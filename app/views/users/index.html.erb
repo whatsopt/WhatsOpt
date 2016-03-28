@@ -1,0 +1,17 @@
+<h1>Users</h1> 
+
+<table class="show" id="users">
+  <tr>
+    <th>Login</th>
+    <th>Email</th>
+    <th style="width:300px" >Roles</th>
+    <th>Last Login At</th>
+  </tr>
+  <% for user in @users %>
+    <tr>
+      <td><%= link_to user.login, user %></td>
+      <td><%= user.email %></td>
+      <td><%= (user.roles.map {|r| r.titleize }).join(", ") %></td>
+    </tr>
+  <% end %>
+</table>
