@@ -10,6 +10,14 @@
  * defined in the other CSS/SCSS files in this directory. It is generally better to create a new
  * file per style scope.
  *
+ *= require bootstrap
  *= require_tree .
  *= require_self
  */
+
+body {
+  padding-top: 50px;
+  padding-bottom: 20px;
+}
+
+table#users th { width:150px;}
