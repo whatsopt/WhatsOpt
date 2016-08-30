@@ -1,0 +1,61 @@
+<div id="all_pt_n2_content_div">
+  <div id="instructions">
+    <h1>OpenMDAO Partition Tree and N^2 diagram.</h1>
+    <p>Left clicking on a node in the partition tree will navigate to that node. Right clicking on a node in the partition tree will collapse/uncollapse it. A click on any element in the N^2 diagram will allow those arrows to persist.</p>
+  </div>
+  <span class="control_panel">
+    <fieldset>
+      <legend><b> Collapse Algorithms </b> </legend>
+      <button onclick="CollapseOutputsButtonClick(root)">Collapse All Outputs</button>
+      <button onclick="CollapseOutputsButtonClick(zoomedElement)">Collapse Outputs In View</button>
+      <button onclick="UncollapseButtonClick(root)">Uncollapse All</button>
+      <button onclick="UncollapseButtonClick(zoomedElement)">Uncollapse In View</button>
+      <select id="myCollapseDepthSelect" onchange="CollapseToDepthSelectChange()">
+        <option value="CollapseDepth">Collapse Depth</option>
+      </select>
+    </fieldset>
+  </span>
+  <br />
+  <span class="control_panel">
+    <fieldset>
+      <legend><b> Navigation </b> </legend>
+      <button onclick="ReturnToRootButtonClick()">Return To Root</button>
+    </fieldset>
+  </span>
+  <span class="control_panel">
+    <fieldset>
+      <legend><b> Display </b> </legend>
+      <button onclick="ClearArrows()">Clear Arrows</button>
+      <select id="fontSizeSelect" onchange="FontSizeSelectChange()">
+        <option value="Font Size" id="fontSizeFirstOption">Font Size</option>
+        <option value="8">8 px</option>
+        <option value="9">9 px</option>
+        <option value="10">10 px</option>
+        <option value="11">11 px</option>
+        <option value="12">12 px</option>
+        <option value="13">13 px</option>
+        <option value="14">14 px</option>
+      </select>
+      <select id="outputNamingSelect" onchange="OutputNameSelectChange()" style="display:none">
+        <option value="Output Naming" id="outputNamingFirstOption">Output Naming</option>
+        <option value="Absolute">Absolute</option>
+        <option value="Promoted">Promoted</option>
+      </select>
+      <select id="paramViewSelect" onchange="ParamViewSelectChange()">
+        <option value="Params" id="paramViewFirstOption">Params</option>
+        <option value="Hidden">Hidden</option>
+        <option value="Visible">Visible</option>
+      </select>
+      <input id="showCurrentPathCheckbox" type="checkbox" onchange="ShowPathCheckboxChange()">
+      <label for="showCurrentPathCheckbox">Show Path</label>
+    </fieldset>
+  </span>
+  <span class="control_panel">
+    <fieldset>
+      <legend><b> Save </b> </legend>
+      <button onclick="SaveSvg()">Save Svg</button>
+    </fieldset>
+  </span>
+  <div id="currentPathId"></div>
+  <div id="d3_content_div"></div>
+</div>

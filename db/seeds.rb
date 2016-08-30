@@ -30,10 +30,26 @@ def create_project(params)
     puts "Creating project #{params[:name]}" 
     project = Project.create! do |p|
       p.name = params[:name]
+      p.description = params[:description]
     end
   end
   project
 end
+
+def create_study(params) 
+  puts "Creating study of Project #{params[:project_id]}" 
+  study = Study.create! do |p|
+      p.project_id = params[:project_id]
+    end
+end
+
+def create_run(params) 
+  puts "Creating run of Study #{params[:study_id]}" 
+  run = Run.create! do |p|
+      p.study_id = params[:study_id]
+  end
+end
+
 
 # Admin
 u=create_user(login: "admin", 
@@ -43,6 +59,12 @@ u.save!
 
 # Project
 project_test = create_project(name:"Test", description: "Project Test")
+
+# Study
+study_test = create_study(name:"Study Test", project_id:project_test.id)
+
+# Project
+run_test = create_run(name:"Run Test", study_id:study_test.id)
 
 # Onera 
 u = create_user(login: "rlafage",

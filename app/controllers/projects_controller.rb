@@ -39,7 +39,7 @@ class ProjectsController < ApplicationController
     @project.description = params[:user][:description] unless params[:user][:description].blank?
     if @project.save
       flash[:notice] = "Successfully updated project."
-      redirect_to project_url
+      redirect_to projects_url
     else
       render :action => 'edit'
     end

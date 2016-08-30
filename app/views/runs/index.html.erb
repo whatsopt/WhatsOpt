@@ -1,0 +1,14 @@
+<h1>Runs</h1> 
+
+<table class="table table-striped" id="users">
+  <tr>
+    <th>Name</th>
+    <th>Description</th>
+  </tr>
+  <% for project in @projects %>
+    <tr>
+      <td><%= project.name %></td>
+      <td><%= project.description %></td>
+    </tr>
+  <% end %>
+</table>
