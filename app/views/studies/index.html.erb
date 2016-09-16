@@ -1,19 +1,13 @@
-<h1>Studies</h1> 
+<h1>Available Studies</h1> 
 
 <table class="table table-striped">
   <tr>
-    <th>Name</th>
-    <th>Description</th>
     <th>Studies</th>
   </tr>
-  <% for project in @projects %>
+  <% for study in @studies %>
     <tr>
-      <td><%= link_to project.name, studies_url(project) %></td>
-      <td><%= project.description %></td>
       <td>
-      <% for study in project.studies %>
-        <%= link_to "Study", study_url(study) %>
-      <% end%>
+        <%= link_to "Study ##{study.id}", study_url(study) %>
       </td>
     </tr>
   <% end %>

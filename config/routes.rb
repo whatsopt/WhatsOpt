@@ -6,7 +6,13 @@ Rails.application.routes.draw do
   resources :projects
   resources :studies
   resources :runs
+
+  namespace :api do
+    namespace :v1 do
+      resources :studies
+    end
+  end
   
-  root to: 'projects#index'
+  root to: 'studies#index'
 
 end

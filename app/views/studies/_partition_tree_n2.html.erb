@@ -500,10 +500,10 @@
 
 
 
-        var zoomedElement = root = <%= @study.treejson %>;
+        var zoomedElement = root = <%= raw @study.tree_json.to_json %>;
 
 
-        var conns = <%= @study.connsjson %>;
+        var conns =  <%= raw @study.conns_json.to_json %>;
 
 
         var zoomedElement0 = root;
