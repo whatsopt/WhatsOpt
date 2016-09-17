@@ -18,22 +18,20 @@
             <span class="icon-bar"></span>
           </button>
           <a class="navbar-brand" href="#">WhatsOpt</a>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-          <form class="navbar-form navbar-right" role="form">
-            <div class="form-group">
-              <input type="text" placeholder="Login" class="form-control">
-            </div>
-            <div class="form-group">
-              <input type="password" placeholder="Password" class="form-control">
-            </div>
-            <button type="submit" class="btn btn-success">Log in</button>
-          </form>
-        </div><!--/.navbar-collapse -->
+        </div> 
+	<% if @user_signed_in? %>
+	  Signed in as <%= current_user.email %>. Not you?
+          <%= link_to "Sign out", destroy_user_session_path %>
+	<% else %>
+	  <%= link_to "Sign up", new_user_registration_path %> or
+          <%= link_to "Sign in", new_user_session_path %>
+	<% end %>
       </div>
     </nav>
 
     <div class="container">
+      <p class="notice"><%= notice %></p>
+      <p class="alert"><%= alert %></p>
       <%= yield %>
     </div> <!-- /container -->   
 </body>
