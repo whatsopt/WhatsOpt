@@ -1,8 +1,7 @@
 class User < ActiveRecord::Base
   rolify
   
-  devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :trackable, :validatable
+  devise :database_authenticatable, :trackable, :validatable, :timeoutable
 
   before_create :generate_api_key
 
