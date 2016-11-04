@@ -2,7 +2,6 @@ Rails.application.routes.draw do
   
   devise_for :users
   
-  resources :users
   resources :projects
   resources :studies
   resources :runs
@@ -12,7 +11,10 @@ Rails.application.routes.draw do
       resources :studies
     end
   end
-  
-  root to: 'studies#index'
 
+  authenticated :user do
+    root to: 'studies#index', as: :authenticated_root
+  end
+  root to: redirect('/users/sign_in')
+  
 end
