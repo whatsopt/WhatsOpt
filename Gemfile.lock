@@ -52,6 +52,9 @@ GEM
       railties (>= 4.1.0, < 5.1)
       responders
       warden (~> 1.2.3)
+    devise_ldap_authenticatable (0.8.5)
+      devise (>= 3.4.1)
+      net-ldap (>= 0.6.0, <= 0.11)
     erubis (2.7.0)
     execjs (2.7.0)
     globalid (0.3.7)
@@ -76,6 +79,7 @@ GEM
     mini_portile2 (2.1.0)
     minitest (5.9.0)
     multi_json (1.12.1)
+    net-ldap (0.11)
     nio4r (1.2.1)
     nokogiri (1.6.8)
       mini_portile2 (~> 2.1.0)
@@ -153,6 +157,7 @@ PLATFORMS
 DEPENDENCIES
   byebug
   devise
+  devise_ldap_authenticatable
   jbuilder (~> 2.0)
   jquery-rails
   pundit
@@ -166,4 +171,4 @@ DEPENDENCIES
   web-console (~> 2.0)
 
 BUNDLED WITH
-   1.12.5
+   1.13.1
