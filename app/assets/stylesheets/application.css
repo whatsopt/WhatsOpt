@@ -20,4 +20,40 @@ body {
   padding-bottom: 20px;
 }
 
-table#users th { width:150px;}
+.container {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+/* flash messages */
+div.field_with_errors {
+  display: inline;
+}
+
+.alert-error {
+    background-color: #f2dede;
+    border-color: #eed3d7;
+    color: #b94a48;
+    text-align: left;
+ }
+
+.alert-alert {
+    background-color: #f2dede;
+    border-color: #eed3d7;
+    color: #b94a48;
+    text-align: left;
+ }
+
+.alert-success {
+    background-color: #dff0d8;
+    border-color: #d6e9c6;
+    color: #468847;
+    text-align: left;
+ }
+
+.alert-notice {
+    background-color: #dff0d8;
+    border-color: #d6e9c6;
+    color: #468847;
+    text-align: left;
+ }
