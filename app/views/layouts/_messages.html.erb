@@ -1,9 +1,9 @@
-<% flash.each do |key, value| %>
+<% flash_messages.each do |message| %>
   <div class="alert alert-<%= key %>">
     <a href="#" data-dismiss="alert" class="close">×</a>
     <ul>
       <li>
-        <%= value %>
+        <%= message %>
       </li>
     </ul>
   </div>
