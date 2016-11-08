@@ -16,4 +16,12 @@
 !/log/.keep
 /tmp
 
+# Emacs
 **/*~
+
+# Eclipse pydev
+.project
+.pydevproject
+
+# Python compiled
+**/*.pyc
