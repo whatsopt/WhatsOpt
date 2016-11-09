@@ -1,5 +1,5 @@
-<% flash_messages.each do |message| %>
-  <div class="alert alert-<%= key %>">
+<% flash_messages.each do |key, message| %>
+  <div class="alert <%= bootstrap_class_for key %>">
     <a href="#" data-dismiss="alert" class="close">×</a>
     <ul>
       <li>
