@@ -1,6 +1,9 @@
 <h1>User <%= @user.login %></h1> 
 
-<h2>Access</h2>
-
-<%= label @user.api_key %>
+<table class="table table-striped" id="user">
+  <tr>
+    <th>Api Key</th>
+    <td><%= @user.api_key %></td>
+  </tr>
+</table>
 
