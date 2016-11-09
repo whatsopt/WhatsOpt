@@ -53,4 +53,7 @@ Rails.application.configure do
   # config.file_watcher = ActiveSupport::EventedFileUpdateChecker
 
   config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
+
+  # whitelist emulated private localhost IP address (virtual box)
+  config.web_console.whitelisted_ips = '10.0.2.2'
 end
