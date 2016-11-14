@@ -1,14 +1,14 @@
-<h1>Projects</h1> 
+<h1>Runs</h1> 
 
-<table class="table table-striped" id="projects">
+<table class="table table-striped" id="runs">
   <tr>
-    <th>Name</th>
-    <th>Description</th>
+    <th>#</th>
+    <th>Creation Date</th>
   </tr>
-  <% for project in @projects %>
+  <% for run in @runs %>
     <tr>
-      <td><%= project.name %></td>
-      <td><%= project.description %></td>
+      <td><%= #{run.id} %></td>
+      <td><%= distance_of_time_in_words(run.created_at, Time.now) %></td>
     </tr>
   <% end %>
 </table>

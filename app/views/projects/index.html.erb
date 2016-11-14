@@ -4,16 +4,14 @@
   <tr>
     <th>Name</th>
     <th>Description</th>
-    <th>Studies</th>
+    <th>Nb of Studies</th>
   </tr>
   <% for project in @projects %>
     <tr>
-      <td><%= link_to project.name, studies_url(project) %></td>
+      <td><%= link_to project.name, project_url(project) %></td>
       <td><%= project.description %></td>
       <td>
-      <% for study in project.studies %>
-        <%= link_to "Study", study_url(study) %>
-      <% end%>
+	<%= pluralize(project.studies.count, 'study') %>
       </td>
     </tr>
   <% end %>
