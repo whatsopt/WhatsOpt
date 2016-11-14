@@ -1,11 +1,7 @@
 <% flash_messages.each do |key, message| %>
-  <div class="alert <%= bootstrap_class_for key %>">
+  <div class="alert <%= bootstrap_class_for key %>" role="alert">
     <a href="#" data-dismiss="alert" class="close">×</a>
-    <ul>
-      <li>
-        <%= message %>
-      </li>
-    </ul>
+    <%= message %>
   </div>
 <% end %>
   
