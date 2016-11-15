@@ -10,7 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 7) do
+ActiveRecord::Schema.define(version: 8) do
+
+  create_table "attachments", force: :cascade do |t|
+    t.string   "container_type"
+    t.integer  "container_id"
+    t.string   "file_file_name"
+    t.string   "file_content_type"
+    t.integer  "file_file_size"
+    t.datetime "file_updated_at"
+    t.string   "description"
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
+    t.index ["container_type", "container_id"], name: "index_attachments_on_container_type_and_container_id"
+  end
 
   create_table "projects", force: :cascade do |t|
     t.string   "name",        limit: 30, default: "", null: false

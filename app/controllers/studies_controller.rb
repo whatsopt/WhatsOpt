@@ -16,13 +16,20 @@ class StudiesController < ApplicationController
       flash[:notice] = "Study creation cancelled."
       redirect_to studies_url
     else
-      @study = Study.new do |p|  
-        p.name = params[:name]
-        p.description = params[:name]
+      @study = Study.new do |s|  
+        s.name = params[:name]
+        s.description = params[:name]
+        if params[:project_id] && Project.find(project_id)
+          #TODO : check write permissions on given project
+          s.project = Project.find(project_id)
+        else
+          #TODO: create default project object
+          s.project = Project.find_by(name: 'Scratch')
+        end
       end
       if @study.save
-        flash[:notice] = "Creation successful."
-        redirect_to studies_url
+        flash[:notice] = "Study created in project #{@study.project.name}"
+        redirect_to study_url(@study)
       else
         render :action => 'new'
       end

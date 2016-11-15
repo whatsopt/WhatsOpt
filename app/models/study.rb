@@ -5,6 +5,7 @@ class Study < ApplicationRecord
 
   belongs_to :project, :dependent => :destroy
   has_many :runs
+  has_many :attachments
 
   serialize :tree_json, JSON
   serialize :conns_json, JSON

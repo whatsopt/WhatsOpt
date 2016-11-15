@@ -1,0 +1,13 @@
+<%= form_for @study, :html => { :multipart => true, :class => "form-horizontal", :role => "form" } do |f| %>
+
+<div class="form-group">
+  <%= f.label :version, "File", {class: "col-sm-2 control-label"} %>
+  <div class="col-sm-4">
+    <%= render "attachments/attachments_form", :f => f %>
+  </div>  
+</div>
+
+  <%= f.submit "Submit", class: "btn btn-primary" %>
+  <%= f.submit "Cancel", class: "btn", name: "cancel_button" %>
+
+<% end %>
