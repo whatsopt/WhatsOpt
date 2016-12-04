@@ -42,7 +42,7 @@ def create_study(params)
   puts "Creating study of Project #{params[:project_id]}" 
   study = Study.create! do |p|
     p.project_id = params[:project_id]
-    
+    p.name = params[:name]
     p.tree_json = params[:tree_json]
     p.conns_json = params[:conns_json]
   end

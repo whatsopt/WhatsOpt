@@ -7,7 +7,7 @@ module AttachmentsHelper
   end
  
   def view_description(attachment)
-    if record.attachment.blank?
+    if attachment.description.blank?
       "None"
     else
       "#{attachment.description}"

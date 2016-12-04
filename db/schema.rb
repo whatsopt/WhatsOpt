@@ -15,10 +15,10 @@ ActiveRecord::Schema.define(version: 8) do
   create_table "attachments", force: :cascade do |t|
     t.string   "container_type"
     t.integer  "container_id"
-    t.string   "file_file_name"
-    t.string   "file_content_type"
-    t.integer  "file_file_size"
-    t.datetime "file_updated_at"
+    t.string   "data_file_name"
+    t.string   "data_content_type"
+    t.integer  "data_file_size"
+    t.datetime "data_updated_at"
     t.string   "description"
     t.datetime "created_at",        null: false
     t.datetime "updated_at",        null: false
@@ -50,8 +50,9 @@ ActiveRecord::Schema.define(version: 8) do
 
   create_table "studies", force: :cascade do |t|
     t.integer  "project_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.string   "name",       limit: 30, default: "", null: false
+    t.datetime "created_at",                         null: false
+    t.datetime "updated_at",                         null: false
     t.text     "tree_json"
     t.text     "conns_json"
   end

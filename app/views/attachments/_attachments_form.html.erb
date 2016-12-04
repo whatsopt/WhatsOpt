@@ -5,10 +5,10 @@
   <br/>
 <% end %>
 
-<%= f.fields_for :attachments, Attachment.new, :child_index => "new_attachment" do |fattach| %>
+<%= f.fields_for :attachments, Attachment.new, :child_index => "0" do |fattach| %>
   <%= render "attachments/attachment_fields", :f => fattach %>
 <% end %>
 
 <div class="fields">
-  <p><%= link_to_add_fields "(add another data file)", f, :attachments %></p>
+  <%= link_to_add_fields "(add another data file)", f, :attachments %>
 </div>
