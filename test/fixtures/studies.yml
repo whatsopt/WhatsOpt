@@ -1,5 +1,7 @@
 one:
   project_id: 1
+  name: StudyTest1
 
-two:
+unnamed1:
   project_id: 1
+  name: Unnamed1

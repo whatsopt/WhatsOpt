@@ -1,43 +1,10 @@
 <h1>Study #<%= @study.id %> from <%= link_to @study.project.name, project_path(@study.project) %></h1>
 
-<div id="accordio" role="tablist" aria-multiselectable="true">
-  <div class="card">
-    <div class="card-header" role="tab" id="headingOne">
-      <h5 class="mb-0">
-        <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-	  OpenMDAO N2 Viewer
-        </a>
-      </h5>
-    </div>
-    <div id="collapseOne" class="collapse" role="tabpanel" aria-labelledby="headingOne">
-      <div class="card-block">
-	<%= render :partial => "partition_tree_n2", :locals => {:study => @study } %>
-      </div>
-    </div>
-  </div>
-  <div class="card">
-    <div class="card-header" role="tab" id="headingTwo">
-      <h5 class="mb-0">
-        <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
-	  Runs
-        </a>
-      </h5>
-    </div>
-    <div id="collapseTwo" class="collapse in" role="tabpanel" aria-labelledby="headingTwo">
-      <div class="card-block">
-	<table class="table table-striped">
-	  <tr>
-	    <th>#</th>
-	    <th>Creation Date</th>
-	  </tr>
-	  <% for run in @study.runs %>
-	  <tr>
-	    <td><%= link_to "Run ##{run.id}", run_url(run) %></td>
-	    <td><%= distance_of_time_in_words(run.created_at, Time.now) %></td>
-	  </tr>
-	  <% end %>
-	</table>
-      </div>
-    </div>
-  </div>
+<div>
+  <% if @study.has_notebook? %>
+    <%= render :partial => "jupyter_notebook", :locals => {:study => @study } %>
+  <% elsif @study.has_openmdao_problem? %>
+    <%= render :partial => "openmdao", :locals => {:study => @study } %>
+  <% end %>
+
 </div>

@@ -1,16 +1,3 @@
 <h1>All Studies</h1> 
 
-<table class="table table-striped">
-  <tr>
-    <th>Studies</th>
-    <th>Creation Date</th>
-    <th>Project</th>
-  </tr>
-  <% for study in @studies %>
-    <tr>
-      <td><%= link_to "Study ##{study.id}", study_url(study) %></td>
-      <td><%= distance_of_time_in_words(study.created_at, Time.now) %></td>
-      <td><%= study.project.name %></td>
-    </tr>
-  <% end %>
-</table>
+<%= render :partial => 'studies_index', locals: { studies: @studies } %>
