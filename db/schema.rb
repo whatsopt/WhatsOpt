@@ -20,6 +20,7 @@ ActiveRecord::Schema.define(version: 8) do
     t.integer  "data_file_size"
     t.datetime "data_updated_at"
     t.string   "description"
+    t.string   "category"
     t.datetime "created_at",        null: false
     t.datetime "updated_at",        null: false
     t.index ["container_type", "container_id"], name: "index_attachments_on_container_type_and_container_id"

@@ -1,14 +1,17 @@
-<%= form_for @study, :html => { :multipart => true, :class => "form-vertical", :role => "form" } do |f| %>
+<%= form_for @study, :html => { :multipart => true, :role => "form" } do |f| %>
 
-  <div class="form-group">
-    <%= f.label :name, "Name", {class: "control-label"} %>  
-    <%= f.text_field :name, {class: "control-label"} %>  
+  <div class="form-group row">
+    <%= f.label :name, "Name", class:"col-md-2 col-form-label"  %>
+    <div class="col-md-4">
+      <%= f.text_field :name, class: "form-control" %>
+    </div>
   </div>  
 
-
-  <div class="form-group">
-    <%= f.label :version, "Files", {class: "control-label"} %>
-    <%= render "attachments/attachments_form", :f => f %>  
+  <div class="form-group row">
+    <%= f.label :attachment, "Notebook", class:"col-md-2 col-form-label" %>
+    <div class="col-md-4">
+      <%= render "attachments/attachments_form", :f => f %>  
+    </div>
   </div>
 
   <div class="form-group">

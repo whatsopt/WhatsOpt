@@ -11,4 +11,9 @@ class StudyTest < ActiveSupport::TestCase
     assert_equal "Unnamed", study.name
   end
   
+  test "should not have notebook when empty" do
+    study = Study.new
+    assert !study.has_notebook?
+  end
+  
 end

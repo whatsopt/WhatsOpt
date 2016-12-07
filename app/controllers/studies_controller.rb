@@ -14,23 +14,23 @@ class StudiesController < ApplicationController
   def create
     if params[:cancel_button]
       flash[:notice] = "Study creation cancelled."
-      redirect_to studies_url
+      if params[:project_id] && Project.find(project_id)
+        redirect_to Project.find(params[:project_id])
+      else
+        redirect_to Project.find_by(name: 'Scratch')
+      end
     else
       @study = Study.create(study_params)
       if params[:project_id] && Project.find(project_id)
-        #TODO : check write permissions on given project
         @study.project = Project.find(project_id)
       else
-        #TODO: create default project object
         @study.project = Project.find_by(name: 'Scratch')
       end
-      p @study
-      p @study.valid?
-      p @study.errors
       if @study.save
         flash[:notice] = "Study created in project #{@study.project.name}"
         redirect_to study_url(@study)
       else
+        flash[:error] = "Study creation failed: invalid input data."
         render :action => 'new'
       end
     end
