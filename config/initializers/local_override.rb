@@ -9,15 +9,18 @@ module Devise
 
       def authenticate!
         if params[:user]
-          user = User.find_by_email(params[:user][:email])
-
-          if user && user.encrypted_password == params[:user][:password]
-            success!(user)
+          user = User.find_by_login(params[:user][:login])
+          if user
+            if user.valid_password?(params[:user][:password])
+              success!(user)
+            else
+              halt!
+            end
           else
             fail
           end 
         else
-          fail
+          halt!
         end 
       end 
     end 
