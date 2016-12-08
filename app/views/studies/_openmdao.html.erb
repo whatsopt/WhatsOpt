@@ -1,0 +1,14 @@
+  <div class="card">
+    <div class="card-header" role="tab" id="headingOne">
+      <h5 class="mb-0">
+        <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+	  OpenMDAO N2 Viewer
+        </a>
+      </h5>
+    </div>
+    <div id="collapseOne" class="collapse" role="tabpanel" aria-labelledby="headingOne">
+      <div class="card-block">
+	<%= render :partial => "partition_tree_n2", :locals => {:study => @study } %>
+      </div>
+    </div>
+  </div>

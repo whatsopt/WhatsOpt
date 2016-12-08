@@ -1,14 +1,4 @@
-<%= f.fields_for :attachments do |fattach| %>
-  <%= link_to_attachment fattach.object %>
-  <%= fattach.check_box :_destroy %>
-  <%= fattach.label :_destroy, "remove" %>
-  <br/>
+<%= f.fields_for :attachments, Attachment.new, :child_index => "0" do |fattach| %>
+  <%= fattach.file_field :data %>
 <% end %>
 
-<%= f.fields_for :attachments, Attachment.new, :child_index => "new_attachment" do |fattach| %>
-  <%= render "attachments/attachment_fields", :f => fattach %>
-<% end %>
-
-<div class="fields">
-  <p><%= link_to_add_fields "(add another data file)", f, :attachments %></p>
-</div>

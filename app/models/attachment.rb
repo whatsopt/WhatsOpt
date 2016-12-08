@@ -1,57 +1,32 @@
 class Attachment < ActiveRecord::Base
 
   has_attached_file :data,
-                    :path => ":rails_root/upload/:attachment/:id/:style/:filename",
-                    :processors => lambda { |a|
-                                            if a.image?
-                                              [:thumbnail]
-                                            elsif a.notebook?
-                                              [:noise_airport_kml_processor]
-                                            else
-                                              []
-                                            end
-                                          },
-                    :styles => lambda { |a|
-                                        if a.instance.image?
-                                          { :small  => ["100x100>"], 
-                                            :medium => ["800x800>"] }
-                                        elsif a.notebook?
-                                          {}
-                                        else 
-                                          {}
-                                        end
-                                      }
+                    :path => ":rails_root/upload/:attachment/:id/:style/:basename.:extension",
+                    :processors => [:notebook_processor],
+                    :styles => { html: {:format => :html} }
 
-  before_post_process :before_post_process
-  after_post_process :after_post_process
-
-  def before_post_process
-    puts "=== Before processing #{File.basename(data.path)} ==========="
-  end
-  
-  def after_post_process
-    puts "--- After processing #{File.basename(data.path)} ------------"
-  end
+  ATTACHMENT_CATEGORIES = %w(Notebook, Openmdao)
 
   belongs_to :container, :polymorphic => true
-  belongs_to :study, foreign_key: 'container_id', conditions: "attachments.container_type = 'Study'"
+  belongs_to :study, -> { where("attachments.container_type = 'Study'") }, foreign_key: 'container_id' 
 
-  validates_attachment_presence :data
-  validates_attachment_size     :data, :less_than => 100.megabytes
+  validates :category, presence: true
+  validates_attachment_presence  :data
+  validates_attachment_size      :data, :less_than => 100.megabytes
+  validates_attachment_file_name :data, :matches => [/\.ipynb\Z/, /.json\Z/]
 
-  def image?
-    return false unless data.content_type
-    data.content_type =~ /^image/
-  end 
+  after_initialize :_post_initialize
 
-  def notebook?
-    return false unless data.content_type
-    data.content_type =~ /google-earth\.kml/
-  end 
+  scope :notebooks, -> { where(category: 'Notebook') }
+  
+  private
+  
+  def _post_initialize
+    _initialize_category if category.blank?
+  end
 
-  def text?
-    return false unless data.content_type
-    data.content_type =~ /^text/
-  end 
+  def _initialize_category
+    self.category = "Notebook"
+  end
 
 end

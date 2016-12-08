@@ -1,0 +1,3 @@
+<%= link_to study.attachments.first.data_file_name, study.attachments.first %>
+<%= render :html => File.new(study.attachments.first.data.path(:html)).read.html_safe %>
+

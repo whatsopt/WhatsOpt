@@ -25,3 +25,6 @@
 
 # Python compiled
 **/*.pyc
+
+# Uploaded files
+/upload
