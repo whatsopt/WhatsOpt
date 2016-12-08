@@ -1,11 +1,8 @@
 language: ruby
 rvm:
-env: 
-  - RAILS_ENV=test
-script:
-  - bundle exec rake db:create
-  - bundle exec rake db:migrate --trace RAILS_ENV=development
+before_script:
+  - bundle exec rake db:create RAILS_ENV=test
   - bundle exec rake db:migrate --trace RAILS_ENV=test
-  - bundle exec rails db:migrate
   - bundle exec rake db:test:prepare
+script:
   - bundle exec rake test
