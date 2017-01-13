@@ -29,6 +29,7 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 group :development do
   gem 'capistrano-rails'
   gem 'capistrano-rvm'
+  gem 'highline'
 end
 
 group :development, :test do
@@ -51,3 +52,4 @@ gem 'devise_ldap_authenticatable'
 gem 'rolify'
 gem 'pundit'
 gem 'paperclip'
+
