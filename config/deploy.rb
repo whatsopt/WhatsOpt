@@ -12,8 +12,8 @@ set :deploy_to, "/var/www/html/rails/whatsopt"
 
 set :log_level, :info
 
-#set :linked_files, %w{config/database.yml}
-#set :linked_dirs, %w{bin log tmp upload vendor/bundle public/system}
+#set :linked_files, %w{config/database.yml config/secrets.yml}
+set :linked_dirs, %w{bin log tmp upload vendor/bundle public/system}
 
 SSHKit.config.command_map[:rake]  = "bundle exec rake" 
 SSHKit.config.command_map[:rails] = "bundle exec rails"
