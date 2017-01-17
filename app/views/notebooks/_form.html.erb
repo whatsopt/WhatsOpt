@@ -1,0 +1,14 @@
+<%= form_for @notebook, :html => { :multipart => true, :role => "form" } do |f| %>
+
+  <div class="form-group row">
+    <div class="col-md-4">
+      <%= render "attachment_form", :f => f %>  
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= f.submit "Submit", class: "btn btn-primary" %>
+    <%= f.submit "Cancel", class: "btn", name: "cancel_button" %>
+  </div>
+  
+<% end %>

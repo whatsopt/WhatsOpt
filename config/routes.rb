@@ -5,6 +5,7 @@ Rails.application.routes.draw do
   resources :users, only: [:show]
   resources :projects
   resources :studies
+  resources :notebooks
   resources :attachments, only: [:show, :index]
 
   namespace :api do

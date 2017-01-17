@@ -1,0 +1,20 @@
+<p>
+<%= link_to "New Notebook", new_notebook_path, class: "btn btn-primary" %>
+</p>
+
+<p>
+<table class="table table-striped">
+  <tr>
+    <th>#</th>
+    <th>Owner</th>
+    <th>Updated</th>
+  </tr>
+  <% for notebook in notebooks %>
+    <tr>
+      <td><%= link_to "Notebook ##{notebook.id}", notebook_path(notebook) %></td>
+      <td><%= notebook.owner %></td>
+      <td><%= time_ago_in_words(notebook.updated_at) %> ago</td>
+    </tr>
+  <% end %>
+</table>
+</p>

@@ -9,6 +9,7 @@ class Attachment < ActiveRecord::Base
 
   belongs_to :container, :polymorphic => true
   belongs_to :study, -> { where("attachments.container_type = 'Study'") }, foreign_key: 'container_id' 
+  belongs_to :notebook, -> { where("attachments.container_type = 'Notebook'") }, foreign_key: 'container_id' 
 
   validates :category, presence: true
   validates_attachment_presence  :data
