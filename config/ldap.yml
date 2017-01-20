@@ -41,6 +41,16 @@ test:
   ssl: simple_tls
   # <<: *AUTHORIZATIONS
 
+staging:
+  host: ldap
+  port: 389
+  attribute: uid
+  base: ou=people,o=onera
+  admin_user: ou=people,o=onera
+  admin_password: admin_password
+  ssl: false
+  # <<: *AUTHORIZATIONS
+
 production:
   host: localhost
   port: 636
