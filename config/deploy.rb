@@ -5,7 +5,7 @@ set :application, 'WhatsOpt'# config valid only for current version of Capistran
 
 set :repo_url, 'ssh://designlab@endymion/iesta-base/designlab/gitrepos/WhatsOpt.git'
 set :scm, :git
-set :branch, :"ft-automate-deployment"
+set :branch, :master
 set :keep_releases, 5
 
 set :deploy_to, "/var/www/html/rails/whatsopt"
