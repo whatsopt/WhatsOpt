@@ -6,6 +6,8 @@ module WhatsOpt
 
     SORRY_MESSAGE = "Oops, can not convert notebook to html!"
     SORRY_MESSAGE_HTML = "<p><strong>"+SORRY_MESSAGE+"</strong></p>"
+
+    JUPYTER = Rails.configuration.jupyter_script || "jupyter"
     
     class HtmlConversionError < StandardError
     end
@@ -28,7 +30,8 @@ module WhatsOpt
       dst_path = File.dirname(dst.path)
       dst_filename = File.basename(dst.path)
 
-      cmd = "jupyter nbconvert --template=basic --output-dir=#{dst_path} --output=#{dst_filename} #{src.path}"
+      cmd = "#{JUPYTER} nbconvert --template=basic --output-dir=#{dst_path} --output=#{dst_filename} #{src.path}"
+      Rails.logger.info "RUN COMMAND: #{cmd}"
       ok = self.run(cmd)
 
       unless ok

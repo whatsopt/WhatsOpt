@@ -58,5 +58,5 @@ Rails.application.configure do
   config.web_console.whitelisted_ips = '10.0.2.2'
 
   # Jupyter script
-  config.jupyter_script=/home/rlafage/anaconda2/bin/jupyter
+  config.jupyter_script='/home/rlafage/anaconda2/bin/jupyter'
 end
