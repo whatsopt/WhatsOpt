@@ -56,4 +56,7 @@ Rails.application.configure do
 
   # whitelist emulated private localhost IP address (virtual box)
   config.web_console.whitelisted_ips = '10.0.2.2'
+
+  # Jupyter script
+  config.jupyter_script=/home/rlafage/anaconda2/bin/jupyter
 end

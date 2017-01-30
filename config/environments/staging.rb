@@ -83,4 +83,7 @@ Rails.application.configure do
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
+  
+  # Jupyter script
+  config.jupyter_script=/home/rlafage/anaconda2/bin/jupyter
 end
