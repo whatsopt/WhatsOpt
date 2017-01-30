@@ -85,5 +85,5 @@ Rails.application.configure do
   config.active_record.dump_schema_after_migration = false
   
   # Jupyter script
-  config.jupyter_script='/home/rlafage/anaconda2/bin/jupyter'
+  config.jupyter_script='/usr/local/anaconda2/bin/jupyter'
 end
