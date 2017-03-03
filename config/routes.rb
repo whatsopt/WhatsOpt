@@ -1,5 +1,8 @@
 Rails.application.routes.draw do
   
+  resources :variables
+  resources :disciplines
+  resources :multi_disciplinary_analyses
   devise_for :users
 
   resources :users, only: [:show]

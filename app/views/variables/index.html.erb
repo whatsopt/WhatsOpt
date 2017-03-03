@@ -1,0 +1,31 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Variables</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Discipline</th>
+      <th>Io mode</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @variables.each do |variable| %>
+      <tr>
+        <td><%= variable.name %></td>
+        <td><%= variable.discipline_id %></td>
+        <td><%= variable.io_mode %></td>
+        <td><%= link_to 'Show', variable %></td>
+        <td><%= link_to 'Edit', edit_variable_path(variable) %></td>
+        <td><%= link_to 'Destroy', variable, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Variable', new_variable_path %>

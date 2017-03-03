@@ -1,0 +1,2 @@
+class MultiDisciplinaryAnalysis < ApplicationRecord
+end

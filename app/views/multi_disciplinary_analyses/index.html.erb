@@ -1,0 +1,27 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Multi Disciplinary Analyses</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @multi_disciplinary_analyses.each do |multi_disciplinary_analysis| %>
+      <tr>
+        <td><%= multi_disciplinary_analysis.name %></td>
+        <td><%= link_to 'Show', multi_disciplinary_analysis %></td>
+        <td><%= link_to 'Edit', edit_multi_disciplinary_analysis_path(multi_disciplinary_analysis) %></td>
+        <td><%= link_to 'Destroy', multi_disciplinary_analysis, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Multi Disciplinary Analysis', new_multi_disciplinary_analysis_path %>

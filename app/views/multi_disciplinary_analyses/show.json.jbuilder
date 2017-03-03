@@ -1,0 +1,1 @@
+json.partial! "multi_disciplinary_analyses/multi_disciplinary_analysis", multi_disciplinary_analysis: @multi_disciplinary_analysis

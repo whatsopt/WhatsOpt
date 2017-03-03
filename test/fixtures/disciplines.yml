@@ -1,0 +1,9 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  multi_disciplinary_analisys_id: 1
+
+two:
+  name: MyString
+  multi_disciplinary_analisys_id: 1

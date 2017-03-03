@@ -1,0 +1,1 @@
+json.array! @multi_disciplinary_analyses, partial: 'multi_disciplinary_analyses/multi_disciplinary_analysis', as: :multi_disciplinary_analysis

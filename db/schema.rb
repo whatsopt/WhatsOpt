@@ -10,20 +10,32 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 9) do
+ActiveRecord::Schema.define(version: 20170303161046) do
 
   create_table "attachments", force: :cascade do |t|
     t.string   "container_type"
     t.integer  "container_id"
-    t.string   "data_file_name"
-    t.string   "data_content_type"
-    t.integer  "data_file_size"
-    t.datetime "data_updated_at"
+    t.string   "file_file_name"
+    t.string   "file_content_type"
+    t.integer  "file_file_size"
+    t.datetime "file_updated_at"
     t.string   "description"
-    t.string   "category"
     t.datetime "created_at",        null: false
     t.datetime "updated_at",        null: false
     t.index ["container_type", "container_id"], name: "index_attachments_on_container_type_and_container_id"
+  end
+
+  create_table "disciplines", force: :cascade do |t|
+    t.string   "name"
+    t.integer  "multi_disciplinary_analisys_id"
+    t.datetime "created_at",                     null: false
+    t.datetime "updated_at",                     null: false
+  end
+
+  create_table "multi_disciplinary_analyses", force: :cascade do |t|
+    t.string   "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "notebooks", force: :cascade do |t|
@@ -57,9 +69,8 @@ ActiveRecord::Schema.define(version: 9) do
 
   create_table "studies", force: :cascade do |t|
     t.integer  "project_id"
-    t.string   "name",       limit: 30, default: "", null: false
-    t.datetime "created_at",                         null: false
-    t.datetime "updated_at",                         null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.text     "tree_json"
     t.text     "conns_json"
   end
@@ -87,6 +98,14 @@ ActiveRecord::Schema.define(version: 9) do
     t.integer "user_id"
     t.integer "role_id"
     t.index ["user_id", "role_id"], name: "index_users_roles_on_user_id_and_role_id"
+  end
+
+  create_table "variables", force: :cascade do |t|
+    t.string   "name"
+    t.integer  "discipline_id"
+    t.string   "io_mode"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
   end
 
 end

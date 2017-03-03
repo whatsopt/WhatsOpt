@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @variable.name %>
+</p>
+
+<p>
+  <strong>Discipline:</strong>
+  <%= @variable.discipline_id %>
+</p>
+
+<p>
+  <strong>Io mode:</strong>
+  <%= @variable.io_mode %>
+</p>
+
+<%= link_to 'Edit', edit_variable_path(@variable) %> |
+<%= link_to 'Back', variables_path %>
