@@ -27,7 +27,7 @@ ActiveRecord::Schema.define(version: 20170303161046) do
 
   create_table "disciplines", force: :cascade do |t|
     t.string   "name"
-    t.integer  "multi_disciplinary_analisys_id"
+    t.integer  "multi_disciplinary_analysis_id"
     t.datetime "created_at",                     null: false
     t.datetime "updated_at",                     null: false
   end
