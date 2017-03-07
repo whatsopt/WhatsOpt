@@ -13,6 +13,7 @@
         <a class="navbar-brand" href="#">WhatsOpt</a>
 	<ul class="nav navbar-nav float-xs-left">
 	  <li class="nav-item"><%= link_to "Projects", :projects, class: "nav-link" %></li>
+	  <li class="nav-item"><%= link_to "MDAs", :multi_disciplinary_analyses, class: "nav-link" %></li>
 	  <li class="nav-item"><%= link_to "Notebooks", :notebooks, class: "nav-link" %></li>
         </ul>
 	<ul class="nav navbar-nav float-xs-right">
@@ -35,7 +36,10 @@
     <div class="container">
       <%= render 'layouts/messages' %>
       <%= yield %>
-    </div>
     </div> <!-- /container -->   
+
+    <div>
+      <%= yield :document_ready %>
+    </div>  
 </body>
 </html>

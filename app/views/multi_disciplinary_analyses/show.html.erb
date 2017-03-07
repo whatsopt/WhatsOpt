@@ -1,9 +1,23 @@
-<p id="notice"><%= notice %></p>
-
 <p>
   <strong>Name:</strong>
-  <%= @multi_disciplinary_analysis.name %>
+  <%= @mda.name %>
 </p>
 
-<%= link_to 'Edit', edit_multi_disciplinary_analysis_path(@multi_disciplinary_analysis) %> |
+<div class="xdsm"></div>
+
+<%= link_to 'Edit', edit_multi_disciplinary_analysis_path(@mda) %> |
 <%= link_to 'Back', multi_disciplinary_analyses_path %>
+
+<% content_for :document_ready do %>
+  <script>
+    var tooltip = d3.select("body").selectAll(".tooltip").data(['tooltip'])
+      .enter().append("div")
+      .attr("class", "tooltip")
+      .style("opacity", 0);
+
+    var mda = <%= raw @mda.get_xdsm_json.to_json %>
+    var graph = new Graph(mda);
+    var xdsm = new Xdsm(graph, 'root', tooltip);
+    xdsm.draw();
+  </script>
+<% end %>

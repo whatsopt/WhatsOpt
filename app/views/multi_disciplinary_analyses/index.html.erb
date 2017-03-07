@@ -1,8 +1,6 @@
-<p id="notice"><%= notice %></p>
-
 <h1>Multi Disciplinary Analyses</h1>
 
-<table>
+<table class="table table-striped">
   <thead>
     <tr>
       <th>Name</th>
@@ -11,12 +9,12 @@
   </thead>
 
   <tbody>
-    <% @multi_disciplinary_analyses.each do |multi_disciplinary_analysis| %>
+    <% @mdas.each do |mda| %>
       <tr>
-        <td><%= multi_disciplinary_analysis.name %></td>
-        <td><%= link_to 'Show', multi_disciplinary_analysis %></td>
-        <td><%= link_to 'Edit', edit_multi_disciplinary_analysis_path(multi_disciplinary_analysis) %></td>
-        <td><%= link_to 'Destroy', multi_disciplinary_analysis, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= mda.name %></td>
+        <td><%= link_to 'Show', mda %></td>
+        <td><%= link_to 'Edit', edit_multi_disciplinary_analysis_path(mda) %></td>
+        <td><%= link_to 'Destroy', mda, method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>
     <% end %>
   </tbody>
@@ -24,4 +22,4 @@
 
 <br>
 
-<%= link_to 'New Multi Disciplinary Analysis', new_multi_disciplinary_analysis_path %>
+<%= link_to 'New MDA', new_multi_disciplinary_analysis_path, class: "btn btn-primary" %>

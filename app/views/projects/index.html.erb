@@ -1,18 +1,23 @@
 <h1>Projects</h1> 
 
-<table class="table table-striped" id=>
-  <tr>
-    <th>Name</th>
-    <th>Description</th>
-    <th>Nb of Studies</th>
-  </tr>
-  <% for project in @projects %>
+<table class="table table-striped">
+  <thead>
     <tr>
-      <td><%= link_to project.name, project_url(project) %></td>
-      <td><%= project.description %></td>
-      <td>
-	<%= pluralize(project.studies.count, 'study') %>
-      </td>
+      <th>Name</th>
+      <th>Description</th>
+      <th>Nb of Studies</th>
     </tr>
-  <% end %>
+  </thead> 
+
+  <tbody>
+    <% @projects.each do |project| %>
+      <tr>
+	<td><%= link_to project.name, project_url(project) %></td>
+	<td><%= project.description %></td>
+	<td>
+	  <%= pluralize(project.studies.count, 'study') %>
+	</td>
+      </tr>
+    <% end %>
+  </tbody>
 </table>
