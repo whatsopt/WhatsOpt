@@ -4,7 +4,7 @@
   <thead>
     <tr>
       <th>Name</th>
-      <th colspan="3"></th>
+      <th colspan="1"></th>
     </tr>
   </thead>
 
@@ -12,9 +12,9 @@
     <% @mdas.each do |mda| %>
       <tr>
         <td><%= mda.name %></td>
-        <td><%= link_to 'Show', mda %></td>
-        <td><%= link_to 'Edit', edit_multi_disciplinary_analysis_path(mda) %></td>
-        <td><%= link_to 'Destroy', mda, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= link_to 'Show', mda %> |
+        <%= link_to 'Edit', edit_multi_disciplinary_analysis_path(mda) %> |
+        <%= link_to 'Delete', mda, method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>
     <% end %>
   </tbody>

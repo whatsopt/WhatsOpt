@@ -58,5 +58,8 @@ Rails.application.configure do
   config.web_console.whitelisted_ips = ['10.0.2.2', '134.212.26.254']
 
   # Jupyter script
-  config.jupyter_script='/home/rlafage/anaconda2/bin/jupyter'
+  # rdri206h
+  config.jupyter_script='/tmp_user/rdri206h/rlafage/anaconda2/bin/jupyter'
+  # virtual box remix
+  #config.jupyter_script='/d/rlafage/anaconda2/bin/jupyter'
 end
