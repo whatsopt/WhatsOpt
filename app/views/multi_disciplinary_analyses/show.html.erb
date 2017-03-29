@@ -15,7 +15,7 @@
       .attr("class", "tooltip")
       .style("opacity", 0);
 
-    var mda = <%= raw @mda.get_xdsm_json.to_json %>
+    var mda = <%= raw @mda.get_xdsm_json %>
     var graph = new Graph(mda);
     var xdsm = new Xdsm(graph, 'root', tooltip);
     xdsm.draw();

@@ -65,7 +65,7 @@ def create_mda(params)
     puts "MDA #{params[:name]} already in database" 
   else
     puts "Creating MDA #{params[:name]}" 
-    mda = MultiDisciplinaryAnalysis.create(params)
+    mda = MultiDisciplinaryAnalysis.create!(params)
   end
   mda
 end
