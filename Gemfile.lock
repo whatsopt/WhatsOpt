@@ -160,6 +160,10 @@ GEM
     responders (2.3.0)
       railties (>= 4.2.0, < 5.1)
     rolify (5.1.0)
+    rubyXL (3.3.23)
+      nokogiri (>= 1.4.4)
+      rubyzip (>= 1.1.6)
+    rubyzip (1.2.1)
     sass (3.4.22)
     sass-rails (5.0.6)
       railties (>= 4.0.0, < 6)
@@ -221,6 +225,7 @@ DEPENDENCIES
   rails (~> 5.0)
   rails-assets-tether (>= 1.1.0)!
   rolify
+  rubyXL
   sass-rails
   sdoc (~> 0.4.0)
   sqlite3

@@ -57,4 +57,4 @@ gem 'devise_ldap_authenticatable'
 gem 'rolify'
 gem 'pundit'
 gem 'paperclip'
-
+gem 'rubyXL'
