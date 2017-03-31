@@ -40,22 +40,22 @@ class MultiDisciplinaryAnalysis < ApplicationRecord
         end
       end
 
-      # pendings 
+      # pendings
       disciplines.each do |d|
-        pendings = [] 
-        d.input_variables do |v|
-          unless all_connections.includes?(v.name)
+        pendings = []
+        d.input_variables.each do |v|
+          unless all_connections.include?(v.name)
             pendings << v.name
           end
-        end 
+        end
         unless pendings.empty?
           edges << { from: "_U_", to: "#{d.id}", 
                      name: pendings.join(",") }
         end
 
         pendings = [] 
-        d.output_variables do |v|
-          unless all_connections.includes?(v.name)
+        d.output_variables.each do |v|
+          unless all_connections.include?(v.name)
             pendings << v.name
           end
         end 
