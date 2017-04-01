@@ -15,7 +15,9 @@ class Study < ApplicationRecord
   validates :project, presence: true
   validates :attachments, presence: true
 
-  scope :with_notebooks, -> { joins(:attachments).where(attachments: {category: 'Notebook'}) } 
+  scope :with_notebooks, -> { joins(:attachments).where(attachments: {category: 'Notebook'}) }
+
+  after_initialize :post_initialize
 
   # FIXME: implement has_many attachments but for the time being use just one
   def attachment
@@ -32,5 +34,8 @@ class Study < ApplicationRecord
   end
   
   private
-  
+
+  def post_initialize
+    self.name = "Unnamed"
+  end
 end

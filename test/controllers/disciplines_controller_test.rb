@@ -2,6 +2,7 @@ require 'test_helper'
 
 class DisciplinesControllerTest < ActionDispatch::IntegrationTest
   setup do
+    sign_in users(:one)
     @discipline = disciplines(:one)
   end
 
@@ -17,7 +18,7 @@ class DisciplinesControllerTest < ActionDispatch::IntegrationTest
 
   test "should create discipline" do
     assert_difference('Discipline.count') do
-      post disciplines_url, params: { discipline: { multi_disciplinary_analisys_id: @discipline.multi_disciplinary_analisys_id, name: @discipline.name } }
+      post disciplines_url, params: { discipline: { multi_disciplinary_analysis_id: @discipline.multi_disciplinary_analysis_id, name: @discipline.name } }
     end
 
     assert_redirected_to discipline_url(Discipline.last)
@@ -34,7 +35,7 @@ class DisciplinesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update discipline" do
-    patch discipline_url(@discipline), params: { discipline: { multi_disciplinary_analisys_id: @discipline.multi_disciplinary_analisys_id, name: @discipline.name } }
+    patch discipline_url(@discipline), params: { discipline: { multi_disciplinary_analysis_id: @discipline.multi_disciplinary_analysis_id, name: @discipline.name } }
     assert_redirected_to discipline_url(@discipline)
   end
 

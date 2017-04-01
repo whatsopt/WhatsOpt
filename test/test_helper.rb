@@ -11,3 +11,7 @@ class ActiveSupport::TestCase
     File.new("test/fixtures/#{filename}")
   end
 end
+
+class ActionDispatch::IntegrationTest
+    include Devise::Test::IntegrationHelpers
+end

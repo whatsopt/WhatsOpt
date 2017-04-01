@@ -2,6 +2,7 @@ require 'test_helper'
 
 class VariablesControllerTest < ActionDispatch::IntegrationTest
   setup do
+    sign_in users(:one)
     @variable = variables(:one)
   end
 

@@ -2,8 +2,8 @@
 
 one:
   name: MyString
-  multi_disciplinary_analisys_id: 1
+  multi_disciplinary_analysis_id: 1
 
 two:
   name: MyString
-  multi_disciplinary_analisys_id: 1
+  multi_disciplinary_analysis_id: 1
