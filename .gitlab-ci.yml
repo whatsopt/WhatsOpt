@@ -2,8 +2,6 @@ image: "ruby:2.3"
 
 before_script:
   - apt-get update -qq && apt-get install -y -qq build-essential sqlite3 libsqlite3-dev python2.7 python-pip python-dev ipython ipython-notebook nodejs 
-  - pip install --upgrade pip
-  - pip install jupyter
   - ruby -v
   - which ruby
   - gem install bundler --no-ri --no-rdoc

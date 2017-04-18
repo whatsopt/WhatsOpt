@@ -47,7 +47,7 @@ Rails.application.configure do
     # rdri206h
     config.jupyter_script='/tmp_user/rdri206h/rlafage/anaconda2/bin/jupyter'
   else
-    config.jupyter_script='jupyter'
+    config.jupyter_script='ipython'
   end  
 
 end
