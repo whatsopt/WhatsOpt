@@ -2,7 +2,7 @@ module WhatsOpt
 
   class ExcelMdaImporter
     
-    attr_reader :line_count
+    attr_reader :line_count, :disciplines, :variables
     
     FIRST_LINE_NB = 15
     
@@ -20,29 +20,46 @@ module WhatsOpt
     end
     
     def get_disciplines
-      disciplines = @workdata.map{|row| row && row[1].value}
-      disciplines = disciplines.uniq.compact
-      return disciplines
+      unless @disciplines
+        @disciplines = @workdata.map{|row| row && row[1].value}
+        @disciplines = @disciplines.uniq.compact
+        @disciplines.map!(&:camelize)
+      end   
+      return @disciplines
     end
     
     def get_variables(discipline)
-      rows = @workdata.select{|row| row && row[1].value == discipline}
-      rows.compact!
-      variables = []
-      rows.each do |row|
-        variables.append({name: row[12].value, type: row[3].value, unit: row[5].value})
+      unless @variables
+        rows = @workdata.select{|row| row && row[1].value.camelize == discipline}
+        rows.compact!
+        @variables = []
+        rows.each do |row|
+          @variables.append({name: row[12].value, type: row[3].value, unit: row[5].value})
+        end
       end
       return variables
     end
     
     def get_connections()
-      flows = @workdata.map{|row| row && row[6..12]}
-      flows.each do |f|
-        puts f[0].value
+      result = {}
+      flows = @workdata.map{|row| row && row[6..11]}
+      vars = @workdata.map{|row| row && row[12]}
+      flows.each_with_index do |row, i|
+        var = vars[i] && vars[i].value
+        row.each do |c|
+          val = c && c.value
+          if val 
+            if result.has_key? val
+              result[val].append(var)
+            else
+              result[val] = [var]
+            end  
+          end
+        end
       end
-      return {}
+      return result
     end
 
-  end
+  end # class
 
 end
