@@ -1,5 +1,5 @@
 FROM ruby:2.3
-MAINTAINER remi.lafage@inera.fr
+MAINTAINER remi.lafage@onera.fr
 
 RUN apt-get update && apt-get install -y \ 
   build-essential \ 
