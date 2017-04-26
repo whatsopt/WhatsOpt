@@ -1,4 +1,5 @@
-class UsersController < ApplicationController    
+class UsersController < ApplicationController   
+   
   def index
     @users = User.all
   end
@@ -9,6 +10,10 @@ class UsersController < ApplicationController
 
   def new
     @user = User.new
+  end
+  
+  def edit
+    @user = current_user.admin? ? User.find(params[:id]) : current_user
   end
   
   def create
@@ -30,10 +35,6 @@ class UsersController < ApplicationController
         render :action => 'new'
       end
     end
-  end
-  
-  def edit
-    @user = current_user.admin? ? User.find(params[:id]) : current_user
   end
   
   def update

@@ -1,16 +1,26 @@
 class NotebooksController < ApplicationController
+  
+  # GET /notebooks
   def index
     @notebooks = Notebook.all
   end
   
+  # GET /notebooks/1
   def show
     @notebook = Notebook.find(params[:id]);
   end
 
+  # GET /notebooks/new
   def new
     @notebook = Notebook.new
   end
   
+  # GET /notebooks/1/edit
+  def edit
+    @notebook = Notebook.find(params[:id])
+  end
+  
+  # POST /notebooks
   def create
     if params[:cancel_button]
       flash[:notice] = "Notebook creation cancelled."
@@ -29,10 +39,7 @@ class NotebooksController < ApplicationController
     end
   end
   
-  def edit
-    @notebook = Notebook.find(params[:id])
-  end
-  
+  # PATCH/PUT /notebooks/1
   def update
     @notebook = Notebook.find(params[:id])
     @notebook.name = params[:user][:name] unless params[:user][:name].blank?
@@ -44,6 +51,7 @@ class NotebooksController < ApplicationController
     end
   end
   
+  # DELETE /notebooks/1
   def destroy
     @notebook = Notebook.find(params[:id])
     @notebook.destroy

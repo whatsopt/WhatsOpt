@@ -1,4 +1,6 @@
 class ProjectsController < ApplicationController    
+  before_action :set_project, only: [:show, :edit, :update, :destroy]
+    
   def index
     @projects = Project.all
   end
@@ -9,6 +11,10 @@ class ProjectsController < ApplicationController
 
   def new
     @project = Project.new
+  end
+  
+  def edit
+    @project = Project.find(params[:id])
   end
   
   def create
@@ -29,10 +35,6 @@ class ProjectsController < ApplicationController
     end
   end
   
-  def edit
-    @project = Project.find(params[:id])
-  end
-  
   def update
     @project = Project.find(params[:id])
     @project.name = params[:user][:name] unless params[:user][:name].blank?
@@ -51,4 +53,16 @@ class ProjectsController < ApplicationController
     flash[:notice] = "Successfully deleted project."
     redirect_to projects_url
   end 
+  
+  private
+  
+  # Use callbacks to share common setup or constraints between actions.
+  def set_project
+    @project = Project.find(params[:id])
+  end
+
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def project_params
+    params.require(:project).permit(:name, :multi_disciplinary_analisys_id)
+  end
 end

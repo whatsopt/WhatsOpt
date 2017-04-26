@@ -1,5 +1,6 @@
 class AttachmentsController < ApplicationController 
 
+  # GET /attachements/1
   def show 
     @attachment = Attachment.find(params[:id])
     case params[:style]

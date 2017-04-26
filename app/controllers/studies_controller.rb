@@ -1,4 +1,5 @@
 class StudiesController < ApplicationController    
+  
   def index
     @studies = Study.all
   end
@@ -9,6 +10,10 @@ class StudiesController < ApplicationController
 
   def new
     @study = Study.new
+  end
+  
+  def edit
+    @study = Study.find(params[:id])
   end
   
   def create
@@ -34,10 +39,6 @@ class StudiesController < ApplicationController
         render :action => 'new'
       end
     end
-  end
-  
-  def edit
-    @study = Study.find(params[:id])
   end
   
   def update

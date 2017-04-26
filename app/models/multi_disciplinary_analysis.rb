@@ -1,8 +1,13 @@
 class MultiDisciplinaryAnalysis < ApplicationRecord
+
   has_many :disciplines
   accepts_nested_attributes_for :disciplines, 
     reject_if: proc { |attr| attr['name'].blank? }, allow_destroy: true
 
+  has_one :attachment, :as => :container
+  accepts_nested_attributes_for :attachment, allow_destroy: true,
+                                reject_if: lambda { |a| a[:data].blank? }    
+      
   validates :name, presence: true
 
   def get_xdsm_json

@@ -1,4 +1,5 @@
 class RunsController < ApplicationController    
+  
   def index
     @runs = Run.all
   end
@@ -9,6 +10,10 @@ class RunsController < ApplicationController
 
   def new
     @run = Run.new
+  end
+  
+  def edit
+    @run = Run.find(params[:id])
   end
   
   def create
@@ -27,11 +32,7 @@ class RunsController < ApplicationController
       end
     end
   end
-  
-  def edit
-    @run = Run.find(params[:id])
-  end
-  
+
   def update
     @run = Run.find(params[:id])
     if @run.save
