@@ -1,26 +1,30 @@
 <h1>Multi Disciplinary Analyses</h1>
 
+<p>
 <table class="table table-striped">
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th colspan="1"></th>
-    </tr>
-  </thead>
 
-  <tbody>
-    <% @mdas.each do |mda| %>
-      <tr>
-        <td><%= mda.name %></td>
-        <td><%= link_to 'Show', mda %> |
-        <%= link_to 'Edit', edit_multi_disciplinary_analysis_path(mda) %> |
-        <%= link_to 'Delete', mda, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-      </tr>
-    <% end %>
+	<thead>
+		<tr>
+		  <th>Name</th>
+		  <th>Actions</th>
+		</tr>
+	</thead>
+  
+	<tbody>
+	  <% @mdas.each do |mda| %>
+	    <tr>
+	      <td><%= link_to mda.name, mda %></td>
+	      <td>
+	      	<%= link_to 'Edit', edit_multi_disciplinary_analysis_path(mda) %> |
+	      	<%= link_to 'Delete', mda, method: :delete, data: { confirm: 'Are you sure?' } %>
+	      </td>
+	    </tr>
+	  <% end %>
   </tbody>
 </table>
+</p>
 
-<br>
-
+<p>
 <%= link_to 'New MDA', new_multi_disciplinary_analysis_path, class: "btn btn-primary" %>
 <%= link_to 'Import MDA', new_multi_disciplinary_analysis_path(import: true), class: "btn btn-primary" %>
+</p>
