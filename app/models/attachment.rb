@@ -5,29 +5,46 @@ class Attachment < ActiveRecord::Base
                     :processors => [:notebook_processor],
                     :styles => { html: {:format => :html} }
 
-  ATTACHMENT_CATEGORIES = %w(Notebook, Openmdao)
+  ATTACH_RAW = "Raw"
+  ATTACH_NOTEBOOK = "Notebook"
+  ATTACH_MDA_TEMPLATE = "MdaTemplate"
+  ATTACHMENT_CATEGORIES = [ATTACH_RAW, ATTACH_NOTEBOOK, ATTACH_MDA_TEMPLATE]  
 
   belongs_to :container, :polymorphic => true
   belongs_to :study, -> { where("attachments.container_type = 'Study'") }, foreign_key: 'container_id' 
   belongs_to :notebook, -> { where("attachments.container_type = 'Notebook'") }, foreign_key: 'container_id' 
+  belongs_to :mda_template, -> { where("attachments.container_type = 'MultiDisciplinaryAnalysis'") }, foreign_key: 'container_id' 
 
-  validates :category, presence: true
+  after_initialize :ensure_category_setting, on: :create 
+    
   validates_attachment_presence  :data
   validates_attachment_size      :data, :less_than => 100.megabytes
-  validates_attachment_file_name :data, :matches => [/\.ipynb\Z/, /.json\Z/]
+  validates_attachment_file_name :data, :matches => [/\.ipynb\Z/, /\.xlsm\Z/]
 
-  after_initialize :_post_initialize
+  scope :notebooks, -> { where(category: ATTACH_NOTEBOOK) }
+  scope :mda_template, -> { where(category: ATTACH_MDA_TEMPLATE) }
 
-  scope :notebooks, -> { where(category: 'Notebook') }
-  
-  private
-  
-  def _post_initialize
-    _initialize_category if category.blank?
+  def exists?
+    data.exists?
   end
+  
+  def path
+    data.path
+  end
+      
+  private
 
-  def _initialize_category
-    self.category = "Notebook"
+  def ensure_category_setting
+    unless self.category
+      case self.data_file_name
+      when /\.ipynb\Z/
+        self.category = ATTACH_NOTEBOOK
+      when /\.xlsm\Z/ 
+        self.category = ATTACH_MDA_TEMPLATE
+      else
+        self.category = ATTACH_RAW
+      end
+    end
   end
 
 end

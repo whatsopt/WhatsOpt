@@ -21,6 +21,7 @@ class VariablesController < ApplicationController
 
   # POST /variables
   def create
+    @variable = Variable.new(variable_params)
     if @variable.save
       redirect_to @variable, notice: 'Variable was successfully created.' 
     else

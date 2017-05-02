@@ -20,8 +20,8 @@ module WhatsOpt
     end
 
     def make
-      return @file if File.extname(@file.path) != @orig_format
-      return @file unless @options && @options[:format]
+      return File.new(@file.path) if File.extname(@file.path) != @orig_format
+      return File.new(@file.path) unless @options && @options[:format]
 
       @basename = File.basename(@file.path, @orig_format)
       src = @file

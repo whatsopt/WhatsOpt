@@ -1,6 +1,9 @@
 FROM ruby:2.3
 MAINTAINER remi.lafage@onera.fr
 
+#ENV http_proxy=http://proxy.onecert.fr:80
+#ENV https_proxy=http://proxy.onecert.fr:80
+
 RUN apt-get update && apt-get install -y \ 
   build-essential \ 
   python2.7 \

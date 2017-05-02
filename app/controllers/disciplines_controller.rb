@@ -32,7 +32,7 @@ class DisciplinesController < ApplicationController
   # PATCH/PUT /disciplines/1
   def update
     if @discipline.update(discipline_params)
-      format.html { redirect_to @discipline, notice: 'Discipline was successfully updated.' }
+      redirect_to @discipline, notice: 'Discipline was successfully updated.'
     else
       render :edit
     end

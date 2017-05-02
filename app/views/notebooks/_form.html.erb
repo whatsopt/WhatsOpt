@@ -1,9 +1,8 @@
 <%= form_for @notebook, :html => { :multipart => true, :role => "form" } do |f| %>
 
-  <div class="form-group row">
-    <div class="col-md-4">
-      <%= render "attachments/attachment_form", :f => f %>  
-    </div>
+  <div class="form-group">
+  	<%= f.label 'Jupyter ipynb file'%>
+    <%= render "attachments/attachment_form", :f => f %>  
   </div>
 
   <div class="form-group">

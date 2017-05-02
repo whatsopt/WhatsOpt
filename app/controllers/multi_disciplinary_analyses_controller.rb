@@ -25,6 +25,7 @@ class MultiDisciplinaryAnalysesController < ApplicationController
     if params[:cancel_button]
       redirect_to multi_disciplinary_analyses_url, notice: "MDA creation cancelled."
     else 
+      @mda = MultiDisciplinaryAnalysis.create(mda_params)
       if @mda.save
         redirect_to @mda, notice: 'MDA was successfully created.'
       else
@@ -56,6 +57,6 @@ class MultiDisciplinaryAnalysesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def mda_params
-      params.require(:multi_disciplinary_analysis).permit(:name)
+      params.require(:multi_disciplinary_analysis).permit(:name, :attachment_attributes => [:id, :data, :_destroy])
     end
 end

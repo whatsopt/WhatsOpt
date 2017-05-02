@@ -14,7 +14,8 @@ module WhatsOpt
     def initialize(filename)
       begin
         @workbook = RubyXL::Parser.parse(filename)
-      rescue Zip::Error
+      rescue Zip::Error => e
+        # puts e.message
         raise ImportError.new
       end
       @worksheet = @workbook[0]
@@ -91,7 +92,7 @@ module WhatsOpt
       unless @variables
         @variables = {}
         @workdata.each do |row|
-          @variables[row[12].value] = {name: row[12].value, type: row[3].value, unit: row[5].value}
+          @variables[row[12].value] = {name: row[12].value, kind: row[3].value, unit: row[5].value}
         end
       end
       return @variables

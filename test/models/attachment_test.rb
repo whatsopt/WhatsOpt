@@ -21,9 +21,10 @@ class AttachmentTest < ActiveSupport::TestCase
     assert File.exist?(path)    
   end
   
-  test "should have Notebook category when ipynb extension" do
+  test "should have category when valid" do
     attach = Attachment.new(data: sample_file("notebook_sample.ipynb"))
-    assert_equal 'Notebook', attach.category
+    assert attach.valid?
+    assert_equal Attachment::ATTACH_NOTEBOOK, attach.category
   end
   
   test "should generate fake html if bad notebook html conversion" do

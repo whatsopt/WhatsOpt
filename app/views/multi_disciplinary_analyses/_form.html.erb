@@ -1,16 +1,17 @@
-<%= form_for(multi_disciplinary_analysis) do |f| %>
-
+<%= form_for(multi_disciplinary_analysis, :html => { :multipart => true, :role => "form" }) do |f| %>
+  <% if @mda.errors.any? %>
+    <% @mda.errors.full_messages.each do |message| %>
+      <li><%= message %></li>
+    <% end %>
+  <% end %>
 <p>
-  <div class="form-group row">
+  <div class="form-group">
   <% if @import %>
-   	<div class="col-md-4">
-     	<%= render "attachments/attachment_form", :f => f %>  
-   	</div>
+  	<%= f.label 'Excel xlsm file' %>
+    <%= render "attachments/attachment_form", :f => f %>  
   <% else %>
-	<div class="col-md-8">
 		<%= f.label :name %>
-	    <%= f.text_field :name %>
-	</div>
+		<%= f.text_field :name, class: "form-control" %>
   <% end %>
   </div>
 </p> 	

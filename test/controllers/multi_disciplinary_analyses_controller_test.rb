@@ -18,12 +18,22 @@ class MultiDisciplinaryAnalysesControllerTest < ActionDispatch::IntegrationTest
 
   test "should create multi_disciplinary_analysis" do
     assert_difference('MultiDisciplinaryAnalysis.count') do
-      post multi_disciplinary_analyses_url, params: { multi_disciplinary_analysis: { name: @multi_disciplinary_analysis.name } }
+      post multi_disciplinary_analyses_url, params: { 
+        multi_disciplinary_analysis: { name: @multi_disciplinary_analysis.name } }
     end
 
     assert_redirected_to multi_disciplinary_analysis_url(MultiDisciplinaryAnalysis.last)
   end
 
+  test "should import multi_disciplinary_analysis" do
+    assert_difference('MultiDisciplinaryAnalysis.count') do
+      post multi_disciplinary_analyses_url, params: { 
+        multi_disciplinary_analysis: { attachment_attributes: {data: fixture_file_upload('excel_mda_simple_sample.xlsm') }} }
+    end
+
+    assert_redirected_to multi_disciplinary_analysis_url(MultiDisciplinaryAnalysis.last)
+  end  
+  
   test "should show multi_disciplinary_analysis" do
     get multi_disciplinary_analysis_url(@multi_disciplinary_analysis)
     assert_response :success

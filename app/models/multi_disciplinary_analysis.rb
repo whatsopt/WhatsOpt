@@ -1,15 +1,35 @@
+require 'whats_opt/excel_mda_importer'
+
 class MultiDisciplinaryAnalysis < ApplicationRecord
 
+  has_one :attachment, :as => :container
+  accepts_nested_attributes_for :attachment, allow_destroy: true
+  validates_associated :attachment
+  
   has_many :disciplines
   accepts_nested_attributes_for :disciplines, 
     reject_if: proc { |attr| attr['name'].blank? }, allow_destroy: true
-
-  has_one :attachment, :as => :container
-  accepts_nested_attributes_for :attachment, allow_destroy: true,
-                                reject_if: lambda { |a| a[:data].blank? }    
       
   validates :name, presence: true
 
+  before_validation(on: :create) do
+    if attachment
+      attachment.save
+      if attachment.exists?
+        emi = WhatsOpt::ExcelMdaImporter.new(self.attachment.path)
+        self.name = emi.get_mda_attributes[:name]
+        vars = emi.get_variables_attributes
+        emi.get_disciplines_attributes().each do |dattr|
+          disc = self.disciplines.build(dattr)
+        end
+        self.disciplines.each do |d|
+          d.variables.build(vars[d.name])
+        end
+      end
+    end
+  end
+  
+  
   def get_xdsm_json
     {
       nodes: build_nodes,

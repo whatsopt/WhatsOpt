@@ -55,7 +55,7 @@ Rails.application.configure do
   config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
 
   # whitelist emulated private localhost IP address (virtual box)
-  config.web_console.whitelisted_ips = ['10.0.2.2', '134.212.26.254']
+  config.web_console.whitelisted_ips = ['10.0.2.2', '134.212.26.254', '192.168.99.1']
 
   # Jupyter script
   if `hostname`.strip == "remix"
