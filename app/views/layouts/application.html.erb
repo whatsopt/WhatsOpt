@@ -8,32 +8,35 @@
   <%= csrf_meta_tags %>
 </head>
 <body>
-    <nav class="navbar navbar-dark bg-inverse navbar-fixed-top" role="navigation">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="#">WhatsOpt</a>
-	<ul class="nav navbar-nav float-xs-left">
-	  <li class="nav-item"><%= link_to "Projects", :projects, class: "nav-link" %></li>
-	  <li class="nav-item"><%= link_to "MDAs", :multi_disciplinary_analyses, class: "nav-link" %></li>
-	  <li class="nav-item"><%= link_to "Notebooks", :notebooks, class: "nav-link" %></li>
+    <nav class="navbar fixed-top navbar-toggleable-md navbar-inverse bg-inverse" role="navigation">
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+    		<span class="navbar-toggler-icon"></span>
+  		</button>
+      <a class="navbar-brand" href="#">WhatsOpt</a>
+      <div class="collapse navbar-collapse" id="navbarNavDropdown">
+				<ul class="navbar-nav mr-auto">
+	  			<li class="nav-item"><%= link_to "Projects", :projects, class: "nav-link" %></li>
+	  			<li class="nav-item"><%= link_to "MDAs", :multi_disciplinary_analyses, class: "nav-link" %></li>
+	  			<li class="nav-item"><%= link_to "Notebooks", :notebooks, class: "nav-link" %></li>
         </ul>
-	<ul class="nav navbar-nav float-xs-right">
-	  <% if user_signed_in? %>
-	    <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><%= current_user.login %></a>
-	      <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-		<%= link_to "My Profile", user_path(current_user), class: "dropdown-item" %>
-		<div class="dropdown-divider"></div>
-		<%= link_to "Log Out", destroy_user_session_path, method: :delete, class: "dropdown-item" %>
-	      </div>
-	    </li>
-	  <% else %>
-            <li class="nav-item nav-link"><%= link_to "Log in", new_user_session_path %></li>
-	  <% end %>
-	</ul>
-      </div>
+				<ul class="navbar-nav">
+		  		<% if user_signed_in? %>
+		    		<li class="nav-item dropdown">
+	            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><%= current_user.login %></a>
+		      		<div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+								<%= link_to "My Profile", user_path(current_user), class: "dropdown-item" %>
+								<div class="dropdown-divider"></div>
+								<%= link_to "Log Out", destroy_user_session_path, method: :delete, class: "dropdown-item" %>
+		      		</div>
+		    		</li>
+		  		<% else %>
+	          <li class="nav-item nav-link"><%= link_to "Log in", new_user_session_path %></li>
+		  		<% end %>
+				</ul>
+			</div>	      
     </nav>
 
-    <div class="container main-container">
+    <div class="container-fluid main-container">
       <%= render 'layouts/messages' %>
       <%= yield %>
     </div> 
