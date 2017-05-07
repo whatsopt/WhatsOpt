@@ -53,9 +53,9 @@ gem 'bootstrap', '~> 4.0.0.alpha6'
 
 gem 'sass-rails'
 gem 'devise', github: 'plataformatec/devise'
-gem 'erubis'
 gem 'devise_ldap_authenticatable', :git => "git://github.com/cschiewek/devise_ldap_authenticatable.git"
 gem 'rolify'
 gem 'pundit'
 gem 'paperclip'
 gem 'rubyXL'
+gem 'webpacker'

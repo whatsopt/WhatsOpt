@@ -27,4 +27,6 @@
 **/*.pyc
 
 # Uploaded files
+/upload/public/packs
+/node_modules
 /upload
