@@ -1,6 +1,6 @@
 set :stage, :staging
 
-set :rvm_ruby_version, "ruby-2.3.0@whatsopt"
+set :rvm_ruby_version, "ruby-2.3.3@whatsopt"
 set :server_name, "rdri206h"
 server 'rdri206h', user: 'rlafage', roles: %w{app web db}, primary: true
 

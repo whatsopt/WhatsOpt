@@ -1,8 +1,8 @@
 FROM ruby:2.3
 MAINTAINER remi.lafage@onera.fr
 
-#ENV http_proxy=http://proxy.onecert.fr:80
-#ENV https_proxy=http://proxy.onecert.fr:80
+ENV http_proxy=http://proxy.onecert.fr:80
+ENV https_proxy=http://proxy.onecert.fr:80
 
 RUN apt-get update && apt-get install -y \ 
   build-essential \ 
@@ -20,7 +20,6 @@ RUN groupadd --gid 1000 node \
 # gpg keys listed at https://github.com/nodejs/node#release-team
 RUN set -ex \
   && for key in \
-    9554F04D7259F04124DE6B476D5A82AC7E37093B \
     94AE36675C464D64BAFA68DD7434390BDBE9B9C5 \
     FD3A5288F042B6850C66B31F09FE44734EB7990E \
     71DCFD284A79C3B38668286BC97EC7A07EDE3FC1 \
