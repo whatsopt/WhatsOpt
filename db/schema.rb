@@ -13,86 +13,86 @@
 ActiveRecord::Schema.define(version: 12) do
 
   create_table "attachments", force: :cascade do |t|
-    t.string   "container_type"
-    t.integer  "container_id"
-    t.string   "data_file_name"
-    t.string   "data_content_type"
-    t.integer  "data_file_size"
+    t.string "container_type"
+    t.integer "container_id"
+    t.string "data_file_name"
+    t.string "data_content_type"
+    t.integer "data_file_size"
     t.datetime "data_updated_at"
-    t.string   "description"
-    t.string   "category"
-    t.datetime "created_at",        null: false
-    t.datetime "updated_at",        null: false
+    t.string "description"
+    t.string "category"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["container_type", "container_id"], name: "index_attachments_on_container_type_and_container_id"
   end
 
   create_table "disciplines", force: :cascade do |t|
-    t.string   "name"
-    t.integer  "multi_disciplinary_analysis_id"
-    t.datetime "created_at",                     null: false
-    t.datetime "updated_at",                     null: false
+    t.string "name"
+    t.integer "multi_disciplinary_analysis_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "multi_disciplinary_analyses", force: :cascade do |t|
-    t.string   "name"
+    t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
   create_table "notebooks", force: :cascade do |t|
-    t.integer  "user_id"
+    t.integer "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
   create_table "projects", force: :cascade do |t|
-    t.string   "name",        limit: 30, default: "", null: false
-    t.string   "description",            default: "", null: false
-    t.datetime "created_at",                          null: false
-    t.datetime "updated_at",                          null: false
+    t.string "name", limit: 30, default: "", null: false
+    t.string "description", default: "", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "roles", force: :cascade do |t|
-    t.string   "name"
-    t.string   "resource_type"
-    t.integer  "resource_id"
-    t.datetime "created_at",    null: false
-    t.datetime "updated_at",    null: false
+    t.string "name"
+    t.string "resource_type"
+    t.integer "resource_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["name", "resource_type", "resource_id"], name: "index_roles_on_name_and_resource_type_and_resource_id"
     t.index ["name"], name: "index_roles_on_name"
     t.index ["resource_type", "resource_id"], name: "index_roles_on_resource_type_and_resource_id"
   end
 
   create_table "runs", force: :cascade do |t|
-    t.integer  "study_id"
+    t.integer "study_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
   create_table "studies", force: :cascade do |t|
-    t.integer  "project_id"
-    t.string   "name",       limit: 30, default: "", null: false
-    t.datetime "created_at",                         null: false
-    t.datetime "updated_at",                         null: false
-    t.text     "tree_json"
-    t.text     "conns_json"
+    t.integer "project_id"
+    t.string "name", limit: 30, default: "", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.text "tree_json"
+    t.text "conns_json"
   end
 
   create_table "users", force: :cascade do |t|
-    t.string   "login",                  default: "", null: false
-    t.string   "email",                  default: "", null: false
-    t.string   "encrypted_password",     default: "", null: false
-    t.string   "reset_password_token"
+    t.string "login", default: "", null: false
+    t.string "email", default: "", null: false
+    t.string "encrypted_password", default: "", null: false
+    t.string "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",          default: 0,  null: false
+    t.integer "sign_in_count", default: 0, null: false
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
-    t.string   "current_sign_in_ip"
-    t.string   "last_sign_in_ip"
-    t.datetime "created_at",                          null: false
-    t.datetime "updated_at",                          null: false
-    t.string   "api_key"
+    t.string "current_sign_in_ip"
+    t.string "last_sign_in_ip"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "api_key"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
@@ -106,13 +106,13 @@ ActiveRecord::Schema.define(version: 12) do
   end
 
   create_table "variables", force: :cascade do |t|
-    t.string   "name"
-    t.integer  "discipline_id"
-    t.string   "io_mode"
-    t.string   "kind"
-    t.string   "unit"
-    t.datetime "created_at",    null: false
-    t.datetime "updated_at",    null: false
+    t.string "name"
+    t.integer "discipline_id"
+    t.string "io_mode"
+    t.string "kind"
+    t.string "unit"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
 end
