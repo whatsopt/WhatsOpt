@@ -24,7 +24,7 @@ rescue Errno::ENOENT, NoMethodError
   exit!
 end
 
-WEBPACK_BIN    = "#{NODE_MODULES_PATH}/.bin/webpack"
+WEBPACK_BIN    = "#{NODE_MODULES_PATH}/webpack/bin/webpack.js"
 WEBPACK_CONFIG = "#{WEBPACK_CONFIG_PATH}/#{NODE_ENV}.js"
 
 Dir.chdir(APP_PATH) do
