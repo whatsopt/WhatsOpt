@@ -1,23 +1,8 @@
-<p>
-  <strong>Name:</strong>
-  <%= @mda.name %>
-</p>
-
-<div class="xdsm"></div>
+<div id="mda-viewer"></div>
 
 <%= link_to 'Edit', edit_multi_disciplinary_analysis_path(@mda) %> |
 <%= link_to 'Back', multi_disciplinary_analyses_path %>
-
-<% content_for :document_ready do %>
-  <script>
-    var tooltip = d3.select("body").selectAll(".tooltip").data(['tooltip'])
-      .enter().append("div")
-      .attr("class", "tooltip")
-      .style("opacity", 0);
-
-    var mda = <%= raw @mda.get_xdsm_json %>
-    var graph = new Graph(mda);
-    var xdsm = new Xdsm(graph, 'root', tooltip);
-    xdsm.draw();
-  </script>
-<% end %>
+  
+<script>var MDA = <%= raw @mda.get_xdsm_json %></script>
+<!-- <%= javascript_pack_tag 'mda_viewer' %> -->
+<script src="http://192.168.99.100:8080/packs/mda_viewer.js"></script>
