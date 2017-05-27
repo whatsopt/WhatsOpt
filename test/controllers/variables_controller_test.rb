@@ -3,7 +3,7 @@ require 'test_helper'
 class VariablesControllerTest < ActionDispatch::IntegrationTest
   setup do
     sign_in users(:one)
-    @variable = variables(:one)
+    @variable = variables(:varx_geo_in)
   end
 
   test "should get index" do

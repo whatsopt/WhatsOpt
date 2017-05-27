@@ -50,4 +50,6 @@ Rails.application.configure do
     config.jupyter_script='ipython'
   end  
 
+  #config.logger = Logger.new(STDOUT)
+  #config.log_level = 'ERROR'
 end

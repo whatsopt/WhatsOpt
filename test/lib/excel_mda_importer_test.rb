@@ -45,7 +45,7 @@ class ExcelMdaImporterTest < ActiveSupport::TestCase
         {:name=>"eigen_values_table", :kind=>"table", :unit=>"(-)", :io_mode=>"out"}]},
       @emi.get_variables_attributes)
   end
-
+  
   test "should transform index in discipline name" do
     assert_equal WhatsOpt::ExcelMdaImporter::USER_DISCIPLINE, @emi._to_discipline('x')
     assert_equal "Geometry", @emi._to_discipline('0')

@@ -3,7 +3,7 @@ require 'test_helper'
 class MultiDisciplinaryAnalysesControllerTest < ActionDispatch::IntegrationTest
   setup do
     sign_in users(:one)
-    @multi_disciplinary_analysis = multi_disciplinary_analyses(:one)
+    @multi_disciplinary_analysis = multi_disciplinary_analyses(:cicav)
   end
 
   test "should get index" do

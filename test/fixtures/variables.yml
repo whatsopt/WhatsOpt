@@ -1,11 +1,30 @@
-# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+varx_geo_in:
+  name: x
+  discipline: geometry
+  io_mode: in 
 
-one:
-  name: MyString
-  discipline_id: 1
-  io_mode: MyString
+vary_geo_out:
+  name: y
+  discipline: geometry
+  io_mode: out
 
-two:
-  name: MyString
-  discipline_id: 1
-  io_mode: MyString
+varz_geo_in:
+  name: z
+  discipline: geometry
+  io_mode: in
+
+varz_geo_out:
+  name: z
+  discipline: geometry
+  io_mode: out
+
+varx_aero_out:
+  name: x
+  discipline: aerodynamics
+  io_mode: out
+  
+vary_aero_in:
+  name: y
+  discipline: aerodynamics
+  io_mode: in
+

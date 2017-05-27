@@ -3,7 +3,7 @@ require 'test_helper'
 class DisciplinesControllerTest < ActionDispatch::IntegrationTest
   setup do
     sign_in users(:one)
-    @discipline = disciplines(:one)
+    @discipline = disciplines(:geometry)
   end
 
   test "should get index" do

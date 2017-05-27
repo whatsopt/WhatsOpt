@@ -1,0 +1,1 @@
+docker run -it -p 8080:8080 -v /WhatsOpt:/whatsopt:rw whatsopt_app ruby bin/webpack-dev-server --watch-poll --host 0.0.0.0 --public 192.168.99.100:8080

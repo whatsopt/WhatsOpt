@@ -1,9 +1,7 @@
-# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+geometry:
+  name: Geometry
+  multi_disciplinary_analysis: cicav
 
-one:
-  name: MyString
-  multi_disciplinary_analysis_id: 1
-
-two:
-  name: MyString
-  multi_disciplinary_analysis_id: 1
+aerodynamics:
+  name: Aerodynamics
+  multi_disciplinary_analysis: cicav
