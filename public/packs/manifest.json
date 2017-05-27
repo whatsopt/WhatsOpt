@@ -1,0 +1,6 @@
+{
+  "application.js": "http://localhost:8080/packs/application.js",
+  "application.js.map": "http://localhost:8080/packs/application.js.map",
+  "mda_viewer.js": "http://localhost:8080/packs/mda_viewer.js",
+  "mda_viewer.js.map": "http://localhost:8080/packs/mda_viewer.js.map"
+}
