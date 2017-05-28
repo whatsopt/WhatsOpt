@@ -16,8 +16,9 @@ class MultiDisciplinaryAnalysis < ApplicationRecord
     _create_from_attachment if attachment
   end
   
-  def get_xdsm_json
+  def to_json
     {
+      name: self.name,
       nodes: build_nodes,
       edges: build_edges,
       workflow: []
@@ -25,8 +26,7 @@ class MultiDisciplinaryAnalysis < ApplicationRecord
   end
 
   def build_nodes
-    nodes = disciplines.map {|d| { id: "#{d.id}", type: "analysis", name: d.name } }
-    return nodes
+    return disciplines.map {|d| { id: "#{d.id}", type: "analysis", name: d.name } }
   end
 
   def build_edges

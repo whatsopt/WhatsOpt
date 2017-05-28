@@ -5,8 +5,22 @@ import Graph from 'graph'
 import Xdsm from 'xdsm'
 
 class XdsmViewer extends React.Component {
+  constructor(props) {
+    super(props) 
+    this.state = this.props.mda
+  }
+  
   componentDidMount() {    
-    /* D3 code to append elements to this.svg */
+    // D3 drawing
+    var tooltip = d3.select("body").selectAll(".tooltip").data(['tooltip'])
+    .enter().append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0);
+
+    console.log(JSON.stringify(this.state));
+    var graph = new Graph(this.state);
+    var xdsm = new Xdsm(graph, 'root', tooltip);
+    xdsm.draw();
   }
   
   shouldComponentUpdate() {
@@ -27,22 +41,28 @@ class Discipline extends React.Component {
   }
   
   render() {
-    return <h2>Discipline {this.state.name}</h2>
+    return <h2>{this.state.name}</h2>
   }  
 } 
 
 class Mda extends React.Component {
   constructor(props) {
     super(props) 
-    this.state = {name: this.props.name, mda: this.props.mda}
+    this.state = this.props.mda
   }
-  
+   
   render() {
+    var disciplines = this.state.nodes.map((node) => {
+      return (
+          <Discipline key={node.id} name={node.name} />
+        );
+    }); 
+    
     return (
       <div>
         <h1>MDA {this.state.name}</h1>
-        <XdsmViewer />
-        <Discipline name='Geometry'/>
+        <XdsmViewer mda={this.state}/>
+        {disciplines}
       </div>
     );
   }
@@ -50,17 +70,7 @@ class Mda extends React.Component {
 
 document.addEventListener('DOMContentLoaded', () => {
   ReactDOM.render(
-    <Mda name="CICAV" mda={MDA}/>,
+    <Mda mda={MDA}/>,
     document.getElementById('mda-viewer'),
   )
-  
-  var tooltip = d3.select("body").selectAll(".tooltip").data(['tooltip'])
-      .enter().append("div")
-      .attr("class", "tooltip")
-      .style("opacity", 0);
-  
-  console.log(JSON.stringify(MDA));
-  var graph = new Graph(MDA);
-  var xdsm = new Xdsm(graph, 'root', tooltip);
-  xdsm.draw();
 })
