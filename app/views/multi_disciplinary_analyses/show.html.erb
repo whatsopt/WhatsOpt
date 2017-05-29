@@ -4,5 +4,7 @@
 <%= link_to 'Back', multi_disciplinary_analyses_path %>
   
 <script>var MDA = <%= raw @mda.to_json %></script>
-<!-- <%= javascript_pack_tag 'mda_viewer' %> -->
-<script src="http://192.168.99.100:8080/packs/mda_viewer.js"></script>
+<%= javascript_pack_tag 'mda_viewer' %> 
+<!-- <script src="http://192.168.99.100:8080/packs/mda_viewer.js"></script> -->
+<!-- <script src="http://rdri206h.onecert.fr:8080/packs/mda_viewer.js"></script>--> 
+ 

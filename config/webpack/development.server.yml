@@ -2,7 +2,7 @@
 
 default: &default
   enabled: true
-  host: localhost
+  host: rdri206h.onecert.fr
   port: 8080
 
 development:

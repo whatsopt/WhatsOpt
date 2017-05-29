@@ -40,7 +40,7 @@ class Discipline extends React.Component {
     this.state = {name: this.props.name}
   }
   
-  render() {
+  render() { 
     return <h2>{this.state.name}</h2>
   }  
 } 
