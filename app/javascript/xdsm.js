@@ -4,11 +4,11 @@ var Labelizer = require('./labelizer.js');
 
 var WIDTH = 1000;
 var HEIGHT = 500;
-var X_ORIG = 100;
+var X_ORIG = 50;
 var Y_ORIG = 20;
-var PADDING = 20;
-var CELL_W = 250;
-var CELL_H = 75;
+var PADDING = 10;
+var CELL_W = 200;
+var CELL_H = 50;
 var MULTI_OFFSET = 3;
 var BORDER_PADDING = 4;
 var ANIM_DURATION = 1000; // ms
