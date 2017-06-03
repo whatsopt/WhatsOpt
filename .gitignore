@@ -30,3 +30,6 @@
 /upload/public/packs
 /node_modules
 /upload
+/rtest
+/wds
+/wpack
