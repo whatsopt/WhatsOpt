@@ -1,3 +1,4 @@
+import * as d3 from 'd3';
 import React from 'react'
 import ReactDOM from 'react-dom'
 import PropTypes from 'prop-types'
@@ -31,17 +32,6 @@ class XdsmViewer extends React.Component {
     return ( <div className="xdsm"></div> );
   }
 }
-
-class Discipline extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {name: this.props.name}
-  }
-  
-  render() {
-    return <h2>{this.state.name}</h2>
-  }  
-} 
 
 class Connection extends React.Component {
   constructor(props) {
@@ -133,7 +123,7 @@ class Mda extends React.Component {
 
 document.addEventListener('DOMContentLoaded', () => {
   ReactDOM.render(
-    <Mda mda={MDA}/>,
+    <Mda mda={MDA} />,
     document.getElementById('mda-viewer'),
-  )
+  );
 })

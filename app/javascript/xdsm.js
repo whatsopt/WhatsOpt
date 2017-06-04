@@ -1,5 +1,5 @@
 var d3 = require('d3');
-//import * as d3 from 'd3';
+// import * as d3 from 'd3';
 var Labelizer = require('./labelizer.js');
 
 var WIDTH = 1000;
@@ -37,8 +37,8 @@ function Xdsm(graph, svgid, tooltip) {
     labelizer: {
       ellipsis: 5,
       subSupScript: false,
-      showLinkNbOnly: true,
-    },
+      showLinkNbOnly: true
+    }
   };
 
   this._initialize();
