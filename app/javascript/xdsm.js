@@ -12,6 +12,7 @@ var CELL_H = 50;
 var MULTI_OFFSET = 3;
 var BORDER_PADDING = 4;
 var ANIM_DURATION = 1000; // ms
+var TOOLTIP_WIDTH = 300;
 
 function Cell(x, y, width, height) {
   this.x = x;
@@ -126,7 +127,7 @@ Xdsm.prototype._createTextGroup = function(kind, group, decorate) {
                         .subSupScript(self.config.labelizer.subSupScript)
                         .text(d.name);
     self.tooltip.call(tooltipize)
-      .style("width", "200px")
+      .style("width", TOOLTIP_WIDTH+"px")
       .style("left", (d3.event.pageX) + "px")
       .style("top", (d3.event.pageY - 28) + "px");
   }).on("mouseout", function() {
