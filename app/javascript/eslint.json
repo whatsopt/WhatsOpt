@@ -1,10 +1,14 @@
 {
+  "plugins": ["react"],
   "extends": [
     "google"
   ],
   "parserOptions": {
     "ecmaVersion": 6,
-    "sourceType": "module"
+    "sourceType": "module",
+    "ecmaFeatures": {
+    	"jsx":true
+    }
   },
   "env": {
     "commonjs": true,
@@ -19,6 +23,7 @@
     "no-var": "off",
     "linebreak-style": "off",
     "require-jsdoc": "off",
-    "brace-style": "off"
+    "brace-style": "off",
+    "react/jsx-uses-vars": [2]
   }
 }

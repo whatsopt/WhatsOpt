@@ -1,13 +1,12 @@
 import * as d3 from 'd3';
-import React from 'react'
-import ReactDOM from 'react-dom'
-import PropTypes from 'prop-types'
-import Graph from 'graph'
-import Xdsm from 'xdsm'
+import React from 'react';
+import ReactDOM from 'react-dom';
+import Graph from 'graph';
+import Xdsm from 'xdsm';
 
 class XdsmViewer extends React.Component {
   constructor(props) {
-    super(props) 
+    super(props)
     this.state = this.props.mda
   }
   
@@ -124,6 +123,6 @@ class Mda extends React.Component {
 document.addEventListener('DOMContentLoaded', () => {
   ReactDOM.render(
     <Mda mda={MDA} />,
-    document.getElementById('mda-viewer'),
+    document.getElementById('mda-viewer')
   );
 })
