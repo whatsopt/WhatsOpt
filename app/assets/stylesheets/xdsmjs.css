@@ -75,14 +75,20 @@
 .xdsm text {
   fill: black;
   stroke: none;
-  font-size: large;
   font-family: Arial, sans-serif;
 }
-.xdsm tspan.sub {
+.node text {
+  font-size: medium;
+}
+.edge text {
   font-size: small;
 }
+
+.xdsm tspan.sub {
+  font-size: smaller;
+}
 .xdsm tspan.sup {
-  font-size: small;
+  font-size: smaller;
 }
 
 /* Data */
