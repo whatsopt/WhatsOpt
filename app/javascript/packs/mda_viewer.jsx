@@ -42,8 +42,8 @@ class Connection extends React.Component {
     return (
       <tr>
         <td>{this.state.from}</td>
-        <td>{this.state.varname}</td>
         <td>{this.state.to}</td>
+        <td>{this.state.varname}</td>
       </tr>
     );
   }
@@ -80,8 +80,8 @@ class Connections extends React.Component {
         <thead>
           <tr>
             <th>From</th>
-            <th>Variable</th>
             <th>To</th>
+            <th>Variable</th>
           </tr>
         </thead>
 
