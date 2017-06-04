@@ -17,7 +17,6 @@ class XdsmViewer extends React.Component {
     .attr("class", "tooltip")
     .style("opacity", 0);
 
-    console.log(JSON.stringify(this.state));
     var graph = new Graph(this.state);
     var xdsm = new Xdsm(graph, 'root', tooltip);
     xdsm.draw();
@@ -52,16 +51,30 @@ class Connection extends React.Component {
 class Connections extends React.Component {
   constructor(props) {
     super(props);
-    this.state = this.props.mda;
+    this.state = {
+      mda: this.props.mda,
+      filter: this.props.filter,
+    };
   }
 
   render() {
     var conns = [];
-    this.state.edges.forEach((edge) => {
+    var edges = this.state.mda.edges;
+    var filter = this.state.filter;
+
+    if (filter) {
+      var nodeFrom = this._findNodeFromIndex(filter.from);
+      var nodeTo = this._findNodeFromIndex(filter.to);
+      var edges = edges.filter((edge) => {
+        return edge.from === nodeFrom.id && edge.to === nodeTo.id;
+      });
+    }
+    console.log(edges);
+    edges.forEach((edge) => {
       var vars = edge.name.split(",");
       vars.forEach((v) => {
-        var nameFrom = this._findNode(edge.from).name;
-        var nameTo = this._findNode(edge.to).name;
+        var nameFrom = this._findNodeFromId(edge.from).name;
+        var nameTo = this._findNodeFromId(edge.to).name;
         conns.push({
           id: nameFrom + '_' + v + nameTo,
           from: nameFrom,
@@ -89,14 +102,21 @@ class Connections extends React.Component {
           {connections}
         </tbody>
       </table>
-    );
+     );
+  };
+
+  _findNodeFromIndex(index) {
+    if ( 0 <= index && index < this.state.mda.nodes.length ) {
+      return this.state.mda.nodes[index];
+    }
+    throw Error("Node index ("+ index +") out of range: " + JSON.stringify(this.state.nodes));
   }
 
-  _findNode(id) {
+  _findNodeFromId(id) {
     if (id === '_U_') return {id: '_U_', name: '_U_'};
-    for (var i=0; i < this.state.nodes.length; i++) {
-      if (this.state.nodes[i].id === id) {
-        return this.state.nodes[i];
+    for (var i=0; i < this.state.mda.nodes.length; i++) {
+      if (this.state.mda.nodes[i].id === id) {
+        return this.state.mda.nodes[i];
       }
     };
     throw Error("Node id ("+ id +") unknown: " + JSON.stringify(this.state.nodes));
