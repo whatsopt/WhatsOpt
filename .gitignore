@@ -33,3 +33,5 @@
 /rtest
 /wds
 /wpack
+/.settings
+/.tern-project
