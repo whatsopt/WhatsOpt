@@ -37,8 +37,8 @@ function Xdsm(graph, svgid, tooltip) {
     labelizer: {
       ellipsis: 5,
       subSupScript: false,
-      showLinkNbOnly: true
-    }
+      showLinkNbOnly: true,
+    },
   };
 
   this._initialize();

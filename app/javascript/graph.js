@@ -54,7 +54,7 @@ function Edge(from, to, name, row, col, isMulti) {
   this.iotype = row < col ? "in" : "out";
   this.io = {
     fromU: (from === UID),
-    toU: (to === UID)
+    toU: (to === UID),
   };
   this.isMulti = isMulti;
 }
