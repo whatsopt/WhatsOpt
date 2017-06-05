@@ -1,0 +1,15 @@
+from openmdao.api import Group, Problem
+
+class <%= @mda.name.camelcase %>(Group):
+
+  def __init__(self):
+    super(<%= @mda.name.camelcase %>, self).__init__()
+  	
+  	
+if __name__ == "__main__":
+
+  top = Problem()
+  root = top.root = <%= @mda.name.camelcase %>()
+	
+  top.setup()
+  top.run()
