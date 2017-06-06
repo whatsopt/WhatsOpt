@@ -13,7 +13,7 @@ set :deploy_to, "/var/www/html/rails/whatsopt"
 set :log_level, :info
 
 # set :linked_files, %w{config/database.yml config/secrets.yml}
-set :linked_dirs, %w{log tmp upload vendor/bundle public/system}
+set :linked_dirs, %w{node_modules log tmp upload vendor/bundle public/system}
 
 # fix ssh twice prompt with sshkit 1.11
 # cf. https://github.com/capistrano/capistrano/issues/1774
