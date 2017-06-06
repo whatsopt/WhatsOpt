@@ -80,7 +80,7 @@ Labelizer._createVarListLabel = function(selection, name, text, ellipsis) {
 
 Labelizer._createLinkNbLabel = function(selection, name, text) {
   var lstr = name.split(',');
-  var str = lstr.length + " link";
+  var str = lstr.length + " var";
   if (lstr.length > 1) {
     str += 's';
   }
@@ -97,7 +97,7 @@ Labelizer.labelize = function() {
   function createLabel(selection) {
     selection.each(function(d) {
       var text = selection.append("text");
-      if (linkNbOnly && labelKind != "node") {  // show connexion nb
+      if (linkNbOnly && labelKind !== "node") {  // show connexion nb
         Labelizer._createLinkNbLabel(selection, d.name, text);
       } else {
         Labelizer._createVarListLabel(selection, d.name, text, ellipsis);
@@ -146,9 +146,7 @@ Labelizer.tooltipize = function() {
 
   function createTooltip(selection) {
     var html = [];
-    if (!subSupScript) {
-      html = text.split(',');
-    } else {
+    if (subSupScript) {
       var tokens = Labelizer.strParse(text);
       tokens.forEach(function(token) {
         var item = token.base;
@@ -160,6 +158,8 @@ Labelizer.tooltipize = function() {
         }
         html.push(item);
       });
+    } else {
+      html = text.split(',');
     }
     selection.html(html.join(", "));
   }

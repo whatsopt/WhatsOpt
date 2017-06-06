@@ -30,3 +30,10 @@
 /upload/public/packs
 /node_modules
 /upload
+/rtest
+/wds
+/wpack
+/.settings
+/.tern-project
+/eslint.bat
+/lint.bat

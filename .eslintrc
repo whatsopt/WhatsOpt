@@ -1,0 +1,29 @@
+{
+  "plugins": ["react"],
+  "extends": [
+    "google"
+  ],
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module",
+    "ecmaFeatures": {
+    	"jsx":true
+    }
+  },
+  "env": {
+    "commonjs": true,
+    "es6": true
+  },
+  "rules": {
+    "max-len": [
+      "error",
+      120
+    ],
+    "quotes": "off",
+    "no-var": "off",
+    "linebreak-style": "off",
+    "require-jsdoc": "off",
+    "brace-style": "off",
+    "react/jsx-uses-vars": [2]
+  }
+}

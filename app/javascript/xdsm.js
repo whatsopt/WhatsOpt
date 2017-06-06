@@ -1,17 +1,18 @@
 var d3 = require('d3');
-//import * as d3 from 'd3';
+// import * as d3 from 'd3';
 var Labelizer = require('./labelizer.js');
 
 var WIDTH = 1000;
 var HEIGHT = 500;
-var X_ORIG = 100;
+var X_ORIG = 50;
 var Y_ORIG = 20;
-var PADDING = 20;
-var CELL_W = 250;
-var CELL_H = 75;
+var PADDING = 10;
+var CELL_W = 200;
+var CELL_H = 50;
 var MULTI_OFFSET = 3;
 var BORDER_PADDING = 4;
 var ANIM_DURATION = 1000; // ms
+var TOOLTIP_WIDTH = 300;
 
 function Cell(x, y, width, height) {
   this.x = x;
@@ -126,7 +127,7 @@ Xdsm.prototype._createTextGroup = function(kind, group, decorate) {
                         .subSupScript(self.config.labelizer.subSupScript)
                         .text(d.name);
     self.tooltip.call(tooltipize)
-      .style("width", "200px")
+      .style("width", TOOLTIP_WIDTH+"px")
       .style("left", (d3.event.pageX) + "px")
       .style("top", (d3.event.pageY - 28) + "px");
   }).on("mouseout", function() {
