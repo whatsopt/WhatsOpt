@@ -85,5 +85,14 @@ Rails.application.configure do
   config.active_record.dump_schema_after_migration = false
   
   # Jupyter script
-  config.jupyter_script='/usr/local/anaconda2/bin/jupyter'
+  if `hostname`.strip == "remix"
+    # virtual box ubuntu
+    config.jupyter_script='/home/rlafage/anaconda2/bin/jupyter'
+  elsif `hostname`.strip == "rdri206h"
+    # rdri206h
+    config.jupyter_script='/tmp_user/rdri206h/rlafage/anaconda2/bin/jupyter'
+  else
+    config.jupyter_script='jupyter'
+  end  
+
 end
