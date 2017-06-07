@@ -1,4 +1,5 @@
 class Variable < ApplicationRecord
+  self.inheritance_column = :disable_inheritance
   belongs_to :discipline
 
   validates :name, presence: true

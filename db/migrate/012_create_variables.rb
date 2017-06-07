@@ -4,9 +4,11 @@ class CreateVariables < ActiveRecord::Migration[5.0]
       t.string :name
       t.integer :discipline_id
       t.string :io_mode
-      t.string :kind
-      t.string :unit
-
+      t.string :type
+      t.integer :dim
+      t.string :units
+      t.string :desc
+      
       t.timestamps
     end
   end

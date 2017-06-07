@@ -109,8 +109,10 @@ ActiveRecord::Schema.define(version: 12) do
     t.string "name"
     t.integer "discipline_id"
     t.string "io_mode"
-    t.string "kind"
-    t.string "unit"
+    t.string "type"
+    t.integer "dim"
+    t.string "units"
+    t.string "desc"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

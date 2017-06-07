@@ -88,12 +88,11 @@ study_test = create_study(project_id:project_scratch.id,
 mda_test = create_mda(name:"MDA_Example", 
                       disciplines_attributes: [{
                                                  name: 'Disc1',
-                                                 variables_attributes: [{name:"x1", io_mode:"in"},
-                                                                        {name:"x2", io_mode:"in"},
-                                                                        {name:"y2", io_mode:"in"},
-                                                                        {name:"y1", io_mode:"out"}
+                                                 variables_attributes: [{name:"x1", io_mode:"in", type:"int", dim:"1", units:"m"},
+                                                                        {name:"x2", io_mode:"in", type:"float", dim:"1", units:"m"},
+                                                                        {name:"y2", io_mode:"in", dim:"3"},
+                                                                        {name:"y1", io_mode:"out"},
                                                                         ],
-                                                 
                                                },
                                                {name: 'Disc2',
                                                  variables_attributes: [{name:"y1", io_mode:"in"},
