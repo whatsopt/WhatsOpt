@@ -142,7 +142,7 @@ class Mda extends React.Component {
 
 document.addEventListener('DOMContentLoaded', () => {
   ReactDOM.render(
-    <Mda mda={MDA} />,
+    <Mda mda={MDA} vars={VARS} />,
     document.getElementById('mda-viewer')
   );
 });

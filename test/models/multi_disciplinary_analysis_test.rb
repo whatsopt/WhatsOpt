@@ -1,7 +1,6 @@
 require 'test_helper'
 
 class MultiDisciplinaryAnalysisTest < ActiveSupport::TestCase
-  #extend ActionDispatch::TestProcess
   
   test "should create an mda from a mda template excel file" do
     attach = sample_file('excel_mda_simple_sample.xlsm')
@@ -18,12 +17,18 @@ class MultiDisciplinaryAnalysisTest < ActiveSupport::TestCase
     mda = multi_disciplinary_analyses(:cicav)
     geo = disciplines(:geometry)
     edges = mda.build_edges
-    assert_includes edges, {from:"_U_", to:"#{geo.id}", name:"z"}
+    assert_includes edges, {from: "_U_", to: "#{geo.id}", name: "z"}
   end
   
   test "should not contain reflexive connection" do
     mda = multi_disciplinary_analyses(:cicav)
     edges = mda.build_edges
     assert_empty edges.select {|e| e[:to] == e[:from] }
+  end
+  
+  test "should be able to build variable list" do
+    mda = multi_disciplinary_analyses(:cicav)
+    vars = mda.build_var_list
+    assert_equal vars.length, 8  # number of variables in excel_mda_simple_sample.xlsm
   end
 end

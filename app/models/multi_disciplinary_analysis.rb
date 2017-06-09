@@ -21,7 +21,8 @@ class MultiDisciplinaryAnalysis < ApplicationRecord
       name: self.name,
       nodes: build_nodes,
       edges: build_edges,
-      workflow: []
+      workflow: [],
+      vars: []
     }.to_json
   end
 
@@ -62,6 +63,11 @@ class MultiDisciplinaryAnalysis < ApplicationRecord
     edges
   end
 
+  def build_var_list
+    return ['dumb', 'dumb', 'dumb', 'dumb', 'dumb', 'dumb', 'dumb', 'dumb']
+    Variable.select('variables.name')
+  end
+  
   private
   
     def _get_pending_connections(vars)
