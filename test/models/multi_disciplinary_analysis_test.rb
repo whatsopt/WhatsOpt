@@ -28,7 +28,9 @@ class MultiDisciplinaryAnalysisTest < ActiveSupport::TestCase
   
   test "should be able to build variable list" do
     mda = multi_disciplinary_analyses(:cicav)
-    vars = mda.build_var_list
-    assert_equal vars.length, 8  # number of variables in excel_mda_simple_sample.xlsm
+    tree = mda.build_var_tree
+    assert_equal ['Geometry', 'Aerodynamics'], tree.keys
+    assert_equal [["y", "out"], ["z", "out"], ["x", "in"], ["z", "in"]], tree['Geometry']
+    assert_equal [["x", "out"], ["y", "in"]], tree['Aerodynamics']
   end
 end

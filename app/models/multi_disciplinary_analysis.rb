@@ -63,9 +63,9 @@ class MultiDisciplinaryAnalysis < ApplicationRecord
     edges
   end
 
-  def build_var_list
-    return ['dumb', 'dumb', 'dumb', 'dumb', 'dumb', 'dumb', 'dumb', 'dumb']
-    Variable.select('variables.name')
+  def build_var_tree
+    res = disciplines.map {|d| {d.name => d.variables.pluck(:name, :io_mode)}}
+    res.inject({}) {|result, h| result.update(h)}
   end
   
   private
