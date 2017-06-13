@@ -1,6 +1,9 @@
+<h1>MDA <%= @mda.name %></h1>
+
+<%= link_to 'Generate OpenMDAO', openmdao_generation_new_path(:mda_id => @mda.id), class: "btn btn-primary" %>
+
 <div id="mda-viewer"></div>
 
-<%= link_to 'Edit', edit_multi_disciplinary_analysis_path(@mda) %> |
 <%= link_to 'Back', multi_disciplinary_analyses_path %>
   
 <script>var MDA = <%= raw @mda.to_json %></script>

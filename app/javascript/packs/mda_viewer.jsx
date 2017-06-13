@@ -132,7 +132,6 @@ class Mda extends React.Component {
   render() {
     return (
       <div>
-        <h1>MDA {this.state.name}</h1>
         <XdsmViewer mda={this.state}/>
         <Connections mda={this.state}/>
       </div>
@@ -142,7 +141,7 @@ class Mda extends React.Component {
 
 document.addEventListener('DOMContentLoaded', () => {
   ReactDOM.render(
-    <Mda mda={MDA} vars={VARS} />,
+    <Mda mda={MDA} />,
     document.getElementById('mda-viewer')
   );
 });
