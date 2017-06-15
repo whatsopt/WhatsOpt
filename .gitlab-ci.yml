@@ -4,6 +4,9 @@ before_script:
   - apt-get update -qq && apt-get install -y -qq build-essential sqlite3 libsqlite3-dev python2.7 python-pip python-dev ipython ipython-notebook
   - curl -sL https://deb.nodesource.com/setup_6.x | bash -
   - apt-get install -y nodejs
+  - node --version
+  - npm --version
+  - npm install --global yarn
   - ruby -v
   - which ruby
   - gem install bundler --no-ri --no-rdoc
