@@ -1,6 +1,4 @@
 {
-  "application.js": "http://rdri206h.onecert.fr:8080/packs/application.js",
-  "application.js.map": "http://rdri206h.onecert.fr:8080/packs/application.js.map",
-  "mda_viewer.js": "http://rdri206h.onecert.fr:8080/packs/mda_viewer.js",
-  "mda_viewer.js.map": "http://rdri206h.onecert.fr:8080/packs/mda_viewer.js.map"
+  "application.js": "http://0.0.0.0:8080/packs/application.js",
+  "mda_viewer.js": "http://0.0.0.0:8080/packs/mda_viewer.js"
 }

@@ -37,3 +37,6 @@
 /.tern-project
 /eslint.bat
 /lint.bat
+/public/packs
+/public/packs-test
+/node_modules

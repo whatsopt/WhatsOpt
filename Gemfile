@@ -58,4 +58,4 @@ gem 'rolify'
 gem 'pundit'
 gem 'paperclip'
 gem 'rubyXL'
-gem 'webpacker'
+gem 'webpacker', :git => "git://github.com/rails/webpacker.git"
