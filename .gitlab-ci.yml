@@ -1,7 +1,9 @@
 image: "ruby:2.3"
 
 before_script:
-  - apt-get update -qq && apt-get install -y -qq build-essential sqlite3 libsqlite3-dev python2.7 python-pip python-dev ipython ipython-notebook nodejs 
+  - apt-get update -qq && apt-get install -y -qq build-essential sqlite3 libsqlite3-dev python2.7 python-pip python-dev ipython ipython-notebook
+  - curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
+  - sudo apt-get install -y nodejs
   - ruby -v
   - which ruby
   - gem install bundler --no-ri --no-rdoc
