@@ -18,6 +18,8 @@
 	  			<li class="nav-item"><%= link_to "Projects", :projects, class: "nav-link" %></li>
 	  			<li class="nav-item"><%= link_to "MDAs", :multi_disciplinary_analyses, class: "nav-link" %></li>
 	  			<li class="nav-item"><%= link_to "Notebooks", :notebooks, class: "nav-link" %></li>
+	  			<!-- <li class="nav-item">< link_to "Toolbox", :toolbox, class: "nav-link" %></li> -->
+	  			<li class="nav-item"><%= link_to "JupyterHub", jupyterhub_path, class: "nav-link" %></li>
         </ul>
 				<ul class="navbar-nav">
 		  		<% if user_signed_in? %>

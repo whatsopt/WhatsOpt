@@ -19,6 +19,8 @@ Rails.application.routes.draw do
     end
   end
 
+  get "/jupyterhub" => redirect("https://rdri206h.onecert.fr")
+  
   authenticated :user do
     root to: 'projects#index', as: :authenticated_root
   end
