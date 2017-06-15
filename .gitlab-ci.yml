@@ -7,10 +7,12 @@ before_script:
   - node --version
   - npm --version
   - npm install --global yarn
+  - yarn --version
   - ruby -v
   - which ruby
-  - gem install bundler --no-ri --no-rdoc
+  - gem install bundler --no-ri --no-rdoc 
   - bundle install --jobs $(nproc)  "${FLAGS[@]}"
+  - yarn
 
 test:
   script:
