@@ -1,8 +1,8 @@
 FROM ruby:2.3
 MAINTAINER remi.lafage@onera.fr
 
-#ENV http_proxy=http://proxy.onecert.fr:80
-#ENV https_proxy=http://proxy.onecert.fr:80
+ENV http_proxy=http://proxy.onecert.fr:80
+ENV https_proxy=http://proxy.onecert.fr:80
 
 RUN apt-get update && apt-get install -y \ 
   build-essential \ 
@@ -44,7 +44,7 @@ RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-
   && rm "node-v$NODE_VERSION-linux-x64.tar.xz" SHASUMS256.txt.asc SHASUMS256.txt \
   && ln -s /usr/local/bin/node /usr/local/bin/nodejs
 
-ENV YARN_VERSION 0.23.4
+ENV YARN_VERSION 0.24.5
 
 RUN set -ex \
   && for key in \
