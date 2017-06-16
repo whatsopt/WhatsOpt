@@ -69,7 +69,7 @@ class Connections extends React.Component {
         return edge.from === nodeFrom.id && edge.to === nodeTo.id;
       });
     }
-    console.log(edges);
+
     edges.forEach((edge) => {
       var vars = edge.name.split(",");
       vars.forEach((v) => {
