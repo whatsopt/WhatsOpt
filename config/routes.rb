@@ -20,6 +20,7 @@ Rails.application.routes.draw do
   end
 
   get "/jupyterhub" => redirect("https://rdri206h.onecert.fr")
+  get "/oneramdao" => redirect("http://dcps.onera/redmine/projects/oneramdao/files")
   
   authenticated :user do
     root to: 'projects#index', as: :authenticated_root
