@@ -18,7 +18,7 @@ class VariablesController < ApplicationController
   # GET /variables/1/edit
   def edit
   end
-
+  
   # POST /variables
   def create
     @variable = Variable.new(variable_params)
@@ -52,6 +52,6 @@ class VariablesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def variable_params
-      params.require(:variable).permit(:name, :discipline_id, :io_mode)
+      params.require(:variable).permit(:name, :discipline_id, :io_mode, :type, :dim)
     end
 end

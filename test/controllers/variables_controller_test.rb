@@ -18,12 +18,17 @@ class VariablesControllerTest < ActionDispatch::IntegrationTest
 
   test "should create variable" do
     assert_difference('Variable.count') do
-      post variables_url, params: { variable: { discipline_id: @variable.discipline_id, io_mode: @variable.io_mode, name: @variable.name } }
+      post variables_url, params: { variable: { discipline_id: @variable.discipline_id, io_mode: @variable.io_mode, name: "newVAR" } }
     end
-
     assert_redirected_to variable_url(Variable.last)
   end
 
+  test "should not duplicate variable" do
+    assert_no_difference('Variable.count') do
+      post variables_url, params: { variable: { discipline_id: @variable.discipline_id, io_mode: @variable.io_mode, name: @variable.name } }
+    end
+  end
+  
   test "should show variable" do
     get variable_url(@variable)
     assert_response :success
