@@ -17,6 +17,6 @@ class OpenmdaoGenerationController < ApplicationController
       redirect_to multi_disciplinary_analyses_url,
                   alert: 'MDA not specified. Openmdao generation aborted!'
     end
-  end
+  end  
   
 end

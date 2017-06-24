@@ -1,7 +1,9 @@
 require 'test_helper'
 
 class VariableTest < ActiveSupport::TestCase
-  # test "the truth" do
-  #   assert true
-  # end
+  
+  test "should have dim and type default attributes" do
+    assert Variable.new(name: 'test', io_mode: Variable::IN)
+  end
+
 end

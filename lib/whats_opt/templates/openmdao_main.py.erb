@@ -1,15 +1,18 @@
 from openmdao.api import Group, Problem
+<% @mda.disciplines.each do |d| %>
+from <%= d.name.downcase %> import <%= d.name.camelcase %><% end %>
 
 class <%= @mda.name.camelcase %>(Group):
 
-  def __init__(self):
-    super(<%= @mda.name.camelcase %>, self).__init__()
-  	
+    def __init__(self):
+        super(<%= @mda.py_classname %>, self).__init__()
+		    <% @mda.disciplines.each do |d| %>
+        self.add('<%= d.py_classname %>', <%= d.py_classname %>(), promotes=[<%= d.variables.map(&:py_varname).join(', ') %>])<% end %>
   	
 if __name__ == "__main__":
 
-  top = Problem()
-  root = top.root = <%= @mda.name.camelcase %>()
+    top = Problem()
+    root = top.root = <%= @mda.py_classname %>()
 	
-  top.setup()
-  top.run()
+    top.setup()
+    top.run()

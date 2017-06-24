@@ -1,14 +1,26 @@
 from openmdao.api import Component
 
 class <%= @discipline.name.camelcase %>(Component):
+""" An OpenMDAO component to encapsulate <%= @discipline.py_classname %> discipline """
 
     def __init__(Component):
-        super(<%= @discipline.name %>, self).__init__()
+        super(<%= @discipline.py_classname %>, self).__init__()
 		<% @discipline.input_variables.each do |var| %>
-        self.add_param('<%= var.name %>', val=0.0)<% end %>
+        self.add_param('<%= var.py_varname %>', val=<%= var.default_py_value %><%= var.desc.blank? ? "" : ", #{var.desc}" %>)<% end %>
 		<% @discipline.output_variables.each do |var| %>
-        self.add_output('<%= var.name %>', val=0.0)<% end %>
+        self.add_output('<%= var.py_varname %>', val=<%= var.default_py_value %><%= var.desc.blank? ? "" : ", #{var.desc}" %>)<% end %>
 		
     def solve_nonlinear(self, params, unknowns, resids):
-        pass
+        """ <%= @discipline.py_classname %> computation. """
+    <% @discipline.output_variables.each do |var_out| %>
+        unknowns['<%= var_out.py_varname %>'] = <%= var_out.default_py_value %> <% end %>  
 				
+    def linearize(self, params, unknowns, resids):
+        """ Jacobian for <%= @discipline.py_classname %>."""
+        J = {}
+    <% @discipline.output_variables.each do |var_out| %>
+    		<% @discipline.input_variables.each do |var_in| %>
+        J['<%= var_out.py_varname %>', '<%= var_in.py_varname %>'] = np.zeros((<%= var_in.dim %>, <%= var_out.dim %>))<% end %><% end %>        
+
+        return J
+        

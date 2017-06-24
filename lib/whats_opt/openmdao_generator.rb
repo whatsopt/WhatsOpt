@@ -16,7 +16,7 @@ module WhatsOpt
       @template_dir = File.join(File.dirname(__FILE__), "templates")
       @genfiles = []
     end
-    
+        
     def generate_zip
       zip_filename = 'openmdao_mda.zip'
       stringio = nil
@@ -44,13 +44,13 @@ module WhatsOpt
     end
     
     def _generate_main gendir
-      _generate("#{@mda.name.downcase}_main.py", 'openmdao_main.py.erb', gendir)
+      _generate(@mda.py_filename, 'openmdao_main.py.erb', gendir)
     end
     
     def _generate_discipline(disc, gendir)
       @discipline = disc
       if @discipline
-        _generate("#{@discipline.name.downcase}.py", 'openmdao_discipline.py.erb', gendir)
+        _generate(@discipline.py_filename, 'openmdao_discipline.py.erb', gendir)
       else
         raise DisciplineNotFoundException.new("Discipline " +
           discname + " not found in " + @mda.disciplines)

@@ -1,7 +1,10 @@
 require 'whats_opt/excel_mda_importer'
+require 'whats_opt/openmdao_mapping'
 
 class MultiDisciplinaryAnalysis < ApplicationRecord
 
+  include WhatsOpt::OpenmdaoModule
+  
   has_one :attachment, :as => :container
   accepts_nested_attributes_for :attachment, allow_destroy: true
   validates_associated :attachment

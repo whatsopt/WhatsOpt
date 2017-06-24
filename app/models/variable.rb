@@ -1,11 +1,9 @@
+require 'whats_opt/openmdao_mapping'
+
 class Variable < ApplicationRecord
   
-  FLOAT_T = :Float
-  INTEGER_T = :Integer
+  include WhatsOpt::OpenmdaoVariable
   
-  IN = :in  
-  OUT = :out  
-    
   self.inheritance_column = :disable_inheritance
   belongs_to :discipline
 
@@ -13,8 +11,8 @@ class Variable < ApplicationRecord
   validates :name, uniqueness: { scope: :io_mode, message: "should be named once per io mode" }
   validates :dim, numericality: { only_integer: true, greater_than: 0 }
       
-  scope :inputs, -> { where(io_mode: 'in') }
-  scope :outputs, -> { where(io_mode: 'out') }
+  scope :inputs, -> { where(io_mode: IN) }
+  scope :outputs, -> { where(io_mode: OUT) }
     
   after_initialize :set_defaults, unless: :persisted?
 
@@ -22,6 +20,7 @@ class Variable < ApplicationRecord
   
   def set_defaults
     self.dim  ||= 1
-    self.type ||= FLOAT_T
+    self.type ||= WhatsOpt::OpenmdaoVariable::FLOAT_T
   end
+  
 end

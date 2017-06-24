@@ -1,14 +1,21 @@
 require 'test_helper'
 require 'whats_opt/openmdao_generator'
+require 'whats_opt/openmdao_mapping'
 require 'tmpdir'
 
-class FakeVar < Struct.new(:name)
+class FakeVar < Struct.new(:name, :type, :dim, :desc)
+  include WhatsOpt::OpenmdaoVariable  
 end
 
 class FakeDiscipline < Struct.new(:name, :input_variables, :output_variables)
+  include WhatsOpt::OpenmdaoModule 
+  def variables
+    self.input_variables + self.output_variables
+  end
 end
 
 class FakeMda < Struct.new(:name, :disciplines)
+  include WhatsOpt::OpenmdaoModule 
 end
 
 class OpenmdaoGeneratorTest < ActiveSupport::TestCase
@@ -17,11 +24,11 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     @mda = 
       FakeMda.new('Cicav', [
         FakeDiscipline.new('Geometry',
-                           [FakeVar.new('x1'), FakeVar.new('y2'), FakeVar.new('z')],
-                           [FakeVar.new('x2'), FakeVar.new('y1')]),
+                           [FakeVar.new('x1', FakeVar::FLOAT_T, 1), FakeVar.new('y2', FakeVar::FLOAT_T, 1), FakeVar.new('z', FakeVar::FLOAT_T, 1)],
+                           [FakeVar.new('x2', FakeVar::FLOAT_T, 1), FakeVar.new('y1', FakeVar::FLOAT_T, 1)]),
         FakeDiscipline.new('Aerodynamics',
-                           [FakeVar.new('x3'), FakeVar.new('y1'), FakeVar.new('z')],
-                           [FakeVar.new('y3'), FakeVar.new('y2')])
+                           [FakeVar.new('x3', FakeVar::FLOAT_T, 1), FakeVar.new('y1', FakeVar::FLOAT_T, 1), FakeVar.new('z', FakeVar::FLOAT_T, 1)],
+                           [FakeVar.new('y3', FakeVar::FLOAT_T, 1), FakeVar.new('y2', FakeVar::FLOAT_T, 1)])
                            ])
     @ogen = WhatsOpt::OpenmdaoGenerator.new(@mda)
   end
@@ -48,7 +55,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
       assert_equal 3, basenames.length
       assert_includes basenames,"geometry.py"
       assert_includes basenames,"aerodynamics.py"
-      assert_includes basenames,"cicav_main.py"
+      assert_includes basenames,"cicav.py"
     end
   end 
   
