@@ -1,12 +1,23 @@
+class String
+  def snakize
+    gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2').
+    gsub(/([a-z\d])([A-Z])/,'\1_\2').
+    tr('-', '_').
+    gsub(/\s/, '_').
+    gsub(/__+/, '_').
+    downcase
+  end
+end
+
 module WhatsOpt
   
   module OpenmdaoModule
     def py_classname
-      self.name.parameterize.camelize
+      self.name.snakize.camelize
     end
 
     def py_filename
-      "#{self.name.downcase}.py"
+      "#{self.name.snakize}.py"
     end
   end
       
@@ -18,7 +29,7 @@ module WhatsOpt
     OUT = :out  
     
     def py_varname
-      self.name.parameterize.underscore
+      self.name.downcase
     end
     
     def default_py_type
