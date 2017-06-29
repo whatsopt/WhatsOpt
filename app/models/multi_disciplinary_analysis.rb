@@ -67,7 +67,7 @@ class MultiDisciplinaryAnalysis < ApplicationRecord
   end
 
   def build_var_tree
-    res = disciplines.map {|d| {d.name => d.variables.pluck(:name, :io_mode)}}
+    res = disciplines.map {|d| {d.name => d.variables}}
     res.inject({}) {|result, h| result.update(h)}
   end
   
