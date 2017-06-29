@@ -3,6 +3,7 @@
 const merge = require('webpack-merge')
 const sharedConfig = require('./shared.js')
 const { settings, output } = require('./configuration.js')
+const webpack = require('webpack')
 
 module.exports = merge(sharedConfig, {
   devtool: 'cheap-eval-source-map',
@@ -10,6 +11,10 @@ module.exports = merge(sharedConfig, {
   output: {
     pathinfo: true
   },
+  
+  plugins: [
+	new webpack.HotModuleReplacementPlugin() // Enable HMR
+  ],
 
   devServer: {
     clientLogLevel: 'none',
@@ -29,3 +34,4 @@ module.exports = merge(sharedConfig, {
     }
   }
 })
+ 
