@@ -1,14 +1,14 @@
 import * as d3 from 'd3';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Graph from 'graph';
-import Xdsm from 'xdsm';
+import Graph from 'xdsmjs/graph';
+import Xdsm from 'xdsmjs/xdsm';
 
 class XdsmViewer extends React.Component {
   constructor(props) {
     super(props);
     this.state = this.props.mda;
-  }
+  } 
 
   componentDidMount() {
     // D3 drawing
@@ -76,7 +76,7 @@ class Connections extends React.Component {
         var nameFrom = this._findNodeFromId(edge.from).name;
         var nameTo = this._findNodeFromId(edge.to).name;
         conns.push({
-          id: nameFrom + '_' + v + nameTo,
+          id: nameFrom + '_' + v + + '_' + nameTo,
           from: nameFrom,
           to: nameTo,
           varname: v,
@@ -113,13 +113,13 @@ class Connections extends React.Component {
   }
 
   _findNodeFromId(id) {
-    if (id === '_U_') return {id: '_U_', name: '_U_'};
+    if (id === '_U_') return {id: '_U_', name: '_U_'}; 
     for (var i=0; i < this.state.mda.nodes.length; i++) {
       if (this.state.mda.nodes[i].id === id) {
         return this.state.mda.nodes[i];
       }
     };
-    throw Error("Node id ("+ id +") unknown: " + JSON.stringify(this.state.nodes));
+    throw Error("Node id ("+ id +") unknown: " + JSON.stringify(this.state.nodes));  
   }
 }
 
@@ -137,7 +137,7 @@ class Mda extends React.Component {
       </div>
     );
   }
-}
+} 
 
 document.addEventListener('DOMContentLoaded', () => {
   ReactDOM.render(
@@ -145,3 +145,5 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('mda-viewer')
   );
 });
+
+    
