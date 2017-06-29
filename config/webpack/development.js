@@ -11,10 +11,6 @@ module.exports = merge(sharedConfig, {
   output: {
     pathinfo: true
   },
-  
-  plugins: [
-	new webpack.HotModuleReplacementPlugin() // Enable HMR
-  ],
 
   devServer: {
     clientLogLevel: 'none',
@@ -27,6 +23,8 @@ module.exports = merge(sharedConfig, {
     headers: { 'Access-Control-Allow-Origin': '*' },
     historyApiFallback: true,
     watchOptions: {
+      aggregateTimeout: 300,
+      poll: 1000,
       ignored: /node_modules/
     },
     stats: {
