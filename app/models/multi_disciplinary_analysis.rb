@@ -25,7 +25,7 @@ class MultiDisciplinaryAnalysis < ApplicationRecord
       nodes: build_nodes,
       edges: build_edges,
       workflow: [],
-      vars: []
+      vars: build_var_tree
     }.to_json
   end
 
@@ -67,7 +67,7 @@ class MultiDisciplinaryAnalysis < ApplicationRecord
   end
 
   def build_var_tree
-    res = disciplines.map {|d| {d.name => d.variables}}
+    res = disciplines.map {|d| {d.name => {in: d.input_variables, out: d.output_variables}}}
     res.inject({}) {|result, h| result.update(h)}
   end
   
@@ -84,6 +84,8 @@ class MultiDisciplinaryAnalysis < ApplicationRecord
     end      
 
     def _create_from_attachment
+      p attachment.created_at
+      p attachment
       attachment.save
       if attachment.exists?
         emi = WhatsOpt::ExcelMdaImporter.new(self.attachment.path)

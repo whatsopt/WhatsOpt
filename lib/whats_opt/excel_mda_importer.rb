@@ -56,11 +56,14 @@ module WhatsOpt
           if k =~ /Y(\w)(\w)/
             src = _to_discipline($1) 
             dst = _to_discipline($2)
-            res[src].append(varattr.merge({io_mode: 'out'}))
-            res[dst].append(varattr.merge({io_mode: 'in'}))
+            v = varattr.merge({io_mode: 'out'})
+            res[src].append(v) unless res[src].include?(v) 
+            v = varattr.merge({io_mode: 'in'})
+            res[dst].append(v) unless res[dst].include?(v) 
           elsif k =~ /X(\w)/
             dst = _to_discipline($1)
-            res[dst].append(varattr.merge({io_mode: 'in'}))
+            v = varattr.merge({io_mode: 'in'})
+            res[dst].append(v) unless res[dst].include?(v) 
           else     
             puts "Unknown connection: #{k}"
           end

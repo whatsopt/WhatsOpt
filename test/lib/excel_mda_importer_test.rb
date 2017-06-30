@@ -20,12 +20,9 @@ class ExcelMdaImporterTest < ActiveSupport::TestCase
   end
 
   test "should get variables attributes" do
-    
     expected = {"__User__"=>[{:name=>"eigen_values_table", :dim=>10, :type => 'Float', :units => '', :io_mode=>"in"}], 
       "Geometry"=>[{:name=>"wing_span", :dim=>1, :type => 'Float', :units=>"m", :io_mode=>"in"}, 
         {:name=>"control_surfaces_number", :dim=>1, :type => 'Integer', :units => '', :io_mode=>"in"},
-        {:name=>"cockpit_length", :dim=>1, :type => 'Float', :units=>"m", :io_mode=>"out"}, 
-        {:name=>"control_surfaces_number", :dim=>1, :type => 'Integer', :units => '', :io_mode=>"out"}, 
         {:name=>"cockpit_length", :dim=>1, :type => 'Float', :units=>"m", :io_mode=>"out"}, 
         {:name=>"control_surfaces_number", :dim=>1, :type => 'Integer', :units => '', :io_mode=>"out"}, 
         {:name=>"airfoil_extrados_p0_table", :dim=>10, :type => 'Float', :units => '', :io_mode=>"in"}], 
@@ -33,8 +30,7 @@ class ExcelMdaImporterTest < ActiveSupport::TestCase
         {:name=>"wing_airfoils_number_of_point", :dim=>1, :type => 'Integer', :units => '', :io_mode=>"out"}, 
         {:name=>"airfoil_extrados_p0_table", :dim=>10, :type => 'Float', :units => '', :io_mode=>"out"}, 
         {:name=>"cockpit_length", :dim=>1, :type => 'Float', :units=>"m", :io_mode=>"in"}, 
-        {:name=>"control_surfaces_number", :dim=>1, :type => 'Integer', :units => '', :io_mode=>"in"}, 
-        {:name=>"airfoil_extrados_p0_table", :dim=>10, :type => 'Float', :units => '', :io_mode=>"out"}, 
+        {:name=>"control_surfaces_number", :dim=>1, :type => 'Integer', :units => '', :io_mode=>"in"},  
         {:name=>"handling_qualities_inputs_table", :dim=>10, :type => 'Float', :units => '', :io_mode=>"in"}],
       "Control"=>[{:name=>"wing_reference_surface", :dim=>1, :type => 'Float', :units=>"m2", :io_mode=>"in"}, 
         {:name=>"wing_airfoils_number_of_point", :dim=>1, :type => 'Integer', :units => '', :io_mode=>"in"}, 
@@ -50,6 +46,8 @@ class ExcelMdaImporterTest < ActiveSupport::TestCase
         assert_equal expected[k], actual[k]
       end
   end
+  
+  
   
   test "should transform index in discipline name" do
     assert_equal WhatsOpt::ExcelMdaImporter::USER_DISCIPLINE, @emi._to_discipline('x')

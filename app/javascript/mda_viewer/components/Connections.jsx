@@ -3,17 +3,52 @@ import React from 'react';
 class Connection extends React.Component {
   constructor(props) {
     super(props);
-    this.state = this.props.conn;
+    this.state = { conn: this.props.conn,
+                   vars: this.props.vars };
   }
 
   render() {
+    let infos = this._findInfos(this.state.conn); 
+      
     return (
       <tr>
-        <td>{this.state.from}</td>
-        <td>{this.state.to}</td>
-        <td>{this.state.varname}</td>
+        <td>{infos.frName}</td>
+        <td>{infos.frUnits}</td>
+        <td title={infos.desc} >{infos.vName}</td>
+        <td>{infos.toUnits}</td>
+        <td>{infos.toName}</td>
       </tr>
     );
+  }
+  
+  _findInfos(conn) { 
+    console.log(JSON.stringify(conn)); 
+    let vfr = this._findVariableInfo(conn.fr, conn.varname, "out");
+    let vto = this._findVariableInfo(conn.to, conn.varname, "in");
+    let desc = vfr.desc || vto.desc
+    if (vfr.desc && vto.desc && vfr.desc !== vto.desc) {
+      desc = `From: ${vfr.desc}, To: ${vfr.desc}`;
+    } 
+    let infos = { frName: conn.fr, frUnits: vfr.units, 
+                  vName: conn.varname, desc: desc,
+                  toName: conn.to, toUnits: vto.units };
+    return infos;
+  }
+  
+  _findVariableInfo(disc, vname, io_mode) {
+    let vars = this.state.vars;
+    let vinfo = {units: '', desc: ''}
+    if (disc !== '_U_') {
+      let vinfos = vars[disc][io_mode].filter((v) => { 
+        return v.name === vname; 
+      });
+      if (vinfos.length === 1) {
+        vinfo = vinfos[0];
+      } else {
+        throw Error(`Expected one variable ${vname} found ${vinfos.length} in ${JSON.stringify(vinfos)}`);        
+      }
+    } 
+    return vinfo;
   }
 }
 
@@ -22,39 +57,40 @@ class Connections extends React.Component {
     super(props);
     this.state = {
       mda: this.props.mda,
-      filter: this.props.filter,
+      filter: this.props.filter,  // TODO : pass discipline filter
     };
   }
 
   render() {
     var conns = [];
     var edges = this.state.mda.edges;
+    var vars = this.state.mda.vars;
     var filter = this.state.filter;
 
     if (filter) {
-      var nodeFrom = this._findNodeFromIndex(filter.from);
-      var nodeTo = this._findNodeFromIndex(filter.to);
-      var edges = edges.filter((edge) => {
+      let nodeFrom = this._findNodeFromIndex(filter.from);
+      let nodeTo = this._findNodeFromIndex(filter.to);
+      let edges = edges.filter((edge) => {
         return edge.from === nodeFrom.id && edge.to === nodeTo.id;
       });
     }
 
     edges.forEach((edge) => {
-      var vars = edge.name.split(",");
+      let vars = edge.name.split(",");
       vars.forEach((v) => {
-        var nameFrom = this._findNodeFromId(edge.from).name;
-        var nameTo = this._findNodeFromId(edge.to).name;
+        let nameFrom = this._findNodeFromId(edge.from).name;
+        let nameTo = this._findNodeFromId(edge.to).name;
         conns.push({
-          id: nameFrom + '_' + v + + '_' + nameTo,
-          from: nameFrom,
+          id: nameFrom + '_' + v + '_' + nameTo,
+          fr: nameFrom,
           to: nameTo,
           varname: v,
         });
       }, this);
     }, this);
 
-    var connections = conns.map((conn) => {
-      return ( <Connection key={conn.id} conn={conn}/> );
+    let connections = conns.map((conn) => {
+      return ( <Connection key={conn.id} conn={conn} vars={vars}/> );
     });
 
     return (
@@ -62,8 +98,10 @@ class Connections extends React.Component {
         <thead>
           <tr>
             <th>From</th>
-            <th>To</th>
+            <th>Units</th>
             <th>Variable</th>
+            <th>Units</th>
+            <th>To</th>
           </tr>
         </thead>
 

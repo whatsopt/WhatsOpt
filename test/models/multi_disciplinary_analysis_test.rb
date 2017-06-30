@@ -30,7 +30,9 @@ class MultiDisciplinaryAnalysisTest < ActiveSupport::TestCase
     mda = multi_disciplinary_analyses(:cicav)
     tree = mda.build_var_tree
     assert_equal ['Geometry', 'Aerodynamics'], tree.keys
-    assert_equal [["y", "out"], ["z", "out"], ["x", "in"], ["z", "in"]], tree['Geometry'].map {|v| [v.name, v.io_mode]}
-    assert_equal [["x", "out"], ["y", "in"]], tree['Aerodynamics'].map {|v| [v.name, v.io_mode]}
+    assert_equal ["x", "z"], tree['Geometry'][:in].map(&:name)
+    assert_equal ["y", "z"], tree['Geometry'][:out].map(&:name)
+    assert_equal ["y"], tree['Aerodynamics'][:in].map(&:name)
+    assert_equal ["x"], tree['Aerodynamics'][:out].map(&:name)  
   end
 end
