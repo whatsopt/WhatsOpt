@@ -2,8 +2,18 @@ class Attachment < ActiveRecord::Base
 
   has_attached_file :data,
                     :path => ":rails_root/upload/:attachment/:id/:style/:basename.:extension",
-                    :processors => [:notebook_processor],
-                    :styles => { html: {:format => :html} }
+                    :processors => -> (a) { if a.notebook?
+                                              [:notebook_processor]
+                                            else
+                                              []
+                                            end },  
+                    :styles => -> (a) { if a.instance.notebook?
+                                          { html: {:format => :html} }
+                                        else 
+                                          {}
+                                        end }
+                                                          
+                    { html: {:format => :html} }
 
   ATTACH_RAW = "Raw"
   ATTACH_NOTEBOOK = "Notebook"
@@ -15,7 +25,8 @@ class Attachment < ActiveRecord::Base
   belongs_to :notebook, -> { where("attachments.container_type = 'Notebook'") }, foreign_key: 'container_id' 
   belongs_to :mda_template, -> { where("attachments.container_type = 'MultiDisciplinaryAnalysis'") }, foreign_key: 'container_id' 
 
-  after_initialize :ensure_category_setting, on: :create 
+  after_initialize :ensure_category_setting, on: :create
+  before_post_process :ensure_category_setting
     
   validates_attachment_presence  :data
   validates_attachment_size      :data, :less_than => 100.megabytes
@@ -26,6 +37,10 @@ class Attachment < ActiveRecord::Base
 
   def exists?
     data.exists?
+  end
+  
+  def notebook?
+    self.category == ATTACH_NOTEBOOK
   end
   
   def path
