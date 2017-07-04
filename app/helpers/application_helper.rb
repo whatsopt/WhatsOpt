@@ -21,4 +21,21 @@ module ApplicationHelper
     link_to name, '#' , class: "add-fields", "data-association": "#{association}", "data-content": "#{fields}"
   end
 
+  def version_major  
+    File.read(File.expand_path("VERSION", Rails.root)) =~ /(\d+)\.(\d+)\.(\d+)/
+    $1
+  end
+  def version_minor 
+    File.read(File.expand_path("VERSION", Rails.root)) =~ /(\d+)\.(\d+)\.(\d+)/
+    $2
+  end
+  def version_patch   
+    File.read(File.expand_path("VERSION", Rails.root)) =~ /(\d+)\.(\d+)\.(\d+)/
+    $3    
+  end
+  def version_release 
+    File.read(File.expand_path("VERSION", Rails.root)) =~ /(\d+)\.(\d+)\.(\d+)\-(\d+)/
+    $4
+  end
+  
 end
