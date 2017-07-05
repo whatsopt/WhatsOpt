@@ -23,14 +23,21 @@
   content: "Browse";
 }
 
+html {
+	height:100%;
+}
+
 body {
   padding-top: 50px;
   padding-bottom: 20px;
+  height:100%;
 }
 
 .main-container {
   padding-top: 20px;
   padding-bottom: 20px;
+  min-height:100%;
+  position:relative;
 }
 
 /* flash messages */
@@ -65,3 +72,8 @@ div.field_with_errors {
     color: #468847;
     text-align: left;
  }
+
+.footer {
+		text-align: right;
+		padding-right: 5px;
+}

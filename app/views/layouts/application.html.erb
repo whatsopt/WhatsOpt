@@ -41,10 +41,25 @@
     <div class="container-fluid main-container">
       <%= render 'layouts/messages' %>
       <%= yield %>
+      
+      
     </div> 
 
     <div>
       <%= yield :document_ready %>
     </div>  
+    
+    <footer class="footer">
+    	<small>
+	      WhatsOpt, version:
+	      <% if user_signed_in? %>
+	        <%= link_to_unless_current version, changelog_path =%>, 
+		      <%= mail_to "remi.lafage@onera.fr", "contact", :encode => "hex"  %>
+	      <% else %>
+	        <%= version %>
+	      <% end %>
+      </small>
+    </div>
+
 </body>
 </html>

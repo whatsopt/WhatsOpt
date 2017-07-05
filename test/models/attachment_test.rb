@@ -13,8 +13,9 @@ class AttachmentTest < ActiveSupport::TestCase
   end
 
   test "should process notebook as html file" do
-    attach = Attachment.new
-    attach.update_attributes(data: sample_file("notebook_sample.ipynb"))
+    attach = Attachment.new(data: sample_file("notebook_sample.ipynb"))
+    attach.save
+    assert attach.category, Attachment::ATTACH_NOTEBOOK
     path = attach.data.path(:original)
     assert File.exist?(path)
     path = attach.data.path(:html)
@@ -28,8 +29,8 @@ class AttachmentTest < ActiveSupport::TestCase
   end
   
   test "should generate fake html if bad notebook html conversion" do
-    attach = Attachment.new
-    attach.update_attributes(data: sample_file("fake_notebook.ipynb"))
+    attach = Attachment.new(data: sample_file("fake_notebook.ipynb"))
+    attach.save
     expected = "<p><strong>Oops, can not convert notebook to html!</strong></p>"
     path = attach.data.path(:html)
     assert File.exist?(path)
