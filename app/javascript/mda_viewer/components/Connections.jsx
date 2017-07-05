@@ -22,7 +22,7 @@ class Connection extends React.Component {
   }
   
   _findInfos(conn) { 
-    console.log(JSON.stringify(conn)); 
+    //console.log(JSON.stringify(conn)); 
     let vfr = this._findVariableInfo(conn.fr, conn.varname, "out");
     let vto = this._findVariableInfo(conn.to, conn.varname, "in");
     let desc = vfr.desc || vto.desc
