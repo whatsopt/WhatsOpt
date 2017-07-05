@@ -84,8 +84,6 @@ class MultiDisciplinaryAnalysis < ApplicationRecord
     end      
 
     def _create_from_attachment
-      p attachment.created_at
-      p attachment
       attachment.save
       if attachment.exists?
         emi = WhatsOpt::ExcelMdaImporter.new(self.attachment.path)
