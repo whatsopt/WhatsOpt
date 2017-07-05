@@ -21,8 +21,12 @@ test:
   database: db/test.sqlite3
 
 staging:
-  <<: *default
-  database: db/staging.sqlite3
+  adapter:  mysql2
+  database: whatsopt
+  encoding: utf8
+  username: whatsopt
+  password: WhatsOpt2017!
+  pool: 5
   
 production:
   <<: *default

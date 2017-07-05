@@ -125,6 +125,7 @@ GEM
     mini_portile2 (2.1.0)
     minitest (5.10.2)
     multi_json (1.12.1)
+    mysql2 (0.4.7)
     net-ldap (0.16.0)
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
@@ -234,6 +235,7 @@ DEPENDENCIES
   highline
   jbuilder (~> 2.0)
   jquery-rails
+  mysql2
   paperclip
   pundit
   rails (~> 5.1.1)
