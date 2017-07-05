@@ -1,0 +1,3 @@
+[submodule "app/javascript/XDSMjs"]
+	path = app/javascript/XDSMjs
+	url = https://github.com/OneraHub/XDSMjs.git
