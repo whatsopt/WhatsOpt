@@ -4,6 +4,8 @@ variables:
   GIT_SUBMODULE_STRATEGY: recursive
 
 before_script:
+  - git submodule sync --recursive
+  - git submodule update --init --recursive
   - apt-get update -qq && apt-get install -y -qq build-essential sqlite3 libsqlite3-dev python2.7 python-pip python-dev ipython ipython-notebook
   - curl -sL https://deb.nodesource.com/setup_6.x | bash -
   - apt-get install -y nodejs
