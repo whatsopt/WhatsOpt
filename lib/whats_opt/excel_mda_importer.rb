@@ -95,7 +95,8 @@ module WhatsOpt
       unless @variables
         @variables = {}
         @workdata.each do |row|
-          dim = (row[3].value != 'scalaire') ? 10 : 1
+          name = row[12] && row[12].value
+          shape = (row[3].value != 'scalaire') ? '10' : '1'
           type = (row[4].value =~ /integer/) ? 'Integer' : 'Float'
           units = case row[5].value
                   when '(-)'
@@ -103,9 +104,10 @@ module WhatsOpt
                   when "degré"
                     "deg"
                   else
-                    row[5].value
+                    row[5] && row[5].value
                   end
-          @variables[row[12].value] = {name: row[12].value, dim: dim, type: type, units: units}
+          desc = row[0] && row[0].value
+          @variables[name] = {name: name, shape: shape, type: type, units: units, desc: desc}
         end
       end
       return @variables
