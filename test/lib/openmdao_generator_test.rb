@@ -3,7 +3,7 @@ require 'whats_opt/openmdao_generator'
 require 'whats_opt/openmdao_mapping'
 require 'tmpdir'
 
-class FakeVar < Struct.new(:name, :type, :dim, :desc)
+class FakeVar < Struct.new(:name, :type, :shape, :desc)
   include WhatsOpt::OpenmdaoVariable  
 end
 
@@ -24,11 +24,11 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     @mda = 
       FakeMda.new('Cicav', [
         FakeDiscipline.new('Geometry',
-                           [FakeVar.new('x1', FakeVar::FLOAT_T, 1), FakeVar.new('y2', FakeVar::FLOAT_T, 1), FakeVar.new('z', FakeVar::FLOAT_T, 1)],
-                           [FakeVar.new('x2', FakeVar::FLOAT_T, 1), FakeVar.new('y1', FakeVar::FLOAT_T, 1)]),
+                           [FakeVar.new('x1', FakeVar::FLOAT_T, '1'), FakeVar.new('y2', FakeVar::FLOAT_T, '1'), FakeVar.new('z', FakeVar::FLOAT_T, '1')],
+                           [FakeVar.new('x2', FakeVar::FLOAT_T, '1'), FakeVar.new('y1', FakeVar::FLOAT_T, '1')]),
         FakeDiscipline.new('Aerodynamics',
-                           [FakeVar.new('x3', FakeVar::FLOAT_T, 1), FakeVar.new('y1', FakeVar::FLOAT_T, 1), FakeVar.new('z', FakeVar::FLOAT_T, 1)],
-                           [FakeVar.new('y3', FakeVar::FLOAT_T, 1), FakeVar.new('y2', FakeVar::FLOAT_T, 1)])
+                           [FakeVar.new('x3', FakeVar::FLOAT_T, '1'), FakeVar.new('y1', FakeVar::FLOAT_T, '1'), FakeVar.new('z', FakeVar::FLOAT_T, '1')],
+                           [FakeVar.new('y3', FakeVar::FLOAT_T, '1'), FakeVar.new('y2', FakeVar::FLOAT_T, '1')])
                            ])
     @ogen = WhatsOpt::OpenmdaoGenerator.new(@mda)
   end

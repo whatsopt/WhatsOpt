@@ -10,17 +10,21 @@ class Connection extends React.Component {
   render() {
     let infos = this._findInfos(this.state.conn); 
       
+    let units = infos.frUnits;
+    if (infos.frUnits != infos.toUnits) {
+      units += `-> {$infos.toUnits}`;
+    }
+    
     return (
       <tr>
         <td>{infos.frName}</td>
-        <td>{infos.frUnits}</td>
-        <td title={infos.desc} >{infos.vName}</td>
-        <td>{infos.toUnits}</td>
         <td>{infos.toName}</td>
+        <td title={infos.desc} >{infos.vName}</td>
+        <td>{units}</td>
       </tr>
     );
   }
-  
+   
   _findInfos(conn) { 
     //console.log(JSON.stringify(conn)); 
     let vfr = this._findVariableInfo(conn.fr, conn.varname, "out");
@@ -37,12 +41,13 @@ class Connection extends React.Component {
   
   _findVariableInfo(disc, vname, io_mode) {
     let vars = this.state.vars;
-    let vinfo = {units: '', desc: ''}
+    let vinfo = {units: '', desc: '', type: '', shape: ''};
     if (disc !== '_U_') {
       let vinfos = vars[disc][io_mode].filter((v) => { 
         return v.name === vname; 
       });
       if (vinfos.length === 1) {
+        console.log(vinfos[0]);
         vinfo = vinfos[0];
       } else {
         throw Error(`Expected one variable ${vname} found ${vinfos.length} in ${JSON.stringify(vinfos)}`);        
@@ -98,10 +103,11 @@ class Connections extends React.Component {
         <thead>
           <tr>
             <th>From</th>
-            <th>Units</th>
+            <th>To</th>
             <th>Variable</th>
             <th>Units</th>
-            <th>To</th>
+            <th>Type</th>
+            <th>Shape</th>
           </tr>
         </thead>
 

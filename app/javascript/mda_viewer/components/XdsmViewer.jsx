@@ -17,7 +17,15 @@ class XdsmViewer extends React.Component {
     .style("opacity", 0);
 
     var graph = new Graph(this.state);
-    var xdsm = new Xdsm(graph, 'root', tooltip);
+    
+    let config = {
+        labelizer: {
+          ellipsis: 5,
+          subSupScript: false,
+          showLinkNbOnly: true,
+        },
+      };
+    var xdsm = new Xdsm(graph, 'root', tooltip, config);
     xdsm.draw();
   }
 

@@ -3,41 +3,41 @@ varx_geo_in:
   discipline: geometry
   io_mode: in 
   type: Float
-  dim: 1
+  shape: 1
 
 vary_geo_out:
   name: y
   discipline: geometry
   io_mode: out
   type: Float
-  dim: 1
+  shape: 1
   
 varz_geo_in:
   name: z
   discipline: geometry
   io_mode: in
   type: Float
-  dim: 1
+  shape: 1
   
 varz_geo_out:
   name: z
   discipline: geometry
   io_mode: out
   type: Float
-  dim: 1
+  shape: 1
   
 varx_aero_out:
   name: x
   discipline: aerodynamics
   io_mode: out
   type: Float
-  dim: 1
+  shape: 1
     
 vary_aero_in:
   name: y
   discipline: aerodynamics
   io_mode: in
   type: Float
-  dim: 1
+  shape: 1
   
 

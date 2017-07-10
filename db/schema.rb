@@ -110,7 +110,7 @@ ActiveRecord::Schema.define(version: 12) do
     t.integer "discipline_id"
     t.string "io_mode"
     t.string "type"
-    t.integer "dim"
+    t.string "shape"
     t.string "units"
     t.string "desc"
     t.datetime "created_at", null: false

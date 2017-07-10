@@ -20,26 +20,26 @@ class ExcelMdaImporterTest < ActiveSupport::TestCase
   end
 
   test "should get variables attributes" do
-    expected = {"__User__"=>[{:name=>"eigen_values_table", :dim=>10, :type => 'Float', :units => '', :io_mode=>"in"}], 
-      "Geometry"=>[{:name=>"wing_span", :dim=>1, :type => 'Float', :units=>"m", :io_mode=>"in"}, 
-        {:name=>"control_surfaces_number", :dim=>1, :type => 'Integer', :units => '', :io_mode=>"in"},
-        {:name=>"cockpit_length", :dim=>1, :type => 'Float', :units=>"m", :io_mode=>"out"}, 
-        {:name=>"control_surfaces_number", :dim=>1, :type => 'Integer', :units => '', :io_mode=>"out"}, 
-        {:name=>"airfoil_extrados_p0_table", :dim=>10, :type => 'Float', :units => '', :io_mode=>"in"}], 
-      "Aerodynamics"=>[{:name=>"wing_reference_surface", :dim=>1, :type => 'Float', :units=>"m2", :io_mode=>"out"}, 
-        {:name=>"wing_airfoils_number_of_point", :dim=>1, :type => 'Integer', :units => '', :io_mode=>"out"}, 
-        {:name=>"airfoil_extrados_p0_table", :dim=>10, :type => 'Float', :units => '', :io_mode=>"out"}, 
-        {:name=>"cockpit_length", :dim=>1, :type => 'Float', :units=>"m", :io_mode=>"in"}, 
-        {:name=>"control_surfaces_number", :dim=>1, :type => 'Integer', :units => '', :io_mode=>"in"},  
-        {:name=>"handling_qualities_inputs_table", :dim=>10, :type => 'Float', :units => '', :io_mode=>"in"}],
-      "Control"=>[{:name=>"wing_reference_surface", :dim=>1, :type => 'Float', :units=>"m2", :io_mode=>"in"}, 
-        {:name=>"wing_airfoils_number_of_point", :dim=>1, :type => 'Integer', :units => '', :io_mode=>"in"}, 
-        {:name=>"airfoil_extrados_p0_table", :dim=>10, :type => 'Float', :units => '', :io_mode=>"in"}, 
-        {:name=>"cockpit_length", :dim=>1, :type => 'Float', :units =>"m", :io_mode=>"in"}, 
-        {:name=>"control_surfaces_number", :dim=>1, :type => 'Integer', :units => '', :io_mode=>"in"}, 
-        {:name=>"handling_qualities_inputs_table", :dim=>10, :type => 'Float', :units => '', :io_mode=>"in"}, 
-        {:name=>"handling_qualities_inputs_table" , :dim=>10, :type => 'Float', :units => '', :io_mode=>"out"}, 
-        {:name=>"eigen_values_table", :dim=>10, :type => 'Float', :units => '', :io_mode=>"out"}]}
+    expected = {"__User__"=>[{:name=>"eigen_values_table", :shape=>'10', :type => 'Float', :units => '', :io_mode=>"in"}], 
+      "Geometry"=>[{:name=>"wing_span", :shape=>'1', :type => 'Float', :units=>"m", :io_mode=>"in"}, 
+        {:name=>"control_surfaces_number", :shape=>'1', :type => 'Integer', :units => '', :io_mode=>"in"},
+        {:name=>"cockpit_length", :shape=>'1', :type => 'Float', :units=>"m", :io_mode=>"out"}, 
+        {:name=>"control_surfaces_number", :shape=>'1', :type => 'Integer', :units => '', :io_mode=>"out"}, 
+        {:name=>"airfoil_extrados_p0_table", :shape=>'10', :type => 'Float', :units => '', :io_mode=>"in"}], 
+      "Aerodynamics"=>[{:name=>"wing_reference_surface", :shape=>'1', :type => 'Float', :units=>"m2", :io_mode=>"out"}, 
+        {:name=>"wing_airfoils_number_of_point", :shape=>'1', :type => 'Integer', :units => '', :io_mode=>"out"}, 
+        {:name=>"airfoil_extrados_p0_table", :shape=>'10', :type => 'Float', :units => '', :io_mode=>"out"}, 
+        {:name=>"cockpit_length", :shape=>'1', :type => 'Float', :units=>"m", :io_mode=>"in"}, 
+        {:name=>"control_surfaces_number", :shape=>'1', :type => 'Integer', :units => '', :io_mode=>"in"},  
+        {:name=>"handling_qualities_inputs_table", :shape=>'10', :type => 'Float', :units => '', :io_mode=>"in"}],
+      "Control"=>[{:name=>"wing_reference_surface", :shape=>'1', :type => 'Float', :units=>"m2", :io_mode=>"in"}, 
+        {:name=>"wing_airfoils_number_of_point", :shape=>'1', :type => 'Integer', :units => '', :io_mode=>"in"}, 
+        {:name=>"airfoil_extrados_p0_table", :shape=>'10', :type => 'Float', :units => '', :io_mode=>"in"}, 
+        {:name=>"cockpit_length", :shape=>'1', :type => 'Float', :units =>"m", :io_mode=>"in"}, 
+        {:name=>"control_surfaces_number", :shape=>'1', :type => 'Integer', :units => '', :io_mode=>"in"}, 
+        {:name=>"handling_qualities_inputs_table", :shape=>'10', :type => 'Float', :units => '', :io_mode=>"in"}, 
+        {:name=>"handling_qualities_inputs_table" , :shape=>'10', :type => 'Float', :units => '', :io_mode=>"out"}, 
+        {:name=>"eigen_values_table", :shape=>'10', :type => 'Float', :units => '', :io_mode=>"out"}]}
       actual = @emi.get_variables_attributes
       expected.keys.each do |k, v| 
         assert actual.key?(k)
@@ -60,14 +60,14 @@ class ExcelMdaImporterTest < ActiveSupport::TestCase
   end
 
   test "should import variables" do
-    assert_equal({'handling_qualities_inputs_table'=> {name: 'handling_qualities_inputs_table', dim: 10, type: 'Float', units: ''}, 
-                  'control_surfaces_number'=> {name: 'control_surfaces_number', dim: 1, type: 'Integer', units: ''}, 
-                  'eigen_values_table'=> {name: 'eigen_values_table', dim: 10, type: 'Float', units: ''},
-                  'wing_reference_surface'=> {name: 'wing_reference_surface', dim: 1, type: 'Float', units: 'm2'},
-                  'wing_span'=> {name: 'wing_span', dim: 1, type: 'Float', units: 'm'},
-                  'cockpit_length'=> {name: 'cockpit_length', dim: 1, type: 'Float', units: 'm'},
-                  'wing_airfoils_number_of_point'=> {name: 'wing_airfoils_number_of_point', dim: 1, type: 'Integer', units: ''},
-                  'airfoil_extrados_p0_table'=> {name: 'airfoil_extrados_p0_table', dim: 10, type: 'Float', units: ''}
+    assert_equal({'handling_qualities_inputs_table'=> {name: 'handling_qualities_inputs_table', shape: 10, type: 'Float', units: ''}, 
+                  'control_surfaces_number'=> {name: 'control_surfaces_number', shape: 1, type: 'Integer', units: ''}, 
+                  'eigen_values_table'=> {name: 'eigen_values_table', shape: 10, type: 'Float', units: ''},
+                  'wing_reference_surface'=> {name: 'wing_reference_surface', shape: 1, type: 'Float', units: 'm2'},
+                  'wing_span'=> {name: 'wing_span', shape: 1, type: 'Float', units: 'm'},
+                  'cockpit_length'=> {name: 'cockpit_length', shape: 1, type: 'Float', units: 'm'},
+                  'wing_airfoils_number_of_point'=> {name: 'wing_airfoils_number_of_point', shape: 1, type: 'Integer', units: ''},
+                  'airfoil_extrados_p0_table'=> {name: 'airfoil_extrados_p0_table', shape: 10, type: 'Float', units: ''}
                   }, 
                   @emi._import_variables_data)
   end
