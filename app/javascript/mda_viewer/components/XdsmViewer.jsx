@@ -1,7 +1,7 @@
 import * as d3 from 'd3';
 import React from 'react';
-import Graph from 'xdsmjs/graph';
-import Xdsm from 'xdsmjs/xdsm';
+import Graph from 'XDSMjs/src/graph';
+import Xdsm from 'XDSMjs/src/xdsm';
 
 class XdsmViewer extends React.Component {
   constructor(props) {
