@@ -22,9 +22,10 @@ module WhatsOpt
   end
       
   module OpenmdaoVariable
-    FLOAT_T = :Float
-    INTEGER_T = :Integer
-    
+
+    FLOAT_T   = "Float"
+    INTEGER_T = "Integer"
+        
     IN = :in  
     OUT = :out  
     

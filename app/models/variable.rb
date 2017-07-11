@@ -1,12 +1,15 @@
 require 'whats_opt/openmdao_mapping'
 
-class BadShapeAttributeError < StandardException
+class BadShapeAttributeError < StandardError
 end
 
 class Variable < ApplicationRecord
-  
+
   include WhatsOpt::OpenmdaoVariable
-  
+
+  DEFAULT_SHAPE = '1' # either 'n', '(n,)' or '(n, m)'
+  DEFAULT_TYPE = FLOAT_T
+    
   self.inheritance_column = :disable_inheritance
   belongs_to :discipline
 
@@ -19,13 +22,6 @@ class Variable < ApplicationRecord
     
   after_initialize :set_defaults, unless: :persisted?
 
-  private
-  
-  def set_defaults
-    self.shape  ||= '1'
-    self.type ||= WhatsOpt::OpenmdaoVariable::FLOAT_T
-  end
-  
   def dim
     case self.shape
     when /^(\d+)$/
@@ -33,12 +29,19 @@ class Variable < ApplicationRecord
     when /^\((\d+),\)$/
       $1.to_i
     when /^\((\d+),(\d+)\)$/
-      $1.to_i * $1.to_i
+      $1.to_i * $2.to_i
     else
-      raise BadShapeAttributeException.new
+      raise BadShapeAttributeError("should be either n, (n,) or (n,m) but found #{self.shape}")
     end
   end
   
+  private
+  
+  def set_defaults
+    self.shape = DEFAULT_SHAPE unless self.shape
+    self.type  = DEFAULT_TYPE unless self.type
+  end
+
   def shape_is_well_formed
     unless shape =~ /^(\d+)$/ || shape =~ /^\((\d+),\)$/ || shape =~ /^\((\d+),(\d+)\)$/
       errors.add(:shape, "must be an int or of the form (n, ) or (n, m)")
