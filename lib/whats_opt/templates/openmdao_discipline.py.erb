@@ -1,3 +1,4 @@
+import numpy as np
 from openmdao.api import Component
 
 class <%= @discipline.name.camelcase %>(Component):
@@ -6,9 +7,9 @@ class <%= @discipline.name.camelcase %>(Component):
     def __init__(Component):
         super(<%= @discipline.py_classname %>, self).__init__()
 		<% @discipline.input_variables.each do |var| %>
-        self.add_param('<%= var.py_varname %>', val=<%= var.default_py_value %><%= var.desc.blank? ? "" : ", #{var.desc}" %>)<% end %>
+        self.add_param('<%= var.py_varname %>', val=<%= var.default_py_value %>, desc='<%= var.desc.blank? ? "" : " #{var.desc}" %>')<% end %>
 		<% @discipline.output_variables.each do |var| %>
-        self.add_output('<%= var.py_varname %>', val=<%= var.default_py_value %><%= var.desc.blank? ? "" : ", #{var.desc}" %>)<% end %>
+        self.add_output('<%= var.py_varname %>', val=<%= var.default_py_value %>, desc='<%= var.desc.blank? ? "" : "#{var.desc}" %>')<% end %>
 		
     def solve_nonlinear(self, params, unknowns, resids):
         """ <%= @discipline.py_classname %> computation. """
