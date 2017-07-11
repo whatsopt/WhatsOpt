@@ -20,7 +20,7 @@ class VariableTest < ActiveSupport::TestCase
     var = Variable.new(name: 'test', io_mode: Variable::IN, shape:'(12,)')
     assert var.valid?
     assert_equal 12, var.dim
-    var = Variable.new(name: 'test', io_mode: Variable::IN, shape:'(5,6)')
+    var = Variable.new(name: 'test', io_mode: Variable::IN, shape:'(5, 6)')
     assert var.valid?
     assert_equal 5*6, var.dim
   end
@@ -31,7 +31,7 @@ class VariableTest < ActiveSupport::TestCase
     var = variables(:var_scalar_int)
     assert_equal '0', var.default_py_value 
     var = variables(:var_array_float)
-    assert_equal 'np.zeros((3,))', var.default_py_value 
+    assert_equal 'np.zeros((3,))', var.default_py_value  
     var = variables(:var_nparray_float)
     assert_equal 'np.zeros((3, 5))', var.default_py_value 
   end
