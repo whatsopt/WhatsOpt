@@ -97,7 +97,7 @@ module WhatsOpt
         @workdata.each do |row|
           name = row[12] && row[12].value
           shape = (row[3].value != 'scalaire') ? '10' : '1'
-          type = (row[4].value =~ /integer/) ? 'Integer' : 'Float'
+          type = (row[4].value =~ /integer/) ? Variable::INTEGER_T : Variable::FLOAT_T
           units = case row[5].value
                   when '(-)'
                     ""   

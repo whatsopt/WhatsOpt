@@ -5,6 +5,9 @@ require 'tmpdir'
 
 class FakeVar < Struct.new(:name, :type, :shape, :desc)
   include WhatsOpt::OpenmdaoVariable  
+  def dim
+    return 1
+  end
 end
 
 class FakeDiscipline < Struct.new(:name, :input_variables, :output_variables)
