@@ -106,7 +106,7 @@ module WhatsOpt
                   else
                     row[5] && row[5].value
                   end
-          desc = row[0] && row[0].value
+          desc = row[0] && row[0].value.to_s
           @variables[name] = {name: name, shape: shape, type: type, units: units, desc: desc}
         end
       end
