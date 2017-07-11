@@ -58,9 +58,9 @@ module WhatsOpt
         end
       else
         if self.type == FLOAT_T
-          "np.zeros(#{self.dim})"
+          "np.zeros(#{self.shape})"
         else 
-          "np.zeros(#{self.dim}, dtype=np.int)"
+          "np.zeros(#{self.shape}, dtype=np.int)"
         end
       end
     end

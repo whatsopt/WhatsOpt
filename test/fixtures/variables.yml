@@ -39,5 +39,40 @@ vary_aero_in:
   io_mode: in
   type: Float
   shape: 1
+
+var_scalar_float:
+  name: y
+  discipline: dummy
+  io_mode: in
+  type: Float
+  shape: 1  
   
+var_array_float:
+  name: y
+  discipline: dummy
+  io_mode: in
+  type: Float
+  shape: (3,)  
+
+var_nparray_float:
+  name: y
+  discipline: dummy
+  io_mode: in
+  type: Float
+  shape: (3, 5)  
+
+var_scalar_int:
+  name: y
+  discipline: dummy
+  io_mode: in
+  type: Integer
+  shape: 1  
+  
+var_scalar_int:
+  name: y
+  discipline: dummy
+  io_mode: in
+  type: Integer
+  shape: 1  
+
 

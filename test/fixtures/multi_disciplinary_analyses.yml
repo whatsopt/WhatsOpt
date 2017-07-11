@@ -3,3 +3,6 @@ cicav:
 
 fast:
   name: FAST
+  
+dummy:
+  name: DUMMY

@@ -31,7 +31,7 @@ class Variable < ApplicationRecord
     when /^\((\d+),(\d+)\)$/
       $1.to_i * $2.to_i
     else
-      raise BadShapeAttributeError("should be either n, (n,) or (n,m) but found #{self.shape}")
+      raise BadShapeAttributeError.new("should be either n, (n,) or (n,m) but found #{self.shape}")
     end
   end
   

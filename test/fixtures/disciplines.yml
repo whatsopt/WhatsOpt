@@ -5,3 +5,7 @@ geometry:
 aerodynamics:
   name: Aerodynamics
   multi_disciplinary_analysis: cicav
+
+dummy:
+  name: Aerodynamics
+  multi_disciplinary_analysis: dummy
