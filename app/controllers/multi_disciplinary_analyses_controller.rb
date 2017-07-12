@@ -29,6 +29,7 @@ class MultiDisciplinaryAnalysesController < ApplicationController
       if @mda.save
         redirect_to @mda, notice: 'MDA was successfully created.'
       else
+        @import = params[:import]
         render :new
       end
     end

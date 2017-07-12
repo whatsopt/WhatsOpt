@@ -1,11 +1,15 @@
 <%= form_for(multi_disciplinary_analysis, :html => { :multipart => true, :role => "form" }) do |f| %>
   <% if @mda.errors.any? %>
     <% @mda.errors.full_messages.each do |message| %>
-      <li><%= message %></li>
+      <div class="alert <%= bootstrap_class_for :error %>" role="alert">
+        <a href="#" data-dismiss="alert" class="close">×</a>
+        <%= message %>
+      </div>
     <% end %>
   <% end %>
 <p>
   <div class="form-group">
+  <%= hidden_field_tag :import, @import %> 
   <% if @import %>
   	<%= f.label 'Excel xlsm file' %>
     <%= render "attachments/attachment_form", :f => f %>  
