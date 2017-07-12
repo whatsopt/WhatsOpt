@@ -1,3 +1,6 @@
+class AttachmentNotFound < StandardError
+end
+
 class Attachment < ActiveRecord::Base
 
   has_attached_file :data,
@@ -36,7 +39,7 @@ class Attachment < ActiveRecord::Base
   scope :mda_template, -> { where(category: ATTACH_MDA_TEMPLATE) }
 
   def exists?
-    data.exists?
+    Pathname.new(self.path).exist?
   end
   
   def notebook?
@@ -44,7 +47,13 @@ class Attachment < ActiveRecord::Base
   end
   
   def path
-    data.path
+    if data.exists?
+      data.path
+    elsif Pathname.new(data.queued_for_write[:original].path).exist?
+      data.queued_for_write[:original].path
+    else
+      raise AttachmentNotFound
+    end
   end
       
   private
