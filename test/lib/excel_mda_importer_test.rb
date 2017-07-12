@@ -20,26 +20,26 @@ class ExcelMdaImporterTest < ActiveSupport::TestCase
   end
 
   test "should get variables attributes" do
-    expected = {"__User__"=>[{:name=>"eigen_values_table", :shape=>'10', :type => 'Float', :units => '', :io_mode=>"in"}], 
+    expected = {"__User__"=>[{:name=>"eigen_values_table", :shape=>'(10,)', :type => 'Float', :units => '', :io_mode=>"in"}], 
       "Geometry"=>[{:name=>"wing_span", :shape=>'1', :type => 'Float', :units=>"m", :io_mode=>"in"}, 
         {:name=>"control_surfaces_number", :shape=>'1', :type => 'Integer', :units => '', :io_mode=>"in"},
         {:name=>"cockpit_length", :shape=>'1', :type => 'Float', :units=>"m", :io_mode=>"out"}, 
         {:name=>"control_surfaces_number", :shape=>'1', :type => 'Integer', :units => '', :io_mode=>"out"}, 
-        {:name=>"airfoil_extrados_p0_table", :shape=>'10', :type => 'Float', :units => '', :io_mode=>"in"}], 
+        {:name=>"airfoil_extrados_p0_table", :shape=>'(10,)', :type => 'Float', :units => '', :io_mode=>"in"}], 
       "Aerodynamics"=>[{:name=>"wing_reference_surface", :shape=>'1', :type => 'Float', :units=>"m2", :io_mode=>"out"}, 
         {:name=>"wing_airfoils_number_of_point", :shape=>'1', :type => 'Integer', :units => '', :io_mode=>"out"}, 
-        {:name=>"airfoil_extrados_p0_table", :shape=>'10', :type => 'Float', :units => '', :io_mode=>"out"}, 
+        {:name=>"airfoil_extrados_p0_table", :shape=>'(10,)', :type => 'Float', :units => '', :io_mode=>"out"}, 
         {:name=>"cockpit_length", :shape=>'1', :type => 'Float', :units=>"m", :io_mode=>"in"}, 
         {:name=>"control_surfaces_number", :shape=>'1', :type => 'Integer', :units => '', :io_mode=>"in"},  
-        {:name=>"handling_qualities_inputs_table", :shape=>'10', :type => 'Float', :units => '', :io_mode=>"in"}],
+        {:name=>"handling_qualities_inputs_table", :shape=>'(10,)', :type => 'Float', :units => '', :io_mode=>"in"}],
       "Control"=>[{:name=>"wing_reference_surface", :shape=>'1', :type => 'Float', :units=>"m2", :io_mode=>"in"}, 
         {:name=>"wing_airfoils_number_of_point", :shape=>'1', :type => 'Integer', :units => '', :io_mode=>"in"}, 
-        {:name=>"airfoil_extrados_p0_table", :shape=>'10', :type => 'Float', :units => '', :io_mode=>"in"}, 
+        {:name=>"airfoil_extrados_p0_table", :shape=>'(10,)', :type => 'Float', :units => '', :io_mode=>"in"}, 
         {:name=>"cockpit_length", :shape=>'1', :type => 'Float', :units =>"m", :io_mode=>"in"}, 
         {:name=>"control_surfaces_number", :shape=>'1', :type => 'Integer', :units => '', :io_mode=>"in"}, 
-        {:name=>"handling_qualities_inputs_table", :shape=>'10', :type => 'Float', :units => '', :io_mode=>"in"}, 
-        {:name=>"handling_qualities_inputs_table" , :shape=>'10', :type => 'Float', :units => '', :io_mode=>"out"}, 
-        {:name=>"eigen_values_table", :shape=>'10', :type => 'Float', :units => '', :io_mode=>"out"}]}
+        {:name=>"handling_qualities_inputs_table", :shape=>'(10,)', :type => 'Float', :units => '', :io_mode=>"in"}, 
+        {:name=>"handling_qualities_inputs_table" , :shape=>'(10,)', :type => 'Float', :units => '', :io_mode=>"out"}, 
+        {:name=>"eigen_values_table", :shape=>'(10,)', :type => 'Float', :units => '', :io_mode=>"out"}]}
     actual = @emi.get_variables_attributes
     expected.each do |k, vars| 
       assert actual.key?(k)
@@ -73,11 +73,11 @@ class ExcelMdaImporterTest < ActiveSupport::TestCase
   end
 
   test "should import variables" do
-    assert_equal({'handling_qualities_inputs_table'=> {name: 'handling_qualities_inputs_table', shape: '10', type: 'Float', units: '', 
+    assert_equal({'handling_qualities_inputs_table'=> {name: 'handling_qualities_inputs_table', shape: '(10,)', type: 'Float', units: '', 
                   desc: "Points de vol pour l'analyse des QdV" }, 
                   'control_surfaces_number'=> {name: 'control_surfaces_number', shape: '1', type: 'Integer', units: '', 
                   desc: "Nombre de gouvernes"}, 
-                  'eigen_values_table'=> {name: 'eigen_values_table', shape: '10', type: 'Float', units: '', 
+                  'eigen_values_table'=> {name: 'eigen_values_table', shape: '(10,)', type: 'Float', units: '', 
                   desc: "Valeurs propres des modes avion"},
                   'wing_reference_surface'=> {name: 'wing_reference_surface', shape: '1', type: 'Float', units: 'm2', 
                   desc: "Surface de référence totale du véhicule"},
@@ -87,7 +87,7 @@ class ExcelMdaImporterTest < ActiveSupport::TestCase
                   desc: "Longueur du cockpit"},
                   'wing_airfoils_number_of_point'=> {name: 'wing_airfoils_number_of_point', shape: '1', type: 'Integer', units: '', 
                   desc: "Nombre de points des tables de profil aérodynamique"},
-                  'airfoil_extrados_p0_table'=> {name: 'airfoil_extrados_p0_table', shape: '10', type: 'Float', units: '', 
+                  'airfoil_extrados_p0_table'=> {name: 'airfoil_extrados_p0_table', shape: '(10,)', type: 'Float', units: '', 
                   desc: "Profil aérodynamique au plan 0, coordonnées de l'extrados (BA vers BF)"}
                   }, 
                   @emi._import_variables_data)

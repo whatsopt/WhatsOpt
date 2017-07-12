@@ -7,7 +7,7 @@ class Variable < ApplicationRecord
 
   include WhatsOpt::OpenmdaoVariable
 
-  DEFAULT_SHAPE = '1' # either 'n', '(n,)' or '(n, m)'
+  DEFAULT_SHAPE = '1' # either 'n', '(n,), (n, m) or (n, m, p)'
   DEFAULT_TYPE = FLOAT_T
     
   self.inheritance_column = :disable_inheritance
@@ -15,7 +15,7 @@ class Variable < ApplicationRecord
 
   validates :name, :io_mode, :type, :shape, presence: true
   validates :name, uniqueness: { scope: [:discipline, :io_mode], message: "should be uniq per discipline and io mode." }
-  validate :shape_is_well_formed
+  validate  :shape_is_well_formed
       
   scope :inputs, -> { where(io_mode: IN) }
   scope :outputs, -> { where(io_mode: OUT) }
@@ -30,8 +30,10 @@ class Variable < ApplicationRecord
                 $1.to_i
               when /^\((\d+), (\d+)\)$/
                 $1.to_i * $2.to_i
+              when /^\((\d+), (\d+), (\d+)\)$/
+                $1.to_i * $2.to_i * $3.to_i
               else
-                raise BadShapeAttributeError.new("should be either n, (n,) or (n, m) but found #{self.shape}")
+                raise BadShapeAttributeError.new("should be either n, (n,), (n, m) or (n, m, p) but found #{self.shape}")
               end
   end
   

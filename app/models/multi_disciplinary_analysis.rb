@@ -27,7 +27,7 @@ class MultiDisciplinaryAnalysis < ApplicationRecord
       workflow: [],
       vars: build_var_tree
     }.to_json
-  end
+    end
 
   def build_nodes
     return disciplines.map {|d| { id: "#{d.id}", type: "analysis", name: d.name } }

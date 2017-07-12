@@ -1,6 +1,11 @@
 <h1>CHANGELOG</h1>
 
-<h3>0.1.0</h3>
+<h3>0.2.0 (?)</h3>
+<ul>
+  <li>Display variables connections in MDA view</li>
+</ul>
+
+<h3>0.1.0 (04/07/2017)</h3>
 <ul>
 	<li>Display and import Multi Disciplinary Analyses from CICAV Excel template file</li>
 	<li>Display Notebooks as static HTML</li>

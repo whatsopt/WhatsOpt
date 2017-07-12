@@ -11,7 +11,9 @@ class Mda extends React.Component {
   render() {
     return (
       <div>
+        <h2>XDSM</h2>        
         <XdsmViewer mda={this.state}/>
+        <h2>Connections</h2>
         <Connections mda={this.state}/>
       </div>
     );

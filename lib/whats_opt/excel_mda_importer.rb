@@ -29,7 +29,7 @@ module WhatsOpt
       @workdata.compact!
     end
             
-    def import 
+    def import_all 
       _import_disciplines_data
       _import_variables_data
       _import_connections_data
@@ -45,7 +45,7 @@ module WhatsOpt
     end
     
     def get_variables_attributes
-      self.import
+      import_all
       res = {}
       ([USER_DISCIPLINE]+self.disciplines).each do |d|
         res[d] = [] 
@@ -95,18 +95,36 @@ module WhatsOpt
       unless @variables
         @variables = {}
         @workdata.each do |row|
-          name = row[12] && row[12].value
-          shape = (row[3].value != 'scalaire') ? '10' : '1'
-          type = (row[4].value =~ /integer/) ? Variable::INTEGER_T : Variable::FLOAT_T
-          units = case row[5].value
+          name = row[12] && row[12].value.to_s.strip
+          shape = case row[3].value.to_s.strip
+                  when /scalaire/  # backward compatibility cicav excel
+                    '1'
+                  when /table/     # backward compatibility cicav excel
+                    '(10,)'
+                  when /^(\d+)$/ || /^\((\d+),\)$/
+                    if $1.to_i > 1 
+                      "(#{1},)"
+                    else
+                      puts "SHOULD display 1, got #{1}"
+                      "#{1}"  
+                    end
+                  when /^\((\d+),\s*(\d+)\)$/  
+                    "(#{1}, #{2})"
+                  when /\((\d+),\s*(\d+),\s*(\d+)\)/
+                    "(#{1}, #{2}, #{3})"
+                  else
+                    '0'
+                  end
+          type = (row[4].value =~ /int/) ? Variable::INTEGER_T : Variable::FLOAT_T
+          units = case row[5].value.to_s.strip
                   when '(-)'
                     ""   
                   when "degré"
                     "deg"
                   else
-                    row[5] && row[5].value
+                    row[5] && row[5].value.to_s.strip
                   end
-          desc = row[0] && row[0].value.to_s
+          desc = row[0] && row[0].value.to_s.strip
           @variables[name] = {name: name, shape: shape, type: type, units: units, desc: desc}
         end
       end
