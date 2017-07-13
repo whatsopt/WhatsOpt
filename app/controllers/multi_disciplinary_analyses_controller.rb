@@ -58,6 +58,8 @@ class MultiDisciplinaryAnalysesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def mda_params
-      params.require(:multi_disciplinary_analysis).permit(:name, :attachment_attributes => [:id, :data, :_destroy])
+      params.require(:multi_disciplinary_analysis)
+        .permit(:name, :attachment_attributes => [:id, :data, :_destroy], 
+                       :disciplines_attributes => [:id, :name, :_destroy])
     end
 end

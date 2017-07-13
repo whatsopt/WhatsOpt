@@ -56,4 +56,17 @@ class MultiDisciplinaryAnalysesControllerTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to multi_disciplinary_analyses_url
   end
+  
+  test "should destroy discipline when destroying multi_disciplinary_analysis" do
+    assert_difference('Discipline.count', -2) do
+      delete multi_disciplinary_analysis_url(@multi_disciplinary_analysis)
+    end
+  end
+  
+  test "should destroy variables when destroying multi_disciplinary_analysis" do
+    assert_difference('Variable.count', -6) do
+      delete multi_disciplinary_analysis_url(@multi_disciplinary_analysis)
+    end
+  end
+
 end

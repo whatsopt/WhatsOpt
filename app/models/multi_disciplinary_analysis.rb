@@ -5,11 +5,11 @@ class MultiDisciplinaryAnalysis < ApplicationRecord
 
   include WhatsOpt::OpenmdaoModule
   
-  has_one :attachment, :as => :container
+  has_one :attachment, :as => :container, :dependent => :destroy
   accepts_nested_attributes_for :attachment, allow_destroy: true
   validates_associated :attachment
   
-  has_many :disciplines
+  has_many :disciplines, :dependent => :destroy
   accepts_nested_attributes_for :disciplines, 
     reject_if: proc { |attr| attr['name'].blank? }, allow_destroy: true
       
