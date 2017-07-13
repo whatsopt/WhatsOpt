@@ -65,7 +65,7 @@ module WhatsOpt
             v = varattr.merge({io_mode: 'in'})
             res[dst].append(v) unless res[dst].include?(v) 
           else     
-            puts "Unknown connection: #{k}"
+            puts "Unknown connection: '#{k}'"
           end
         end 
       end
@@ -84,7 +84,7 @@ module WhatsOpt
     
     def _import_disciplines_data
       unless @disciplines
-        @disciplines = @workdata.map{|row| row && row[1].value}
+        @disciplines = @workdata.map{|row| getstr(row[1])}
         @disciplines = @disciplines.uniq.compact
         @disciplines.map!(&:camelize)
       end   
@@ -95,8 +95,8 @@ module WhatsOpt
       unless @variables
         @variables = {}
         @workdata.each do |row|
-          name = row[12] && row[12].value.to_s.strip
-          shape = case row[3].value.to_s.strip
+          name = getstr(row[12])
+          shape = case getstr(row[3])
                   when /scalaire/  # backward compatibility cicav excel
                     '1'
                   when /table/     # backward compatibility cicav excel
@@ -115,16 +115,17 @@ module WhatsOpt
                   else
                     '0'
                   end
-          type = (row[4].value =~ /int/) ? Variable::INTEGER_T : Variable::FLOAT_T
-          units = case row[5].value.to_s.strip
+          type = (getstr(row[4]) =~ /int/) ? Variable::INTEGER_T : Variable::FLOAT_T
+          units = getstr(row[5])
+          units = case units
                   when '(-)'
                     ""   
                   when "degré"
                     "deg"
                   else
-                    row[5] && row[5].value.to_s.strip
+                    units
                   end
-          desc = row[0] && row[0].value.to_s.strip
+          desc = getstr(row[0])
           @variables[name] = {name: name, shape: shape, type: type, units: units, desc: desc}
         end
       end
@@ -136,10 +137,10 @@ module WhatsOpt
       flows = @workdata.map{|row| row && row[6..11]}
       vars = @workdata.map{|row| row && row[12]}
       flows.each_with_index do |row, i|
-        var = vars[i] && vars[i].value
+        var = getstr(vars[i]) 
         row.each do |c|
-          val = c && c.value
-          if val 
+          if c && c.value
+            val = getstr(c)
             if @connections.has_key? val
               @connections[val].append(var)
             else
@@ -149,6 +150,10 @@ module WhatsOpt
         end
       end
       return @connections
+    end
+    
+    def getstr(row_element)
+      row_element && row_element.value.to_s.strip
     end
             
   end # class
