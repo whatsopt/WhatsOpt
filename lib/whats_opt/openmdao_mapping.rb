@@ -33,6 +33,12 @@ module WhatsOpt
       self.name.downcase
     end
     
+    def py_desc
+      desc = self.desc
+      desc += " (#{self.units})"
+      desc
+    end
+    
     def default_py_type
       if self.type == INTEGER_T
         "np.int"
