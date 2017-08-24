@@ -97,11 +97,11 @@ module WhatsOpt
         @workdata.each do |row|
           name = getstr(row[12])
           shape = case getstr(row[3])
-                  when /scalaire/  # backward compatibility cicav excel
+                  when /scalar/, /scalaire/ # format backward compatibility 
                     '1'
-                  when /table/     # backward compatibility cicav excel
+                  when /table/  # format compatibility cicav excel
                     '(10,)'
-                  when /^(\d+)$/ || /^\((\d+),\)$/
+                  when /^(\d+)$/, /^\((\d+),\)$/
                     if $1.to_i > 1 
                       "(#{1},)"
                     else
@@ -118,10 +118,10 @@ module WhatsOpt
           type = (getstr(row[4]) =~ /int/) ? Variable::INTEGER_T : Variable::FLOAT_T
           units = getstr(row[5])
           units = case units
+                  when /degre/, /degré/ # format compatibility cicav excel
+                    "deg"
                   when '(-)'
                     ""   
-                  when "degré"
-                    "deg"
                   else
                     units
                   end
