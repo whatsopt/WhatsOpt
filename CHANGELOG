@@ -1,5 +1,13 @@
 <h1>CHANGELOG</h1>
 
+<h3>0.2.1 (28/08/2017)</h3>
+<ul>
+  <li>Improve MDA connections import (Xn : input from user to discicpline n, 
+  Yn: output from discipline n to user, Ynm : from discipline to discipline m) </li>
+  <li>Automate deployment</li>
+  <li>Bug fixes</li>
+</ul>
+
 <h3>0.2.0 (13/07/2017)</h3>
 <ul>
   <li>Display variables connections in MDA view</li>
