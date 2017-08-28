@@ -27,6 +27,8 @@ class MultiDisciplinaryAnalysesController < ApplicationController
     else 
       @mda = MultiDisciplinaryAnalysis.create(mda_params)
       if @mda.save
+        current_user.add_role(:owner, @mda)
+        current_user.save
         redirect_to @mda, notice: 'MDA was successfully created.'
       else
         @import = params[:import]

@@ -58,13 +58,13 @@ class MultiDisciplinaryAnalysesControllerTest < ActionDispatch::IntegrationTest
   end
   
   test "should destroy discipline when destroying multi_disciplinary_analysis" do
-    assert_difference('Discipline.count', -2) do
+    assert_difference('Discipline.count', -3) do  # cicav contains 3 disciplines
       delete multi_disciplinary_analysis_url(@multi_disciplinary_analysis)
     end
   end
   
   test "should destroy variables when destroying multi_disciplinary_analysis" do
-    assert_difference('Variable.count', -6) do
+    assert_difference('Variable.count', -11) do  # cicav use 11 variables
       delete multi_disciplinary_analysis_url(@multi_disciplinary_analysis)
     end
   end

@@ -1,3 +1,7 @@
+control_cicav:
+  name: __CONTROL__
+  multi_disciplinary_analysis: cicav
+
 geometry:
   name: Geometry
   multi_disciplinary_analysis: cicav
@@ -9,3 +13,5 @@ aerodynamics:
 dummy:
   name: Aerodynamics
   multi_disciplinary_analysis: dummy
+
+ 

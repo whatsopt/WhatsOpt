@@ -1,3 +1,17 @@
+varz_design_out:
+  name: z
+  discipline: control_cicav
+  io_mode: out
+  type: Float
+  shape: 1
+  
+varz_objective_in:
+  name: x
+  discipline: control_cicav
+  io_mode: in
+  type: Float
+  shape: 1  
+  
 varx_geo_in:
   name: x
   discipline: geometry
@@ -19,6 +33,13 @@ varz_geo_in:
   type: Float
   shape: 1
   
+varz_geo_in_pending:
+  name: x_pending
+  discipline: geometry
+  io_mode: in
+  type: Float
+  shape: 1
+  
 varz_geo_out:
   name: z
   discipline: geometry
@@ -32,9 +53,23 @@ varx_aero_out:
   io_mode: out
   type: Float
   shape: 1
+  
+varx_aero_out_pending:
+  name: z_pending
+  discipline: aerodynamics
+  io_mode: out
+  type: Float
+  shape: 1
     
 vary_aero_in:
   name: y
+  discipline: aerodynamics
+  io_mode: in
+  type: Float
+  shape: 1
+
+varz_aero_in:
+  name: z
   discipline: aerodynamics
   io_mode: in
   type: Float

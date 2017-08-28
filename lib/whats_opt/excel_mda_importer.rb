@@ -2,7 +2,7 @@ module WhatsOpt
 
   class ExcelMdaImporter
     
-    USER_DISCIPLINE = '__User__'
+    CONTROL_NAME = '__CONTROL__'
     
     class ImportError < StandardError
     end
@@ -12,6 +12,7 @@ module WhatsOpt
     FIRST_LINE_NB = 15
     
     def initialize(filename)
+      @filename = filename
       begin
         @workbook = RubyXL::Parser.parse(filename)
       rescue Zip::Error => e
@@ -47,25 +48,44 @@ module WhatsOpt
     def get_variables_attributes
       import_all
       res = {}
-      ([USER_DISCIPLINE]+self.disciplines).each do |d|
+      ([CONTROL_NAME]+self.disciplines).each do |d|
         res[d] = [] 
       end
       @connections.keys.each do |k|
         connections[k].each do |varname|
           varattr = self.variables[varname]
-          if k =~ /Y(\w)(\w)/
+          if k =~ /Y(\d)x/
+            src = _to_discipline($1) 
+            dsts = _to_other_disciplines($1)
+            v = varattr.merge({io_mode: 'out'})
+            res[src].append(v) unless res[src].include?(v) 
+            dsts.each do |dst|
+              v = varattr.merge({io_mode: 'in'})
+              res[dst].append(v) unless res[dst].include?(v)
+            end  
+          elsif k =~ /[CY](\d)(\d)/
             src = _to_discipline($1) 
             dst = _to_discipline($2)
             v = varattr.merge({io_mode: 'out'})
             res[src].append(v) unless res[src].include?(v) 
             v = varattr.merge({io_mode: 'in'})
             res[dst].append(v) unless res[dst].include?(v) 
-          elsif k =~ /X(\w)/
+          elsif k =~ /Y(\d)/
+            src = _to_discipline($1)
+            dst = CONTROL_NAME
+            v = varattr.merge({io_mode: 'out'})
+            res[src].append(v) unless res[src].include?(v) 
+            v = varattr.merge({io_mode: 'in'})
+            res[dst].append(v) unless res[dst].include?(v) 
+          elsif k =~ /X(\d)/
+            src = CONTROL_NAME
             dst = _to_discipline($1)
+            v = varattr.merge({io_mode: 'out'})
+            res[src].append(v) unless res[src].include?(v) 
             v = varattr.merge({io_mode: 'in'})
             res[dst].append(v) unless res[dst].include?(v) 
           else     
-            puts "Unknown connection: '#{k}'"
+            Rails.logger.error "Unknown connection pattern '#{k}' while importing #{@filename}"
           end
         end 
       end
@@ -77,18 +97,28 @@ module WhatsOpt
       if idx =~ /\d/ && idx.to_i < self.disciplines.length
         d = self.disciplines[idx.to_i] 
       else
-        d = USER_DISCIPLINE
+        d = CONTROL_NAME
       end
-      return d
+      d
     end
     
+    def _to_other_disciplines(idx)
+      _import_disciplines_data
+      d = []
+      if idx =~ /\d/ && idx.to_i < self.disciplines.length
+        d = self.disciplines - [self.disciplines[idx.to_i]]
+      end
+      d = [CONTROL_NAME] if d.empty?
+      d
+    end
+
     def _import_disciplines_data
       unless @disciplines
         @disciplines = @workdata.map{|row| getstr(row[1])}
         @disciplines = @disciplines.uniq.compact
         @disciplines.map!(&:camelize)
       end   
-      return @disciplines
+      @disciplines
     end
     
     def _import_variables_data
