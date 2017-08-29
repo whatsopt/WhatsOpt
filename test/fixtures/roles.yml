@@ -1,5 +1,17 @@
-one: 
-  name: admin
+admin_role: 
+  name: :admin
   
-two:
-  name: manager
+user_role:
+  name: :user
+
+owner_cicav_mda_role:
+  name: :owner
+  resource: cicav (MultiDisciplinaryAnalysis)
+  
+owner_fast_mda_role:
+  name: :owner
+  resource: fast (MultiDisciplinaryAnalysis)
+  
+owner_dummy_mda_role:
+  name: :owner
+  resource: dummy (MultiDisciplinaryAnalysis)

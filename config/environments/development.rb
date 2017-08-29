@@ -68,5 +68,5 @@ Rails.application.configure do
     config.jupyter_script='jupyter'
   end  
 
-  config.x.webpacker[:dev_server_host] = 'rdri206h.onecert.fr'
+  config.x.webpacker[:dev_server_host] = 'endymion'
 end

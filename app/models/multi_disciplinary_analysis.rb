@@ -87,6 +87,10 @@ class MultiDisciplinaryAnalysis < ApplicationRecord
     res.inject({}) {|result, h| result.update(h)}
   end
   
+  def owner
+    User.with_role(:owner, self).first.login
+  end
+  
   private
   
     def _get_pending_connections(vars)

@@ -6,6 +6,7 @@
 	<thead>
 		<tr>
 		  <th>Name</th>
+		  <th>Owner</th>
 		  <th>Actions</th>
 		</tr>
 	</thead>
@@ -14,6 +15,7 @@
 	  <% @mdas.each do |mda| %>
 	    <tr>
 	      <td><%= link_to mda.name, mda %></td>
+	      <td><%= mda.owner %></td>
 	      <td>
 	      	<%= link_to 'Edit', edit_multi_disciplinary_analysis_path(mda) %> |
 	      	<%= link_to 'Delete', mda, method: :delete, data: { confirm: 'Are you sure?' } %>

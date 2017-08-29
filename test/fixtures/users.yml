@@ -1,8 +1,12 @@
-one:
+admin:
   login: admin
   email: admin@onera.fr
 
-two:
+user1:
   login: john
   email: john.doe@onera.fr
+
+user2:
+  login: bob
+  email: bob.smith@onera.fr
   
