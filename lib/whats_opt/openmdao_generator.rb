@@ -37,7 +37,7 @@ module WhatsOpt
     end
     
     def _generate_mda(gendir)
-      @mda.disciplines.each do |disc|
+      @mda.disciplines.plain.each do |disc|
         _generate_discipline(disc, gendir)
       end 
       _generate_main(gendir)
