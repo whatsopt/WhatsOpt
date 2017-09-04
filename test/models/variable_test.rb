@@ -18,11 +18,14 @@ class VariableTest < ActiveSupport::TestCase
     assert var.valid?
     assert_equal 3, var.dim
     var = Variable.new(name: 'test', io_mode: Variable::IN, shape:'(12,)')
-    assert var.valid?
+    assert var.valid? 
     assert_equal 12, var.dim
     var = Variable.new(name: 'test', io_mode: Variable::IN, shape:'(5, 6)')
     assert var.valid?
     assert_equal 5*6, var.dim
+    var = Variable.new(name: 'test', io_mode: Variable::IN, shape:'(5, 6, 7)')
+    assert var.valid?
+    assert_equal 5*6*7, var.dim
   end
 
   def test_should_have_a_valid_py_default_value_taking_into_account_type_and_shape

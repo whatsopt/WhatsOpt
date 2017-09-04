@@ -16,9 +16,9 @@ class OpenmdaoMappingTest < ActiveSupport::TestCase
     assert_equal 'PrfCicav', @module.py_classname
   end
 
-  def test_should_have_a_valid_py_varname
-    @var = FakeOpenmdaoVariable.new('VAR2tesT')
-    assert_equal 'var2test', @var.py_varname
+  def test_should_have_a_description
+    @var = FakeOpenmdaoVariable.new('VAR2tesT', :Float, 1, :in, "m", "description")
+    assert_equal 'description (m)', @var.py_desc
   end
 
 end 

@@ -1,5 +1,7 @@
 import React from 'react';
 
+const USER = '_U_';
+
 class Connection extends React.Component {
   constructor(props) {
     super(props);
@@ -11,8 +13,8 @@ class Connection extends React.Component {
     let infos = this._findInfos(this.state.conn); 
       
     let units = infos.frUnits;
-    if (infos.frUnits != infos.toUnits) {
-      units += `-> {$infos.toUnits}`;
+    if (infos.frUnits !== infos.toUnits && infos.toUnits) {
+      units += `-> ${infos.toUnits}`;
     }
     
     return (
@@ -20,6 +22,8 @@ class Connection extends React.Component {
         <td>{infos.frName}</td>
         <td>{infos.toName}</td>
         <td title={infos.desc} >{infos.vName}</td>
+        <td>{infos.type}</td>
+        <td>{infos.shape}</td>
         <td>{units}</td>
       </tr>
     );
@@ -33,21 +37,27 @@ class Connection extends React.Component {
     if (vfr.desc && vto.desc && vfr.desc !== vto.desc) {
       desc = `From: ${vfr.desc}, To: ${vfr.desc}`;
     } 
-    let infos = { frName: conn.fr, frUnits: vfr.units, 
+    let vartype = vfr.type || vto.type;
+    let shape = vfr.shape || vto.shape;    
+    let infos = { frName: this._disciplineName(conn.fr), frUnits: vfr.units, 
                   vName: conn.varname, desc: desc,
-                  toName: conn.to, toUnits: vto.units };
+                  toName: this._disciplineName(conn.to), toUnits: vto.units,
+                  type: vartype, shape: shape};
     return infos;
+  }
+  
+  _disciplineName(name) {
+    return name === USER ? 'PENDING' : name;
   }
   
   _findVariableInfo(disc, vname, io_mode) {
     let vars = this.state.vars;
     let vinfo = {units: '', desc: '', type: '', shape: ''};
-    if (disc !== '_U_') {
+    if (disc !== USER) {
       let vinfos = vars[disc][io_mode].filter((v) => { 
         return v.name === vname; 
       });
       if (vinfos.length === 1) {
-        console.log(vinfos[0]);
         vinfo = vinfos[0];
       } else {
         throw Error(`Expected one variable ${vname} found ${vinfos.length} in ${JSON.stringify(vinfos)}`);        
@@ -105,9 +115,9 @@ class Connections extends React.Component {
             <th>From</th>
             <th>To</th>
             <th>Variable</th>
-            <th>Units</th>
             <th>Type</th>
             <th>Shape</th>
+            <th>Units</th>
           </tr>
         </thead>
 
@@ -126,7 +136,7 @@ class Connections extends React.Component {
   }
 
   _findNodeFromId(id) {
-    if (id === '_U_') return {id: '_U_', name: '_U_'}; 
+    if (id === USER) return {id: USER, name: USER}; 
     for (var i=0; i < this.state.mda.nodes.length; i++) {
       if (this.state.mda.nodes[i].id === id) {
         return this.state.mda.nodes[i];

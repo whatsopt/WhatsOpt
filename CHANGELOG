@@ -1,6 +1,25 @@
 <h1>CHANGELOG</h1>
 
-<h3>0.1.0</h3>
+<h3>0.2.2 (29/08/2017)</h3>
+<ul>
+  <li>Implement MDA ownership</li>
+</ul>
+
+<h3>0.2.1 (28/08/2017)</h3>
+<ul>
+  <li>Improve MDA connections import (Xn : input from user to discicpline n, 
+  Yn: output from discipline n to user, Ynm : from discipline to discipline m) </li>
+  <li>Automate deployment</li>
+  <li>Bug fixes</li>
+</ul>
+
+<h3>0.2.0 (13/07/2017)</h3>
+<ul>
+  <li>Display variables connections in MDA view</li>
+  <li>Bug fixes</li>
+</ul>
+
+<h3>0.1.0 (04/07/2017)</h3>
 <ul>
 	<li>Display and import Multi Disciplinary Analyses from CICAV Excel template file</li>
 	<li>Display Notebooks as static HTML</li>

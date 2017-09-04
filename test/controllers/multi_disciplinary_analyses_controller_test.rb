@@ -2,7 +2,7 @@ require 'test_helper'
 
 class MultiDisciplinaryAnalysesControllerTest < ActionDispatch::IntegrationTest
   setup do
-    sign_in users(:one)
+    sign_in users(:user1)
     @multi_disciplinary_analysis = multi_disciplinary_analyses(:cicav)
   end
 
@@ -19,10 +19,15 @@ class MultiDisciplinaryAnalysesControllerTest < ActionDispatch::IntegrationTest
   test "should create multi_disciplinary_analysis" do
     assert_difference('MultiDisciplinaryAnalysis.count') do
       post multi_disciplinary_analyses_url, params: { 
-        multi_disciplinary_analysis: { name: @multi_disciplinary_analysis.name } }
+        multi_disciplinary_analysis: { name: 'test' } }
     end
-
     assert_redirected_to multi_disciplinary_analysis_url(MultiDisciplinaryAnalysis.last)
+  end
+  
+  test "should assign owner on creation" do
+    post multi_disciplinary_analyses_url, params: { 
+            multi_disciplinary_analysis: { name: 'test2' } }
+    assert MultiDisciplinaryAnalysis.last.owner, users(:user1)  
   end
 
   test "should import multi_disciplinary_analysis" do
@@ -56,4 +61,17 @@ class MultiDisciplinaryAnalysesControllerTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to multi_disciplinary_analyses_url
   end
+  
+  test "should destroy discipline when destroying multi_disciplinary_analysis" do
+    assert_difference('Discipline.count', -3) do  # cicav contains 3 disciplines
+      delete multi_disciplinary_analysis_url(@multi_disciplinary_analysis)
+    end
+  end
+  
+  test "should destroy variables when destroying multi_disciplinary_analysis" do
+    assert_difference('Variable.count', -11) do  # cicav use 11 variables
+      delete multi_disciplinary_analysis_url(@multi_disciplinary_analysis)
+    end
+  end
+
 end

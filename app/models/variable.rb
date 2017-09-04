@@ -7,15 +7,15 @@ class Variable < ApplicationRecord
 
   include WhatsOpt::OpenmdaoVariable
 
-  DEFAULT_SHAPE = '1' # either 'n', '(n,)' or '(n, m)'
+  DEFAULT_SHAPE = '1' # either 'n', '(n,), (n, m) or (n, m, p)'
   DEFAULT_TYPE = FLOAT_T
     
   self.inheritance_column = :disable_inheritance
   belongs_to :discipline
 
   validates :name, :io_mode, :type, :shape, presence: true
-  validates :name, uniqueness: { scope: :io_mode, message: "should be named once per io mode" }
-  validate :shape_is_well_formed
+  validates :name, uniqueness: { scope: [:discipline, :io_mode], message: "should be uniq per discipline and io mode." }
+  validate  :shape_is_well_formed
       
   scope :inputs, -> { where(io_mode: IN) }
   scope :outputs, -> { where(io_mode: OUT) }
@@ -23,16 +23,18 @@ class Variable < ApplicationRecord
   after_initialize :set_defaults, unless: :persisted?
 
   def dim
-    case self.shape
-    when /^(\d+)$/
-      $1.to_i
-    when /^\((\d+),\)$/ 
-      $1.to_i
-    when /^\((\d+), (\d+)\)$/
-      $1.to_i * $2.to_i
-    else
-      raise BadShapeAttributeError.new("should be either n, (n,) or (n,m) but found #{self.shape}")
-    end
+    @dim ||=  case self.shape
+              when /^(\d+)$/
+                $1.to_i
+              when /^\((\d+),\)$/ 
+                $1.to_i
+              when /^\((\d+), (\d+)\)$/
+                $1.to_i * $2.to_i
+              when /^\((\d+), (\d+), (\d+)\)$/
+                $1.to_i * $2.to_i * $3.to_i
+              else
+                raise BadShapeAttributeError.new("should be either n, (n,), (n, m) or (n, m, p) but found #{self.shape}")
+              end
   end
   
   private
@@ -43,8 +45,10 @@ class Variable < ApplicationRecord
   end
 
   def shape_is_well_formed
-    unless shape =~ /^(\d+)$/ || shape =~ /^\((\d+),\)$/ || shape =~ /^\((\d+),(\d+)\)$/
-      errors.add(:shape, "must be an int or of the form (n, ) or (n, m)")
+    begin
+      self.dim
+    rescue BadShapeAttributeError => e
+      errors.add(:shape, "variable shape " + e.message)
     end
   end
 end

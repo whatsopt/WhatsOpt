@@ -3,36 +3,10 @@ require 'whats_opt/openmdao_generator'
 require 'whats_opt/openmdao_mapping'
 require 'tmpdir'
 
-class FakeVar < Struct.new(:name, :type, :shape, :desc)
-  include WhatsOpt::OpenmdaoVariable  
-  def dim
-    return 1
-  end
-end
-
-class FakeDiscipline < Struct.new(:name, :input_variables, :output_variables)
-  include WhatsOpt::OpenmdaoModule 
-  def variables
-    self.input_variables + self.output_variables
-  end
-end
-
-class FakeMda < Struct.new(:name, :disciplines)
-  include WhatsOpt::OpenmdaoModule 
-end
-
 class OpenmdaoGeneratorTest < ActiveSupport::TestCase
 
   def setup
-    @mda = 
-      FakeMda.new('Cicav', [
-        FakeDiscipline.new('Geometry',
-                           [FakeVar.new('x1', FakeVar::FLOAT_T, '1'), FakeVar.new('y2', FakeVar::FLOAT_T, '1'), FakeVar.new('z', FakeVar::FLOAT_T, '1')],
-                           [FakeVar.new('x2', FakeVar::FLOAT_T, '1'), FakeVar.new('y1', FakeVar::FLOAT_T, '1')]),
-        FakeDiscipline.new('Aerodynamics',
-                           [FakeVar.new('x3', FakeVar::FLOAT_T, '1'), FakeVar.new('y1', FakeVar::FLOAT_T, '1'), FakeVar.new('z', FakeVar::FLOAT_T, '1')],
-                           [FakeVar.new('y3', FakeVar::FLOAT_T, '1'), FakeVar.new('y2', FakeVar::FLOAT_T, '1')])
-                           ])
+    @mda = multi_disciplinary_analyses(:cicav)
     @ogen = WhatsOpt::OpenmdaoGenerator.new(@mda)
   end
     
@@ -54,11 +28,9 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
   test "should maintain a list of generated filepaths" do
     Dir.mktmpdir do |dir|
       filepath = @ogen._generate_mda dir
-      basenames = @ogen.genfiles.map {|fp| File.basename(fp)}
-      assert_equal 3, basenames.length
-      assert_includes basenames,"geometry.py"
-      assert_includes basenames,"aerodynamics.py"
-      assert_includes basenames,"cicav.py"
+      basenames = @ogen.genfiles.map {|fp| File.basename(fp)}.sort
+      expected = ["aerodynamics.py", "cicav.py", "geometry.py"]
+      assert_equal expected, basenames
     end
   end 
   

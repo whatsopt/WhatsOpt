@@ -2,7 +2,7 @@ from openmdao.api import Group, Problem
 <% @mda.disciplines.each do |d| %>
 from <%= d.name.downcase %> import <%= d.name.camelcase %><% end %>
 
-class <%= @mda.name.camelcase %>(Group):
+class <%= @mda.py_classname %>(Group):
 
     def __init__(self):
         super(<%= @mda.py_classname %>, self).__init__()

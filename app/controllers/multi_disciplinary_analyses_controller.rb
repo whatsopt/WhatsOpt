@@ -27,8 +27,11 @@ class MultiDisciplinaryAnalysesController < ApplicationController
     else 
       @mda = MultiDisciplinaryAnalysis.create(mda_params)
       if @mda.save
+        current_user.add_role(:owner, @mda)
+        current_user.save
         redirect_to @mda, notice: 'MDA was successfully created.'
       else
+        @import = params[:import]
         render :new
       end
     end
@@ -57,6 +60,8 @@ class MultiDisciplinaryAnalysesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def mda_params
-      params.require(:multi_disciplinary_analysis).permit(:name, :attachment_attributes => [:id, :data, :_destroy])
+      params.require(:multi_disciplinary_analysis)
+        .permit(:name, :attachment_attributes => [:id, :data, :_destroy], 
+                       :disciplines_attributes => [:id, :name, :_destroy])
     end
 end

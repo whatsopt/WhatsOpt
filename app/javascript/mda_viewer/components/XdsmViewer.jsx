@@ -24,6 +24,11 @@ class XdsmViewer extends React.Component {
           subSupScript: false,
           showLinkNbOnly: true,
         },
+        layout: { 
+          origin: {x: 50, y: 20},
+          cellsize: {w: 150, h: 50},
+          padding: 10,
+        },
       };
     var xdsm = new Xdsm(graph, 'root', tooltip, config);
     xdsm.draw();

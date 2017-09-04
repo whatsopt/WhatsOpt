@@ -30,6 +30,7 @@ group :development do
   gem 'capistrano-rails'
   gem 'capistrano-rvm'
   gem 'capistrano-passenger'
+  gem 'capistrano-git-with-submodules', '~> 2.0'
   gem 'highline'
 end
 

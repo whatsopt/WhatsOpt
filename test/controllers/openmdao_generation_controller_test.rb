@@ -2,7 +2,7 @@ require 'test_helper'
 
 class OpenmdaoGenerationControllerTest < ActionDispatch::IntegrationTest
   setup do
-    sign_in users(:one)
+    sign_in users(:user1)
     @mda = multi_disciplinary_analyses(:cicav)
   end
   

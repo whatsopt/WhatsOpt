@@ -2,7 +2,7 @@ require 'test_helper'
 
 class VariablesControllerTest < ActionDispatch::IntegrationTest
   setup do
-    sign_in users(:one)
+    sign_in users(:user1)
     @variable = variables(:varx_geo_in)
   end
 

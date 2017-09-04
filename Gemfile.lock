@@ -87,6 +87,8 @@ GEM
     capistrano-bundler (1.2.0)
       capistrano (~> 3.1)
       sshkit (~> 1.2)
+    capistrano-git-with-submodules (2.0.3)
+      capistrano (~> 3.7)
     capistrano-passenger (0.2.0)
       capistrano (~> 3.0)
     capistrano-rails (1.2.3)
@@ -262,6 +264,7 @@ PLATFORMS
 DEPENDENCIES
   bootstrap (~> 4.0.0.alpha6)
   byebug
+  capistrano-git-with-submodules (~> 2.0)
   capistrano-passenger
   capistrano-rails
   capistrano-rvm

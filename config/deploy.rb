@@ -4,7 +4,8 @@ set :application, 'WhatsOpt'# config valid only for current version of Capistran
 #set :deploy_user, 'rlafage'
 
 set :repo_url, 'ssh://designlab@endymion/iesta-base/designlab/gitrepos/WhatsOpt.git'
-set :scm, :git
+
+set :git_strategy, Capistrano::SCM::Git::WithSubmodules
 set :branch, :master
 set :keep_releases, 5
 

@@ -4,12 +4,14 @@ require 'whats_opt/openmdao_mapping'
 class MultiDisciplinaryAnalysis < ApplicationRecord
 
   include WhatsOpt::OpenmdaoModule
-  
-  has_one :attachment, :as => :container
+
+  resourcify
+    
+  has_one :attachment, :as => :container, :dependent => :destroy
   accepts_nested_attributes_for :attachment, allow_destroy: true
   validates_associated :attachment
   
-  has_many :disciplines
+  has_many :disciplines, :dependent => :destroy
   accepts_nested_attributes_for :disciplines, 
     reject_if: proc { |attr| attr['name'].blank? }, allow_destroy: true
       
@@ -17,6 +19,18 @@ class MultiDisciplinaryAnalysis < ApplicationRecord
 
   before_validation(on: :create) do
     _create_from_attachment if attachment
+  end
+  
+  def control
+    self.disciplines.as_control.first || _build_control
+  end
+  
+  def design_variables
+    self.control.output_variables
+  end
+
+  def objective_variables
+    self.control.input_variables
   end
   
   def to_json
@@ -27,10 +41,10 @@ class MultiDisciplinaryAnalysis < ApplicationRecord
       workflow: [],
       vars: build_var_tree
     }.to_json
-  end
+    end
 
   def build_nodes
-    return disciplines.map {|d| { id: "#{d.id}", type: "analysis", name: d.name } }
+    return self.disciplines.plain.map {|d| { id: "#{d.id}", type: "analysis", name: d.name } }
   end
 
   def build_edges
@@ -46,7 +60,9 @@ class MultiDisciplinaryAnalysis < ApplicationRecord
         connections = outputs.map(&:name) & inputs.map(&:name)
         @all_connections.merge(connections)
         unless connections.empty?
-          edges << { from: "#{d_from.id}", to: "#{d_to.id}", name: connections.join(",") }
+          frid = (d_from.name == Discipline::CONTROL_NAME)?"_U_":d_from.id 
+          toid = (d_to.name == Discipline::CONTROL_NAME)?"_U_":d_to.id
+          edges << { from: "#{frid}", to: "#{toid}", name: connections.join(",") }
         end
       end
     end
@@ -62,13 +78,17 @@ class MultiDisciplinaryAnalysis < ApplicationRecord
       unless out_pendings.empty?
         edges << { from: "#{d.id}", to: "_U_", name: out_pendings.join(",") }
       end        
-    end    
+    end   
     edges
   end
 
   def build_var_tree
-    res = disciplines.map {|d| {d.name => {in: d.input_variables, out: d.output_variables}}}
+    res = disciplines.plain.map {|d| {d.name => {in: d.input_variables, out: d.output_variables}}}
     res.inject({}) {|result, h| result.update(h)}
+  end
+  
+  def owner
+    User.with_role(:owner, self).first.login
   end
   
   private
@@ -84,18 +104,22 @@ class MultiDisciplinaryAnalysis < ApplicationRecord
     end      
 
     def _create_from_attachment
-      attachment.save
-      if attachment.exists?
+      if self.attachment.exists?
         emi = WhatsOpt::ExcelMdaImporter.new(self.attachment.path)
         self.name = emi.get_mda_attributes[:name]
         vars = emi.get_variables_attributes
+        _build_control
         emi.get_disciplines_attributes().each do |dattr|
           disc = self.disciplines.build(dattr)
         end
         self.disciplines.each do |d|
-          d.variables.build(vars[d.name])
+          d.variables.build(vars[d.name]) if vars[d.name]
         end
       end
+    end
+    
+    def _build_control
+      self.disciplines.build({ name: WhatsOpt::ExcelMdaImporter::CONTROL_NAME })
     end
 
 end
