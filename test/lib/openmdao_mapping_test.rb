@@ -15,7 +15,12 @@ class OpenmdaoMappingTest < ActiveSupport::TestCase
     @module = FakeOpenmdaoModule.new('PRF CICAV')
     assert_equal 'PrfCicav', @module.py_classname
   end
-
+  
+  def test_should_have_a_valid_py_modulename
+    @module = FakeOpenmdaoModule.new('PRF CICAV')
+    assert_equal 'prf_cicav', @module.py_modulename
+  end
+  
   def test_should_have_a_description
     @var = FakeOpenmdaoVariable.new('VAR2tesT', :Float, 1, :in, "m", "description")
     assert_equal 'description (m)', @var.py_desc

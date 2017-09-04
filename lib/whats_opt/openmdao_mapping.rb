@@ -12,12 +12,17 @@ end
 module WhatsOpt
   
   module OpenmdaoModule
+    
+    def py_modulename
+      "#{self.name.snakize}"
+    end
+    
     def py_classname
       self.name.snakize.camelize
     end
 
     def py_filename
-      "#{self.name.snakize}.py"
+      "#{self.py_modulename}.py"
     end
   end
       

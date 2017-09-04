@@ -22,7 +22,7 @@ module WhatsOpt
       @worksheet = @workbook[0]
       workprobe = @worksheet[FIRST_LINE_NB..1024]
       @line_count = 0
-      while workprobe[@line_count][5]
+      while workprobe[@line_count][5] && getstr(workprobe[@line_count][5]) =~ /\w+/
         @line_count += 1
       end 
       @worksheet = @worksheet[FIRST_LINE_NB...(FIRST_LINE_NB+@line_count)]
@@ -133,9 +133,8 @@ module WhatsOpt
                     '(10,)'
                   when /^(\d+)$/, /^\((\d+),\)$/
                     if $1.to_i > 1 
-                      "(#{1},)"
+                      "(#{$1},)"
                     else
-                      puts "SHOULD display 1, got #{1}"
                       "#{1}"  
                     end
                   when /^\((\d+),\s*(\d+)\)$/  
