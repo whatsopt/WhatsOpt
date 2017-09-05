@@ -24,7 +24,7 @@ Rails.application.routes.draw do
   get "/changelog" => 'infos#changelog'
   
   authenticated :user do
-    root to: 'projects#index', as: :authenticated_root
+    root to: 'multi_disciplinary_analyses#index', as: :authenticated_root
   end
   root to: redirect('users/sign_in')
   
