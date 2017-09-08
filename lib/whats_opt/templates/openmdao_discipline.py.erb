@@ -17,11 +17,11 @@ class <%= @discipline.name.camelcase %>(Component):
         unknowns['<%= var_out.py_varname %>'] = <%= var_out.default_py_value %> <% end %>  
 				
     def linearize(self, params, unknowns, resids):
-         """ Jacobian for <%= @discipline.py_classname %>."""
-         J = {}
-     <% @discipline.output_variables.each do |var_out| %>
-   		 <% @discipline.input_variables.each do |var_in| %>
-       	 J['<%= var_out.py_varname %>', '<%= var_in.py_varname %>'] = np.zeros((<%= var_out.dim %>, <%= var_in.dim %>))<% end %><% end %>        
+        """ Jacobian for <%= @discipline.py_classname %>."""
+        J = {}
+    <% @discipline.output_variables.each do |var_out| %>
+   		<% @discipline.input_variables.each do |var_in| %>
+       	J['<%= var_out.py_varname %>', '<%= var_in.py_varname %>'] = np.zeros((<%= var_out.dim %>, <%= var_in.dim %>))<% end %><% end %>        
 
-         return J
+        return J
         
