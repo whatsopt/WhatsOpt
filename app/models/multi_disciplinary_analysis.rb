@@ -29,8 +29,16 @@ class MultiDisciplinaryAnalysis < ApplicationRecord
     self.control.output_variables
   end
 
-  def objective_variables
+  def optimization_variables
     self.control.input_variables
+  end  
+  
+  def objective_variables
+    self.control.input_variables.objectives
+  end
+  
+  def constraint_variables
+    self.control.input_variables.constraints
   end
   
   def to_json

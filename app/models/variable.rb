@@ -19,6 +19,8 @@ class Variable < ApplicationRecord
       
   scope :inputs, -> { where(io_mode: IN) }
   scope :outputs, -> { where(io_mode: OUT) }
+  scope :objectives, -> { where("name LIKE '#{OBJECTIVE_PREFIX}%'") }
+  scope :constraints, -> { where("name LIKE '#{CONSTRAINT_PREFIX}%'") }
     
   after_initialize :set_defaults, unless: :persisted?
 

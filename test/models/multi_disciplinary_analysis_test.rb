@@ -13,7 +13,7 @@ class MultiDisciplinaryAnalysisTest < ActiveSupport::TestCase
     mda = MultiDisciplinaryAnalysis.create!(attachment_attributes: {data: attach})
     assert mda.valid?
     assert_equal 3, mda.design_variables.count
-    assert_equal 1, mda.objective_variables.count
+    assert_equal 1, mda.optimization_variables.count
   end
 
   test "should be able to build nodes" do

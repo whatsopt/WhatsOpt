@@ -1,17 +1,18 @@
-class String
-  def snakize
-    gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2').
-    gsub(/([a-z\d])([A-Z])/,'\1_\2').
-    tr('-', '_').
-    gsub(/\s/, '_').
-    gsub(/__+/, '_').
-    downcase
-  end
-end
-
 module WhatsOpt
-  
+
+  refine String do
+    def snakize
+      gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2').
+      gsub(/([a-z\d])([A-Z])/,'\1_\2').
+      tr('-', '_').
+      gsub(/\s/, '_').
+      gsub(/__+/, '_').
+      downcase
+    end
+  end
+    
   module OpenmdaoModule
+    using WhatsOpt
     
     def py_modulename
       "#{self.name.snakize}"
@@ -24,15 +25,22 @@ module WhatsOpt
     def py_filename
       "#{self.py_modulename}.py"
     end
+    
   end
       
-  module OpenmdaoVariable
-
+  module Variable
     FLOAT_T   = "Float"
     INTEGER_T = "Integer"
         
     IN = :in  
     OUT = :out  
+    
+    OBJECTIVE_PREFIX  = "obj"
+    CONSTRAINT_PREFIX = "cstr"
+  end
+  
+  module OpenmdaoVariable
+    include Variable
     
     def py_varname
       self.name.downcase
