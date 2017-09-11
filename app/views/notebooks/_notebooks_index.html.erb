@@ -4,7 +4,8 @@
 	  <tr>
 	    <th>#</th>
 	    <th>Owner</th>
-	    <th>Updated</th>
+        <th>Creation</th>
+        <th>Action(s)</th>
 	  </tr>
 	</thead>
 	
@@ -14,6 +15,13 @@
       <td><%= link_to "Notebook ##{notebook.id}", notebook_path(notebook) %></td>
       <td><%= notebook.owner %></td>
       <td><%= time_ago_in_words(notebook.updated_at) %> ago</td>
+      <td>
+        <% if policy(notebook).destroy? %>
+          <%= link_to 'Delete', notebook, method: :delete, data: { confirm: 'Are you sure?' } %>
+        <% else %>
+          None
+        <% end %>
+      </td>
     </tr>
   <% end %>
   </tbody>

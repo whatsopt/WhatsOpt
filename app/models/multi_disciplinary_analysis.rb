@@ -96,7 +96,8 @@ class MultiDisciplinaryAnalysis < ApplicationRecord
   end
   
   def owner
-    User.with_role(:owner, self).first.login
+    owners = User.with_role(:owner, self)
+    owners.first.login if owners
   end
   
   private

@@ -8,6 +8,8 @@ class Notebook < ApplicationRecord
   validates :attachment, presence: true
 
   def owner
-    User.with_role(:owner, self).first.login
+    owners = User.with_role(:owner, self)
+    owners.first.login if owners.first
   end
+  
 end

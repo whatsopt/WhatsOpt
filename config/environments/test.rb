@@ -52,4 +52,8 @@ Rails.application.configure do
 
   #config.logger = Logger.new(STDOUT)
   #config.log_level = 'ERROR'
+  
+  Paperclip::Attachment.default_options[:path] = "#{Rails.root}/spec/test_files/:class/:id_partition/:style.:extension"
+
+
 end

@@ -23,15 +23,13 @@ class NotebooksController < ApplicationController
   # POST /notebooks
   def create
     if params[:cancel_button]
-      flash[:notice] = "Notebook creation cancelled."
-      redirect_to notebooks_url
+      redirect_to notebooks_url, notice: "Notebook creation cancelled."
     else 
       @notebook = Notebook.create(notebook_params)
       if @notebook.save
         current_user.add_role(:owner, @notebook)
         current_user.save
-        flash[:notice] = "Notebook created"
-        redirect_to notebook_url(@notebook)
+        redirect_to notebook_url(@notebook), notice: "Notebook was successfully created."
       else
         flash[:error] = "Notebook creation failed: invalid input data."
         render :action => 'new'
