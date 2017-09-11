@@ -11,6 +11,10 @@ class User < ActiveRecord::Base
   def ldap_before_save
     self.email = Devise::LDAP::Adapter.get_ldap_param(self.login, "mail").first
   end
+  
+  def admin?
+    self.has_role?(:admin)
+  end
 
   private
   
@@ -23,5 +27,5 @@ class User < ActiveRecord::Base
   def set_default_role
     self.add_role(:user)
   end
-  
+
 end

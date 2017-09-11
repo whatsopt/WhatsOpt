@@ -61,7 +61,17 @@ class MultiDisciplinaryAnalysesControllerTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to multi_disciplinary_analyses_url
   end
-  
+
+  test "should not destroy multi_disciplinary_analysis, if not owner" do
+    sign_out users(:user1)
+    sign_in users(:user2)
+    assert_difference('MultiDisciplinaryAnalysis.count', 0) do
+      delete multi_disciplinary_analysis_url(@multi_disciplinary_analysis)
+    end
+    assert_redirected_to root_path
+    assert_equal 'You are not authorized to perform this action.', flash[:error]
+  end
+    
   test "should destroy discipline when destroying multi_disciplinary_analysis" do
     assert_difference('Discipline.count', -3) do  # cicav contains 3 disciplines
       delete multi_disciplinary_analysis_url(@multi_disciplinary_analysis)

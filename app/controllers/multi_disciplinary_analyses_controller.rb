@@ -39,6 +39,7 @@ class MultiDisciplinaryAnalysesController < ApplicationController
 
   # PATCH/PUT /multi_disciplinary_analyses/1
   def update
+    authorize @mda
     if @mda.update(mda_params)
       redirect_to @mda, notice: 'MDA was successfully updated.' 
     else
@@ -48,6 +49,7 @@ class MultiDisciplinaryAnalysesController < ApplicationController
 
   # DELETE /multi_disciplinary_analyses/1
   def destroy
+    authorize @mda
     @mda.destroy
     redirect_to multi_disciplinary_analyses_url, notice: 'MDA was successfully destroyed.'
   end
