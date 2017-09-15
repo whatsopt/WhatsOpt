@@ -19,7 +19,6 @@ class NotebookControllerTest < ActionDispatch::IntegrationTest
     sign_out users(:user1)
     sign_in users(:user2)
     assert_difference('Notebook.count', 0) do
-      p Notebook.all.first
       delete notebook_url(Notebook.first)
     end
     assert_redirected_to root_path

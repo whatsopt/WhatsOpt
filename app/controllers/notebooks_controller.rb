@@ -1,5 +1,6 @@
 class NotebooksController < ApplicationController
-  
+  before_action :set_notebook, only: [:show, :edit, :update, :destroy]
+    
   # GET /notebooks
   def index
     @notebooks = Notebook.all
@@ -7,7 +8,6 @@ class NotebooksController < ApplicationController
   
   # GET /notebooks/1
   def show
-    @notebook = Notebook.find(params[:id]);
   end
 
   # GET /notebooks/new
@@ -17,7 +17,6 @@ class NotebooksController < ApplicationController
   
   # GET /notebooks/1/edit
   def edit
-    @notebook = Notebook.find(params[:id])
   end
   
   # POST /notebooks
@@ -39,7 +38,7 @@ class NotebooksController < ApplicationController
   
   # PATCH/PUT /notebooks/1
   def update
-    @notebook = Notebook.find(params[:id])
+    authorize @notebook
     @notebook.name = params[:user][:name] unless params[:user][:name].blank?
     if @notebook.save
       flash[:notice] = "Successfully updated notebook."
@@ -51,14 +50,18 @@ class NotebooksController < ApplicationController
   
   # DELETE /notebooks/1
   def destroy
-    @notebook = Notebook.find(params[:id])
+    authorize @notebook
     @notebook.destroy
     flash[:notice] = "Successfully deleted project."
     redirect_to notebooks_url
   end
 
   private
-
+  # Use callbacks to share common setup or constraints between actions.
+  def set_notebook
+    @notebook = Notebook.find(params[:id])
+  end
+  
   def notebook_params
     params.fetch(:notebook, {}).permit(:attachment_attributes => [:id, :data, :_destroy])   
   end
