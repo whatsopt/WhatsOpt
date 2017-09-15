@@ -26,7 +26,7 @@ module WhatsOpt
         @line_count += 1
       end 
       @worksheet = @worksheet[FIRST_LINE_NB...(FIRST_LINE_NB+@line_count)]
-      @workdata = @worksheet.map{|row| row && row[4..16]}
+      @workdata = @worksheet.map{|row| row && row[4..18]}  # col E to col S
       @workdata.compact!
     end
             
@@ -54,6 +54,8 @@ module WhatsOpt
       @connections.keys.each do |k|
         connections[k].each do |varname|
           varattr = self.variables[varname]
+          next if varattr[:disabled]
+          varattr.except!(:disabled)  # not an attribute of variable in database
           if k =~ /Y(\d)x/
             src = _to_discipline($1) 
             dsts = _to_other_disciplines($1)
@@ -155,7 +157,9 @@ module WhatsOpt
                     units
                   end
           desc = getstr(row[0])
-          @variables[name] = {name: name, shape: shape, type: type, units: units, desc: desc}
+          disabled = !!(getstr(row[14]) =~ /^y$|^yes$|^o$|^oui$/)  
+          @variables[name] = {name: name, shape: shape, type: type, 
+                              units: units, desc: desc, disabled: disabled}
         end
       end
       return @variables

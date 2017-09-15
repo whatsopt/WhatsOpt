@@ -8,7 +8,7 @@ class ExcelMdaImporterTest < ActiveSupport::TestCase
   end
 
   test "should get excel line count" do
-    assert_equal 8, @emi.line_count
+    assert_equal 9, @emi.line_count
   end
   
   test "should get mda attributes" do
@@ -56,8 +56,6 @@ class ExcelMdaImporterTest < ActiveSupport::TestCase
     end
   end
   
-  
-  
   test "should transform index in discipline name" do
     assert_equal WhatsOpt::ExcelMdaImporter::CONTROL_NAME, @emi._to_discipline('x')
     assert_equal "Geometry", @emi._to_discipline('0')
@@ -70,21 +68,22 @@ class ExcelMdaImporterTest < ActiveSupport::TestCase
 
   test "should import variables" do
     assert_equal({'handling_qualities_inputs_table'=> {name: 'handling_qualities_inputs_table', shape: '(10,)', type: 'Float', units: '', 
-                  desc: "Points de vol pour l'analyse des QdV" }, 
+                  desc: "Points de vol pour l'analyse des QdV", :disabled=>false}, 
                   'control_surfaces_number'=> {name: 'control_surfaces_number', shape: '1', type: 'Integer', units: 'deg', 
-                  desc: "Nombre de gouvernes"}, 
+                  desc: "Nombre de gouvernes", :disabled=>false}, 
                   'eigen_values_table'=> {name: 'eigen_values_table', shape: '(10,)', type: 'Float', units: 'deg', 
-                  desc: "Valeurs propres des modes avion"},
+                  desc: "Valeurs propres des modes avion", :disabled=>false},
                   'wing_reference_surface'=> {name: 'wing_reference_surface', shape: '1', type: 'Float', units: 'm2', 
-                  desc: "Surface de référence totale du véhicule"},
+                  desc: "Surface de référence totale du véhicule", :disabled=>false},
                   'wing_span'=> {name: 'wing_span', shape: '1', type: 'Float', units: 'm', 
-                  desc: "Envergure totale du véhicule"},
+                  desc: "Envergure totale du véhicule", :disabled=>false},
                   'cockpit_length'=> {name: 'cockpit_length', shape: '1', type: 'Float', units: 'm', 
-                  desc: "Longueur du cockpit"},
+                  desc: "Longueur du cockpit", :disabled=>false},
                   'wing_airfoils_number_of_point'=> {name: 'wing_airfoils_number_of_point', shape: '1', type: 'Integer', units: '', 
-                  desc: "Nombre de points des tables de profil aérodynamique"},
+                  desc: "Nombre de points des tables de profil aérodynamique", :disabled=>false},
                   'airfoil_extrados_p0_table'=> {name: 'airfoil_extrados_p0_table', shape: '(10,)', type: 'Float', units: '', 
-                  desc: "Profil aérodynamique au plan 0, coordonnées de l'extrados (BA vers BF)"}
+                  desc: "Profil aérodynamique au plan 0, coordonnées de l'extrados (BA vers BF)", :disabled=>false},
+                  'disabled_var'=> {:name=>"disabled_var", :shape=>"(10,)", :type=>"Float", :units=>"deg", :desc=>"Disabled variable", :disabled=>true}
                   }, 
                   @emi._import_variables_data)
   end
@@ -98,8 +97,8 @@ class ExcelMdaImporterTest < ActiveSupport::TestCase
       'Y10'=> ['airfoil_extrados_p0_table'],
       'Y12'=> ['wing_reference_surface', 'wing_airfoils_number_of_point', 'airfoil_extrados_p0_table'],
       'Y21'=> ['handling_qualities_inputs_table'], 
-      'Y2x'=> ['eigen_values_table'],
-      'Y2'=> ['eigen_values_table']
+      'Y2x'=> ['eigen_values_table', 'disabled_var'],
+      'Y2'=> ['eigen_values_table', 'disabled_var']
     }, @emi._import_connections_data)
   end
 

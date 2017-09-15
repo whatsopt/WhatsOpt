@@ -1,8 +1,14 @@
 <h1>CHANGELOG</h1>
 
+<h3>0.2.5 (15/09/2017)</h3>
+<ul>
+  <li>Manage 'commented' column in Excel template file to disable a variable</li>
+  <li>Implement edit/delete permissions for MDAs and notebooks</li>
+</ul>
+
 <h3>0.2.4 (08/09/2017)</h3>
 <ul>
-  <li>Fix OpenMDAO generation bug</li>
+  <li>Fix OpenMDAO code generation bug</li>
   <li>Add view tree call in generated code</li>
 </ul>
 
