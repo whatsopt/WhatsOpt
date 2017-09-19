@@ -2,6 +2,7 @@ import * as d3 from 'd3';
 import React from 'react';
 import Graph from 'XDSMjs/src/graph';
 import Xdsm from 'XDSMjs/src/xdsm';
+import Selectable from 'XDSMjs/src/selectable';
 
 class XdsmViewer extends React.Component {
   constructor(props) {
@@ -32,6 +33,7 @@ class XdsmViewer extends React.Component {
       };
     var xdsm = new Xdsm(graph, 'root', tooltip, config);
     xdsm.draw();
+    //var selectable_xdsm = new Selectable(xdsm);
   }
 
   shouldComponentUpdate() {
