@@ -186,7 +186,8 @@ module WhatsOpt
     end
     
     def getstr(row_element)
-      row_element && row_element.value.to_s.strip
+      s = row_element && row_element.value.to_s.strip
+      s
     end
             
   end # class

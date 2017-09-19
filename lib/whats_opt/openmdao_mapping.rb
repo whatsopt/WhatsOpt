@@ -84,6 +84,14 @@ module WhatsOpt
       end
     end
     
+    def escaped_desc
+      s = ""
+      unless self.desc.blank? 
+        s = self.desc.gsub("'", "\\\\'")
+      end
+      s
+    end
+    
   end
   
 end
