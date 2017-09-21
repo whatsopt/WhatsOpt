@@ -111,4 +111,5 @@ mda_test = create_mda(name:"MDA_Example",
 u = create_user(login: "rlafage",
                 email: "test@onera.fr")
 u.add_role(:manager, project_scratch)
+u.add_role(:owner, mda_test)
 u.save!
