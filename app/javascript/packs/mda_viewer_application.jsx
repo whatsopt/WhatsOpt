@@ -1,10 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Mda } from 'mda_viewer';
+import { MdaViewer } from 'mda_viewer';
 
 document.addEventListener('DOMContentLoaded', () => {
 	  ReactDOM.render(
-	    < Mda mda={MDA} />,
+	    < MdaViewer mda={MDA} />,
 	    document.getElementById('mda-viewer')
 	  );
 	});

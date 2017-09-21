@@ -70,24 +70,26 @@ class Connection extends React.Component {
 class Connections extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      mda: this.props.mda,
-      filter: this.props.filter,  // TODO : pass discipline filter
-    };
   }
 
   render() {
     var conns = [];
-    var edges = this.state.mda.edges;
-    var vars = this.state.mda.vars;
-    var filter = this.state.filter;
+    var edges = this.props.mda.edges;
+    var vars = this.props.mda.vars;
+    var filter = this.props.filter;
 
-    if (filter) {
-      let nodeFrom = this._findNodeFromIndex(filter.from);
-      let nodeTo = this._findNodeFromIndex(filter.to);
-      let edges = edges.filter((edge) => {
-        return edge.from === nodeFrom.id && edge.to === nodeTo.id;
-      });
+    if (filter.fr && filter.to) {
+      let nodeFrom = this._findNodeFromId(filter.fr);
+      let nodeTo = this._findNodeFromId(filter.to);
+      if (filter.fr === filter.to) { // node selected
+        edges = edges.filter((edge) => {
+          return edge.from === nodeFrom.id || edge.to === nodeTo.id;
+        });
+      } else {
+        edges = edges.filter((edge) => { // edge selected
+          return edge.from === nodeFrom.id && edge.to === nodeTo.id;
+        });
+      }
     }
 
     edges.forEach((edge) => {
@@ -128,18 +130,11 @@ class Connections extends React.Component {
      );
   };
 
-  _findNodeFromIndex(index) {
-    if ( 0 <= index && index < this.state.mda.nodes.length ) {
-      return this.state.mda.nodes[index];
-    }
-    throw Error("Node index ("+ index +") out of range: " + JSON.stringify(this.state.nodes));
-  }
-
   _findNodeFromId(id) {
     if (id === USER) return {id: USER, name: USER}; 
-    for (var i=0; i < this.state.mda.nodes.length; i++) {
-      if (this.state.mda.nodes[i].id === id) {
-        return this.state.mda.nodes[i];
+    for (var i=0; i < this.props.mda.nodes.length; i++) {
+      if (this.props.mda.nodes[i].id === id) {
+        return this.props.mda.nodes[i];
       }
     };
     throw Error("Node id ("+ id +") unknown: " + JSON.stringify(this.state.nodes));  

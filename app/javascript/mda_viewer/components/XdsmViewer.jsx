@@ -5,9 +5,11 @@ import Xdsm from 'XDSMjs/src/xdsm';
 import Selectable from 'XDSMjs/src/selectable';
 
 class XdsmViewer extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = this.props.mda;
+  constructor() {
+    super();
+    this.state = {
+      filter: undefined,
+    }
   } 
 
   componentDidMount() {
@@ -17,7 +19,7 @@ class XdsmViewer extends React.Component {
     .attr("class", "tooltip")
     .style("opacity", 0);
 
-    var graph = new Graph(this.state);
+    var graph = new Graph(this.props.mda);
     
     let config = {
         labelizer: {
@@ -33,7 +35,7 @@ class XdsmViewer extends React.Component {
       };
     var xdsm = new Xdsm(graph, 'root', tooltip, config);
     xdsm.draw();
-    //var selectable_xdsm = new Selectable(xdsm);
+    var selectable_xdsm = new Selectable(xdsm, this._onXDSMSelectionChange.bind(this));
   }
 
   shouldComponentUpdate() {
@@ -42,6 +44,10 @@ class XdsmViewer extends React.Component {
 
   render() {
     return ( <div className="xdsm"></div> );
+  }
+
+  _onXDSMSelectionChange(filter) {
+    this.props.onFilterChange(filter);    
   }
 }
 
