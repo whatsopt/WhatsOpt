@@ -1,6 +1,11 @@
 <h1>Multi Disciplinary Analyses</h1>
 
 <p>
+<!-- <%= link_to 'New MDA', new_multi_disciplinary_analysis_path, class: "btn btn-primary" %> -->
+<%= link_to 'Import MDA', new_multi_disciplinary_analysis_path(import: true), class: "btn btn-primary" %>
+</p>
+
+<p>
 <table class="table table-striped">
 
 	<thead>
@@ -32,7 +37,3 @@
 </table>
 </p>
 
-<p>
-<!-- <%= link_to 'New MDA', new_multi_disciplinary_analysis_path, class: "btn btn-primary" %> -->
-<%= link_to 'Import MDA', new_multi_disciplinary_analysis_path(import: true), class: "btn btn-primary" %>
-</p>

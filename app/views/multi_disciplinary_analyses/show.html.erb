@@ -1,8 +1,12 @@
 <h1>MDA <%= @mda.name %></h1>
 
-<%= link_to 'OpenMDAO Export', openmdao_generation_new_path(:mda_id => @mda.id), class: "btn btn-primary" %>
+<p>
+  <%= link_to 'OpenMDAO Export', openmdao_generation_new_path(:mda_id => @mda.id), class: "btn btn-primary" %>
+</p>
 
-<div id="mda-viewer"></div>
+<p>
+  <div id="mda-viewer"></div>
+</p>
 
 <%= link_to 'Back', multi_disciplinary_analyses_path %>
   
