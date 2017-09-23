@@ -9,7 +9,6 @@ class AttachmentsController < ApplicationController
                 :type => @attachment.data_content_type, 
                 :disposition => 'inline'
     else
-      flash[:error] = "Attachment style '#{params[:style]}' not handled"
       send_file @attachment.data.path, 
                 :type => @attachment.data_content_type
     end
