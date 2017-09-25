@@ -66,3 +66,4 @@ gem 'pundit'
 gem 'paperclip'
 gem 'rubyXL'
 gem 'webpacker', :git => "git://github.com/rails/webpacker.git"
+gem 'rack-cors'
