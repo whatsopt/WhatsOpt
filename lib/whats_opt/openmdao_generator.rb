@@ -35,6 +35,15 @@ module WhatsOpt
       stringio.rewind
       return stringio, zip_filename
     end
+
+    def check_mda_setup
+      ok, log = false, ""
+      Dir.mktmpdir("check_#{@mda.name.downcase.tr(" ", "_")}_") do |dir|
+        _generate_mda dir
+        ok, log = _check_mda dir        
+      end
+      return ok, log
+    end
     
     def _generate_mda(gendir)
       @mda.disciplines.plain.each do |disc|
@@ -43,6 +52,12 @@ module WhatsOpt
       _generate_main(gendir)
     end
     
+    def _check_mda(gendir)
+      script = File.join(gendir, @mda.py_filename) 
+      stdouterr, status = Open3.capture2e('python', script, '--no-n2')
+      return status.success?, stdouterr
+    end
+
     def _generate_main gendir
       _generate(@mda.py_filename, 'openmdao_main.py.erb', gendir)
     end

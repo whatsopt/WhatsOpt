@@ -19,10 +19,18 @@ class <%= @mda.py_classname %>(Group):
 
 if __name__ == "__main__":
     from openmdao.api import view_tree
+    from optparse import OptionParser
+
+    parser = OptionParser()
+    parser.add_option("-n", "--no-n2", action="store_false", dest='n2_view', default=True, 
+                      help="display N2 openmdao viewer")
+    (options, args) = parser.parse_args()
 
     top = Problem()
     root = top.root = <%= @mda.py_classname %>()
-	
+
     top.setup()
-    view_tree(top)
+    
+    if options.n2_view:
+        view_tree(top)
     

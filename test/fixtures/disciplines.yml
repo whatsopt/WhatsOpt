@@ -10,6 +10,10 @@ aerodynamics:
   name: Aerodynamics
   multi_disciplinary_analysis: cicav
 
+fast_discipline:
+  name: FastDiscipline
+  multi_disciplinary_analysis: fast
+
 dummy:
   name: Aerodynamics
   multi_disciplinary_analysis: dummy
