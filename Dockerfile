@@ -12,7 +12,8 @@ RUN apt-get update && apt-get install -y \
 
 RUN pip install --upgrade pip
 RUN pip install jupyter
-  
+RUN pip install openmdao
+
 # node
 RUN groupadd --gid 1000 node \
   && useradd --uid 1000 --gid node --shell /bin/bash --create-home node
@@ -60,7 +61,7 @@ RUN set -ex \
   && rm yarn.js.asc \
   && mv yarn.js /usr/local/bin/yarn \
   && chmod +x /usr/local/bin/yarn  
-  
+
 RUN mkdir -p /whatsopt 
 WORKDIR /whatsopt
 
