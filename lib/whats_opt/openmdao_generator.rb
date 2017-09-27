@@ -37,12 +37,13 @@ module WhatsOpt
     end
 
     def check_mda_setup
-      ok, log = false, ""
+      ok, lines = false, []
       Dir.mktmpdir("check_#{@mda.name.downcase.tr(" ", "_")}_") do |dir|
         _generate_mda dir
-        ok, log = _check_mda dir        
+        ok, log = _check_mda dir   
+        lines = log.lines.map(&:chomp)     
       end
-      return ok, log
+      return ok, lines
     end
     
     def _generate_mda(gendir)
