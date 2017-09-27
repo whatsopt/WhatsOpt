@@ -16,7 +16,7 @@
 	<div class="collapse navbar-collapse" id="navbarNavDropdown">
 	<ul class="navbar-nav mr-auto">
 		<!-- <li class="nav-item"><%= link_to "Projects", :projects, class: "nav-link" %></li> -->
-		<li class="nav-item"><%= link_to "MDAs", :multi_disciplinary_analyses, class: "nav-link" %></li>
+		<li class="nav-item"><%= link_to "MDAs", mdas_path, class: "nav-link" %></li>
 		<li class="nav-item"><%= link_to "Notebooks", :notebooks, class: "nav-link" %></li>
 		<li class="nav-item"><%= link_to "OneraMDAO", oneramdao_path, class: "nav-link" %></li>
 		<li class="nav-item"><%= link_to "JupyterHub", jupyterhub_path, class: "nav-link" %></li>
@@ -38,7 +38,7 @@
 	</div>	      
     </nav>
 
-    <div class="container-fluid main-container">
+    <div class="container main-container">
       <%= render 'layouts/messages' %>
       <%= yield %>
     </div> 

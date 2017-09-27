@@ -1,10 +1,10 @@
 Rails.application.routes.draw do
   
-  get 'openmdao_generation/new'
-
   resources :variables
   resources :disciplines
-  resources :multi_disciplinary_analyses
+  resources :multi_disciplinary_analyses, as: :mdas do
+    get "openmdao_generation/new"
+  end
   devise_for :users
   resources :users, only: [:show]
   resources :projects
@@ -14,8 +14,9 @@ Rails.application.routes.draw do
   resources :openmdao_generation, only: [:new]
     
   namespace :api do
-    namespace :v1 do
+    namespace :v1, defaults: { format: :json } do
       resources :studies
+      post "openmdao_checking/create" 
     end
   end
 

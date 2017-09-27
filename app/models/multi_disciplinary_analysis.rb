@@ -42,7 +42,8 @@ class MultiDisciplinaryAnalysis < ApplicationRecord
   end
   
   def to_json
-    {
+    { 
+      id: self.id,
       name: self.name,
       nodes: build_nodes,
       edges: build_edges,

@@ -1,8 +1,8 @@
 <h1>Multi Disciplinary Analyses</h1>
 
 <p>
-<!-- <%= link_to 'New MDA', new_multi_disciplinary_analysis_path, class: "btn btn-primary" %> -->
-<%= link_to 'Import MDA', new_multi_disciplinary_analysis_path(import: true), class: "btn btn-primary" %>
+<!-- <%= link_to 'New MDA', new_mda_path, class: "btn btn-primary" %> -->
+<%= link_to 'Import MDA', new_mda_path(import: true), class: "btn btn-primary" %>
 </p>
 
 <p>
@@ -20,13 +20,13 @@
 	<tbody>
 	  <% @mdas.each do |mda| %>
 	    <tr>
-	      <td><%= link_to mda.name, mda %></td>
+	      <td><%= link_to mda.name, mda_path(mda) %></td>
           <td><%= mda.owner %></td>
           <td><%= time_ago_in_words(mda.created_at) %> ago</td>
 	      <td>
 	        <% if policy(mda).destroy? %>
-	      	  <%= link_to 'Edit', edit_multi_disciplinary_analysis_path(mda) %> |
-	      	  <%= link_to 'Delete', mda, method: :delete, data: { confirm: 'Are you sure?' } %>
+	      	  <%= link_to 'Edit', edit_mda_path(mda) %> |
+	      	  <%= link_to 'Delete', mda_path(mda), method: :delete, data: { confirm: 'Are you sure?' } %>
 	      	<% else %>
 	      	  None
 	      	<% end %>

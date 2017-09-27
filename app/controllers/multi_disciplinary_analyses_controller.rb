@@ -1,35 +1,35 @@
 class MultiDisciplinaryAnalysesController < ApplicationController
   before_action :set_mda, only: [:show, :edit, :update, :destroy]
 
-  # GET /multi_disciplinary_analyses
+  # GET /mdas
   def index
     @mdas = MultiDisciplinaryAnalysis.all
   end
 
-  # GET /multi_disciplinary_analyses/1
+  # GET /mdas/1
   def show
   end
 
-  # GET /multi_disciplinary_analyses/new
+  # GET /mdas/new
   def new
     @import = !!params[:import]
     @mda = MultiDisciplinaryAnalysis.new
   end
 
-  # GET /multi_disciplinary_analyses/1/edit
+  # GET /mdas/1/edit
   def edit
   end
 
-  # POST /multi_disciplinary_analyses
+  # POST /mdas
   def create
     if params[:cancel_button]
-      redirect_to multi_disciplinary_analyses_url, notice: "MDA creation cancelled."
+      redirect_to mdas_url, notice: "MDA creation cancelled."
     else 
       @mda = MultiDisciplinaryAnalysis.create(mda_params)
       if @mda.save
         current_user.add_role(:owner, @mda)
         current_user.save
-        redirect_to @mda, notice: 'MDA was successfully created.'
+        redirect_to mda_url(@mda), notice: 'MDA was successfully created.'
       else
         @import = params[:import]
         render :new
@@ -37,21 +37,21 @@ class MultiDisciplinaryAnalysesController < ApplicationController
     end
   end
 
-  # PATCH/PUT /multi_disciplinary_analyses/1
+  # PATCH/PUT /mdas/1
   def update
     authorize @mda
     if @mda.update(mda_params)
-      redirect_to @mda, notice: 'MDA was successfully updated.' 
+      redirect_to mda_url(@mda), notice: 'MDA was successfully updated.' 
     else
       render :edit 
     end
   end
 
-  # DELETE /multi_disciplinary_analyses/1
+  # DELETE /mdas/1
   def destroy
     authorize @mda
     @mda.destroy
-    redirect_to multi_disciplinary_analyses_url, notice: 'MDA was successfully destroyed.'
+    redirect_to mdas_url, notice: 'MDA was successfully destroyed.'
   end
 
   private
