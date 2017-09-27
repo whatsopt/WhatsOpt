@@ -105,6 +105,8 @@ GEM
     erubi (1.6.0)
     execjs (2.7.0)
     ffi (1.9.18)
+    font-awesome-rails (4.7.0.2)
+      railties (>= 3.2, < 5.2)
     formatador (0.2.5)
     globalid (0.4.0)
       activesupport (>= 4.2.0)
@@ -271,6 +273,7 @@ DEPENDENCIES
   capistrano-rvm
   devise!
   devise_ldap_authenticatable!
+  font-awesome-rails
   guard
   guard-minitest
   highline
