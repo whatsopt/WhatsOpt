@@ -3,7 +3,16 @@ image: "ruby:2.3"
 before_script:
   - git submodule sync --recursive
   - git submodule update --init --recursive
-  - apt-get update -qq && apt-get install -y -qq build-essential sqlite3 libsqlite3-dev python2.7 python-pip python-dev ipython ipython-notebook
+  - apt-get update -qq && apt-get install -y -qq build-essential sqlite3 libsqlite3-dev
+  - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
+  - chmod +x miniconda.sh
+  - ./miniconda.sh -b -p $HOME/miniconda
+  - export PATH=$HOME/miniconda/bin:$PATH
+  - conda update --yes conda
+  - conda create --yes -n condaenv python=2.7
+  - conda install --yes -n condaenv pip
+  - source activate condaenv
+  - conda install -c conda-forge --yes scikit-learn scipy python=2.7 pip
   - pip install openmdao
   - curl -sL https://deb.nodesource.com/setup_6.x | bash -
   - apt-get install -y nodejs
