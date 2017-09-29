@@ -1,6 +1,7 @@
 require 'erubi'
 require 'tmpdir'
 require 'zip'
+require 'open3'
 
 module WhatsOpt
   

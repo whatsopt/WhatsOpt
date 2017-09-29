@@ -6,6 +6,7 @@
   <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
   <%= csrf_meta_tags %>
+  <meta name="relative-url-root" content="<%= Rails.application.config.action_controller.relative_url_root%>" />
 </head>
 <body>
 	<nav class="navbar fixed-top navbar-toggleable-md navbar-inverse bg-inverse" role="navigation">

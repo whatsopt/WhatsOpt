@@ -95,4 +95,7 @@ Rails.application.configure do
     config.jupyter_script='jupyter'
   end  
 
+  # set the relative root, because we're deploying to /whatsopt
+  config.action_controller.relative_url_root  = "/whatsopt"
+  
 end

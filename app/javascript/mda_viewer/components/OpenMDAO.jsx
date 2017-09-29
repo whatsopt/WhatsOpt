@@ -1,6 +1,12 @@
 import React from 'react';
 import axios from 'axios';
 
+let token = document.getElementsByName('csrf-token')[0].getAttribute('content')
+axios.defaults.headers.common['X-CSRF-Token'] = token
+axios.defaults.headers.common['Accept'] = 'application/json'
+let relative_url_root = document.getElementsByName('relative-url-root')[0].getAttribute('content')
+//axios.defaults.baseURL = 'http://endymion:3000'
+
 class OpenMDAOLogLine extends React.Component {  
   
   constructor(props) {
@@ -12,6 +18,11 @@ class OpenMDAOLogLine extends React.Component {
   }
 }
 
+
+//prepend relative_url_root
+var url = function (path) {
+    return relative_url_root+path;
+}
 
 class OpenMDAO extends React.Component {
   
@@ -26,11 +37,11 @@ class OpenMDAO extends React.Component {
   componentDidMount() {
     this.getStatus();
   }
+
   
   getStatus() {
-    axios.post('/api/v1/openmdao_checking', {mda_id: this.props.mda_id})
+    axios.post(url('/api/v1/openmdao_checking'), {mda_id: this.props.mda_id})
     .then(response => {
-      console.log(response.data)
       this.setState({status_ok: response.data.status_ok, log: response.data.log})
     })
     .catch(error => console.log(error))
@@ -43,10 +54,11 @@ class OpenMDAO extends React.Component {
     
     let btnStatusClass = this.state.status_ok?"btn btn-success":"btn btn-warning";
     let btnIcon = this.state.status_ok?<i className="fa fa-check"/>:<i className="fa fa-exclamation-triangle"></i>;
+    let href = url("/multi_disciplinary_analyses/"+this.props.mda_id+"/openmdao_generation/new");
     return (
       <div>
         <div className="btn-group" role="group">
-          <a className="btn btn-primary" href="/multi_disciplinary_analyses/5/openmdao_generation/new">OpenMDAO Export</a>
+          <a className="btn btn-primary" href={href}>OpenMDAO Export</a>
           <button className={btnStatusClass} type="button" data-toggle="collapse" data-target="#collapseListing" aria-expanded="false">{btnIcon}</button>
         </div>
         <div className="collapse" id="collapseListing">
