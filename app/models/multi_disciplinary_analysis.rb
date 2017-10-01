@@ -53,7 +53,17 @@ class MultiDisciplinaryAnalysis < ApplicationRecord
     end
 
   def build_nodes
-    return self.disciplines.plain.map {|d| { id: "#{d.id}", type: "analysis", name: d.name } }
+    return self.disciplines.plain.map {|d| 
+      t = case d.name.downcase 
+          when /function/
+            "function"
+          when /optimizer/
+            "optimization"
+          else
+            "analysis"
+          end 
+      { id: "#{d.id}", type:t , name: d.name } 
+    }
   end
 
   def build_edges
