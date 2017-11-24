@@ -1,6 +1,6 @@
 module WhatsOpt
 
-  class ExcelMdaImporter2
+  class ExcelMdaImporter
     
     CONTROL_NAME = '__CONTROL__'
     GSV_SHEET_NAME = 'Global State Vector'
@@ -11,9 +11,6 @@ module WhatsOpt
     end
     
     attr_reader :line_count, :mda, :disciplines, :variables, :connections, :defined_names
-    
-    FIRST_LINE_NB = 15
-    
     
     def initialize(filename)
       @filename = filename

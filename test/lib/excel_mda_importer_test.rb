@@ -1,10 +1,10 @@
 require 'test_helper'
-require 'whats_opt/excel_mda_importer2'
+require 'whats_opt/excel_mda_importer'
 
 class ExcelMdaImporter2Test < ActiveSupport::TestCase
 
   def setup
-    @emi = WhatsOpt::ExcelMdaImporter2.new(sample_file("excel_mda_simple_sample.xlsx"))  
+    @emi = WhatsOpt::ExcelMdaImporter.new(sample_file("excel_mda_simple_sample.xlsx"))  
   end
 
   test "should get 6 defined names" do
@@ -12,7 +12,7 @@ class ExcelMdaImporter2Test < ActiveSupport::TestCase
   end
   
   test "should get discipline table coordinates" do
-    top_left, bottom_right = @emi._get_coordinates(WhatsOpt::ExcelMdaImporter2::DISCIPLINE_RANGE_NAME)
+    top_left, bottom_right = @emi._get_coordinates(WhatsOpt::ExcelMdaImporter::DISCIPLINE_RANGE_NAME)
     assert_equal [7, 2], top_left
     assert_equal [10, 2], bottom_right
   end
@@ -26,7 +26,7 @@ class ExcelMdaImporter2Test < ActiveSupport::TestCase
   end
 
   test "should get variables attributes" do
-    expected = {WhatsOpt::ExcelMdaImporter2::CONTROL_NAME =>[{:name=>"wing_span", :shape=>"1", :type=>"Float", :units=>"N", :desc=>"Envergure totale du véhicule", :io_mode=>"out"}, 
+    expected = {WhatsOpt::ExcelMdaImporter::CONTROL_NAME =>[{:name=>"wing_span", :shape=>"1", :type=>"Float", :units=>"N", :desc=>"Envergure totale du véhicule", :io_mode=>"out"}, 
         {:name=>"control_surfaces_number", :shape=>"1", :type=>"Integer", :units=>"deg", :desc=>"Nombre de gouvernes", :io_mode=>"out"}, 
         {:name=>"handling_qualities_inputs_table", :shape=>"(10,)", :type=>"Float", :units=>"", :desc=>"Points de vol pour l'analyse des QdV", :io_mode=>"out"},
         {:name=>"eigen_values_table", :shape=>'(10,)', :type => 'Float', :units => 'deg', :io_mode=>"in", :desc => "Valeurs propres des modes avion"}], 
