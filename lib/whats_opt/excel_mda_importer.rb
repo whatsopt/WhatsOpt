@@ -1,15 +1,19 @@
 module WhatsOpt
 
-  class ExcelMdaImporter
+  class ExcelMdaImporter2
     
     CONTROL_NAME = '__CONTROL__'
+    GSV_SHEET_NAME = 'Global State Vector'
+    DISCIPLINE_RANGE_NAME = 'discipline_list'
+    GLOBAL_STATE_VECTOR = 'global_state_vector'
     
     class ImportError < StandardError
     end
     
-    attr_reader :line_count, :mda, :disciplines, :variables, :connections
+    attr_reader :line_count, :mda, :disciplines, :variables, :connections, :defined_names
     
     FIRST_LINE_NB = 15
+    
     
     def initialize(filename)
       @filename = filename
@@ -18,15 +22,16 @@ module WhatsOpt
       rescue Zip::Error => e
         # puts e.message
         raise ImportError.new
-      end
-      @worksheet = @workbook[0]
-      workprobe = @worksheet[FIRST_LINE_NB..1024]
-      @line_count = 0
-      while workprobe[@line_count][5] && getstr(workprobe[@line_count][5]) =~ /\w+/
-        @line_count += 1
       end 
-      @worksheet = @worksheet[FIRST_LINE_NB...(FIRST_LINE_NB+@line_count)]
-      @workdata = @worksheet.map{|row| row && row[4..18]}  # col E to col S
+      _initialize_defined_names
+      @worksheet = @workbook[GSV_SHEET_NAME]
+      top_right, bottom_left = _get_coordinates(DISCIPLINE_RANGE_NAME)
+      @disc_table = @worksheet[top_right[0]...bottom_left[0]]
+      @disc_data = @disc_table.map{|row| row && row[top_right[1]..bottom_left[1]]}
+        
+      top_right, bottom_left = [[14, 1], [23, 15]]
+      @main_table = @worksheet[top_right[0]...bottom_left[0]]
+      @workdata = @main_table.map{|row| row && row[top_right[1]..bottom_left[1]]} 
       @workdata.compact!
     end
             
@@ -35,9 +40,23 @@ module WhatsOpt
       _import_variables_data
       _import_connections_data
     end
+        
+    def _initialize_defined_names
+      @defined_names = {}
+      for elt in @workbook.defined_names
+        @defined_names[elt.name] = elt.reference
+      end
+    end
     
+    def _get_coordinates(range_name)
+      @defined_names[range_name] =~ /(.*)!\$(.*)\$(.*):\$(.*)\$(.*)/
+      top_left_ref = RubyXL::Reference.ref2ind("#{$2}#{$3}")
+      bottom_right_ref = RubyXL::Reference.ref2ind("#{$4}#{$5}")
+      return top_left_ref, bottom_right_ref
+    end
+      
     def get_mda_attributes
-      { name: @workbook[0][1][1].value }
+      { name: @worksheet[1][1].value }
     end 
     
     def get_disciplines_attributes
@@ -116,8 +135,9 @@ module WhatsOpt
 
     def _import_disciplines_data
       unless @disciplines
-        @disciplines = @workdata.map{|row| getstr(row[1])}
-        @disciplines = @disciplines.uniq.compact
+        # TODO: use the discipline code, for now suppose they are
+        # ordered in the increasing code number: 0,1,2,...
+        @disciplines = @disc_data.map{|row| _getstr(row[0])}
         @disciplines.map!(&:camelize)
       end   
       @disciplines
@@ -127,12 +147,8 @@ module WhatsOpt
       unless @variables
         @variables = {}
         @workdata.each do |row|
-          name = getstr(row[12])
-          shape = case getstr(row[3])
-                  when /scalar/, /scalaire/ # format backward compatibility 
-                    '1'
-                  when /table/  # format compatibility cicav excel
-                    '(10,)'
+          name = _getstr(row[3])
+          shape = case _getstr(row[5])
                   when /^(\d+)$/, /^\((\d+),\)$/
                     if $1.to_i > 1 
                       "(#{$1},)"
@@ -146,8 +162,8 @@ module WhatsOpt
                   else
                     '0'
                   end
-          type = (getstr(row[4]) =~ /int/) ? Variable::INTEGER_T : Variable::FLOAT_T
-          units = getstr(row[5])
+          type = (_getstr(row[7]) =~ /int/) ? Variable::INTEGER_T : Variable::FLOAT_T
+          units = _getstr(row[6])
           units = case units
                   when /degre/, /degré/ # format compatibility cicav excel
                     "deg"
@@ -156,8 +172,8 @@ module WhatsOpt
                   else
                     units
                   end
-          desc = getstr(row[0])
-          disabled = !!(getstr(row[14]) =~ /^y$|^yes$|^o$|^oui$/)  
+          desc = _getstr(row[4])
+          disabled = (_getstr(row[0]) == 'false')  
           @variables[name] = {name: name, shape: shape, type: type, 
                               units: units, desc: desc, disabled: disabled}
         end
@@ -167,13 +183,13 @@ module WhatsOpt
     
     def _import_connections_data()
       @connections = {}
-      flows = @workdata.map{|row| row && row[6..11]}
-      vars = @workdata.map{|row| row && row[12]}
+      flows = @workdata.map{|row| row && row[8..13]}
+      vars = @workdata.map{|row| row && row[3]}
       flows.each_with_index do |row, i|
-        var = getstr(vars[i]) 
+        var = _getstr(vars[i]) 
         row.each do |c|
           if c && c.value
-            val = getstr(c)
+            val = _getstr(c)
             if @connections.has_key? val
               @connections[val].append(var)
             else
@@ -185,7 +201,7 @@ module WhatsOpt
       return @connections
     end
     
-    def getstr(row_element)
+    def _getstr(row_element)
       s = row_element && row_element.value.to_s.strip
       s
     end
