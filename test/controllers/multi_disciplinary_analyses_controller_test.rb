@@ -32,7 +32,7 @@ class MultiDisciplinaryAnalysesControllerTest < ActionDispatch::IntegrationTest
   test "should import multi_disciplinary_analysis" do
     assert_difference('MultiDisciplinaryAnalysis.count') do
       post mdas_url, params: { 
-        multi_disciplinary_analysis: { attachment_attributes: {data: fixture_file_upload('excel_mda_simple_sample.xlsm') }} }
+        multi_disciplinary_analysis: { attachment_attributes: {data: fixture_file_upload('excel_mda_simple_sample.xlsx') }} }
     end
 
     assert_redirected_to mda_url(MultiDisciplinaryAnalysis.last)

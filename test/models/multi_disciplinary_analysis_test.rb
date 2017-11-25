@@ -9,7 +9,7 @@ class MultiDisciplinaryAnalysisTest < ActiveSupport::TestCase
   end
    
   test "should create an mda from a mda template excel file" do
-    attach = sample_file('excel_mda_simple_sample.xlsm')
+    attach = sample_file('excel_mda_simple_sample.xlsx')
     mda = MultiDisciplinaryAnalysis.create!(attachment_attributes: {data: attach})
     assert mda.valid?
     assert_equal 3, mda.design_variables.count

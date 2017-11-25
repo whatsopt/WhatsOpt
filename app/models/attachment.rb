@@ -33,7 +33,7 @@ class Attachment < ActiveRecord::Base
     
   validates_attachment_presence  :data
   validates_attachment_size      :data, :less_than => 100.megabytes
-  validates_attachment_file_name :data, :matches => [/\.ipynb\Z/, /\.xlsm\Z/]
+  validates_attachment_file_name :data, :matches => [/\.ipynb\Z/, /\.xlsx\Z/]
 
   scope :notebooks, -> { where(category: ATTACH_NOTEBOOK) }
   scope :mda_template, -> { where(category: ATTACH_MDA_TEMPLATE) }
@@ -63,7 +63,7 @@ class Attachment < ActiveRecord::Base
       case self.data_file_name
       when /\.ipynb\Z/
         self.category = ATTACH_NOTEBOOK
-      when /\.xlsm\Z/ 
+      when /\.xlsx\Z/ 
         self.category = ATTACH_MDA_TEMPLATE
       else
         self.category = ATTACH_RAW
