@@ -29,6 +29,7 @@ class OpenMDAO extends React.Component {
   constructor(props) {
     super(props);
     this.state = { 
+      loading:true,
       status_ok: false,
       log: [] 
     };
@@ -42,7 +43,7 @@ class OpenMDAO extends React.Component {
   getStatus() {
     axios.post(url('/api/v1/openmdao_checking'), {mda_id: this.props.mda_id})
     .then(response => {
-      this.setState({status_ok: response.data.status_ok, log: response.data.log})
+      this.setState({loading: false, status_ok: response.data.status_ok, log: response.data.log})
     })
     .catch(error => console.log(error))
   }
@@ -51,9 +52,12 @@ class OpenMDAO extends React.Component {
     let lines = this.state.log.map((l, i) => {
       return ( <OpenMDAOLogLine key={i} line={l}/> );
     });
-    
     let btnStatusClass = this.state.status_ok?"btn btn-success":"btn btn-warning";
     let btnIcon = this.state.status_ok?<i className="fa fa-check"/>:<i className="fa fa-exclamation-triangle"></i>;
+    if (this.state.loading) {
+      btnStatusClass = "btn btn-info";
+      btnIcon = <i className="fa fa-cog fa-spin" />;
+    }
     let href = url("/multi_disciplinary_analyses/"+this.props.mda_id+"/openmdao_generation/new");
     return (
       <div>
