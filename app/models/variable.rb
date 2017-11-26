@@ -50,7 +50,7 @@ class Variable < ApplicationRecord
     begin
       self.dim
     rescue BadShapeAttributeError => e
-      errors.add(:shape, "variable shape " + e.message)
+      errors.add(:shape, e.message)
     end
   end
 end

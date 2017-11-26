@@ -103,7 +103,7 @@ module WhatsOpt
             v = varattr.merge({io_mode: 'in'})
             res[dst].append(v) unless res[dst].include?(v) 
           else     
-            Rails.logger.error "Unknown connection pattern '#{k}' while importing #{@filename}"
+            raise ImportError.new("Bad flow '#{k}' for variable #{varname}")
           end
         end 
       end
@@ -145,20 +145,18 @@ module WhatsOpt
         @variables = {}
         @workdata.each do |row|
           name = _getstr(row[3])
-          shape = case _getstr(row[5])
-                  when /^(\d+)$/, /^\((\d+),\)$/
-                    if $1.to_i > 1 
-                      "(#{$1},)"
-                    else
-                      "#{1}"  
-                    end
-                  when /^\((\d+),\s*(\d+)\)$/  
-                    "(#{1}, #{2})"
-                  when /\((\d+),\s*(\d+),\s*(\d+)\)/
-                    "(#{1}, #{2}, #{3})"
-                  else
-                    '0'
-                  end
+          initval_or_shape = _getstr(row[5])
+          shape = 1
+          case initval_or_shape
+          when /\(\s*(\d+)\s*,\s*\)/
+            shape = "(#{$1},)"
+          when /\(\s*(\d+)\s*,\s*(\d+)\s*\)/  
+            shape = "(#{1}, #{2})"
+          when /\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)/
+            shape = "(#{1}, #{2}, #{3})"
+          else # 
+            initval = initval_or_shape
+          end
           type = (_getstr(row[7]) =~ /int/) ? Variable::INTEGER_T : Variable::FLOAT_T
           units = _getstr(row[6])
           units = case units
@@ -184,6 +182,7 @@ module WhatsOpt
       vars = @workdata.map{|row| row && row[3]}
       flows.each_with_index do |row, i|
         var = _getstr(vars[i]) 
+        next if row.nil?
         row.each do |c|
           if c && c.value
             val = _getstr(c)
