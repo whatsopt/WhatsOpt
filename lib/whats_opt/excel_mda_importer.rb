@@ -146,7 +146,7 @@ module WhatsOpt
         @workdata.each do |row|
           name = _getstr(row[3])
           initval_or_shape = _getstr(row[5])
-          shape = 1
+          shape = "1"
           case initval_or_shape
           when /\(\s*(\d+)\s*,\s*\)/
             shape = "(#{$1},)"

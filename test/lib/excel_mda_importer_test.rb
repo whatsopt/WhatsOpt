@@ -4,7 +4,7 @@ require 'whats_opt/excel_mda_importer'
 class ExcelMdaImporterTest < ActiveSupport::TestCase
 
   def setup
-    #@emi = WhatsOpt::ExcelMdaImporter.new(sample_file("excel_mda_simple_sample.xlsx"))  
+    @emi = WhatsOpt::ExcelMdaImporter.new(sample_file("excel_mda_simple_sample.xlsx"))  
   end
 
   test "should get 6 defined names" do
