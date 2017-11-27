@@ -1,27 +1,25 @@
 import numpy as np
-from openmdao.api import Component
+from openmdao.api import ExplicitComponent
 
-class <%= @discipline.name.camelcase %>(Component):
+class <%= @discipline.name.camelcase %>(ExplicitComponent):
     """ An OpenMDAO component to encapsulate <%= @discipline.py_classname %> discipline """
 
-    def __init__(self):
-        super(<%= @discipline.py_classname %>, self).__init__()
+    def setup(self):
 		<% @discipline.input_variables.each do |var| %>
-        self.add_param('<%= var.py_varname %>', val=<%= var.default_py_value %>, desc='<%= var.escaped_desc %>')<% end %>
+        self.add_input('<%= var.py_varname %>', val=<%= var.default_py_value %>, desc='<%= var.escaped_desc %>')<% end %>
 		<% @discipline.output_variables.each do |var| %>
         self.add_output('<%= var.py_varname %>', val=<%= var.default_py_value %>, desc='<%= var.escaped_desc %>')<% end %>
+        self.declare_partials('*', '*')
 		
-    def solve_nonlinear(self, params, unknowns, resids):
+    def compute(self, inputs, outputs):
         """ <%= @discipline.py_classname %> computation. """
     <% @discipline.output_variables.each do |var_out| %>
-        unknowns['<%= var_out.py_varname %>'] = <%= var_out.default_py_value %> <% end %>  
+        outputs['<%= var_out.py_varname %>'] = <%= var_out.default_py_value %> <% end %>  
 				
-    def linearize(self, params, unknowns, resids):
+    def compute_partials(self, inputs, partials):
         """ Jacobian for <%= @discipline.py_classname %>."""
-        J = {}
     <% @discipline.output_variables.each do |var_out| %>
    		<% @discipline.input_variables.each do |var_in| %>
-       	J['<%= var_out.py_varname %>', '<%= var_in.py_varname %>'] = np.zeros((<%= var_out.dim %>, <%= var_in.dim %>))<% end %><% end %>        
+       	partials['<%= var_out.py_varname %>', '<%= var_in.py_varname %>'] = np.zeros((<%= var_out.dim %>, <%= var_in.dim %>))<% end %><% end %>        
 
-        return J
         

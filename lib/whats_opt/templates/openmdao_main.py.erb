@@ -1,24 +1,25 @@
 import numpy as np
 
-from openmdao.api import Group, Problem, IndepVarComp, NLGaussSeidel, ScipyGMRES
+from openmdao.api import Problem, Group
+from openmdao.api import IndepVarComp
+from openmdao.api import NonlinearBlockGS, ScipyIterativeSolver
 <% @mda.disciplines.plain.each do |d| %>
 from <%= d.py_modulename %> import <%= d.py_classname %><% end %>
 
 class <%= @mda.py_classname %>(Group):
     """ An OpenMDAO component to encapsulate <%= @mda.py_classname %> MDA """
     
-    def __init__(self):
-        super(<%= @mda.py_classname %>, self).__init__()  
+    def setup(self): 
 		<% @mda.design_variables.each do |dv| %>
-        self.add('p_<%= dv.name %>', IndepVarComp('<%= dv.name %>', <%= dv.default_py_value%>), promotes=['<%= dv.name %>'])<% end %>		    
+        self.add_subsystem('p_<%= dv.name %>', IndepVarComp('<%= dv.name %>', <%= dv.default_py_value%>), promotes=['<%= dv.name %>'])<% end %>		    
  		<% @mda.disciplines.plain.each do |d| %>
-        self.add('<%= d.py_modulename %>', <%= d.py_classname %>(), promotes=[<%= d.variables.map(&:py_varname).map{|v| "'#{v}'"}.join(', ') %>])<% end %>         
+        self.add_subsystem('<%= d.py_modulename %>', <%= d.py_classname %>(), promotes=[<%= d.variables.map(&:py_varname).map{|v| "'#{v}'"}.join(', ') %>])<% end %>         
 
-        self.nl_solver = NLGaussSeidel() 
-        self.ln_solver = ScipyGMRES()
+        self.nonlinear_solver = NonlinearBlockGS() 
+        self.linear_solver = ScipyIterativeSolver()
 
 if __name__ == "__main__":
-    from openmdao.api import view_tree
+    from openmdao.api import view_model
     from optparse import OptionParser
 
     parser = OptionParser()
@@ -26,11 +27,11 @@ if __name__ == "__main__":
                       help="display N2 openmdao viewer")
     (options, args) = parser.parse_args()
 
-    top = Problem()
-    root = top.root = <%= @mda.py_classname %>()
+    problem = Problem()
+    problem.model = <%= @mda.py_classname %>()
 
-    top.setup()
+    problem.setup()
     
     if options.n2_view:
-        view_tree(top)
+        view_model(problem)
     
