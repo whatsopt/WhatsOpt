@@ -53,7 +53,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
   test "should run openmdao check and return false when invalid" do
     ok, log = @ogen.check_mda_setup
     refute ok  # check raises a runtime error
-    assert_match /RuntimeError: : variable .* already exists/, log.join(' ')
+    assert_match /Error: Variable name .* already exists/, log.join(' ')
   end
   
   test "should run openmdao check and return true when valid" do
@@ -61,7 +61,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     ogen2 = WhatsOpt::OpenmdaoGenerator.new(mda)
     ok, log = ogen2.check_mda_setup
     assert ok  # ok even if discipline without connections
-    assert_match /Setup: Check of root problem complete/, log.join(' ')
+    assert_empty log
   end
   
 end
