@@ -22,7 +22,7 @@ class Api::V1::OpenmdaoCheckingController < Api::ApiController
   private
 
   def openmdao_checking_params
-    params.permit(:mda_id)
+    params.require(:openmdao_checking).permit(:mda_id)
   end
   
 end

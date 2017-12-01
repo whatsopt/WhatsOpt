@@ -12,7 +12,8 @@
 
 <%= link_to 'Back', mdas_path %>
   
-<script>var MDA = <%= raw @mda.to_json %></script>
+<script>var MDA = <%= raw @mda.to_xdsm_json %></script>
+<script>var API_KEY = "<%=current_user.api_key%>"</script>
 
 <% if Rails.env == 'development' %>
   <% if `hostname` =~ /(rdri206h)/ %>

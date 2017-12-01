@@ -17,8 +17,11 @@ class TestWhatsOptClient(unittest.TestCase):
 
     def setUp(self):
         self.setup_problem_example()
-        wopt_url = "http://192.168.99.100:3000"
-        wopt_key = "47f2cd8c8ea3e8b72ee48324e773b2fd"
+#        wopt_url = "http://192.168.99.100:3000"
+#        wopt_url = "http://134.212.16.16:3000"
+        wopt_url = "http://endymion:3000"
+#        wopt_key = "47f2cd8c8ea3e8b72ee48324e773b2fd"
+        wopt_key = "7700013fc9e01f7529358dd7fa71bfaa"
         self.wopt = WhatsOpt(wopt_url)
 
     def test_import_mda(self):

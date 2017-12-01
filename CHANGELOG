@@ -1,10 +1,15 @@
 <h1>CHANGELOG</h1>
 
+<h3>0.4.1 (21/12/2017)</h3>
+<ul>
+  <li>Implement import MDA from OpenMDAO code as a dedicated python module</li>
+</ul>
+
 <h3>0.4.0 (27/11/2017)</h3>
 <ul>
   <li>Implement new Excel template import.</li>
   <li>Implement OpenMDAO 2.0.2 export.</li>
-  <li>Use Bootstrap tooltip in XDSMS view.</li>
+  <li>Use Bootstrap tooltip in XDSM view.</li>
 </ul>
 
 <h3>0.3.0 (29/09/2017)</h3>
