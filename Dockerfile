@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y \
 
 RUN pip install --upgrade pip
 RUN pip install jupyter
-RUN pip install openmdao
+RUN pip install openmdao==2.0.2
 
 # node
 RUN groupadd --gid 1000 node \

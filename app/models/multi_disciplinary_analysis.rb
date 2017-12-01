@@ -41,7 +41,7 @@ class MultiDisciplinaryAnalysis < ApplicationRecord
     self.control.input_variables.constraints
   end
   
-  def to_json
+  def to_xdsm_json
     { 
       id: self.id,
       name: self.name,
