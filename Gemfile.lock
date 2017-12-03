@@ -1,31 +1,3 @@
-GIT
-  remote: git://github.com/cschiewek/devise_ldap_authenticatable.git
-  revision: 9f7699d913f715afd4f2a99b80733eda52b1d88a
-  specs:
-    devise_ldap_authenticatable (0.8.6)
-      devise (>= 3.4.1)
-      net-ldap (>= 0.6, != 0.12)
-
-GIT
-  remote: git://github.com/plataformatec/devise.git
-  revision: 079ed3b6f8b671acde2dd630d28d21adb010fb3a
-  specs:
-    devise (4.3.0)
-      bcrypt (~> 3.0)
-      orm_adapter (~> 0.1)
-      railties (>= 4.1.0, < 5.2)
-      responders
-      warden (~> 1.2.3)
-
-GIT
-  remote: git://github.com/rails/webpacker.git
-  revision: 017e8f3acbd5caa58f791a264cd18183272807f9
-  specs:
-    webpacker (2.0)
-      activesupport (>= 4.2)
-      multi_json (~> 1.2)
-      railties (>= 4.2)
-
 GEM
   remote: https://rubygems.org/
   remote: https://rails-assets.org/
@@ -102,6 +74,15 @@ GEM
       climate_control (>= 0.0.3, < 1.0)
     coderay (1.1.1)
     concurrent-ruby (1.0.5)
+    devise (4.3.0)
+      bcrypt (~> 3.0)
+      orm_adapter (~> 0.1)
+      railties (>= 4.1.0, < 5.2)
+      responders
+      warden (~> 1.2.3)
+    devise_ldap_authenticatable (0.8.5)
+      devise (>= 3.4.1)
+      net-ldap (>= 0.6.0, <= 0.11)
     erubi (1.6.0)
     execjs (2.7.0)
     ffi (1.9.18)
@@ -152,7 +133,7 @@ GEM
     multi_json (1.12.1)
     mysql2 (0.4.7)
     nenv (0.3.0)
-    net-ldap (0.16.0)
+    net-ldap (0.11)
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
     net-ssh (4.1.0)
@@ -177,6 +158,8 @@ GEM
       activesupport (>= 3.0.0)
     rack (2.0.3)
     rack-cors (1.0.1)
+    rack-proxy (0.6.2)
+      rack
     rack-test (0.6.3)
       rack (>= 1.0)
     rails (5.1.1)
@@ -257,6 +240,10 @@ GEM
       activemodel (>= 5.0)
       bindex (>= 0.4.0)
       railties (>= 5.0)
+    webpacker (3.0.2)
+      activesupport (>= 4.2)
+      rack-proxy (>= 0.6.1)
+      railties (>= 4.2)
     websocket-driver (0.6.5)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.2)
@@ -271,8 +258,8 @@ DEPENDENCIES
   capistrano-passenger
   capistrano-rails
   capistrano-rvm
-  devise!
-  devise_ldap_authenticatable!
+  devise
+  devise_ldap_authenticatable
   font-awesome-rails
   guard
   guard-minitest
@@ -294,7 +281,7 @@ DEPENDENCIES
   tzinfo-data
   uglifier (>= 1.3.0)
   web-console
-  webpacker!
+  webpacker
 
 BUNDLED WITH
    1.15.4

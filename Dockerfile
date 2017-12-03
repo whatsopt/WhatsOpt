@@ -1,11 +1,15 @@
-FROM ruby:2.3
+FROM drecom/ubuntu-ruby:2.3.3
 MAINTAINER remi.lafage@onera.fr
 
-ENV http_proxy=http://proxy.onecert.fr:80
-ENV https_proxy=http://proxy.onecert.fr:80
+#ENV http_proxy=http://proxy.onecert.fr:80
+#ENV https_proxy=http://proxy.onecert.fr:80
 
+# sqlite
 RUN apt-get update && apt-get install -y \ 
-  build-essential \ 
+	sqlite3 libsqlite3-dev
+  
+# Python
+RUN apt-get install -y \ 
   python2.7 \
   python-pip \
   python-dev 
@@ -62,11 +66,32 @@ RUN set -ex \
   && mv yarn.js /usr/local/bin/yarn \
   && chmod +x /usr/local/bin/yarn  
 
+# OpenVSP
+RUN apt-get install -y git cmake libxml2-dev \
+			g++ libcpptest-dev libeigen3-dev \
+			libcminpack-dev swig \
+  && apt-get update \
+  && mkdir OpenVSP \
+  && cd OpenVSP \
+  && mkdir repo \
+  && git clone https://github.com/OpenVSP/OpenVSP.git repo \
+  && mkdir build \
+  && cd build \
+  && echo $PWD \
+  && cmake -DCMAKE_BUILD_TYPE=Release \
+	-DVSP_USE_SYSTEM_CPPTEST=false \
+	-DVSP_USE_SYSTEM_LIBXML2=true \
+	-DVSP_USE_SYSTEM_EIGEN=false \
+	-DVSP_USE_SYSTEM_CMINPACK=true \
+	-DCMAKE_INSTALL_PREFIX=/usr/local/OpenVSP \
+	-DVSP_NO_GRAPHICS=1 ../repo/SuperProject \
+  && make 
+
 RUN mkdir -p /whatsopt 
 WORKDIR /whatsopt
 
 COPY Gemfile Gemfile.lock ./ 
-RUN gem install bundler && bundle install --jobs 20 --retry 5
+RUN bundle install --jobs 20 --retry 5
 
 COPY . ./
 
