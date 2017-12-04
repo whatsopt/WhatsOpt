@@ -8,6 +8,8 @@ class AttachmentsController < ApplicationController
       send_file @attachment.data.path(:html), 
                 :type => @attachment.data_content_type, 
                 :disposition => 'inline'
+    when "notebook_view"
+        render file: @attachment.data.path(:html), layout: false
     else
       send_file @attachment.data.path, 
                 :type => @attachment.data_content_type

@@ -1,5 +1,9 @@
 <h1>Notebook #<%= @notebook.id %></h1>
 
-<div>
-  <%= render :partial => "jupyter_notebook", :locals => {:notebook => @notebook } %>
-</div>
+<p>
+  <small>created from <%= link_to @notebook.attachment.data_file_name, attachment_path(@notebook.attachment) %> by <%= @notebook.owner %></small>
+</p>
+
+
+<iframe width="1000" height="1000" src=<%= attachment_url(@notebook.attachment, :style => "notebook_view") %>>
+</iframe>

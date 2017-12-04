@@ -30,7 +30,7 @@ module WhatsOpt
       dst_path = File.dirname(dst.path)
       dst_filename = File.basename(dst.path)
 
-      cmd = "#{JUPYTER} nbconvert --template=basic --output-dir=#{dst_path} --output=#{dst_filename} #{src.path}"
+      cmd = "#{JUPYTER} nbconvert --template=full --output-dir=#{dst_path} --output=#{dst_filename} #{src.path}"
       Rails.logger.info "RUN COMMAND: #{cmd}"
       ok = self.run(cmd)
 
