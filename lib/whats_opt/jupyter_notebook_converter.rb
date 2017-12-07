@@ -2,7 +2,7 @@ require 'open3'
 
 module WhatsOpt
   
-  class JupyterNotebook
+  class JupyterNotebookConverter
 
     SORRY_MESSAGE = "Oops, can not convert notebook to html!"
     SORRY_MESSAGE_HTML = "<p><strong>"+SORRY_MESSAGE+"</strong></p>"
@@ -19,7 +19,7 @@ module WhatsOpt
       @format = options[:format]
     end
 
-    def make
+    def convert
       return File.new(@file.path) if File.extname(@file.path) != @orig_format
       return File.new(@file.path) unless @options && @options[:format]
 

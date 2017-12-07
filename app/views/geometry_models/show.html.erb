@@ -1,0 +1,11 @@
+<h1><%= @geomodel.title %></h1>
+
+<p>
+  <small>created from <%= link_to @geomodel.attachment.data_file_name, attachment_path(@geomodel.attachment) %> by <%= @geomodel.owner %></small>
+</p>
+
+<x3d width='800px' height='400px'>
+    <scene>
+      <Inline nameSpaceName="geometry-model" mapDEFToID="true" url="<%= attachment_url(@geomodel.attachment, format: :x3d) %>" />
+    </scene>
+</x3d>

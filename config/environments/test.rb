@@ -40,14 +40,12 @@ Rails.application.configure do
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
 
-  if `hostname`.strip == "remix"
-    # virtual box ubuntu
-    config.jupyter_script='/home/rlafage/anaconda2/bin/jupyter'
-  elsif `hostname`.strip == "rdri206h" 
+  if `hostname`.strip == "rdri206h" 
     # rdri206h
     config.jupyter_script='/tmp_user/rdri206h/rlafage/anaconda2/bin/jupyter'
   else
-    config.jupyter_script='ipython'
+    config.jupyter_script='jupyter'
+    config.openvsp_script='vspscript'
   end  
 
   #config.logger = Logger.new(STDOUT)

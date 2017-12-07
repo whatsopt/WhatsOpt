@@ -1,0 +1,18 @@
+<%= form_for @geomodel, :html => { :multipart => true, :role => "form" } do |f| %>
+
+  <div class="form-group">
+  	<%= f.label :title %>
+		<%= f.text_field :title, class: "form-control" %>
+  </div>
+  
+  <div class="form-group">
+  	<%= label_tag :openvsp_file, 'OpenVSP .vsp3 file'%>
+    <%= render "attachments/attachment_form", :f => f %>  
+  </div>
+
+  <div class="form-group">
+    <%= f.submit "Submit", class: "btn btn-primary" %>
+    <%= f.submit "Cancel", class: "btn", name: "cancel_button" %>
+  </div>
+  
+<% end %>

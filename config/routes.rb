@@ -9,6 +9,7 @@ Rails.application.routes.draw do
   resources :users, only: [:show]
   resources :projects
   resources :notebooks
+  resources :geometry_models
   resources :attachments, only: [:show, :index]
   resources :openmdao_generation, only: [:new]
     

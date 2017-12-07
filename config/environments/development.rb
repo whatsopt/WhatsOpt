@@ -58,14 +58,12 @@ Rails.application.configure do
   config.web_console.whitelisted_ips = ['10.0.2.2', '134.212.26.254', '192.168.99.1']
 
   # Jupyter script
-  if `hostname`.strip == "remix"
-    # virtual box ubuntu
-    config.jupyter_script='/home/rlafage/anaconda2/bin/jupyter'
-  elsif `hostname`.strip == "rdri206h"
+  if `hostname`.strip == "rdri206h"
     # rdri206h
     config.jupyter_script='/tmp_user/rdri206h/rlafage/anaconda2/bin/jupyter'
   else
     config.jupyter_script='jupyter'
+    config.openvsp_script='vspscript'
   end  
 
   config.x.webpacker[:dev_server_host] = 'endymion'
