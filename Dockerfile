@@ -1,70 +1,94 @@
-FROM drecom/ubuntu-ruby:2.3.3
+FROM ubuntu:latest
 MAINTAINER remi.lafage@onera.fr
 
 #ENV http_proxy=http://proxy.onecert.fr:80
 #ENV https_proxy=http://proxy.onecert.fr:80
 
-# sqlite
-RUN apt-get update && apt-get install -y \ 
-	sqlite3 libsqlite3-dev
-  
-# Python
-RUN apt-get install -y \ 
-  python2.7 \
-  python-pip \
-  python-dev 
+# adapted from drecom/ubuntu-base drecom/ubuntu-ruby
+RUN apt-get update \
+&&  apt-get upgrade -y --force-yes \
+&&  apt-get install -y --force-yes \
+    libssl-dev \
+    libreadline-dev \
+    zlib1g-dev \
+    wget \
+    curl \
+    git \
+    build-essential \
+    vim \
+    dtach \
+    imagemagick \
+    libmagick++-dev \
+    libqtwebkit-dev \
+    libffi-dev \
+    mysql-client \
+    libmysqlclient-dev \
+    libxslt1-dev \
+    redis-tools \
+    xvfb \
+    python \
+	python-dev \
+    tzdata \
+	libyaml-dev \
+	libsqlite3-dev \
+	sqlite3 \
+	libxml2-dev \
+	libcurl4-openssl-dev \
+	python-software-properties \
+&&  apt-get clean \
+&&  rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/*
 
-RUN pip install --upgrade pip
-RUN pip install jupyter
-RUN pip install openmdao==2.0.2
+# node.js LTS install
+RUN curl --silent --location https://deb.nodesource.com/setup_6.x | bash - \
+    && apt-get install -y nodejs \
+    && npm -g up
 
-# node
-RUN groupadd --gid 1000 node \
-  && useradd --uid 1000 --gid node --shell /bin/bash --create-home node
+# yarn install
+RUN curl -o- -L https://yarnpkg.com/install.sh | bash
 
-# gpg keys listed at https://github.com/nodejs/node#release-team
-RUN set -ex \
-  && for key in \
-    94AE36675C464D64BAFA68DD7434390BDBE9B9C5 \
-    FD3A5288F042B6850C66B31F09FE44734EB7990E \
-    71DCFD284A79C3B38668286BC97EC7A07EDE3FC1 \
-    DD8F2338BAE7501E3DD5AC78C273792F7D83545D \
-    B9AE9905FFD7803F25714661B63B535A4C206CA9 \
-    C4F0DFFF4E8C1A8236409D08E73BC641CC11F4C8 \
-    56730D5401028683275BD23C23EFEFE93C4CFFFE \
-  ; do \
-    gpg --keyserver ha.pool.sks-keyservers.net --recv-keys "$key" || \
-    gpg --keyserver pgp.mit.edu --recv-keys "$key" || \
-    gpg --keyserver keyserver.pgp.com --recv-keys "$key" ; \
-  done
+# pip install
+RUN wget https://bootstrap.pypa.io/get-pip.py \
+&&  python get-pip.py
 
-ENV NPM_CONFIG_LOGLEVEL info
-ENV NODE_VERSION 6.10.3
+# Ruby
+RUN git clone git://github.com/rbenv/rbenv.git /usr/local/rbenv \
+&&  git clone git://github.com/rbenv/ruby-build.git /usr/local/rbenv/plugins/ruby-build \
+&&  git clone git://github.com/jf/rbenv-gemset.git /usr/local/rbenv/plugins/rbenv-gemset \
+&&  /usr/local/rbenv/plugins/ruby-build/install.sh
+ENV PATH /usr/local/rbenv/bin:$PATH
+ENV RBENV_ROOT /usr/local/rbenv
 
-RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" \
-  && curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc" \
-  && gpg --batch --decrypt --output SHASUMS256.txt SHASUMS256.txt.asc \
-  && grep " node-v$NODE_VERSION-linux-x64.tar.xz\$" SHASUMS256.txt | sha256sum -c - \
-  && tar -xJf "node-v$NODE_VERSION-linux-x64.tar.xz" -C /usr/local --strip-components=1 \
-  && rm "node-v$NODE_VERSION-linux-x64.tar.xz" SHASUMS256.txt.asc SHASUMS256.txt \
-  && ln -s /usr/local/bin/node /usr/local/bin/nodejs
+RUN echo 'export RBENV_ROOT=/usr/local/rbenv' >> /etc/profile.d/rbenv.sh \
+&&  echo 'export PATH=/usr/local/rbenv/bin:$PATH' >> /etc/profile.d/rbenv.sh \
+&&  echo 'eval "$(rbenv init -)"' >> /etc/profile.d/rbenv.sh
 
-ENV YARN_VERSION 0.24.5
+RUN echo 'export RBENV_ROOT=/usr/local/rbenv' >> /root/.bashrc \
+&&  echo 'export PATH=/usr/local/rbenv/bin:$PATH' >> /root/.bashrc \
+&&  echo 'eval "$(rbenv init -)"' >> /root/.bashrc
 
-RUN set -ex \
-  && for key in \
-    6A010C5166006599AA17F08146C2130DFD2497F5 \
-  ; do \
-    gpg --keyserver ha.pool.sks-keyservers.net --recv-keys "$key" || \
-    gpg --keyserver pgp.mit.edu --recv-keys "$key" || \
-    gpg --keyserver keyserver.pgp.com --recv-keys "$key" ; \
-  done \
-  && curl -fSL -o yarn.js "https://yarnpkg.com/downloads/$YARN_VERSION/yarn-legacy-$YARN_VERSION.js" \
-  && curl -fSL -o yarn.js.asc "https://yarnpkg.com/downloads/$YARN_VERSION/yarn-legacy-$YARN_VERSION.js.asc" \
-  && gpg --batch --verify yarn.js.asc yarn.js \
-  && rm yarn.js.asc \
-  && mv yarn.js /usr/local/bin/yarn \
-  && chmod +x /usr/local/bin/yarn  
+ENV CONFIGURE_OPTS --disable-install-doc
+ENV PATH /usr/local/rbenv/bin:/usr/local/rbenv/shims:$PATH
+
+RUN eval "$(rbenv init -)"; rbenv install 2.3.3 \
+&&  eval "$(rbenv init -)"; rbenv global 2.3.3 \
+&&  eval "$(rbenv init -)"; gem update --system \
+&& eval "$(rbenv init -)"; gem install bundler --force
+
+# node.js LTS install
+RUN curl --silent --location https://deb.nodesource.com/setup_6.x | bash - \
+    && apt-get install -y nodejs \
+    && npm -g up
+
+# yarn install
+RUN curl -o- -L https://yarnpkg.com/install.sh | bash
+
+# pip install
+RUN wget https://bootstrap.pypa.io/get-pip.py \
+&& python get-pip.py
+
+RUN pip install --upgrade pip \
+	&& pip install jupyter \
+	&& pip install openmdao==2.0.2
 
 # OpenVSP
 RUN apt-get install -y git cmake libxml2-dev \
@@ -83,7 +107,7 @@ RUN apt-get install -y git cmake libxml2-dev \
 	-DVSP_USE_SYSTEM_LIBXML2=true \
 	-DVSP_USE_SYSTEM_EIGEN=false \
 	-DVSP_USE_SYSTEM_CMINPACK=true \
-	-DCMAKE_INSTALL_PREFIX=/usr/local/OpenVSP \
+	-DCMAKE_INSTALL_PREFIX=/usr/local/bin \
 	-DVSP_NO_GRAPHICS=1 ../repo/SuperProject \
   && make 
 
