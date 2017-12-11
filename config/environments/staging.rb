@@ -88,6 +88,7 @@ Rails.application.configure do
   if `hostname`.strip == "rdri206h"
     # rdri206h
     config.jupyter_script='/tmp_user/rdri206h/rlafage/anaconda2/bin/jupyter'
+    config.openvsp_script='/tmp_user/rdri206h/rlafage/OpenVSP-3.13.3-Linux/vspscript'
   else
     config.jupyter_script='jupyter'
     config.openvsp_script='vspscript'

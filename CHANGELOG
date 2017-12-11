@@ -1,8 +1,14 @@
 <h1>CHANGELOG</h1>
 
+<h3>0.4.2 (11/12/2017)</h3>
+<ul>
+  <li>Implement Hangar to store OpenVSP3 3D models.</li>
+</ul>
+
 <h3>0.4.1 (21/12/2017)</h3>
 <ul>
   <li>Implement import MDA from OpenMDAO code as a dedicated python module</li>
+  <li>Fix notebook style display (use full template within iframe)
 </ul>
 
 <h3>0.4.0 (27/11/2017)</h3>
