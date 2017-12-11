@@ -1,7 +1,8 @@
+import os
 import unittest
 from openmdao.api import IndepVarComp, Problem, Group
 from openmdao.test_suite.components.paraboloid import Paraboloid
-from whatsopt.client import WhatsOpt
+from whatsopt.whatsopt_client import WhatsOpt
 
 class TestWhatsOptClient(unittest.TestCase):
 
@@ -17,16 +18,15 @@ class TestWhatsOptClient(unittest.TestCase):
 
     def setUp(self):
         self.setup_problem_example()
-#        wopt_url = "http://192.168.99.100:3000"
-#        wopt_url = "http://134.212.16.16:3000"
-        wopt_url = "http://endymion:3000"
-#        wopt_key = "47f2cd8c8ea3e8b72ee48324e773b2fd"
-        wopt_key = "7700013fc9e01f7529358dd7fa71bfaa"
-        self.wopt = WhatsOpt(wopt_url)
+        self.wopt = WhatsOpt()
 
-    def test_import_mda(self):
-        self.wopt.import_mda(self.pb)
+    def test_push_mda(self):
+        self.wopt.push_mda(self.pb)
 
+    def test_get_openmdao_problem(self):
+        pb = self.wopt.get_openmdao_problem(os.path.join(os.path.dirname(__file__), 'openmdao_problem.py'))
+        
+        
 #     def test_list_studies(self):
 #         studies = self.wopt.list_studies()
 #         # print studies
