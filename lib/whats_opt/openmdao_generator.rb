@@ -18,7 +18,7 @@ module WhatsOpt
       @genfiles = []
     end
         
-    def generate_zip
+    def generate
       zip_filename = 'openmdao_mda.zip'
       stringio = nil
       Dir.mktmpdir("openmdao_#{@mda.name.downcase.tr(" ", "_")}_") do |dir|

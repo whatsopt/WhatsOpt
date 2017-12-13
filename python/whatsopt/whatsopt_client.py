@@ -16,7 +16,6 @@ PROD_URL = "http://rdri206h.onecert.fr/whatsopt"
 TEST_URL = "http://endymion:3000"
 DEV_URL = "http://192.168.99.100:3000"
 
-
 class WhatsOptImportMdaError(Exception):
     pass
 

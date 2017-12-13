@@ -1,0 +1,1196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="cmdows">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="header">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="creator" type="xs:string">
+								<xs:annotation>
+									<xs:documentation>Creator of the initial CMDOWS dataset </xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="description" type="xs:string">
+								<xs:annotation>
+									<xs:documentation>Description of the initial CMDOWS dataset</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="timestamp" type="xs:dateTime">
+								<xs:annotation>
+									<xs:documentation>Timestamp of the initial CMDOWS dataset creation </xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="fileVersion" type="xs:string">
+								<xs:annotation>
+									<xs:documentation>Version of the initial CMDOWS dataset</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="cmdowsVersion" type="xs:string">
+								<xs:annotation>
+									<xs:documentation>Version of the CMDOWS schema that the initial CMDOWS dataset adheres to </xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="updates" minOccurs="0">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="update" maxOccurs="unbounded">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="modification" type="xs:string">
+														<xs:annotation>
+															<xs:documentation>Description of the modification to the CMDOWS dataset</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element name="creator" type="xs:string">
+														<xs:annotation>
+															<xs:documentation>Creator of the modification to the CMDOWS dataset</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element name="timestamp" type="xs:dateTime">
+														<xs:annotation>
+															<xs:documentation>Timestamp of the modification to the CMDOWS dataset</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element name="fileVersion" type="xs:string">
+														<xs:annotation>
+															<xs:documentation>Version of the modification to the CMDOWS dataset</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element name="cmdowsVersion" type="xs:string">
+														<xs:annotation>
+															<xs:documentation>Version of the CMDOWS schema that the modification  to the CMDOWS dataset adheres to </xs:documentation>
+														</xs:annotation>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="organization" minOccurs="0">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="contacts">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="contact" maxOccurs="unbounded">
+														<xs:complexType>
+															<xs:all>
+																<xs:element name="name" type="xs:string">
+																	<xs:annotation>
+																		<xs:documentation>Name of the contact person</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+																<xs:element name="email" type="xs:string" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>E-Mail address of the contact person</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+																<xs:element name="company" minOccurs="0"/>
+																<xs:element name="department" minOccurs="0"/>
+																<xs:element name="function" type="xs:string" minOccurs="0"/>
+																<xs:element name="address" type="xs:string" minOccurs="0"/>
+																<xs:element name="telephone" type="xs:string" minOccurs="0"/>
+																<xs:element name="country" type="xs:string" minOccurs="0"/>
+															</xs:all>
+															<xs:attribute name="uID" type="xs:string" use="optional">
+																<xs:annotation>
+																	<xs:documentation>Unique ID of the contact which can be used as reference in order to avoid having the same contact twice in the document</xs:documentation>
+																</xs:annotation>
+															</xs:attribute>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="organigram" minOccurs="0">
+											<xs:complexType>
+												<xs:all>
+													<xs:element name="architects" minOccurs="0">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="architect" maxOccurs="unbounded">
+																	<xs:complexType>
+																		<xs:sequence>
+																			<xs:element name="contactUID"/>
+																		</xs:sequence>
+																	</xs:complexType>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="integrators" minOccurs="0">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="integrator" maxOccurs="unbounded">
+																	<xs:complexType>
+																		<xs:sequence>
+																			<xs:element name="contactUID"/>
+																		</xs:sequence>
+																	</xs:complexType>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="collaborativeEngineers" minOccurs="0">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="collaborativeEngineer" maxOccurs="unbounded">
+																	<xs:complexType>
+																		<xs:sequence>
+																			<xs:element name="contactUID"/>
+																		</xs:sequence>
+																	</xs:complexType>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="toolSpecialists" minOccurs="0">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="toolSpecialist" maxOccurs="unbounded">
+																	<xs:complexType>
+																		<xs:sequence>
+																			<xs:element name="contactUID"/>
+																		</xs:sequence>
+																	</xs:complexType>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="customers" minOccurs="0">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="customer" maxOccurs="unbounded">
+																	<xs:complexType>
+																		<xs:sequence>
+																			<xs:element name="contactUID" type="xs:string"/>
+																		</xs:sequence>
+																	</xs:complexType>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="projectSpecific" type="xs:anyType" minOccurs="0"/>
+												</xs:all>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="executableBlocks">
+					<xs:complexType>
+						<xs:all>
+							<xs:element name="designCompetences" minOccurs="0">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="designCompetence" maxOccurs="unbounded">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="ID" type="xs:string">
+														<xs:annotation>
+															<xs:documentation>Identifier of the tool to be executed</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element name="modeID" type="xs:string">
+														<xs:annotation>
+															<xs:documentation>Identifier of the tool mode to be executed (as a tool can usually be executed in different modes)</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element name="instanceID" type="xs:string"/>
+													<xs:element name="version" type="xs:string"/>
+													<xs:element name="label" type="xs:string">
+														<xs:annotation>
+															<xs:documentation>Label of the design competence which can be used for clean printouts (e.g. 'F')</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element name="inputs">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="input" maxOccurs="unbounded">
+																	<xs:complexType>
+																		<xs:complexContent>
+																			<xs:extension base="inoutType">
+																				<xs:sequence>
+																					<xs:element name="validRanges" type="rangeType" minOccurs="0"/>
+																				</xs:sequence>
+																			</xs:extension>
+																		</xs:complexContent>
+																	</xs:complexType>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="outputs" type="outputsType"/>
+													<xs:element name="metadata" minOccurs="0">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="generalInfo" minOccurs="0">
+																	<xs:complexType>
+																		<xs:all>
+																			<xs:element name="description" type="xs:string" minOccurs="0">
+																				<xs:annotation>
+																					<xs:documentation>Description of the design competence</xs:documentation>
+																				</xs:annotation>
+																			</xs:element>
+																			<xs:element name="status" type="xs:string" minOccurs="0">
+																				<xs:annotation>
+																					<xs:documentation>Describing the state of the design competence, e.g. draft, final, for verification, ...</xs:documentation>
+																				</xs:annotation>
+																			</xs:element>
+																			<xs:element name="creationDate" type="xs:date" minOccurs="0"/>
+																			<xs:element name="owner" type="contactType" minOccurs="0">
+																				<xs:annotation>
+																					<xs:documentation>Owner of the design competence</xs:documentation>
+																				</xs:annotation>
+																			</xs:element>
+																			<xs:element name="creator" type="contactType" minOccurs="0">
+																				<xs:annotation>
+																					<xs:documentation>Creator of the design competence</xs:documentation>
+																				</xs:annotation>
+																			</xs:element>
+																			<xs:element name="operator" type="contactType" minOccurs="0">
+																				<xs:annotation>
+																					<xs:documentation>Operator of the design competence to be contacted in case of problems</xs:documentation>
+																				</xs:annotation>
+																			</xs:element>
+																			<xs:element name="modelDefinition" minOccurs="0">
+																				<xs:annotation>
+																					<xs:documentation>Optional element for 'surrogateModel' competence types</xs:documentation>
+																				</xs:annotation>
+																				<xs:complexType>
+																					<xs:all>
+																						<xs:element name="referenceDataSet" type="xs:string" minOccurs="0"/>
+																						<xs:element name="analysisMethod" type="xs:string" minOccurs="0"/>
+																						<xs:element name="fittingMethod" type="xs:string" minOccurs="0"/>
+																					</xs:all>
+																				</xs:complexType>
+																			</xs:element>
+																		</xs:all>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="performanceInfo" minOccurs="0">
+																	<xs:complexType>
+																		<xs:all>
+																			<xs:element name="precision" type="xs:decimal" minOccurs="0"/>
+																			<xs:element name="fidelityLevel" type="xs:decimal" minOccurs="0"/>
+																			<xs:element name="runTime" type="xs:decimal" minOccurs="0"/>
+																			<xs:element name="standardDeviation" type="xs:decimal" minOccurs="0"/>
+																			<xs:element name="verifications" minOccurs="0">
+																				<xs:complexType>
+																					<xs:sequence>
+																						<xs:element name="verification" maxOccurs="unbounded">
+																							<xs:complexType>
+																								<xs:all>
+																									<xs:element name="method" type="xs:string"/>
+																									<xs:element name="verifier" type="contactType"/>
+																									<xs:element name="result" type="xs:string"/>
+																									<xs:element name="date" type="xs:date"/>
+																									<xs:element name="version" type="xs:string"/>
+																								</xs:all>
+																							</xs:complexType>
+																						</xs:element>
+																					</xs:sequence>
+																				</xs:complexType>
+																			</xs:element>
+																		</xs:all>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="executionInfo" minOccurs="0">
+																	<xs:complexType>
+																		<xs:all>
+																			<xs:element name="availabilityConstraints" minOccurs="0">
+																				<xs:complexType>
+																					<xs:all>
+																						<xs:element name="fromDate" type="xs:date" minOccurs="0"/>
+																						<xs:element name="toDate" type="xs:date" minOccurs="0"/>
+																						<xs:element name="fromOfficeHour" type="xs:time" minOccurs="0"/>
+																						<xs:element name="toOfficeHour" type="xs:time" minOccurs="0"/>
+																						<xs:element name="maximumTotalExecutions" type="xs:int" minOccurs="0"/>
+																						<xs:element name="maximumParallelExecutions" type="xs:int" minOccurs="0"/>
+																					</xs:all>
+																				</xs:complexType>
+																			</xs:element>
+																			<xs:element name="authorizationConstraints" minOccurs="0">
+																				<xs:complexType>
+																					<xs:all>
+																						<xs:element name="authorizedUsers" minOccurs="0">
+																							<xs:complexType>
+																								<xs:sequence>
+																									<xs:element name="authorizedUser" type="contactType" maxOccurs="unbounded"/>
+																								</xs:sequence>
+																							</xs:complexType>
+																						</xs:element>
+																						<xs:element name="unauthorizedUsers" minOccurs="0">
+																							<xs:complexType>
+																								<xs:sequence>
+																									<xs:element name="unauthorizedUser" type="contactType" maxOccurs="unbounded"/>
+																								</xs:sequence>
+																							</xs:complexType>
+																						</xs:element>
+																					</xs:all>
+																				</xs:complexType>
+																			</xs:element>
+																			<xs:element name="remoteComponentInfo" minOccurs="0">
+																				<xs:complexType>
+																					<xs:all>
+																						<xs:element name="jobSettings" minOccurs="0">
+																							<xs:complexType>
+																								<xs:all>
+																									<xs:element name="singleOrMultiExecution" type="xs:string" minOccurs="0"/>
+																									<xs:element name="jobName" type="xs:string" minOccurs="0"/>
+																									<xs:element name="remoteEngineer" type="contactType" minOccurs="0"/>
+																									<xs:element name="notificationMessage" type="xs:string" minOccurs="0"/>
+																								</xs:all>
+																							</xs:complexType>
+																						</xs:element>
+																						<xs:element name="dataExchangeSettings" minOccurs="0">
+																							<xs:complexType>
+																								<xs:all>
+																									<xs:element name="dataserver" type="xs:string" minOccurs="0"/>
+																									<xs:element name="urlsite" type="xs:string" minOccurs="0"/>
+																									<xs:element name="webAuthenticationProtocol" type="xs:string" minOccurs="0"/>
+																									<xs:element name="context" type="xs:string" minOccurs="0"/>
+																									<xs:element name="folder" type="xs:string" minOccurs="0"/>
+																									<xs:element name="pollingTime" type="xs:float" minOccurs="0"/>
+																									<xs:element name="maxIterations" type="xs:int" minOccurs="0"/>
+																									<xs:element name="timeOut" type="xs:float" minOccurs="0"/>
+																									<xs:element name="sharedFilePolicy" type="xs:string" minOccurs="0"/>
+																									<xs:element name="servermutex" type="xs:string" minOccurs="0"/>
+																								</xs:all>
+																							</xs:complexType>
+																						</xs:element>
+																					</xs:all>
+																				</xs:complexType>
+																			</xs:element>
+																		</xs:all>
+																	</xs:complexType>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="projectSpecific" type="xs:anyType" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>Free element containing any project specific information  (e.g. for RCE or Optimus).</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+												</xs:sequence>
+												<xs:attribute name="uID" type="xs:string" use="required">
+													<xs:annotation>
+														<xs:documentation>Unique ID of the design competence which can be used as reference in the problem definition etc. By convention this identifier should be of the following form ID[modeID][instanceID][version]</xs:documentation>
+													</xs:annotation>
+												</xs:attribute>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="mathematicalFunctions" minOccurs="0">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="mathematicalFunction" maxOccurs="unbounded">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="label" type="xs:string">
+														<xs:annotation>
+															<xs:documentation>Name of the function which can be used for clean printouts (e.g. 'G')</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element name="inputs">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="input" maxOccurs="unbounded">
+																	<xs:complexType>
+																		<xs:complexContent>
+																			<xs:extension base="inoutType">
+																				<xs:sequence>
+																					<xs:element name="equationLabel" minOccurs="0">
+																						<xs:simpleType>
+																							<xs:list itemType="xs:string"/>
+																						</xs:simpleType>
+																					</xs:element>
+																					<xs:element name="validRanges" type="rangeType" minOccurs="0"/>
+																				</xs:sequence>
+																			</xs:extension>
+																		</xs:complexContent>
+																	</xs:complexType>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="outputs">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="output" maxOccurs="unbounded">
+																	<xs:complexType>
+																		<xs:complexContent>
+																			<xs:extension base="inoutType">
+																				<xs:sequence>
+																					<xs:choice>
+																						<xs:element name="equations" type="equationsType">
+																							<xs:annotation>
+																								<xs:documentation>A mathematical function output can be defined by mulitple equivalent equations in different languages</xs:documentation>
+																							</xs:annotation>
+																						</xs:element>
+																						<xs:element name="equationsUID" type="xs:string">
+																							<xs:annotation>
+																								<xs:documentation>A mathematical function output can also be defined by a reference to another group of equivalent equations in different languages</xs:documentation>
+																							</xs:annotation>
+																						</xs:element>
+																					</xs:choice>
+																				</xs:sequence>
+																			</xs:extension>
+																		</xs:complexContent>
+																	</xs:complexType>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+												<xs:attribute name="uID" type="xs:string" use="required">
+													<xs:annotation>
+														<xs:documentation>Unique ID of the function which can be used as reference in the problem definition etc. (e.g. 'G')</xs:documentation>
+													</xs:annotation>
+												</xs:attribute>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:all>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="parameters">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="parameter" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:all>
+										<xs:element name="label" type="xs:string">
+											<xs:annotation>
+												<xs:documentation>Label of the parameter which can be used for clean printouts (e.g. 'y1')</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="description" type="xs:string" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>Detailed description of the parameter</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="note" type="xs:string" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>Any additional note for the parameter</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="unit" type="xs:string" minOccurs="0"/>
+										<xs:element name="dataType" type="xs:string" minOccurs="0"/>
+									</xs:all>
+									<xs:attribute name="uID" type="xs:string" use="required">
+										<xs:annotation>
+											<xs:documentation>Unique ID of the parameter which can be used as reference in the problem definition etc. (e.g. '/data_schema/analyses/y1')</xs:documentation>
+										</xs:annotation>
+									</xs:attribute>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="problemDefinition" minOccurs="0">
+					<xs:complexType>
+						<xs:all>
+							<xs:element name="problemFormulation">
+								<xs:complexType>
+									<xs:all>
+										<xs:element name="mdaoArchitecture" type="xs:string"/>
+										<xs:element name="convergerType" type="xs:string" minOccurs="0"/>
+										<xs:element name="executableBlocksOrder">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="executableBlock" maxOccurs="unbounded">
+														<xs:complexType>
+															<xs:simpleContent>
+																<xs:extension base="xs:string">
+																	<xs:attribute name="position" type="xs:int"/>
+																</xs:extension>
+															</xs:simpleContent>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="allowUnconvergedCouplings" type="xs:boolean"/>
+										<xs:element name="doeSettings" minOccurs="0">
+											<xs:complexType>
+												<xs:all>
+													<xs:element name="doeMethod" type="xs:string"/>
+													<xs:element name="doeSeed" type="xs:decimal" minOccurs="0"/>
+													<xs:element name="doeRuns" type="xs:int" minOccurs="0"/>
+												</xs:all>
+											</xs:complexType>
+										</xs:element>
+									</xs:all>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="problemRoles">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="parameters">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="designVariables" minOccurs="0">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="designVariable" maxOccurs="unbounded">
+																	<xs:complexType>
+																		<xs:complexContent>
+																			<xs:extension base="simpleVariableType">
+																				<xs:sequence>
+																					<xs:element name="nominalValue" type="xs:decimal" minOccurs="0"/>
+																					<xs:element name="validRanges" type="rangeType" minOccurs="0"/>
+																					<xs:element name="variableType" minOccurs="0">
+																						<xs:simpleType>
+																							<xs:restriction base="xs:string">
+																								<xs:enumeration value="int"/>
+																								<xs:enumeration value="real"/>
+																							</xs:restriction>
+																						</xs:simpleType>
+																					</xs:element>
+																					<xs:element name="samples" minOccurs="0">
+																						<xs:complexType>
+																							<xs:sequence>
+																								<xs:element name="sample" maxOccurs="unbounded">
+																									<xs:complexType>
+																										<xs:simpleContent>
+																											<xs:extension base="xs:string">
+																												<xs:attribute name="position" type="xs:int"/>
+																											</xs:extension>
+																										</xs:simpleContent>
+																									</xs:complexType>
+																								</xs:element>
+																							</xs:sequence>
+																						</xs:complexType>
+																					</xs:element>
+																				</xs:sequence>
+																			</xs:extension>
+																		</xs:complexContent>
+																	</xs:complexType>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="objectiveVariables" minOccurs="0">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="objectiveVariable" type="simpleVariableType" maxOccurs="unbounded"/>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="constraintVariables" minOccurs="0">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="constraintVariable" maxOccurs="unbounded">
+																	<xs:complexType>
+																		<xs:complexContent>
+																			<xs:extension base="simpleVariableType">
+																				<xs:sequence>
+																					<xs:element name="constraintType" type="xs:string" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Either 'inequality' or  'equality'</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="constraintOperator" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Either '==', 'lt', 'gt', 'lt=' or 'gt='</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="referenceValue" type="xs:decimal" minOccurs="0"/>
+																					<xs:element name="requiredEqualityPrecision" type="xs:decimal" minOccurs="0"/>
+																				</xs:sequence>
+																			</xs:extension>
+																		</xs:complexContent>
+																	</xs:complexType>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="stateVariables" minOccurs="0">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="stateVariable" type="simpleVariableType" maxOccurs="unbounded"/>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="executableBlocks">
+											<xs:complexType>
+												<xs:all>
+													<xs:element name="preCouplingBlocks" minOccurs="0">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="preCouplingBlock" maxOccurs="unbounded">
+																	<xs:complexType>
+																		<xs:simpleContent>
+																			<xs:extension base="xs:string"/>
+																		</xs:simpleContent>
+																	</xs:complexType>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="coupledBlocks" minOccurs="0">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="coupledBlock" maxOccurs="unbounded">
+																	<xs:complexType>
+																		<xs:simpleContent>
+																			<xs:extension base="xs:string"/>
+																		</xs:simpleContent>
+																	</xs:complexType>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="postCouplingBlocks" minOccurs="0">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="postCouplingBlock" maxOccurs="unbounded">
+																	<xs:complexType>
+																		<xs:simpleContent>
+																			<xs:extension base="xs:string"/>
+																		</xs:simpleContent>
+																	</xs:complexType>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="preDesvarsBlocks" minOccurs="0">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="preDesvarsBlock" maxOccurs="unbounded">
+																	<xs:complexType>
+																		<xs:simpleContent>
+																			<xs:extension base="xs:string"/>
+																		</xs:simpleContent>
+																	</xs:complexType>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="postDesvarsBlocks" minOccurs="0">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="postDesvarBlock" maxOccurs="unbounded">
+																	<xs:complexType>
+																		<xs:simpleContent>
+																			<xs:extension base="xs:string"/>
+																		</xs:simpleContent>
+																	</xs:complexType>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+												</xs:all>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:all>
+						<xs:attribute name="uID" type="xs:string" use="required"/>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="workflow" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="problemDefinitionUID" type="xs:string" minOccurs="0"/>
+							<xs:element name="dataGraph">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="name" type="xs:string"/>
+										<xs:element name="edges">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="edge" maxOccurs="unbounded">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:choice>
+																	<xs:element name="fromParameterUID" type="xs:string"/>
+																	<xs:element name="fromExecutableBlockUID" type="xs:string"/>
+																</xs:choice>
+																<xs:choice>
+																	<xs:element name="toParameterUID"/>
+																	<xs:element name="toExecutableBlockUID"/>
+																</xs:choice>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="metadata" minOccurs="0"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="processGraph" minOccurs="0">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="name" type="xs:string"/>
+										<xs:element name="edges">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="edge" maxOccurs="unbounded">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="fromExecutableBlockUID" type="xs:string"/>
+																<xs:element name="toExecutableBlockUID" type="xs:string"/>
+																<xs:element name="processStepNumber" type="xs:int"/>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="nodes">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="node" maxOccurs="unbounded">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="referenceUID" type="xs:string"/>
+																<xs:element name="processStepNumber" type="xs:int"/>
+																<xs:element name="convergerStepNumber" type="xs:int" minOccurs="0"/>
+																<xs:element name="diagonalPosition" type="xs:int"/>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="metadata" minOccurs="0">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="loopNesting" type="loopElementType" minOccurs="0"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="architectureElements" minOccurs="0">
+					<xs:complexType>
+						<xs:all>
+							<xs:element name="parameters">
+								<xs:complexType>
+									<xs:all>
+										<xs:element name="instances" minOccurs="0">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="instance" maxOccurs="unbounded">
+														<xs:complexType>
+															<xs:complexContent>
+																<xs:extension base="simpleArchitectureElementsVariableType">
+																	<xs:sequence>
+																		<xs:element name="instanceID" type="xs:int"/>
+																	</xs:sequence>
+																</xs:extension>
+															</xs:complexContent>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="initialGuessCouplingVariables" minOccurs="0">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="initialGuessCouplingVariable" type="simpleArchitectureElementsVariableType" maxOccurs="unbounded"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="finalCouplingVariables" minOccurs="0">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="finalCouplingVariable" type="simpleArchitectureElementsVariableType" maxOccurs="unbounded"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="couplingCopyVariables" minOccurs="0">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="couplingCopyVariable" type="simpleArchitectureElementsVariableType" maxOccurs="unbounded"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="initialGuessDesignVariables" minOccurs="0">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="initialGuessDesignVariable" type="simpleArchitectureElementsVariableType" maxOccurs="unbounded"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="finalDesignVariables" minOccurs="0">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="finalDesignVariable" type="simpleArchitectureElementsVariableType" maxOccurs="unbounded"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="finalOutputVariables" minOccurs="0">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="finalOutputVariable" type="simpleArchitectureElementsVariableType" maxOccurs="unbounded"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="consistencyConstraintVariables" minOccurs="0">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="consistencyConstraintVariable" type="simpleArchitectureElementsVariableType" maxOccurs="unbounded"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="doeInputSampleLists" minOccurs="0">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="doeInputSampleList" type="simpleArchitectureElementsVariableType" maxOccurs="unbounded"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="doeOutputSampleLists" minOccurs="0">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="doeOutputSampleList" type="simpleArchitectureElementsVariableType" maxOccurs="unbounded"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:all>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="executableBlocks">
+								<xs:complexType>
+									<xs:all>
+										<xs:element name="coordinators" minOccurs="0">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="coordinator" type="simpleArchitectureElementsBlockType" maxOccurs="unbounded"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="optimizers" minOccurs="0">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="optimizer" maxOccurs="unbounded">
+														<xs:complexType>
+															<xs:complexContent>
+																<xs:extension base="simpleArchitectureElementsBlockType">
+																	<xs:sequence>
+																		<xs:element name="designVariables" minOccurs="0">
+																			<xs:complexType>
+																				<xs:sequence>
+																					<xs:element name="designVariable" maxOccurs="unbounded">
+																						<xs:complexType>
+																							<xs:sequence>
+																								<xs:element name="designVariableUID" type="xs:string"/>
+																							</xs:sequence>
+																						</xs:complexType>
+																					</xs:element>
+																				</xs:sequence>
+																			</xs:complexType>
+																		</xs:element>
+																		<xs:element name="objectiveVariables" minOccurs="0">
+																			<xs:complexType>
+																				<xs:sequence>
+																					<xs:element name="objectiveVariable" maxOccurs="unbounded">
+																						<xs:complexType>
+																							<xs:sequence>
+																								<xs:element name="objectiveVariableUID" type="xs:string"/>
+																							</xs:sequence>
+																						</xs:complexType>
+																					</xs:element>
+																				</xs:sequence>
+																			</xs:complexType>
+																		</xs:element>
+																		<xs:element name="constraintVariables" minOccurs="0">
+																			<xs:complexType>
+																				<xs:sequence>
+																					<xs:element name="constraintVariable" maxOccurs="unbounded">
+																						<xs:complexType>
+																							<xs:sequence>
+																								<xs:element name="constraintVariableUID" type="xs:string"/>
+																							</xs:sequence>
+																						</xs:complexType>
+																					</xs:element>
+																				</xs:sequence>
+																			</xs:complexType>
+																		</xs:element>
+																	</xs:sequence>
+																</xs:extension>
+															</xs:complexContent>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="convergers" minOccurs="0">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="converger" type="simpleArchitectureElementsBlockType" maxOccurs="unbounded"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="does" minOccurs="0">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="doe" maxOccurs="unbounded">
+														<xs:complexType>
+															<xs:complexContent>
+																<xs:extension base="simplerArchitectureElementsBlockType">
+																	<xs:sequence>
+																		<xs:element name="settings">
+																			<xs:complexType>
+																				<xs:all>
+																					<xs:element name="doeTable" minOccurs="0">
+																						<xs:complexType>
+																							<xs:sequence>
+																								<xs:element name="tableRow" maxOccurs="unbounded">
+																									<xs:complexType>
+																										<xs:sequence>
+																											<xs:element name="tableElement" maxOccurs="unbounded">
+																												<xs:complexType>
+																													<xs:simpleContent>
+																														<xs:extension base="xs:float">
+																															<xs:attribute name="experimentID" type="xs:string"/>
+																														</xs:extension>
+																													</xs:simpleContent>
+																												</xs:complexType>
+																											</xs:element>
+																										</xs:sequence>
+																										<xs:attribute name="relatedParameterUID" type="xs:string"/>
+																									</xs:complexType>
+																								</xs:element>
+																							</xs:sequence>
+																						</xs:complexType>
+																					</xs:element>
+																					<xs:element name="doeMethod" type="xs:string"/>
+																				</xs:all>
+																			</xs:complexType>
+																		</xs:element>
+																		<xs:element name="designVariables" minOccurs="0">
+																			<xs:complexType>
+																				<xs:sequence>
+																					<xs:element name="designVariable" maxOccurs="unbounded">
+																						<xs:complexType>
+																							<xs:sequence>
+																								<xs:element name="designVariableUID" type="xs:string"/>
+																							</xs:sequence>
+																						</xs:complexType>
+																					</xs:element>
+																				</xs:sequence>
+																			</xs:complexType>
+																		</xs:element>
+																	</xs:sequence>
+																</xs:extension>
+															</xs:complexContent>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="consistencyConstraintFunctions" minOccurs="0">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="consistencyConstraintFunction" type="simpleArchitectureElementsBlockType" maxOccurs="unbounded"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="preCouplingAnalyses" minOccurs="0">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="preCouplingAnalysis" type="simpleArchitectureElementsRelatedBlockType" maxOccurs="unbounded"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="preIteratorAnalyses" minOccurs="0">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="preIteratorAnalysis" type="simpleArchitectureElementsRelatedBlockType" maxOccurs="unbounded"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="postIteratorAnalyses" minOccurs="0">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="postIteratorAnalysis" type="simpleArchitectureElementsRelatedBlockType" maxOccurs="unbounded"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="coupledAnalyses" minOccurs="0">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="coupledAnalysis" type="simpleArchitectureElementsRelatedBlockType" maxOccurs="unbounded"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="postCouplingAnalyses" minOccurs="0">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="postCouplingAnalysis" type="simpleArchitectureElementsRelatedBlockType" maxOccurs="unbounded"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:all>
+								</xs:complexType>
+							</xs:element>
+						</xs:all>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="rangeType">
+		<xs:sequence>
+			<xs:element name="limitRange" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Range defined by two limits</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:all>
+						<xs:element name="minimum" type="xs:float"/>
+						<xs:element name="maximum" type="xs:float"/>
+					</xs:all>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="listRange" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Range defined by a list of items</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="listRangeItem" type="xs:string" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="inoutType">
+		<xs:sequence>
+			<xs:element name="parameterUID" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>ID of the parameter which serves as input or output  (e.g. '/data_schema/analyses/y2')</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="equationsType">
+		<xs:sequence>
+			<xs:element name="equation" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="language" type="xs:string">
+								<xs:annotation>
+									<xs:documentation>The language in which the equation is formulated (e.g.  Python or MathML)</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uID" type="xs:string"/>
+	</xs:complexType>
+	<xs:complexType name="outputsType">
+		<xs:sequence>
+			<xs:element name="output" type="inoutType" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="contactType">
+		<xs:choice>
+			<xs:element name="contact">
+				<xs:complexType>
+					<xs:all>
+						<xs:element name="name" type="xs:string">
+							<xs:annotation>
+								<xs:documentation>Name of the contact person</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="email" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>E-Mail address of the contact person</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="company" minOccurs="0"/>
+						<xs:element name="department" minOccurs="0"/>
+						<xs:element name="function" type="xs:string" minOccurs="0"/>
+						<xs:element name="address" type="xs:string" minOccurs="0"/>
+						<xs:element name="telephone" type="xs:string" minOccurs="0"/>
+						<xs:element name="country" type="xs:string" minOccurs="0"/>
+					</xs:all>
+					<xs:attribute name="uID" type="xs:string" use="optional">
+						<xs:annotation>
+							<xs:documentation>Unique ID of the contact which can be used as reference in order to avoid having the same contact twice in the document</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="contactUID" type="xs:string"/>
+		</xs:choice>
+	</xs:complexType>
+	<xs:complexType name="loopElementType">
+		<xs:sequence>
+			<xs:element name="loopElements" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="loopElement" type="loopElementType" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="functionElements" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="functionElement" type="xs:string" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="relatedUID" type="xs:string"/>
+	</xs:complexType>
+	<xs:complexType name="simpleVariableType">
+		<xs:sequence>
+			<xs:element name="parameterUID" type="xs:string"/>
+		</xs:sequence>
+		<xs:attribute name="uID" type="xs:string" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="simpleArchitectureElementsVariableType">
+		<xs:sequence>
+			<xs:element name="relatedParameterUID" type="xs:string"/>
+			<xs:element name="label" type="xs:string"/>
+		</xs:sequence>
+		<xs:attribute name="uID" type="xs:string"/>
+	</xs:complexType>
+	<xs:complexType name="simpleArchitectureElementsBlockType">
+		<xs:sequence>
+			<xs:element name="label" type="xs:string"/>
+			<xs:element name="settings" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="uID" type="xs:string"/>
+	</xs:complexType>
+	<xs:complexType name="simplerArchitectureElementsBlockType">
+		<xs:sequence>
+			<xs:element name="label" type="xs:string"/>
+		</xs:sequence>
+		<xs:attribute name="uID" type="xs:string"/>
+	</xs:complexType>
+	<xs:complexType name="simpleArchitectureElementsRelatedBlockType">
+		<xs:sequence>
+			<xs:element name="relatedExecutableBlockUID" type="xs:string"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>
