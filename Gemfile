@@ -56,7 +56,7 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 source 'https://rails-assets.org' do
   gem 'rails-assets-tether', '>= 1.1.0'
 end
-gem 'bootstrap', '~> 4.0.0.alpha6'
+gem 'bootstrap', '~> 4.0.0.beta2'
 
 gem 'sass-rails'
 gem 'devise' #, github: 'plataformatec/devise'
@@ -68,4 +68,4 @@ gem 'rubyXL'
 gem 'webpacker' #, :git => "git://github.com/rails/webpacker.git"
 gem 'rack-cors'
 gem 'font-awesome-rails'
-
+gem 'nokogiri'
