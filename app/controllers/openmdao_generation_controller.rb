@@ -8,7 +8,7 @@ class OpenmdaoGenerationController < ApplicationController
       begin
         mda = MultiDisciplinaryAnalysis.find(mda_id)
         ogen = WhatsOpt::OpenmdaoGenerator.new(mda)
-        stringio, filename = ogen.generate_zip
+        stringio, filename = ogen.generate
         send_data stringio.read, filename: filename
       rescue ActiveRecord::RecordNotFound
         redirect_to mdas_url, 
