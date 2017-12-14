@@ -25,6 +25,7 @@
 
 # Python compiled
 **/*.pyc
+*/whatsopt.egg-info/
 
 # Uploaded files
 /upload/public/packs
