@@ -32,7 +32,7 @@ class WhatsOpt(object):
         elif os.path.exists(API_KEY_FILENAME):
             self.api_key = self._read_api_key()
         else:
-            self.api_key = self._ask_and_write_key()
+            self.api_key = self._ask_and_write_api_key()
           
         self.headers = {'Authorization': 'Token token=' + self.api_key}
         
@@ -69,15 +69,28 @@ class WhatsOpt(object):
             api_key = f.read()
             return api_key
 
-    def get_openmdao_problem(self, python_file):
-        sys.path.append(os.path.dirname(python_file))
-        execfile(python_file)
-        for name in locals():
-            var = locals()[name]
-            if isinstance(var, Problem):
-                return var
+    def execute(self, progname, func):
+        dir = os.path.dirname(progname)
+        sys.path.insert(0, dir)
+        with open(progname, 'rb') as fp:
+            code = compile(fp.read(), progname, 'exec')
+        globals_dict = {
+            '__file__': progname,
+            '__name__': '__main__',
+            '__package__': None,
+            '__cached__': None,
+        }
+        Problem._post_setup_func = self.push_mda_cmd()
+        exec(code, globals_dict)
+
+    def push_mda_cmd(self):
+        def push_mda(prob):
+            self.push_mda(prob)
+            exit()
+        return push_mda
 
     def push_mda(self, problem):
+        print "Try to push MDA to "+self.url
         data = _get_viewer_data(problem)
         tree = data['tree']
         print tree
@@ -97,6 +110,8 @@ class WhatsOpt(object):
         resp = self.session.post(url, headers=self.headers, json=mda_params)
         if resp.ok:
             print resp.json()
+        else:
+            print resp
 
     @staticmethod    
     def _get_discipline_names(system, tree):
@@ -134,7 +149,11 @@ class WhatsOpt(object):
                 varattrs[discsrc].append({'name':varsrc, 'io_mode':'out'})
             else:
                 varattrs[DISCIPLINE_CONTROL_NAME].append({'name':varsrc, 'io_mode':'out'})
-            disctgt, vartgt = conn['tgt'].split('.')
+                
+            if nelt > 1:
+                disctgt, vartgt = '.'.join(name_elts[:-1]), name_elts[-1] 
+            else:
+                raise Exception('Connection qualified name should contain at least one dot, but got %s' % conn['tgt'])
             if disctgt in discnames: 
                 varattrs[disctgt].append({'name':vartgt, 'io_mode':'in'})
             else:

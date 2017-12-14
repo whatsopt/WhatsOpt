@@ -10,7 +10,6 @@ def cli():
 def push(py_filename):
 	""" Push given MDA specified within given PY_FILENAME """
 	wop = WhatsOpt()
-	pb = wop.get_openmdao_problem(py_filename)
-	wop.push_mda(pb)
+	wop.execute(py_filename, wop.push_mda)
 	
 cli(prog_name='wop')
