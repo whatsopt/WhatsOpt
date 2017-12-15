@@ -81,6 +81,7 @@ RUN curl --silent --location https://deb.nodesource.com/setup_6.x | bash - \
 
 # yarn install
 RUN curl -o- -L https://yarnpkg.com/install.sh | bash
+ENV PATH "$PATH:/root/.yarn/bin"
 
 # pip install
 RUN wget https://bootstrap.pypa.io/get-pip.py \
