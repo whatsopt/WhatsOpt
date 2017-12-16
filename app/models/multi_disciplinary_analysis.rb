@@ -22,7 +22,7 @@ class MultiDisciplinaryAnalysis < ApplicationRecord
   end
   
   def control
-    self.disciplines.as_control.first || _build_control
+    self.disciplines.as_control.first
   end
   
   def design_variables
@@ -128,7 +128,7 @@ class MultiDisciplinaryAnalysis < ApplicationRecord
         emi = WhatsOpt::ExcelMdaImporter.new(self.attachment.path)
         self.name = emi.get_mda_attributes[:name]
         vars = emi.get_variables_attributes
-        _build_control
+        #self.disciplines.build({ name: WhatsOpt::ExcelMdaImporter::CONTROL_NAME })
         emi.get_disciplines_attributes().each do |dattr|
           disc = self.disciplines.build(dattr)
         end
@@ -136,10 +136,6 @@ class MultiDisciplinaryAnalysis < ApplicationRecord
           d.variables.build(vars[d.name]) if vars[d.name]
         end
       end
-    end
-    
-    def _build_control
-      self.disciplines.build({ name: WhatsOpt::ExcelMdaImporter::CONTROL_NAME })
     end
 
 end

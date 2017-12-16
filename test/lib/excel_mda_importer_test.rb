@@ -22,7 +22,9 @@ class ExcelMdaImporterTest < ActiveSupport::TestCase
   end
   
   test "should get disciplines attributes" do
-    assert_equal([{name: "Geometry"}, {name: "Aerodynamics"}, {name: "Control"}], @emi.get_disciplines_attributes)
+    assert_equal([{name: WhatsOpt::ExcelMdaImporter::CONTROL_NAME}, 
+                  {name: "Geometry"}, {name: "Aerodynamics"}, {name: "Control"}], 
+                 @emi.get_disciplines_attributes)
   end
 
   test "should get variables attributes" do
@@ -70,7 +72,7 @@ class ExcelMdaImporterTest < ActiveSupport::TestCase
   end
     
   test "should import disciplines" do
-    assert_equal ['Geometry', 'Aerodynamics', 'Control'],
+    assert_equal [WhatsOpt::ExcelMdaImporter::CONTROL_NAME, 'Geometry', 'Aerodynamics', 'Control'],
       @emi._import_disciplines_data
   end
 

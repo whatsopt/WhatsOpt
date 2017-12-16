@@ -10,6 +10,10 @@ aerodynamics:
   name: Aerodynamics
   multi_disciplinary_analysis: cicav
 
+control_fast:
+  name: __CONTROL__
+  multi_disciplinary_analysis: fast
+
 fast_discipline:
   name: FastDiscipline
   multi_disciplinary_analysis: fast

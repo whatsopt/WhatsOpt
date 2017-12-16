@@ -64,7 +64,7 @@ module WhatsOpt
     def get_variables_attributes
       import_all
       res = {}
-      ([CONTROL_NAME]+self.disciplines).each do |d|
+      (self.disciplines).each do |d|
         res[d] = [] 
       end
       @connections.keys.each do |k|
@@ -112,8 +112,8 @@ module WhatsOpt
         
     def _to_discipline(idx)
       _import_disciplines_data
-      if idx =~ /\d/ && idx.to_i < self.disciplines.length
-        d = self.disciplines[idx.to_i] 
+      if idx =~ /\d/ && idx.to_i+1 < self.disciplines.length
+        d = self.disciplines[idx.to_i+1] 
       else
         d = CONTROL_NAME
       end
@@ -123,10 +123,9 @@ module WhatsOpt
     def _to_other_disciplines(idx)
       _import_disciplines_data
       d = []
-      if idx =~ /\d/ && idx.to_i < self.disciplines.length
-        d = self.disciplines - [self.disciplines[idx.to_i]]
+      if idx =~ /\d/ && idx.to_i+1 < self.disciplines.length
+        d = self.disciplines - [self.disciplines[idx.to_i+1]] - [CONTROL_NAME]
       end
-      d = [CONTROL_NAME] if d.empty?
       d
     end
 
@@ -136,6 +135,7 @@ module WhatsOpt
         # ordered in the increasing code number: 0,1,2,...
         @disciplines = @disc_data.map{|row| _getstr(row[0])}
         @disciplines.map!(&:camelize)
+        @disciplines = [CONTROL_NAME] + @disciplines
       end   
       @disciplines
     end

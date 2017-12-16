@@ -2,7 +2,7 @@ require 'nokogiri'
 
 class WhatsOpt::CmdowsGenerator
 
-  class CmdowsSchemaError < StandardError
+  class CmdowsValidationError < StandardError
   end
   
   SCHEMA_FILE = File.join(File.dirname(__FILE__), 'cmdows.xsd')
@@ -16,7 +16,7 @@ class WhatsOpt::CmdowsGenerator
   def generate
     doc = @builder.doc
     XSD.validate(doc).each do |error|
-      raise CmdowsSchemaError.new(error.message)
+      raise CmdowsValidationError.new(error.message)
     end
     doc.to_xml 
   end
