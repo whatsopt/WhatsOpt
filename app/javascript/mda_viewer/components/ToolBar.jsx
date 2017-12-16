@@ -59,13 +59,20 @@ class OpenMDAO extends React.Component {
       btnStatusClass = "btn btn-info";
       btnIcon = <i className="fa fa-cog fa-spin" />;
     }
-    let href = url("/multi_disciplinary_analyses/"+this.props.mda_id+"/openmdao_generation/new");
+    let base = "/multi_disciplinary_analyses/"+this.props.mda_id+"/mda_exports/new"
+    let href_om = url(base+".openmdao");
+    let href_cd = url(base+".cmdows");
     return (
       <div>
-        <div className="btn-group" role="group">
-          <a className="btn btn-primary" href={href}>OpenMDAO Export</a>
-          <button className={btnStatusClass} type="button" data-toggle="collapse" data-target="#collapseListing" aria-expanded="false">{btnIcon}</button>
-        </div>
+        <div class="btn-toolbar" role="toolbar">   
+          <div className="btn-group mr-2" role="group"> 
+              <button className={btnStatusClass} type="button" data-toggle="collapse" data-target="#collapseListing" aria-expanded="false">{btnIcon}</button>
+            <a className="btn btn-primary" href={href_om}>OpenMDAO Export</a>
+          </div>
+          <div className="btn-group mr-2" role="group">
+            <a className="btn btn-primary" href={href_cd}>Cmdows Export</a>
+          </div>
+        </div>  
         <div className="collapse" id="collapseListing">
           <div className="card card-block">
             <div className="listing">

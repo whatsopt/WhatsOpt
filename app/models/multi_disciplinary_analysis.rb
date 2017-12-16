@@ -1,4 +1,5 @@
 require 'whats_opt/excel_mda_importer'
+require 'whats_opt/cmdows_mda_importer'
 require 'whats_opt/openmdao_mapping'
 
 class MultiDisciplinaryAnalysis < ApplicationRecord
@@ -125,7 +126,13 @@ class MultiDisciplinaryAnalysis < ApplicationRecord
 
     def _create_from_attachment
       if self.attachment.exists?
-        emi = WhatsOpt::ExcelMdaImporter.new(self.attachment.path)
+        if self.attachment.mda_excel?
+          emi = WhatsOpt::ExcelMdaImporter.new(self.attachment.path)
+        elsif self.attachment.mda_cmdows?
+          emi = WhatsOpt::CmdowsMdaImporter.new(self.attachment.path)
+        else
+          raise StandardError.new
+        end
         self.name = emi.get_mda_attributes[:name]
         vars = emi.get_variables_attributes
         #self.disciplines.build({ name: WhatsOpt::ExcelMdaImporter::CONTROL_NAME })

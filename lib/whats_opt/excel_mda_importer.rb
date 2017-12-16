@@ -1,8 +1,9 @@
+require 'whats_opt/mda_importer'
+
 module WhatsOpt
 
-  class ExcelMdaImporter
+  class ExcelMdaImporter < MdaImporter
     
-    CONTROL_NAME = '__CONTROL__'
     GSV_SHEET_NAME = 'Global State Vector'
     DISCIPLINE_RANGE_NAME = 'discipline_list'
     GLOBAL_STATE_VECTOR = 'global_state_vector'
@@ -90,13 +91,13 @@ module WhatsOpt
             res[dst].append(v) unless res[dst].include?(v) 
           elsif k =~ /Y(\d)/
             src = _to_discipline($1)
-            dst = CONTROL_NAME
+            dst = MdaImporter::CONTROL_DISCIPLINE_NAME
             v = varattr.merge({io_mode: 'out'})
             res[src].append(v) unless res[src].include?(v) 
             v = varattr.merge({io_mode: 'in'})
             res[dst].append(v) unless res[dst].include?(v) 
           elsif k =~ /X(\d)/
-            src = CONTROL_NAME
+            src = MdaImporter::CONTROL_DISCIPLINE_NAME
             dst = _to_discipline($1)
             v = varattr.merge({io_mode: 'out'})
             res[src].append(v) unless res[src].include?(v) 
@@ -115,7 +116,7 @@ module WhatsOpt
       if idx =~ /\d/ && idx.to_i+1 < self.disciplines.length
         d = self.disciplines[idx.to_i+1] 
       else
-        d = CONTROL_NAME
+        d = CONTROL_DISCIPLINE_NAME
       end
       d
     end
@@ -124,7 +125,7 @@ module WhatsOpt
       _import_disciplines_data
       d = []
       if idx =~ /\d/ && idx.to_i+1 < self.disciplines.length
-        d = self.disciplines - [self.disciplines[idx.to_i+1]] - [CONTROL_NAME]
+        d = self.disciplines - [self.disciplines[idx.to_i+1]] - [CONTROL_DISCIPLINE_NAME]
       end
       d
     end
@@ -135,7 +136,7 @@ module WhatsOpt
         # ordered in the increasing code number: 0,1,2,...
         @disciplines = @disc_data.map{|row| _getstr(row[0])}
         @disciplines.map!(&:camelize)
-        @disciplines = [CONTROL_NAME] + @disciplines
+        @disciplines = [MdaImporter::CONTROL_DISCIPLINE_NAME] + @disciplines
       end   
       @disciplines
     end

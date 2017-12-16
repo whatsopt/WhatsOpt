@@ -3,7 +3,7 @@ Rails.application.routes.draw do
   resources :variables
   resources :disciplines
   resources :multi_disciplinary_analyses, as: :mdas do
-    get  "openmdao_generation/new"
+    get "mda_exports/new"
   end
   devise_for :users
   resources :users, only: [:show]
@@ -11,7 +11,6 @@ Rails.application.routes.draw do
   resources :notebooks
   resources :geometry_models
   resources :attachments, only: [:show, :index]
-  resources :openmdao_generation, only: [:new]
     
   namespace :api do
     namespace :v1, defaults: { format: :json } do

@@ -1,8 +1,13 @@
 class AttachmentNotFound < StandardError
 end
 
+class AttachmentTypeNotHandledError < StandardError
+end
+
 class Attachment < ActiveRecord::Base
 
+  
+  
   has_attached_file :data,
                     :path => ":rails_root/upload/:attachment/:id/:style/:basename.:extension",
                     :processors => -> (a) { if a.notebook?
@@ -22,16 +27,18 @@ class Attachment < ActiveRecord::Base
                                                           
                     { html: {:format => :html} }
 
-  ATTACH_RAW = "Raw"
+  ATTACH_UNDEFINED = "Undefined"
   ATTACH_NOTEBOOK = "Notebook"
-  ATTACH_MDA_TEMPLATE = "MdaTemplate"
+  ATTACH_MDA_EXCEL = "MdaExcel"
+  ATTACH_MDA_CMDOWS = "MdaCmdows"
   ATTACH_GEOMETRY_MODEL = "GeometryModel"
-  ATTACHMENT_CATEGORIES = [ATTACH_RAW, ATTACH_NOTEBOOK, ATTACH_MDA_TEMPLATE, ATTACH_GEOMETRY_MODEL]  
+  ATTACHMENT_CATEGORIES = [ATTACH_UNDEFINED, ATTACH_NOTEBOOK, ATTACH_MDA_EXCEL, ATTACH_MDA_CMDOWS, ATTACH_GEOMETRY_MODEL]  
 
   belongs_to :container, :polymorphic => true
   belongs_to :study, -> { where("attachments.container_type = 'Study'") }, foreign_key: 'container_id' 
   belongs_to :notebook, -> { where("attachments.container_type = 'Notebook'") }, foreign_key: 'container_id' 
-  belongs_to :mda_template, -> { where("attachments.container_type = 'MultiDisciplinaryAnalysis'") }, foreign_key: 'container_id' 
+  belongs_to :mda_excel, -> { where("attachments.container_type = 'MultiDisciplinaryAnalysis'") }, foreign_key: 'container_id' 
+  belongs_to :mda_cmdows, -> { where("attachments.container_type = 'MultiDisciplinaryAnalysis'") }, foreign_key: 'container_id' 
   belongs_to :geometry_model, -> { where("attachments.container_type = 'GeometryModel'") }, foreign_key: 'container_id' 
 
   after_initialize :ensure_category_setting, on: :create
@@ -42,7 +49,8 @@ class Attachment < ActiveRecord::Base
   validates_attachment_file_name :data, :matches => [/\.ipynb\Z/, /\.xlsx\Z/, /\.vsp3\Z/]
 
   scope :notebooks, -> { where(category: ATTACH_NOTEBOOK) }
-  scope :mda_template, -> { where(category: ATTACH_MDA_TEMPLATE) }
+  scope :mda_excel, -> { where(category: ATTACH_MDA_EXCEL) }
+  scope :mda_cmdows, -> { where(category: ATTACH_MDA_CMDOWS) }
 
   def exists?
     Pathname.new(self.path).exist?
@@ -56,6 +64,14 @@ class Attachment < ActiveRecord::Base
     self.category == ATTACH_GEOMETRY_MODEL
   end
     
+  def mda_excel?
+    self.category == ATTACH_MDA_EXCEL
+  end
+
+  def mda_cmdows?
+    self.category == ATTACH_MDA_CMDOWS
+  end
+  
   def path
     if data.exists?
       data.path
@@ -74,11 +90,13 @@ class Attachment < ActiveRecord::Base
       when /\.ipynb\Z/
         self.category = ATTACH_NOTEBOOK
       when /\.xlsx\Z/ 
-          self.category = ATTACH_MDA_TEMPLATE
+          self.category = ATTACH_MDA_EXCEL
+      when /\.cmdows\Z/ 
+          self.category = ATTACH_MDA_CMDOWS
       when /\.vsp3\Z/ 
           self.category = ATTACH_GEOMETRY_MODEL
       else
-        self.category = ATTACH_RAW
+        self.category = ATTACH_UNDEFINED
       end
     end
   end

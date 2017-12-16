@@ -13,7 +13,11 @@ module WhatsOpt
     
   module OpenmdaoModule
     using WhatsOpt
-    
+
+    def file_basename
+      "#{self.name.snakize}"
+    end
+        
     def py_modulename
       "#{self.name.snakize}"
     end

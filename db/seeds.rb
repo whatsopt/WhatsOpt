@@ -7,6 +7,7 @@
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
 require 'json'
+require 'whats_opt/mda_importer'
 
 def create_user(params) 
   u = User.find_by_login(params[:login])
@@ -87,6 +88,12 @@ study_test = create_study(project_id:project_scratch.id,
 # MDA
 mda_test = create_mda(name:"MDA_Example", 
                       disciplines_attributes: [{
+                                                  name: WhatsOpt::MdaImporter::CONTROL_DISCIPLINE_NAME,
+                                                  variables_attributes: [{name:"x1", io_mode:"out", type:"Integer", shape:"(1,)", units:"m"},
+                                                                         {name:"y2", io_mode:"in"},
+                                                                         ],
+                                               },
+                                               {
                                                  name: 'Disc1',
                                                  variables_attributes: [{name:"x1", io_mode:"in", type:"Integer", shape:"(1,)", units:"m"},
                                                                         {name:"x2", io_mode:"in", type:"Float", shape:"1", units:"m"},

@@ -1,7 +1,7 @@
 import React from 'react';
 import XdsmViewer from 'mda_viewer/components/XdsmViewer'
 import Connections from 'mda_viewer/components/Connections'
-import OpenMDAO from 'mda_viewer/components/OpenMDAO'
+import ToolBar from 'mda_viewer/components/ToolBar'
 
 class MdaViewer extends React.Component {
   constructor(props) {
@@ -21,7 +21,7 @@ class MdaViewer extends React.Component {
     return (
       <div>
       <div className="mda-section">
-        <OpenMDAO mda_id={this.props.mda.id} />
+        <ToolBar mda_id={this.props.mda.id} />
       </div>
       <div className="mda-section">
         <h2>XDSM</h2>        

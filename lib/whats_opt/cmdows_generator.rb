@@ -18,7 +18,8 @@ class WhatsOpt::CmdowsGenerator
     XSD.validate(doc).each do |error|
       raise CmdowsValidationError.new(error.message)
     end
-    doc.to_xml 
+    filename = "#{@mda.file_basename}.cmdows"
+    return doc.to_xml, filename 
   end
   
   def _build
@@ -40,7 +41,7 @@ class WhatsOpt::CmdowsGenerator
   def _generate_header(xml)
     xml.header do
       xml.creator @mda.owner
-      xml.description "MDA "+@mda.name
+      xml.description @mda.name
       xml.timestamp DateTime.now
       xml.fileVersion "1.0"
       xml.cmdowsVersion "0.7"
@@ -59,7 +60,7 @@ class WhatsOpt::CmdowsGenerator
       end
     end
   end
-  
+    
   def _generate_inputs_outputs(xml, disc)
     xml.inputs do
       disc.input_variables.each do |ivar|
