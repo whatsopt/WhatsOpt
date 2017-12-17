@@ -22,8 +22,8 @@ class ExcelMdaImporterTest < ActiveSupport::TestCase
   end
   
   test "should get disciplines attributes" do
-    assert_equal([{name: WhatsOpt::ExcelMdaImporter::DRIVER_NAME}, 
-                  {name: "Geometry"}, {name: "Aerodynamics"}, {name: "Control"}], 
+    assert_equal([{id: WhatsOpt::ExcelMdaImporter::DRIVER_NAME, name: WhatsOpt::ExcelMdaImporter::DRIVER_NAME}, 
+                  {id: "Geometry", name: "Geometry"}, {id: "Aerodynamics", name: "Aerodynamics"}, {id: "Control", name: "Control"}], 
                  @emi.get_disciplines_attributes)
   end
 

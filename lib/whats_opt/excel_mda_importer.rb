@@ -59,7 +59,7 @@ module WhatsOpt
     
     def get_disciplines_attributes
       _import_disciplines_data
-      @disciplines.map { |d| {name: d} }
+      @disciplines.map { |d| {id: d, name: d} }
     end
     
     def get_variables_attributes

@@ -16,7 +16,7 @@ class MdaExportsController < ApplicationController
         elsif format == "cmdows"
           cmdowsgen = WhatsOpt::CmdowsGenerator.new(mda)
           content, filename = cmdowsgen.generate
-          send_data content, filename: filename
+          send_data content, filename: filename, type: 'application/xml'
         else
           redirect_to mdas_url, alert: "Export format '#{format}' not handled!"
         end           

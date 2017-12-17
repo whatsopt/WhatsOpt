@@ -132,20 +132,20 @@ class MultiDisciplinaryAnalysis < ApplicationRecord
     def _create_from_attachment
       if self.attachment.exists?
         if self.attachment.mda_excel?
-          emi = WhatsOpt::ExcelMdaImporter.new(self.attachment.path)
+          importer = WhatsOpt::ExcelMdaImporter.new(self.attachment.path)
         elsif self.attachment.mda_cmdows?
-          emi = WhatsOpt::CmdowsMdaImporter.new(self.attachment.path)
+          mda_name = File.basename(self.attachment.original_filename, '.cmdows').camelcase
+          importer = WhatsOpt::CmdowsMdaImporter.new(self.attachment.path, mda_name)
         else
           raise StandardError.new
         end
-        self.name = emi.get_mda_attributes[:name]
-        vars = emi.get_variables_attributes
-        #self.disciplines.build({ name: WhatsOpt::ExcelMdaImporter::CONTROL_NAME })
-        emi.get_disciplines_attributes().each do |dattr|
+        self.name = importer.get_mda_attributes[:name]
+        vars = importer.get_variables_attributes
+        importer.get_disciplines_attributes().each do |dattr|
+          id = dattr[:id]
+          dattr.delete(:id)
           disc = self.disciplines.build(dattr)
-        end
-        self.disciplines.each do |d|
-          d.variables.build(vars[d.name]) if vars[d.name]
+          disc.variables.build(vars[id]) if vars[id]
         end
       end
     end

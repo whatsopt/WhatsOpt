@@ -9,23 +9,6 @@
   </header>
   <executableBlocks>
     <designCompetences>
-      <designCompetence uID="13">
-        <ID>13</ID>
-        <modeID>undefined</modeID>
-        <instanceID>__CONTROL__-13</instanceID>
-        <version>undefined</version>
-        <label>__CONTROL__</label>
-        <inputs>
-          <input>
-            <parameterUID>y2</parameterUID>
-          </input>
-        </inputs>
-        <outputs>
-          <output>
-            <parameterUID>x1</parameterUID>
-          </output>
-        </outputs>
-      </designCompetence>
       <designCompetence uID="14">
         <ID>14</ID>
         <modeID>undefined</modeID>
