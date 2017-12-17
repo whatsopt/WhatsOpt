@@ -1,3 +1,4 @@
+require 'whats_opt/discipline'
 require 'whats_opt/excel_mda_importer'
 require 'whats_opt/cmdows_mda_importer'
 require 'whats_opt/openmdao_mapping'
@@ -21,25 +22,29 @@ class MultiDisciplinaryAnalysis < ApplicationRecord
   before_validation(on: :create) do
     _create_from_attachment if attachment
   end
-  
-  def control
-    self.disciplines.as_control.first
+    
+  def driver
+    self.disciplines.driver&.first
   end
   
   def design_variables
-    self.control.output_variables
+    return self.driver.output_variables if driver
+    []
   end
 
   def optimization_variables
-    self.control.input_variables
+    return self.driver.input_variables if driver
+    []
   end  
   
   def objective_variables
-    self.control.input_variables.objectives
+    return self.driver.input_variables.objectives if driver
+    []
   end
-  
+
   def constraint_variables
-    self.control.input_variables.constraints
+    self.driver.input_variables.constraints if driver
+    []
   end
   
   def to_xdsm_json
@@ -54,7 +59,7 @@ class MultiDisciplinaryAnalysis < ApplicationRecord
     end
 
   def build_nodes
-    return self.disciplines.plain.map {|d| 
+    return self.disciplines.analyses.map {|d| 
       t = case d.name.downcase 
           when /function/
             "function"
@@ -80,8 +85,8 @@ class MultiDisciplinaryAnalysis < ApplicationRecord
         connections = outputs.map(&:name) & inputs.map(&:name)
         @all_connections.merge(connections)
         unless connections.empty?
-          frid = (d_from.name == Discipline::CONTROL_NAME)?"_U_":d_from.id 
-          toid = (d_to.name == Discipline::CONTROL_NAME)?"_U_":d_to.id
+          frid = (d_from.name == WhatsOpt::Discipline::DRIVER_NAME)?"_U_":d_from.id 
+          toid = (d_to.name == WhatsOpt::Discipline::DRIVER_NAME)?"_U_":d_to.id
           edges << { from: "#{frid}", to: "#{toid}", name: connections.join(",") }
         end
       end
@@ -103,7 +108,7 @@ class MultiDisciplinaryAnalysis < ApplicationRecord
   end
 
   def build_var_tree
-    res = disciplines.plain.map {|d| {d.name => {in: d.input_variables, out: d.output_variables}}}
+    res = disciplines.analyses.map {|d| {d.name => {in: d.input_variables, out: d.output_variables}}}
     res.inject({}) {|result, h| result.update(h)}
   end
   

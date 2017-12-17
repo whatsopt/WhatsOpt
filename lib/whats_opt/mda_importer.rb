@@ -1,9 +1,11 @@
+require 'discipline'
+
 module WhatsOpt
     
   class MdaImporter
-  
-    CONTROL_DISCIPLINE_NAME = '__CONTROL__'
-      
+    
+    DRIVER_NAME = Discipline::DRIVER_NAME
+          
     def get_mda_attributes
     end 
     

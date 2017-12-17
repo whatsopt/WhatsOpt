@@ -1,5 +1,5 @@
 control_cicav:
-  name: __CONTROL__
+  name: __DRIVER__
   multi_disciplinary_analysis: cicav
 
 geometry:
@@ -11,7 +11,7 @@ aerodynamics:
   multi_disciplinary_analysis: cicav
 
 control_fast:
-  name: __CONTROL__
+  name: __DRIVER__
   multi_disciplinary_analysis: fast
 
 fast_discipline:

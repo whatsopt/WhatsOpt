@@ -22,13 +22,13 @@ class ExcelMdaImporterTest < ActiveSupport::TestCase
   end
   
   test "should get disciplines attributes" do
-    assert_equal([{name: WhatsOpt::ExcelMdaImporter::CONTROL_DISCIPLINE_NAME}, 
+    assert_equal([{name: WhatsOpt::ExcelMdaImporter::DRIVER_NAME}, 
                   {name: "Geometry"}, {name: "Aerodynamics"}, {name: "Control"}], 
                  @emi.get_disciplines_attributes)
   end
 
   test "should get variables attributes" do
-    expected = {WhatsOpt::MdaImporter::CONTROL_DISCIPLINE_NAME =>[{:name=>"wing_span", :shape=>"1", :type=>"Float", :units=>"N", :desc=>"Envergure totale du véhicule", :io_mode=>"out"}, 
+    expected = {WhatsOpt::MdaImporter::DRIVER_NAME =>[{:name=>"wing_span", :shape=>"1", :type=>"Float", :units=>"N", :desc=>"Envergure totale du véhicule", :io_mode=>"out"}, 
         {:name=>"control_surfaces_number", :shape=>"1", :type=>"Integer", :units=>"deg", :desc=>"Nombre de gouvernes", :io_mode=>"out"}, 
         {:name=>"handling_qualities_inputs_table", :shape=>"(10,)", :type=>"Float", :units=>"", :desc=>"Points de vol pour l'analyse des QdV", :io_mode=>"out"},
         {:name=>"eigen_values_table", :shape=>'(10,)', :type => 'Float', :units => 'deg', :io_mode=>"in", :desc => "Valeurs propres des modes avion"}], 
@@ -67,12 +67,12 @@ class ExcelMdaImporterTest < ActiveSupport::TestCase
   end
   
   test "should transform index in discipline name" do
-    assert_equal WhatsOpt::MdaImporter::CONTROL_DISCIPLINE_NAME, @emi._to_discipline('x')
+    assert_equal WhatsOpt::MdaImporter::DRIVER_NAME, @emi._to_discipline('x')
     assert_equal "Geometry", @emi._to_discipline('0')
   end
     
   test "should import disciplines" do
-    assert_equal [WhatsOpt::MdaImporter::CONTROL_DISCIPLINE_NAME, 'Geometry', 'Aerodynamics', 'Control'],
+    assert_equal [WhatsOpt::MdaImporter::DRIVER_NAME, 'Geometry', 'Aerodynamics', 'Control'],
       @emi._import_disciplines_data
   end
 

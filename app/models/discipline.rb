@@ -1,10 +1,9 @@
 require 'whats_opt/openmdao_mapping'
+require 'whats_opt/discipline'
 
 class Discipline < ApplicationRecord
   
   include WhatsOpt::OpenmdaoModule
-  
-  CONTROL_NAME = '__CONTROL__'
   
   has_many :variables, :dependent => :destroy
   belongs_to :multi_disciplinary_analysis
@@ -12,8 +11,8 @@ class Discipline < ApplicationRecord
 
   validates :name, presence: true
   
-  scope :as_control, -> { where( name: CONTROL_NAME ) }
-  scope :plain, -> { where.not( name: CONTROL_NAME ) }
+  scope :driver, -> { where( name: WhatsOpt::Discipline::DRIVER_NAME ) }
+  scope :analyses, -> { where.not( name: WhatsOpt::Discipline::DRIVER_NAME ) }
 
   def input_variables
     self.variables.inputs

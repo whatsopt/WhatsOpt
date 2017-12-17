@@ -3,7 +3,7 @@ import numpy as np
 from openmdao.api import Problem, Group
 from openmdao.api import IndepVarComp
 from openmdao.api import NonlinearBlockGS, ScipyIterativeSolver
-<% @mda.disciplines.plain.each do |d| %>
+<% @mda.disciplines.analyses.each do |d| %>
 from <%= d.py_modulename %> import <%= d.py_classname %><% end %>
 
 class <%= @mda.py_classname %>(Group):
@@ -12,7 +12,7 @@ class <%= @mda.py_classname %>(Group):
     def setup(self): 
 		<% @mda.design_variables.each do |dv| %>
         self.add_subsystem('dv_<%= dv.name %>', IndepVarComp('<%= dv.name %>', <%= dv.default_py_value%>), promotes=['<%= dv.name %>'])<% end %>		    
- 		<% @mda.disciplines.plain.each do |d| %>
+ 		<% @mda.disciplines.analyses.each do |d| %>
         self.add_subsystem('<%= d.py_classname %>', <%= d.py_classname %>(), promotes=[<%= d.variables.map(&:py_varname).map{|v| "'#{v}'"}.join(', ') %>])<% end %>         
 
         self.nonlinear_solver = NonlinearBlockGS() 

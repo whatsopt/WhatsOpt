@@ -4,7 +4,6 @@ class MultiDisciplinaryAnalysisTest < ActiveSupport::TestCase
   
   test "when created, should have a controller discipline" do
     mda = multi_disciplinary_analyses(:cicav)
-    refute_nil mda.control 
     assert mda.valid?
   end
    
