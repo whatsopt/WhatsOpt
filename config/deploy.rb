@@ -1,4 +1,4 @@
-lock '3.8.1'
+lock '3.10.1'
 
 set :application, 'WhatsOpt'# config valid only for current version of Capistrano
 #set :deploy_user, 'rlafage'
