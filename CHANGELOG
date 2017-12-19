@@ -1,5 +1,10 @@
 <h1>CHANGELOG</h1>
 
+<h3>0.4.3 (18/12/2017)</h3>
+<ul>
+  <li>Import/Export MDA from/to CMDOWS file.</li>
+</ul>
+
 <h3>0.4.2 (11/12/2017)</h3>
 <ul>
   <li>Implement Hangar to store OpenVSP3 3D models.</li>
