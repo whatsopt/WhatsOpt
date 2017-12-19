@@ -37,10 +37,10 @@ end
 
 class CmdowsMdaImporterErrorTest < ActiveSupport::TestCase
 
-  test "should raise error when not a cmdows file" do
-    #assert_raises WhatsOpt::CmdowsMdaImporter::ImportError do
-      #@cmi = WhatsOpt::CmdowsMdaImporter.new(sample_file(""))  
-    #end 
+  test "should raise error when cmdows file is invalid" do
+    assert_raises WhatsOpt::CmdowsMdaImporter::CmdowsMdaImportError do
+      @cmi = WhatsOpt::CmdowsMdaImporter.new(sample_file("cmdows_invalid.cmdows"))  
+    end 
   end
   
 end

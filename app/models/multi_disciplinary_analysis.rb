@@ -18,7 +18,7 @@ class MultiDisciplinaryAnalysis < ApplicationRecord
     reject_if: proc { |attr| attr['name'].blank? }, allow_destroy: true
       
   before_validation(on: :create) do
-    _create_from_attachment if attachment
+    _create_from_attachment if attachment_exists
   end
   validate :check_mda_import_error, on: :create, if: :attachment_exists
   validates :name, presence: true
@@ -130,7 +130,7 @@ class MultiDisciplinaryAnalysis < ApplicationRecord
     end      
     
     def attachment_exists
-      self.attachment.exists?
+      self.attachment && self.attachment.exists?
     end
     
     def check_mda_import_error
@@ -149,23 +149,30 @@ class MultiDisciplinaryAnalysis < ApplicationRecord
     end
     
     def _create_from_attachment
-      if self.attachment.exists?
-        if self.attachment.mda_excel?
-          importer = WhatsOpt::ExcelMdaImporter.new(self.attachment.path)
-        elsif self.attachment.mda_cmdows?
-          mda_name = File.basename(self.attachment.original_filename, '.cmdows').camelcase
-          importer = WhatsOpt::CmdowsMdaImporter.new(self.attachment.path, mda_name)
+      begin
+        if self.attachment.exists?
+          if self.attachment.mda_excel?
+            self.name = File.basename(self.attachment.original_filename, '.xlsx').camelcase
+            importer = WhatsOpt::ExcelMdaImporter.new(self.attachment.path)
+          elsif self.attachment.mda_cmdows?
+            self.name = File.basename(self.attachment.original_filename, '.cmdows').camelcase
+            importer = WhatsOpt::CmdowsMdaImporter.new(self.attachment.path, self.name)
+          else
+            raise WhatsOpt::MdaImporter::MdaImportError.new("bad format, can not be imported as an MDA")
+          end
+          self.name = importer.get_mda_attributes[:name]
+          vars = importer.get_variables_attributes
+          importer.get_disciplines_attributes().each do |dattr|
+            id = dattr[:id]
+            dattr.delete(:id)
+            disc = self.disciplines.build(dattr)
+            disc.variables.build(vars[id]) if vars[id]
+          end
         else
-          raise StandardError.new
+          raise WhatsOpt::MdaImporter::MdaImportError.new("does not exist")
         end
-        self.name = importer.get_mda_attributes[:name]
-        vars = importer.get_variables_attributes
-        importer.get_disciplines_attributes().each do |dattr|
-          id = dattr[:id]
-          dattr.delete(:id)
-          disc = self.disciplines.build(dattr)
-          disc.variables.build(vars[id]) if vars[id]
-        end
+      rescue WhatsOpt::MdaImporter::MdaImportError => e
+        self.errors.add(:attachment, e.message)
       end
     end
 

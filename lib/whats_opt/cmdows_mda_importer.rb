@@ -5,7 +5,7 @@ module WhatsOpt
     
   class CmdowsMdaImporter < MdaImporter
   
-    class CmdowsValidationError < MdaImportError
+    class CmdowsMdaImportError < MdaImportError
     end
     
     SCHEMA_FILE = File.join(File.dirname(__FILE__), 'cmdows.xsd')
@@ -16,7 +16,7 @@ module WhatsOpt
       @mda_name = mda_name || File.basename(@filename, '.cmdows').camelcase
       @doc = Nokogiri::XML(File.read(filename))
       XSD.validate(@doc).each do |error|
-        raise CmdowsValidationError.new(error.message)
+        raise CmdowsMdaImportError.new(error.message)
       end
     end
     
@@ -26,7 +26,7 @@ module WhatsOpt
     
     def get_disciplines_attributes
       discattrs = []
-      disc_ids = @doc.xpath('//designCompetence/@uID').map(&:content)
+      disc_ids = @doc.xpath('//designCompetence/@uID').map(&:content).map{|t| ERB::Util::h(t)}
       disc_ids.each do |duid|
         label = @doc.xpath('//designCompetence[@uID="'+duid+'"]/label') 
         discattrs << { id: duid, name: label.text }
@@ -39,13 +39,13 @@ module WhatsOpt
     
     def get_variables_attributes
       varattrs = {}
-      disc_ids = @doc.xpath('//designCompetence/@uID').map(&:content)
+      disc_ids = @doc.xpath('//designCompetence/@uID').map(&:content).map{|t| ERB::Util::h(t)}
       input_params_ids = []
       output_params_ids = []
       disc_ids.each do |duid|
         base = '//designCompetence[@uID="'+duid+'"]'
-        input_params_ids = @doc.xpath(base+'/inputs/input/parameterUID').map(&:text)
-        output_params_ids = @doc.xpath(base+'/outputs/output/parameterUID').map(&:text)
+        input_params_ids = @doc.xpath(base+'/inputs/input/parameterUID').map(&:text).map{|t| ERB::Util::h(t)}
+        output_params_ids = @doc.xpath(base+'/outputs/output/parameterUID').map(&:text).map{|t| ERB::Util::h(t)}
         varattrs[duid] = []
         input_params_ids.each do |pid|
           label = @doc.xpath('//parameters/parameter[@uID="'+pid+'"]/label').text

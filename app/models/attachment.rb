@@ -1,13 +1,8 @@
 class AttachmentNotFound < StandardError
 end
 
-class AttachmentTypeNotHandledError < StandardError
-end
-
 class Attachment < ActiveRecord::Base
 
-  
-  
   has_attached_file :data,
                     :path => ":rails_root/upload/:attachment/:id/:style/:basename.:extension",
                     :processors => -> (a) { if a.notebook?
@@ -27,6 +22,7 @@ class Attachment < ActiveRecord::Base
                                                           
                     { html: {:format => :html} }
 
+  NOT_FOUND = '__NOT_FOUND__'
   ATTACH_UNDEFINED = "Undefined"
   ATTACH_NOTEBOOK = "Notebook"
   ATTACH_MDA_EXCEL = "MdaExcel"
@@ -76,7 +72,7 @@ class Attachment < ActiveRecord::Base
     if data
       data.original_filename
     else
-      raise AttachmentNotFound
+      raise AttachmentNotFound.new
     end
   end
   
@@ -86,7 +82,7 @@ class Attachment < ActiveRecord::Base
     elsif Pathname.new(data.queued_for_write[:original].path).exist?
       data.queued_for_write[:original].path
     else
-      raise AttachmentNotFound
+      raise AttachmentNotFound.new
     end
   end
         

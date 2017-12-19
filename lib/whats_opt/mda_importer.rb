@@ -3,6 +3,9 @@ require 'discipline'
 module WhatsOpt
   
   class MdaImporter
+        
+    class MdaImportError < StandardError
+    end
     
     class MdaImportError < StandardError
     end

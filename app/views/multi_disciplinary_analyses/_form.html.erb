@@ -11,11 +11,11 @@
   <div class="form-group">
   <%= hidden_field_tag :import, @import %> 
   <% if @import %>
-  	<%= label_tag 'Excel (.xlsx) or Cmdows (.cdmows) file' %>
+  	<%= label_tag 'Excel (.xlsx) or Cmdows (.cmdows) file' %>
     <%= render "attachments/attachment_form", :f => f %>  
   <% else %>
-		<%= f.label :name %>
-		<%= f.text_field :name, class: "form-control" %>
+	<%= f.label :name %>
+	<%= f.text_field :name, class: "form-control" %>
   <% end %>
   </div>
 </p> 	
