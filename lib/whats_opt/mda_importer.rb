@@ -1,8 +1,11 @@
 require 'discipline'
 
 module WhatsOpt
-    
+  
   class MdaImporter
+    
+    class MdaImportError < StandardError
+    end
     
     DRIVER_NAME = Discipline::DRIVER_NAME
           

@@ -17,11 +17,11 @@ class MultiDisciplinaryAnalysis < ApplicationRecord
   accepts_nested_attributes_for :disciplines, 
     reject_if: proc { |attr| attr['name'].blank? }, allow_destroy: true
       
-  validates :name, presence: true
-
   before_validation(on: :create) do
     _create_from_attachment if attachment
   end
+  validate :check_mda_import_error, on: :create, if: :attachment_exists
+  validates :name, presence: true
     
   def driver
     self.disciplines.driver&.first
@@ -128,7 +128,26 @@ class MultiDisciplinaryAnalysis < ApplicationRecord
       end
       pendings
     end      
-
+    
+    def attachment_exists
+      self.attachment.exists?
+    end
+    
+    def check_mda_import_error
+      begin
+        if self.attachment.mda_excel?
+          importer = WhatsOpt::ExcelMdaImporter.new(self.attachment.path)
+        elsif self.attachment.mda_cmdows?
+          mda_name = File.basename(self.attachment.original_filename, '.cmdows').camelcase
+          importer = WhatsOpt::CmdowsMdaImporter.new(self.attachment.path, mda_name)
+        else
+          self.errors.add("Bad file format")
+        end
+      rescue
+        self.errors.add("Import error")
+      end
+    end
+    
     def _create_from_attachment
       if self.attachment.exists?
         if self.attachment.mda_excel?

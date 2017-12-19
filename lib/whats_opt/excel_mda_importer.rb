@@ -8,7 +8,7 @@ module WhatsOpt
     DISCIPLINE_RANGE_NAME = 'discipline_list'
     GLOBAL_STATE_VECTOR = 'global_state_vector'
     
-    class ImportError < StandardError
+    class ExcelMdaImportError < MdaImportError
     end
     
     attr_reader :line_count, :mda, :disciplines, :variables, :connections, :defined_names
@@ -19,7 +19,7 @@ module WhatsOpt
         @workbook = RubyXL::Parser.parse(filename)
       rescue Zip::Error => e
         # puts e.message
-        raise ImportError.new
+        raise ExcelMdaImportError.new(e)
       end 
       _initialize_defined_names
       @worksheet = @workbook[GSV_SHEET_NAME]

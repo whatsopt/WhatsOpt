@@ -5,10 +5,7 @@ module WhatsOpt
     
   class CmdowsMdaImporter < MdaImporter
   
-    class CmdowsValidationError < StandardError
-    end
-    
-    class ImportError < StandardError
+    class CmdowsValidationError < MdaImportError
     end
     
     SCHEMA_FILE = File.join(File.dirname(__FILE__), 'cmdows.xsd')
