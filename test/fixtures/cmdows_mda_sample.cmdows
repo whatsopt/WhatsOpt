@@ -16,9 +16,6 @@
         <version>undefined</version>
         <label>Disc1</label>
         <inputs>
-		  <input>
-            <parameterUID>/cpacs/vehicles[@uID="AGILE_DC1_vehicleID"]/materials/material[@uID="aluminium2024"]/k11</parameterUID>
-          </input>
           <input>
             <parameterUID>x1</parameterUID>
           </input>
@@ -93,7 +90,7 @@
     <parameter uID="x3">
       <label>x3</label>
     </parameter>
-    <parameter uID="/cpacs/vehicles[@uID=&quot;AGILE_DC1_vehicleID&quot;]/materials/material[@uID=&quot;aluminium2024&quot;]/k11">
+    <parameter uID="z">
       <label>z</label>
     </parameter>
   </parameters>

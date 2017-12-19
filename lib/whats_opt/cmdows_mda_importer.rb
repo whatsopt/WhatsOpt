@@ -45,12 +45,10 @@ module WhatsOpt
       disc_ids.each do |duid|
         base = '//designCompetence[@uID="'+duid+'"]'
         input_params_ids = @doc.xpath(base+'/inputs/input/parameterUID').map(&:text)
-        p input_params_ids
         output_params_ids = @doc.xpath(base+'/outputs/output/parameterUID').map(&:text)
         varattrs[duid] = []
         input_params_ids.each do |pid|
-          req = "//parameters/parameter[@uID='"+pid+"']/label"
-          label = @doc.xpath(req).text
+          label = @doc.xpath("//parameters/parameter[@uID='"+pid+"']/label").text
           varattrs[duid] << {name: label, :shape=>"1", :type=>"Float", :units=>"", :desc=>"", io_mode: "in"}
         end
         output_params_ids.each do |pid|
