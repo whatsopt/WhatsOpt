@@ -44,3 +44,11 @@ class CmdowsMdaImporterErrorTest < ActiveSupport::TestCase
   end
   
 end
+
+class AgileCmdowsImportTest < ActiveSupport::TestCase
+
+  test "should import cmdows coming from AGILE project" do
+    @cmi = WhatsOpt::CmdowsMdaImporter.new(sample_file("cmdows_big_mda.cmdows"))
+  end
+  
+end

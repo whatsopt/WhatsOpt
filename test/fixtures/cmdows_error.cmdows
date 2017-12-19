@@ -94,7 +94,7 @@
       <label>x3</label>
     </parameter>
     <parameter uID="/cpacs/vehicles[@uID=&quot;AGILE_DC1_vehicleID&quot;]/materials/material[@uID=&quot;aluminium2024&quot;]/k11">
-      <label>z</label>
+      <label>MYPARAM</label>
     </parameter>
   </parameters>
 </cmdows>

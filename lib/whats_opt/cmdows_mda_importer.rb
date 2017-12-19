@@ -26,7 +26,7 @@ module WhatsOpt
     
     def get_disciplines_attributes
       discattrs = []
-      disc_ids = @doc.xpath('//designCompetence/@uID').map(&:content).map{|t| ERB::Util::h(t)}
+      disc_ids = @doc.xpath('//designCompetence/@uID').map(&:content)
       disc_ids.each do |duid|
         label = @doc.xpath('//designCompetence[@uID="'+duid+'"]/label') 
         discattrs << { id: duid, name: label.text }
@@ -39,20 +39,22 @@ module WhatsOpt
     
     def get_variables_attributes
       varattrs = {}
-      disc_ids = @doc.xpath('//designCompetence/@uID').map(&:content).map{|t| ERB::Util::h(t)}
+      disc_ids = @doc.xpath('//designCompetence/@uID').map(&:content)
       input_params_ids = []
       output_params_ids = []
       disc_ids.each do |duid|
         base = '//designCompetence[@uID="'+duid+'"]'
-        input_params_ids = @doc.xpath(base+'/inputs/input/parameterUID').map(&:text).map{|t| ERB::Util::h(t)}
-        output_params_ids = @doc.xpath(base+'/outputs/output/parameterUID').map(&:text).map{|t| ERB::Util::h(t)}
+        input_params_ids = @doc.xpath(base+'/inputs/input/parameterUID').map(&:text)
+        p input_params_ids
+        output_params_ids = @doc.xpath(base+'/outputs/output/parameterUID').map(&:text)
         varattrs[duid] = []
         input_params_ids.each do |pid|
-          label = @doc.xpath('//parameters/parameter[@uID="'+pid+'"]/label').text
+          req = "//parameters/parameter[@uID='"+pid+"']/label"
+          label = @doc.xpath(req).text
           varattrs[duid] << {name: label, :shape=>"1", :type=>"Float", :units=>"", :desc=>"", io_mode: "in"}
         end
         output_params_ids.each do |pid|
-          label = @doc.xpath('//parameters/parameter[@uID="'+pid+'"]/label').text
+          label = @doc.xpath("//parameters/parameter[@uID='"+pid+"']/label").text
           varattrs[duid] << {name: label, :shape=>"1", :type=>"Float", :units=>"", :desc=>"", io_mode: "out"}
         end
       end
