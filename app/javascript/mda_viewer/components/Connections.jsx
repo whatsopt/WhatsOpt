@@ -7,6 +7,7 @@ class Connection extends React.Component {
     super(props);
     this.state = { conn: this.props.conn,
                    vars: this.props.vars };
+    console.log(this.props.conn)
   }
 
   render() {

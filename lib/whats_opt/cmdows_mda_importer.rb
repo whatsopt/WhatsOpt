@@ -49,11 +49,11 @@ module WhatsOpt
         varattrs[duid] = []
         input_params_ids.each do |pid|
           label = @doc.xpath("//parameters/parameter[@uID='"+pid+"']/label").text
-          varattrs[duid] << {name: label, :shape=>"1", :type=>"Float", :units=>"", :desc=>"", io_mode: "in"}
+          varattrs[duid] << {name: label, fullname: pid, :shape=>"1", :type=>"Float", :units=>"", :desc=>"", io_mode: "in"}
         end
         output_params_ids.each do |pid|
           label = @doc.xpath("//parameters/parameter[@uID='"+pid+"']/label").text
-          varattrs[duid] << {name: label, :shape=>"1", :type=>"Float", :units=>"", :desc=>"", io_mode: "out"}
+          varattrs[duid] << {name: label, fullname: pid, :shape=>"1", :type=>"Float", :units=>"", :desc=>"", io_mode: "out"}
         end
       end
       unless varattrs.key?(WhatsOpt::Discipline::DRIVER_NAME)

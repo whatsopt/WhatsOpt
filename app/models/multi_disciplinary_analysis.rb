@@ -82,12 +82,21 @@ class MultiDisciplinaryAnalysis < ApplicationRecord
       disciplines.each do |d_to|
         next if d_to == d_from
         inputs = d_to.input_variables
-        connections = outputs.map(&:name) & inputs.map(&:name)
-        @all_connections.merge(connections)
+        connections = outputs.map(&:fullname) & inputs.map(&:fullname)
+        p connections
+        in_connections = inputs.select{|c| connections.include?(c.fullname)}
+        p in_connections
+        out_connections = outputs.select{|c| connections.include?(c.fullname)}
+        p out_connections
+        if in_connections != out_connections
+          raise StandardError.new("connection inconsistency in:"+in_connections.inspect+", out:"+out_connections.inspect)
+        end
+        @all_connections.merge(in_connections)
         unless connections.empty?
           frid = (d_from.name == WhatsOpt::Discipline::DRIVER_NAME)?"_U_":d_from.id 
           toid = (d_to.name == WhatsOpt::Discipline::DRIVER_NAME)?"_U_":d_to.id
-          edges << { from: "#{frid}", to: "#{toid}", name: connections.join(",") }
+          names = in_connections.map(&:name)
+          edges << { from: "#{frid}", to: "#{toid}", name: names.join(",") }
         end
       end
     end
@@ -122,7 +131,7 @@ class MultiDisciplinaryAnalysis < ApplicationRecord
     def _get_pending_connections(vars)
       pendings = []
       vars.each do |v|
-        unless @all_connections.include?(v.name)
+        unless @all_connections.map(&:fullname).include?(v.fullname)
           pendings << v.name
         end
       end

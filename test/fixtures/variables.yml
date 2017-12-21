@@ -1,5 +1,6 @@
 varz_design_out:
   name: z
+  fullname: z
   discipline: control_cicav
   io_mode: out
   type: Float
@@ -7,6 +8,7 @@ varz_design_out:
   
 varz_objective_in:
   name: x
+  fullname: x
   discipline: control_cicav
   io_mode: in
   type: Float
@@ -14,6 +16,7 @@ varz_objective_in:
   
 varx_geo_in:
   name: x
+  fullname: x
   discipline: geometry
   io_mode: in 
   type: Float
@@ -21,6 +24,7 @@ varx_geo_in:
 
 vary_geo_out:
   name: y
+  fullname: y
   discipline: geometry
   io_mode: out
   type: Float
@@ -28,6 +32,7 @@ vary_geo_out:
   
 varz_geo_in:
   name: z
+  fullname: z
   discipline: geometry
   io_mode: in
   type: Float
@@ -35,6 +40,7 @@ varz_geo_in:
   
 varz_geo_in_pending:
   name: x_pending
+  fullname: x_pending
   discipline: geometry
   io_mode: in
   type: Float
@@ -42,6 +48,7 @@ varz_geo_in_pending:
   
 varz_geo_out:
   name: z
+  fullname: z
   discipline: geometry
   io_mode: out
   type: Float
@@ -49,6 +56,7 @@ varz_geo_out:
   
 varx_aero_out:
   name: x
+  fullname: x
   discipline: aerodynamics
   io_mode: out
   type: Float
@@ -56,6 +64,7 @@ varx_aero_out:
   
 varx_aero_out_pending:
   name: z_pending
+  fullname: z_pending
   discipline: aerodynamics
   io_mode: out
   type: Float
@@ -63,6 +72,7 @@ varx_aero_out_pending:
     
 vary_aero_in:
   name: y
+  fullname: y
   discipline: aerodynamics
   io_mode: in
   type: Float
@@ -70,6 +80,7 @@ vary_aero_in:
 
 varz_aero_in:
   name: z
+  fullname: z
   discipline: aerodynamics
   io_mode: in
   type: Float
@@ -77,6 +88,7 @@ varz_aero_in:
 
 var_scalar_float:
   name: y
+  fullname: y
   discipline: dummy
   io_mode: in
   type: Float
@@ -84,6 +96,7 @@ var_scalar_float:
   
 var_array_float:
   name: y
+  fullname: y
   discipline: dummy
   io_mode: in
   type: Float
@@ -91,6 +104,7 @@ var_array_float:
 
 var_nparray_float:
   name: y
+  fullname: y
   discipline: dummy
   io_mode: in
   type: Float
@@ -98,6 +112,7 @@ var_nparray_float:
 
 var_scalar_int:
   name: y
+  fullname: y
   discipline: dummy
   io_mode: in
   type: Integer
@@ -105,6 +120,7 @@ var_scalar_int:
   
 var_scalar_int:
   name: y
+  fullname: y
   discipline: dummy
   io_mode: in
   type: Integer

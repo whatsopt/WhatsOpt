@@ -30,6 +30,9 @@
           <output>
             <parameterUID>y1</parameterUID>
           </output>
+          <output>
+            <parameterUID>y3</parameterUID>
+          </output>
         </outputs>
       </designCompetence>
       <designCompetence uID="15">
@@ -41,6 +44,9 @@
         <inputs>
           <input>
             <parameterUID>y1</parameterUID>
+          </input>
+          <input>
+            <parameterUID>y3</parameterUID>
           </input>
           <input>
             <parameterUID>x3</parameterUID>
@@ -85,7 +91,10 @@
       <label>x2</label>
     </parameter>
     <parameter uID="y1">
-      <label>y1</label>
+      <label>y</label>
+    </parameter>
+    <parameter uID="y3">
+      <label>y</label>
     </parameter>
     <parameter uID="x3">
       <label>x3</label>

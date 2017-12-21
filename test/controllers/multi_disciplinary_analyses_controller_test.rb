@@ -29,15 +29,22 @@ class MultiDisciplinaryAnalysesControllerTest < ActionDispatch::IntegrationTest
     assert MultiDisciplinaryAnalysis.last.owner, users(:user1)  
   end
 
-  test "should import multi_disciplinary_analysis" do
+  test "should import multi_disciplinary_analysis from excel" do
     assert_difference('MultiDisciplinaryAnalysis.count') do
       post mdas_url, params: { 
         multi_disciplinary_analysis: { attachment_attributes: {data: fixture_file_upload('excel_mda_simple_sample.xlsx') }} }
     end
-
     assert_redirected_to mda_url(MultiDisciplinaryAnalysis.last)
   end  
-  
+
+  test "should import multi_disciplinary_analysis from cmdows" do
+    assert_difference('MultiDisciplinaryAnalysis.count') do
+      post mdas_url, params: { 
+        multi_disciplinary_analysis: { attachment_attributes: {data: fixture_file_upload('cmdows_mda_sample.cmdows') }} }
+    end
+    assert_redirected_to mda_url(MultiDisciplinaryAnalysis.last)
+  end    
+    
   test "should show multi_disciplinary_analysis" do
     get mda_url(@mda)
     assert_response :success

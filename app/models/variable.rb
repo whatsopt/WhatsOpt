@@ -42,6 +42,7 @@ class Variable < ApplicationRecord
   private
   
   def set_defaults
+    self.fullname = self.name
     self.shape = DEFAULT_SHAPE unless self.shape
     self.type  = DEFAULT_TYPE unless self.type
   end
