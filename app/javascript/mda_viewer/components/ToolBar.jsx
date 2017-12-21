@@ -64,7 +64,7 @@ class OpenMDAO extends React.Component {
     let href_cd = url(base+".cmdows");
     return (
       <div>
-        <div class="btn-toolbar" role="toolbar">   
+        <div className="btn-toolbar" role="toolbar">   
           <div className="btn-group mr-2" role="group"> 
               <button className={btnStatusClass} type="button" data-toggle="collapse" data-target="#collapseListing" aria-expanded="false">{btnIcon}</button>
             <a className="btn btn-primary" href={href_om}>OpenMDAO Export</a>

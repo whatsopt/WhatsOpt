@@ -83,23 +83,20 @@ class MultiDisciplinaryAnalysis < ApplicationRecord
         next if d_to == d_from
         inputs = d_to.input_variables
         connections = outputs.map(&:fullname) & inputs.map(&:fullname)
-        p connections
         in_connections = inputs.select{|c| connections.include?(c.fullname)}
-        p in_connections
         out_connections = outputs.select{|c| connections.include?(c.fullname)}
-        p out_connections
-        if in_connections != out_connections
+        unless _consistent?(in_connections, out_connections)
           raise StandardError.new("connection inconsistency in:"+in_connections.inspect+", out:"+out_connections.inspect)
         end
         @all_connections.merge(in_connections)
         unless connections.empty?
           frid = (d_from.name == WhatsOpt::Discipline::DRIVER_NAME)?"_U_":d_from.id 
           toid = (d_to.name == WhatsOpt::Discipline::DRIVER_NAME)?"_U_":d_to.id
-          names = in_connections.map(&:name)
-          edges << { from: "#{frid}", to: "#{toid}", name: names.join(",") }
+          names = in_connections.map(&:fullname)
+          edges << { from: "#{frid}", to: "#{toid}", name: names.sort.join(",") }
         end
       end
-    end
+    end 
 
     # pendings
     disciplines.each do |d|
@@ -118,7 +115,8 @@ class MultiDisciplinaryAnalysis < ApplicationRecord
 
   def build_var_tree
     res = disciplines.analyses.map {|d| {d.name => {in: d.input_variables, out: d.output_variables}}}
-    res.inject({}) {|result, h| result.update(h)}
+    tree = res.inject({}) {|result, h| result.update(h)}
+    tree
   end
   
   def owner
@@ -128,11 +126,18 @@ class MultiDisciplinaryAnalysis < ApplicationRecord
   
   private
   
+    def _consistent?(ins, outs)
+      criteria = [:type, :units, :shape]
+      ins_selection = ins.map{|var| {type: var[:type], units: var[:units], shape: var[:shape]} }
+      outs_selection = ins.map{|var| {type: var[:type], units: var[:units], shape: var[:shape]} }
+      ins_selection == outs_selection
+    end
+  
     def _get_pending_connections(vars)
       pendings = []
       vars.each do |v|
         unless @all_connections.map(&:fullname).include?(v.fullname)
-          pendings << v.name
+          pendings << v.fullname
         end
       end
       pendings

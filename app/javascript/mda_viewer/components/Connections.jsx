@@ -56,7 +56,7 @@ class Connection extends React.Component {
     let vinfo = {units: '', desc: '', type: '', shape: ''};
     if (disc !== USER) {
       let vinfos = vars[disc][io_mode].filter((v) => { 
-        return v.name === vname; 
+        return v.fullname === vname; 
       });
       if (vinfos.length === 1) {
         vinfo = vinfos[0];
