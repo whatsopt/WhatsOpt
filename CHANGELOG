@@ -1,5 +1,11 @@
 <h1>CHANGELOG</h1>
 
+<h3>0.4.4 (21/12/2017)</h3>
+<ul>
+  <li>Manage AGILE CMDOWS file.</li>
+  <li>fix CMDOWS export using variables fullnames.</li>
+</ul>
+
 <h3>0.4.3 (18/12/2017)</h3>
 <ul>
   <li>Import/Export MDA from/to CMDOWS file.</li>
