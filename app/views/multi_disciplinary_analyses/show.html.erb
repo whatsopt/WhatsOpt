@@ -6,12 +6,8 @@
 </p>
 <% end %>
 
+<div id="mda-viewer"></div>
 
-  <div id="mda-viewer"></div>
-
-
-<%= link_to 'Back', mdas_path %>
-  
 <script>var MDA = <%= raw @mda.to_xdsm_json %></script>
 <script>var API_KEY = "<%=current_user.api_key%>"</script>
 
