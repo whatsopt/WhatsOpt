@@ -114,7 +114,7 @@ class MultiDisciplinaryAnalysis < ApplicationRecord
   end
 
   def build_var_tree
-    res = disciplines.analyses.map {|d| {d.name => {in: d.input_variables, out: d.output_variables}}}
+    res = disciplines.analyses.map {|d| {d.id => {in: d.input_variables, out: d.output_variables}}}
     tree = res.inject({}) {|result, h| result.update(h)}
     tree
   end

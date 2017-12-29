@@ -5,22 +5,15 @@ import Xdsm from 'XDSMjs/src/xdsm';
 import Selectable from 'XDSMjs/src/selectable';
 
 class XdsmViewer extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       filter: undefined,
     }
+    this.graph = new Graph(props.mda);
   } 
 
   componentDidMount() {
-    // D3 drawing
-    var tooltip = d3.select("body").selectAll(".tooltip").data(['tooltip'])
-      .enter().append("div")
-      .attr("class", "tooltip")
-      .style("opacity", 0);
-
-    var graph = new Graph(this.props.mda);
-    
     let config = {
         labelizer: {
           ellipsis: 5,
@@ -34,9 +27,9 @@ class XdsmViewer extends React.Component {
         },
         titleTooltip: true,
       };
-    var xdsm = new Xdsm(graph, 'root', config);
-    xdsm.draw();
-    var selectable_xdsm = new Selectable(xdsm, this._onXDSMSelectionChange.bind(this));
+    this.xdsm = new Xdsm(this.graph, 'root', config);
+    this.xdsm.draw();
+    var selectable_xdsm = new Selectable(this.xdsm, this._onXDSMSelectionChange.bind(this));
     
     // bootstrap tooltip for connections
     $(".ellipsized").attr("data-toggle", "tooltip").attr("data-placement", "right");
@@ -45,14 +38,14 @@ class XdsmViewer extends React.Component {
     })
   }
 
-  shouldComponentUpdate() {
-    return false; // This prevents future re-renders of this component
-  }
-
   render() {
     return ( <div className="xdsm"></div> );
   }
 
+  shouldComponentUpdate() {
+    return false;
+  }
+  
   _onXDSMSelectionChange(filter) {
     this.props.onFilterChange(filter);    
   }

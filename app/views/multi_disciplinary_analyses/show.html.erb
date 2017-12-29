@@ -6,9 +6,8 @@
 </p>
 <% end %>
 
-<div id="mda-viewer"></div>
+<div id="mda-viewer" data-mda="<%= @mda.to_xdsm_json %>" data-is-editing="false" data-api-key="<%=current_user.api_key%>"></div> 
 
-<script>var MDA = <%= raw @mda.to_xdsm_json %></script>
 <script>var API_KEY = "<%=current_user.api_key%>"</script>
 
 <% if Rails.env == 'development' %>

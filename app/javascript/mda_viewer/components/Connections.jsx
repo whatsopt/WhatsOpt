@@ -3,15 +3,9 @@ import React from 'react';
 const USER = '_U_';
 
 class Connection extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { conn: this.props.conn,
-                   vars: this.props.vars };
-  }
 
   render() {
-    let infos = this._findInfos(this.state.conn); 
-      
+    let infos = this._findInfos(this.props.conn); 
     let units = infos.frUnits;
     if (infos.frUnits !== infos.toUnits && infos.toUnits) {
       units += `-> ${infos.toUnits}`;
@@ -19,8 +13,8 @@ class Connection extends React.Component {
     
     return (
       <tr>
-        <td>{infos.frName}</td>
-        <td>{infos.toName}</td>
+        <td>{this.props.conn.frName}</td>
+        <td>{this.props.conn.toName}</td>
         <td title={infos.desc} >{infos.vName}</td>
         <td>{infos.type}</td>
         <td>{infos.shape}</td>
@@ -30,7 +24,6 @@ class Connection extends React.Component {
   }
    
   _findInfos(conn) { 
-    //console.log(JSON.stringify(conn)); 
     let vfr = this._findVariableInfo(conn.fr, conn.varname, "out");
     let vto = this._findVariableInfo(conn.to, conn.varname, "in");
     let desc = vfr.desc || vto.desc
@@ -39,19 +32,15 @@ class Connection extends React.Component {
     } 
     let vartype = vfr.type || vto.type;
     let shape = vfr.shape || vto.shape;    
-    let infos = { frName: this._disciplineName(conn.fr), frUnits: vfr.units, 
+    let infos = { frName: conn.frName, frUnits: vfr.units, 
                   vName: conn.varname, desc: desc,
-                  toName: this._disciplineName(conn.to), toUnits: vto.units,
+                  toName: conn.toName, toUnits: vto.units,
                   type: vartype, shape: shape};
     return infos;
   }
-  
-  _disciplineName(name) {
-    return name === USER ? 'PENDING' : name;
-  }
-  
+    
   _findVariableInfo(disc, vname, io_mode) {
-    let vars = this.state.vars;
+    let vars = this.props.vars;
     let vinfo = {units: '', desc: '', type: '', shape: ''};
     if (disc !== USER) {
       let vinfos = vars[disc][io_mode].filter((v) => { 
@@ -75,7 +64,6 @@ class Connections extends React.Component {
   render() {
     var conns = [];
     var edges = this.props.mda.edges;
-    var vars = this.props.mda.vars;
     var filter = this.props.filter;
 
     if (filter.fr && filter.to) {
@@ -94,20 +82,22 @@ class Connections extends React.Component {
 
     edges.forEach((edge) => {
       let vars = edge.name.split(",");
+      let fromName = this._disciplineName(edge.from);
+      let toName = this._disciplineName(edge.to);
       vars.forEach((v) => {
-        let nameFrom = this._findNodeFromId(edge.from).name;
-        let nameTo = this._findNodeFromId(edge.to).name;
         conns.push({
-          id: nameFrom + '_' + v + '_' + nameTo,
-          fr: nameFrom,
-          to: nameTo,
+          id: edge.from + '_' + v + '_' + edge.to,
+          fr: edge.from,
+          to: edge.to,
+          frName: fromName,
+          toName: toName, 
           varname: v,
         });
       }, this);
     }, this);
 
     let connections = conns.map((conn) => {
-      return ( <Connection key={conn.id} conn={conn} vars={vars}/> );
+      return ( <Connection key={conn.id} conn={conn} vars={this.props.mda.vars} /> );
     });
 
     return (
@@ -129,6 +119,11 @@ class Connections extends React.Component {
       </table>
      );
   };
+  
+  _disciplineName(id) {
+    let name = this._findNodeFromId(id).name;
+    return name === USER ? 'PENDING' : name;
+  };
 
   _findNodeFromId(id) {
     if (id === USER) return {id: USER, name: USER}; 
@@ -138,7 +133,7 @@ class Connections extends React.Component {
       }
     };
     throw Error("Node id ("+ id +") unknown: " + JSON.stringify(this.state.nodes));  
-  }
+  };
 }
 
 export default Connections;

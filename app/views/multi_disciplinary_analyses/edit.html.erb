@@ -1,3 +1,26 @@
-<h1>Editing Multi Disciplinary Analysis</h1>
+<h1><%= @mda.name %></h1>
 
-<%= render 'form', multi_disciplinary_analysis: @mda %>
+<% if @mda.attachment %>
+<p>
+  <small>created from <%= link_to @mda.attachment.data_file_name, attachment_path(@mda.attachment) %> by <%= @mda.owner %></small>
+</p>
+<% end %>
+
+<div id="mda-viewer" data-mda="<%= @mda.to_xdsm_json %>" data-is-editing="true" data-api-key="<%=current_user.api_key%>"></div> 
+
+<script>var API_KEY = "<%=current_user.api_key%>"</script>
+
+<% if Rails.env == 'development' %>
+  <% if `hostname` =~ /(rdri206h)/ %>
+    <script src="http://rdri206h:8080/packs/mda_viewer_application.js"></script>
+    <!-- <script src="http://127.0.0.1:8080/packs/mda_viewer_application.js"></script> -->
+  <% elsif `hostname` =~ /(endymion)/%>
+    <script src="http://endymion:8080/packs/mda_viewer_application.js"></script>
+    <!-- <script src="http://127.0.0.1:8080/packs/mda_viewer_application.js"></script> -->
+  <% else %>
+    <script src="http://192.168.99.100:8080/packs/mda_viewer_application.js"></script>
+  <% end %>    
+<% else %>
+  <%= javascript_pack_tag 'mda_viewer_application' %>
+<% end%>
+ 

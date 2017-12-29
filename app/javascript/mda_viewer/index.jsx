@@ -3,27 +3,49 @@ import XdsmViewer from 'mda_viewer/components/XdsmViewer'
 import Connections from 'mda_viewer/components/Connections'
 import ToolBar from 'mda_viewer/components/ToolBar'
 import EditionToolBar from 'mda_viewer/components/EditionToolBar'
+import DisciplinesEditor from 'mda_viewer/components/DisciplinesEditor'
+import update from 'immutability-helper'
+import Graph from 'XDSMjs/src/graph';
 
 class MdaViewer extends React.Component {
   constructor(props) {
     super(props);
+    let nodes = props.mda.nodes.map(function(n) { return {id: n.id, name: n.name, type: n.type}; });
+    let edges = props.mda.edges.map(function(e) { return {from: e.from, to: e.to, name: e.name}; });
+    let isEditing = props.isEditing;
     this.state = {
       filter: { fr: undefined, to: undefined },
-      isEditing: true,
+      isEditing: isEditing,
+      mda: {nodes: nodes, edges: edges, vars: props.mda.vars},
+      newDisciplineName: '',
     }
     this.handleFilterChange = this.handleFilterChange.bind(this);
+    this.handleNewDiscipline = this.handleNewDiscipline.bind(this);
+    this.handleNewNameChange = this.handleNewNameChange.bind(this);
   }
 
   handleFilterChange(filter) { 
     this.setState({filter: {fr: filter.fr, to: filter.to}});
   }
 
+  handleNewDiscipline(event) { 
+    event.preventDefault();
+    let newState = update(this.state, {mda: {nodes: {$push: [{id:'NewNode', name: this.state.newDisciplineName, type: 'analysis'}] }}});
+    this.setState(newState);
+  }
+  
+  handleNewNameChange(event) { 
+    event.preventDefault();
+    this.setState({newDisciplineName: event.target.value});
+    return false;
+  }
+  
   render() {
     if (this.state.isEditing) {
       return(
       <div>
         <div className="mda-section">     
-          <XdsmViewer mda={this.props.mda} onFilterChange={this.handleFilterChange}/>
+          <XdsmViewer mda={this.state.mda} onFilterChange={this.handleFilterChange}/>
         </div>
         <ul className="nav nav-tabs" id="myTab" role="tablist">
           <li className="nav-item">
@@ -34,7 +56,9 @@ class MdaViewer extends React.Component {
           </li>
         </ul>
         <div className="tab-content" id="myTabContent">
-          <div className="tab-pane fade show active" id="disciplines" role="tabpanel" aria-labelledby="disciplines-tab">...</div>
+          <div className="tab-pane fade show active" id="disciplines" role="tabpanel" aria-labelledby="disciplines-tab">
+            <DisciplinesEditor nodes={this.state.mda.nodes} onNewDiscipline={this.handleNewDiscipline} onNewNameChange={this.handleNewNameChange}/>
+          </div>
           <div className="tab-pane fade" id="connections" role="tabpanel" aria-labelledby="connections-tab">...</div>
         </div>
       </div>);      
@@ -42,13 +66,13 @@ class MdaViewer extends React.Component {
     return (
       <div>
         <div className="mda-section">
-          <ToolBar mda_id={this.props.mda.id} isEditing={this.props.isEditing}/>
+          <ToolBar mda_id={this.state.mda.id} isEditing={this.props.isEditing}/>
         </div>
         <div className="mda-section">      
-          <XdsmViewer mda={this.props.mda} onFilterChange={this.handleFilterChange}/>
+          <XdsmViewer mda={this.state.mda} onFilterChange={this.handleFilterChange}/>
         </div>
         <div className="mda-section">
-          <Connections mda={this.props.mda} filter={this.state.filter} />
+          <Connections mda={this.state.mda} filter={this.state.filter} />
         </div>
       </div>
     );
