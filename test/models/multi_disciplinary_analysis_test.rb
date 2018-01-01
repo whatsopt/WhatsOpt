@@ -44,11 +44,13 @@ class MultiDisciplinaryAnalysisTest < ActiveSupport::TestCase
   
   test "should be able to build variable list" do
     mda = multi_disciplinary_analyses(:cicav)
-    tree = mda.build_var_tree
-    assert_equal ['Geometry', 'Aerodynamics'], tree.keys
-    assert_equal ["x_pending", "x", "z"], tree['Geometry'][:in].map(&:name)
-    assert_equal ["y", "z"], tree['Geometry'][:out].map(&:name)
-    assert_equal ["z", "y"], tree['Aerodynamics'][:in].map(&:name)
-    assert_equal ["x", "z_pending"], tree['Aerodynamics'][:out].map(&:name)  
+    tree = mda.build_var_infos
+    assert_equal mda.disciplines.analyses.all.map(&:id), tree.keys
+    geom_id = Discipline.where(name: 'Geometry').first.id
+    aero_id = Discipline.where(name: 'Aerodynamics').first.id
+    assert_equal ["x_pending", "x", "z"], tree[geom_id][:in].map(&:name)
+    assert_equal ["y", "z"], tree[geom_id][:out].map(&:name)
+    assert_equal ["z", "y"], tree[aero_id][:in].map(&:name)
+    assert_equal ["x", "z_pending"], tree[aero_id][:out].map(&:name)  
   end
 end

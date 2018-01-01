@@ -54,7 +54,7 @@ class MultiDisciplinaryAnalysis < ApplicationRecord
       nodes: build_nodes,
       edges: build_edges,
       workflow: [],
-      vars: build_var_tree
+      vars: build_var_infos
     }.to_json
     end
 
@@ -113,7 +113,7 @@ class MultiDisciplinaryAnalysis < ApplicationRecord
     edges
   end
 
-  def build_var_tree
+  def build_var_infos
     res = disciplines.analyses.map {|d| {d.id => {in: d.input_variables, out: d.output_variables}}}
     tree = res.inject({}) {|result, h| result.update(h)}
     tree

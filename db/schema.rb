@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 16) do
+ActiveRecord::Schema.define(version: 17) do
 
   create_table "attachments", force: :cascade do |t|
     t.string "container_type"
@@ -31,6 +31,7 @@ ActiveRecord::Schema.define(version: 16) do
     t.integer "multi_disciplinary_analysis_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "kind"
   end
 
   create_table "geometry_models", force: :cascade do |t|

@@ -4,10 +4,12 @@ control_cicav:
 
 geometry:
   name: Geometry
+  kind: analysis
   multi_disciplinary_analysis: cicav
 
 aerodynamics:
   name: Aerodynamics
+  kind: analysis
   multi_disciplinary_analysis: cicav
 
 control_fast:
@@ -16,10 +18,12 @@ control_fast:
 
 fast_discipline:
   name: FastDiscipline
+  kind: analysis
   multi_disciplinary_analysis: fast
 
 dummy:
-  name: Aerodynamics
+  name: DummyDiscipline
+  kind: analysis
   multi_disciplinary_analysis: dummy
 
  
