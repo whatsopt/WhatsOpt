@@ -16,7 +16,7 @@ class MdaViewer extends React.Component {
     this.state = {
       filter: { fr: undefined, to: undefined },
       isEditing: isEditing,
-      mda: {nodes: nodes, edges: edges, vars: props.mda.vars},
+      mda: {id: props.mda.id, nodes: nodes, edges: edges, vars: props.mda.vars},
       newDisciplineName: '',
     }
     this.handleFilterChange = this.handleFilterChange.bind(this);
