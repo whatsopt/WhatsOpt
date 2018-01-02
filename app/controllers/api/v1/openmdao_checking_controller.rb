@@ -2,6 +2,7 @@ require 'whats_opt/openmdao_generator'
 
 class Api::V1::OpenmdaoCheckingController < Api::ApiController 
 
+  # POST /multi_disciplinary_analysis/{mda_id}/openmdao_checking
   def create
     params = openmdao_checking_params
       

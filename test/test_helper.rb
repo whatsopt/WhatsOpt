@@ -15,3 +15,5 @@ end
 class ActionDispatch::IntegrationTest
     include Devise::Test::IntegrationHelpers
 end
+
+TEST_API_KEY = 'FriendlyApiKey'

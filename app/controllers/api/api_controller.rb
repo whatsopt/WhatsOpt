@@ -1,4 +1,7 @@
 class Api::ApiController < ActionController::Base
+  include Response
+  include ExceptionHandler
+  
   respond_to :json
   
   protect_from_forgery with: :null_session

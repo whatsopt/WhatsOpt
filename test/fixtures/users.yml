@@ -5,6 +5,7 @@ admin:
 user1:
   login: john
   email: john.doe@onera.fr
+  api_key: FriendlyApiKey
 
 user2:
   login: bob

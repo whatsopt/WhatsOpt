@@ -6,7 +6,6 @@ class Api::V1::MultiDisciplinaryAnalysesController < Api::ApiController
   
   # POST /mdas
   def create
-    print mda_params
     @mda = MultiDisciplinaryAnalysis.create(mda_params)
     current_user.add_role(:owner, @mda)
     if @mda.save && current_user.save
