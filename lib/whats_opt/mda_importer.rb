@@ -10,8 +10,6 @@ module WhatsOpt
     class MdaImportError < StandardError
     end
     
-    DRIVER_NAME = Discipline::DRIVER_NAME
-          
     def get_mda_attributes
     end 
     

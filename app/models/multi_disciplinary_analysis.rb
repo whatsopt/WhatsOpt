@@ -13,7 +13,8 @@ class MultiDisciplinaryAnalysis < ApplicationRecord
   accepts_nested_attributes_for :attachment, allow_destroy: true
   validates_associated :attachment
   
-  has_many :disciplines, :dependent => :destroy
+  #has_many :disciplines, -> { order(position: :asc) }, :dependent => :destroy 
+  has_many :disciplines, :dependent => :destroy 
   accepts_nested_attributes_for :disciplines, 
     reject_if: proc { |attr| attr['name'].blank? }, allow_destroy: true
       
@@ -90,8 +91,8 @@ class MultiDisciplinaryAnalysis < ApplicationRecord
         end
         @all_connections.merge(in_connections)
         unless connections.empty?
-          frid = (d_from.name == WhatsOpt::Discipline::DRIVER_NAME)?"_U_":d_from.id 
-          toid = (d_to.name == WhatsOpt::Discipline::DRIVER_NAME)?"_U_":d_to.id
+          frid = (d_from.name == WhatsOpt::Discipline::NULL_DRIVER_NAME)?"_U_":d_from.id 
+          toid = (d_to.name == WhatsOpt::Discipline::NULL_DRIVER_NAME)?"_U_":d_to.id
           names = in_connections.map(&:fullname)
           edges << { from: "#{frid}", to: "#{toid}", name: names.sort.join(",") }
         end

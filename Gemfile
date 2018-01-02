@@ -62,13 +62,14 @@ gem 'popper'
 gem 'bootstrap', '~> 4.0.0.beta2'
 
 gem 'sass-rails'
-gem 'devise' #, github: 'plataformatec/devise'
-gem 'devise_ldap_authenticatable' #, :git => "git://github.com/cschiewek/devise_ldap_authenticatable.git"
+gem 'devise' 
+gem 'devise_ldap_authenticatable' 
 gem 'rolify'
 gem 'pundit'
 gem 'paperclip'
 gem 'rubyXL'
-gem 'webpacker' #, :git => "git://github.com/rails/webpacker.git"
+gem 'webpacker' 
 gem 'rack-cors'
 gem 'font-awesome-rails'
 gem 'nokogiri'
+gem 'acts_as_list'

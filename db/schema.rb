@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 17) do
+ActiveRecord::Schema.define(version: 20) do
 
   create_table "attachments", force: :cascade do |t|
     t.string "container_type"
@@ -32,6 +32,7 @@ ActiveRecord::Schema.define(version: 17) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "kind"
+    t.integer "position"
   end
 
   create_table "geometry_models", force: :cascade do |t|

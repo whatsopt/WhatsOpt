@@ -31,8 +31,8 @@ module WhatsOpt
         label = @doc.xpath('//designCompetence[@uID="'+duid+'"]/label') 
         discattrs << { id: duid, name: label.text }
       end
-      unless discattrs.detect{|d| d['name'] == WhatsOpt::Discipline::DRIVER_NAME}
-        discattrs.unshift({name: WhatsOpt::Discipline::DRIVER_NAME})
+      unless discattrs.detect{|d| d['name'] == WhatsOpt::Discipline::NULL_DRIVER_NAME}
+        discattrs.unshift({name: WhatsOpt::Discipline::NULL_DRIVER_NAME})
       end
       discattrs
     end
@@ -56,8 +56,8 @@ module WhatsOpt
           varattrs[duid] << {name: label, fullname: pid, :shape=>"1", :type=>"Float", :units=>"", :desc=>"", io_mode: "out"}
         end
       end
-      unless varattrs.key?(WhatsOpt::Discipline::DRIVER_NAME)
-        varattrs[WhatsOpt::Discipline::DRIVER_NAME]=[]
+      unless varattrs.key?(WhatsOpt::Discipline::NULL_DRIVER_NAME)
+        varattrs[WhatsOpt::Discipline::NULL_DRIVER_NAME]=[]
       end
       varattrs
     end

@@ -12,13 +12,13 @@ class CmdowsMdaImporterTest < ActiveSupport::TestCase
   end
   
   test "should get disciplines attributes" do
-    assert_equal([{name: WhatsOpt::CmdowsMdaImporter::DRIVER_NAME}, 
+    assert_equal([{name: WhatsOpt::Discipline::NULL_DRIVER_NAME}, 
                   {id: "14", name: "Disc1"}, {id: "15", name: "Disc2"}, {id: "16", name: "Disc3"}], 
                  @cmi.get_disciplines_attributes)
   end
 
   test "should get variables attributes" do
-    expected = {WhatsOpt::MdaImporter::DRIVER_NAME =>[],
+    expected = {WhatsOpt::Discipline::NULL_DRIVER_NAME =>[],
       "14" => [{:name=>"x1", :fullname=>"x1", :shape=>"1", :type=>"Float", :units=>"", :desc=>"", :io_mode=>"in"},
         {:name=>"x2", :fullname=>"x2", :shape=>"1", :type=>"Float", :units=>"", :desc=>"", :io_mode=>"in"},
         {:name=>"y2", :fullname=>"y2", :shape=>"1", :type=>"Float", :units=>"", :desc=>"", :io_mode=>"in"},
