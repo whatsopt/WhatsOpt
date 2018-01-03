@@ -6,6 +6,7 @@ import EditionToolBar from 'mda_viewer/components/EditionToolBar'
 import DisciplinesEditor from 'mda_viewer/components/DisciplinesEditor'
 import update from 'immutability-helper'
 import Graph from 'XDSMjs/src/graph';
+import api from '../../utils/WhatsOptApi';
 
 class MdaViewer extends React.Component {
   constructor(props) {
@@ -30,8 +31,10 @@ class MdaViewer extends React.Component {
 
   handleNewDiscipline(event) { 
     event.preventDefault();
-    let newState = update(this.state, {mda: {nodes: {$push: [{id:'NewNode', name: this.state.newDisciplineName, type: 'analysis'}] }}});
-    this.setState(newState);
+    api.create_discipline({name: this.state.newDisciplineName, type: 'analysis'}, function() {
+      let newState = update(this.state, {mda: {nodes: {$push: [{id:'NewNode', name: this.state.newDisciplineName, type: 'analysis'}] }}});
+      this.setState(newState);
+    });
   }
   
   handleNewNameChange(event) { 
