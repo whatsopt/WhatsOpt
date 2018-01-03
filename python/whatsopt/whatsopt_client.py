@@ -10,7 +10,7 @@ from openmdao.core.group import Group
 
 WHATSOPT_DIRNAME = os.path.join(os.path.expanduser('~'), '.whatsopt')
 API_KEY_FILENAME = os.path.join(WHATSOPT_DIRNAME, 'api_key')
-DISCIPLINE_CONTROL_NAME = '__CONTROL__'  # check WhatsOpt Discipline model
+NULL_DRIVER_NAME = '__NULL_DRIVER__'  # check WhatsOpt Discipline model
 
 PROD_URL = "http://rdri206h.onecert.fr/whatsopt"
 TEST_URL = "http://endymion:3000"
@@ -96,7 +96,7 @@ class WhatsOpt(object):
         print tree
         connections = data['connections_list']
         print connections
-        discnames = [DISCIPLINE_CONTROL_NAME]
+        discnames = [NULL_DRIVER_NAME]
         discnames.extend(self._get_discipline_names(problem.model, tree))
         print discnames
         disciplines_attrs = self._create_disciplines_attrs(problem, discnames, connections)
@@ -137,7 +137,7 @@ class WhatsOpt(object):
     @staticmethod
     def _create_variables_attrs(problem, discnames, connections):
         varattrs = {dname: [] for dname in discnames}
-        varattrs.update({DISCIPLINE_CONTROL_NAME: []})
+        varattrs.update({NULL_DRIVER_NAME: []})
         for conn in connections:
             name_elts = conn['src'].split('.')
             nelt = len(name_elts)
@@ -148,7 +148,7 @@ class WhatsOpt(object):
             if discsrc in discnames: 
                 varattrs[discsrc].append({'name':varsrc, 'io_mode':'out'})
             else:
-                varattrs[DISCIPLINE_CONTROL_NAME].append({'name':varsrc, 'io_mode':'out'})
+                varattrs[NULL_DRIVER_NAME].append({'name':varsrc, 'io_mode':'out'})
                 
             if nelt > 1:
                 disctgt, vartgt = '.'.join(name_elts[:-1]), name_elts[-1] 
@@ -157,7 +157,7 @@ class WhatsOpt(object):
             if disctgt in discnames: 
                 varattrs[disctgt].append({'name':vartgt, 'io_mode':'in'})
             else:
-                varattrs[DISCIPLINE_CONTROL_NAME].append({'name':vartgt, 'io_mode':'in'})
+                varattrs[NULL_DRIVER_NAME].append({'name':vartgt, 'io_mode':'in'})
         return varattrs
     
             
