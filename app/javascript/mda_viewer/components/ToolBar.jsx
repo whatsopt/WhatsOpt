@@ -1,6 +1,6 @@
 import React from 'react';
 import axios from 'axios';
-import api from '../../utils/WhatsOptApi';
+import {api, url} from '../../utils/WhatsOptApi';
 
 class OpenMDAOLogLine extends React.Component {  
   

@@ -18,19 +18,19 @@ class WhatsOptApi {
   openmdao_checking(mda_id, callback) {
     let path = '/api/v1/openmdao_checking';
     axios.post(url(path), {mda_id: mda_id})
-      .then(then_callback)
-      .catch(error => console.log(error))
+      .then(callback)
+      .catch(error => console.log(error));
   };
   
   create_discipline(mda_id, discipline_attributes, callback) {
     let path = `/api/v1/${mda_id}/disciplines`;
     axios.post(url(path), {discipline_attributes: discipline_attributes})
-      .then(then_callback)
-      .catch(error => console.log(error))
+      .then(callback)
+      .catch(error => console.log(error));
   }
   
 };
 
-let api = new WhatsOptApi
+let api = new WhatsOptApi();
 
-export default api;
+export {api, url};

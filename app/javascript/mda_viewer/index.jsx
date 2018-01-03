@@ -2,11 +2,10 @@ import React from 'react';
 import XdsmViewer from 'mda_viewer/components/XdsmViewer'
 import Connections from 'mda_viewer/components/Connections'
 import ToolBar from 'mda_viewer/components/ToolBar'
-import EditionToolBar from 'mda_viewer/components/EditionToolBar'
 import DisciplinesEditor from 'mda_viewer/components/DisciplinesEditor'
 import update from 'immutability-helper'
-import Graph from 'XDSMjs/src/graph';
-import api from '../../utils/WhatsOptApi';
+//let Graph = require('XDSMjs/src/graph');
+//import api from '../../utils/WhatsOptApi';
 
 class MdaViewer extends React.Component {
   constructor(props) {
