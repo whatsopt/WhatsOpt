@@ -1,12 +1,6 @@
 import React from 'react';
 import axios from 'axios';
-
-let token = document.getElementsByName('csrf-token')[0].getAttribute('content')
-axios.defaults.headers.common['X-CSRF-Token'] = token
-axios.defaults.headers.common['Accept'] = 'application/json'
-axios.defaults.headers.common['Authorization'] = 'Token '+API_KEY
-let relative_url_root = document.getElementsByName('relative-url-root')[0].getAttribute('content')
-//axios.defaults.baseURL = 'http://endymion:3000'
+import api from '../../utils/WhatsOptApi';
 
 class OpenMDAOLogLine extends React.Component {  
   
@@ -17,12 +11,6 @@ class OpenMDAOLogLine extends React.Component {
   render() {
     return (<div className="listing-line">{this.props.line}</div>);
   }
-}
-
-
-//prepend relative_url_root
-var url = function (path) {
-    return relative_url_root+path;
 }
 
 class OpenMDAO extends React.Component {
@@ -40,13 +28,10 @@ class OpenMDAO extends React.Component {
     this.getStatus();
   }
 
-  
   getStatus() {
-    axios.post(url('/api/v1/openmdao_checking'), {mda_id: this.props.mda_id})
-    .then(response => {
-      this.setState({loading: false, status_ok: response.data.status_ok, log: response.data.log})
-    })
-    .catch(error => console.log(error))
+    api.openmdao_checking(
+        this.props.mda_id, 
+        response => {this.setState({loading: false, status_ok: response.data.status_ok, log: response.data.log})});
   }
   
   render() {
