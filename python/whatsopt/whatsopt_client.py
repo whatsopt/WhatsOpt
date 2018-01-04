@@ -10,7 +10,7 @@ from openmdao.core.group import Group
 
 WHATSOPT_DIRNAME = os.path.join(os.path.expanduser('~'), '.whatsopt')
 API_KEY_FILENAME = os.path.join(WHATSOPT_DIRNAME, 'api_key')
-NULL_DRIVER_NAME = '__NULL_DRIVER__'  # check WhatsOpt Discipline model
+NULL_DRIVER_NAME = '__DRIVER__'  # check WhatsOpt Discipline model
 
 PROD_URL = "http://rdri206h.onecert.fr/whatsopt"
 TEST_URL = "http://endymion:3000"
@@ -128,6 +128,7 @@ class WhatsOpt(object):
     @staticmethod
     def _create_disciplines_attrs(problem, discnames, connections):
         variables_attrs = WhatsOpt._create_variables_attrs(problem, discnames, connections)
+        print variables_attrs
         disciplines_attrs = []
         for dname in discnames:
             disc = {'name': dname, 'variables_attributes': variables_attrs[dname]}
