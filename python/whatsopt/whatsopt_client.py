@@ -104,20 +104,22 @@ class WhatsOpt(object):
         print("Try to push MDA to %s" % self.url)
         data = _get_viewer_data(problem)
         tree = data['tree']
-        print(tree)
+        #print(tree)
         connections = data['connections_list']
-        print(connections)
+        #print(connections)
         self.discnames = [NULL_DRIVER_NAME]
-        self._collect_discnames_and_vars(problem.model, tree)
+        self.discnames.extend(self._collect_discnames_and_vars(problem.model, tree))
         print(self.discnames)
         self._initialize_disciplines_attrs(problem, connections)
         
         name = problem.model.__class__.__name__
+        print("MDA= ", name)
         if name == 'Group':
             name = 'MDA'
         self.mda_attrs = {'name': name,
                           'disciplines_attributes': self.discattrs}    
-            
+        print([d for d in self.discattrs if d['name']=='sap.Struc'])    
+        #print(self.vars)
         mda_params = {'multi_disciplinary_analysis': self.mda_attrs}
         url =  self._url('/api/v1/multi_disciplinary_analyses')
         resp = self.session.post(url, headers=self.headers, json=mda_params)
@@ -128,16 +130,18 @@ class WhatsOpt(object):
 
     # see _get_tree_dict at
     # https://github.com/OpenMDAO/OpenMDAO/blob/master/openmdao/devtools/problem_viewer/problem_viewer.py
-    def _collect_discnames_and_vars(self, system, tree):
+    def _collect_discnames_and_vars(self, system, tree, group_prefix=''):
+        disciplines = []
         if 'children' in tree:
             for i, child in enumerate(tree['children']):
                 # do not represent IndepVarComp
                 if not isinstance(system._subsystems_myproc[i], IndepVarComp):
                     # retain only components, not intermediates (subsystem or group)
                     if child['type'] == 'subsystem' and child['subsystem_type'] == 'group':
-                        self.discnames.extend(self._collect_discnames_and_vars(system._subsystems_myproc[i], child))
+                        prefix = group_prefix+child['name']+'.'
+                        disciplines.extend(self._collect_discnames_and_vars(system._subsystems_myproc[i], child, prefix))
                     else:
-                        self.discnames.append(child['name'])
+                        disciplines.append(group_prefix+child['name'])
                         for typ in ['input', 'output']:
                             for ind, abs_name in enumerate(system._var_abs_names[typ]):
                                 io_mode = 'out'
@@ -153,10 +157,11 @@ class WhatsOpt(object):
                                                        'io_mode': io_mode
                                                        #'dtype': type(meta['value']).__name__
                                                        }
+        return disciplines
 
     def _initialize_disciplines_attrs(self, problem, connections):
         self._initialize_variables_attrs()
-        print(self.varattrs)
+        #print(self.varattrs)
         self.discattrs = []
         for dname in self.discnames:
             discattr = {'name': dname, 'variables_attributes': self.varattrs[dname]}
@@ -167,13 +172,13 @@ class WhatsOpt(object):
 #         for conn in connections:
 #             self._create_varattr_from_connection(conn['src'], 'out')
 #             self._create_varattr_from_connection(conn['tgt'], 'in')
-        print(self.vars)
+        #print(self.vars)
         for fullname, varattr in iteritems(self.vars): 
             name_elts = fullname.split('.')
             if len(name_elts) > 1 and name_elts[-1] == varattr['name']:
                 disc, var = '.'.join(name_elts[:-1]), name_elts[-1] 
             else:
-                raise Exception('Can not parse '+ fullname + ": "+ varattr)
+                raise Exception('Can not parse '+ fullname + ": "+ str(varattr))
             if disc in self.discnames and varattr not in self.varattrs[disc]: 
                 self.varattrs[disc].append(varattr)
             elif varattr not in self.varattrs[NULL_DRIVER_NAME]:

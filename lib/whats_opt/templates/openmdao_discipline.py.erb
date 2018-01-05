@@ -1,7 +1,7 @@
 import numpy as np
 from openmdao.api import ExplicitComponent
 
-class <%= @discipline.name.camelcase %>(ExplicitComponent):
+class <%= @discipline.py_classname %>(ExplicitComponent):
     """ An OpenMDAO component to encapsulate <%= @discipline.py_classname %> discipline """
 
     def setup(self):
