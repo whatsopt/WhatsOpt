@@ -83,34 +83,64 @@ class MultiDisciplinaryAnalysis < ApplicationRecord
       disciplines.each do |d_to|
         next if d_to == d_from
         inputs = d_to.input_variables
-        connections = outputs.map(&:fullname) & inputs.map(&:fullname)
-        in_connections = inputs.select{|c| connections.include?(c.fullname)}
-        out_connections = outputs.select{|c| connections.include?(c.fullname)}
+        if self.attachment&.mda_cmdows?
+          connections = outputs.map(&:fullname) & inputs.map(&:fullname)
+          in_connections = inputs.select{|c| connections.include?(c.fullname)}
+          out_connections = outputs.select{|c| connections.include?(c.fullname)}
+        else
+          connections = outputs.map(&:name) & inputs.map(&:name)
+          in_connections = inputs.select{|c| connections.include?(c.name)}
+          out_connections = outputs.select{|c| connections.include?(c.name)}
+        end
+
         unless _consistent?(in_connections, out_connections)
           raise StandardError.new("connection inconsistency in:"+in_connections.inspect+", out:"+out_connections.inspect)
         end
         @all_connections.merge(in_connections)
+        @all_connections.merge(out_connections)
         unless connections.empty?
+          p connections
           frid = (d_from.name == WhatsOpt::Discipline::NULL_DRIVER_NAME)?"_U_":d_from.id 
           toid = (d_to.name == WhatsOpt::Discipline::NULL_DRIVER_NAME)?"_U_":d_to.id
-          names = in_connections.map(&:fullname)
-          edges << { from: "#{frid}", to: "#{toid}", name: names.sort.join(",") }
+          if frid == "_U_"
+            names = in_connections.map(&:name)
+            fullnames = in_connections.map(&:fullname)
+          else
+            names = in_connections.map(&:name)
+            fullnames = out_connections.map(&:fullname)
+          end
+          if self.attachment&.mda_cmdows?
+            edge = { from: "#{frid}", to: "#{toid}", name: fullnames.sort.join(",") }
+          else
+            edge = { from: "#{frid}", to: "#{toid}", name: names.sort.join(",") }
+          end
+          p "ADD", edge
+          edges << edge
         end
       end
     end 
 
+    p @all_connections
     # pendings
-    disciplines.each do |d|
+    disciplines.analyses.each do |d|
+      p d, d.input_variables, d.output_variables
       in_pendings = _get_pending_connections(d.input_variables)
+      p "IN_PENDINGS", in_pendings
       unless in_pendings.empty?
-        edges << { from: "_U_", to: "#{d.id}", name: in_pendings.join(",") }
+        edge = { from: "_U_", to: "#{d.id}", name: in_pendings.join(",") }
+        p "ADD", edge
+        edges << edge
       end
 
       out_pendings = _get_pending_connections(d.output_variables)
+      p "OUT_PENDINGS", out_pendings
       unless out_pendings.empty?
-        edges << { from: "#{d.id}", to: "_U_", name: out_pendings.join(",") }
+        edge = { from: "#{d.id}", to: "_U_", name: out_pendings.join(",") }
+        p "ADD", edge
+        edges << edge
       end        
     end   
+    p edges
     edges
   end
 
@@ -138,7 +168,11 @@ class MultiDisciplinaryAnalysis < ApplicationRecord
       pendings = []
       vars.each do |v|
         unless @all_connections.map(&:fullname).include?(v.fullname)
-          pendings << v.fullname
+          if self.attachment&.mda_cmdows?
+            pendings << v.fullname
+          else
+            pendings << v.name
+          end
         end
       end
       pendings

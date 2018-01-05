@@ -6,29 +6,23 @@ class Api::V1::MultiDisciplinaryAnalysesController < Api::ApiController
   
   # POST /mdas
   def create
-    @mda = MultiDisciplinaryAnalysis.create(mda_params)
+    @mda = MultiDisciplinaryAnalysis.create!(mda_params)
     current_user.add_role(:owner, @mda)
-    if @mda.save && current_user.save
-      render json: @mda, status: :created, location: api_v1_mda_path(@mda)
-    else
-      render json: @mda.errors.update(current_user.errors)
-    end
+    current_user.save
+    json_response @mda
   end
 
   private
 
-  def mda_params
     def mda_params
       params.require(:multi_disciplinary_analysis).permit(
       :name, 
-        
       :disciplines_attributes => 
          [
           :name, 
-          :variables_attributes => [:name, :io_mode, :type, :shape, :units, :desc]
+          :variables_attributes => [:name, :fullname, :io_mode, :type, :shape, :units, :desc]
          ]
       )
     end
-  end 
   
 end

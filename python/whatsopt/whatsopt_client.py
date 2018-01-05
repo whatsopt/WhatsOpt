@@ -1,3 +1,5 @@
+from __future__ import print_function
+from six import iteritems
 import os
 import sys
 import json
@@ -7,6 +9,7 @@ from openmdao.devtools.problem_viewer.problem_viewer import _get_viewer_data, vi
 from openmdao.core.indepvarcomp import IndepVarComp
 from openmdao.core.problem import Problem
 from openmdao.core.group import Group
+from __builtin__ import staticmethod
 
 WHATSOPT_DIRNAME = os.path.join(os.path.expanduser('~'), '.whatsopt')
 API_KEY_FILENAME = os.path.join(WHATSOPT_DIRNAME, 'api_key')
@@ -39,6 +42,14 @@ class WhatsOpt(object):
         # config session object
         self.session = requests.Session()  
         self.session.trust_env = False 
+        
+        # MDA informations
+        self.mda_attrs = {'name': '', 'discipline_attributes':''}
+        self.discnames = []
+        self.discattrs = []
+        self.vars = {}
+        self.varattrs = {}
+        
 
     def _url(self, path):
         return self.url + path
@@ -55,8 +66,8 @@ class WhatsOpt(object):
         return self._default_url    
             
     def _ask_and_write_api_key(self):
-        print "You have to set your API_KEY. You can get it in your profile on WhatsOpt."
-        print "Please, copy/paste your api key below then hit return (characters are hidden)."
+        print("You have to set your API_KEY. You can get it in your profile on WhatsOpt.")
+        print("Please, copy/paste your api key below then hit return (characters are hidden).")
         api_key = getpass.getpass(prompt='Your API key: ')
         if not os.path.exists(WHATSOPT_DIRNAME):
             os.makedirs(WHATSOPT_DIRNAME)
@@ -90,76 +101,97 @@ class WhatsOpt(object):
         return push_mda
 
     def push_mda(self, problem):
-        print "Try to push MDA to "+self.url
+        print("Try to push MDA to %s" % self.url)
         data = _get_viewer_data(problem)
         tree = data['tree']
-        print tree
+        print(tree)
         connections = data['connections_list']
-        print connections
-        discnames = [NULL_DRIVER_NAME]
-        discnames.extend(self._get_discipline_names(problem.model, tree))
-        print discnames
-        disciplines_attrs = self._create_disciplines_attrs(problem, discnames, connections)
+        print(connections)
+        self.discnames = [NULL_DRIVER_NAME]
+        self._collect_discnames_and_vars(problem.model, tree)
+        print(self.discnames)
+        self._initialize_disciplines_attrs(problem, connections)
+        
         name = problem.model.__class__.__name__
         if name == 'Group':
             name = 'MDA'
-        mda_params = {'multi_disciplinary_analysis': 
-                      {'name': name,
-                       'disciplines_attributes': disciplines_attrs}}
+        self.mda_attrs = {'name': name,
+                          'disciplines_attributes': self.discattrs}    
+            
+        mda_params = {'multi_disciplinary_analysis': self.mda_attrs}
         url =  self._url('/api/v1/multi_disciplinary_analyses')
         resp = self.session.post(url, headers=self.headers, json=mda_params)
         if resp.ok:
-            print resp.json()
+            print(resp.json())
         else:
-            print resp
+            print(resp.json())
 
-    @staticmethod    
-    def _get_discipline_names(system, tree):
-        disciplines = []
+    # see _get_tree_dict at
+    # https://github.com/OpenMDAO/OpenMDAO/blob/master/openmdao/devtools/problem_viewer/problem_viewer.py
+    def _collect_discnames_and_vars(self, system, tree):
         if 'children' in tree:
             for i, child in enumerate(tree['children']):
+                # do not represent IndepVarComp
                 if not isinstance(system._subsystems_myproc[i], IndepVarComp):
+                    # retain only components, not intermediates (subsystem or group)
                     if child['type'] == 'subsystem' and child['subsystem_type'] == 'group':
-                        disciplines.extend(WhatsOpt._get_discipline_names(system._subsystems_myproc[i], child))
+                        self.discnames.extend(self._collect_discnames_and_vars(system._subsystems_myproc[i], child))
                     else:
-                        disciplines.append(child['name'])
-        return disciplines
+                        self.discnames.append(child['name'])
+                        for typ in ['input', 'output']:
+                            for ind, abs_name in enumerate(system._var_abs_names[typ]):
+                                io_mode = 'out'
+                                if typ == 'input': 
+                                    io_mode = 'in' 
+                                elif typ == 'output': 
+                                    io_mode = 'out'
+                                else:
+                                    raise Exception('Unhandled variable type ' + typ)
+                                meta = system._var_abs2meta[typ][abs_name]
+                                self.vars[abs_name] = {'fullname': abs_name,
+                                                       'name': system._var_abs2prom[typ][abs_name],
+                                                       'io_mode': io_mode
+                                                       #'dtype': type(meta['value']).__name__
+                                                       }
 
-    @staticmethod
-    def _create_disciplines_attrs(problem, discnames, connections):
-        variables_attrs = WhatsOpt._create_variables_attrs(problem, discnames, connections)
-        print variables_attrs
-        disciplines_attrs = []
-        for dname in discnames:
-            disc = {'name': dname, 'variables_attributes': variables_attrs[dname]}
-            disciplines_attrs.append(disc)
-        return disciplines_attrs
+    def _initialize_disciplines_attrs(self, problem, connections):
+        self._initialize_variables_attrs()
+        print(self.varattrs)
+        self.discattrs = []
+        for dname in self.discnames:
+            discattr = {'name': dname, 'variables_attributes': self.varattrs[dname]}
+            self.discattrs.append(discattr)
 
-    @staticmethod
-    def _create_variables_attrs(problem, discnames, connections):
-        varattrs = {dname: [] for dname in discnames}
-        varattrs.update({NULL_DRIVER_NAME: []})
-        for conn in connections:
-            name_elts = conn['src'].split('.')
-            nelt = len(name_elts)
-            if nelt > 1:
-                discsrc, varsrc = '.'.join(name_elts[:-1]), name_elts[-1] 
+    def _initialize_variables_attrs(self):
+        self.varattrs = {dname: [] for dname in self.discnames}
+#         for conn in connections:
+#             self._create_varattr_from_connection(conn['src'], 'out')
+#             self._create_varattr_from_connection(conn['tgt'], 'in')
+        print(self.vars)
+        for fullname, varattr in iteritems(self.vars): 
+            name_elts = fullname.split('.')
+            if len(name_elts) > 1 and name_elts[-1] == varattr['name']:
+                disc, var = '.'.join(name_elts[:-1]), name_elts[-1] 
             else:
-                raise Exception('Connection qualified name should contain at least one dot, but got %s' % conn['src'])
-            if discsrc in discnames: 
-                varattrs[discsrc].append({'name':varsrc, 'io_mode':'out'})
-            else:
-                varattrs[NULL_DRIVER_NAME].append({'name':varsrc, 'io_mode':'out'})
-                
-            if nelt > 1:
-                disctgt, vartgt = '.'.join(name_elts[:-1]), name_elts[-1] 
-            else:
-                raise Exception('Connection qualified name should contain at least one dot, but got %s' % conn['tgt'])
-            if disctgt in discnames: 
-                varattrs[disctgt].append({'name':vartgt, 'io_mode':'in'})
-            else:
-                varattrs[NULL_DRIVER_NAME].append({'name':vartgt, 'io_mode':'in'})
-        return varattrs
-    
+                raise Exception('Can not parse '+ fullname + ": "+ varattr)
+            if disc in self.discnames and varattr not in self.varattrs[disc]: 
+                self.varattrs[disc].append(varattr)
+            elif varattr not in self.varattrs[NULL_DRIVER_NAME]:
+                self.varattrs[NULL_DRIVER_NAME].append(varattr)
             
+    def _create_varattr_from_connection(self, conn, io_mode):
+        name_elts = conn.split('.')
+        if len(name_elts) > 1:
+            disc, var = '.'.join(name_elts[:-1]), name_elts[-1] 
+        else:
+            raise Exception('Connection qualified name should contain' + 
+                            'at least one dot, but got %s' % conn)
+        varattr = {'name':var, 'fullname':conn, 'io_mode': io_mode}
+        if disc in self.discnames and varattr not in self.varattrs[disc]: 
+            self.varattrs[disc].append(varattr)
+        elif varattr not in self.varattrs[NULL_DRIVER_NAME]:
+            self.varattrs[NULL_DRIVER_NAME].append(varattr)
             
+        
+        
+        

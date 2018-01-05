@@ -10,7 +10,7 @@ class Connection extends React.Component {
     if (infos.frUnits !== infos.toUnits && infos.toUnits) {
       units += `-> ${infos.toUnits}`;
     }
-    
+    console.log("VARNAME "+infos.vName);
     return (
       <tr>
         <td>{this.props.conn.frName}</td>
@@ -24,6 +24,7 @@ class Connection extends React.Component {
   }
    
   _findInfos(conn) { 
+    console.log("CONN : "+JSON.stringify(conn));
     let vfr = this._findVariableInfo(conn.fr, conn.varname, "out");
     let vto = this._findVariableInfo(conn.to, conn.varname, "in");
     let desc = vfr.desc || vto.desc
@@ -32,24 +33,47 @@ class Connection extends React.Component {
     } 
     let vartype = vfr.type || vto.type;
     let shape = vfr.shape || vto.shape;    
+    let varname = vfr.fullname || vto.fullname; 
     let infos = { frName: conn.frName, frUnits: vfr.units, 
-                  vName: conn.varname, desc: desc,
+                  vName: varname, desc: desc,
                   toName: conn.toName, toUnits: vto.units,
                   type: vartype, shape: shape};
     return infos;
   }
     
+  // TODO: Big technical debt to be reduced
   _findVariableInfo(disc, vname, io_mode) {
     let vars = this.props.vars;
     let vinfo = {units: '', desc: '', type: '', shape: ''};
     if (disc !== USER) {
+      console.log("search "+ vname + " in " + JSON.stringify(vars[disc][io_mode])); 
       let vinfos = vars[disc][io_mode].filter((v) => { 
-        return v.fullname === vname; 
+        return v.name === vname; 
       });
       if (vinfos.length === 1) {
         vinfo = vinfos[0];
+      } else if (vinfos.length > 1) {
+        console.log("Find several occurences of " + vname + ": " + JSON.stringify(vinfos));
+        console.log("Check against fullnames");
+        vinfos = vars[disc][io_mode].filter((v) => { 
+          return v.fullname === vname; 
+        });
+        if (vinfos.length === 1) {
+          vinfo = vinfos[0];
+        } else {
+          throw Error(`Expected one variable ${vname} found ${vinfos.length} in ${JSON.stringify(vars[disc][io_mode])}`);
+        }
       } else {
-        throw Error(`Expected one variable ${vname} found ${vinfos.length} in ${JSON.stringify(vinfos)}`);        
+        console.log("Find no occurence of " + vname + ": " + JSON.stringify(vinfos));
+        console.log("Check against fullnames");
+        vinfos = vars[disc][io_mode].filter((v) => { 
+          return v.fullname === vname; 
+        });
+        if (vinfos.length === 1) {
+          vinfo = vinfos[0];
+        } else {
+          throw Error(`Expected one variable ${vname} found ${vinfos.length} in ${JSON.stringify(vars[disc][io_mode])}`);
+        }
       }
     } 
     return vinfo;

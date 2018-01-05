@@ -20,7 +20,7 @@
             <parameterUID>x1</parameterUID>
           </input>
           <input>
-            <parameterUID>x2</parameterUID>
+            <parameterUID>z</parameterUID>
           </input>
           <input>
             <parameterUID>y2</parameterUID>
@@ -29,9 +29,6 @@
         <outputs>
           <output>
             <parameterUID>y1</parameterUID>
-          </output>
-          <output>
-            <parameterUID>y3</parameterUID>
           </output>
         </outputs>
       </designCompetence>
@@ -43,18 +40,21 @@
         <label>Disc2</label>
         <inputs>
           <input>
+            <parameterUID>x2</parameterUID>
+          </input>
+          <input>
+            <parameterUID>z</parameterUID>
+          </input>
+          <input>
             <parameterUID>y1</parameterUID>
-          </input>
-          <input>
-            <parameterUID>y3</parameterUID>
-          </input>
-          <input>
-            <parameterUID>x3</parameterUID>
           </input>
         </inputs>
         <outputs>
           <output>
             <parameterUID>y2</parameterUID>
+          </output>
+          <output>
+            <parameterUID>y3</parameterUID>
           </output>
         </outputs>
       </designCompetence>
