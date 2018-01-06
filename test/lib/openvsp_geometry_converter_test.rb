@@ -5,7 +5,7 @@ require 'tmpdir'
 class OpenvspGeometryConverterTest < ActiveSupport::TestCase
 
   def check_openvsp
-    system('vspscript')
+    system('vspscript > NUL')
   end
   
   def setup

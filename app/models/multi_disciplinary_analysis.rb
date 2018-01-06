@@ -99,7 +99,7 @@ class MultiDisciplinaryAnalysis < ApplicationRecord
         @all_connections.merge(in_connections)
         @all_connections.merge(out_connections)
         unless connections.empty?
-          p connections
+          #p connections
           frid = (d_from.name == WhatsOpt::Discipline::NULL_DRIVER_NAME)?"_U_":d_from.id 
           toid = (d_to.name == WhatsOpt::Discipline::NULL_DRIVER_NAME)?"_U_":d_to.id
           if frid == "_U_"
@@ -114,33 +114,33 @@ class MultiDisciplinaryAnalysis < ApplicationRecord
           else
             edge = { from: "#{frid}", to: "#{toid}", name: names.sort.join(",") }
           end
-          p "ADD", edge
+          #p "ADD", edge
           edges << edge
         end
       end
     end 
 
-    p @all_connections
+    #p @all_connections
     # pendings
     disciplines.analyses.each do |d|
-      p d, d.input_variables, d.output_variables
+      #p d, d.input_variables, d.output_variables
       in_pendings = _get_pending_connections(d.input_variables)
-      p "IN_PENDINGS", in_pendings
+      #p "IN_PENDINGS", in_pendings
       unless in_pendings.empty?
         edge = { from: "_U_", to: "#{d.id}", name: in_pendings.join(",") }
-        p "ADD", edge
+        #p "ADD", edge
         edges << edge
       end
 
       out_pendings = _get_pending_connections(d.output_variables)
-      p "OUT_PENDINGS", out_pendings
+      #p "OUT_PENDINGS", out_pendings
       unless out_pendings.empty?
         edge = { from: "#{d.id}", to: "_U_", name: out_pendings.join(",") }
-        p "ADD", edge
+        #p "ADD", edge
         edges << edge
       end        
     end   
-    p edges
+    #p edges
     edges
   end
 
