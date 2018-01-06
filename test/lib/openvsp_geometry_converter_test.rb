@@ -1,11 +1,13 @@
 require 'test_helper'
 require 'whats_opt/openvsp_geometry_converter'
 require 'tmpdir'
+require 'open3'
 
 class OpenvspGeometryConverterTest < ActiveSupport::TestCase
 
   def check_openvsp
-    system('vspscript > NUL')
+    so, se, status = Open3.capture3('vspscript')
+    status.success?
   end
   
   def setup
