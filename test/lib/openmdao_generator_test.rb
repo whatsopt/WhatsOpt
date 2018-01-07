@@ -6,7 +6,7 @@ require 'tmpdir'
 class OpenmdaoGeneratorTest < ActiveSupport::TestCase
 
   def setup
-    @mda = multi_disciplinary_analyses(:cicav)
+    @mda = analyses(:cicav)
     @ogen = WhatsOpt::OpenmdaoGenerator.new(@mda)
   end
     
@@ -57,7 +57,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
   end
   
   test "should run openmdao check and return true when valid" do
-    mda = multi_disciplinary_analyses(:fast)
+    mda = analyses(:fast)
     ogen2 = WhatsOpt::OpenmdaoGenerator.new(mda)
     ok, log = ogen2.check_mda_setup
     assert ok  # ok even if discipline without connections

@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   
   resources :variables
-  resources :multi_disciplinary_analyses, as: :mdas do
+  resources :analyses, as: :mdas do
     get "mda_exports/new"
   end
   devise_for :users
@@ -14,7 +14,7 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1, defaults: { format: :json } do
       post "openmdao_checking", to: "openmdao_checking#create" 
-      resources :multi_disciplinary_analyses, shallow:true, as: :mdas, only: [:show, :create, :update, :destroy] do
+      resources :analyses, shallow:true, as: :mdas, only: [:show, :create, :update, :destroy] do
         resources :disciplines
       end
     end
@@ -25,7 +25,7 @@ Rails.application.routes.draw do
   get "/changelog" => 'infos#changelog'
   
   authenticated :user do
-    root to: 'multi_disciplinary_analyses#index', as: :authenticated_root
+    root to: 'analyses#index', as: :authenticated_root
   end
   root to: redirect('users/sign_in')
   

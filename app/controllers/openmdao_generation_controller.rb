@@ -6,7 +6,7 @@ class OpenmdaoGenerationController < ApplicationController
     mda_id = params[:mda_id]
     if mda_id
       begin
-        mda = MultiDisciplinaryAnalysis.find(mda_id)
+        mda = Analysis.find(mda_id)
         ogen = WhatsOpt::OpenmdaoGenerator.new(mda)
         stringio, filename = ogen.generate
         send_data stringio.read, filename: filename

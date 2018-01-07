@@ -14,7 +14,7 @@ class NotebookControllerTest < ActionDispatch::IntegrationTest
     assert Notebook.last.owner, users(:user1)  
   end
   
-  test "should not destroy multi_disciplinary_analysis, if not owner" do
+  test "should not destroy notebook, if not owner" do
     post notebooks_url, params: { notebook: {attachment_attributes: { data: @nb }} }
     sign_out users(:user1)
     sign_in users(:user2)

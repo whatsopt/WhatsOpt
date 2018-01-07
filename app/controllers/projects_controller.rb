@@ -63,6 +63,6 @@ class ProjectsController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def project_params
-    params.require(:project).permit(:name, :multi_disciplinary_analisys_id)
+    params.require(:project).permit(:name, :analisys_id)
   end
 end

@@ -1,4 +1,4 @@
-<%= form_for(multi_disciplinary_analysis, url: (multi_disciplinary_analysis.new_record? ? mdas_path : mda_path(@mda)), :html => { :multipart => true, :role => "form" }) do |f| %>
+<%= form_for(analysis, url: (analysis.new_record? ? mdas_path : mda_path(@mda)), :html => { :multipart => true, :role => "form" }) do |f| %>
   <% if @mda.errors.any? %>
     <% @mda.errors.full_messages.each do |message| %>
       <div class="alert <%= bootstrap_class_for :error %>" role="alert">

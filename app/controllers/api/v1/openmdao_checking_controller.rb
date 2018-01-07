@@ -2,12 +2,12 @@ require 'whats_opt/openmdao_generator'
 
 class Api::V1::OpenmdaoCheckingController < Api::ApiController 
 
-  # POST /multi_disciplinary_analysis/{mda_id}/openmdao_checking
+  # POST /analysis/{mda_id}/openmdao_checking
   def create
     params = openmdao_checking_params
       
     if params[:mda_id]
-      mda = MultiDisciplinaryAnalysis.find(params[:mda_id])
+      mda = Analysis.find(params[:mda_id])
       if mda
         ogen = WhatsOpt::OpenmdaoGenerator.new(mda)
         status, lines = ogen.check_mda_setup 

@@ -6,7 +6,7 @@
   <thead>
     <tr>
       <th>Name</th>
-      <th>Multi disciplinary analysis</th>
+      <th>Analysis</th>
       <th colspan="3"></th>
     </tr>
   </thead>
@@ -15,7 +15,7 @@
     <% @disciplines.each do |discipline| %>
       <tr>
         <td><%= discipline.name %></td>
-        <td><%= discipline.multi_disciplinary_analysis_id %></td>
+        <td><%= discipline.analysis_id %></td>
         <td><%= link_to 'Show', discipline %></td>
         <td><%= link_to 'Edit', edit_discipline_path(discipline) %></td>
         <td><%= link_to 'Destroy', discipline, method: :delete, data: { confirm: 'Are you sure?' } %></td>

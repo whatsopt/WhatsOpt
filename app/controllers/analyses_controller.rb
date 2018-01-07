@@ -1,9 +1,9 @@
-class MultiDisciplinaryAnalysesController < ApplicationController
+class AnalysesController < ApplicationController
   before_action :set_mda, only: [:show, :edit, :update, :destroy]
 
   # GET /mdas
   def index
-    @mdas = MultiDisciplinaryAnalysis.all
+    @mdas = Analysis.all
   end
 
   # GET /mdas/1
@@ -13,7 +13,7 @@ class MultiDisciplinaryAnalysesController < ApplicationController
   # GET /mdas/new
   def new
     @import = !!params[:import]
-    @mda = MultiDisciplinaryAnalysis.new
+    @mda = Analysis.new
   end
 
   # GET /mdas/1/edit
@@ -25,7 +25,7 @@ class MultiDisciplinaryAnalysesController < ApplicationController
     if params[:cancel_button]
       redirect_to mdas_url, notice: "MDA creation cancelled."
     else 
-      @mda = MultiDisciplinaryAnalysis.create(mda_params)
+      @mda = Analysis.create(mda_params)
       if @mda.save
         current_user.add_role(:owner, @mda)
         current_user.save
@@ -57,12 +57,12 @@ class MultiDisciplinaryAnalysesController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_mda
-      @mda = MultiDisciplinaryAnalysis.find(params[:id])
+      @mda = Analysis.find(params[:id])
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def mda_params
-      params.require(:multi_disciplinary_analysis)
+      params.require(:analysis)
         .permit(:name, :attachment_attributes => [:id, :data, :_destroy], 
                        :disciplines_attributes => [:id, :name, :_destroy])
     end

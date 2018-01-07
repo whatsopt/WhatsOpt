@@ -1,27 +1,27 @@
 require 'test_helper'
 
-class MultiDisciplinaryAnalysisTest < ActiveSupport::TestCase
+class AnalysisTest < ActiveSupport::TestCase
   
   test "when created, should have a controller discipline" do
-    mda = multi_disciplinary_analyses(:cicav)
+    mda = analyses(:cicav)
     assert mda.valid?
   end
    
   test "should create an mda from a mda template excel file" do
     attach = sample_file('excel_mda_simple_sample.xlsx')
-    mda = MultiDisciplinaryAnalysis.create!(attachment_attributes: {data: attach})
+    mda = Analysis.create!(attachment_attributes: {data: attach})
     assert mda.valid?
     assert_equal 3, mda.design_variables.count
     assert_equal 1, mda.optimization_variables.count
   end
 
   test "should be able to build nodes" do
-    mda = multi_disciplinary_analyses(:cicav)
+    mda = analyses(:cicav)
     assert_equal %w[Geometry Aerodynamics], mda.build_nodes.map {|n| n[:name]} 
   end
   
   test "should be able to build connections from user" do
-    mda = multi_disciplinary_analyses(:cicav)
+    mda = analyses(:cicav)
     geo = disciplines(:geometry).id.to_s
     aero = disciplines(:aerodynamics).id.to_s
     u = "_U_"
@@ -37,13 +37,13 @@ class MultiDisciplinaryAnalysisTest < ActiveSupport::TestCase
   end
   
   test "should not contain reflexive connection" do
-    mda = multi_disciplinary_analyses(:cicav)
+    mda = analyses(:cicav)
     edges = mda.build_edges
     assert_empty edges.select {|e| e[:to] == e[:from] }
   end
   
   test "should be able to build variable list" do
-    mda = multi_disciplinary_analyses(:cicav)
+    mda = analyses(:cicav)
     tree = mda.build_var_infos
     assert_equal mda.disciplines.analyses.all.map(&:id), tree.keys
     geom_id = Discipline.where(name: 'Geometry').first.id

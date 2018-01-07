@@ -8,7 +8,7 @@ class MdaExportsController < ApplicationController
     format = params[:format]
     if mda_id
       begin
-        mda = MultiDisciplinaryAnalysis.find(mda_id)
+        mda = Analysis.find(mda_id)
         if format == "openmdao"
           ogen = WhatsOpt::OpenmdaoGenerator.new(mda)
           stringio, filename = ogen.generate

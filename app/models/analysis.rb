@@ -3,7 +3,7 @@ require 'whats_opt/excel_mda_importer'
 require 'whats_opt/cmdows_mda_importer'
 require 'whats_opt/openmdao_mapping'
 
-class MultiDisciplinaryAnalysis < ApplicationRecord
+class Analysis < ApplicationRecord
 
   include WhatsOpt::OpenmdaoModule
 

@@ -1,12 +1,12 @@
-class Api::V1::MultiDisciplinaryAnalysesController < Api::ApiController 
+class Api::V1::AnalysesController < Api::ApiController 
 
   def show
-    @mda = MultiDisciplinaryAnalysis.find(params[:id])
+    @mda = Analysis.find(params[:id])
   end
   
   # POST /mdas
   def create
-    @mda = MultiDisciplinaryAnalysis.create!(mda_params)
+    @mda = Analysis.create!(mda_params)
     current_user.add_role(:owner, @mda)
     current_user.save
     json_response @mda
@@ -15,7 +15,7 @@ class Api::V1::MultiDisciplinaryAnalysesController < Api::ApiController
   private
 
     def mda_params
-      params.require(:multi_disciplinary_analysis).permit(
+      params.require(:analysis).permit(
       :name, 
       :disciplines_attributes => 
          [

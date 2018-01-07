@@ -9,7 +9,7 @@ class UserTest < ActiveSupport::TestCase
   
   test "could own an MDA" do
     user = users(:user1)
-    mda = multi_disciplinary_analyses(:cicav)
+    mda = analyses(:cicav)
     assert user.has_role?(:owner, mda)
   end
 

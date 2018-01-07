@@ -4,7 +4,7 @@ class Api::V1::DisciplineControllerTest < ActionDispatch::IntegrationTest
   setup do
     user1 = users(:user1)
     @auth_headers = {"Authorization" => "Token " + TEST_API_KEY}
-    @mda = multi_disciplinary_analyses(:cicav)
+    @mda = analyses(:cicav)
     @disc = @mda.disciplines.analyses.first
   end
   

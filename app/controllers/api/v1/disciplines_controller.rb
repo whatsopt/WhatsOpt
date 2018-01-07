@@ -8,7 +8,7 @@ class Api::V1::DisciplinesController < Api::ApiController
   
   # POST /disciplines
   def create
-    mda = MultiDisciplinaryAnalysis.find(params[:mda_id])
+    mda = Analysis.find(params[:mda_id])
     @discipline = Discipline.create!(discipline_params)
     json_response @discipline, :created
   end
@@ -33,6 +33,6 @@ class Api::V1::DisciplinesController < Api::ApiController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def discipline_params
-      params.require(:discipline).permit(:name, :multi_disciplinary_analisys_id)
+      params.require(:discipline).permit(:name, :analysis_id)
     end
 end

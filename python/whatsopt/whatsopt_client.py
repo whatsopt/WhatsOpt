@@ -120,8 +120,8 @@ class WhatsOpt(object):
                           'disciplines_attributes': self.discattrs}    
         print([d for d in self.discattrs if d['name']=='sap.Struc'])    
         #print(self.vars)
-        mda_params = {'multi_disciplinary_analysis': self.mda_attrs}
-        url =  self._url('/api/v1/multi_disciplinary_analyses')
+        mda_params = {'analysis': self.mda_attrs}
+        url =  self._url('/api/v1/analyses')
         resp = self.session.post(url, headers=self.headers, json=mda_params)
         if resp.ok:
             print(resp.json())

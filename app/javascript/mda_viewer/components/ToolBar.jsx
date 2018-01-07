@@ -44,7 +44,7 @@ class OpenMDAO extends React.Component {
       btnStatusClass = "btn btn-info";
       btnIcon = <i className="fa fa-cog fa-spin" />;
     }
-    let base = "/multi_disciplinary_analyses/"+this.props.mda_id+"/mda_exports/new"
+    let base = "/analyses/"+this.props.mda_id+"/mda_exports/new"
     let href_om = url(base+".openmdao");
     let href_cd = url(base+".cmdows");
     return (

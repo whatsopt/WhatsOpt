@@ -6,12 +6,12 @@ user_role:
 
 owner_cicav_mda_role:
   name: :owner
-  resource: cicav (MultiDisciplinaryAnalysis)
+  resource: cicav (Analysis)
   
 owner_fast_mda_role:
   name: :owner
-  resource: fast (MultiDisciplinaryAnalysis)
+  resource: fast (Analysis)
   
 owner_dummy_mda_role:
   name: :owner
-  resource: dummy (MultiDisciplinaryAnalysis)
+  resource: dummy (Analysis)

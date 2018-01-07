@@ -1,4 +1,4 @@
-class MultiDisciplinaryAnalysisPolicy < ApplicationPolicy
+class AnalysisPolicy < ApplicationPolicy
 
   def index?
     @true

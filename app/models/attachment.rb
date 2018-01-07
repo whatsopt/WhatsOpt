@@ -33,8 +33,8 @@ class Attachment < ActiveRecord::Base
   belongs_to :container, :polymorphic => true
   belongs_to :study, -> { where("attachments.container_type = 'Study'") }, foreign_key: 'container_id' 
   belongs_to :notebook, -> { where("attachments.container_type = 'Notebook'") }, foreign_key: 'container_id' 
-  belongs_to :mda_excel, -> { where("attachments.container_type = 'MultiDisciplinaryAnalysis'") }, foreign_key: 'container_id' 
-  belongs_to :mda_cmdows, -> { where("attachments.container_type = 'MultiDisciplinaryAnalysis'") }, foreign_key: 'container_id' 
+  belongs_to :mda_excel, -> { where("attachments.container_type = 'Analysis'") }, foreign_key: 'container_id' 
+  belongs_to :mda_cmdows, -> { where("attachments.container_type = 'Analysis'") }, foreign_key: 'container_id' 
   belongs_to :geometry_model, -> { where("attachments.container_type = 'GeometryModel'") }, foreign_key: 'container_id' 
 
   after_initialize :ensure_category_setting, on: :create

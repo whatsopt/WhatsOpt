@@ -1,29 +1,29 @@
 control_cicav:
   name: __DRIVER__
-  multi_disciplinary_analysis: cicav
+  analysis: cicav
 
 geometry:
   name: Geometry
   kind: analysis
-  multi_disciplinary_analysis: cicav
+  analysis: cicav
 
 aerodynamics:
   name: Aerodynamics
   kind: analysis
-  multi_disciplinary_analysis: cicav
+  analysis: cicav
 
 control_fast:
   name: __DRIVER__
-  multi_disciplinary_analysis: fast
+  analysis: fast
 
 fast_discipline:
   name: FastDiscipline
   kind: analysis
-  multi_disciplinary_analysis: fast
+  analysis: fast
 
 dummy:
   name: DummyDiscipline
   kind: analysis
-  multi_disciplinary_analysis: dummy
+  analysis: dummy
 
  
