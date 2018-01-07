@@ -45,6 +45,10 @@ class XdsmViewer extends React.Component {
   shouldComponentUpdate() {
     return false;
   }
+
+  addDiscipline(newdisc) {
+    console.log(newdisc);
+  }
   
   _onXDSMSelectionChange(filter) {
     this.props.onFilterChange(filter);    

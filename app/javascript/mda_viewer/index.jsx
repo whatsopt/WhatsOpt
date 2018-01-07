@@ -4,8 +4,8 @@ import Connections from 'mda_viewer/components/Connections'
 import ToolBar from 'mda_viewer/components/ToolBar'
 import DisciplinesEditor from 'mda_viewer/components/DisciplinesEditor'
 import update from 'immutability-helper'
-//let Graph = require('XDSMjs/src/graph');
-//import api from '../../utils/WhatsOptApi';
+let Graph = require('XDSMjs/src/graph');
+import {api, url} from '../utils/WhatsOptApi';
 
 class MdaViewer extends React.Component {
   constructor(props) {
@@ -30,10 +30,16 @@ class MdaViewer extends React.Component {
 
   handleNewDiscipline(event) { 
     event.preventDefault();
-    api.create_discipline({name: this.state.newDisciplineName, type: 'analysis'}, function() {
-      let newState = update(this.state, {mda: {nodes: {$push: [{id:'NewNode', name: this.state.newDisciplineName, type: 'analysis'}] }}});
+    api.create_discipline(this.props.mda.id, {name: this.state.newDisciplineName, kind: 'analysis'}, (function(response) {
+      let newdisc = {id: response.data.id, name: this.state.newDisciplineName, kind: 'analysis'};
+      let newState = update(this.state, {mda: 
+        {nodes: {$push: [newdisc]}
+      },
+      newDisciplineName: {$set: ''}
+      });
       this.setState(newState);
-    });
+      this.xdsmViewer.addDiscipline(newdisc);
+    }).bind(this));
   }
   
   handleNewNameChange(event) { 
@@ -47,7 +53,7 @@ class MdaViewer extends React.Component {
       return(
       <div>
         <div className="mda-section">     
-          <XdsmViewer mda={this.state.mda} onFilterChange={this.handleFilterChange}/>
+          <XdsmViewer ref={xdsmViewer => this.xdsmViewer = xdsmViewer} mda={this.state.mda} onFilterChange={this.handleFilterChange}/>
         </div>
         <ul className="nav nav-tabs" id="myTab" role="tablist">
           <li className="nav-item">
