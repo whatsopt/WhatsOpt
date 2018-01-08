@@ -11,6 +11,9 @@ class Api::V1::DisciplineControllerTest < ActionDispatch::IntegrationTest
   test "should get given discipline" do
     get api_v1_discipline_url(@disc), as: :json, headers: @auth_headers
     assert_response :success
+    resp = JSON.parse(response.body)
+    assert_equal 'Geometry', resp['name']
+    assert_equal 'analysis', resp['kind']
   end
   
   test "should create discipline in given mda" do
@@ -23,12 +26,10 @@ class Api::V1::DisciplineControllerTest < ActionDispatch::IntegrationTest
   end
   
   test "should update discipline" do
-    skip "not working yet"
     patch api_v1_discipline_url(@disc), params: { discipline: {  name: "NewName", kind: 'function' } }, as: :json, headers: @auth_headers
     assert_response :success
     get api_v1_discipline_url(@disc), as: :json, headers: @auth_headers
     assert_response :success
-    p response.body
     resp = JSON.parse(response.body)
     assert_equal 'NewName', resp['name']
     assert_equal 'function', resp['kind']
