@@ -18,7 +18,7 @@ class WhatsOptApi {
   openmdao_checking(mda_id, callback) {
     let path = '/api/v1/openmdao_checking';
     axios.post(url(path), {mda_id: mda_id})
-      .then(callback(response))
+      .then(response => callback(response))
       .catch(error => console.log(error));
   };
   
