@@ -2,10 +2,8 @@ require 'whats_opt/openmdao_generator'
 
 class Api::V1::OpenmdaoCheckingController < Api::ApiController 
 
-  # POST /analysis/{mda_id}/openmdao_checking
+  # POST /api/v1/analysis/{mda_id}/openmdao_checking
   def create
-    params = openmdao_checking_params
-      
     if params[:mda_id]
       mda = Analysis.find(params[:mda_id])
       if mda
@@ -18,12 +16,6 @@ class Api::V1::OpenmdaoCheckingController < Api::ApiController
     else
       render json: {error: true} 
     end 
-  end
-
-  private
-
-  def openmdao_checking_params
-    params.require(:openmdao_checking).permit(:mda_id)
   end
   
 end

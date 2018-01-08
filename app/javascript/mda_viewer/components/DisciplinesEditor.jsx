@@ -16,8 +16,7 @@ class Discipline extends React.Component {
 
 class DisciplinesEditor extends React.Component {
   constructor(props) {
-    super(props);
-    this.state = { name: '' };   
+    super(props);   
     this.handleChange = this.handleChange.bind(this);
   }
 
@@ -43,7 +42,7 @@ class DisciplinesEditor extends React.Component {
             <form className="form-inline" onSubmit={this.props.onNewDiscipline}>
               <div className="form-group mx-sm-3">
                 <label htmlFor="name" className="sr-only">Name</label>
-                <input type="text" value={this.state.name} placeholder='Enter Name...' className="form-control" id="name" onChange={this.handleChange}/>
+                <input type="text" value={this.props.name} placeholder='Enter Name...' className="form-control" id="name" onChange={this.handleChange}/>
               </div>
               <button type="submit" className="btn btn-primary">New</button>
             </form>

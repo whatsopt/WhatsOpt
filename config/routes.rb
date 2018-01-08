@@ -13,9 +13,9 @@ Rails.application.routes.draw do
     
   namespace :api do
     namespace :v1, defaults: { format: :json } do
-      post "openmdao_checking", to: "openmdao_checking#create" 
       resources :analyses, shallow:true, as: :mdas, only: [:show, :create, :update, :destroy] do
         resources :disciplines
+        post "openmdao_checking", to: "openmdao_checking#create" 
       end
     end
   end

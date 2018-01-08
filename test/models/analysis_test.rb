@@ -2,9 +2,11 @@ require 'test_helper'
 
 class AnalysisTest < ActiveSupport::TestCase
   
-  test "when created, should have a controller discipline" do
-    mda = analyses(:cicav)
+  test "when created, should have a driver discipline" do
+    mda = Analysis.create!( {name: 'NewMDA'} )
     assert mda.valid?
+    assert_equal 1, mda.disciplines.count
+    assert_equal WhatsOpt::Discipline::NULL_DRIVER_NAME, mda.disciplines.first.name
   end
    
   test "should create an mda from a mda template excel file" do

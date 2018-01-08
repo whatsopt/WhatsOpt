@@ -23,6 +23,8 @@ class Api::V1::DisciplineControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     resp = JSON.parse(response.body)
     assert_equal 'TestDiscipline', resp['name']
+    assert_equal @mda.id, resp['analysis_id']
+    assert_equal @mda.disciplines.count-1, resp['position']
   end
   
   test "should update discipline" do

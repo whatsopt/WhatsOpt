@@ -8,7 +8,7 @@ class Discipline < ApplicationRecord
   has_many :variables, :dependent => :destroy
   
   belongs_to :analysis
-  #acts_as_list scope: :analysis
+  acts_as_list scope: :analysis, top_of_list: 0
   
   accepts_nested_attributes_for :variables, reject_if: proc { |attr| attr['name'].blank? }, allow_destroy: true
 

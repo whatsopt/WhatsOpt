@@ -9,7 +9,7 @@ class Api::V1::DisciplinesController < Api::ApiController
   # POST /api/v1/{mda_id}/disciplines
   def create
     mda = Analysis.find(params[:mda_id])
-    @discipline = Discipline.create!(discipline_params)
+    @discipline = mda.disciplines.create!(discipline_params)
     json_response @discipline, :created
   end
 

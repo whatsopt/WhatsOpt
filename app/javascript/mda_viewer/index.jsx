@@ -65,7 +65,7 @@ class MdaViewer extends React.Component {
         </ul>
         <div className="tab-content" id="myTabContent">
           <div className="tab-pane fade show active" id="disciplines" role="tabpanel" aria-labelledby="disciplines-tab">
-            <DisciplinesEditor nodes={this.state.mda.nodes} onNewDiscipline={this.handleNewDiscipline} onNewNameChange={this.handleNewNameChange}/>
+            <DisciplinesEditor name={this.state.newDisciplineName} nodes={this.state.mda.nodes} onNewDiscipline={this.handleNewDiscipline} onNewNameChange={this.handleNewNameChange}/>
           </div>
           <div className="tab-pane fade" id="connections" role="tabpanel" aria-labelledby="connections-tab">...</div>
         </div>

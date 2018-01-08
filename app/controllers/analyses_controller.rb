@@ -25,7 +25,7 @@ class AnalysesController < ApplicationController
     if params[:cancel_button]
       redirect_to mdas_url, notice: "MDA creation cancelled."
     else 
-      @mda = Analysis.create(mda_params)
+      @mda = Analysis.new(mda_params)
       if @mda.save
         current_user.add_role(:owner, @mda)
         current_user.save

@@ -13,17 +13,20 @@ class Analysis < ApplicationRecord
   accepts_nested_attributes_for :attachment, allow_destroy: true
   validates_associated :attachment
   
-  #has_many :disciplines, -> { order(position: :asc) }, :dependent => :destroy 
-  has_many :disciplines, :dependent => :destroy 
+  has_many :disciplines, -> { order(position: :asc) }, :dependent => :destroy 
+
   accepts_nested_attributes_for :disciplines, 
     reject_if: proc { |attr| attr['name'].blank? }, allow_destroy: true
       
   before_validation(on: :create) do
     _create_from_attachment if attachment_exists
   end
+  
+  after_save :_ensure_driver_presence
+  
   validate :check_mda_import_error, on: :create, if: :attachment_exists
   validates :name, presence: true
-    
+
   def driver
     self.disciplines.driver&.first
   end
@@ -225,5 +228,11 @@ class Analysis < ApplicationRecord
       end
     end
 
+    def _ensure_driver_presence
+      if self.valid? and self.disciplines.where(name: WhatsOpt::Discipline::NULL_DRIVER_NAME).empty?
+        self.disciplines.create!(name: WhatsOpt::Discipline::NULL_DRIVER_NAME, position: 0)
+      end
+    end
+    
 end
 
