@@ -1,5 +1,11 @@
 <h1>CHANGELOG</h1>
 
+<h3>0.4.5 (08/01/2019)</h3>
+<ul>
+  <li>Initial version of MDA import from code: command 'wop push mda.py' </li>
+  <li>Schema evolutions : add kind and position to Discipline, rename MDA in Analysis</li>
+</ul>
+
 <h3>0.4.4 (21/12/2017)</h3>
 <ul>
   <li>Manage AGILE CMDOWS file.</li>
