@@ -6,8 +6,12 @@ require 'open3'
 class OpenvspGeometryConverterTest < ActiveSupport::TestCase
 
   def check_openvsp
-    so, se, status = Open3.capture3('vspscript')
-    status.success?
+    begin
+      so, se, status = Open3.capture3('vspscript')
+      status.success?
+    rescue
+      false
+    end
   end
   
   def setup
