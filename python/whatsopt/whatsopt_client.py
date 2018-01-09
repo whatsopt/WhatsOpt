@@ -116,7 +116,7 @@ class WhatsOpt(object):
             '__package__': None,
             '__cached__': None,
         }
-        Problem._post_setup_func = func
+        Problem._post_setup_func = func()
         exec(code, globals_dict)
 
     def push_mda_cmd(self):
@@ -152,7 +152,8 @@ class WhatsOpt(object):
             #print(resp.json())
             print("... %s pushed." % resp.json()['name'])
         else:
-            print(resp.json())
+            #print(resp.json())
+            resp.raise_for_status()
 
     # see _get_tree_dict at
     # https://github.com/OpenMDAO/OpenMDAO/blob/master/openmdao/devtools/problem_viewer/problem_viewer.py

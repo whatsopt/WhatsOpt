@@ -24,6 +24,7 @@ def list():
 @click.argument('py_filename')
 def push(py_filename):
 	""" Push multi disciplinary analyses specified within given PY_FILENAME """
-	WhatsOpt().execute(py_filename, wop.push_mda)
+	wop = WhatsOpt()
+	wop.execute(py_filename, wop.push_mda_cmd)
 	
 cli(prog_name='wop')
