@@ -4,7 +4,13 @@ class Api::V1::AnalysesController < Api::ApiController
     @mda = Analysis.find(params[:id])
   end
   
-  # POST /mdas
+  # POST /api/v1/mdas
+  def index
+    @mdas = Analysis.all
+    json_response @mdas
+  end
+  
+  # POST /api/v1/mdas
   def create
     @mda = Analysis.create!(mda_params)
     current_user.add_role(:owner, @mda)

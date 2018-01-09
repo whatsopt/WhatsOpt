@@ -9,7 +9,7 @@ setup(name='whatsopt',
       license='Apache 2.0',
       packages=['whatsopt'],
       install_requires=[
-          'Click',
+          'Click', 'beautifultable'
       ],
       entry_points="""
           [console_scripts]
