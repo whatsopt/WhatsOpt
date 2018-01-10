@@ -1,10 +1,11 @@
 class Api::V1::AnalysesController < Api::ApiController 
 
+  # GET /api/v1/mda/1
   def show
     @mda = Analysis.find(params[:id])
   end
   
-  # POST /api/v1/mdas
+  # GET /api/v1/mdas
   def index
     @mdas = Analysis.all
     json_response @mdas

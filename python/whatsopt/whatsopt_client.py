@@ -6,6 +6,7 @@ import json
 import getpass
 import requests
 import copy
+import re
 from openmdao.devtools.problem_viewer.problem_viewer import _get_viewer_data, view_model
 from openmdao.api import IndepVarComp, Problem, Group
 from tabulate import tabulate
@@ -105,7 +106,7 @@ class WhatsOpt(object):
         else:
             resp.raise_for_status()
 
-    def execute(self, progname, func):
+    def execute(self, progname, func, options):
         dir = os.path.dirname(progname)
         sys.path.insert(0, dir)
         with open(progname, 'rb') as fp:
@@ -116,16 +117,23 @@ class WhatsOpt(object):
             '__package__': None,
             '__cached__': None,
         }
-        Problem._post_setup_func = func()
+        Problem._post_setup_func = func(options)
         exec(code, globals_dict)
 
-    def push_mda_cmd(self):
+    def push_mda_cmd(self, options):
         def push_mda(prob):
-            self.push_mda(prob)
-            exit()
+            name = options['--name']
+            pbname = prob.model.__class__.__name__
+            if name and pbname != name:
+                print("Analysis %s skipped" % pbname)
+                pass # do not exit
+            else:
+                self.push_mda(prob, options)
+                exit()
+                
         return push_mda
 
-    def push_mda(self, problem):
+    def push_mda(self, problem, options):
         name = problem.model.__class__.__name__
         print("Push %s to %s ..." % (name, self.url))
         data = _get_viewer_data(problem)
@@ -143,17 +151,20 @@ class WhatsOpt(object):
             name = 'MDA'
         self.mda_attrs = {'name': name,
                           'disciplines_attributes': self.discattrs}    
-        #print([d for d in self.discattrs if d['name']=='sap.Struc'])    
+        #print([d for d in self.discattrs if d['name'] == 'sap.Struc'])    
         #print(self.vars)
         mda_params = {'analysis': self.mda_attrs}
-        url =  self._url('/api/v1/analyses')
-        resp = self.session.post(url, headers=self.headers, json=mda_params)
-        if resp.ok:
-            #print(resp.json())
-            print("... %s pushed." % resp.json()['name'])
+        if options['--dry-run']:
+            print(mda_params)
         else:
-            #print(resp.json())
-            resp.raise_for_status()
+            url =  self._url('/api/v1/analyses')
+            resp = self.session.post(url, headers=self.headers, json=mda_params)
+            if resp.ok:
+                #print(resp.json())
+                print("... %s pushed." % resp.json()['name'])
+            else:
+                #print(resp.json())
+                resp.raise_for_status()
 
     # see _get_tree_dict at
     # https://github.com/OpenMDAO/OpenMDAO/blob/master/openmdao/devtools/problem_viewer/problem_viewer.py
@@ -179,11 +190,16 @@ class WhatsOpt(object):
                                 else:
                                     raise Exception('Unhandled variable type ' + typ)
                                 meta = system._var_abs2meta[typ][abs_name]
+                                vtype = 'Float'
+                                if re.match('int', type(meta['value']).__name__):
+                                    vtype = 'Integer' 
                                 self.vars[abs_name] = {'fullname': abs_name,
                                                        'name': system._var_abs2prom[typ][abs_name],
-                                                       'io_mode': io_mode
-                                                       #'dtype': type(meta['value']).__name__
-                                                       }
+                                                       'io_mode': io_mode,
+                                                       'type': vtype,
+                                                       'shape': str(meta['shape']),
+                                                       'units': meta['units'],
+                                                       'desc': meta['desc']}
         return disciplines
 
     def _initialize_disciplines_attrs(self, problem, connections):
@@ -205,7 +221,9 @@ class WhatsOpt(object):
             
     def _create_varattr_from_connection(self, fullname, io_mode):
         disc, var = WhatsOpt._extract_disc_var(fullname)
-        varattr = {'name':var, 'fullname':fullname, 'io_mode': io_mode}
+        varattr = {'name':var, 'fullname':fullname, 'io_mode': io_mode,
+                   'type':self.vars[fullname]['type'], 'shape':self.vars[fullname]['shape'], 
+                   'units':self.vars[fullname]['units'], 'desc':self.vars[fullname]['desc']}
         if disc in self.discnames and varattr not in self.varattrs[disc]: 
             self.varattrs[disc].append(varattr)
         elif varattr not in self.varattrs[NULL_DRIVER_NAME]:
