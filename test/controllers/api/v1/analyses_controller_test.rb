@@ -13,9 +13,18 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
   
-  test "should create an mda" do
-    post api_v1_mdas_url(@mda), params: { analysis: { name: "TestMda" } }, as: :json, headers: @auth_headers
+  test "should create a mda" do
+    post api_v1_mdas_url, params: { analysis: { name: "TestMda" } }, as: :json, headers: @auth_headers
     assert_response :success
+  end
+  
+  test "should update a mda" do
+    put api_v1_mda_url(@mda), params: { analysis: { name: "TestNewName" } }, as: :json, headers: @auth_headers
+    assert_response :success
+    get api_v1_mda_url(@mda), as: :json, headers: @auth_headers
+    assert_response :success
+    resp = JSON.parse(response.body)
+    assert_equal 'TestNewName', resp['name'] 
   end
   
 end

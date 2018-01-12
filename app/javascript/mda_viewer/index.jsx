@@ -16,35 +16,52 @@ class MdaViewer extends React.Component {
     this.state = {
       filter: { fr: undefined, to: undefined },
       isEditing: isEditing,
-      mda: {id: props.mda.id, nodes: nodes, edges: edges, vars: props.mda.vars},
+      mda: {id: props.mda.id, name: props.mda.name, nodes: nodes, edges: edges, vars: props.mda.vars},
+      mdaNewName: props.mda.name,
       newDisciplineName: '',
     }
     this.handleFilterChange = this.handleFilterChange.bind(this);
-    this.handleNewDiscipline = this.handleNewDiscipline.bind(this);
-    this.handleNewNameChange = this.handleNewNameChange.bind(this);
+    this.handleNewDisciplineName = this.handleNewDisciplineName.bind(this);
+    this.handleNewDisciplineNameChange = this.handleNewDisciplineNameChange.bind(this);
+    this.handleMdaNewNameChange = this.handleMdaNewNameChange.bind(this);
+    this.handleMdaNewName = this.handleMdaNewName.bind(this);
   }
 
   handleFilterChange(filter) { 
     this.setState({filter: {fr: filter.fr, to: filter.to}});
   }
 
-  handleNewDiscipline(event) { 
+  handleNewDisciplineName(event) { 
     event.preventDefault();
-    api.create_discipline(this.props.mda.id, {name: this.state.newDisciplineName, kind: 'analysis'}, (function(response) {
-      let newdisc = {id: response.data.id, name: this.state.newDisciplineName, kind: 'analysis'};
-      let newState = update(this.state, {mda: 
-        {nodes: {$push: [newdisc]}
-      },
-      newDisciplineName: {$set: ''}
-      });
-      this.setState(newState);
-      this.xdsmViewer.addDiscipline(newdisc);
+    api.createDiscipline(this.props.mda.id, {name: this.state.newDisciplineName, kind: 'analysis'}, 
+      (function(response) {
+        let newdisc = {id: response.data.id, name: this.state.newDisciplineName, kind: 'analysis'};
+        let newState = update(this.state, {mda: {nodes: {$push: [newdisc]}}, newDisciplineName: {$set: ''}});
+        this.setState(newState);
+        this.xdsmViewer.addDiscipline(newdisc);
     }).bind(this));
   }
   
-  handleNewNameChange(event) { 
+  handleNewDisciplineNameChange(event) { 
     event.preventDefault();
-    this.setState({newDisciplineName: event.target.value});
+    let newState = update(this.state, {newDisciplineName: {$set: event.target.value}});
+    this.setState(newState);
+    return false;
+  }
+
+  handleMdaNewName(event) { 
+    event.preventDefault();
+    api.updateAnalysis(this.props.mda.id, {name: this.state.mdaNewName}, 
+      (function(response) {
+        let newState = update(this.state, {mda: { name: {$set: this.state.mdaNewName}}});
+        this.setState(newState);
+      }).bind(this));
+  }
+  
+  handleMdaNewNameChange(event) { 
+    event.preventDefault();
+    let newState = update(this.state, {mdaNewName: {$set: event.target.value}});
+    this.setState(newState);
     return false;
   }
   
@@ -52,20 +69,38 @@ class MdaViewer extends React.Component {
     if (this.state.isEditing) {
       return(
       <div>
+        <h1>Edit {this.state.mda.name}</h1>
         <div className="mda-section">     
           <XdsmViewer ref={xdsmViewer => this.xdsmViewer = xdsmViewer} mda={this.state.mda} onFilterChange={this.handleFilterChange}/>
         </div>
         <ul className="nav nav-tabs" id="myTab" role="tablist">
           <li className="nav-item">
-            <a className="nav-link active" id="disciplines-tab" data-toggle="tab" href="#disciplines" role="tab" aria-controls="disciplines" aria-selected="true">Disciplines</a>
+            <a className="nav-link active" id="analysis-tab" data-toggle="tab" href="#analysis" role="tab" aria-controls="analysis" aria-selected="true">Analysis</a>
+          </li>
+          <li className="nav-item">
+            <a className="nav-link" id="disciplines-tab" data-toggle="tab" href="#disciplines" role="tab" aria-controls="disciplines" aria-selected="false">Disciplines</a>
           </li>
           <li className="nav-item">
             <a className="nav-link" id="connection-tab" data-toggle="tab" href="#connections" role="tab" aria-controls="connections" aria-selected="false">Connections</a>
           </li>
         </ul>
         <div className="tab-content" id="myTabContent">
-          <div className="tab-pane fade show active" id="disciplines" role="tabpanel" aria-labelledby="disciplines-tab">
-            <DisciplinesEditor name={this.state.newDisciplineName} nodes={this.state.mda.nodes} onNewDiscipline={this.handleNewDiscipline} onNewNameChange={this.handleNewNameChange}/>
+          <div className="tab-pane fade show active" id="analysis" role="tabpanel" aria-labelledby="analysis-tab">
+            <div className="editor-section">
+              <form className="form-inline" onSubmit={this.handleMdaNewName}>
+                <div className="form-group mx-sm-3">
+                  <label htmlFor="name" className="sr-only">Name</label>
+                  <input type="text" value={this.state.mdaNewName} className="form-control" id="name" onChange={this.handleMdaNewNameChange}/>
+                </div>
+                <button type="submit" className="btn btn-primary">Update</button>
+              </form>
+            </div>
+          </div>
+          <div className="tab-pane fade" id="disciplines" role="tabpanel" aria-labelledby="disciplines-tab">
+            <DisciplinesEditor name={this.state.newDisciplineName} 
+                               nodes={this.state.mda.nodes} 
+                               onNewDisciplineName={this.handleNewDisciplineName} 
+                               onNewDisciplineNameChange={this.handleNewDisciplineNameChange}/>
           </div>
           <div className="tab-pane fade" id="connections" role="tabpanel" aria-labelledby="connections-tab">...</div>
         </div>

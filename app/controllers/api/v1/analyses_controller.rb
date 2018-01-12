@@ -1,8 +1,10 @@
 class Api::V1::AnalysesController < Api::ApiController 
 
+  before_action :set_mda, only: [:show, :update]
+  
   # GET /api/v1/mda/1
   def show
-    @mda = Analysis.find(params[:id])
+    json_response @mda
   end
   
   # GET /api/v1/mdas
@@ -19,8 +21,19 @@ class Api::V1::AnalysesController < Api::ApiController
     json_response @mda
   end
 
+  # PUT/PATCH /api/v1/mdas/1
+  def update
+    authorize @mda
+    @mda.update!(mda_params)
+    head :no_content
+  end
+  
   private
 
+    def set_mda
+      @mda = Analysis.find(params[:id])
+    end
+  
     def mda_params
       params.require(:analysis).permit(
       :name, 

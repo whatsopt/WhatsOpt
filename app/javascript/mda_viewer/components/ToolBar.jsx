@@ -29,7 +29,7 @@ class OpenMDAO extends React.Component {
   }
 
   getStatus() {
-    api.openmdao_checking(
+    api.openmdaoChecking(
         this.props.mda_id, 
         response => {this.setState({loading: false, status_ok: response.data.status_ok, log: response.data.log})});
   }

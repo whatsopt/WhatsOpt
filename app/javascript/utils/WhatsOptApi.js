@@ -15,20 +15,27 @@ function url(path) {
 
 class WhatsOptApi {
   
-  openmdao_checking(mda_id, callback) {
-    let path = `/api/v1/analyses/${mda_id}/openmdao_checking`;
+  openmdaoChecking(mdaId, callback) {
+    let path = `/api/v1/analyses/${mdaId}/openmdao_checking`;
     axios.post(url(path))
       .then(response => callback(response))
       .catch(error => console.log(error));
   };
   
-  create_discipline(mda_id, discipline_attributes, callback) {
-    let path = `/api/v1/analyses/${mda_id}/disciplines`;
+  createDiscipline(mdaId, discipline_attributes, callback) {
+    let path = `/api/v1/analyses/${mdaId}/disciplines`;
     axios.post(url(path), {discipline: discipline_attributes})
       .then(response => callback(response))
       .catch(error => console.log(error));
   }
   
+  updateAnalysis(mdaId, mdaAttrs, callback) {
+    let path = `/api/v1/analyses/${mdaId}`;
+    axios.put(url(path), {analysis: mdaAttrs})
+      .then(response => callback(response))
+      .catch(error => console.log(error));
+  }
+
 };
 
 let api = new WhatsOptApi();

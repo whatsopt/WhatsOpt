@@ -9,7 +9,7 @@ class Discipline extends React.Component {
   
   render() {
     return (
-        <div className="list-group-item editor-discipline">{this.state.node.name}</div>
+        <li className="list-inline-item editor-discipline">{this.state.node.name}</li>
         ); 
   }
 }
@@ -23,7 +23,7 @@ class DisciplinesEditor extends React.Component {
   handleChange(event) {
     event.preventDefault();
     this.setState({ name: event.target.value });
-    this.props.onNewNameChange(event);
+    this.props.onNewDisciplineNameChange(event);
   }
   
   render() {
@@ -33,13 +33,13 @@ class DisciplinesEditor extends React.Component {
 
     return (
         <div className='container'>
-          <div className="row editor-section">
-            <div className="list-group">
+          <div className="editor-section">
+            <ul className="list-inline">
               {disciplines}
-            </div>
+            </ul>
           </div>
-          <div className="row editor-section">          
-            <form className="form-inline" onSubmit={this.props.onNewDiscipline}>
+          <div className="editor-section">          
+            <form className="form-inline" onSubmit={this.props.onNewDisciplineName}>
               <div className="form-group mx-sm-3">
                 <label htmlFor="name" className="sr-only">Name</label>
                 <input type="text" value={this.props.name} placeholder='Enter Name...' className="form-control" id="name" onChange={this.handleChange}/>

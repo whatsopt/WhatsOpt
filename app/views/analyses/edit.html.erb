@@ -1,11 +1,3 @@
-<h1><%= @mda.name %></h1>
-
-<% if @mda.attachment %>
-<p>
-  <small>created from <%= link_to @mda.attachment.data_file_name, attachment_path(@mda.attachment) %> by <%= @mda.owner %></small>
-</p>
-<% end %>
-
 <div id="mda-viewer" data-mda="<%= @mda.to_xdsm_json %>" data-is-editing="true" data-api-key="<%=current_user.api_key%>"></div> 
 
 <script>var API_KEY = "<%=current_user.api_key%>"</script>
