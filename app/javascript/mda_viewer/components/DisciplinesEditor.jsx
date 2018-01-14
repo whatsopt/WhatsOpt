@@ -4,8 +4,9 @@ import React from 'react';
 class Discipline extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { node: props.node, isEditing: false };
-    
+    this.state = {discName:'', isEditing: false };
+  
+    this.handleDiscNameChange = this.handleDiscNameChange.bind(this);
     this.handleEdit = this.handleEdit.bind(this);
     this.handleCancelEdit = this.handleCancelEdit.bind(this);
     this.handleUpdate = this.handleUpdate.bind(this);
@@ -14,21 +15,26 @@ class Discipline extends React.Component {
     this.onDisciplineDelete = this.props.onDisciplineDelete.bind(this);
   }  
   
+  handleDiscNameChange(event) {
+    this.setState({discName: event.target.value, isEditing: true});
+  } 
+  
   handleEdit(event) {
-    this.setState({ node: this.state.node, isEditing: true });
+    this.setState({discName: this.props.node.name, isEditing: true });
   }
   
   handleCancelEdit(event) {
-    this.setState({ node: this.state.node, isEditing: false });
+    this.setState({ isEditing: false });
   }
   
   handleUpdate(event) {
     event.preventDefault();
-    this.onDisciplineUpdate(this.props.node)
+    this.setState({ isEditing: false });
+    this.onDisciplineUpdate(this.props.node, parseInt(this.props.pos), {name: this.state.discName})
   }
   
   handleDelete(event) {
-    this.onDisciplineDelete(parseInt(this.props.pos), this.props.node)
+    this.onDisciplineDelete(this.props.node, parseInt(this.props.pos))
   }
   
   render() {
@@ -37,7 +43,7 @@ class Discipline extends React.Component {
           <li className="list-group-item editor-discipline">
             <form className="form-inline" onSubmit={this.handleUpdate}>
               <div className="form-group mx-md-3">
-                <input type="text" value={this.state.node.name} placeholder='Enter Name...' className="form-control" id="name" onChange={this.handleChange}/>
+                <input type="text" defaultValue={this.state.discName} placeholder='Enter Name...' className="form-control" id="name" onChange={this.handleDiscNameChange}/>
               </div>
               <button type="submit" className="btn btn-primary">Update</button>
               <button type="button" onClick={this.handleCancelEdit} className="btn ml-md-2">Cancel</button>
@@ -46,7 +52,7 @@ class Discipline extends React.Component {
       } else {
         return (
           <li className="list-group-item editor-discipline col-md-4">
-            <span className="align-bottom">{this.state.node.name}</span>
+            <span className="align-bottom">{this.props.node.name}</span>
             <button className="d-inline btn btn-link btn-inverse btn-sm float-right text-danger" onClick={this.handleDelete}>
               <i className="fa fa-close"/>
             </button>

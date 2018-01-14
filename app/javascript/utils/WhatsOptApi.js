@@ -29,6 +29,13 @@ class WhatsOptApi {
       .catch(error => console.log(error));
   }
   
+  updateDiscipline(discId, discipline_attributes, callback) {
+    let path = `/api/v1/disciplines/${discId}`;
+    axios.put(url(path), {discipline: discipline_attributes})
+      .then(response => callback(response))
+      .catch(error => console.log(error));
+  }
+  
   deleteDiscipline(discId, callback) {
     let path = `/api/v1/disciplines/${discId}`;
     axios.delete(url(path))

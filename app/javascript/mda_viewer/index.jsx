@@ -67,15 +67,23 @@ class MdaViewer extends React.Component {
     return false;
   }
 
-  handleDisciplineUpdate(node) {
-    
+  handleDisciplineUpdate(node, pos, discattrs) {
+    api.updateDiscipline(node.id, discattrs,
+        (function(response) {
+          let index = pos-1;
+          console.log("INDEX="+index);
+          console.log(JSON.stringify(this.state.mda.nodes));
+          let newState = update(this.state, {mda: {nodes: {[index]: {$merge: discattrs }} }});
+          console.log(JSON.stringify(newState));
+          this.setState(newState);
+          //this.xdsmViewer.removeDiscipline(pos);
+    }).bind(this));
   }
   
-  handleDisciplineDelete(pos, node) {
+  handleDisciplineDelete(node, pos) {
     api.deleteDiscipline(node.id, 
         (function(response) {
           let newState = update(this.state, {mda: {nodes: {$splice: [[pos-1, 1]]}}});
-          console.log(JSON.stringify(newState));
           this.setState(newState);
           this.xdsmViewer.removeDiscipline(pos);
     }).bind(this));
