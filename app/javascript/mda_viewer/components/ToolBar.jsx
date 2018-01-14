@@ -13,7 +13,7 @@ class OpenMDAOLogLine extends React.Component {
   }
 }
 
-class OpenMDAO extends React.Component {
+class ToolBar extends React.Component {
   
   constructor(props) {
     super(props);
@@ -70,4 +70,4 @@ class OpenMDAO extends React.Component {
   }
 }
 
-export default OpenMDAO;
+export default ToolBar;

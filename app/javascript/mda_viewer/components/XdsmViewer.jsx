@@ -51,6 +51,12 @@ class XdsmViewer extends React.Component {
     this.xdsm.graph.addNode(newdisc);
     this.xdsm.draw();
   }
+
+  removeDiscipline(index) {
+    console.log(index);
+    this.xdsm.graph.removeNode(index);
+    this.xdsm.draw();
+  }
   
   _onXDSMSelectionChange(filter) {
     this.props.onFilterChange(filter);    

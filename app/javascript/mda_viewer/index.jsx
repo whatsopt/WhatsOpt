@@ -16,7 +16,7 @@ class MdaViewer extends React.Component {
     this.state = {
       filter: { fr: undefined, to: undefined },
       isEditing: isEditing,
-      mda: {id: props.mda.id, name: props.mda.name, nodes: nodes, edges: edges, vars: props.mda.vars},
+      mda: {name: props.mda.name, nodes: nodes, edges: edges, vars: props.mda.vars},
       mdaNewName: props.mda.name,
       newDisciplineName: '',
     }
@@ -25,6 +25,8 @@ class MdaViewer extends React.Component {
     this.handleNewDisciplineNameChange = this.handleNewDisciplineNameChange.bind(this);
     this.handleMdaNewNameChange = this.handleMdaNewNameChange.bind(this);
     this.handleMdaNewName = this.handleMdaNewName.bind(this);
+    this.handleDisciplineUpdate = this.handleDisciplineUpdate.bind(this);
+    this.handleDisciplineDelete = this.handleDisciplineDelete.bind(this);
   }
 
   handleFilterChange(filter) { 
@@ -64,6 +66,20 @@ class MdaViewer extends React.Component {
     this.setState(newState);
     return false;
   }
+
+  handleDisciplineUpdate(node) {
+    
+  }
+  
+  handleDisciplineDelete(pos, node) {
+    api.deleteDiscipline(node.id, 
+        (function(response) {
+          let newState = update(this.state, {mda: {nodes: {$splice: [[pos-1, 1]]}}});
+          console.log(JSON.stringify(newState));
+          this.setState(newState);
+          this.xdsmViewer.removeDiscipline(pos);
+    }).bind(this));
+  }
   
   render() {
     if (this.state.isEditing) {
@@ -75,17 +91,17 @@ class MdaViewer extends React.Component {
         </div>
         <ul className="nav nav-tabs" id="myTab" role="tablist">
           <li className="nav-item">
-            <a className="nav-link active" id="analysis-tab" data-toggle="tab" href="#analysis" role="tab" aria-controls="analysis" aria-selected="true">Analysis</a>
+            <a className="nav-link " id="analysis-tab" data-toggle="tab" href="#analysis" role="tab" aria-controls="analysis" aria-selected="true">Analysis</a>
           </li>
           <li className="nav-item">
-            <a className="nav-link" id="disciplines-tab" data-toggle="tab" href="#disciplines" role="tab" aria-controls="disciplines" aria-selected="false">Disciplines</a>
+            <a className="nav-link active" id="disciplines-tab" data-toggle="tab" href="#disciplines" role="tab" aria-controls="disciplines" aria-selected="false">Disciplines</a>
           </li>
           <li className="nav-item">
             <a className="nav-link" id="connection-tab" data-toggle="tab" href="#connections" role="tab" aria-controls="connections" aria-selected="false">Connections</a>
           </li>
         </ul>
         <div className="tab-content" id="myTabContent">
-          <div className="tab-pane fade show active" id="analysis" role="tabpanel" aria-labelledby="analysis-tab">
+          <div className="tab-pane fade" id="analysis" role="tabpanel" aria-labelledby="analysis-tab">
             <div className="editor-section">
               <form className="form-inline" onSubmit={this.handleMdaNewName}>
                 <div className="form-group mx-sm-3">
@@ -96,11 +112,14 @@ class MdaViewer extends React.Component {
               </form>
             </div>
           </div>
-          <div className="tab-pane fade" id="disciplines" role="tabpanel" aria-labelledby="disciplines-tab">
+          <div className="tab-pane fade show active" id="disciplines" role="tabpanel" aria-labelledby="disciplines-tab">
             <DisciplinesEditor name={this.state.newDisciplineName} 
                                nodes={this.state.mda.nodes} 
                                onNewDisciplineName={this.handleNewDisciplineName} 
-                               onNewDisciplineNameChange={this.handleNewDisciplineNameChange}/>
+                               onNewDisciplineNameChange={this.handleNewDisciplineNameChange}
+                               onDisciplineDelete={this.handleDisciplineDelete}
+                               onDisciplineUpdate={this.handleDisciplineUpdate}
+             />
           </div>
           <div className="tab-pane fade" id="connections" role="tabpanel" aria-labelledby="connections-tab">...</div>
         </div>

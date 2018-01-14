@@ -25,6 +25,5 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     resp = JSON.parse(response.body)
     assert_equal 'TestNewName', resp['name'] 
-  end
-  
+  end  
 end
