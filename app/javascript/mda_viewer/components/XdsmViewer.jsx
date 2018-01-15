@@ -55,7 +55,7 @@ class XdsmViewer extends React.Component {
     var newNode = Object.assign({}, this.xdsm.graph.nodes[index], discattrs);
     console.log(JSON.stringify(discattrs));
     this.xdsm.graph.nodes.splice(index, 1, newNode);
-    this.xdsm.refreshNode(index, discattrs);
+    this.xdsm.refresh();
   }
   removeDiscipline(index) {
     this.xdsm.graph.removeNode(index);

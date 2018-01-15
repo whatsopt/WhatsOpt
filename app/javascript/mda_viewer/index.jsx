@@ -68,11 +68,14 @@ class MdaViewer extends React.Component {
   }
 
   handleDisciplineUpdate(node, pos, discattrs) {
+    console.log("INDEX="+pos+" ATTRS="+JSON.stringify(discattrs));
     api.updateDiscipline(node.id, discattrs,
         (function(response) {
           let index = pos-1;
           let newState = update(this.state, {mda: {nodes: {[index]: {$merge: discattrs }} }});
           this.setState(newState);
+          discattrs['type'] = discattrs['kind']
+          delete discattrs['kind'];
           this.xdsmViewer.updateDiscipline(pos, discattrs);
     }).bind(this));
   }
