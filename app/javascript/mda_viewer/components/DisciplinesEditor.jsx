@@ -1,40 +1,51 @@
 import React from 'react';
-
+import update from 'immutability-helper'
 
 class Discipline extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {discName:'', isEditing: false };
+    this.state = {discName:'', discKind:'analysis', isEditing: false };
   
     this.handleDiscNameChange = this.handleDiscNameChange.bind(this);
     this.handleEdit = this.handleEdit.bind(this);
     this.handleCancelEdit = this.handleCancelEdit.bind(this);
     this.handleUpdate = this.handleUpdate.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
+    this.handleSelectChange = this.handleSelectChange.bind(this);
     this.onDisciplineUpdate = this.props.onDisciplineUpdate.bind(this);
     this.onDisciplineDelete = this.props.onDisciplineDelete.bind(this);
   }  
   
   handleDiscNameChange(event) {
-    this.setState({discName: event.target.value, isEditing: true});
+    let newState = update(this.state, {discName: {$set: event.target.value}});
+    this.setState(newState);
   } 
   
   handleEdit(event) {
-    this.setState({discName: this.props.node.name, isEditing: true });
+    let newState = {discName: this.props.node.name, discKind: this.props.node.kind, 
+                    isEditing: true};  
+    this.setState(newState);
   }
   
   handleCancelEdit(event) {
-    this.setState({ isEditing: false });
+    let newState = update(this.state, {isEditing: {$set: false}});  
+    this.setState(newState);
   }
   
   handleUpdate(event) {
     event.preventDefault();
-    this.setState({ isEditing: false });
-    this.onDisciplineUpdate(this.props.node, parseInt(this.props.pos), {name: this.state.discName})
+    this.handleCancelEdit(event);
+    this.onDisciplineUpdate(this.props.node, parseInt(this.props.pos), 
+                            {name: this.state.discName, kind: this.state.discKind});
   }
   
   handleDelete(event) {
-    this.onDisciplineDelete(this.props.node, parseInt(this.props.pos))
+    this.onDisciplineDelete(this.props.node, parseInt(this.props.pos));
+  }
+  
+  handleSelectChange(event) {
+    let newState = update(this.state, {discKind: {$set: event.target.value}});
+    this.setState(newState);
   }
   
   render() {
@@ -43,11 +54,15 @@ class Discipline extends React.Component {
           <li className="list-group-item editor-discipline">
             <form className="form-inline" onSubmit={this.handleUpdate}>
               <div className="form-group mx-md-3">
-                <input type="text" defaultValue={this.state.discName} placeholder='Enter Name...' className="form-control" id="name" onChange={this.handleDiscNameChange}/>
-              </div>
+                <input  className="form-control" id="name" type="text" defaultValue={this.state.discName} placeholder='Enter Name...' onChange={this.handleDiscNameChange}/>
+                <select className="form-control" id="kind" value={this.state.discKind} onChange={this.handleSelectChange}>
+                  <option value="analysis">Analysis</option>
+                  <option value="function">Function</option>
+                </select>
+              </div>  
               <button type="submit" className="btn btn-primary">Update</button>
-              <button type="button" onClick={this.handleCancelEdit} className="btn ml-md-2">Cancel</button>
-             </form>
+              <button type="button" onClick={this.handleCancelEdit} className="btn ml-md-1">Cancel</button>
+            </form>
           </li>); 
       } else {
         return (

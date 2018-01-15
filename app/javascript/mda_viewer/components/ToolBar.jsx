@@ -19,7 +19,7 @@ class ToolBar extends React.Component {
     super(props);
     this.state = { 
       loading:true,
-      status_ok: false,
+      statusOk: false,
       log: [] 
     };
   }
@@ -30,21 +30,21 @@ class ToolBar extends React.Component {
 
   getStatus() {
     api.openmdaoChecking(
-        this.props.mda_id, 
-        response => {this.setState({loading: false, status_ok: response.data.status_ok, log: response.data.log})});
+        this.props.mdaId, 
+        response => {this.setState({loading: false, statusOk: response.data.statusOk, log: response.data.log})});
   }
   
   render() {
     let lines = this.state.log.map((l, i) => {
       return ( <OpenMDAOLogLine key={i} line={l}/> );
     });
-    let btnStatusClass = this.state.status_ok?"btn btn-success":"btn btn-warning";
-    let btnIcon = this.state.status_ok?<i className="fa fa-check"/>:<i className="fa fa-exclamation-triangle"></i>;
+    let btnStatusClass = this.state.statusOk?"btn btn-success":"btn btn-warning";
+    let btnIcon = this.state.statusOk?<i className="fa fa-check"/>:<i className="fa fa-exclamation-triangle"></i>;
     if (this.state.loading) {
       btnStatusClass = "btn btn-info";
       btnIcon = <i className="fa fa-cog fa-spin" />;
     }
-    let base = "/analyses/"+this.props.mda_id+"/mda_exports/new"
+    let base = "/analyses/"+this.props.mdaId+"/mda_exports/new"
     let href_om = url(base+".openmdao");
     let href_cd = url(base+".cmdows");
     return (

@@ -46,14 +46,18 @@ class XdsmViewer extends React.Component {
     return false;
   }
 
-  addDiscipline(newdisc) {
-    console.log(newdisc);
-    this.xdsm.graph.addNode(newdisc);
+  addDiscipline(discattrs) {
+    this.xdsm.graph.addNode(discattrs);
     this.xdsm.draw();
   }
 
+  updateDiscipline(index, discattrs) {
+    var newNode = Object.assign({}, this.xdsm.graph.nodes[index], discattrs);
+    console.log(JSON.stringify(discattrs));
+    this.xdsm.graph.nodes.splice(index, 1, newNode);
+    this.xdsm.refreshNode(index, discattrs);
+  }
   removeDiscipline(index) {
-    console.log(index);
     this.xdsm.graph.removeNode(index);
     this.xdsm.draw();
   }

@@ -71,12 +71,9 @@ class MdaViewer extends React.Component {
     api.updateDiscipline(node.id, discattrs,
         (function(response) {
           let index = pos-1;
-          console.log("INDEX="+index);
-          console.log(JSON.stringify(this.state.mda.nodes));
           let newState = update(this.state, {mda: {nodes: {[index]: {$merge: discattrs }} }});
-          console.log(JSON.stringify(newState));
           this.setState(newState);
-          //this.xdsmViewer.removeDiscipline(pos);
+          this.xdsmViewer.updateDiscipline(pos, discattrs);
     }).bind(this));
   }
   
@@ -136,7 +133,7 @@ class MdaViewer extends React.Component {
     return (
       <div>
         <div className="mda-section">
-          <ToolBar mda_id={this.state.mda.id} isEditing={this.props.isEditing}/>
+          <ToolBar mdaId={this.props.mda.id} isEditing={this.props.isEditing}/>
         </div>
         <div className="mda-section">      
           <XdsmViewer mda={this.state.mda} onFilterChange={this.handleFilterChange}/>
