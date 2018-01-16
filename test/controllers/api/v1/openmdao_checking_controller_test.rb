@@ -5,7 +5,7 @@ class Api::V1::OpenmdaoCheckingControllerTest < ActionDispatch::IntegrationTest
     user1 = users(:user1)
     @auth_headers = {"Authorization" => "Token " + TEST_API_KEY}
     @mda = analyses(:cicav)
-    @disc = @mda.disciplines.analyses.first
+    @disc = @mda.disciplines.nodes.first
   end
   
   test "should run openmdao checking" do

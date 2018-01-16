@@ -63,7 +63,7 @@ class Analysis < ApplicationRecord
     end
 
   def build_nodes
-    return self.disciplines.analyses.map {|d| 
+    return self.disciplines.nodes.map {|d| 
       t = case d.name.downcase 
           when /function/
             "function"
@@ -125,7 +125,7 @@ class Analysis < ApplicationRecord
 
     #p @all_connections
     # pendings
-    disciplines.analyses.each do |d|
+    disciplines.nodes.each do |d|
       #p d, d.input_variables, d.output_variables
       in_pendings = _get_pending_connections(d.input_variables)
       #p "IN_PENDINGS", in_pendings
@@ -148,7 +148,7 @@ class Analysis < ApplicationRecord
   end
 
   def build_var_infos
-    res = disciplines.analyses.map {|d| {d.id => {in: d.input_variables, out: d.output_variables}}}
+    res = disciplines.nodes.map {|d| {d.id => {in: d.input_variables, out: d.output_variables}}}
     tree = res.inject({}) {|result, h| result.update(h)}
     tree
   end

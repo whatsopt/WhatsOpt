@@ -5,7 +5,7 @@ class Api::V1::DisciplineControllerTest < ActionDispatch::IntegrationTest
     user1 = users(:user1)
     @auth_headers = {"Authorization" => "Token " + TEST_API_KEY}
     @mda = analyses(:cicav)
-    @disc = @mda.disciplines.analyses.first
+    @disc = @mda.disciplines.nodes.first
   end
   
   test "should get given discipline" do

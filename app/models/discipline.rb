@@ -17,7 +17,7 @@ class Discipline < ApplicationRecord
   validates :name, presence: true
   
   scope :driver, -> { where( type: WhatsOpt::Discipline::NULL_DRIVER ) }
-  scope :analyses, -> { where( type: WhatsOpt::Discipline::ANALYSIS ) }
+  scope :nodes, -> { where.not( type: WhatsOpt::Discipline::NULL_DRIVER ) }
 
   after_initialize :set_defaults, unless: :persisted?  
     

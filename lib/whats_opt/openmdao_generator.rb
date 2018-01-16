@@ -48,7 +48,7 @@ module WhatsOpt
     end
     
     def _generate_mda(gendir)
-      @mda.disciplines.analyses.each do |disc|
+      @mda.disciplines.nodes.each do |disc|
         _generate_discipline(disc, gendir)
       end 
       _generate_main(gendir)

@@ -49,7 +49,7 @@ class WhatsOpt::CmdowsGenerator
   end
   
   def _generate_design_competences(xml) 
-    @mda.disciplines.analyses.each do |disc|
+    @mda.disciplines.nodes.each do |disc|
       xml.designCompetence uID: disc.id do
         xml.ID disc.id
         xml.modeID "undefined"
