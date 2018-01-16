@@ -60,8 +60,9 @@ class WhatsOpt(object):
         return self._default_url    
             
     def _ask_and_write_api_key(self):
-        print("You have to set your API_KEY. You can get it in your profile on WhatsOpt.")
-        print("Please, copy/paste your api key below then hit return (characters are hidden).")
+        print("You have to set your API key.")
+        print("You can get it in your profile page on WhatsOpt (%s)." % self.url)
+        print("Please, copy/paste your API key below then hit return (characters are hidden).")
         api_key = getpass.getpass(prompt='Your API key: ')
         if not os.path.exists(WHATSOPT_DIRNAME):
             os.makedirs(WHATSOPT_DIRNAME)
