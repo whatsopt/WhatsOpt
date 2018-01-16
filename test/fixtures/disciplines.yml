@@ -1,34 +1,36 @@
 control_cicav:
   name: __DRIVER__
+  type: null_driver
   analysis: cicav
   position: 0
 
 geometry:
   name: Geometry
-  kind: analysis
+  type: analysis
   analysis: cicav
   position: 1
 
 aerodynamics:
   name: Aerodynamics
-  kind: analysis
+  type: analysis
   analysis: cicav
   position: 2
 
 control_fast:
   name: __DRIVER__
+  type: null_driver
   analysis: fast
   position: 0
 
 fast_discipline:
   name: FastDiscipline
-  kind: analysis
+  type: analysis
   analysis: fast
   position: 1
 
 dummy:
   name: DummyDiscipline
-  kind: analysis
+  type: analysis
   analysis: dummy
   position: 0
 

@@ -4,7 +4,7 @@ import update from 'immutability-helper'
 class Discipline extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {discName:'', discKind:'analysis', isEditing: false };
+    this.state = {discName:'', discType:'analysis', isEditing: false };
   
     this.handleDiscNameChange = this.handleDiscNameChange.bind(this);
     this.handleEdit = this.handleEdit.bind(this);
@@ -22,7 +22,8 @@ class Discipline extends React.Component {
   } 
   
   handleEdit(event) {
-    let newState = {discName: this.props.node.name, discKind: this.props.node.kind, 
+    let newState = {discName: this.props.node.name, 
+                    discType: this.props.node.type, 
                     isEditing: true};  
     this.setState(newState);
   }
@@ -35,8 +36,8 @@ class Discipline extends React.Component {
   handleUpdate(event) {
     event.preventDefault();
     this.handleCancelEdit(event);
-    console.log("KIND:"+this.state.discKind);
-    let discattrs = {name: this.state.discName, kind: this.state.discKind};
+    console.log("Type:"+this.state.discType);
+    let discattrs = {name: this.state.discName, type: this.state.discType};
     console.log("COUCOU"+JSON.stringify(discattrs));
     this.onDisciplineUpdate(this.props.node, parseInt(this.props.pos), discattrs);
   }
@@ -46,7 +47,7 @@ class Discipline extends React.Component {
   }
   
   handleSelectChange(event) {
-    let newState = update(this.state, {discKind: {$set: event.target.value}});
+    let newState = update(this.state, {discType: {$set: event.target.value}});
     this.setState(newState);
   }
   
@@ -55,9 +56,9 @@ class Discipline extends React.Component {
       return (
           <li className="list-group-item editor-discipline">
             <form className="form-inline" onSubmit={this.handleUpdate}>
-              <div className="form-group mx-md-3">
+              <div className="form-group">
                 <input  className="form-control" id="name" type="text" defaultValue={this.state.discName} placeholder='Enter Name...' onChange={this.handleDiscNameChange}/>
-                <select className="form-control" id="kind" value={this.state.discKind} onChange={this.handleSelectChange}>
+                <select className="form-control" id="type" value={this.state.discType} onChange={this.handleSelectChange}>
                   <option value="analysis">Analysis</option>
                   <option value="function">Function</option>
                 </select>
@@ -109,7 +110,7 @@ class DisciplinesEditor extends React.Component {
           </div>
           <div className="editor-section">          
             <form className="form-inline" onSubmit={this.props.onNewDisciplineName}>
-              <div className="form-group mx-sm-3">
+              <div className="form-group"> 
                 <label htmlFor="name" className="sr-only">Name</label>
                 <input type="text" value={this.props.name} placeholder='Enter Name...' className="form-control" id="name" onChange={this.handleChange}/>
               </div>

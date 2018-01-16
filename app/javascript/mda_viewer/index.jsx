@@ -35,9 +35,9 @@ class MdaViewer extends React.Component {
 
   handleNewDisciplineName(event) { 
     event.preventDefault();
-    api.createDiscipline(this.props.mda.id, {name: this.state.newDisciplineName, kind: 'analysis'}, 
+    api.createDiscipline(this.props.mda.id, {name: this.state.newDisciplineName, type: 'analysis'}, 
       (function(response) {
-        let newdisc = {id: response.data.id, name: this.state.newDisciplineName, kind: 'analysis'};
+        let newdisc = {id: response.data.id, name: this.state.newDisciplineName, type: 'analysis'};
         let newState = update(this.state, {mda: {nodes: {$push: [newdisc]}}, newDisciplineName: {$set: ''}});
         this.setState(newState);
         this.xdsmViewer.addDiscipline(newdisc);
@@ -74,8 +74,6 @@ class MdaViewer extends React.Component {
           let index = pos-1;
           let newState = update(this.state, {mda: {nodes: {[index]: {$merge: discattrs }} }});
           this.setState(newState);
-          discattrs['type'] = discattrs['kind']
-          delete discattrs['kind'];
           this.xdsmViewer.updateDiscipline(pos, discattrs);
     }).bind(this));
   }

@@ -10,6 +10,7 @@ class XdsmViewer extends React.Component {
     this.state = {
       filter: undefined,
     }
+    console.log(props.mda)
     this.graph = new Graph(props.mda);
   } 
 

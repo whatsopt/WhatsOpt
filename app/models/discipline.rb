@@ -4,6 +4,8 @@ require 'whats_opt/discipline'
 class Discipline < ApplicationRecord
   
   include WhatsOpt::OpenmdaoModule
+  
+  self.inheritance_column = :disable_inheritance
     
   has_many :variables, :dependent => :destroy
   
@@ -14,8 +16,8 @@ class Discipline < ApplicationRecord
 
   validates :name, presence: true
   
-  scope :driver, -> { where( kind: WhatsOpt::Discipline::NULL_DRIVER ) }
-  scope :analyses, -> { where( kind: WhatsOpt::Discipline::ANALYSIS ) }
+  scope :driver, -> { where( type: WhatsOpt::Discipline::NULL_DRIVER ) }
+  scope :analyses, -> { where( type: WhatsOpt::Discipline::ANALYSIS ) }
 
   after_initialize :set_defaults, unless: :persisted?  
     
@@ -30,9 +32,9 @@ class Discipline < ApplicationRecord
   private
   
   def set_defaults
-    self.kind = WhatsOpt::Discipline::ANALYSIS if self.kind.blank?
+    self.type = WhatsOpt::Discipline::ANALYSIS if self.type.blank?
     if self.name == WhatsOpt::Discipline::NULL_DRIVER_NAME
-      self.kind = WhatsOpt::Discipline::NULL_DRIVER
+      self.type = WhatsOpt::Discipline::NULL_DRIVER
     end
   end
   

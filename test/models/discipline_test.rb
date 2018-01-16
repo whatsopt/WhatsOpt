@@ -12,6 +12,6 @@ class DisciplineTest < ActiveSupport::TestCase
   
   test "should have a default kind" do
     disc = Discipline.create({ name: 'TEST'})
-    assert_equal WhatsOpt::Discipline::ANALYSIS, disc.kind    
+    assert_equal WhatsOpt::Discipline::ANALYSIS, disc.type    
   end
 end

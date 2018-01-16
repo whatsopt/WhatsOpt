@@ -8,7 +8,7 @@ module WhatsOpt
     ANALYSIS = 'analysis'
     FUNCTION = 'function'
     
-    KINDS = [NULL_DRIVER, ANALYSIS, FUNCTION]
+    TYPES = [NULL_DRIVER, ANALYSIS, FUNCTION]
     
     def initialize
     end

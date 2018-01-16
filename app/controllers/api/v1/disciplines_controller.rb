@@ -33,6 +33,6 @@ class Api::V1::DisciplinesController < Api::ApiController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def discipline_params
-      params.require(:discipline).permit(:name, :analysis_id, :kind)
+      params.require(:discipline).permit(:name, :analysis_id, :type)
     end
 end
