@@ -80,6 +80,8 @@ GEM
     coderay (1.1.2)
     concurrent-ruby (1.0.5)
     crass (1.0.3)
+    data-confirm-modal (1.6.1)
+      railties (>= 3.0)
     devise (4.3.0)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
@@ -293,6 +295,7 @@ DEPENDENCIES
   capistrano-passenger
   capistrano-rails
   capistrano-rvm
+  data-confirm-modal
   devise
   devise_ldap_authenticatable
   font-awesome-rails
@@ -312,7 +315,7 @@ DEPENDENCIES
   rails-assets-tether (>= 1.1.0)!
   rolify
   rubyXL
-  sass-rails
+  sass-rails (~> 5.0)
   sdoc (~> 0.4.0)
   sqlite3
   turbolinks

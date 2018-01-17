@@ -56,7 +56,7 @@ class Discipline extends React.Component {
       return (
           <li className="list-group-item editor-discipline">
             <form className="form-inline" onSubmit={this.handleUpdate}>
-              <div className="form-group">
+              <div className="form-group mr-3">
                 <input  className="form-control" id="name" type="text" defaultValue={this.state.discName} placeholder='Enter Name...' onChange={this.handleDiscNameChange}/>
                 <select className="form-control" id="type" value={this.state.discType} onChange={this.handleSelectChange}>
                   <option value="analysis">Analysis</option>
@@ -68,13 +68,16 @@ class Discipline extends React.Component {
             </form>
           </li>); 
       } else {
+        let confirm = `Remove ${this.props.node.name} discipline?`
         return (
           <li className="list-group-item editor-discipline col-md-4">
             <span className="align-bottom">{this.props.node.name}</span>
-            <button className="d-inline btn btn-link btn-inverse btn-sm float-right text-danger" onClick={this.handleDelete}>
+            <button data-title="Are you sure?" data-confirm={confirm} data-commit="Yes" data-cancel="No, cancel"  
+             data-method="delete" className="d-inline btn btn-light btn-inverse btn-sm float-right text-danger" 
+             onClick={this.handleDelete}>
               <i className="fa fa-close"/>
             </button>
-            <button className="d-inline btn btn-link btn-sm ml-2" onClick={this.handleEdit}>
+            <button className="d-inline btn btn-light btn-sm ml-2" onClick={this.handleEdit}>
               <i className="fa fa-pencil"/>
             </button>
           </li>); 

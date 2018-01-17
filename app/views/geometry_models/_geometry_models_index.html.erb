@@ -17,8 +17,13 @@
       <td><%= time_ago_in_words(geomodel.updated_at) %> ago</td>
       <td>
         <% if policy(geomodel).destroy? %>
-          <%= link_to 'Delete', geomodel, method: :delete, data: { confirm: 'Are you sure?' } %>
-        <% else %>
+          <%= link_to geomodel, method: :delete, data: { title: 'Are you sure?', 
+                                                         confirm: "Remove #{geomodel.title} geometric model?",
+                                                         commit: 'Yes',
+                                                         cancel: 'No, cancel' }, 
+                  class: "d-inline btn btn-light btn-inverse btn-sm text-danger" do %>
+            <i class="fa fa-close"></i> 
+          <% end %>        <% else %>
           None
         <% end %>
       </td>

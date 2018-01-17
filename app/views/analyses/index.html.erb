@@ -25,8 +25,17 @@
           <td><%= time_ago_in_words(mda.created_at) %> ago</td>
 	      <td>
 	        <% if policy(mda).destroy? %>
-	      	  <%= link_to 'Edit', edit_mda_path(mda) %> |
-	      	  <%= link_to 'Delete', mda_path(mda), method: :delete, data: { confirm: 'Are you sure?' } %>
+	          <%= link_to edit_mda_path(mda), class: "d-inline btn btn-light btn-inverse btn-sm" do %>
+	            <i class="fa fa-pencil"></i> 
+	          <% end %>    
+	          <span class="ml-1"/>
+	          <%= link_to mda_path(mda), method: :delete, data: { title: 'Are you sure?', 
+	                                                              confirm: "Remove #{mda.name} analysis?",
+	                                                              commit: 'Yes',
+	                                                              cancel: 'No, cancel' }, 
+	              class: "d-inline btn btn-light btn-inverse btn-sm text-danger" do %>
+                <i class="fa fa-close"></i> 
+              <% end %>    
 	      	<% else %>
 	      	  None
 	      	<% end %>

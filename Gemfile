@@ -3,10 +3,8 @@ source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~>5.1.1'
-# Use sqlite3 as the database for Active Record
-gem 'sqlite3'
 # Use SCSS for stylesheets
-#gem 'sass-rails', '~> 5.0'
+gem 'sass-rails', '~> 5.0'
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier', '>= 1.3.0'
 
@@ -29,6 +27,8 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 
 # Use Capistrano for deployment
 group :development do
+  # Use sqlite3 as the database for Active Record
+  gem 'sqlite3'
   gem 'capistrano-rails'
   gem 'capistrano-rvm'
   gem 'capistrano-passenger'
@@ -58,18 +58,20 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 source 'https://rails-assets.org' do
   gem 'rails-assets-tether', '>= 1.1.0'
 end
-gem 'popper'
-gem 'bootstrap', '~> 4.0.0.beta2'
 
-gem 'sass-rails'
 gem 'devise' 
 gem 'devise_ldap_authenticatable' 
 gem 'rolify'
 gem 'pundit'
 gem 'paperclip'
 gem 'rubyXL'
-gem 'webpacker' 
 gem 'rack-cors'
-gem 'font-awesome-rails'
 gem 'nokogiri'
 gem 'acts_as_list'
+
+gem 'popper'
+gem 'bootstrap', '~> 4.0.0.beta2'
+gem 'webpacker' 
+gem 'font-awesome-rails'
+gem 'data-confirm-modal'
+
