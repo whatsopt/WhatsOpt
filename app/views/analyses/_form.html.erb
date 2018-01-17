@@ -8,7 +8,7 @@
     <% end %>
   <% end %>
 <p>
-  <div class="form-group">
+  <div class="form-group col-4">
   <%= hidden_field_tag :import, @import %> 
   <% if @import %>
   	Excel (.xlsx) or XML CMDOWS (.xml, .cmdows) file
@@ -19,7 +19,7 @@
   <% end %>
   </div>
 </p> 	
-  <div class="form-group">
+  <div class="form-group col-4">
     <%= f.submit "Submit", class: "btn btn-primary" %>
     <%= f.submit "Cancel", class: "btn", name: "cancel_button" %>
   </div>
