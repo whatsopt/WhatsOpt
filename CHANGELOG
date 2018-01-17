@@ -1,5 +1,10 @@
 <h1>CHANGELOG</h1>
 
+<h3>0.4.7 (17/01/2019)</h3>
+<ul>
+  <li>fix bugs in Excel and Cmdows importers.</li>
+</ul>
+
 <h3>0.4.6 (08/01/2019)</h3>
 <ul>
   <li>wop command : login, logout, list (analyses), push (openmdao analyses) </li>
