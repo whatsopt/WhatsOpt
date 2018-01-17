@@ -42,7 +42,7 @@ class Attachment < ActiveRecord::Base
     
   validates_attachment_presence  :data
   validates_attachment_size      :data, :less_than => 100.megabytes
-  validates_attachment_file_name :data, :matches => [/\.ipynb\Z/, /\.xlsx\Z/, /\.cmdows\Z/, /\.vsp3\Z/]
+  validates_attachment_file_name :data, :matches => [/\.ipynb\Z/, /\.xlsx\Z/, /\.cmdows\Z/, /\.xml\Z/, /\.vsp3\Z/]
 
   scope :notebooks, -> { where(category: ATTACH_NOTEBOOK) }
   scope :mda_excel, -> { where(category: ATTACH_MDA_EXCEL) }
@@ -95,7 +95,7 @@ class Attachment < ActiveRecord::Base
         self.category = ATTACH_NOTEBOOK
       when /\.xlsx\Z/ 
           self.category = ATTACH_MDA_EXCEL
-      when /\.cmdows\Z/ 
+      when /\.cmdows\Z/, /\.xml\Z/
           self.category = ATTACH_MDA_CMDOWS
       when /\.vsp3\Z/ 
           self.category = ATTACH_GEOMETRY_MODEL

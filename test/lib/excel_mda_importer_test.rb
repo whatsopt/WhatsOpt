@@ -116,6 +116,11 @@ class ExcelMdaImporterTest < ActiveSupport::TestCase
     }, @emi._import_connections_data)
   end
 
+  test "should import Excel Glider" do
+    @emi = WhatsOpt::ExcelMdaImporter.new(sample_file("excel_glider.xlsx").path)
+    vars = @emi.get_variables_attributes
+  end
+  
 end
 
 class ExcelMdaImporterErrorTest < ActiveSupport::TestCase

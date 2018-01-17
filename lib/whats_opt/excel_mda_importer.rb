@@ -27,7 +27,7 @@ module WhatsOpt
       @disc_table = @worksheet[top_right[0]...bottom_left[0]]
       @disc_data = @disc_table.map{|row| row && row[top_right[1]..bottom_left[1]]}
         
-      top_right, bottom_left = [[14, 1], [23, 15]]
+      top_right, bottom_left = _get_coordinates(GLOBAL_STATE_VECTOR)
       @main_table = @worksheet[top_right[0]...bottom_left[0]]
       @workdata = @main_table.map{|row| row && row[top_right[1]..bottom_left[1]]} 
       @workdata.compact!
@@ -104,7 +104,7 @@ module WhatsOpt
             v = varattr.merge({io_mode: 'in'})
             res[dst].append(v) unless res[dst].include?(v) 
           else     
-            raise ImportError.new("Bad flow '#{k}' for variable #{varname}")
+            raise ExcelMdaImportError.new("Bad flow '#{k}' for variable #{varname}")
           end
         end 
       end
@@ -146,6 +146,7 @@ module WhatsOpt
         @variables = {}
         @workdata.each do |row|
           name = _getstr(row[3])
+          next if name.blank?  # named range start on 'insert below line' => generate "" varname
           initval_or_shape = _getstr(row[5])
           shape = "1"
           case initval_or_shape

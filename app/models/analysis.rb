@@ -64,15 +64,7 @@ class Analysis < ApplicationRecord
 
   def build_nodes
     return self.disciplines.nodes.map {|d| 
-      t = case d.name.downcase 
-          when /function/
-            "function"
-          when /optimizer/
-            "optimization"
-          else
-            "analysis"
-          end 
-      { id: "#{d.id}", type:t , name: d.name } 
+      { id: "#{d.id}", type: d.type , name: d.name } 
     }
   end
 
@@ -193,10 +185,10 @@ class Analysis < ApplicationRecord
           mda_name = File.basename(self.attachment.original_filename, '.cmdows').camelcase
           importer = WhatsOpt::CmdowsMdaImporter.new(self.attachment.path, mda_name)
         else
-          self.errors.add("Bad file format")
+          self.errors.add(:attachment, "Bad file format")
         end
       rescue
-        self.errors.add("Import error")
+        self.errors.add(:attachment, "Import error")
       end
     end
     

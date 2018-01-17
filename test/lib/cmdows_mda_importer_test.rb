@@ -35,6 +35,10 @@ class CmdowsMdaImporterTest < ActiveSupport::TestCase
     assert_equal(expected, @cmi.get_variables_attributes)
   end
   
+  test "should load AGILE cmdows as xml files" do
+    @cmi2 = WhatsOpt::CmdowsMdaImporter.new(sample_file("cmdows_agile_fpg_mdf_gs.xml").path)  
+  end
+  
 end
 
 class CmdowsMdaImporterErrorTest < ActiveSupport::TestCase
