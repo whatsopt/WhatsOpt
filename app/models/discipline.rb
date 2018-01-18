@@ -1,8 +1,9 @@
-require 'whats_opt/openmdao_mapping'
+require 'whats_opt/openmdao_module'
 require 'whats_opt/discipline'
 
 class Discipline < ApplicationRecord
   
+  include WhatsOpt::Discipline
   include WhatsOpt::OpenmdaoModule
   
   self.inheritance_column = :disable_inheritance

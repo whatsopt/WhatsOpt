@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  init: 1.5
+  lower: 1.5
+  upper: 1.5
+  variable_id: 1
+
+two:
+  init: 1.5
+  lower: 1.5
+  upper: 1.5
+  variable_id: 1

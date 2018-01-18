@@ -159,7 +159,15 @@ module WhatsOpt
           else # 
             initval = initval_or_shape
           end
-          type = (_getstr(row[7]) =~ /int/) ? Variable::INTEGER_T : Variable::FLOAT_T
+          type = _getstr(row[7])
+          type = case type
+                 when /int/
+                   Variable::INTEGER_T
+                 when /string/  
+                   Variable::STRING_T
+                 else # 
+                   Variable::FLOAT_T
+                 end          
           units = _getstr(row[6])
           units = case units
                   when /degre/, /degré/ # format compatibility cicav excel

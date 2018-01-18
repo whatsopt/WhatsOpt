@@ -1,10 +1,12 @@
-require 'whats_opt/openmdao_mapping'
+require 'whats_opt/variable'
+require 'whats_opt/openmdao_variable'
 
 class BadShapeAttributeError < StandardError
 end
 
 class Variable < ApplicationRecord
 
+  include WhatsOpt::Variable
   include WhatsOpt::OpenmdaoVariable
 
   DEFAULT_SHAPE = '1' # either 'n', '(n,), (n, m) or (n, m, p)'
@@ -17,10 +19,11 @@ class Variable < ApplicationRecord
   validates :name, uniqueness: { scope: [:discipline, :io_mode], message: "should be uniq per discipline and io mode." }
   validate  :shape_is_well_formed
       
-  scope :inputs, -> { where(io_mode: IN) }
-  scope :outputs, -> { where(io_mode: OUT) }
-  scope :objectives, -> { where("name LIKE '#{OBJECTIVE_PREFIX}%'") }
-  scope :constraints, -> { where("name LIKE '#{CONSTRAINT_PREFIX}%'") }
+  scope :numeric, -> { where.not(type: STRING_T) }
+  scope :inputs, -> { numeric.where(io_mode: IN) }
+  scope :outputs, -> { numeric.where(io_mode: OUT) }
+  scope :objectives, -> { numeric.where("name LIKE '#{OBJECTIVE_PREFIX}%'") }
+  scope :constraints, -> { numeric.where("name LIKE '#{CONSTRAINT_PREFIX}%'") }
     
   after_initialize :set_defaults, unless: :persisted?
 

@@ -1,6 +1,5 @@
 require 'test_helper'
 require 'whats_opt/openmdao_generator'
-require 'whats_opt/openmdao_mapping'
 require 'tmpdir'
 
 class OpenmdaoGeneratorTest < ActiveSupport::TestCase

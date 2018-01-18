@@ -1,6 +1,6 @@
 module WhatsOpt
   
-  class Discipline
+  module Discipline
     
     NULL_DRIVER_NAME = '__DRIVER__'
     
@@ -9,9 +9,6 @@ module WhatsOpt
     FUNCTION = 'function'
     
     TYPES = [NULL_DRIVER, ANALYSIS, FUNCTION]
-    
-    def initialize
-    end
     
   end
   
