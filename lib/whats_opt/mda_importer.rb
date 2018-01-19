@@ -1,5 +1,3 @@
-require 'discipline'
-
 module WhatsOpt
   
   class MdaImporter
@@ -7,16 +5,16 @@ module WhatsOpt
     class MdaImportError < StandardError
     end
     
-    class MdaImportError < StandardError
-    end
-    
     def get_mda_attributes
+      raise "Not yet implemented"
     end 
     
     def get_disciplines_attributes
+      raise "Not yet implemented"
     end
     
     def get_variables_attributes
+      raise "Not yet implemented"
     end
     
   end

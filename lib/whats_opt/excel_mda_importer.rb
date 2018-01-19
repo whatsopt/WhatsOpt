@@ -110,7 +110,7 @@ module WhatsOpt
       end
       res
     end
-        
+    
     def _to_discipline(idx)
       _import_disciplines_data
       if idx =~ /\d/ && idx.to_i+1 < self.disciplines.length
@@ -149,6 +149,7 @@ module WhatsOpt
           next if name.blank?  # named range start on 'insert below line' => generate "" varname
           initval_or_shape = _getstr(row[5])
           shape = "1"
+          initval = nil
           case initval_or_shape
           when /\(\s*(\d+)\s*,\s*\)/
             shape = "(#{$1},)"
@@ -157,7 +158,10 @@ module WhatsOpt
           when /\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)/
             shape = "(#{1}, #{2}, #{3})"
           else # 
-            initval = initval_or_shape
+            unless initval_or_shape.nil?
+              initval = initval_or_shape
+              shape = shape_of initval
+            end
           end
           type = _getstr(row[7])
           type = case type
@@ -181,6 +185,9 @@ module WhatsOpt
           disabled = (_getstr(row[0]) == 'false')  
           @variables[name] = {name: name, shape: shape, type: type, 
                               units: units, desc: desc, disabled: disabled}
+          unless initval.blank?
+            @variables[name].merge!({parameters_attributes: {init: initval}})  # used as is
+          end
         end
       end
       return @variables

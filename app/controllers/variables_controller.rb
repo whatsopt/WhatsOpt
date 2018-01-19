@@ -52,6 +52,7 @@ class VariablesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def variable_params
-      params.require(:variable).permit(:fullname, :name, :discipline_id, :io_mode, :type, :shape, :units, :desc)
+      params.require(:variable).permit(:fullname, :name, :discipline_id, 
+                                       :io_mode, :type, :shape, :units, :desc)
     end
 end

@@ -77,13 +77,13 @@ class ExcelMdaImporterTest < ActiveSupport::TestCase
   end
 
   test "should import variables" do
-    expected ={'handling_qualities_inputs_table'=> {name: 'handling_qualities_inputs_table', shape: '(10,)', type: 'Float', units: '', 
+    expected ={'handling_qualities_inputs_table'=> {name: 'handling_qualities_inputs_table', shape: '(10, 4, 3)', type: 'Float', units: '', 
                   desc: "Points de vol pour l'analyse des QdV", :disabled=>false}, 
                   'control_surfaces_number'=> {name: 'control_surfaces_number', shape: '1', type: 'Integer', units: 'deg', 
-                  desc: "Nombre de gouvernes", :disabled=>false}, 
+                  desc: "Nombre de gouvernes", :disabled=>false, :parameters_attributes => [{init: 4}]}, 
                   'eigen_values_table'=> {name: 'eigen_values_table', shape: '(10,)', type: 'Float', units: 'deg', 
                   desc: "Valeurs propres des modes avion", :disabled=>false},
-                  'wing_reference_surface'=> {name: 'wing_reference_surface', shape: '1', type: 'Float', units: 'Hz', 
+                  'wing_reference_surface'=> {name: 'wing_reference_surface', shape: '(1,)', type: 'Float', units: 'Hz', 
                   desc: "Surface de référence totale du véhicule", :disabled=>false},
                   'wing_span'=> {name: 'wing_span', shape: '1', type: 'Float', units: 'N', 
                   desc: "Envergure totale du véhicule", :disabled=>false},

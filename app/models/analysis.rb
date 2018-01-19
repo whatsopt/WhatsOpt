@@ -182,7 +182,7 @@ class Analysis < ApplicationRecord
         if self.attachment.mda_excel?
           importer = WhatsOpt::ExcelMdaImporter.new(self.attachment.path)
         elsif self.attachment.mda_cmdows?
-          mda_name = File.basename(self.attachment.original_filename, '.cmdows').camelcase
+          mda_name = File.basename(self.attachment.original_filename, '.*').camelcase
           importer = WhatsOpt::CmdowsMdaImporter.new(self.attachment.path, mda_name)
         else
           self.errors.add(:attachment, "Bad file format")
@@ -199,7 +199,7 @@ class Analysis < ApplicationRecord
             self.name = File.basename(self.attachment.original_filename, '.xlsx').camelcase
             importer = WhatsOpt::ExcelMdaImporter.new(self.attachment.path)
           elsif self.attachment.mda_cmdows?
-            self.name = File.basename(self.attachment.original_filename, '.cmdows').camelcase
+            self.name = File.basename(self.attachment.original_filename, '.*').camelcase
             importer = WhatsOpt::CmdowsMdaImporter.new(self.attachment.path, self.name)
           else
             raise WhatsOpt::MdaImporter::MdaImportError.new("bad format, can not be imported as an MDA")
