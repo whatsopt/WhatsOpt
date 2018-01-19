@@ -28,11 +28,11 @@ class ExcelMdaImporterTest < ActiveSupport::TestCase
   end
 
   test "should get variables attributes" do
-    expected = {WhatsOpt::Discipline::NULL_DRIVER_NAME =>[{:name=>"wing_span", :shape=>"1", :type=>"Float", :units=>"N", :desc=>"Envergure totale du véhicule", :io_mode=>"out"}, 
+    expected = {WhatsOpt::Discipline::NULL_DRIVER_NAME =>[{:name=>"wing_span", :shape=>"(3,)", :type=>"Float", :units=>"N", :desc=>"Envergure totale du véhicule", :io_mode=>"out"}, 
         {:name=>"control_surfaces_number", :shape=>"1", :type=>"Integer", :units=>"deg", :desc=>"Nombre de gouvernes", :io_mode=>"out"}, 
         {:name=>"handling_qualities_inputs_table", :shape=>"(10,)", :type=>"Float", :units=>"", :desc=>"Points de vol pour l'analyse des QdV", :io_mode=>"out"},
         {:name=>"eigen_values_table", :shape=>'(10,)', :type => 'Float', :units => 'deg', :io_mode=>"in", :desc => "Valeurs propres des modes avion"}], 
-      "Geometry"=>[{:name=>"wing_span", :shape=>'1', :type => 'Float', :units=>"N", :io_mode=>"in", :desc => "Envergure totale du véhicule"}, 
+      "Geometry"=>[{:name=>"wing_span", :shape=>'(3,)', :type => 'Float', :units=>"N", :io_mode=>"in", :desc => "Envergure totale du véhicule"}, 
         {:name=>"control_surfaces_number", :shape=>'1', :type => 'Integer', :units => 'deg', :io_mode=>"in", :desc => "Nombre de gouvernes"},
         {:name=>"cockpit_length", :shape=>'1', :type => 'Float', :units=>"Pa", :io_mode=>"out", :desc => "Longueur du cockpit"}, 
         {:name=>"control_surfaces_number", :shape=>'1', :type => 'Integer', :units => 'deg', :io_mode=>"out", :desc => "Nombre de gouvernes"}, 
@@ -81,14 +81,14 @@ class ExcelMdaImporterTest < ActiveSupport::TestCase
                   desc: "Points de vol pour l'analyse des QdV", :disabled=>false}, 
                   'control_surfaces_number'=> {name: 'control_surfaces_number', shape: '1', type: 'Integer', units: 'deg', 
                   desc: "Nombre de gouvernes", :disabled=>false, :parameters_attributes => [{init: 4}]}, 
-                  'eigen_values_table'=> {name: 'eigen_values_table', shape: '(10,)', type: 'Float', units: 'deg', 
-                  desc: "Valeurs propres des modes avion", :disabled=>false},
+                  'eigen_values_table'=> {name: 'eigen_values_table', shape: '(5,)', type: 'Float', units: 'deg', 
+                  desc: "Valeurs propres des modes avion", :disabled=>false, :parameters_attributes => [{init: [1.0,2.0,3.0,4.0,5.0]}]}, 
                   'wing_reference_surface'=> {name: 'wing_reference_surface', shape: '(1,)', type: 'Float', units: 'Hz', 
                   desc: "Surface de référence totale du véhicule", :disabled=>false},
-                  'wing_span'=> {name: 'wing_span', shape: '1', type: 'Float', units: 'N', 
+                  'wing_span'=> {name: 'wing_span', shape: '(3,)', type: 'Float', units: 'N', 
                   desc: "Envergure totale du véhicule", :disabled=>false},
-                  'cockpit_length'=> {name: 'cockpit_length', shape: '1', type: 'Float', units: 'Pa', 
-                  desc: "Longueur du cockpit", :disabled=>false},
+                  'cockpit_length'=> {name: 'cockpit_length', shape: '(3,)', type: 'Float', units: 'Pa', 
+desc:             "Longueur du cockpit", :disabled=>false, :parameters_attributes => [{init: [25.0, 2.1, 3.0]}]},
                   'wing_airfoils_number_of_point'=> {name: 'wing_airfoils_number_of_point', shape: '1', type: 'Integer', units: '', 
                   desc: "Nombre de points des tables de profil aérodynamique", :disabled=>false},
                   'airfoil_extrados_p0_table'=> {name: 'airfoil_extrados_p0_table', shape: '(10,)', type: 'Float', units: '', 
@@ -96,6 +96,7 @@ class ExcelMdaImporterTest < ActiveSupport::TestCase
                   'disabled_var'=> {:name=>"disabled_var", :shape=>"(10,)", :type=>"Float", :units=>"", :desc=>"Disabled variable", :disabled=>true}
                   } 
      actual = @emi._import_variables_data
+     p expected.keys
      assert_equal expected.keys.sort, actual.keys.sort
      expected.each do |k, v|
        assert_equal expected[k], actual[k]

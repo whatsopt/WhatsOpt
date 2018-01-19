@@ -1,8 +1,11 @@
 require 'whats_opt/mda_importer'
+require 'whats_opt/utils' 
 
 module WhatsOpt
 
   class ExcelMdaImporter < MdaImporter
+    
+    include WhatsOpt::Utils
     
     GSV_SHEET_NAME = 'Global State Vector'
     DISCIPLINE_RANGE_NAME = 'discipline_list'
@@ -156,11 +159,11 @@ module WhatsOpt
           when /\(\s*(\d+)\s*,\s*(\d+)\s*\)/  
             shape = "(#{1}, #{2})"
           when /\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)/
-            shape = "(#{1}, #{2}, #{3})"
+            shape = "(#{$1}, #{$2}, #{$3})"
           else # 
             unless initval_or_shape.nil?
               initval = initval_or_shape
-              shape = shape_of initval
+              shape = self.shape_of initval
             end
           end
           type = _getstr(row[7])
@@ -186,7 +189,12 @@ module WhatsOpt
           @variables[name] = {name: name, shape: shape, type: type, 
                               units: units, desc: desc, disabled: disabled}
           unless initval.blank?
-            @variables[name].merge!({parameters_attributes: {init: initval}})  # used as is
+            v = if type == Variable::INTEGER_T
+                  initval.to_i
+                else
+                  initval.to_f
+                end
+            @variables[name].merge!({parameters_attributes: [{init: v}]})  # used as is
           end
         end
       end

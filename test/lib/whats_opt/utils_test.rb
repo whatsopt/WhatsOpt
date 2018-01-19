@@ -2,7 +2,7 @@ require 'test_helper'
 require 'whats_opt/utils'
 
 class UtilsTest < ActiveSupport::TestCase
-  include WhatsOpt
+  include WhatsOpt::Utils
   
   def test_shape_of 
     assert_equal "1", shape_of("1")
