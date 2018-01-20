@@ -79,32 +79,36 @@ module WhatsOpt
           if k =~ /Y(\d)x/
             src = _to_discipline($1) 
             dsts = _to_other_disciplines($1)
-            v = varattr.merge({io_mode: 'out'})
+            v = varattr.merge(io_mode: 'out')
             res[src].append(v) unless res[src].include?(v) 
             dsts.each do |dst|
-              v = varattr.merge({io_mode: 'in'})
+              v = varattr.merge(io_mode: 'in')
+              v.merge!(parameters_attributes: [{init: @init_values[v['name']]}]) if @init_values[v['name']]
               res[dst].append(v) unless res[dst].include?(v)
             end  
           elsif k =~ /[CY](\d)(\d)/
             src = _to_discipline($1) 
             dst = _to_discipline($2)
-            v = varattr.merge({io_mode: 'out'})
+            v = varattr.merge(io_mode: 'out')
             res[src].append(v) unless res[src].include?(v) 
-            v = varattr.merge({io_mode: 'in'})
+            v = varattr.merge(io_mode: 'in')
+            v.merge!(parameters_attributes: [{init: @init_values[v['name']]}]) if @init_values[v['name']]
             res[dst].append(v) unless res[dst].include?(v) 
           elsif k =~ /Y(\d)/
             src = _to_discipline($1)
             dst = WhatsOpt::Discipline::NULL_DRIVER_NAME
-            v = varattr.merge({io_mode: 'out'})
+            v = varattr.merge(io_mode: 'out')
             res[src].append(v) unless res[src].include?(v) 
-            v = varattr.merge({io_mode: 'in'})
+            v = varattr.merge(io_mode: 'in')
+            v.merge!(parameters_attributes: [{init: @init_values[v['name']]}]) if @init_values[v['name']]
             res[dst].append(v) unless res[dst].include?(v) 
           elsif k =~ /X(\d)/
             src = WhatsOpt::Discipline::NULL_DRIVER_NAME
             dst = _to_discipline($1)
-            v = varattr.merge({io_mode: 'out'})
+            v = varattr.merge(io_mode: 'out')
             res[src].append(v) unless res[src].include?(v) 
-            v = varattr.merge({io_mode: 'in'})
+            v = varattr.merge(io_mode: 'in')
+            v.merge!(parameters_attributes: [{init: @init_values[v['name']]}]) if @init_values[v['name']]
             res[dst].append(v) unless res[dst].include?(v) 
           else     
             raise ExcelMdaImportError.new("Bad flow '#{k}' for variable #{varname}")
@@ -147,6 +151,7 @@ module WhatsOpt
     def _import_variables_data
       unless @variables
         @variables = {}
+        @init_values = {}
         @workdata.each do |row|
           name = _getstr(row[3])
           next if name.blank?  # named range start on 'insert below line' => generate "" varname
@@ -194,7 +199,7 @@ module WhatsOpt
                 else
                   initval.to_f
                 end
-            @variables[name].merge!({parameters_attributes: [{init: v}]})  # used as is
+            @init_values[name] = {}  # used as is
           end
         end
       end
