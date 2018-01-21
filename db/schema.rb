@@ -53,12 +53,10 @@ ActiveRecord::Schema.define(version: 24) do
   end
 
   create_table "parameters", force: :cascade do |t|
-    t.float "init"
-    t.float "lower"
-    t.float "upper"
+    t.string "init"
+    t.string "lower"
+    t.string "upper"
     t.integer "variable_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
   end
 
   create_table "projects", force: :cascade do |t|
