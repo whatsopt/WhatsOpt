@@ -14,9 +14,9 @@ class Variable < ApplicationRecord
     
   self.inheritance_column = :disable_inheritance
   belongs_to :discipline
-  has_many :parameters
+  has_one :parameter
   
-  accepts_nested_attributes_for :parameters, reject_if: proc { |attr| attr['init'].blank? }, allow_destroy: true
+  accepts_nested_attributes_for :parameter, reject_if: proc { |attr| attr['init'].blank? }, allow_destroy: true
 
   validates :name, :io_mode, :type, :shape, presence: true
   validates :name, uniqueness: { scope: [:discipline, :io_mode], message: "should be uniq per discipline and io mode." }

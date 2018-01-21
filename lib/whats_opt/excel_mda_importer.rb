@@ -83,7 +83,7 @@ module WhatsOpt
             res[src].append(v) unless res[src].include?(v) 
             dsts.each do |dst|
               v = varattr.merge(io_mode: 'in')
-              v.merge!(parameters_attributes: [{init: @init_values[v[:name]]}]) if @init_values[v[:name]]
+              v.merge!(parameter_attributes: {init: @init_values[v[:name]]}) if @init_values[v[:name]]
               res[dst].append(v) unless res[dst].include?(v)
             end  
           elsif k =~ /[CY](\d)(\d)/
@@ -92,7 +92,7 @@ module WhatsOpt
             v = varattr.merge(io_mode: 'out')
             res[src].append(v) unless res[src].include?(v) 
             v = varattr.merge(io_mode: 'in')
-            v.merge!(parameters_attributes: [{init: @init_values[v[:name]]}]) if @init_values[v[:name]]
+            v.merge!(parameter_attributes: {init: @init_values[v[:name]]}) if @init_values[v[:name]]
             res[dst].append(v) unless res[dst].include?(v) 
           elsif k =~ /Y(\d)/
             src = _to_discipline($1)
@@ -100,7 +100,7 @@ module WhatsOpt
             v = varattr.merge(io_mode: 'out')
             res[src].append(v) unless res[src].include?(v) 
             v = varattr.merge(io_mode: 'in')
-            v.merge!(parameters_attributes: [{init: @init_values[v[:name]]}]) if @init_values[v[:name]]
+            v.merge!(parameter_attributes: {init: @init_values[v[:name]]}) if @init_values[v[:name]]
             res[dst].append(v) unless res[dst].include?(v) 
           elsif k =~ /X(\d)/
             src = WhatsOpt::Discipline::NULL_DRIVER_NAME
@@ -108,7 +108,7 @@ module WhatsOpt
             v = varattr.merge(io_mode: 'out')
             res[src].append(v) unless res[src].include?(v) 
             v = varattr.merge(io_mode: 'in')
-            v.merge!(parameters_attributes: [{init: @init_values[v[:name]]}]) if @init_values[v[:name]]
+            v.merge!(parameter_attributes: {init: @init_values[v[:name]]}) if @init_values[v[:name]]
             res[dst].append(v) unless res[dst].include?(v) 
           else     
             raise ExcelMdaImportError.new("Bad flow '#{k}' for variable #{varname}")

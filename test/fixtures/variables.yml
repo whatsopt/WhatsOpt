@@ -126,4 +126,12 @@ var_scalar_int:
   type: Integer
   shape: 1  
 
+var_string:
+  name: y
+  fullname: y
+  discipline: dummy
+  io_mode: in
+  type: String
+  shape: 1  
+
 

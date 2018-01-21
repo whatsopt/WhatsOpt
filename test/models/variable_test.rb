@@ -37,6 +37,8 @@ class VariableTest < ActiveSupport::TestCase
     assert_equal 'np.zeros((3,))', var.default_py_value  
     var = variables(:var_nparray_float)
     assert_equal 'np.zeros((3, 5))', var.default_py_value 
+    var = variables(:var_string)
+    assert_equal 'test_init_string', var.parameter.init
   end
   
 end
