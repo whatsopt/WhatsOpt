@@ -13,7 +13,7 @@
 		<tr>
 		  <th class="col-md-2">Name</th>
 		  <th class="col-md-2">Owner</th>
-		  <th class="col-md-3">Creation</th>
+		  <th class="col-md-3">Updated</th>
 		  <th class="col-md-1">Action(s)</th>
 		</tr>
 	</thead>
@@ -23,13 +23,15 @@
 	    <tr>
 	      <td><%= link_to mda.name, mda_path(mda) %></td>
           <td><%= mda.owner %></td>
-          <td><%= time_ago_in_words(mda.created_at) %> ago</td>
+          <td><%= time_ago_in_words(mda.updated_at) %> ago</td>
 	      <td>
-	        <% if policy(mda).destroy? %>
+	        <% if policy(mda).update? %>
 	          <%= link_to edit_mda_path(mda), class: "d-inline btn btn-light btn-inverse btn-sm" do %>
 	            <i class="fa fa-pencil"></i> 
 	          <% end %>    
 	          <span class="ml-1"/>
+	        <% end %>
+	        <% if policy(mda).destroy? %>
 	          <%= link_to mda_path(mda), method: :delete, data: { title: 'Are you sure?', 
 	                                                              confirm: "Remove #{mda.name} analysis?",
 	                                                              commit: 'Yes',
@@ -37,8 +39,6 @@
 	              class: "d-inline btn btn-light btn-inverse btn-sm text-danger" do %>
                 <i class="fa fa-close"></i> 
               <% end %>    
-	      	<% else %>
-	      	  None
 	      	<% end %>
 	      </td>
 	    </tr>

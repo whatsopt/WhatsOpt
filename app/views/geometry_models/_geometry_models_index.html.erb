@@ -4,8 +4,8 @@
 	  <tr>
 	    <th>Title</th>
 	    <th>Owner</th>
-        <th>Creation</th>
-        <th>Action(s)</th>
+      <th>Creation</th>
+      <th>Action(s)</th>
 	  </tr>
 	</thead>
 	
@@ -14,17 +14,23 @@
     <tr>
       <td><%= link_to geomodel.title, geometry_model_path(geomodel) %></td>
       <td><%= geomodel.owner %></td>
-      <td><%= time_ago_in_words(geomodel.updated_at) %> ago</td>
+      <td><%= time_ago_in_words(geomodel.created_at) %> ago</td>
       <td>
+        <% if policy(geomodel).update? %>
+        	<%= link_to edit_geometry_model_path(geomodel), class: "d-inline btn btn-light btn-inverse btn-sm" do %>
+	          <i class="fa fa-pencil"></i> 
+	        <% end %>    
+	        <span class="ml-1"/>
+	      <% end %>
         <% if policy(geomodel).destroy? %>
+	        <span class="ml-1"/>
           <%= link_to geomodel, method: :delete, data: { title: 'Are you sure?', 
                                                          confirm: "Remove #{geomodel.title} geometric model?",
                                                          commit: 'Yes',
                                                          cancel: 'No, cancel' }, 
                   class: "d-inline btn btn-light btn-inverse btn-sm text-danger" do %>
             <i class="fa fa-close"></i> 
-          <% end %>        <% else %>
-          None
+          <% end %>        
         <% end %>
       </td>
     </tr>

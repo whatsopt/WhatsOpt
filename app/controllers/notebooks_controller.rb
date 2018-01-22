@@ -39,8 +39,7 @@ class NotebooksController < ApplicationController
   # PATCH/PUT /notebooks/1
   def update
     authorize @notebook
-    @notebook.name = params[:user][:name] unless params[:user][:name].blank?
-    if @notebook.save
+    if @notebook.update(notebook_params)
       flash[:notice] = "Successfully updated notebook."
       redirect_to notebook_url
     else
@@ -52,7 +51,7 @@ class NotebooksController < ApplicationController
   def destroy
     authorize @notebook
     @notebook.destroy
-    flash[:notice] = "Successfully deleted project."
+    flash[:notice] = "Successfully deleted notebook."
     redirect_to notebooks_url
   end
 
@@ -63,7 +62,7 @@ class NotebooksController < ApplicationController
   end
   
   def notebook_params
-    params.fetch(:notebook, {}).permit(:attachment_attributes => [:id, :data, :_destroy])   
+    params.fetch(:notebook, {}).permit(:title, :attachment_attributes => [:id, :data, :_destroy])   
   end
     
 end

@@ -39,8 +39,7 @@ class GeometryModelsController < ApplicationController
   # PATCH/PUT /geometry_models/1
   def update
     authorize @geomodel
-    @geomodel.name = params[:user][:title] unless params[:user][:title].blank?
-    if @geomodel.save
+    if @geomodel.update(geomodel_params)
       flash[:notice] = "Successfully updated GeometryModel."
       redirect_to geometry_model_url
     else

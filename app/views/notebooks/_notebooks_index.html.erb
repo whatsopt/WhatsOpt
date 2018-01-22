@@ -2,20 +2,26 @@
 <table class="table table-striped">
 	<thead>
 	  <tr>
-	    <th>#</th>
+	    <th>Title</th>
 	    <th>Owner</th>
-        <th>Creation</th>
-        <th>Action(s)</th>
+      <th>Creation</th>
+      <th>Action(s)</th>
 	  </tr>
 	</thead>
 	
 	<tbody>
   <% for notebook in notebooks %>
     <tr>
-      <td><%= link_to "Notebook ##{notebook.id}", notebook_path(notebook) %></td>
+      <td><%= link_to notebook.title, notebook_path(notebook) %></td>
       <td><%= notebook.owner %></td>
-      <td><%= time_ago_in_words(notebook.updated_at) %> ago</td>
+      <td><%= time_ago_in_words(notebook.created_at) %> ago</td>
       <td>
+        <% if policy(notebook).update? %>
+        	<%= link_to edit_notebook_path(notebook), class: "d-inline btn btn-light btn-inverse btn-sm" do %>
+	          <i class="fa fa-pencil"></i> 
+	        <% end %>  
+	        <span class="ml-1"/>
+	      <% end %>
         <% if policy(notebook).destroy? %>
           <%= link_to notebook, method: :delete, data: { title: 'Are you sure?', 
                                                          confirm: "Remove notebook ##{notebook.id}?",
