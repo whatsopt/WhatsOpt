@@ -9,7 +9,7 @@ class Api::V1::OpenmdaoCheckingController < Api::ApiController
       if mda
         ogen = WhatsOpt::OpenmdaoGenerator.new(mda)
         status, lines = ogen.check_mda_setup 
-        render json: {status_ok: status, log: lines}
+        render json: {statusOk: status, log: lines}
       else
         render json: {error: true} 
       end 
