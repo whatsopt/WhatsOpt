@@ -22,15 +22,15 @@ class NotebooksController < ApplicationController
   # POST /notebooks
   def create
     if params[:cancel_button]
-      redirect_to notebooks_url, notice: "Notebook creation cancelled."
+      redirect_to notebooks_url, notice: "Notebook import cancelled."
     else 
       @notebook = Notebook.create(notebook_params)
       if @notebook.save
         current_user.add_role(:owner, @notebook)
         current_user.save
-        redirect_to notebook_url(@notebook), notice: "Notebook was successfully created."
+        redirect_to notebook_url(@notebook), notice: "Notebook was successfully imported."
       else
-        flash[:error] = "Notebook creation failed: invalid input data."
+        flash[:error] = "Notebook import failed: invalid input data."
         render :action => 'new'
       end
     end
@@ -38,12 +38,16 @@ class NotebooksController < ApplicationController
   
   # PATCH/PUT /notebooks/1
   def update
-    authorize @notebook
-    if @notebook.update(notebook_params)
-      flash[:notice] = "Successfully updated notebook."
-      redirect_to notebook_url
-    else
-      render :action => 'edit'
+    if params[:cancel_button]
+      redirect_to notebooks_url, notice: "Notebook update cancelled."
+    else   
+      authorize @notebook
+      if @notebook.update(notebook_params)
+        flash[:notice] = "Successfully updated notebook."
+        redirect_to notebook_url
+      else
+        render :action => 'edit'
+      end
     end
   end
   

@@ -6,7 +6,14 @@
 	  	<%= f.label :title %>
 			<%= f.text_field :title, class: "form-control" %>
 	  </div>
-	
+
+      <% unless action == :edit %>
+          <div class="form-group">
+            <label>Excel (.xslx) or CMDOWS file (.xml or .cmdows)</label>
+            <%= render "attachments/attachment_form", :f => f %>
+          </div>
+      <% end %>
+      	
 	  <div class="form-group">
 	    <%= f.submit "Submit", class: "btn btn-primary" %>
 	    <%= f.submit "Cancel", class: "btn", name: "cancel_button" %>

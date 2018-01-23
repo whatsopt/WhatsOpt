@@ -1,5 +1,4 @@
 <h1>New Notebook</h1>
 
-<p>
-	<%= render :partial => 'form', :object => @notebook %>
-</p>
+<%= render :partial => 'form', locals: {action: :new} %>
+

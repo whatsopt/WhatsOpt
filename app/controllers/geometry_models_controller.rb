@@ -22,15 +22,15 @@ class GeometryModelsController < ApplicationController
   # POST /geometry_models
   def create
     if params[:cancel_button]
-      redirect_to geometry_models_url, notice: "GeometryModel creation cancelled."
+      redirect_to geometry_models_url, notice: "GeometryModel import cancelled."
     else 
       @geomodel = GeometryModel.create(geomodel_params)
       if @geomodel.save
         current_user.add_role(:owner, @geomodel)
         current_user.save
-        redirect_to geometry_model_url(@geomodel), notice: "GeometryModel was successfully created."
+        redirect_to geometry_model_url(@geomodel), notice: "GeometryModel was successfully imported."
       else
-        flash[:error] = "GeometryModel creation failed: invalid input data."
+        flash[:error] = "GeometryModel import failed: invalid input data."
         render :action => 'new'
       end
     end
@@ -38,12 +38,16 @@ class GeometryModelsController < ApplicationController
   
   # PATCH/PUT /geometry_models/1
   def update
-    authorize @geomodel
-    if @geomodel.update(geomodel_params)
-      flash[:notice] = "Successfully updated GeometryModel."
-      redirect_to geometry_model_url
-    else
-      render :action => 'edit'
+    if params[:cancel_button]
+      redirect_to geometry_model_url, notice: "Geometry Model update cancelled."
+    else  
+      authorize @geomodel
+      if @geomodel.update(geomodel_params)
+        flash[:notice] = "Successfully updated Geometry Model."
+        redirect_to geometry_model_url
+      else
+        render :action => 'edit'
+      end
     end
   end
   

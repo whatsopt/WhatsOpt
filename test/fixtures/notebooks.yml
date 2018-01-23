@@ -1,3 +1,2 @@
-# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
-
-
+nb_one:
+  title: "Notebook Test"

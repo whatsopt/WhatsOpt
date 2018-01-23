@@ -23,6 +23,5 @@ class NotebookControllerTest < ActionDispatch::IntegrationTest
     end
     assert_redirected_to root_path
     assert_equal 'You are not authorized to perform this action.', flash[:error]
-  end
-  
+  end  
 end

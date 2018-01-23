@@ -10,6 +10,7 @@ class ActiveSupport::TestCase
   def sample_file(filename = "sample_file.png")
     File.new("test/fixtures/#{filename}")
   end
+
 end
 
 class ActionDispatch::IntegrationTest
@@ -17,3 +18,4 @@ class ActionDispatch::IntegrationTest
 end
 
 TEST_API_KEY = 'FriendlyApiKey'
+

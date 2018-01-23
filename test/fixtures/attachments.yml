@@ -1,0 +1,4 @@
+attach_nb_one:
+  container_type: Notebook
+  container: nb_one
+  category: Notebook
