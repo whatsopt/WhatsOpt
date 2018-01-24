@@ -11,7 +11,7 @@ class CmdowsGeneratorTest < ActiveSupport::TestCase
   test "should generate cmdows xml" do
     content, filename = @cmdowsgen.generate
     assert_equal  Nokogiri::XML(content).xpath('//designCompetence').size, @mda.disciplines.nodes.count
-    assert_equal 'cicav.cmdows', filename
+    assert_equal 'cicav.xml', filename
   end
   
 end

@@ -18,7 +18,7 @@ class WhatsOpt::CmdowsGenerator
     XSD.validate(doc).each do |error|
       raise CmdowsValidationError.new(error.message)
     end
-    filename = "#{@mda.file_basename}.cmdows"
+    filename = "#{@mda.file_basename}.xml"
     return doc.to_xml, filename 
   end
   
