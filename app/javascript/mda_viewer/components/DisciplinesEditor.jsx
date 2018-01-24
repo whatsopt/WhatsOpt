@@ -41,7 +41,15 @@ class Discipline extends React.Component {
   }
   
   handleDelete(event) {
-    this.onDisciplineDelete(this.props.node, parseInt(this.props.pos));
+    let self = this;
+    dataConfirmModal.confirm({
+      title: 'Are you sure?',
+      text: 'Really do this?',
+      commit: 'Yes',
+      cancel: 'No, cancel',
+      onConfirm: function() { self.onDisciplineDelete(self.props.node, parseInt(self.props.pos)); },
+      onCancel:  function() {}
+    });
   }
   
   handleSelectChange(event) {
@@ -70,8 +78,7 @@ class Discipline extends React.Component {
         return (
           <li className="list-group-item editor-discipline col-md-4">
             <span className="align-bottom">{this.props.node.name}</span>
-            <button data-title="Are you sure?" data-confirm={confirm} data-commit="Yes" data-cancel="No, cancel"  
-             data-method="delete" className="d-inline btn btn-light btn-inverse btn-sm float-right text-danger" 
+            <button className="d-inline btn btn-light btn-inverse btn-sm float-right text-danger" 
              onClick={this.handleDelete}>
               <i className="fa fa-close"/>
             </button>
