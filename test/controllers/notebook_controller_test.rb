@@ -5,6 +5,7 @@ class NotebookControllerTest < ActionDispatch::IntegrationTest
   setup do
     sign_in users(:user1)
     @nb = fixture_file_upload 'notebook_sample.ipynb'
+    @nb2 = fixture_file_upload 'notebook_sample.ipynb'
   end
 
   test "should assign owner on creation" do
@@ -24,4 +25,12 @@ class NotebookControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to root_path
     assert_equal 'You are not authorized to perform this action.', flash[:error]
   end  
+  
+  test "should update the attachment and the title" do
+    post notebooks_url, params: { notebook: {title: "Test", attachment_attributes: { data: @nb }} }
+    assert_equal "Test", Notebook.last.title
+    put notebook_url(Notebook.last), params: { notebook: {title: "Test2", attachment_attributes: { data: @nb2 }} }
+    assert_equal "Test2", Notebook.last.title
+  end 
+  
 end

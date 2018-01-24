@@ -89,5 +89,5 @@ class AnalysesControllerTest < ActionDispatch::IntegrationTest
       delete mda_url(@mda)
     end
   end
-
+  
 end
