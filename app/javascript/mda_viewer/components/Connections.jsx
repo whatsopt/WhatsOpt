@@ -127,7 +127,7 @@ class Connections extends React.Component {
       }, this);
     }, this);
 
-    console.log("VARNAME "+JSON.stringify(this.props.mda.vars));
+    //console.log("VARNAME "+JSON.stringify(this.props.mda.vars));
     
     let connections = conns.map((conn) => {
       return ( <Connection key={conn.id} conn={conn} vars={this.props.mda.vars} /> );

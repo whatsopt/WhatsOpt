@@ -36,9 +36,7 @@ class Discipline extends React.Component {
   handleUpdate(event) {
     event.preventDefault();
     this.handleCancelEdit(event);
-    console.log("Type:"+this.state.discType);
     let discattrs = {name: this.state.discName, type: this.state.discType};
-    console.log("COUCOU"+JSON.stringify(discattrs));
     this.onDisciplineUpdate(this.props.node, parseInt(this.props.pos), discattrs);
   }
   

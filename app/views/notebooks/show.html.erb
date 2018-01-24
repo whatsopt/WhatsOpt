@@ -1,4 +1,4 @@
-<h1>Notebook #<%= @notebook.id %></h1>
+<h1><%= @notebook.title %></h1>
 
 <p>
   <small>created from <%= link_to @notebook.attachment.data_file_name, attachment_path(@notebook.attachment) %> by <%= @notebook.owner %></small>
