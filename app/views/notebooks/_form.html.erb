@@ -1,24 +1,23 @@
 <%= form_for @notebook, :html => { :multipart => true, :role => "form"} do |f| %>
 
 <div class="row">
-	<div class="col-md-4">
+    <div class="col-md-4">
 	  <div class="form-group">
 	  	<%= f.label :title %>
-			<%= f.text_field :title, class: "form-control" %>
+		<%= f.text_field :title, class: "form-control" %>
 	  </div>
 	
-	  <% unless action == :edit %>
-          <div class="form-group">
-               <%= f.label 'Jupyter ipynb file'%>
-            <%= render "attachments/attachment_form", :f => f %>
-          </div>
-      <% end %>
+  <% unless action == :edit %>
+      <div class="form-group">
+        <%= f.label 'Jupyter ipynb file'%>
+        <%= render "attachments/attachment_form", :f => f %>
+      </div>
+  <% end %>
 
 	  <div class="form-group">
 	    <%= f.submit "Submit", class: "btn btn-primary" %>
 	    <%= f.submit "Cancel", class: "btn", name: "cancel_button" %>
 	  </div>
-  </div>  
-</div>  
-
+    </div>
+  </div>
 <% end %>

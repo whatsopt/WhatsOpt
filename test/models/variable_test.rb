@@ -41,4 +41,11 @@ class VariableTest < ActiveSupport::TestCase
     assert_equal 'test_init_string', var.parameter.init
   end
   
+  def test_as_json
+    var = variables(:varx_geo_in)
+    adapter = ActiveModelSerializers::SerializableResource.new(var)
+    assert_equal [:desc, :fullname, :io_mode, :name, :parameter, :shape, :type], adapter.as_json.keys.sort
+    assert_equal({:init=>"3.14"}, adapter.as_json[:parameter])
+  end
+  
 end

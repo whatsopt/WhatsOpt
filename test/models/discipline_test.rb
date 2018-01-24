@@ -14,4 +14,11 @@ class DisciplineTest < ActiveSupport::TestCase
     disc = Discipline.create({ name: 'TEST'})
     assert_equal WhatsOpt::Discipline::ANALYSIS, disc.type    
   end
+  
+  def test_as_json
+    disc = disciplines(:geometry)
+    adapter = ActiveModelSerializers::SerializableResource.new(disc)
+    assert_equal [:analysis_id, :id, :name, :position, :type], adapter.as_json.keys.sort
+  end
+
 end

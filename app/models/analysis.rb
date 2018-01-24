@@ -51,7 +51,7 @@ class Analysis < ApplicationRecord
     []
   end
   
-  def to_xdsm_json
+  def to_mda_viewer_json
     { 
       id: self.id,
       name: self.name,
@@ -140,7 +140,13 @@ class Analysis < ApplicationRecord
   end
 
   def build_var_infos
-    res = disciplines.nodes.map {|d| {d.id => {in: d.input_variables, out: d.output_variables}}}
+    res = disciplines.nodes.map {|d|
+      inputs = ActiveModelSerializers::SerializableResource.new(d.input_variables, 
+        each_serializer: VariableSerializer)
+      outputs = ActiveModelSerializers::SerializableResource.new(d.output_variables,
+        each_serializer: VariableSerializer)
+      {d.id => {in: inputs.as_json, out: outputs.as_json}}
+    }
     tree = res.inject({}) {|result, h| result.update(h)}
     tree
   end

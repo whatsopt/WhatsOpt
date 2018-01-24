@@ -1,10 +1,9 @@
-<%= f.fields_for :attachment, Attachment.new, :child_index => "0" do |fattach| %>
-  <!-- <%= fattach.file_field :data, class: "form-control" %> -->
+<%= f.fields_for :attachment, Attachment.new, :child_index => "0" do |fattach| %> 
   <div class="form-control-file">
-    <label class="custom-file">
+    <div class="custom-file">
       <%= fattach.file_field :data, class: "custom-file-input", "data-toggle": "custom-file", "data-target":"#myfile" %>
-      <span id="myfile" class="custom-file-control custom-file-name" data-content="Choose File..."></span>
-    </label>
+      <label id='myfile' class="custom-file-label" for="analysis_attachment_attributes_data">Choose file</label>
+    </div>
   </div>
 <% end %>
 
@@ -12,6 +11,7 @@
   <script>
     // handle custom file inputs
     $('body').on('change', 'input[type="file"][data-toggle="custom-file"]', function (ev) {
+      console.log("COUCOU");
 
       const $input = $(this);
       const target = $input.data('target');
@@ -20,12 +20,12 @@
       if (!$target.length)
         return console.error('Invalid target for custom file', $input);
 
-      if (!$target.attr('data-content'))
+      if (!$target.text())
         return console.error('Invalid `data-content` for custom file target', $input);
 
       // set original content so we can revert if user deselects file
       if (!$target.attr('data-original-content'))
-        $target.attr('data-original-content', $target.attr('data-content'));
+        $target.attr('data-original-content', $target.text());
 
       const input = $input.get(0);
       let name = $input.val();
@@ -33,7 +33,7 @@
       if (!name)
         name = $target.attr('data-original-content');
 
-      $target.attr('data-content', name);
+      $target.text(name);
 
     });
   </script>

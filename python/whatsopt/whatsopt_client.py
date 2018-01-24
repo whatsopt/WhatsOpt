@@ -99,10 +99,10 @@ class WhatsOpt(object):
         resp = self.session.get(url, headers=self.headers)
         if resp.ok:
             mdas = resp.json()
-            headers = ["name", "created at"]
+            headers = ["name", "updated at"]
             data = []
             for mda in mdas:
-                data.append([mda['name'], mda['created_at']])
+                data.append([mda['name'], mda['updated_at']])
             print(tabulate(data, headers))
         else:
             resp.raise_for_status()

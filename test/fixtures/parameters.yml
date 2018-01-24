@@ -5,3 +5,15 @@ string:
   lower: 
   upper: 
   variable: var_string
+
+float:
+  init: "3.14"
+  lower: 
+  upper: 
+  variable: var_scalar_float
+
+var_x_geo_in_init:
+  init: "3.14"
+  lower: 
+  upper: 
+  variable: varx_geo_in

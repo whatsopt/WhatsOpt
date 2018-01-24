@@ -10,7 +10,7 @@ class Connection extends React.Component {
     if (infos.frUnits !== infos.toUnits && infos.toUnits) {
       units += `-> ${infos.toUnits}`;
     }
-    console.log("VARNAME "+infos.vName);
+    //console.log("VARNAME "+JSON.stringify(infos));
     return (
       <tr>
         <td>{this.props.conn.frName}</td>
@@ -18,13 +18,14 @@ class Connection extends React.Component {
         <td title={infos.desc} >{infos.vName}</td>
         <td>{infos.type}</td>
         <td>{infos.shape}</td>
+        <td>{infos.init}</td>
         <td>{units}</td>
       </tr>
     );
   }
    
   _findInfos(conn) { 
-    console.log("CONN : "+JSON.stringify(conn));
+    //console.log("CONN : "+JSON.stringify(conn));
     let vfr = this._findVariableInfo(conn.fr, conn.varname, "out");
     let vto = this._findVariableInfo(conn.to, conn.varname, "in");
     let desc = vfr.desc || vto.desc
@@ -34,23 +35,29 @@ class Connection extends React.Component {
     let vartype = vfr.type || vto.type;
     let shape = vfr.shape || vto.shape;    
     let varname = vfr.fullname || vto.fullname; 
+    let init = "";
+
+    if (vto.parameter) {
+        init = vto.parameter.init;
+    }
     let infos = { frName: conn.frName, frUnits: vfr.units, 
                   vName: varname, desc: desc,
                   toName: conn.toName, toUnits: vto.units,
-                  type: vartype, shape: shape};
+                  type: vartype, shape: shape, init: init};
     return infos;
   }
     
   // TODO: Big technical debt to be reduced
   _findVariableInfo(disc, vname, io_mode) {
     let vars = this.props.vars;
-    let vinfo = {units: '', desc: '', type: '', shape: ''};
+    let vinfo = {units: '', desc: '', type: '', shape: '', init: ''};
     if (disc !== USER) {
-      console.log("search "+ vname + " in " + JSON.stringify(vars[disc][io_mode])); 
+      //console.log("search "+ vname + " in " + JSON.stringify(vars[disc][io_mode])); 
       let vinfos = vars[disc][io_mode].filter((v) => { 
         return v.name === vname; 
       });
       if (vinfos.length === 1) {
+        //console.log("FIND "+JSON.stringify(vinfos));
         vinfo = vinfos[0];
       } else if (vinfos.length > 1) {
         console.log("Find several occurences of " + vname + ": " + JSON.stringify(vinfos));
@@ -120,6 +127,8 @@ class Connections extends React.Component {
       }, this);
     }, this);
 
+    console.log("VARNAME "+JSON.stringify(this.props.mda.vars));
+    
     let connections = conns.map((conn) => {
       return ( <Connection key={conn.id} conn={conn} vars={this.props.mda.vars} /> );
     });
@@ -133,6 +142,7 @@ class Connections extends React.Component {
             <th>Variable</th>
             <th>Type</th>
             <th>Shape</th>
+            <th>Init</th>
             <th>Units</th>
           </tr>
         </thead>
