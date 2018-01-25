@@ -16,26 +16,6 @@
 @import "mda_viewer";
 @import "x3dom";
 
-.custom-file-control::after {
-  content: "Choose file...";
-}
-
-.custom-file-control::before {
-  content: "Browse";
-}
-
-// support custom file inputs
-.custom-file-name:after {
-  content: attr(data-content) !important;
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  display: block;
-  height: 100%;
-  overflow: hidden;
-  padding: 0.5rem 1rem;
-}
-
 html {
 	height:100%;
 }
@@ -104,4 +84,25 @@ div.field_with_errors {
   min-width: 200px;
   max-width: 400px;
   padding: 40px;
+}
+
+/* file browser */
+.custom-file-control::after {
+  content: "Choose file...";
+}
+
+.custom-file-control::before {
+  content: "Browse";
+}
+
+// support custom file inputs
+.custom-file-name:after {
+  content: attr(data-content) !important;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  display: block;
+  height: 100%;
+  overflow: hidden;
+  padding: 0.5rem 1rem;
 }

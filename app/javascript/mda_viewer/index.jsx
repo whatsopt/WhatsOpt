@@ -3,6 +3,7 @@ import XdsmViewer from 'mda_viewer/components/XdsmViewer'
 import Connections from 'mda_viewer/components/Connections'
 import ToolBar from 'mda_viewer/components/ToolBar'
 import DisciplinesEditor from 'mda_viewer/components/DisciplinesEditor'
+import ConnectionsEditor from 'mda_viewer/components/ConnectionsEditor'
 import update from 'immutability-helper'
 let Graph = require('XDSMjs/src/graph');
 import {api, url} from '../utils/WhatsOptApi';
@@ -97,28 +98,29 @@ class MdaViewer extends React.Component {
         </div>
         <ul className="nav nav-tabs" id="myTab" role="tablist">
           <li className="nav-item">
-            <a className="nav-link " id="analysis-tab" data-toggle="tab" href="#analysis" role="tab" aria-controls="analysis" aria-selected="true">Analysis</a>
+            <a className="nav-link " id="analysis-tab" data-toggle="tab" href="#analysis" role="tab" aria-controls="analysis" aria-selected="false">Analysis</a>
           </li>
           <li className="nav-item">
-            <a className="nav-link active" id="disciplines-tab" data-toggle="tab" href="#disciplines" role="tab" aria-controls="disciplines" aria-selected="false">Disciplines</a>
+            <a className="nav-link" id="disciplines-tab" data-toggle="tab" href="#disciplines" role="tab" aria-controls="disciplines" aria-selected="false">Disciplines</a>
           </li>
           <li className="nav-item">
-            <a className="nav-link" id="connection-tab" data-toggle="tab" href="#connections" role="tab" aria-controls="connections" aria-selected="false">Connections</a>
+            <a className="nav-link active" id="connection-tab" data-toggle="tab" href="#connections" role="tab" aria-controls="connections" aria-selected="true">Connections</a>
           </li>
         </ul>
         <div className="tab-content" id="myTabContent">
           <div className="tab-pane fade" id="analysis" role="tabpanel" aria-labelledby="analysis-tab">
-            <div className="editor-section">
+            <div className="container editor-section">
+              <label className="editor-header">Name</label>
               <form className="form-inline" onSubmit={this.handleMdaNewName}>
-                <div className="form-group mx-sm-3">
+                <div className="form-group">
                   <label htmlFor="name" className="sr-only">Name</label>
                   <input type="text" value={this.state.mdaNewName} className="form-control" id="name" onChange={this.handleMdaNewNameChange}/>
                 </div>
-                <button type="submit" className="btn btn-primary">Update</button>
+                <button type="submit" className="btn btn-primary ml-3">Update</button>
               </form>
             </div>
           </div>
-          <div className="tab-pane fade show active" id="disciplines" role="tabpanel" aria-labelledby="disciplines-tab">
+          <div className="tab-pane fade" id="disciplines" role="tabpanel" aria-labelledby="disciplines-tab">
             <DisciplinesEditor name={this.state.newDisciplineName} 
                                nodes={this.state.mda.nodes} 
                                onNewDisciplineName={this.handleNewDisciplineName} 
@@ -127,14 +129,16 @@ class MdaViewer extends React.Component {
                                onDisciplineUpdate={this.handleDisciplineUpdate}
              />
           </div>
-          <div className="tab-pane fade" id="connections" role="tabpanel" aria-labelledby="connections-tab">...</div>
+          <div className="tab-pane fade show active" id="connections" role="tabpanel" aria-labelledby="connections-tab">
+            <ConnectionsEditor nodes={this.state.mda.nodes} edges={this.state.mda.edges} />
+          </div>
         </div>
       </div>);      
     };
     return (
       <div>
         <div className="mda-section">
-          <ToolBar mdaId={this.props.mda.id} isEditing={this.props.isEditing}/>
+          <ToolBar mdaId={this.props.mda.id}/>
         </div>
         <div className="mda-section">      
           <XdsmViewer mda={this.state.mda} onFilterChange={this.handleFilterChange}/>

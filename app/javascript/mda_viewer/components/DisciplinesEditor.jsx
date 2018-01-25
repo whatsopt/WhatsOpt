@@ -58,19 +58,21 @@ class Discipline extends React.Component {
   }
   
   render() {
+    //let nodes = update(this.nodes,)  
+      
     if (this.state.isEditing) {        
       return (
           <li className="list-group-item editor-discipline">
             <form className="form-inline" onSubmit={this.handleUpdate}>
               <div className="form-group mr-3">
                 <input  className="form-control" id="name" type="text" defaultValue={this.state.discName} placeholder='Enter Name...' onChange={this.handleDiscNameChange}/>
-                <select className="form-control" id="type" value={this.state.discType} onChange={this.handleSelectChange}>
+                <select className="form-control ml-1" id="type" value={this.state.discType} onChange={this.handleSelectChange}>
                   <option value="analysis">Analysis</option>
                   <option value="function">Function</option>
                 </select>
               </div>  
               <button type="submit" className="btn btn-primary">Update</button>
-              <button type="button" onClick={this.handleCancelEdit} className="btn ml-md-1">Cancel</button>
+              <button type="button" onClick={this.handleCancelEdit} className="btn ml-1">Cancel</button>
             </form>
           </li>); 
       } else {
@@ -112,6 +114,7 @@ class DisciplinesEditor extends React.Component {
     return (
         <div className='container'>
           <div className="editor-section">
+            <label className="editor-header">Nodes</label> 
             <ul className="list-group">
               {disciplines}
             </ul>
@@ -122,7 +125,7 @@ class DisciplinesEditor extends React.Component {
                 <label htmlFor="name" className="sr-only">Name</label>
                 <input type="text" value={this.props.name} placeholder='Enter Name...' className="form-control" id="name" onChange={this.handleChange}/>
               </div>
-              <button type="submit" className="btn btn-primary">New</button>
+              <button type="submit" className="btn btn-primary ml-1">New</button>
             </form>
           </div>
         </div>
