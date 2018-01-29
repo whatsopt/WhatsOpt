@@ -31,9 +31,11 @@ class MdaViewer extends React.Component {
   }
 
   handleFilterChange(filter) { 
-    this.setState({filter: {fr: filter.fr, to: filter.to}});
+    console.log(JSON.stringify(filter));
+    let newState = update(this.state, {filter: {$set: {fr: filter.fr, to: filter.to}}});
+    this.setState(newState);
   }
-
+  
   handleNewDisciplineName(event) { 
     event.preventDefault();
     api.createDiscipline(this.props.mda.id, {name: this.state.newDisciplineName, type: 'analysis'}, 
@@ -53,7 +55,7 @@ class MdaViewer extends React.Component {
   }
 
   handleMdaNewName(event) { 
-    event.preventDefault();
+    event.preventDefault(); 
     api.updateAnalysis(this.props.mda.id, {name: this.state.mdaNewName}, 
       (function(response) {
         let newState = update(this.state, {mda: { name: {$set: this.state.mdaNewName}}});
@@ -94,7 +96,8 @@ class MdaViewer extends React.Component {
       <div>
         <h1>Edit {this.state.mda.name}</h1>
         <div className="mda-section">     
-          <XdsmViewer ref={xdsmViewer => this.xdsmViewer = xdsmViewer} mda={this.state.mda} onFilterChange={this.handleFilterChange}/>
+          <XdsmViewer ref={xdsmViewer => this.xdsmViewer = xdsmViewer} mda={this.state.mda} 
+                      onFilterChange={this.handleFilterChange}/>
         </div>
         <ul className="nav nav-tabs" id="myTab" role="tablist">
           <li className="nav-item">
@@ -130,7 +133,8 @@ class MdaViewer extends React.Component {
              />
           </div>
           <div className="tab-pane fade show active" id="connections" role="tabpanel" aria-labelledby="connections-tab">
-            <ConnectionsEditor nodes={this.state.mda.nodes} edges={this.state.mda.edges} />
+            <ConnectionsEditor nodes={this.state.mda.nodes} edges={this.state.mda.edges} 
+                                      filter={this.state.filter} onFilterChange={this.handleFilterChange}/>
           </div>
         </div>
       </div>);      
@@ -141,10 +145,10 @@ class MdaViewer extends React.Component {
           <ToolBar mdaId={this.props.mda.id}/>
         </div>
         <div className="mda-section">      
-          <XdsmViewer mda={this.state.mda} onFilterChange={this.handleFilterChange}/>
+          <XdsmViewer mda={this.state.mda} filter={this.state.filter} onFilterChange={this.handleFilterChange}/>
         </div>
         <div className="mda-section">
-          <Connections mda={this.state.mda} filter={this.state.filter} />
+          <Connections mda={this.state.mda} filter={this.state.filter} onFilterChange={this.handleFilterChange} />
         </div>
       </div>
     );

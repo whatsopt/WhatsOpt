@@ -30,7 +30,7 @@ class XdsmViewer extends React.Component {
       };
     this.xdsm = new Xdsm(this.graph, 'root', config);
     this.xdsm.draw();
-    var selectable_xdsm = new Selectable(this.xdsm, this._onXDSMSelectionChange.bind(this));
+    this.selectableXDSM = new Selectable(this.xdsm, this._onXDSMSelectionChange.bind(this));
     
     // bootstrap tooltip for connections
     $(".ellipsized").attr("data-toggle", "tooltip").attr("data-placement", "right");
@@ -61,6 +61,10 @@ class XdsmViewer extends React.Component {
   removeDiscipline(index) {
     this.xdsm.graph.removeNode(index);
     this.xdsm.draw();
+  }
+  
+  setXDSMSelection(filter) {
+    this.selectableXDSM 
   }
   
   _onXDSMSelectionChange(filter) {
