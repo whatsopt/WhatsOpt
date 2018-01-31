@@ -32,8 +32,9 @@ class MdaViewer extends React.Component {
 
   handleFilterChange(filter) { 
     console.log(JSON.stringify(filter));
-    let newState = update(this.state, {filter: {$set: {fr: filter.fr, to: filter.to}}});
+    let newState = update(this.state, {filter: {$set: filter}});
     this.setState(newState);
+    this.xdsmViewer.setXDSMSelection(filter);
   }
   
   handleNewDisciplineName(event) { 

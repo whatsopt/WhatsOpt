@@ -64,7 +64,7 @@ class XdsmViewer extends React.Component {
   }
   
   setXDSMSelection(filter) {
-    this.selectableXDSM 
+    this.selectableXDSM.setFilter(filter); 
   }
   
   _onXDSMSelectionChange(filter) {
