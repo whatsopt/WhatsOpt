@@ -14,7 +14,7 @@
 	  <div class="form-group">
     	  <%= hidden_field_tag :import, @import %> 
     	  <% if @import %>
-    	  	<label>Excel (.xlsx) or XML CMDOWS (.xml, .cmdows) file</label>
+    	  	<label>Excel (.xlsx) or XML CMDOWS (.xml or .cmdows) file</label>
     	    <%= render "attachments/attachment_form", :f => f %>  
     	  <% else %>
     	    <%= f.label :name %>
