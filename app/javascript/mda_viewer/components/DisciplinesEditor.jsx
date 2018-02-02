@@ -12,8 +12,6 @@ class Discipline extends React.Component {
     this.handleUpdate = this.handleUpdate.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
     this.handleSelectChange = this.handleSelectChange.bind(this);
-    this.onDisciplineUpdate = this.props.onDisciplineUpdate.bind(this);
-    this.onDisciplineDelete = this.props.onDisciplineDelete.bind(this);
   }  
   
   handleDiscNameChange(event) {
@@ -37,7 +35,7 @@ class Discipline extends React.Component {
     event.preventDefault();
     this.handleCancelEdit(event);
     let discattrs = {name: this.state.discName, type: this.state.discType};
-    this.onDisciplineUpdate(this.props.node, parseInt(this.props.pos), discattrs);
+    this.props.onDisciplineUpdate(this.props.node, parseInt(this.props.pos), discattrs);
   }
   
   handleDelete(event) {
@@ -47,7 +45,7 @@ class Discipline extends React.Component {
       text: 'Really do this?',
       commit: 'Yes',
       cancel: 'No, cancel',
-      onConfirm: function() { self.onDisciplineDelete(self.props.node, parseInt(self.props.pos)); },
+      onConfirm: function() { self.props.onDisciplineDelete(self.props.node, parseInt(self.props.pos)); },
       onCancel:  function() {}
     });
   }
@@ -100,7 +98,6 @@ class DisciplinesEditor extends React.Component {
 
   handleChange(event) {
     event.preventDefault();
-    this.setState({ name: event.target.value });
     this.props.onNewDisciplineNameChange(event);
   }
   

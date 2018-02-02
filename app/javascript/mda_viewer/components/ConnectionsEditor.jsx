@@ -3,9 +3,7 @@ import update from 'immutability-helper'
 
 class DisciplineSelector extends React.Component {
   constructor(props) {
-    super(props)
-    this.state = { selected: '_U_'};
-    
+    super(props)    
     this.handleSelectChange = this.handleSelectChange.bind(this);
   }
   
@@ -21,7 +19,7 @@ class DisciplineSelector extends React.Component {
     }); 
       
     return (              
-      <select className="form-control" id="type" value={this.state.selected} onChange={this.handleSelectChange}>
+      <select className="form-control mb-1" id="type" value={this.props.selected} onChange={this.handleSelectChange}>
         {disciplines}
       </select>
     );
@@ -36,67 +34,130 @@ class Connection extends React.Component {
   
   render() {
     let varnames = this.props.names.split(',');  
-    console.log(varnames);
     let vars = varnames.map((varname, i) => {
       return <li key={varname} className="list-group-item">{varname}</li>
     });
       
-    return (<ul className="list-group">
-            {vars}
-            </ul>
-            );
+    return (<ul className="list-group mb-3">{vars}</ul> );
   }
 }
+
+class VariableList extends React.Component {
+    constructor(props) {
+      super(props);
+    }  
+    
+    compare(a, b) {
+      if (a.ioMode === b.ioMode) {
+        return a.name.localeCompare(b.name); 
+      }
+      return (a.ioMode === "in")?-1:1;
+    } 
+    
+    render() {
+      let sorted = this.props.vars.sort(this.compare);
+      let vars = this.props.vars.map((v, i) => {
+        let badgeKind = "badge " + ((v.ioMode==="in")?"badge-primary":"badge-secondary");
+        return <li key={v.name} className="list-group-item">{v.name} <span className={badgeKind}>{v.ioMode}</span></li>
+      });
+        
+      return (<ul className="list-group mb-3">{vars}</ul> );
+    }
+  }
+
 
 class ConnectionsEditor extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { from: '_U_', to: '_U_', edges: {} };
-    
+    this.state = { nodes: [], from: '', to: '', edges: {}, connName: ''};
     this.handleFromDisciplineSelected = this.handleFromDisciplineSelected.bind(this);
     this.handleToDisciplineSelected = this.handleToDisciplineSelected.bind(this);
   }
   
   handleFromDisciplineSelected(nodeId) {
-    let newState = update(this.state, { from: {$set: nodeId} });  
-    this.setState(newState);
+    this.props.onFilterChange({fr: nodeId, to: this.props.filter.to});
   }
   
   handleToDisciplineSelected(nodeId) {
-    let newState = update(this.state, { to: {$set: nodeId} });  
-    this.setState(newState);  
+    this.props.onFilterChange({to: nodeId, fr: this.props.filter.fr});
+  }
+  
+  handleConnectionNameChange(event) {
+    event.preventDefault();
+    let newState = update(this.state, { connName: {$set: event.target.value } }); 
+    //this.props.onNewConnectionNameChange(event);
+  }
+  
+  componentDidMount() {
+    let nodes = update(this.props.nodes, {$unshift: [{id: '_U_', name: 'PENDING'}]});
+    if (this.props.nodes.length > 0) {
+      this.setState({ nodes: nodes, from: '_U_', to: this.props.nodes[0].id, edges: {}, connName: ''});
+    }
   }
   
   render() {
-    let nodes = update(this.props.nodes, {$unshift: [{id:'_U_', name:'PENDING'}]}); 
       
-    console.log('Connexion between '+this.state.from+' and '+this.state.to);
-    let edges = this.props.edges.filter((edge) => {
-      return (edge.from === this.state.from) && (edge.to === this.state.to);  
-    }, this);
+    console.log('Connection between '+this.props.filter.fr+' and '+this.props.filter.to);
+    let connections = [];
+    let title = '';
+    if (this.props.filter.fr === this.props.filter.to) {
+      // Node selected
+      title = 'Variables';
+        
+      let edges = this.props.edges.filter((edge) => {
+        return (edge.from === this.props.filter.fr) || (edge.to === this.props.filter.to);  
+      }, this);
+      let uniqEdges = [];
+      let uniqNames = [];
+      edges.forEach((edge, i) => {
+        edge.name.split(',').forEach((name, j) => {  
+          if (!uniqNames.includes(name)) {
+            uniqEdges.push({name: name, ioMode: (edge.to === this.props.filter.to)?"in":"out"}); 
+            uniqNames.push(name);
+          }  
+        }, this); 
+      }, this);
+      edges = uniqEdges;
+      console.log(JSON.stringify(edges));
+      connections = ( <VariableList vars={edges} /> );
+    } else {
+      // Edge selected => Display connection
+      title = 'Connection';
       
-    let connections = edges.map((edge, i) => {
-      return ( <Connection key={i} names={edge.name} /> );
-    });
+      let edges = this.props.edges.filter((edge) => {
+        return (edge.from === this.props.filter.fr) && (edge.to === this.props.filter.to);  
+      }, this);    
+      
+      console.log(JSON.stringify(edges));
+      connections = edges.map((edge, i) => {
+        return ( <Connection key={i} names={edge.name} /> );
+      });
+    }
     
     return (
-        <div className="container">
+      <div className="container">
         <div className="row editor-section">
           <div className="col-3">
-            <label className="editor-header">From</label>
-            <DisciplineSelector nodes={nodes} onSelection={this.handleFromDisciplineSelected}/>
+            <label className="editor-header">From/To</label>
+            <DisciplineSelector nodes={this.state.nodes} selected={this.props.filter.fr} onSelection={this.handleFromDisciplineSelected}/>
+            <DisciplineSelector nodes={this.state.nodes} selected={this.props.filter.to} onSelection={this.handleToDisciplineSelected}/>
           </div>
-          <div className="col-6">
-            <label className="editor-header">Variables</label>
+          <div className="col-9">
+            <label className="editor-header">{title}</label>
             {connections} 
-          </div>
-          <div className="col-3">
-            <label className="editor-header">To</label>
-            <DisciplineSelector nodes={nodes} onSelection={this.handleToDisciplineSelected}/>
+             <form onSubmit={this.props.onNewConnectionName}>
+              <div className="form-group"> 
+                <label htmlFor="name" className="sr-only">Name</label>
+                <input type="text" value={this.props.name} placeholder='Enter name or comma separated names...' 
+                       className="form-control mb-1" id="name" onChange={this.handleConnectionNameChange}
+                />
+                <button type="submit" className="btn btn-primary">New</button>
+              </div>
+            </form>
           </div>
         </div>
-        </div>
-        );
+      </div>
+    );
   }
 } 
 
