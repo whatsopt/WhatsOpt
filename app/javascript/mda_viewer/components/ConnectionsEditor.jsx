@@ -19,7 +19,7 @@ class DisciplineSelector extends React.Component {
     }); 
       
     return (              
-      <select className="form-control" id="type" value={this.props.selected} onChange={this.handleSelectChange}>
+      <select className="form-control mb-1" id="type" value={this.props.selected} onChange={this.handleSelectChange}>
         {disciplines}
       </select>
     );
@@ -138,10 +138,11 @@ class ConnectionsEditor extends React.Component {
       <div className="container">
         <div className="row editor-section">
           <div className="col-3">
-            <label className="editor-header">From</label>
+            <label className="editor-header">From/To</label>
             <DisciplineSelector nodes={this.state.nodes} selected={this.props.filter.fr} onSelection={this.handleFromDisciplineSelected}/>
+            <DisciplineSelector nodes={this.state.nodes} selected={this.props.filter.to} onSelection={this.handleToDisciplineSelected}/>
           </div>
-          <div className="col-6">
+          <div className="col-9">
             <label className="editor-header">{title}</label>
             {connections} 
              <form onSubmit={this.props.onNewConnectionName}>
@@ -153,10 +154,6 @@ class ConnectionsEditor extends React.Component {
                 <button type="submit" className="btn btn-primary">New</button>
               </div>
             </form>
-          </div>
-          <div className="col-3">
-            <label className="editor-header">To</label>
-            <DisciplineSelector nodes={this.state.nodes} selected={this.props.filter.to} onSelection={this.handleToDisciplineSelected}/>
           </div>
         </div>
       </div>

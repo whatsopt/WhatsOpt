@@ -31,7 +31,7 @@ class MdaViewer extends React.Component {
   }
 
   handleFilterChange(filter) { 
-    console.log(JSON.stringify(filter));
+    console.log("indexjs:" + JSON.stringify(filter));
     let newState = update(this.state, {filter: {$set: filter}});
     this.setState(newState);
     this.xdsmViewer.setXDSMSelection(filter);
