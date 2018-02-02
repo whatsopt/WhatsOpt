@@ -13,13 +13,17 @@ class WhatsOpt::CmdowsGenerator
     _build
   end
   
-  def generate
-    doc = @builder.doc
-    XSD.validate(doc).each do |error|
+  def generate(validate=true)
+    @doc ||= @builder.doc
+    filename = "#{@mda.file_basename}.xml"
+    return @doc.to_xml, filename 
+  end
+  
+  def valid?
+    @doc ||= @builder.doc
+    XSD.validate(@doc).each do |error|
       raise CmdowsValidationError.new(error.message)
     end
-    filename = "#{@mda.file_basename}.xml"
-    return doc.to_xml, filename 
   end
   
   def _build
