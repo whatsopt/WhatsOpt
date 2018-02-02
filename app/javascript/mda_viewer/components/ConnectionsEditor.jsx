@@ -35,10 +35,10 @@ class Connection extends React.Component {
   render() {
     let varnames = this.props.names.split(',');  
     let vars = varnames.map((varname, i) => {
-      return <li key={varname} className="list-group-item">{varname}</li>
+      return <button key={varname} className="btn m-1">{varname}</button>
     });
       
-    return (<ul className="list-group mb-3">{vars}</ul> );
+    return (<div className="mb-3">{vars}</div> );
   }
 }
 
@@ -58,10 +58,10 @@ class VariableList extends React.Component {
       let sorted = this.props.vars.sort(this.compare);
       let vars = this.props.vars.map((v, i) => {
         let badgeKind = "badge " + ((v.ioMode==="in")?"badge-primary":"badge-secondary");
-        return <li key={v.name} className="list-group-item">{v.name} <span className={badgeKind}>{v.ioMode}</span></li>
+        return <button key={v.name} className="btn m-1">{v.name} <span className={badgeKind}>{v.ioMode}</span></button>
       });
         
-      return (<ul className="list-group mb-3">{vars}</ul> );
+      return (<div className="mb-3">{vars}</div> );
     }
   }
 
@@ -72,6 +72,7 @@ class ConnectionsEditor extends React.Component {
     this.state = { nodes: [], from: '', to: '', edges: {}, connName: ''};
     this.handleFromDisciplineSelected = this.handleFromDisciplineSelected.bind(this);
     this.handleToDisciplineSelected = this.handleToDisciplineSelected.bind(this);
+    this.handleConnectionNameChange = this.handleConnectionNameChange.bind(this);
   }
   
   handleFromDisciplineSelected(nodeId) {
