@@ -20,6 +20,7 @@ class MdaViewer extends React.Component {
       mda: {name: props.mda.name, nodes: nodes, edges: edges, vars: props.mda.vars},
       mdaNewName: props.mda.name,
       newDisciplineName: '',
+      newConnectionName: ''
     }
     this.handleFilterChange = this.handleFilterChange.bind(this);
     this.handleNewDisciplineName = this.handleNewDisciplineName.bind(this);
@@ -28,8 +29,26 @@ class MdaViewer extends React.Component {
     this.handleMdaNewName = this.handleMdaNewName.bind(this);
     this.handleDisciplineUpdate = this.handleDisciplineUpdate.bind(this);
     this.handleDisciplineDelete = this.handleDisciplineDelete.bind(this);
+    this.handleNewConnectionNameChange = this.handleNewConnectionNameChange.bind(this); 
+    this.handleNewConnectionName = this.handleNewConnectionName.bind(this); 
   }
 
+  handleNewConnectionNameChange(event) {
+    event.preventDefault();    
+    let newState = update(this.state, {newConnectionName: {$set: event.target.value}});
+    this.setState(newState);
+  }
+  
+  handleNewConnectionName(event) {
+    event.preventDefault();
+    let names = this.state.newConnectionName.split(',');
+    names.forEach((name) => { 
+      api.createConnection(this.props.mda.id, 
+          {from_id: this.state.filter.fr, to_id: this.state.filter.to, name: name},
+        (response) => {console.log(response)});
+    }, this);
+  }
+  
   handleFilterChange(filter) { 
     console.log("indexjs:" + JSON.stringify(filter));
     let newState = update(this.state, {filter: {$set: filter}});
@@ -135,7 +154,11 @@ class MdaViewer extends React.Component {
           </div>
           <div className="tab-pane fade show active" id="connections" role="tabpanel" aria-labelledby="connections-tab">
             <ConnectionsEditor nodes={this.state.mda.nodes} edges={this.state.mda.edges} 
-                                      filter={this.state.filter} onFilterChange={this.handleFilterChange}/>
+                               filter={this.state.filter} onFilterChange={this.handleFilterChange}
+                               connectionName={this.state.newConnectionName}
+                               onNewConnectionNameChange={this.handleNewConnectionNameChange}
+                               onNewConnectionName={this.handleNewConnectionName}
+            />
           </div>
         </div>
       </div>);      

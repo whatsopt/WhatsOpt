@@ -50,6 +50,13 @@ class WhatsOptApi {
       .catch(error => console.log(error));
   }
 
+  createConnection(mdaId, connection_attributes, callback) {
+    let path = `/api/v1/analyses/${mdaId}/connections`
+    axios.post(url(path), {connection: connection_attributes})
+      .then(response => callback(response))
+      .catch(error => console.log(error));
+  }
+  
 };
 
 let api = new WhatsOptApi();

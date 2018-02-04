@@ -69,10 +69,9 @@ class VariableList extends React.Component {
 class ConnectionsEditor extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { nodes: [], from: '', to: '', edges: {}, connName: ''};
+    this.state = { nodes: [], from: '', to: '', edges: {} };
     this.handleFromDisciplineSelected = this.handleFromDisciplineSelected.bind(this);
     this.handleToDisciplineSelected = this.handleToDisciplineSelected.bind(this);
-    this.handleConnectionNameChange = this.handleConnectionNameChange.bind(this);
   }
   
   handleFromDisciplineSelected(nodeId) {
@@ -81,12 +80,6 @@ class ConnectionsEditor extends React.Component {
   
   handleToDisciplineSelected(nodeId) {
     this.props.onFilterChange({to: nodeId, fr: this.props.filter.fr});
-  }
-  
-  handleConnectionNameChange(event) {
-    event.preventDefault();
-    let newState = update(this.state, { connName: {$set: event.target.value } }); 
-    //this.props.onNewConnectionNameChange(event);
   }
   
   componentDidMount() {
@@ -149,8 +142,8 @@ class ConnectionsEditor extends React.Component {
              <form onSubmit={this.props.onNewConnectionName}>
               <div className="form-group"> 
                 <label htmlFor="name" className="sr-only">Name</label>
-                <input type="text" value={this.props.name} placeholder='Enter name or comma separated names...' 
-                       className="form-control mb-1" id="name" onChange={this.handleConnectionNameChange}
+                <input type="text" value={this.props.newConnectionName} placeholder='Enter name or comma separated names...' 
+                       className="form-control mb-1" id="name" onChange={this.props.onNewConnectionNameChange}
                 />
                 <button type="submit" className="btn btn-primary">New</button>
               </div>
