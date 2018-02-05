@@ -44,11 +44,36 @@ class MdaViewer extends React.Component {
     let names = this.state.newConnectionName.split(',');
     names.forEach((name) => { 
       api.createConnection(this.props.mda.id, 
-          {from_id: this.state.filter.fr, to_id: this.state.filter.to, name: name},
-        (response) => {console.log(response)});
-    }, this);
-  }
+          {from: this.state.filter.fr, to: this.state.filter.to, name: name},
+          (function(response) {
+              let newconn = response.data;
+              console.log("NEW CONNECTION "+JSON.stringify(newconn));
+              this._addConnection(newconn);
+              this.xdsmViewer.addConnection(newconn);
+          }).bind(this));
+      }, this);
+  };
   
+  _addConnection(connattrs) {
+    let found = false;
+    let newState;
+    this.state.mda.edges.forEach((edge, i) => {
+      if (connattrs.from === edge.from && connattrs.to === edge.to) {
+        found = true;
+        let names = edge.name.split(',')
+        names.push(connattrs.name)
+        let newName = names.sort().join(',') 
+        newState = update(this.state, {mda: {edges: {[i]: {name: {$set: newName}}}}, 
+                                       newConnectionName: {$set: ''}});  
+      }    
+    }, this);
+    if (!found) {
+      newState = update(this.state, {mda: {edges: {$push: [connattrs]}}, 
+                                     newConnectionName: {$set: ''}});  
+    }
+    this.setState(newState); 
+  }
+
   handleFilterChange(filter) { 
     console.log("indexjs:" + JSON.stringify(filter));
     let newState = update(this.state, {filter: {$set: filter}});

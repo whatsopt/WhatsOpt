@@ -30,12 +30,7 @@ class XdsmViewer extends React.Component {
     this.xdsm = new Xdsm(this.graph, 'root', config);
     this.xdsm.draw();
     this.selectableXDSM = new Selectable(this.xdsm, this._onXDSMSelectionChange.bind(this));
-    
-    // bootstrap tooltip for connections
-    $(".ellipsized").attr("data-toggle", "tooltip").attr("data-placement", "right");
-    $(function () {
-      $('.ellipsized').tooltip()
-    })
+    this._setTooltips();
   }
 
   render() {
@@ -55,11 +50,18 @@ class XdsmViewer extends React.Component {
     var newNode = Object.assign({}, this.xdsm.graph.nodes[index], discattrs);
     console.log(JSON.stringify(discattrs));
     this.xdsm.graph.nodes.splice(index, 1, newNode);
-    this.xdsm.refresh();
+    this._xdsmRefresh();
   }
   removeDiscipline(index) {
     this.xdsm.graph.removeNode(index);
     this.xdsm.draw();
+  }
+  
+  addConnection(connattrs) {
+    console.log(JSON.stringify(connattrs));
+    this.xdsm.graph.addEdgeVar(connattrs.from, connattrs.to, connattrs.name);
+    console.log(JSON.stringify(this.xdsm.graph.edges));
+    this._xdsmRefresh();
   }
   
   setXDSMSelection(filter) {
@@ -68,6 +70,18 @@ class XdsmViewer extends React.Component {
   
   _onXDSMSelectionChange(filter) {
     this.props.onFilterChange(filter);    
+  }
+  
+  _xdsmRefresh() {
+    // remove and redraw xdsm 
+    this.xdsm.refresh();
+    this._setTooltips();
+  }
+  
+  _setTooltips() {
+    // bootstrap tooltip for connections
+    $(".ellipsized").attr("data-toggle", "tooltip")
+    $(() => { $('.ellipsized').tooltip({placement: 'right'}); });  
   }
 }
 

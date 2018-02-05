@@ -7,21 +7,21 @@ class Api::V1::ConnectionsController < Api::ApiController
   # POST /api/v1/connections
   def create
     mda = Analysis.find(params[:mda_id])
-    connection = params[:connection]
-    name = connection[:name]
+    name = connection_params[:name]
 
     begin
       check_variable_existence(mda, name)
-              
-      from_disc = Discipline.find(connection[:from_id])
+      
+      from_disc = Discipline.find(connection_params[:from])
       @varout = from_disc.variables.build(name: name, io_mode: "out", shape: 1, type: "Float", desc: "", units: "")    
-      to_disc = Discipline.find(connection[:to_id])
+      to_disc = Discipline.find(connection_params[:to])
       @varin = to_disc.variables.build(name: name, io_mode: "in", shape: 1, type: "Float", desc: "", units: "")
       
       from_disc.save
       to_disc.save
       
-      json_response({fr: from_disc.id, to: to_disc.id, name: name})
+      resp = {from: from_disc.id.to_s, to: to_disc.id.to_s, name: name}
+      json_response(resp)
     rescue VariableAlreadyExistsError => e
       json_response({ message: e }, :unprocessable_entity)
     end
@@ -49,4 +49,7 @@ class Api::V1::ConnectionsController < Api::ApiController
       end      
     end
   
+    def connection_params
+      params.require(:connection).permit([:from, :to, :name])
+    end
 end
