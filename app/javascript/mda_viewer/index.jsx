@@ -8,7 +8,10 @@ import update from 'immutability-helper'
 let Graph = require('XDSMjs/src/graph');
 import {api, url} from '../utils/WhatsOptApi';
 
+let VAR_REGEXP = /^[a-zA-Z][a-zA-Z0-9]*$/;
+
 class MdaViewer extends React.Component {
+    
   constructor(props) {
     super(props);
     let nodes = props.mda.nodes.map(function(n) { return {id: n.id, name: n.name, type: n.type}; });
@@ -20,7 +23,8 @@ class MdaViewer extends React.Component {
       mda: {name: props.mda.name, nodes: nodes, edges: edges, vars: props.mda.vars},
       mdaNewName: props.mda.name,
       newDisciplineName: '',
-      newConnectionName: ''
+      newConnectionName: '',
+      errors: []
     }
     this.handleFilterChange = this.handleFilterChange.bind(this);
     this.handleNewDisciplineName = this.handleNewDisciplineName.bind(this);
@@ -33,15 +37,34 @@ class MdaViewer extends React.Component {
     this.handleNewConnectionName = this.handleNewConnectionName.bind(this); 
   }
 
+  _validateConnectionNames(namesStr) {
+    let names = namesStr.split(',');
+    names = names.map((name) => { return name.trim(); });
+    let errors = [];
+    names.forEach((name) => {
+      if (!name.match(VAR_REGEXP)) {
+        if (name !== '') {
+          errors.push(`Variable name '${name}' is invalid`);   
+          console.log("Error: " + errors);
+        }
+      }
+    }, this);  
+    return errors;
+  }
+  
   handleNewConnectionNameChange(event) {
-    event.preventDefault();    
-    let newState = update(this.state, {newConnectionName: {$set: event.target.value}});
+    console.log("handleNewConnectionNameChange "+event.target.value);
+    event.preventDefault();  
+    let errors = this._validateConnectionNames(event.target.value);
+    let newState = update(this.state, { newConnectionName: {$set: event.target.value}, 
+                                        errors: {$set: errors} });
     this.setState(newState);
   }
   
   handleNewConnectionName(event) {
     event.preventDefault();
     let names = this.state.newConnectionName.split(',');
+    names = names.map((name) => { return name.trim(); });
     names.forEach((name) => { 
       api.createConnection(this.props.mda.id, 
           {from: this.state.filter.fr, to: this.state.filter.to, name: name},
@@ -184,6 +207,7 @@ class MdaViewer extends React.Component {
             <ConnectionsEditor nodes={this.state.mda.nodes} edges={this.state.mda.edges} 
                                filter={this.state.filter} onFilterChange={this.handleFilterChange}
                                connectionName={this.state.newConnectionName}
+                               connectionErrors={this.state.errors}
                                onNewConnectionNameChange={this.handleNewConnectionNameChange}
                                onNewConnectionName={this.handleNewConnectionName}
             />

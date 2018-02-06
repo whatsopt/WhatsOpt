@@ -44,28 +44,69 @@ class Connection extends React.Component {
 }
 
 class VariableList extends React.Component {
-    constructor(props) {
-      super(props);
-    }  
+  constructor(props) {
+    super(props);
+  }  
     
-    compare(a, b) {
-      if (a.ioMode === b.ioMode) {
-        return a.name.localeCompare(b.name); 
-      }
-      return (a.ioMode === "in")?-1:1;
-    } 
-    
-    render() {
-      let sorted = this.props.vars.sort(this.compare);
-      let vars = this.props.vars.map((v, i) => {
-        let badgeKind = "badge " + ((v.ioMode==="in")?"badge-primary":"badge-secondary");
-        return <button key={v.name} className="btn m-1">{v.name} <span className={badgeKind}>{v.ioMode}</span></button>
-      });
-        
-      return (<div className="mb-3">{vars}</div> );
+  compare(a, b) {
+    if (a.ioMode === b.ioMode) {
+      return a.name.localeCompare(b.name); 
     }
+    return (a.ioMode === "in")?-1:1;
+  } 
+  
+  render() {
+    let sorted = this.props.vars.sort(this.compare);
+    let vars = this.props.vars.map((v, i) => {
+      let badgeKind = "badge " + ((v.ioMode==="in")?"badge-primary":"badge-secondary");
+      return <button key={v.name} className="btn m-1">{v.name} <span className={badgeKind}>{v.ioMode}</span></button>
+    });
+      
+    return (<div className="mb-3">{vars}</div> );
   }
+}
 
+class Error extends React.Component {
+  constructor(props) {
+    super(props);  
+  }    
+  
+  render() {
+    return (<div className="alert alert-warning" role="alert">
+              <a href="#" data-dismiss="alert" className="close">×</a>
+              {this.props.msg}
+            </div>);  
+  }
+}
+
+
+class ConnectionsForm extends React.Component {
+  constructor(props) {
+    super(props);  
+  } 
+  
+  render() {
+    let errors = this.props.connectionErrors.map((message, i) => {
+        return ( <Error key={i} msg={message} /> );
+    });
+    
+    return (
+      <div className="container">
+        <label className="editor-header">{this.props.title}</label>
+        {this.props.connections} 
+        <div>{errors}</div>
+        <form onSubmit={this.props.onNewConnectionName}>
+          <div className="form-group"> 
+            <label htmlFor="name" className="sr-only">Name</label>
+            <input type="text" value={this.props.newConnectionName} placeholder='Enter name or comma separated names...' 
+                   className="form-control mb-1" id="name" onChange={this.props.onNewConnectionNameChange}
+            />
+            <button type="submit" className="btn btn-primary">New</button>
+          </div>
+        </form>
+      </div>);
+  }
+}
 
 class ConnectionsEditor extends React.Component {
   constructor(props) {
@@ -134,18 +175,11 @@ class ConnectionsEditor extends React.Component {
             <DisciplineSelector ulabel="OUTWARD" nodes={this.state.nodes} selected={this.props.filter.to} onSelection={this.handleToDisciplineSelected}/>
           </div>
           <div className="col-9">
-            <label className="editor-header">{title}</label>
-            {connections} 
-             <form onSubmit={this.props.onNewConnectionName}>
-              <div className="form-group"> 
-                <label htmlFor="name" className="sr-only">Name</label>
-                <input type="text" value={this.props.newConnectionName} placeholder='Enter name or comma separated names...' 
-                       className="form-control mb-1" id="name" onChange={this.props.onNewConnectionNameChange}
-                />
-                <button type="submit" className="btn btn-primary">New</button>
-              </div>
-            </form>
-          </div>
+            <ConnectionsForm title={title} connections={connections} newConnectionName={this.props.newConnectionName} 
+                             onNewConnectionName={this.props.onNewConnectionName} 
+                             onNewConnectionNameChange={this.props.onNewConnectionNameChange}
+                             connectionErrors={this.props.connectionErrors}/>
+          </div>      
         </div>
       </div>
     );
