@@ -199,7 +199,8 @@ class MdaViewer extends React.Component {
           <ToolBar mdaId={this.props.mda.id}/>
         </div>
         <div className="mda-section">      
-          <XdsmViewer mda={this.state.mda} filter={this.state.filter} onFilterChange={this.handleFilterChange}/>
+            <XdsmViewer ref={xdsmViewer => this.xdsmViewer = xdsmViewer} mda={this.state.mda} 
+              filter={this.state.filter} onFilterChange={this.handleFilterChange}/>
         </div>
         <div className="mda-section">
           <Connections mda={this.state.mda} filter={this.state.filter} onFilterChange={this.handleFilterChange} />
