@@ -7,11 +7,8 @@ let Selectable = require('XDSMjs/src/selectable');
 class XdsmViewer extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      filter: undefined,
-    }
     this.graph = new Graph(props.mda);
-  } 
+  }
 
   componentDidMount() {
     let config = {
@@ -58,14 +55,12 @@ class XdsmViewer extends React.Component {
   }
   
   addConnection(connattrs) {
-    console.log(JSON.stringify(connattrs));
     this.xdsm.graph.addEdgeVar(connattrs.from, connattrs.to, connattrs.name);
-    console.log(JSON.stringify(this.xdsm.graph.edges));
     this._xdsmRefresh();
   }
   
-  setXDSMSelection(filter) {
-    this.selectableXDSM.setFilter(filter); 
+  setXDSMSelection() {
+    this.selectableXDSM.setFilter(this.props.filter); 
   }
   
   _onXDSMSelectionChange(filter) {
@@ -76,6 +71,8 @@ class XdsmViewer extends React.Component {
     // remove and redraw xdsm 
     this.xdsm.refresh();
     this._setTooltips();
+    this.selectableXDSM.enable();
+    this.setXDSMSelection();
   }
   
   _setTooltips() {

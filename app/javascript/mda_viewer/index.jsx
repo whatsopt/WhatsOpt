@@ -78,7 +78,7 @@ class MdaViewer extends React.Component {
     console.log("indexjs:" + JSON.stringify(filter));
     let newState = update(this.state, {filter: {$set: filter}});
     this.setState(newState);
-    this.xdsmViewer.setXDSMSelection(filter);
+    this.xdsmViewer.setXDSMSelection();
   }
   
   handleNewDisciplineName(event) { 
@@ -142,7 +142,7 @@ class MdaViewer extends React.Component {
         <h1>Edit {this.state.mda.name}</h1>
         <div className="mda-section">     
           <XdsmViewer ref={xdsmViewer => this.xdsmViewer = xdsmViewer} mda={this.state.mda} 
-                      onFilterChange={this.handleFilterChange}/>
+                      filter={this.state.filter} onFilterChange={this.handleFilterChange}/>
         </div>
         <ul className="nav nav-tabs" id="myTab" role="tablist">
           <li className="nav-item">

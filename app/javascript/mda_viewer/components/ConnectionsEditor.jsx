@@ -14,8 +14,9 @@ class DisciplineSelector extends React.Component {
   }
   
   render() {
-    let disciplines = this.props.nodes.map(node => {
-      return (<option key={node.id} value={node.id}>{node.name}</option>);
+    let disciplines = this.props.nodes.map((node) => {
+      let name = node.id==="_U_"?this.props.ulabel:node.name
+      return (<option key={node.id} value={node.id}>{name}</option>);
     }); 
       
     return (              
@@ -133,8 +134,8 @@ class ConnectionsEditor extends React.Component {
         <div className="row editor-section">
           <div className="col-3">
             <label className="editor-header">From/To</label>
-            <DisciplineSelector nodes={this.state.nodes} selected={this.props.filter.fr} onSelection={this.handleFromDisciplineSelected}/>
-            <DisciplineSelector nodes={this.state.nodes} selected={this.props.filter.to} onSelection={this.handleToDisciplineSelected}/>
+            <DisciplineSelector ulabel="INWARD" nodes={this.state.nodes} selected={this.props.filter.fr} onSelection={this.handleFromDisciplineSelected}/>
+            <DisciplineSelector ulabel="OUTWARD" nodes={this.state.nodes} selected={this.props.filter.to} onSelection={this.handleToDisciplineSelected}/>
           </div>
           <div className="col-9">
             <label className="editor-header">{title}</label>
