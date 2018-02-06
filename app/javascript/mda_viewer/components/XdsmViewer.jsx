@@ -26,7 +26,8 @@ class XdsmViewer extends React.Component {
       };
     this.xdsm = new Xdsm(this.graph, 'root', config);
     this.xdsm.draw();
-    this.selectableXDSM = new Selectable(this.xdsm, this._onXDSMSelectionChange.bind(this));
+    this.selectable = new Selectable(this.xdsm, this._onSelectionChange.bind(this));
+    this.setSelection();
     this._setTooltips();
   }
 
@@ -47,8 +48,9 @@ class XdsmViewer extends React.Component {
     var newNode = Object.assign({}, this.xdsm.graph.nodes[index], discattrs);
     console.log(JSON.stringify(discattrs));
     this.xdsm.graph.nodes.splice(index, 1, newNode);
-    this._xdsmRefresh();
+    this._refresh();
   }
+  
   removeDiscipline(index) {
     this.xdsm.graph.removeNode(index);
     this.xdsm.draw();
@@ -56,23 +58,26 @@ class XdsmViewer extends React.Component {
   
   addConnection(connattrs) {
     this.xdsm.graph.addEdgeVar(connattrs.from, connattrs.to, connattrs.name);
-    this._xdsmRefresh();
+    this._refresh();
   }
   
-  setXDSMSelection() {
-    this.selectableXDSM.setFilter(this.props.filter); 
+  setSelection() {
+    this.selectable.setFilter(this.props.filter); 
   }
   
-  _onXDSMSelectionChange(filter) {
+  _onSelectionChange(filter) {
     this.props.onFilterChange(filter);    
   }
   
-  _xdsmRefresh() {
+  _refresh() {
     // remove and redraw xdsm 
     this.xdsm.refresh();
+    // reattzach selection
+    this.selectable.enable();
+    // select current
+    this.setSelection();
+    // reattach tooltips
     this._setTooltips();
-    this.selectableXDSM.enable();
-    this.setXDSMSelection();
   }
   
   _setTooltips() {

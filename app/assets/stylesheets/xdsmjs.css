@@ -5,7 +5,9 @@
 
 /* Component types */
 .xdsm .user {
-    visibility: hidden;
+    fill: #CCCCFF;
+    stroke: black;
+    stroke-width: 1px;
 }
 
 .xdsm .optimization {

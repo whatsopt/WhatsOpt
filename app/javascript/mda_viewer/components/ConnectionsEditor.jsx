@@ -91,8 +91,6 @@ class ConnectionsEditor extends React.Component {
   }
   
   render() {
-      
-    console.log('Connection between '+this.props.filter.fr+' and '+this.props.filter.to);
     let connections = [];
     let title = '';
     if (this.props.filter.fr === this.props.filter.to) {
@@ -113,7 +111,6 @@ class ConnectionsEditor extends React.Component {
         }, this); 
       }, this);
       edges = uniqEdges;
-      console.log(JSON.stringify(edges));
       connections = ( <VariableList vars={edges} /> );
     } else {
       // Edge selected => Display connection
@@ -123,7 +120,6 @@ class ConnectionsEditor extends React.Component {
         return (edge.from === this.props.filter.fr) && (edge.to === this.props.filter.to);  
       }, this);    
       
-      console.log(JSON.stringify(edges));
       connections = edges.map((edge, i) => {
         return ( <Connection key={i} names={edge.name} /> );
       });

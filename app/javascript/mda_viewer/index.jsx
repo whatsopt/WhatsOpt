@@ -15,7 +15,7 @@ class MdaViewer extends React.Component {
     let edges = props.mda.edges.map(function(e) { return {from: e.from, to: e.to, name: e.name}; });
     let isEditing = props.isEditing;
     this.state = {
-      filter: { fr: undefined, to: undefined },
+      filter: { fr: "_U_", to: "_U_" },
       isEditing: isEditing,
       mda: {name: props.mda.name, nodes: nodes, edges: edges, vars: props.mda.vars},
       mdaNewName: props.mda.name,
@@ -75,10 +75,9 @@ class MdaViewer extends React.Component {
   }
 
   handleFilterChange(filter) { 
-    console.log("indexjs:" + JSON.stringify(filter));
     let newState = update(this.state, {filter: {$set: filter}});
     this.setState(newState);
-    this.xdsmViewer.setXDSMSelection();
+    this.xdsmViewer.setSelection();
   }
   
   handleNewDisciplineName(event) { 
@@ -116,7 +115,6 @@ class MdaViewer extends React.Component {
   }
 
   handleDisciplineUpdate(node, pos, discattrs) {
-    console.log("INDEX="+pos+" ATTRS="+JSON.stringify(discattrs));
     api.updateDiscipline(node.id, discattrs,
         (function(response) {
           let index = pos-1;
