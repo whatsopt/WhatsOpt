@@ -19,7 +19,8 @@
       <td><%= time_ago_in_words(notebook.updated_at) %> ago</td>
       <td>
         <% if policy(notebook).update? %>
-        	<%= link_to edit_notebook_path(notebook), class: "d-inline btn btn-light btn-inverse btn-sm" do %>
+        	<%= link_to edit_notebook_path(notebook), 
+        	  class: "d-inline btn btn-light btn-inverse btn-sm", title: "Edit" do %>
 	          <i class="fa fa-pencil"></i> 
 	        <% end %>  
 	        <span class="ml-1"/>
@@ -29,7 +30,7 @@
                                                          confirm: "Remove notebook ##{notebook.id}?",
                                                          commit: 'Yes',
                                                          cancel: 'No, cancel' }, 
-                  class: "d-inline btn btn-light btn-inverse btn-sm text-danger" do %>
+                  class: "d-inline btn btn-light btn-inverse btn-sm text-danger", title:"Delete" do %>
             <i class="fa fa-close"></i> 
           <% end %>
         <% end %>

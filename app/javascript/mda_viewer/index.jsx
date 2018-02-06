@@ -139,6 +139,11 @@ class MdaViewer extends React.Component {
     if (this.state.isEditing) {
       return(
       <div>
+        <form className="button_to" method="get" action={url(`/analyses/${this.props.mda.id}`)}>
+          <button className="btn btn-light float-right" type="submit">
+            <i className="fa fa-times-circle" /> Close
+          </button>
+        </form>
         <h1>Edit {this.state.mda.name}</h1>
         <div className="mda-section">     
           <XdsmViewer ref={xdsmViewer => this.xdsmViewer = xdsmViewer} mda={this.state.mda} 

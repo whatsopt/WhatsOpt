@@ -1,3 +1,8 @@
+<%= button_to edit_mda_url(@mda), method: :get, class:"btn btn-light float-right" do |b|%>
+  <span class="fa fa-pencil"></span>
+  Edit
+<% end %> 
+
 <h1><%= @mda.name %></h1>
 
 <% if @mda.attachment %>
