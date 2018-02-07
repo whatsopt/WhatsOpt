@@ -37,8 +37,8 @@ class ConnectionList extends React.Component {
     let href="#";
     let vars = varnames.map((varname, i) => {
       return (<div key={varname} className="btn-group m-1" role="group">
-                <button className="btn btn-light">{varname}</button>
-                <button className="btn btn-light"><i className="fa fa-close" /></button>
+                <button className="btn">{varname}</button>
+                <button className="btn text-danger"><i className="fa fa-close" /></button>
               </div>);
     });
       
