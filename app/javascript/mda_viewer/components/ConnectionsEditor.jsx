@@ -27,8 +27,7 @@ class DisciplineSelector extends React.Component {
   }
 }
 
-
-class Connection extends React.Component {
+class ConnectionList extends React.Component {
   constructor(props) {
     super(props);
   }  
@@ -66,78 +65,18 @@ class VariableList extends React.Component {
   }
 }
 
-class Error extends React.Component {
+class ConnectionsViewer extends React.Component {
   constructor(props) {
     super(props);  
   }    
   
   render() {
-    return (<div className="alert alert-warning" role="alert">
-              <a href="#" data-dismiss="alert" className="close">×</a>
-              {this.props.msg}
-            </div>);  
-  }
-}
-
-
-class ConnectionsForm extends React.Component {
-  constructor(props) {
-    super(props);  
-  } 
-  
-  render() {
-    let errors = this.props.connectionErrors.map((message, i) => {
-        return ( <Error key={i} msg={message} /> );
-    });
-    
-    return (
-      <div className="container">
-        <label className="editor-header">{this.props.title}</label>
-        {this.props.connections} 
-        <div>{errors}</div>
-        <form onSubmit={this.props.onNewConnectionName}>
-          <div className="form-group"> 
-            <label htmlFor="name" className="sr-only">Name</label>
-            <input type="text" value={this.props.newConnectionName} placeholder='Enter name or comma separated names...' 
-                   className="form-control mb-1" id="name" onChange={this.props.onNewConnectionNameChange}
-            />
-            <button type="submit" className="btn btn-primary">New</button>
-          </div>
-        </form>
-      </div>);
-  }
-}
-
-class ConnectionsEditor extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { nodes: [], from: '', to: '', edges: {} };
-    this.handleFromDisciplineSelected = this.handleFromDisciplineSelected.bind(this);
-    this.handleToDisciplineSelected = this.handleToDisciplineSelected.bind(this);
-  }
-  
-  handleFromDisciplineSelected(nodeId) {
-    this.props.onFilterChange({fr: nodeId, to: this.props.filter.to});
-  }
-  
-  handleToDisciplineSelected(nodeId) {
-    this.props.onFilterChange({to: nodeId, fr: this.props.filter.fr});
-  }
-  
-  componentDidMount() {
-    let nodes = update(this.props.nodes, {$unshift: [{id: '_U_', name: 'PENDING'}]});
-    if (this.props.nodes.length > 0) {
-      this.setState({ nodes: nodes, from: '_U_', to: this.props.nodes[0].id, edges: {}, connName: ''});
-    }
-  }
-  
-  render() {
     let connections = [];
     let title = '';
     if (this.props.filter.fr === this.props.filter.to) {
-      // Node selected
+      // Node selected => display input/output variables
       title = 'Variables';
-        
+      
       let edges = this.props.edges.filter((edge) => {
         return (edge.from === this.props.filter.fr) || (edge.to === this.props.filter.to);  
       }, this);
@@ -156,16 +95,100 @@ class ConnectionsEditor extends React.Component {
     } else {
       // Edge selected => Display connection
       title = 'Connection';
-      
+    
       let edges = this.props.edges.filter((edge) => {
         return (edge.from === this.props.filter.fr) && (edge.to === this.props.filter.to);  
       }, this);    
-      
+    
       connections = edges.map((edge, i) => {
-        return ( <Connection key={i} names={edge.name} /> );
+        return ( <ConnectionList key={i} names={edge.name} /> );
       });
     }
+
+    return (<div>
+              <label className="editor-header">{title}</label>
+              {connections} 
+            </div>
+            );
+  }
+}
+
+class Error extends React.Component {
+  constructor(props) {
+    super(props);  
+  }    
+  
+  render() {
+    return (<div className="alert alert-warning" role="alert">
+              {this.props.msg}
+            </div>);  
+  }
+}
+
+class ConnectionsForm extends React.Component {
+  constructor(props) {
+    super(props);  
+  } 
+  
+  render() {
+    let errors = this.props.connectionErrors.map((message, i) => {
+        return ( <Error key={i} msg={message} /> );
+    });
+    let isErroneous = (this.props.connectionErrors.length > 0);
+    let inputClass = "form-control mb-1";
+    if (this.props.newConnectionName.length>0) {
+      inputClass += isErroneous?" is-invalid":" is-valid";
+    }
+    return (
+        <form onSubmit={this.props.onNewConnectionName} noValidate>
+          <div>{errors}</div>
+          <div className="form-group"> 
+            <label htmlFor="name" className="sr-only">Name</label>
+            <input type="text" value={this.props.newConnectionName} placeholder='Enter name or comma separated names...' 
+                   className={inputClass} id="name" onChange={this.props.onNewConnectionNameChange}
+            />
+            <button type="submit" className="btn btn-primary" disabled={isErroneous}>Add</button>
+          </div>
+        </form>
+      );
+  }
+}
+
+class ConnectionsEditor extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { nodes: [], from: '', to: '' };
+    this.handleFromDisciplineSelected = this.handleFromDisciplineSelected.bind(this);
+    this.handleToDisciplineSelected = this.handleToDisciplineSelected.bind(this);
+  }
+  
+  handleFromDisciplineSelected(nodeId) {
+    this.props.onFilterChange({fr: nodeId, to: this.props.filter.to});
+  }
+  
+  handleToDisciplineSelected(nodeId) {
+    this.props.onFilterChange({to: nodeId, fr: this.props.filter.fr});
+  }
+  
+  componentDidMount() {
+    let nodes = update(this.props.nodes, {$unshift: [{id: '_U_', name: 'PENDING'}]});
+    if (this.props.nodes.length > 1) {
+      this.setState({ nodes: nodes, from: '_U_', to: this.props.nodes[1].id});
+    }
+  } 
+  
+  render() {
     
+    let form;
+    if (this.props.filter.fr !== this.props.filter.to) {
+        form = <ConnectionsForm newConnectionName={this.props.newConnectionName} 
+                                onNewConnectionName={this.props.onNewConnectionName} 
+                                onNewConnectionNameChange={this.props.onNewConnectionNameChange}
+                                connectionErrors={this.props.connectionErrors}
+                                filter={this.props.filter}
+                                edges={this.props.edges}/>  
+    } 
+      
     return (
       <div className="container">
         <div className="row editor-section">
@@ -175,10 +198,8 @@ class ConnectionsEditor extends React.Component {
             <DisciplineSelector ulabel="OUTWARD" nodes={this.state.nodes} selected={this.props.filter.to} onSelection={this.handleToDisciplineSelected}/>
           </div>
           <div className="col-9">
-            <ConnectionsForm title={title} connections={connections} newConnectionName={this.props.newConnectionName} 
-                             onNewConnectionName={this.props.onNewConnectionName} 
-                             onNewConnectionNameChange={this.props.onNewConnectionNameChange}
-                             connectionErrors={this.props.connectionErrors}/>
+            <ConnectionsViewer filter={this.props.filter} edges={this.props.edges}/>
+            {form}
           </div>      
         </div>
       </div>

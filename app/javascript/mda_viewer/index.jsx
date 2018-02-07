@@ -36,7 +36,7 @@ class MdaViewer extends React.Component {
     this.handleNewConnectionNameChange = this.handleNewConnectionNameChange.bind(this); 
     this.handleNewConnectionName = this.handleNewConnectionName.bind(this); 
   }
-
+  
   _validateConnectionNames(namesStr) {
     let names = namesStr.split(',');
     names = names.map((name) => { return name.trim(); });
@@ -63,24 +63,26 @@ class MdaViewer extends React.Component {
   
   handleNewConnectionName(event) {
     event.preventDefault();
+
+    if (this.state.errors.length > 0) {
+      return;
+    }
     let names = this.state.newConnectionName.split(',');
     names = names.map((name) => { return name.trim(); });
-    names.forEach((name) => { 
-      if (name !== '') {
-        api.createConnection(this.props.mda.id, 
-            {from: this.state.filter.fr, to: this.state.filter.to, name: name},
-            (response) => {
-                let newconn = response.data;
-                console.log("NEW CONNECTION "+JSON.stringify(newconn));
-                this._addConnection(newconn);
-                this.xdsmViewer.addConnection(newconn);
-              },
-            (error) => { 
-              console.log(JSON.stringify(error));
-              let newState = update(this.state, {errors: {$set: [error.response.data.message]}});
-              this.setState(newState);
-            });
-      }}, this);
+    names = names.filter((name) => name !== '');
+    api.createConnection(this.props.mda.id, 
+        {from: this.state.filter.fr, to: this.state.filter.to, names: names},
+        (response) => {
+            let newconn = response.data;
+            console.log("NEW CONNECTION "+JSON.stringify(newconn));
+            this._addConnection(newconn);
+            this.xdsmViewer.addConnection(newconn);
+          },
+        (error) => { 
+          let message = error.response.data.message;
+          let newState = update(this.state, {errors: {$set: [message]}});
+          this.setState(newState);
+        });
   };
   
   _addConnection(connattrs) {
@@ -212,7 +214,7 @@ class MdaViewer extends React.Component {
           <div className="tab-pane fade show active" id="connections" role="tabpanel" aria-labelledby="connections-tab">
             <ConnectionsEditor nodes={this.state.mda.nodes} edges={this.state.mda.edges} 
                                filter={this.state.filter} onFilterChange={this.handleFilterChange}
-                               connectionName={this.state.newConnectionName}
+                               newConnectionName={this.state.newConnectionName}
                                connectionErrors={this.state.errors}
                                onNewConnectionNameChange={this.handleNewConnectionNameChange}
                                onNewConnectionName={this.handleNewConnectionName}

@@ -7,20 +7,23 @@ class Api::V1::ConnectionsController < Api::ApiController
   # POST /api/v1/connections
   def create
     mda = Analysis.find(params[:mda_id])
-    name = connection_params[:name]
-
+    names = connection_params[:names]
+    from_disc = Discipline.find(connection_params[:from])
+    to_disc = Discipline.find(connection_params[:to])
+      
     begin
-      check_variable_existence(mda, name)
-      
-      from_disc = Discipline.find(connection_params[:from])
-      @varout = from_disc.variables.build(name: name, io_mode: "out", shape: 1, type: "Float", desc: "", units: "")    
-      to_disc = Discipline.find(connection_params[:to])
-      @varin = to_disc.variables.build(name: name, io_mode: "in", shape: 1, type: "Float", desc: "", units: "")
-      
-      from_disc.save
-      to_disc.save
-      
-      resp = {from: from_disc.id.to_s, to: to_disc.id.to_s, name: name}
+      names.each do |name|
+        check_variable_existence(mda, from_disc, to_disc, name)
+        
+        from_disc.variables.build(name: name, io_mode: "out", shape: 1, type: "Float", desc: "", units: "")    
+        to_disc.variables.build(name: name, io_mode: "in", shape: 1, type: "Float", desc: "", units: "")
+        
+        Discipline.transaction do
+          from_disc.save!
+          to_disc.save!
+        end
+      end
+      resp = { from: from_disc.id.to_s, to: to_disc.id.to_s, name: names }
       json_response(resp)
     rescue VariableAlreadyExistsError => e
       json_response({ message: e }, :unprocessable_entity)
@@ -39,17 +42,18 @@ class Api::V1::ConnectionsController < Api::ApiController
 
   private    
   
-    def check_variable_existence(mda, name)
-      found = false      
-      mda.disciplines.nodes.each do |disc|
-        found = disc.variables.map(&:name).include?(name)
-        if found
-          raise VariableAlreadyExistsError.new("Variable " + name + " already in use by node " + disc.name)
+    def check_variable_existence(mda, disc_from, disc_to, varname)     
+      if disc_to.input_variables.map(&:name).include?(varname)
+        raise VariableAlreadyExistsError.new("Variable " + varname + " already consumed by " + disc_to.name)
+      end
+      mda.disciplines.nodes.where.not(id: disc_from).each do |disc|
+        if disc.output_variables.map(&:name).include?(varname)
+          raise VariableAlreadyExistsError.new("Variable " + varname + " already produced by " + disc.name)
         end
       end      
     end
   
     def connection_params
-      params.require(:connection).permit([:from, :to, :name])
+      params.require(:connection).permit(:from, :to, { names: [] })
     end
 end
