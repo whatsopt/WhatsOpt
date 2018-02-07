@@ -17,8 +17,12 @@ class MdaViewer extends React.Component {
     let nodes = props.mda.nodes.map(function(n) { return {id: n.id, name: n.name, type: n.type}; });
     let edges = props.mda.edges.map(function(e) { return {from: e.from, to: e.to, name: e.name}; });
     let isEditing = props.isEditing;
+    let filter = { fr: undefined, to: undefined };
+    if (isEditing) {
+      filter = { fr: "_U_", to: "_U_" };
+    } 
     this.state = {
-      filter: { fr: "_U_", to: "_U_" },
+      filter: filter,
       isEditing: isEditing,
       mda: {name: props.mda.name, nodes: nodes, edges: edges, vars: props.mda.vars},
       mdaNewName: props.mda.name,
@@ -114,12 +118,12 @@ class MdaViewer extends React.Component {
   handleNewDisciplineName(event) { 
     event.preventDefault();
     api.createDiscipline(this.props.mda.id, {name: this.state.newDisciplineName, type: 'analysis'}, 
-      (function(response) {
+      (response) => {
         let newdisc = {id: response.data.id, name: this.state.newDisciplineName, type: 'analysis'};
         let newState = update(this.state, {mda: {nodes: {$push: [newdisc]}}, newDisciplineName: {$set: ''}});
         this.setState(newState);
         this.xdsmViewer.addDiscipline(newdisc);
-    }).bind(this));
+      });
   }
   
   handleNewDisciplineNameChange(event) { 
@@ -132,10 +136,10 @@ class MdaViewer extends React.Component {
   handleMdaNewName(event) { 
     event.preventDefault(); 
     api.updateAnalysis(this.props.mda.id, {name: this.state.mdaNewName}, 
-      (function(response) {
+      (response) => {
         let newState = update(this.state, {mda: { name: {$set: this.state.mdaNewName}}});
         this.setState(newState);
-      }).bind(this));
+      });
   }
   
   handleMdaNewNameChange(event) { 
@@ -147,21 +151,21 @@ class MdaViewer extends React.Component {
 
   handleDisciplineUpdate(node, pos, discattrs) {
     api.updateDiscipline(node.id, discattrs,
-        (function(response) {
+        (response) => {
           let index = pos-1;
           let newState = update(this.state, {mda: {nodes: {[index]: {$merge: discattrs }} }});
           this.setState(newState);
           this.xdsmViewer.updateDiscipline(pos, discattrs);
-    }).bind(this));
+        });
   }
   
   handleDisciplineDelete(node, pos) {
     api.deleteDiscipline(node.id, 
-        (function(response) {
+        (response) => {
           let newState = update(this.state, {mda: {nodes: {$splice: [[pos-1, 1]]}}});
           this.setState(newState);
           this.xdsmViewer.removeDiscipline(pos);
-    }).bind(this));
+        });
   }
   
   render() {
@@ -230,7 +234,7 @@ class MdaViewer extends React.Component {
         </div>
         <div className="mda-section">      
             <XdsmViewer ref={xdsmViewer => this.xdsmViewer = xdsmViewer} mda={this.state.mda} 
-              filter={this.state.filter} onFilterChange={this.handleFilterChange}/>
+             filter={this.state.filter} onFilterChange={this.handleFilterChange}/>
         </div>
         <div className="mda-section">
           <Connections mda={this.state.mda} filter={this.state.filter} onFilterChange={this.handleFilterChange} />
