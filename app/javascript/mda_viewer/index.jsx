@@ -66,15 +66,21 @@ class MdaViewer extends React.Component {
     let names = this.state.newConnectionName.split(',');
     names = names.map((name) => { return name.trim(); });
     names.forEach((name) => { 
-      api.createConnection(this.props.mda.id, 
-          {from: this.state.filter.fr, to: this.state.filter.to, name: name},
-          (function(response) {
-              let newconn = response.data;
-              console.log("NEW CONNECTION "+JSON.stringify(newconn));
-              this._addConnection(newconn);
-              this.xdsmViewer.addConnection(newconn);
-          }).bind(this));
-      }, this);
+      if (name !== '') {
+        api.createConnection(this.props.mda.id, 
+            {from: this.state.filter.fr, to: this.state.filter.to, name: name},
+            (response) => {
+                let newconn = response.data;
+                console.log("NEW CONNECTION "+JSON.stringify(newconn));
+                this._addConnection(newconn);
+                this.xdsmViewer.addConnection(newconn);
+              },
+            (error) => { 
+              console.log(JSON.stringify(error));
+              let newState = update(this.state, {errors: {$set: [error.response.data.message]}});
+              this.setState(newState);
+            });
+      }}, this);
   };
   
   _addConnection(connattrs) {
