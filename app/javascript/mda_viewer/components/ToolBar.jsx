@@ -51,7 +51,7 @@ class ToolBar extends React.Component {
       <div>
         <div className="btn-toolbar" role="toolbar">   
           <div className="btn-group mr-2" role="group"> 
-              <button className={btnStatusClass} type="button" data-toggle="collapse" data-target="#collapseListing" aria-expanded="false">{btnIcon}</button>
+            <button className={btnStatusClass} type="button" data-toggle="collapse" data-target="#collapseListing" aria-expanded="false">{btnIcon}</button>
             <a className="btn btn-primary" href={href_om}>OpenMDAO Export</a>
           </div>
           <div className="btn-group mr-2" role="group">
