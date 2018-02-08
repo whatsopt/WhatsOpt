@@ -6,9 +6,9 @@ varz_design_out:
   type: Float
   shape: 1
   
-varz_objective_in:
-  name: x
-  fullname: x
+varobj_objective_in:
+  name: obj
+  fullname: obj
   discipline: control_cicav
   io_mode: in
   type: Float
@@ -22,9 +22,9 @@ varx_geo_in:
   type: Float
   shape: 1
 
-vary_geo_out:
-  name: y
-  fullname: y
+varobj_geo_out:
+  name: obj
+  fullname: obj
   discipline: geometry
   io_mode: out
   type: Float
@@ -38,41 +38,49 @@ varz_geo_in:
   type: Float
   shape: 1
   
-varz_geo_in_pending:
-  name: x_pending
-  fullname: x_pending
+varya_geo_in:
+  name: ya
+  fullname: ya
+  discipline: geometry
+  io_mode: in
+  type: Float
+  shape: 1  
+  
+varx1_geo_in_pending:
+  name: x1
+  fullname: x1
   discipline: geometry
   io_mode: in
   type: Float
   shape: 1
   
-varz_geo_out:
-  name: z
-  fullname: z
+varyg_geo_out:
+  name: yg
+  fullname: yg
   discipline: geometry
   io_mode: out
   type: Float
   shape: 1
   
-varx_aero_out:
-  name: x
-  fullname: x
+varya_aero_out:
+  name: ya
+  fullname: ya
   discipline: aerodynamics
   io_mode: out
   type: Float
   shape: 1
   
-varx_aero_out_pending:
-  name: z_pending
-  fullname: z_pending
+vary2_aero_out:
+  name: y2
+  fullname: y2
   discipline: aerodynamics
   io_mode: out
   type: Float
   shape: 1
     
-vary_aero_in:
-  name: y
-  fullname: y
+varyg_aero_in:
+  name: yg
+  fullname: yg
   discipline: aerodynamics
   io_mode: in
   type: Float
@@ -86,6 +94,22 @@ varz_aero_in:
   type: Float
   shape: 1
 
+varx_fastdisc_in:
+  name: z
+  fullname: z
+  discipline: fast_discipline
+  io_mode: in
+  type: Float
+  shape: 1
+
+varx_fastdisc_doublon_in:
+  name: z
+  fullname: z
+  discipline: fast_discipline
+  io_mode: in
+  type: Float
+  shape: 1
+  
 var_scalar_float:
   name: y
   fullname: y

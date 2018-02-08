@@ -88,13 +88,15 @@ end
   end
     
   test "should destroy discipline when destroying analysis" do
-    assert_difference('Discipline.count', -3) do  # cicav contains 3 disciplines
+    q = @mda.disciplines
+    assert_difference('Discipline.count', -q.count) do  
       delete mda_url(@mda)
     end
   end
   
   test "should destroy variables when destroying analysis" do
-    assert_difference('Variable.count', -11) do  # cicav use 11 variables
+    q = Variable.joins(discipline: :analysis).where('analyses.id' => @mda.id)
+    assert_difference('Variable.count', -q.count) do
       delete mda_url(@mda)
     end
   end

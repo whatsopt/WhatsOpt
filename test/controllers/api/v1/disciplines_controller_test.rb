@@ -37,7 +37,7 @@ class Api::V1::DisciplineControllerTest < ActionDispatch::IntegrationTest
     assert_equal 'function', resp['type']
   end
 
-  test "should destroy discipline" do
+  test "should delete discipline" do
     assert_difference('Discipline.count', -1) do
       delete api_v1_discipline_url(@disc), as: :json, headers: @auth_headers
     end

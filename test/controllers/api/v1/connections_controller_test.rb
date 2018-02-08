@@ -5,9 +5,9 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
     user1 = users(:user1)
     @auth_headers = {"Authorization" => "Token " + TEST_API_KEY}
     @mda = analyses(:cicav)
-    @from = @mda.disciplines.nodes.first
-    @to = @mda.disciplines.nodes.second
-    @var = @to.variables.take
+    @from = disciplines(:geometry)
+    @to = disciplines(:aerodynamics)
+    @var = variables(:varyg_geo_out)
   end
   
   test "should create a new connection" do
@@ -17,20 +17,28 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-test "should fail to create connection if var name already exists" do
-  post api_v1_mda_connections_url({mda_id: @mda.id, 
-                                   connection: {from: @from.id, to: @to.id, names: [@var.name]}}), 
-       as: :json, headers: @auth_headers 
-  assert_match /Variable x already produced/, JSON.parse(response.body)["message"]
-  assert_response :unprocessable_entity 
-end
+  test "should fail to create connection if var name already exists" do
+    post api_v1_mda_connections_url({mda_id: @mda.id, 
+                                     connection: {from: @from.id, to: @to.id, names: [@var.name]}}), 
+         as: :json, headers: @auth_headers 
+    assert_match /Variable ya already produced/, JSON.parse(response.body)["message"]
+    assert_response :unprocessable_entity 
+  end
+  
+  test "should raise error on bad request" do
+    post api_v1_mda_connections_url({mda_id: @mda.id, 
+                                     connection: {from: @from.id, to: @to.id, names: ['']}}), 
+         as: :json, headers: @auth_headers 
+    assert_match /Variables name can't be blank/, JSON.parse(response.body)["message"]
+    assert_response :unprocessable_entity 
+  end
+      
+  test "should delete a connection" do
+    assert_difference('Variable.count', -2) do
+      delete api_v1_connection_url(connection: {from: @from.id, to: @to.id, names: []}), 
+         as: :json, headers: @auth_headers
+      end
+    assert_response :success
+  end
 
-test "should raise error on bad request" do
-  post api_v1_mda_connections_url({mda_id: @mda.id, 
-                                   connection: {from: @from.id, to: @to.id, names: ['']}}), 
-       as: :json, headers: @auth_headers 
-  assert_match /Variables name can't be blank/, JSON.parse(response.body)["message"]
-  assert_response :unprocessable_entity 
-end
-    
 end
