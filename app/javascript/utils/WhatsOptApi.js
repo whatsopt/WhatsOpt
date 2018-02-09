@@ -54,7 +54,15 @@ class WhatsOptApi {
     let path = `/api/v1/analyses/${mdaId}/connections`
     axios.post(url(path), {connection: connection_attributes})
       .then(callback)
-      .catch(onError);
+      .catch(error => console.log(error));
+  } 
+  
+  deleteConnection(connection_attributes, callback) {
+    let path = `/api/v1/connection`
+    console.log(connection_attributes);
+    axios.post(url(path), {connection: connection_attributes})
+      .then(response => callback(response))
+      .catch(error => console.log(error));
   }
   
 };

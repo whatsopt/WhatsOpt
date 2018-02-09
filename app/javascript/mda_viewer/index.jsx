@@ -39,6 +39,7 @@ class MdaViewer extends React.Component {
     this.handleDisciplineDelete = this.handleDisciplineDelete.bind(this);
     this.handleNewConnectionNameChange = this.handleNewConnectionNameChange.bind(this); 
     this.handleNewConnectionName = this.handleNewConnectionName.bind(this); 
+    this.handleConnectionDelete = this.handleConnectionDelete.bind(this); 
   }
   
   _validateConnectionNames(namesStr) {
@@ -66,6 +67,7 @@ class MdaViewer extends React.Component {
   }
   
   handleNewConnectionName(event) {
+    console.log("handleNewConnectionName ");
     event.preventDefault();
 
     if (this.state.errors.length > 0) {
@@ -74,11 +76,11 @@ class MdaViewer extends React.Component {
     let names = this.state.newConnectionName.split(',');
     names = names.map((name) => { return name.trim(); });
     names = names.filter((name) => name !== '');
+    console.log("handleNewConnectionName ");
     api.createConnection(this.props.mda.id, 
         {from: this.state.filter.fr, to: this.state.filter.to, names: names},
         (response) => {
             let newconn = response.data;
-            console.log("NEW CONNECTION "+JSON.stringify(newconn));
             this._addConnection(newconn);
             this.xdsmViewer.addConnection(newconn);
           },
@@ -90,25 +92,63 @@ class MdaViewer extends React.Component {
   };
   
   _addConnection(connattrs) {
+    console.log("ADDCONN "+JSON.stringify(connattrs));
     let found = false;
     let newState;
     this.state.mda.edges.forEach((edge, i) => {
       if (connattrs.from === edge.from && connattrs.to === edge.to) {
         found = true;
-        let names = edge.name.split(',')
-        names.push(connattrs.name)
-        let newName = names.sort().join(',') 
+        console.log(JSON.stringify(edge));
+        let names = edge.name.split(',');
+        names.push(connattrs.names);
+        let newName = names.sort().join(','); 
+        console.log(newName);
         newState = update(this.state, {mda: {edges: {[i]: {name: {$set: newName}}}}, 
                                        newConnectionName: {$set: ''}});  
       }    
     }, this);
     if (!found) {
-      newState = update(this.state, {mda: {edges: {$push: [connattrs]}}, 
+      let newEdge = { from: connattrs.from, to: connattrs.to, name: connattrs.names.join(',') }
+      newState = update(this.state, {mda: {edges: {$push: [newEdge]}}, 
                                      newConnectionName: {$set: ''}});  
     }
     this.setState(newState); 
+    console.log("END ADDCONN ");
   }
 
+  handleConnectionDelete(varname) {
+    api.deleteConnection({from: this.state.filter.fr, to: this.state.filter.to, names: [varname]},
+      (response) => {
+        let connattrs = { from: this.state.filter.fr, to: this.state.filter.to, names: [varname] };
+        this._deleteConnection(connattrs);
+        this.xdsmViewer.removeConnection(connattrs);
+      });
+  }
+  
+  _deleteConnection(connattrs) {
+     let newState;
+     this.state.mda.edges.forEach((edge, i) => {
+       if (connattrs.from === edge.from && connattrs.to === edge.to) {
+         let names = edge.name.split(',');
+         connattrs.names.forEach((name) => {
+           let index = names.indexOf(name);
+           if (index < 0) {
+             console.log("Warning delete connection: connection " + connattrs + " not found.")  
+           } else {
+             names.splice(index, 1);  
+           }
+         });
+         if (names.length > 0) {
+           let newName = names.sort().join(','); 
+           newState = update(this.state, {mda: {edges: {[i]: {name: {$set: newName}}}}});
+         } else {
+           newState = update(this.state, {mda: {edges: {$splice: [[i, 1]] }}});  
+         }
+         this.setState(newState); 
+       }    
+     }, this);
+  }
+  
   handleFilterChange(filter) { 
     let newState = update(this.state, {filter: {$set: filter}});
     this.setState(newState);
@@ -222,6 +262,7 @@ class MdaViewer extends React.Component {
                                connectionErrors={this.state.errors}
                                onNewConnectionNameChange={this.handleNewConnectionNameChange}
                                onNewConnectionName={this.handleNewConnectionName}
+                               onConnectionDelete={this.handleConnectionDelete}
             />
           </div>
         </div>

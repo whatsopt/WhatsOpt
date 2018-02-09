@@ -33,12 +33,15 @@ class ConnectionList extends React.Component {
   }  
   
   render() {
+    console.log("HTIS.PROPS.NAME "+this.props.names);
     let varnames = this.props.names.split(',');  
     let href="#";
     let vars = varnames.map((varname, i) => {
       return (<div key={varname} className="btn-group m-1" role="group">
                 <button className="btn">{varname}</button>
-                <button className="btn text-danger"><i className="fa fa-close" /></button>
+                <button className="btn text-danger" onClick={(e) => this.props.onConnectionDelete(varname)}>
+                  <i className="fa fa-close" />
+                </button>
               </div>);
     });
       
@@ -103,9 +106,9 @@ class ConnectionsViewer extends React.Component {
       let edges = this.props.edges.filter((edge) => {
         return (edge.from === this.props.filter.fr) && (edge.to === this.props.filter.to);  
       }, this);    
-    
+      console.log(JSON.stringify(edges));
       connections = edges.map((edge, i) => {
-        return ( <ConnectionList key={i} names={edge.name} /> );
+        return ( <ConnectionList key={i} names={edge.name} onConnectionDelete={this.props.onConnectionDelete}/> );
       });
     }
 
@@ -202,7 +205,8 @@ class ConnectionsEditor extends React.Component {
             <DisciplineSelector ulabel="OUTWARD" nodes={this.state.nodes} selected={this.props.filter.to} onSelection={this.handleToDisciplineSelected}/>
           </div>
           <div className="col-9">
-            <ConnectionsViewer filter={this.props.filter} edges={this.props.edges}/>
+            <ConnectionsViewer filter={this.props.filter} edges={this.props.edges} 
+                               onConnectionDelete={this.props.onConnectionDelete}/>
             {form}
           </div>      
         </div>

@@ -57,10 +57,17 @@ class XdsmViewer extends React.Component {
   }
   
   addConnection(connattrs) {
-    this.xdsm.graph.addEdgeVar(connattrs.from, connattrs.to, connattrs.name);
+    connattrs.names.map((name) =>
+      this.xdsm.graph.addEdgeVar(connattrs.from, connattrs.to, name));
     this._refresh();
   }
-  
+    
+  removeConnection(connattrs) {
+    connattrs.names.map((name) =>
+      this.xdsm.graph.removeEdgeVar(connattrs.from, connattrs.to, name));
+    this._refresh();
+  }
+    
   setSelection() {
     this.selectable.setFilter(this.props.filter); 
   }
@@ -72,7 +79,7 @@ class XdsmViewer extends React.Component {
   _refresh() {
     // remove and redraw xdsm 
     this.xdsm.refresh();
-    // reattzach selection
+    // reattach selection
     this.selectable.enable();
     // select current
     this.setSelection();

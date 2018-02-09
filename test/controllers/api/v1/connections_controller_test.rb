@@ -21,7 +21,7 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
     post api_v1_mda_connections_url({mda_id: @mda.id, 
                                      connection: {from: @from.id, to: @to.id, names: [@var.name]}}), 
          as: :json, headers: @auth_headers 
-    assert_match /Variable ya already produced/, JSON.parse(response.body)["message"]
+    assert_match /Variable (\w+) already/, JSON.parse(response.body)["message"]
     assert_response :unprocessable_entity 
   end
   
@@ -35,10 +35,11 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
       
   test "should delete a connection" do
     assert_difference('Variable.count', -2) do
-      delete api_v1_connection_url(connection: {from: @from.id, to: @to.id, names: []}), 
+      delete api_v1_connection_url(connection: {from: @from.id, to: @to.id, names: ['yg']}), 
          as: :json, headers: @auth_headers
-      end
-    assert_response :success
+      assert_response :success
+    end
+
   end
 
 end
