@@ -176,16 +176,8 @@ class ConnectionsEditor extends React.Component {
   handleToDisciplineSelected(nodeId) {
     this.props.onFilterChange({to: nodeId, fr: this.props.filter.fr});
   }
-  
-  componentDidMount() {
-    let nodes = update(this.props.nodes, {$unshift: [{id: '_U_', name: 'PENDING'}]});
-    if (this.props.nodes.length > 1) {
-      this.setState({ nodes: nodes, from: '_U_', to: this.props.nodes[1].id});
-    }
-  } 
-  
-  render() {
     
+  render() {
     let form;
     if (this.props.filter.fr !== this.props.filter.to) {
         form = <ConnectionsForm newConnectionName={this.props.newConnectionName} 
@@ -195,14 +187,15 @@ class ConnectionsEditor extends React.Component {
                                 filter={this.props.filter}
                                 edges={this.props.edges}/>  
     } 
+    let nodes = update(this.props.nodes, {$unshift: [{id: '_U_', name: 'PENDING'}]});
       
     return (
       <div className="container">
         <div className="row editor-section">
           <div className="col-3">
             <label className="editor-header">From/To</label>
-            <DisciplineSelector ulabel="INWARD" nodes={this.state.nodes} selected={this.props.filter.fr} onSelection={this.handleFromDisciplineSelected}/>
-            <DisciplineSelector ulabel="OUTWARD" nodes={this.state.nodes} selected={this.props.filter.to} onSelection={this.handleToDisciplineSelected}/>
+            <DisciplineSelector ulabel="INWARD" nodes={nodes} selected={this.props.filter.fr} onSelection={this.handleFromDisciplineSelected}/>
+            <DisciplineSelector ulabel="OUTWARD" nodes={nodes} selected={this.props.filter.to} onSelection={this.handleToDisciplineSelected}/>
           </div>
           <div className="col-9">
             <ConnectionsViewer filter={this.props.filter} edges={this.props.edges} 

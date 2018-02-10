@@ -61,7 +61,6 @@ class Api::V1::ConnectionsController < Api::ApiController
     end
   
     def connection_params
-      p params
       params.require(:connection).permit(:from, :to, { names: [] })
     end
 end

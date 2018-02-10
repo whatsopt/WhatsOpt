@@ -40,4 +40,10 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     assert_equal 'TestNewName', resp['name'] 
   end  
 
+  test "should get xdsm format" do
+    get api_v1_mda_url(@mda, :format => 'xdsm'), as: :json, headers: @auth_headers
+    assert_response :success
+    resp = JSON.parse(response.body)
+    assert_equal @mda.disciplines.nodes.count, resp['nodes'].size
+  end
 end

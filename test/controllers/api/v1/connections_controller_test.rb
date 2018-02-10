@@ -35,7 +35,7 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
       
   test "should delete a connection" do
     assert_difference('Variable.count', -2) do
-      delete api_v1_connection_url(connection: {from: @from.id, to: @to.id, names: ['yg']}), 
+      post api_v1_connection_url(connection: {from: @from.id, to: @to.id, names: ['yg']}), 
          as: :json, headers: @auth_headers
       assert_response :success
     end

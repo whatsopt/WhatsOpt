@@ -22,6 +22,13 @@ class WhatsOptApi {
       .catch(error => console.log(error));
   };
   
+  getAnalysisXdsm(mdaId, callback) {
+    let path = `/api/v1/analyses/${mdaId}.xdsm`;
+    axios.get(url(path))
+      .then(response => callback(response))
+      .catch(error => console.log(error));
+  };
+  
   createDiscipline(mdaId, discipline_attributes, callback) {
     let path = `/api/v1/analyses/${mdaId}/disciplines`;
     axios.post(url(path), {discipline: discipline_attributes})
@@ -54,7 +61,7 @@ class WhatsOptApi {
     let path = `/api/v1/analyses/${mdaId}/connections`
     axios.post(url(path), {connection: connection_attributes})
       .then(callback)
-      .catch(error => console.log(error));
+      .catch(onError);
   } 
   
   deleteConnection(connection_attributes, callback) {

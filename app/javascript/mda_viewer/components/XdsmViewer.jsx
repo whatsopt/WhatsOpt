@@ -27,7 +27,7 @@ class XdsmViewer extends React.Component {
     this.xdsm = new Xdsm(this.graph, 'root', config);
     this.xdsm.draw();
     this.selectable = new Selectable(this.xdsm, this._onSelectionChange.bind(this));
-    this.setSelection();
+    this.setSelection(this.props.filter);
     this._setTooltips();
   }
 
@@ -39,9 +39,15 @@ class XdsmViewer extends React.Component {
     return false;
   }
 
+  update(mda) {
+    this.xdsm.graph = new Graph(mda);
+    this._refresh();
+  } 
+  
   addDiscipline(discattrs) {
     this.xdsm.graph.addNode(discattrs);
     this.xdsm.draw();
+    this.selectable.enable();
   }
 
   updateDiscipline(index, discattrs) {
@@ -68,8 +74,9 @@ class XdsmViewer extends React.Component {
     this._refresh();
   }
     
-  setSelection() {
-    this.selectable.setFilter(this.props.filter); 
+  setSelection(filter) {
+    console.log("SELECTION "+JSON.stringify(filter));
+    this.selectable.setFilter(filter); 
   }
   
   _onSelectionChange(filter) {
@@ -77,12 +84,13 @@ class XdsmViewer extends React.Component {
   }
   
   _refresh() {
+    $(".ellipsized").tooltip('dispose');
     // remove and redraw xdsm 
     this.xdsm.refresh();
     // reattach selection
     this.selectable.enable();
     // select current
-    this.setSelection();
+    this.setSelection(this.props.filter);
     // reattach tooltips
     this._setTooltips();
   }

@@ -4,7 +4,11 @@ class Api::V1::AnalysesController < Api::ApiController
   
   # GET /api/v1/mda/1
   def show
-    json_response @mda
+    if params[:format] == 'xdsm'
+      render json: @mda.to_mda_viewer_json
+    else
+      json_response @mda
+    end
   end
   
   # GET /api/v1/mdas
