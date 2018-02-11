@@ -16,4 +16,4 @@ var_x_geo_in_init:
   init: "3.14"
   lower: 
   upper: 
-  variable: varx_geo_in
+  variable: varx1_geo_in

@@ -1,7 +1,23 @@
+varx1_out:
+  name: x1
+  fullname: x1
+  discipline: driver_cicav
+  io_mode: out
+  type: Float
+  shape: 1
+
+vary2_in:
+  name: x1
+  fullname: x1
+  discipline: driver_cicav
+  io_mode: in
+  type: Float
+  shape: 1
+
 varz_design_out:
   name: z
   fullname: z
-  discipline: control_cicav
+  discipline: driver_cicav
   io_mode: out
   type: Float
   shape: 1
@@ -9,19 +25,11 @@ varz_design_out:
 varobj_objective_in:
   name: obj
   fullname: obj
-  discipline: control_cicav
+  discipline: driver_cicav
   io_mode: in
   type: Float
   shape: 1  
   
-varx_geo_in:
-  name: x
-  fullname: x
-  discipline: geometry
-  io_mode: in 
-  type: Float
-  shape: 1
-
 varobj_geo_out:
   name: obj
   fullname: obj
@@ -46,7 +54,7 @@ varya_geo_in:
   type: Float
   shape: 1  
   
-varx1_geo_in_pending:
+varx1_geo_in:
   name: x1
   fullname: x1
   discipline: geometry
@@ -82,6 +90,14 @@ varyg_aero_in:
   name: yg
   fullname: yg
   discipline: aerodynamics
+  io_mode: in
+  type: Float
+  shape: 1
+
+varya_geo_in:
+  name: ya
+  fullname: ya
+  discipline: geometry
   io_mode: in
   type: Float
   shape: 1

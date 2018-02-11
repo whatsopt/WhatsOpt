@@ -1,4 +1,4 @@
-control_cicav:
+driver_cicav:
   name: __DRIVER__
   type: null_driver
   analysis: cicav
@@ -16,7 +16,7 @@ aerodynamics:
   analysis: cicav
   position: 2
 
-control_fast:
+driver_fast:
   name: __DRIVER__
   type: null_driver
   analysis: fast

@@ -1,0 +1,28 @@
+driver_z_geo:
+  from_id: varz_design_out
+  to_id: varz_geo_in
+
+driver_z_aero:
+  from_id: varz_design_out
+  to_id: varz_aero_in
+
+objgeo_driver:
+  from_id: varobj_geo_out
+  to_id: varobj_objective_in
+  
+geo_aero:
+  from_id: varyg_geo_out
+  to_id: varyg_aero_in
+  
+aero_geo:
+  from_id: varya_aero_out
+  to_id: varya_geo_in
+  
+driver_x1_geo:
+  from_id: varx1_out
+  to_id: varx1_geo_in
+  
+aero_y2_driver:
+  from_id: vary2_aero_out
+  to_id: vary2_in
+  

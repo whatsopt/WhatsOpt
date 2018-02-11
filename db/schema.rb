@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 26) do
+ActiveRecord::Schema.define(version: 29) do
 
   create_table "analyses", force: :cascade do |t|
     t.string "name"
@@ -32,6 +32,13 @@ ActiveRecord::Schema.define(version: 26) do
     t.index ["container_type", "container_id"], name: "index_attachments_on_container_type_and_container_id"
   end
 
+  create_table "connections", force: :cascade do |t|
+    t.integer "from_id"
+    t.integer "to_id"
+    t.index ["from_id"], name: "index_connections_on_from_id"
+    t.index ["to_id"], name: "index_connections_on_to_id"
+  end
+
   create_table "disciplines", force: :cascade do |t|
     t.string "name"
     t.integer "analysis_id"
@@ -39,6 +46,7 @@ ActiveRecord::Schema.define(version: 26) do
     t.datetime "updated_at", null: false
     t.string "type"
     t.integer "position"
+    t.index ["analysis_id"], name: "index_disciplines_on_analysis_id"
   end
 
   create_table "geometry_models", force: :cascade do |t|
@@ -131,6 +139,7 @@ ActiveRecord::Schema.define(version: 26) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "fullname"
+    t.index ["discipline_id"], name: "index_variables_on_discipline_id"
   end
 
 end

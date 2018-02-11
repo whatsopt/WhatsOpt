@@ -29,11 +29,10 @@ class AnalysisTest < ActiveSupport::TestCase
     aero = disciplines(:aerodynamics).id.to_s
     u = "_U_"
     edges = mda.build_edges
-    assert_equal 7, edges.count
+    assert_equal 6, edges.count
     assert_includes edges, {from: geo, to: aero, name: "yg"}
     assert_includes edges, {from: aero, to: geo, name: "ya"}
-    assert_includes edges, {from: u, to: geo, name: "x1,x"}
-    assert_includes edges, {from: u, to: geo, name: "z"}
+    assert_includes edges, {from: u, to: geo, name: "x1,z"}
     assert_includes edges, {from: u, to: aero, name: "z"}
     assert_includes edges, {from: aero, to: u, name: "y2"}
     assert_includes edges, {from: geo, to: u, name: "obj"}
@@ -51,7 +50,7 @@ class AnalysisTest < ActiveSupport::TestCase
     assert_equal mda.disciplines.nodes.all.map(&:id), tree.keys
     geom_id = Discipline.where(name: 'Geometry').first.id
     aero_id = Discipline.where(name: 'Aerodynamics').first.id
-    assert_equal ["x", "x1", "ya", "z"], tree[geom_id][:in].map{|h| h[:name]}.sort
+    assert_equal ["x1", "ya", "z"], tree[geom_id][:in].map{|h| h[:name]}.sort
     assert_equal ["obj", "yg"], tree[geom_id][:out].map{|h| h[:name]}.sort
     assert_equal ["yg", "z"], tree[aero_id][:in].map{|h| h[:name]}.sort
     assert_equal ["y2", "ya"], tree[aero_id][:out].map{|h| h[:name]}.sort
