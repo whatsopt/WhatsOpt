@@ -28,7 +28,7 @@ class Analysis < ApplicationRecord
   validates :name, presence: true
 
   def driver
-    self.disciplines.driver&.first
+    self.disciplines.driver&.take
   end
   
   def design_variables
@@ -153,7 +153,7 @@ class Analysis < ApplicationRecord
   
   def owner
     owners = User.with_role(:owner, self)
-    owners.first.login if owners
+    owners.take.login if owners
   end
   
   private

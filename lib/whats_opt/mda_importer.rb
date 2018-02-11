@@ -16,7 +16,11 @@ module WhatsOpt
     def get_variables_attributes
       raise "Not yet implemented"
     end
-    
+
+    def get_connections_attributes
+      raise "Not yet implemented"
+    end
+        
   end
   
 end
