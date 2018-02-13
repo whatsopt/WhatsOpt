@@ -1,10 +1,11 @@
-
-
 class Connection < ApplicationRecord  
   
   belongs_to :from, class_name: 'Variable'
   belongs_to :to, class_name: 'Variable'
   
+  validates :from, presence: true
+  validates :to, presence: true
+
   def self.create_connections(mda, based_on = :name)
     varouts = Variable.outputs.joins(discipline: :analysis).where(analyses: {id: mda.id})
     varins = Variable.inputs.joins(discipline: :analysis).where(analyses: {id: mda.id})

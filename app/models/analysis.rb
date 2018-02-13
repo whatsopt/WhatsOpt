@@ -52,8 +52,6 @@ class Analysis < ApplicationRecord
   end
   
   def to_mda_viewer_json
-    p "VARINFOS***********************************************************"
-    p build_var_infos
     { 
       id: self.id,
       name: self.name,
@@ -70,7 +68,7 @@ class Analysis < ApplicationRecord
     }
   end
 
-  def build_edges2
+  def build_edges
     edges = []
     self.disciplines.each do |d_from|
       from_id = (d_from.name == WhatsOpt::Discipline::NULL_DRIVER_NAME)?"_U_":d_from.id.to_s 
@@ -86,83 +84,79 @@ class Analysis < ApplicationRecord
         edges << { from: from_id, to: to_id, name: names } unless conns.empty?
       end
     end
-    p "EDGES**********************************************************"
-    p build_edges
-    p "EDGES2222222222222222222222222222222222222222222222222222222222"
-    p edges
     edges
   end
   
-  def build_edges
-    edges = []
-    @all_connections = Set.new
-
-    # connections
-    disciplines.each do |d_from|
-      outputs = d_from.output_variables 
-      disciplines.each do |d_to|
-        next if d_to == d_from
-        inputs = d_to.input_variables
-        if self.attachment&.mda_cmdows?
-          connections = outputs.map(&:fullname) & inputs.map(&:fullname)
-          in_connections = inputs.select{|c| connections.include?(c.fullname)}
-          out_connections = outputs.select{|c| connections.include?(c.fullname)}
-        else
-          connections = outputs.map(&:name) & inputs.map(&:name)
-          in_connections = inputs.select{|c| connections.include?(c.name)}
-          out_connections = outputs.select{|c| connections.include?(c.name)}
-        end
-
-        unless _consistent?(in_connections, out_connections)
-          raise StandardError.new("connection inconsistency in:"+in_connections.inspect+", out:"+out_connections.inspect)
-        end
-        @all_connections.merge(in_connections)
-        @all_connections.merge(out_connections)
-        unless connections.empty?
-          #p connections
-          frid = (d_from.name == WhatsOpt::Discipline::NULL_DRIVER_NAME)?"_U_":d_from.id 
-          toid = (d_to.name == WhatsOpt::Discipline::NULL_DRIVER_NAME)?"_U_":d_to.id
-          if frid == "_U_"
-            names = in_connections.map(&:name)
-            fullnames = in_connections.map(&:fullname)
-          else
-            names = in_connections.map(&:name)
-            fullnames = out_connections.map(&:fullname)
-          end
-          if self.attachment&.mda_cmdows?
-            edge = { from: "#{frid}", to: "#{toid}", name: fullnames.sort.join(",") }
-          else
-            edge = { from: "#{frid}", to: "#{toid}", name: names.sort.join(",") }
-          end
-          #p "ADD", edge
-          edges << edge
-        end
-      end
-    end 
-
-    #p @all_connections
-    # pendings
-    disciplines.nodes.each do |d|
-      #p d, d.input_variables, d.output_variables
-      in_pendings = _get_pending_connections(d.input_variables)
-      #p "IN_PENDINGS", in_pendings
-      unless in_pendings.empty?
-        edge = { from: "_U_", to: "#{d.id}", name: in_pendings.join(",") }
-        #p "ADD", edge
-        edges << edge
-      end
-
-      out_pendings = _get_pending_connections(d.output_variables)
-      #p "OUT_PENDINGS", out_pendings
-      unless out_pendings.empty?
-        edge = { from: "#{d.id}", to: "_U_", name: out_pendings.join(",") }
-        #p "ADD", edge
-        edges << edge
-      end        
-    end   
-    #p edges
-    edges
-  end
+#  def build_edges
+#    edges = []
+#    @all_connections = Set.new
+#
+#    # connections
+#    disciplines.each do |d_from|
+#      outputs = d_from.output_variables 
+#      disciplines.each do |d_to|
+#        next if d_to == d_from
+#        inputs = d_to.input_variables
+#        if self.attachment&.mda_cmdows?
+#          connections = outputs.map(&:fullname) & inputs.map(&:fullname)
+#          in_connections = inputs.select{|c| connections.include?(c.fullname)}
+#          out_connections = outputs.select{|c| connections.include?(c.fullname)}
+#        else
+#          connections = outputs.map(&:name) & inputs.map(&:name)
+#          in_connections = inputs.select{|c| connections.include?(c.name)}
+#          out_connections = outputs.select{|c| connections.include?(c.name)}
+#        end
+#
+#        unless _consistent?(in_connections, out_connections)
+#          raise StandardError.new("connection inconsistency in:"+in_connections.inspect+", out:"+out_connections.inspect)
+#        end
+#        @all_connections.merge(in_connections)
+#        @all_connections.merge(out_connections)
+#        unless connections.empty?
+#          #p connections
+#          frid = (d_from.name == WhatsOpt::Discipline::NULL_DRIVER_NAME)?"_U_":d_from.id 
+#          toid = (d_to.name == WhatsOpt::Discipline::NULL_DRIVER_NAME)?"_U_":d_to.id
+#          if frid == "_U_"
+#            names = in_connections.map(&:name)
+#            fullnames = in_connections.map(&:fullname)
+#          else
+#            names = in_connections.map(&:name)
+#            fullnames = out_connections.map(&:fullname)
+#          end
+#          if self.attachment&.mda_cmdows?
+#            edge = { from: "#{frid}", to: "#{toid}", name: fullnames.sort.join(",") }
+#          else
+#            edge = { from: "#{frid}", to: "#{toid}", name: names.sort.join(",") }
+#          end
+#          #p "ADD", edge
+#          edges << edge
+#        end
+#      end
+#    end 
+#
+#    #p @all_connections
+#    # pendings
+#    disciplines.nodes.each do |d|
+#      #p d, d.input_variables, d.output_variables
+#      in_pendings = _get_pending_connections(d.input_variables)
+#      #p "IN_PENDINGS", in_pendings
+#      unless in_pendings.empty?
+#        edge = { from: "_U_", to: "#{d.id}", name: in_pendings.join(",") }
+#        #p "ADD", edge
+#        edges << edge
+#      end
+#
+#      out_pendings = _get_pending_connections(d.output_variables)
+#      #p "OUT_PENDINGS", out_pendings
+#      unless out_pendings.empty?
+#        edge = { from: "#{d.id}", to: "_U_", name: out_pendings.join(",") }
+#        #p "ADD", edge
+#        edges << edge
+#      end        
+#    end   
+#    #p edges
+#    edges
+#  end
 
   def build_var_infos
     res = disciplines.nodes.map {|d|
@@ -173,8 +167,6 @@ class Analysis < ApplicationRecord
       {d.id => {in: inputs.as_json, out: outputs.as_json}}
     }
     tree = res.inject({}) {|result, h| result.update(h)}
-    p "DRIVERRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR"
-    p tree[disciplines.nodes.first.id]
     tree
   end
   
@@ -185,26 +177,26 @@ class Analysis < ApplicationRecord
   
   private
   
-    def _consistent?(ins, outs)
-      criteria = [:type, :units, :shape]
-      ins_selection = ins.map{|var| {type: var[:type], units: var[:units], shape: var[:shape]} }
-      outs_selection = ins.map{|var| {type: var[:type], units: var[:units], shape: var[:shape]} }
-      ins_selection == outs_selection
-    end
-  
-    def _get_pending_connections(vars)
-      pendings = []
-      vars.each do |v|
-        unless @all_connections.map(&:fullname).include?(v.fullname)
-          if self.attachment&.mda_cmdows?
-            pendings << v.fullname
-          else
-            pendings << v.name
-          end
-        end
-      end
-      pendings
-    end      
+#    def _consistent?(ins, outs)
+#      criteria = [:type, :units, :shape]
+#      ins_selection = ins.map{|var| {type: var[:type], units: var[:units], shape: var[:shape]} }
+#      outs_selection = ins.map{|var| {type: var[:type], units: var[:units], shape: var[:shape]} }
+#      ins_selection == outs_selection
+#    end
+#  
+#    def _get_pending_connections(vars)
+#      pendings = []
+#      vars.each do |v|
+#        unless @all_connections.map(&:fullname).include?(v.fullname)
+#          if self.attachment&.mda_cmdows?
+#            pendings << v.fullname
+#          else
+#            pendings << v.name
+#          end
+#        end
+#      end
+#      pendings
+#    end
     
     def attachment_exists
       self.attachment && self.attachment.exists?
