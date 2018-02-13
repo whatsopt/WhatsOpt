@@ -95,7 +95,7 @@ end
   end
   
   test "should destroy variables when destroying analysis" do
-    q = Variable.joins(discipline: :analysis).where('analyses.id' => @mda.id)
+    q = Variable.joins(discipline: :analysis).where(analyses: {id: @mda.id})
     assert_difference('Variable.count', -q.count) do
       delete mda_url(@mda)
     end

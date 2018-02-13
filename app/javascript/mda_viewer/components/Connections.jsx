@@ -60,7 +60,7 @@ class Connection extends React.Component {
         //console.log("FIND "+JSON.stringify(vinfos));
         vinfo = vinfos[0];
       } else if (vinfos.length > 1) {
-        console.log("Find several occurences of " + vname + ": " + JSON.stringify(vinfos));
+        console.log("Find several occurences of " + vname + "("+io_mode +"): " + JSON.stringify(vinfos));
         console.log("Check against fullnames");
         vinfos = vars[disc][io_mode].filter((v) => { 
           return v.fullname === vname; 
@@ -71,8 +71,8 @@ class Connection extends React.Component {
           throw Error(`Expected one variable ${vname} found ${vinfos.length} in ${JSON.stringify(vars[disc][io_mode])}`);
         }
       } else {
-        console.log("Find no occurence of " + vname + ": " + JSON.stringify(vinfos));
-        console.log("Check against fullnames");
+        // console.log("Find no occurence of " + vname + "(" + io_mode + "): " + JSON.stringify(vinfos));
+        // console.log("Check against fullnames");
         vinfos = vars[disc][io_mode].filter((v) => { 
           return v.fullname === vname; 
         });

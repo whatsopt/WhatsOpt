@@ -75,7 +75,7 @@ class XdsmViewer extends React.Component {
   }
     
   setSelection(filter) {
-    console.log("SELECTION "+JSON.stringify(filter));
+    // console.log("SELECTION "+JSON.stringify(filter));
     this.selectable.setFilter(filter); 
   }
   

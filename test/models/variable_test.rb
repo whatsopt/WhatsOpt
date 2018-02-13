@@ -48,4 +48,14 @@ class VariableTest < ActiveSupport::TestCase
     assert_equal({:init=>"3.14"}, adapter.as_json[:parameter])
   end
   
+  test "may have several outgoings when output" do
+    var = variables(:varz_design_out)
+    assert_equal 2, var.outgoing_connections.count
+  end
+  
+  test "should have one incoming when input" do
+    var = variables(:varyg_aero_in)
+    assert var.incoming_connection
+  end
+  
 end

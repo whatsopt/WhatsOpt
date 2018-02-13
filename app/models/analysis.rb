@@ -14,7 +14,7 @@ class Analysis < ApplicationRecord
   validates_associated :attachment
   
   has_many :disciplines, -> { order(position: :asc) }, :dependent => :destroy 
-
+    
   accepts_nested_attributes_for :disciplines, 
     reject_if: proc { |attr| attr['name'].blank? }, allow_destroy: true
       
@@ -52,11 +52,13 @@ class Analysis < ApplicationRecord
   end
   
   def to_mda_viewer_json
+    p "VARINFOS***********************************************************"
+    p build_var_infos
     { 
       id: self.id,
       name: self.name,
       nodes: build_nodes,
-      edges: build_edges,
+      edges: build_edges2,
       workflow: [],
       vars: build_var_infos
     }.to_json
@@ -68,6 +70,29 @@ class Analysis < ApplicationRecord
     }
   end
 
+  def build_edges2
+    edges = []
+    self.disciplines.each do |d_from|
+      from_id = (d_from.name == WhatsOpt::Discipline::NULL_DRIVER_NAME)?"_U_":d_from.id.to_s 
+      self.disciplines.each do |d_to|
+        next if d_from == d_to
+        to_id = (d_to.name == WhatsOpt::Discipline::NULL_DRIVER_NAME)?"_U_":d_to.id.to_s  
+        conns = Connection.between(d_from.id, d_to.id)
+        if self.attachment&.mda_cmdows?
+          names = conns.map{ |c| c.from.fullname }.join(",")
+        else
+          names = conns.map{ |c| c.from.name }.join(",")
+        end
+        edges << { from: from_id, to: to_id, name: names } unless conns.empty?
+      end
+    end
+    p "EDGES**********************************************************"
+    p build_edges
+    p "EDGES2222222222222222222222222222222222222222222222222222222222"
+    p edges
+    edges
+  end
+  
   def build_edges
     edges = []
     @all_connections = Set.new
@@ -148,6 +173,8 @@ class Analysis < ApplicationRecord
       {d.id => {in: inputs.as_json, out: outputs.as_json}}
     }
     tree = res.inject({}) {|result, h| result.update(h)}
+    p "DRIVERRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR"
+    p tree[disciplines.nodes.first.id]
     tree
   end
   

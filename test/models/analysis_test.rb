@@ -48,12 +48,12 @@ class AnalysisTest < ActiveSupport::TestCase
     mda = analyses(:cicav)
     tree = mda.build_var_infos
     assert_equal mda.disciplines.nodes.all.map(&:id), tree.keys
-    geom_id = Discipline.where(name: 'Geometry').first.id
-    aero_id = Discipline.where(name: 'Aerodynamics').first.id
+    geom_id = Discipline.where(name: 'Geometry').take.id
+    aero_id = Discipline.where(name: 'Aerodynamics').take.id
     assert_equal ["x1", "ya", "z"], tree[geom_id][:in].map{|h| h[:name]}.sort
     assert_equal ["obj", "yg"], tree[geom_id][:out].map{|h| h[:name]}.sort
     assert_equal ["yg", "z"], tree[aero_id][:in].map{|h| h[:name]}.sort
     assert_equal ["y2", "ya"], tree[aero_id][:out].map{|h| h[:name]}.sort
   end
- 
+
 end
