@@ -56,7 +56,7 @@ class Analysis < ApplicationRecord
       id: self.id,
       name: self.name,
       nodes: build_nodes,
-      edges: build_edges2,
+      edges: build_edges,
       workflow: [],
       vars: build_var_infos
     }.to_json
