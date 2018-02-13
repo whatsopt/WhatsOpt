@@ -28,18 +28,18 @@ class DisciplineSelector extends React.Component {
 }
 
 class ConnectionList extends React.Component {
-  constructor(props) {
-    super(props);
-  }  
-  
+
   render() {
-    console.log("HTIS.PROPS.NAME "+this.props.names);
     let varnames = this.props.names.split(',');  
     let href="#";
     let vars = varnames.map((varname, i) => {
+      let id = this.props.conn_ids[i];
+      console.log(varname);
+      console.log(this.props.conn_ids);
+      console.log(id);
       return (<div key={varname} className="btn-group m-1" role="group">
                 <button className="btn">{varname}</button>
-                <button className="btn text-danger" onClick={(e) => this.props.onConnectionDelete(varname)}>
+                <button className="btn text-danger" onClick={(e) => this.props.onConnectionDelete(id)}>
                   <i className="fa fa-close" />
                 </button>
               </div>);
@@ -50,10 +50,7 @@ class ConnectionList extends React.Component {
 }
 
 class VariableList extends React.Component {
-  constructor(props) {
-    super(props);
-  }  
-    
+
   compare(a, b) {
     if (a.ioMode === b.ioMode) {
       return a.name.localeCompare(b.name); 
@@ -73,13 +70,11 @@ class VariableList extends React.Component {
 }
 
 class ConnectionsViewer extends React.Component {
-  constructor(props) {
-    super(props);  
-  }    
-  
+
   render() {
     let connections = [];
     let title = '';
+    let count = 0;
     if (this.props.filter.fr === this.props.filter.to) {
       // Node selected => display input/output variables
       title = 'Variables';
@@ -98,22 +93,23 @@ class ConnectionsViewer extends React.Component {
         }, this); 
       }, this);
       edges = uniqEdges;
+      count = edges.length;
       connections = ( <VariableList vars={edges} /> );
     } else {
       // Edge selected => Display connection
-      title = 'Connection';
+      title = 'Connections';
     
       let edges = this.props.edges.filter((edge) => {
         return (edge.from === this.props.filter.fr) && (edge.to === this.props.filter.to);  
       }, this);    
-      console.log(JSON.stringify(edges));
       connections = edges.map((edge, i) => {
-        return ( <ConnectionList key={i} names={edge.name} onConnectionDelete={this.props.onConnectionDelete}/> );
+        count += edge.name.split(',').length;
+        return ( <ConnectionList key={i} names={edge.name} conn_ids={edge.conn_ids} onConnectionDelete={this.props.onConnectionDelete}/> );
       });
     }
 
     return (<div>
-              <label className="editor-header">{title}</label>
+              <label className="editor-header">{title}  <span className="badge badge-info">{count}</span></label>
               {connections} 
             </div>
             );
@@ -121,10 +117,7 @@ class ConnectionsViewer extends React.Component {
 }
 
 class Error extends React.Component {
-  constructor(props) {
-    super(props);  
-  }    
-  
+
   render() {
     return (<div className="alert alert-warning" role="alert">
               {this.props.msg}
@@ -133,9 +126,6 @@ class Error extends React.Component {
 }
 
 class ConnectionsForm extends React.Component {
-  constructor(props) {
-    super(props);  
-  } 
   
   render() {
     let errors = this.props.connectionErrors.map((message, i) => {
@@ -147,12 +137,12 @@ class ConnectionsForm extends React.Component {
       inputClass += isErroneous?" is-invalid":" is-valid";
     }
     return (
-        <form onSubmit={this.props.onNewConnectionName} noValidate>
+        <form onSubmit={this.props.onConnectionCreate} noValidate>
           <div>{errors}</div>
           <div className="form-group"> 
             <label htmlFor="name" className="sr-only">Name</label>
             <input type="text" value={this.props.newConnectionName} placeholder='Enter name or comma separated names...' 
-                   className={inputClass} id="name" onChange={this.props.onNewConnectionNameChange}
+                   className={inputClass} id="name" onChange={this.props.onConnectionNameChange}
             />
             <button type="submit" className="btn btn-primary" disabled={isErroneous}>Add</button>
           </div>
@@ -181,8 +171,8 @@ class ConnectionsEditor extends React.Component {
     let form;
     if (this.props.filter.fr !== this.props.filter.to) {
         form = <ConnectionsForm newConnectionName={this.props.newConnectionName} 
-                                onNewConnectionName={this.props.onNewConnectionName} 
-                                onNewConnectionNameChange={this.props.onNewConnectionNameChange}
+                                onConnectionCreate={this.props.onConnectionCreate} 
+                                onConnectionNameChange={this.props.onConnectionNameChange}
                                 connectionErrors={this.props.connectionErrors}
                                 filter={this.props.filter}
                                 edges={this.props.edges}/>  
@@ -192,12 +182,12 @@ class ConnectionsEditor extends React.Component {
     return (
       <div className="container">
         <div className="row editor-section">
-          <div className="col-3">
+          <div className="col-2">
             <label className="editor-header">From/To</label>
             <DisciplineSelector ulabel="INWARD" nodes={nodes} selected={this.props.filter.fr} onSelection={this.handleFromDisciplineSelected}/>
             <DisciplineSelector ulabel="OUTWARD" nodes={nodes} selected={this.props.filter.to} onSelection={this.handleToDisciplineSelected}/>
           </div>
-          <div className="col-9">
+          <div className="col-10">
             <ConnectionsViewer filter={this.props.filter} edges={this.props.edges} 
                                onConnectionDelete={this.props.onConnectionDelete}/>
             {form}

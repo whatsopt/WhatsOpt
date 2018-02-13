@@ -29,6 +29,7 @@ class AnalysisTest < ActiveSupport::TestCase
     aero = disciplines(:aerodynamics).id.to_s
     u = "_U_"
     edges = mda.build_edges
+    edges = edges.map{|e| {from: e[:from], to: e[:to], name: e[:name]}}
     assert_equal 6, edges.count
     assert_includes edges, {from: geo, to: aero, name: "yg"}
     assert_includes edges, {from: aero, to: geo, name: "ya"}

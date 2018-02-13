@@ -11,6 +11,7 @@ class Variable < ApplicationRecord
 
   DEFAULT_SHAPE = '1' # either 'n', '(n,), (n, m) or (n, m, p)'
   DEFAULT_TYPE = FLOAT_T
+  DEFAULT_IOMODE = IN
     
   self.inheritance_column = :disable_inheritance
   belongs_to :discipline
@@ -51,8 +52,11 @@ class Variable < ApplicationRecord
   
   def set_defaults
     self.fullname = self.name if self.fullname.blank?
+    self.io_mode = DEFAULT_IOMODE if self.io_mode.blank?
     self.shape = DEFAULT_SHAPE if self.shape.blank?
     self.type  = DEFAULT_TYPE if self.type.blank?
+    self.units  = "" if self.units.blank?
+    self.desc  = "" if self.desc.blank?
   end
 
   def shape_is_well_formed

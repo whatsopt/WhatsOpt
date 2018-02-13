@@ -64,10 +64,9 @@ class WhatsOptApi {
       .catch(onError);
   } 
   
-  deleteConnection(connection_attributes, callback) {
-    let path = `/api/v1/connection`
-    console.log(connection_attributes);
-    axios.post(url(path), {connection: connection_attributes})
+  deleteConnection(connection_id, callback) {
+    let path = `/api/v1/connections/${connection_id}`
+    axios.delete(url(path))
       .then(response => callback(response))
       .catch(error => console.log(error));
   }

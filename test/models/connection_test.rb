@@ -11,15 +11,12 @@ class ConnectionTest < ActiveSupport::TestCase
   
   test "should get edges" do
     mda = analyses(:cicav)
-    
-    mda.build_edges2
+    mda.build_edges
   end
   
   test "migration" do
     mda = analyses(:cicav)
-    
     conns = Connection.joins(from: :discipline).where(disciplines: {analysis_id: mda.id})
-    p conns.count
   end
   
 end

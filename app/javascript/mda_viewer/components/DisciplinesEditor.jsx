@@ -93,12 +93,6 @@ class Discipline extends React.Component {
 class DisciplinesEditor extends React.Component {
   constructor(props) {
     super(props);   
-    this.handleChange = this.handleChange.bind(this);
-  }
-
-  handleChange(event) {
-    event.preventDefault();
-    this.props.onNewDisciplineNameChange(event);
   }
   
   render() {
@@ -117,10 +111,12 @@ class DisciplinesEditor extends React.Component {
             </ul>
           </div>
           <div className="editor-section">          
-            <form className="form-inline" onSubmit={this.props.onNewDisciplineName}>
+            <form className="form-inline" onSubmit={this.props.onDisciplineCreate}>
               <div className="form-group"> 
                 <label htmlFor="name" className="sr-only">Name</label>
-                <input type="text" value={this.props.name} placeholder='Enter Name...' className="form-control" id="name" onChange={this.handleChange}/>
+                <input type="text" value={this.props.name} 
+                       placeholder='Enter Name...' className="form-control" 
+                       id="name" onChange={this.props.onDisciplineNameChange}/>
               </div>
               <button type="submit" className="btn btn-primary ml-1">New</button>
             </form>

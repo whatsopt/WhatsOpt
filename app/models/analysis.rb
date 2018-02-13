@@ -57,7 +57,6 @@ class Analysis < ApplicationRecord
       name: self.name,
       nodes: build_nodes,
       edges: build_edges,
-      workflow: [],
       vars: build_var_infos
     }.to_json
     end
@@ -81,7 +80,8 @@ class Analysis < ApplicationRecord
         else
           names = conns.map{ |c| c.from.name }.join(",")
         end
-        edges << { from: from_id, to: to_id, name: names } unless conns.empty?
+        ids = conns.map(&:id)
+        edges << { from: from_id, to: to_id, name: names, conn_ids: ids } unless conns.empty?
       end
     end
     edges
@@ -173,6 +173,14 @@ class Analysis < ApplicationRecord
   def owner
     owners = User.with_role(:owner, self)
     owners.take.login if owners
+  end
+  
+  def find_discipline(id)
+    if id == "_U_"
+      self.driver
+    else
+      Discipline.find(id)
+    end
   end
   
   private

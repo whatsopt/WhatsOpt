@@ -29,14 +29,14 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
     post api_v1_mda_connections_url({mda_id: @mda.id, 
                                      connection: {from: @from.id, to: @to.id, names: ['']}}), 
          as: :json, headers: @auth_headers 
-    assert_match /Variables name can't be blank/, JSON.parse(response.body)["message"]
+    assert_match /can't be blank/, JSON.parse(response.body)["message"]
     assert_response :unprocessable_entity 
   end
       
   test "should delete a connection" do
     assert_difference('Variable.count', -2) do
-      post api_v1_connection_url(connection: {from: @from.id, to: @to.id, names: ['yg']}), 
-         as: :json, headers: @auth_headers
+      connyg = Connection.find_by_from_id(@var.id)
+      delete api_v1_connection_url(connyg), as: :json, headers: @auth_headers
       assert_response :success
     end
 
