@@ -87,12 +87,12 @@ class WhatsOpt(object):
         resp = self.session.get(url, headers=self.headers)
         resp.raise_for_status() 
         if echo:
-            print("Sucessfully login to WhatsOpt")
+            print("Sucessfully login to WhatsOpt (%s)" % self.url)
 
     def logout(self):
         if os.path.exists(API_KEY_FILENAME):
             os.remove(API_KEY_FILENAME)
-        print("Sucessfully logout from WhatsOpt")
+        print("Sucessfully logout from WhatsOpt (%s)" % self.url)
 
     def list_analyses(self):
         url =  self._url('/api/v1/analyses')
@@ -201,6 +201,7 @@ class WhatsOpt(object):
                                                        'shape': str(meta['shape']),
                                                        'units': meta['units'],
                                                        'desc': meta['desc']}
+        disciplines = [WhatsOpt._format_discipline_name(name) for name in disciplines]
         return disciplines
 
     def _initialize_disciplines_attrs(self, problem, connections):
@@ -222,7 +223,7 @@ class WhatsOpt(object):
             
     def _create_varattr_from_connection(self, fullname, io_mode):
         disc, var = WhatsOpt._extract_disc_var(fullname)
-        varattr = {'name':var, 'fullname':fullname, 'io_mode': io_mode,
+        varattr = {'name':var, 'fullname':disc+'.'+var, 'io_mode': io_mode,
                    'type':self.vars[fullname]['type'], 'shape':self.vars[fullname]['shape'], 
                    'units':self.vars[fullname]['units'], 'desc':self.vars[fullname]['desc']}
         if disc in self.discnames and varattr not in self.varattrs[disc]: 
@@ -253,6 +254,10 @@ class WhatsOpt(object):
                 self.varattrs[NULL_DRIVER_NAME].append(varattr_in)
 
     @staticmethod
+    def _format_discipline_name(name):
+        return name.replace('.', '_')
+    
+    @staticmethod
     def _extract_disc_var(fullname):
         name_elts = fullname.split('.')
         if len(name_elts) > 1:
@@ -260,6 +265,5 @@ class WhatsOpt(object):
         else:
             raise Exception('Connection qualified name should contain' + 
                             'at least one dot, but got %s' % fullname)
+        disc = WhatsOpt._format_discipline_name(disc)
         return disc, var
-        
-        

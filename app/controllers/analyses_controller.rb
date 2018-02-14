@@ -27,7 +27,7 @@ class AnalysesController < ApplicationController
     else 
       @mda = Analysis.new(mda_params)
       if @mda.save
-        Connections.create_connections(@mda) if @import
+        Connection.create_connections(@mda) if @import
         current_user.add_role(:owner, @mda)
         current_user.save
         redirect_to mda_url(@mda), notice: 'MDA was successfully created.'

@@ -20,8 +20,9 @@ class Api::V1::AnalysesController < Api::ApiController
   # POST /api/v1/mdas
   def create
     @mda = Analysis.create!(mda_params)
+    Connection.create_connections(@mda)
     current_user.add_role(:owner, @mda)
-    current_user.save
+    current_user.save!
     json_response @mda
   end
 
