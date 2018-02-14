@@ -180,7 +180,7 @@ class ConnectionsEditor extends React.Component {
     let nodes = update(this.props.nodes, {$unshift: [{id: '_U_', name: 'PENDING'}]});
       
     return (
-      <div className="container">
+      <div className="container-fluid">
         <div className="row editor-section">
           <div className="col-2">
             <label className="editor-header">From/To</label>

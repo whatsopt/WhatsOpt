@@ -103,7 +103,7 @@ class DisciplinesEditor extends React.Component {
     });
 
     return (
-        <div className='container'>
+        <div className='container-fluid'>
           <div className="editor-section">
             <label className="editor-header">Nodes</label> 
             <ul className="list-group">

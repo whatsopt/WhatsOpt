@@ -7,14 +7,11 @@ class Connection extends React.Component {
   render() {
     let infos = this._findInfos(this.props.conn); 
     let units = infos.frUnits;
-    if (infos.frUnits !== infos.toUnits && infos.toUnits) {
-      units += `-> ${infos.toUnits}`;
-    }
     //console.log("VARNAME "+JSON.stringify(infos));
     return (
       <tr>
         <td>{this.props.conn.frName}</td>
-        <td>{this.props.conn.toName}</td>
+        <td>{this.props.conn.toName.join(', ')}</td>
         <td title={infos.desc} >{infos.vName}</td>
         <td>{infos.type}</td>
         <td>{infos.shape}</td>
@@ -27,22 +24,19 @@ class Connection extends React.Component {
   _findInfos(conn) { 
     //console.log("CONN : "+JSON.stringify(conn));
     let vfr = this._findVariableInfo(conn.fr, conn.varname, "out");
-    let vto = this._findVariableInfo(conn.to, conn.varname, "in");
-    let desc = vfr.desc || vto.desc
-    if (vfr.desc && vto.desc && vfr.desc !== vto.desc) {
-      desc = `From: ${vfr.desc}, To: ${vfr.desc}`;
-    } 
+    let vto = this._findVariableInfo(conn.to[0], conn.varname, "in");
+    let desc = vfr.desc || vto.desc; 
     let vartype = vfr.type || vto.type;
     let shape = vfr.shape || vto.shape;    
-    let varname = vfr.fullname || vto.fullname; 
+    let varname = vfr.name || vto.name; 
     let init = "";
 
     if (vto.parameter) {
-        init = vto.parameter.init;
+      init = vto.parameter.init;
     }
     let infos = { frName: conn.frName, frUnits: vfr.units, 
                   vName: varname, desc: desc,
-                  toName: conn.toName, toUnits: vto.units,
+                  toName: conn.toName.join(', '),
                   type: vartype, shape: shape, init: init};
     return infos;
   }
@@ -50,14 +44,15 @@ class Connection extends React.Component {
   // TODO: Big technical debt to be reduced
   _findVariableInfo(disc, vname, io_mode) {
     let vars = this.props.vars;
+    //console.log(disc, vname);
     let vinfo = {units: '', desc: '', type: '', shape: '', init: ''};
     if (disc !== USER) {
-      //console.log("search "+ vname + " in " + JSON.stringify(vars[disc][io_mode])); 
+      // console.log("search "+ vname + " in " + JSON.stringify(vars[disc][io_mode])); 
       let vinfos = vars[disc][io_mode].filter((v) => { 
         return v.name === vname; 
       });
       if (vinfos.length === 1) {
-        //console.log("FIND "+JSON.stringify(vinfos));
+        // console.log("FIND "+JSON.stringify(vinfos));
         vinfo = vinfos[0];
       } else if (vinfos.length > 1) {
         console.log("Find several occurences of " + vname + "("+io_mode +"): " + JSON.stringify(vinfos));
@@ -93,7 +88,6 @@ class Connections extends React.Component {
   }
 
   render() {
-    var conns = [];
     var edges = this.props.mda.edges;
     var filter = this.props.filter;
 
@@ -111,23 +105,38 @@ class Connections extends React.Component {
       }
     }
 
+    let hconns = {};
     edges.forEach((edge) => {
       let vars = edge.name.split(",");
       let fromName = this._disciplineName(edge.from);
       let toName = this._disciplineName(edge.to);
       vars.forEach((v) => {
-        conns.push({
-          id: edge.from + '_' + v + '_' + edge.to,
-          fr: edge.from,
-          to: edge.to,
-          frName: fromName,
-          toName: toName, 
-          varname: v,
-        });
+        let id = edge.from + '_' + v;
+        if (hconns[id]) {
+          hconns[id].to.push(edge.to);
+          hconns[id].toName.push(toName);
+        } else {
+          hconns[id] = {
+              id: id,
+              fr: edge.from,
+              to: [edge.to],
+              frName: fromName,
+              toName: [toName], 
+              varname: v,
+          }
+        }
       }, this);
     }, this);
-
-    //console.log("VARNAME "+JSON.stringify(this.props.mda.vars));
+    
+    let conns = [];
+    for (let id in hconns) {
+      if (hconns.hasOwnProperty(id)) {
+        conns.push(hconns[id]);
+      }
+    }
+    conns.sort(function(a, b) {return a.id < b.id});
+    
+    console.log(JSON.stringify(conns));
     
     let connections = conns.map((conn) => {
       return ( <Connection key={conn.id} conn={conn} vars={this.props.mda.vars} /> );
@@ -137,13 +146,13 @@ class Connections extends React.Component {
       <table className="table table-striped connections">
         <thead>
           <tr>
-            <th>From</th>
-            <th>To</th>
-            <th>Variable</th>
-            <th>Type</th>
-            <th>Shape</th>
-            <th>Init</th>
-            <th>Units</th>
+            <th class="col-1">From</th>
+            <th class="col-4">To</th>
+            <th class="col-3">Variable</th>
+            <th class="col-1">Type</th>
+            <th class="col-1">Shape</th>
+            <th class="col-1">Init</th>
+            <th class="col-1">Units</th>
           </tr>
         </thead>
 
@@ -156,7 +165,7 @@ class Connections extends React.Component {
   
   _disciplineName(id) {
     let name = this._findNodeFromId(id).name;
-    return name === USER ? 'PENDING' : name;
+    return name === USER ? 'User' : name;
   };
 
   _findNodeFromId(id) {

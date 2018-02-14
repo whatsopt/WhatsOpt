@@ -164,7 +164,8 @@ class Analysis < ApplicationRecord
         each_serializer: VariableSerializer)
       outputs = ActiveModelSerializers::SerializableResource.new(d.output_variables,
         each_serializer: VariableSerializer)
-      {d.id => {in: inputs.as_json, out: outputs.as_json}}
+      id = d.id
+      {id => {in: inputs.as_json, out: outputs.as_json}}
     }
     tree = res.inject({}) {|result, h| result.update(h)}
     tree

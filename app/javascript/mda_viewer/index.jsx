@@ -298,8 +298,7 @@ class MdaViewer extends React.Component {
             />
           </div>
         </div>
-      </div>);
-
+      </div>);      
     };
     return (
       <div>

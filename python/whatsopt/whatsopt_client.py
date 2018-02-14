@@ -194,19 +194,19 @@ class WhatsOpt(object):
                                 vtype = 'Float'
                                 if re.match('int', type(meta['value']).__name__):
                                     vtype = 'Integer' 
-                                self.vars[abs_name] = {'fullname': abs_name,
+                                disc, var, fname = WhatsOpt._extract_disc_var(abs_name)
+                                self.vars[abs_name] = {'fullname': fname,
                                                        'name': system._var_abs2prom[typ][abs_name],
                                                        'io_mode': io_mode,
                                                        'type': vtype,
                                                        'shape': str(meta['shape']),
                                                        'units': meta['units'],
                                                        'desc': meta['desc']}
-        disciplines = [WhatsOpt._format_discipline_name(name) for name in disciplines]
+        disciplines = [WhatsOpt._format_name(name) for name in disciplines]
         return disciplines
 
     def _initialize_disciplines_attrs(self, problem, connections):
         self._initialize_variables_attrs(connections)
-        #print(self.varattrs)
         self.discattrs = []
         for dname in self.discnames:
             discattr = {'name': dname, 'variables_attributes': self.varattrs[dname]}
@@ -222,12 +222,13 @@ class WhatsOpt(object):
 
             
     def _create_varattr_from_connection(self, fullname, io_mode):
-        disc, var = WhatsOpt._extract_disc_var(fullname)
-        varattr = {'name':var, 'fullname':disc+'.'+var, 'io_mode': io_mode,
+        disc, var, fname = WhatsOpt._extract_disc_var(fullname)
+        varattr = {'name':var, 'fullname': fname, 'io_mode': io_mode,
                    'type':self.vars[fullname]['type'], 'shape':self.vars[fullname]['shape'], 
                    'units':self.vars[fullname]['units'], 'desc':self.vars[fullname]['desc']}
-        if disc in self.discnames and varattr not in self.varattrs[disc]: 
-            self.varattrs[disc].append(varattr)
+        if disc in self.discnames: 
+            if varattr not in self.varattrs[disc]: 
+                self.varattrs[disc].append(varattr)
         elif varattr not in self.varattrs[NULL_DRIVER_NAME]:
             self.varattrs[NULL_DRIVER_NAME].append(varattr)
             
@@ -237,14 +238,18 @@ class WhatsOpt(object):
             if varattr['io_mode'] == 'out':
                 found = False
                 for conn in connections:
-                    if conn['tgt'] == fullname:
+                    disctgt, vartgt, fname_tgt = WhatsOpt._extract_disc_var(conn['tgt'])
+                    discsrc, varsrc, fname_src = WhatsOpt._extract_disc_var(conn['src'])
+                    if fname_tgt == varattr['fullname'] or \
+                       fname_src == varattr['fullname']:
                         found = True
                         break
                 if not found:
+                    #print("Create global output connection ", varattr)
                     self._create_connection_for(fullname, varattr)
                     
     def _create_connection_for(self, fullname, varattr):
-        disc, var = WhatsOpt._extract_disc_var(fullname)
+        disc, var, _ = WhatsOpt._extract_disc_var(fullname)
         if disc in self.discnames:
             fullnames = [v['fullname'] for v in self.varattrs[disc]]
             if fullname not in fullnames:
@@ -253,8 +258,9 @@ class WhatsOpt(object):
                 varattr_in['io_mode']='in'
                 self.varattrs[NULL_DRIVER_NAME].append(varattr_in)
 
+    
     @staticmethod
-    def _format_discipline_name(name):
+    def _format_name(name):
         return name.replace('.', '_')
     
     @staticmethod
@@ -265,5 +271,5 @@ class WhatsOpt(object):
         else:
             raise Exception('Connection qualified name should contain' + 
                             'at least one dot, but got %s' % fullname)
-        disc = WhatsOpt._format_discipline_name(disc)
-        return disc, var
+        disc = WhatsOpt._format_name(disc)
+        return disc, var, disc+"."+var
