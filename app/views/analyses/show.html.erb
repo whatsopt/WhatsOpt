@@ -1,4 +1,4 @@
-<% if policy(mda).update? %>
+<% if policy(@mda).update? %>
   <%= button_to edit_mda_url(@mda), method: :get, class:"btn float-right" do |b|%>
     <span class="fa fa-pencil"></span>
       Edit
