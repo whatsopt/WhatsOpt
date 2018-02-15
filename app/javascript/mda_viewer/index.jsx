@@ -14,8 +14,6 @@ class MdaViewer extends React.Component {
     
   constructor(props) {
     super(props);
-//    let nodes = props.mda.nodes.map(function(n) { return {id: n.id, name: n.name, type: n.type}; });
-//    let edges = props.mda.edges.map(function(e) { return {from: e.from, to: e.to, name: e.name, conn_ids}; });
     let isEditing = props.isEditing;
     let filter = { fr: undefined, to: undefined };
     if (isEditing) {
@@ -87,9 +85,6 @@ class MdaViewer extends React.Component {
     api.createConnection(this.props.mda.id, 
         {from: this.state.filter.fr, to: this.state.filter.to, names: names},
         (response) => {
-//            let newconn = response.data;
-//            this._addConnection(newconn);
-            //this.xdsmViewer.addConnection(newconn);
             let newState = update(this.state, {newConnectionName: {$set: ''}});
             this.setState(newState);
             this.renderXdsm();
@@ -101,68 +96,9 @@ class MdaViewer extends React.Component {
         });
   };
   
-//  _addConnection(connattrs) {
-//    console.log("ADDCONN "+JSON.stringify(connattrs));
-//    let found = false;
-//    let newState;
-//    this.state.mda.edges.forEach((edge, i) => {
-//      if (connattrs.from === edge.from && connattrs.to === edge.to) {
-//        found = true;
-//        console.log(JSON.stringify(edge));
-//        let names = edge.name.split(',');
-//        names.push(connattrs.names);
-//        let newName = names.sort().join(','); 
-//        console.log(newName);
-//        newState = update(this.state, {mda: {edges: {[i]: {name: {$set: newName}}}}, 
-//                                       newConnectionName: {$set: ''}});  
-//      }    
-//    }, this);
-//    if (!found) {
-//      let newEdge = { from: connattrs.from, to: connattrs.to, name: connattrs.names.join(',') }
-//      newState = update(this.state, {mda: {edges: {$push: [newEdge]}}, 
-//                                     newConnectionName: {$set: ''}});  
-//    }
-//    this.setState(newState); 
-//    console.log("END ADDCONN ");
-//  }
-
-//  handleConnectionDelete(varname) {
-//    api.deleteConnection({from: this.state.filter.fr, to: this.state.filter.to, names: [varname]},
-//      (response) => {
-////        let connattrs = { from: this.state.filter.fr, to: this.state.filter.to, names: [varname] };
-////        this._deleteConnection(connattrs);
-//        this.renderXdsm();
-//        //this.xdsmViewer.removeConnection(connattrs);
-//      });
-//  }
-  
   handleConnectionDelete(connId) {
     api.deleteConnection(connId, (response) => { this.renderXdsm(); });
   }
-  
-//  _deleteConnection(connattrs) {
-//     let newState;
-//     this.state.mda.edges.forEach((edge, i) => {
-//       if (connattrs.from === edge.from && connattrs.to === edge.to) {
-//         let names = edge.name.split(',');
-//         connattrs.names.forEach((name) => {
-//           let index = names.indexOf(name);
-//           if (index < 0) {
-//             console.log("Warning delete connection: connection " + connattrs + " not found.")  
-//           } else {
-//             names.splice(index, 1);  
-//           }
-//         });
-//         if (names.length > 0) {
-//           let newName = names.sort().join(','); 
-//           newState = update(this.state, {mda: {edges: {[i]: {name: {$set: newName}}}}});
-//         } else {
-//           newState = update(this.state, {mda: {edges: {$splice: [[i, 1]] }}});  
-//         }
-//         this.setState(newState); 
-//       }    
-//     }, this);
-//  }
   
   // *** Disciplines ************************************************************
 
@@ -170,9 +106,6 @@ class MdaViewer extends React.Component {
     event.preventDefault();
     api.createDiscipline(this.props.mda.id, {name: this.state.newDisciplineName, type: 'analysis'}, 
       (response) => {
-//        let newdisc = {id: response.data.id.toString(), name: this.state.newDisciplineName, type: 'analysis'};
-//        let newState = update(this.state, {mda: {nodes: {$push: [newdisc]}}, newDisciplineName: {$set: ''}});
-//        this.setState(newState);
         let newState = update(this.state, {newDisciplineName: {$set: ''}});
         this.setState(newState);
         this.renderXdsm();
@@ -188,23 +121,11 @@ class MdaViewer extends React.Component {
     
   handleDisciplineUpdate(node, pos, discattrs) {
     api.updateDiscipline(node.id, discattrs,
-        (response) => {
-//          let index = pos-1;
-//          let newState = update(this.state, {mda: {nodes: {[index]: {$merge: discattrs }} }});
-//          this.setState(newState);
-          this.renderXdsm();
-          //this.xdsmViewer.updateDiscipline(pos, discattrs);
-        });
+        (response) => { this.renderXdsm(); });
   }
   
   handleDisciplineDelete(node, pos) {
-    api.deleteDiscipline(node.id, 
-        (response) => {
-//          let newState = update(this.state, {mda: {nodes: {$splice: [[pos-1, 1]]}}});
-//          this.setState(newState);
-          this.renderXdsm();
-          //this.xdsmViewer.removeDiscipline(pos);
-        });
+    api.deleteDiscipline(node.id, (response) => { this.renderXdsm(); });
   }
   
   // *** Analysis ************************************************************
@@ -228,8 +149,6 @@ class MdaViewer extends React.Component {
   renderXdsm() {
     api.getAnalysisXdsm(this.props.mda.id, 
         (response) => {
-//          let nodes = response.data.nodes.map((n) => { return {id: n.id, name: n.name, type: n.type}; });
-//          let edges = response.data.edges.map((e) => { return {from: e.from, to: e.to, name: e.name, }; });
           let newState = update(this.state, 
              {mda: {nodes: {$set: response.data.nodes}, 
                     edges: {$set: response.data.edges}, 
@@ -267,7 +186,7 @@ class MdaViewer extends React.Component {
         </ul>
         <div className="tab-content" id="myTabContent">
           <div className="tab-pane fade" id="analysis" role="tabpanel" aria-labelledby="analysis-tab">
-            <div className="container editor-section">
+            <div className="container-fluid editor-section">
               <label className="editor-header">Name</label>
               <form className="form-inline" onSubmit={this.handleAnalysisUpdate}>
                 <div className="form-group">

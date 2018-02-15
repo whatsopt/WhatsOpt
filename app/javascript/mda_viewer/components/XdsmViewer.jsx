@@ -25,6 +25,7 @@ class XdsmViewer extends React.Component {
         titleTooltip: true,
       };
     this.xdsm = new Xdsm(this.graph, 'root', config);
+    this.xdsm.graph.nodes[0].name = 'Driver';
     this.xdsm.draw();
     this.selectable = new Selectable(this.xdsm, this._onSelectionChange.bind(this));
     this.setSelection(this.props.filter);
@@ -41,6 +42,7 @@ class XdsmViewer extends React.Component {
 
   update(mda) {
     this.xdsm.graph = new Graph(mda);
+    this.xdsm.graph.nodes[0].name = 'Driver';
     this._refresh();
   } 
   

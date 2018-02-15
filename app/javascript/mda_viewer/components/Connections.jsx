@@ -108,8 +108,8 @@ class Connections extends React.Component {
     let hconns = {};
     edges.forEach((edge) => {
       let vars = edge.name.split(",");
-      let fromName = this._disciplineName(edge.from);
-      let toName = this._disciplineName(edge.to);
+      let fromName = this._findNodeFromId(edge.from).name;
+      let toName = this._findNodeFromId(edge.to).name;
       vars.forEach((v) => {
         let id = edge.from + '_' + v;
         if (hconns[id]) {
@@ -146,13 +146,13 @@ class Connections extends React.Component {
       <table className="table table-striped connections">
         <thead>
           <tr>
-            <th class="col-1">From</th>
-            <th class="col-4">To</th>
-            <th class="col-3">Variable</th>
-            <th class="col-1">Type</th>
-            <th class="col-1">Shape</th>
-            <th class="col-1">Init</th>
-            <th class="col-1">Units</th>
+            <th className="col-1">From</th>
+            <th className="col-3">To</th>
+            <th className="col-3">Variable</th>
+            <th className="col-1">Type</th>
+            <th className="col-1">Shape</th>
+            <th className="col-2">Init</th>
+            <th className="col-1">Units</th>
           </tr>
         </thead>
 
@@ -162,14 +162,9 @@ class Connections extends React.Component {
       </table>
      );
   };
-  
-  _disciplineName(id) {
-    let name = this._findNodeFromId(id).name;
-    return name === USER ? 'User' : name;
-  };
 
   _findNodeFromId(id) {
-    if (id === USER) return {id: USER, name: USER}; 
+    if (id === USER) return {id: USER, name: 'Driver'}; 
     for (var i=0; i < this.props.mda.nodes.length; i++) {
       if (this.props.mda.nodes[i].id === id) {
         return this.props.mda.nodes[i];
