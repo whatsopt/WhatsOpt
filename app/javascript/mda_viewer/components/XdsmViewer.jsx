@@ -5,10 +5,6 @@ let Xdsm = require('XDSMjs/src/xdsm');
 let Selectable = require('XDSMjs/src/selectable');
 
 class XdsmViewer extends React.Component {
-  constructor(props) {
-    super(props);
-    this.graph = new Graph(props.mda);
-  }
 
   componentDidMount() {
     let config = {
@@ -24,8 +20,10 @@ class XdsmViewer extends React.Component {
         },
         titleTooltip: true,
       };
+    this.graph = new Graph(this.props.mda, "", "noDefaultDriver");
+    this.graph.nodes[0].name = 'Driver';
+    this.graph.nodes[0].type = 'driver';
     this.xdsm = new Xdsm(this.graph, 'root', config);
-    this.xdsm.graph.nodes[0].name = 'Driver';
     this.xdsm.draw();
     this.selectable = new Selectable(this.xdsm, this._onSelectionChange.bind(this));
     this.setSelection(this.props.filter);
@@ -41,8 +39,9 @@ class XdsmViewer extends React.Component {
   }
 
   update(mda) {
-    this.xdsm.graph = new Graph(mda);
+    this.xdsm.graph = new Graph(mda, "", "noDefaultDriver");
     this.xdsm.graph.nodes[0].name = 'Driver';
+    this.xdsm.graph.nodes[0].type = 'driver';
     this._refresh();
   } 
   

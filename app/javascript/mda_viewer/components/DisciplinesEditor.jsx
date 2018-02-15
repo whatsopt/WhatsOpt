@@ -96,7 +96,8 @@ class DisciplinesEditor extends React.Component {
   }
   
   render() {
-    let disciplines = this.props.nodes.map((node, i) => {
+    let nodes = this.props.nodes.slice(1); 
+    let disciplines = nodes.map((node, i) => {
       return (<Discipline key={node.id} pos={i+1} node={node} 
                 onDisciplineUpdate={this.props.onDisciplineUpdate}
                 onDisciplineDelete={this.props.onDisciplineDelete}/>);

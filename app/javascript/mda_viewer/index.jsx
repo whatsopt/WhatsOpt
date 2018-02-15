@@ -17,12 +17,12 @@ class MdaViewer extends React.Component {
     let isEditing = props.isEditing;
     let filter = { fr: undefined, to: undefined };
     if (isEditing) {
-      filter = { fr: "_U_", to: "_U_" };
+      let driverId = this.props.mda.nodes[0].id
+      filter = { fr: driverId, to: driverId };
     } 
     this.state = {
       filter: filter,
       isEditing: isEditing,
-      //mda: { name: props.mda.name, nodes: nodes, edges: edges, vars: props.mda.vars },
       mda: props.mda,
       newAnalysisName: props.mda.name,
       newDisciplineName: '',
