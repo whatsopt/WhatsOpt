@@ -39,6 +39,14 @@ class MdaViewer extends React.Component {
     this.handleConnectionNameChange = this.handleConnectionNameChange.bind(this); 
     this.handleConnectionCreate = this.handleConnectionCreate.bind(this); 
     this.handleConnectionDelete = this.handleConnectionDelete.bind(this); 
+    this.handleConnectionDelete = this.handleConnectionDelete.bind(this); 
+    this.handleConnectionChange = this.handleConnectionChange.bind(this); 
+  }
+  
+  handleConnectionChange(id, update_attr) {
+    console.log('change conn '+id+ ' with '+JSON.stringify(update_attr));
+//        api.updateConnection(
+//        ); 
   }
   
   handleFilterChange(filter) { 
@@ -229,7 +237,8 @@ class MdaViewer extends React.Component {
              filter={this.state.filter} onFilterChange={this.handleFilterChange}/>
         </div>
         <div className="mda-section">
-          <Connections mda={this.state.mda} filter={this.state.filter} onFilterChange={this.handleFilterChange} />
+          <Connections mda={this.state.mda} filter={this.state.filter} onFilterChange={this.handleFilterChange}
+                       onConnectionChange={this.handleConnectionChange}/>
         </div>
       </div>
     );
