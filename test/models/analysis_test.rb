@@ -20,23 +20,23 @@ class AnalysisTest < ActiveSupport::TestCase
 
   test "should be able to build nodes" do
     mda = analyses(:cicav)
-    assert_equal %w[Geometry Aerodynamics], mda.build_nodes.map {|n| n[:name]} 
+    assert_equal %w[__DRIVER__ Geometry Aerodynamics], mda.build_nodes.map {|n| n[:name]} 
   end
   
   test "should be able to build connections from user" do
     mda = analyses(:cicav)
     geo = disciplines(:geometry).id.to_s
     aero = disciplines(:aerodynamics).id.to_s
-    u = "_U_"
+    d = disciplines(:driver_cicav).id.to_s
     edges = mda.build_edges
     edges = edges.map{|e| {from: e[:from], to: e[:to], name: e[:name]}}
     assert_equal 6, edges.count
     assert_includes edges, {from: geo, to: aero, name: "yg"}
     assert_includes edges, {from: aero, to: geo, name: "ya"}
-    assert_includes edges, {from: u, to: geo, name: "x1,z"}
-    assert_includes edges, {from: u, to: aero, name: "z"}
-    assert_includes edges, {from: aero, to: u, name: "y2"}
-    assert_includes edges, {from: geo, to: u, name: "obj"}
+    assert_includes edges, {from: d, to: geo, name: "x1,z"}
+    assert_includes edges, {from: d, to: aero, name: "z"}
+    assert_includes edges, {from: aero, to: d, name: "y2"}
+    assert_includes edges, {from: geo, to: d, name: "obj"}
   end
   
   test "should not contain reflexive connection" do
@@ -48,7 +48,7 @@ class AnalysisTest < ActiveSupport::TestCase
   test "should be able to build variable list" do
     mda = analyses(:cicav)
     tree = mda.build_var_infos
-    assert_equal mda.disciplines.nodes.all.map(&:id), tree.keys
+    assert_equal mda.disciplines.map(&:id), tree.keys
     geom_id = Discipline.where(name: 'Geometry').take.id
     aero_id = Discipline.where(name: 'Aerodynamics').take.id
     assert_equal ["x1", "ya", "z"], tree[geom_id][:in].map{|h| h[:name]}.sort

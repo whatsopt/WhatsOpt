@@ -44,6 +44,6 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     get api_v1_mda_url(@mda, :format => 'xdsm'), as: :json, headers: @auth_headers
     assert_response :success
     resp = JSON.parse(response.body)
-    assert_equal @mda.disciplines.nodes.count, resp['nodes'].size
+    assert_equal @mda.disciplines.count, resp['nodes'].size
   end
 end
