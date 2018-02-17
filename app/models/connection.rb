@@ -31,5 +31,21 @@ class Connection < ApplicationRecord
               .order('variables.fullname')
               .joins(:to).where(tos_connections: {discipline_id: disc_to_id})
   end 
-  
+
+  def destroy_variables  
+    Connection.transaction do
+      Variable.find(from_id).destroy!
+      Variable.find(to_id).destroy!
+      destroy!
+    end
+  end
+    
+  def update!(params)
+    Connection.transaction do
+      params[:fullname] = params[:name]
+      Variable.find(to_id).update!(params)
+      params = params.except(:parameter_attributes)
+      Variable.find(from_id).update!(params)
+    end
+  end
 end

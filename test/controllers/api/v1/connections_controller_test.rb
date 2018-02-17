@@ -8,6 +8,7 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
     @from = disciplines(:geometry)
     @to = disciplines(:aerodynamics)
     @var = variables(:varyg_geo_out)
+    @conn = connections(:geo_aero)
   end
   
   test "should create a new connection" do
@@ -48,5 +49,11 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
-  
+  test "should update a connection" do
+    put api_v1_connection_url(@conn, {connection: {name: 'test', type: "Integer", shape: "(1, 2)", units: "m",
+                                      desc: "test description", parameter_attributes: {init: "[[1,2]]"} }} ), 
+        as: :json, headers: @auth_headers
+    assert_response :success
+    assert_equal 'test', @conn.from.name
+  end  
 end

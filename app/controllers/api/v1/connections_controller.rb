@@ -7,9 +7,9 @@ class Api::V1::ConnectionsController < Api::ApiController
   # POST /api/v1/connections
   def create
     @mda = Analysis.find(params[:mda_id])        
-    @names = connection_params[:names]
-    @from_disc = @mda.find_discipline(connection_params[:from])
-    @to_disc = @mda.find_discipline(connection_params[:to])
+    @names = connection_create_params[:names]
+    @from_disc = @mda.find_discipline(connection_create_params[:from])
+    @to_disc = @mda.find_discipline(connection_create_params[:to])
     begin
       Connection.transaction do
         @names.each do |name|
@@ -34,14 +34,17 @@ class Api::V1::ConnectionsController < Api::ApiController
     end
   end
 
-  # DELETE /api/v1/connection/1
+  # PUT /api/v1/connections/1
+  def update
+    @connection = Connection.find(params[:id])
+    @connection.update!(connection_update_params)      
+    head :no_content    
+  end
+  
+  # DELETE /api/v1/connections/1
   def destroy
     @connection = Connection.find(params[:id])
-    Connection.transaction do
-      Variable.find(@connection.from_id).destroy!
-      Variable.find(@connection.to_id).destroy!
-      @connection.destroy!
-    end
+    @connection.destroy_variables
     head :no_content
   end
 
@@ -58,7 +61,12 @@ class Api::V1::ConnectionsController < Api::ApiController
       end      
     end
   
-    def connection_params
+    def connection_create_params
       params.require(:connection).permit(:from, :to, { names: [] })
     end
+
+    def connection_update_params
+      params.require(:connection).permit(:name, :type, :shape, :units, :desc, parameter_attributes: [:init])
+    end
+
 end
