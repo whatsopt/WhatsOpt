@@ -11,8 +11,6 @@
   <script>
     // handle custom file inputs
     $('body').on('change', 'input[type="file"][data-toggle="custom-file"]', function (ev) {
-      console.log("COUCOU");
-
       const $input = $(this);
       const target = $input.data('target');
       const $target = $(target);

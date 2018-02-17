@@ -4,8 +4,29 @@
   <small>created from <%= link_to @geomodel.attachment.data_file_name, attachment_path(@geomodel.attachment) %> by <%= @geomodel.owner %></small>
 </p>
 
-<x3d width='800px' height='400px'>
+<button class="btn btn-primary mb-1" data-view="iso">Iso</button>
+<button class="btn btn-primary mb-1" data-view="top">Top</button>
+<button class="btn btn-primary mb-1" data-view="right">Right</button>
+<button class="btn btn-primary mb-1" data-view="front">Front</button>
+
+<div>
+<x3d width='650px' height='400px'>
     <scene>
       <Inline nameSpaceName="geometry-model" mapDEFToID="true" url="<%= attachment_url(@geomodel.attachment, format: :x3d) %>" />
     </scene>
 </x3d>
+</div>
+
+
+<% content_for :document_ready do %>
+<script>
+  views = ['iso', 'front', 'top', 'right'];
+  for (var i=0; i<views.length; i++) { 
+		$('button[data-view="'+views[i]+'"]').on('click', function() {
+		  var view = $(this).attr('data-view');
+			$('#geometry-model__'+view).attr("set_bind", true);
+			$('#geometry-model__'+view).attr("set_bind", null);
+		});
+  }
+</script>
+<% end %>
