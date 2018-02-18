@@ -8,8 +8,8 @@ class Api::V1::ConnectionsController < Api::ApiController
   def create
     @mda = Analysis.find(params[:mda_id])        
     @names = connection_create_params[:names]
-    @from_disc = @mda.find_discipline(connection_create_params[:from])
-    @to_disc = @mda.find_discipline(connection_create_params[:to])
+    @from_disc = @mda.disciplines.find(connection_create_params[:from])
+    @to_disc = @mda.disciplines.find(connection_create_params[:to])
     begin
       Connection.transaction do
         @names.each do |name|

@@ -15,7 +15,7 @@ class Discipline < ApplicationRecord
   
   accepts_nested_attributes_for :variables, reject_if: proc { |attr| attr['name'].blank? }, allow_destroy: true
 
-  validates :name, presence: true
+  validates :name, presence: true, allow_blank: false
   
   scope :driver, -> { where( type: WhatsOpt::Discipline::NULL_DRIVER ) }
   scope :nodes, -> { where.not( type: WhatsOpt::Discipline::NULL_DRIVER ) }

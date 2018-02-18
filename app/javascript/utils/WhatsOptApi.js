@@ -63,6 +63,13 @@ class WhatsOptApi {
       .then(callback)
       .catch(onError);
   } 
+
+  updateConnection(connection_id, connection_attributes, callback) {
+    let path = `/api/v1/connections/${connection_id}`
+    axios.put(url(path), {connection: connection_attributes})
+      .then(response => callback(response))
+      .catch(error => console.log(error));
+  }
   
   deleteConnection(connection_id, callback) {
     let path = `/api/v1/connections/${connection_id}`

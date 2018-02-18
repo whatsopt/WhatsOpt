@@ -94,14 +94,6 @@ varyg_aero_in:
   type: Float
   shape: 1
 
-varya_geo_in:
-  name: ya
-  fullname: ya
-  discipline: geometry
-  io_mode: in
-  type: Float
-  shape: 1
-
 varz_aero_in:
   name: z
   fullname: z
@@ -111,64 +103,64 @@ varz_aero_in:
   shape: 1
 
 varx_fastdisc_in:
-  name: z
-  fullname: z
+  name: z1
+  fullname: z1
   discipline: fast_discipline
   io_mode: in
   type: Float
   shape: 1
 
 varx_fastdisc_doublon_in:
-  name: z
-  fullname: z
+  name: z1
+  fullname: z1
   discipline: fast_discipline
   io_mode: in
   type: Float
   shape: 1
   
 var_scalar_float:
-  name: y
-  fullname: y
+  name: y0
+  fullname: y0
   discipline: dummy
   io_mode: in
   type: Float
   shape: 1  
   
 var_array_float:
-  name: y
-  fullname: y
+  name: y1
+  fullname: y1
   discipline: dummy
   io_mode: in
   type: Float
   shape: (3,)  
 
 var_nparray_float:
-  name: y
-  fullname: y
+  name: y2
+  fullname: y2
   discipline: dummy
   io_mode: in
   type: Float
   shape: (3, 5)  
 
 var_scalar_int:
-  name: y
-  fullname: y
+  name: y3
+  fullname: y3
   discipline: dummy
   io_mode: in
   type: Integer
   shape: 1  
   
 var_scalar_int:
-  name: y
-  fullname: y
+  name: y4
+  fullname: y4
   discipline: dummy
   io_mode: in
   type: Integer
   shape: 1  
 
 var_string:
-  name: y
-  fullname: y
+  name: y5
+  fullname: y5
   discipline: dummy
   io_mode: in
   type: String

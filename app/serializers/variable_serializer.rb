@@ -1,5 +1,5 @@
 class VariableSerializer < ActiveModel::Serializer
-  attributes :name, :fullname, :io_mode, :shape, :type, :desc
+  attributes :name, :fullname, :io_mode, :shape, :type, :desc, :units
   
   has_one :parameter  
   

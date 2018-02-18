@@ -2,7 +2,7 @@ import React from 'react';
 import ReactTable from 'react-table'
 import { RIEToggle, RIEInput, RIETextArea, RIENumber, RIETags, RIESelect } from 'riek'
 
-class Connections extends React.Component {
+class VariablesEditor extends React.Component {
   constructor(props) {
     super(props);
 
@@ -77,58 +77,66 @@ class Connections extends React.Component {
               badgeType += "badge-primary";
             }
           }
-          
-          return { id: conn.connId, from: conn.frName, to: conn.toName.join(', '), varname:infos.vName,
-                   type: infos.type, shape: infos.shape, init: infos.init, units: infos.units };
+          let val = { id: conn.connId, from: conn.frName, to: conn.toName.join(', '), name: infos.vName, desc: infos.desc,
+                      type: infos.type, shape: infos.shape, units: infos.units, init: infos.init };
+          return val;
           
       });
-       
+        
       return connections;
   }
   
   render() {  
     this.connections = this.compute();  
-      
+    let columns = [
+                   {
+                     Header: "From",
+                     accessor: "from",
+                   },
+                   {
+                     Header: "To",
+                     accessor: "to",
+                     minWidth: 300,
+                   },
+                   {
+                     Header: "Variable",
+                     accessor: "name", 
+                     minWidth: 300, 
+                     Cell: this.renderEditable 
+                   },
+                   {
+                     Header: "Type",
+                     accessor: "type", 
+                     Cell: this.renderEditable 
+                   },
+                   {
+                     Header: "Shape",
+                     accessor: "shape", 
+                     Cell: this.renderEditable
+                   },
+                   {
+                     Header: "Init",
+                     accessor: "init", 
+                     Cell: this.renderEditable
+                   },
+                   {
+                     Header: "Units",
+                     accessor: "units", 
+                     Cell: this.renderEditable
+                   }
+                 ];
+    if (this.props.isEditing) {
+      columns.splice(3, 0, {
+        Header: "Description",
+        accessor: "desc", 
+        Cell: this.renderEditable 
+      });
+    }
     return (
             <div>
               <ReactTable
                 data={this.connections}
-                columns={[
-                  {
-                    Header: "From",
-                    accessor: "from",
-                  },
-                  {
-                    Header: "To",
-                    accessor: "to",
-                    minWidth: 300,
-                  },
-                  {
-                    Header: "Variable",
-                    accessor: "varname", 
-                    minWidth: 300,
-                  },
-                  {
-                    Header: "Type",
-                    accessor: "type", 
-                    Cell: this.renderEditable 
-                  },
-                  {
-                    Header: "Shape",
-                    accessor: "shape", 
-                    Cell: this.renderEditable
-                  },
-                  {
-                    Header: "Init",
-                    accessor: "init", 
-                    Cell: this.renderEditable
-                  },
-                  {
-                    Header: "Units",
-                    accessor: "units", 
-                    //Cell: this.renderEditable
-                  }
-                ]}
+                columns={columns}
                 className="-striped -highlight"
                 showPagination={false}
                 pageSize={this.connections.length}
@@ -138,12 +146,16 @@ class Connections extends React.Component {
   };
 
   renderEditable(cellInfo) {
-    console.log(cellInfo.column.id);
-    console.log(this.connections[cellInfo.index][cellInfo.column.id]);
-    return ( <RIEInput
-      value={this.connections[cellInfo.index][cellInfo.column.id]}
-      change={(attr) => this.props.onConnectionChange(this.connections[cellInfo.index].id, attr)}
-      propName={cellInfo.column.id} /> );
+//    console.log(cellInfo.column.id);
+//    console.log(this.connections[cellInfo.index][cellInfo.column.id]);
+    if (this.props.isEditing) {
+      return ( <RIEInput
+        value={this.connections[cellInfo.index][cellInfo.column.id]}
+        change={(attr) => this.props.onConnectionChange(this.connections[cellInfo.index].id, attr)}
+        propName={cellInfo.column.id} /> );
+    } else {  		
+      return (<div>{this.connections[cellInfo.index][cellInfo.column.id]}</div>);
+    }
   };
   
   _findNode(id) { 
@@ -195,6 +207,7 @@ class Connections extends React.Component {
                     vName: varname, desc: desc,
                     toName: conn.toName.join(', '),
                     type: vartype, shape: shape, init: init, units: units};
+      console.log(JSON.stringify(infos));
       return infos;
     }
       
@@ -234,4 +247,4 @@ class Connections extends React.Component {
 
 }
 
-export default Connections;
+export default VariablesEditor;

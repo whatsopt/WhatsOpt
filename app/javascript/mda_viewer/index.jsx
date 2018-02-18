@@ -1,9 +1,10 @@
 import React from 'react';
 import XdsmViewer from 'mda_viewer/components/XdsmViewer'
-import Connections from 'mda_viewer/components/Connections'
 import ToolBar from 'mda_viewer/components/ToolBar'
+import AnalysisEditor from 'mda_viewer/components/AnalysisEditor'
 import DisciplinesEditor from 'mda_viewer/components/DisciplinesEditor'
 import ConnectionsEditor from 'mda_viewer/components/ConnectionsEditor'
+import VariablesEditor from 'mda_viewer/components/VariablesEditor'
 import update from 'immutability-helper'
 let Graph = require('XDSMjs/src/graph');
 import {api, url} from '../utils/WhatsOptApi';
@@ -16,10 +17,10 @@ class MdaViewer extends React.Component {
     super(props);
     let isEditing = props.isEditing;
     let filter = { fr: undefined, to: undefined };
-    if (isEditing) {
-      let driverId = this.props.mda.nodes[0].id
-      filter = { fr: driverId, to: driverId };
-    } 
+//    if (isEditing) {
+//      let driverId = this.props.mda.nodes[0].id
+//      filter = { fr: driverId, to: driverId };
+//    } 
     this.state = {
       filter: filter,
       isEditing: isEditing,
@@ -43,10 +44,17 @@ class MdaViewer extends React.Component {
     this.handleConnectionChange = this.handleConnectionChange.bind(this); 
   }
   
-  handleConnectionChange(id, update_attr) {
-    console.log('change conn '+id+ ' with '+JSON.stringify(update_attr));
-//        api.updateConnection(
-//        ); 
+  handleConnectionChange(connId, connAttrs) {
+    console.log('change conn '+connId+ ' with '+JSON.stringify(connAttrs));
+    if (connAttrs.init) {
+      connAttrs['parameter_attributes'] = { init: connAttrs.init };
+      delete connAttrs['init'];
+    }
+    api.updateConnection(
+      connId, connAttrs, (response) => { 
+        this.renderXdsm(); 
+      }
+    ); 
   }
   
   handleFilterChange(filter) { 
@@ -127,8 +135,8 @@ class MdaViewer extends React.Component {
     return false;
   }
     
-  handleDisciplineUpdate(node, pos, discattrs) {
-    api.updateDiscipline(node.id, discattrs,
+  handleDisciplineUpdate(node, pos, discAttrs) {
+    api.updateDiscipline(node.id, discAttrs,
         (response) => { this.renderXdsm(); });
   }
   
@@ -189,21 +197,17 @@ class MdaViewer extends React.Component {
             <a className="nav-link" id="disciplines-tab" data-toggle="tab" href="#disciplines" role="tab" aria-controls="disciplines" aria-selected="false">Disciplines</a>
           </li>
           <li className="nav-item">
-            <a className="nav-link active" id="connection-tab" data-toggle="tab" href="#connections" role="tab" aria-controls="connections" aria-selected="true">Connections</a>
+            <a className="nav-link" id="connections-tab" data-toggle="tab" href="#connections" role="tab" aria-controls="connections" aria-selected="false">Connections</a>
+          </li>
+          <li className="nav-item">
+            <a className="nav-link active" id="variables-tab" data-toggle="tab" href="#variables" role="tab" aria-controls="variables" aria-selected="true">Variables</a>
           </li>
         </ul>
         <div className="tab-content" id="myTabContent">
           <div className="tab-pane fade" id="analysis" role="tabpanel" aria-labelledby="analysis-tab">
-            <div className="container-fluid editor-section">
-              <label className="editor-header">Name</label>
-              <form className="form-inline" onSubmit={this.handleAnalysisUpdate}>
-                <div className="form-group">
-                  <label htmlFor="name" className="sr-only">Name</label>
-                  <input type="text" value={this.state.newAnalysisName} className="form-control" id="name" onChange={this.handleAnalysisNameChange}/>
-                </div>
-                <button type="submit" className="btn btn-primary ml-3">Update</button>
-              </form>
-            </div>
+            <AnalysisEditor newAnalysisName={this.state.newAnalysisName} 
+                            onAnalysisUpdate={this.handleAnalysisUpdate} 
+                            onAnalysisNameChange={this.handleAnalysisNameChange}/>
           </div>
           <div className="tab-pane fade" id="disciplines" role="tabpanel" aria-labelledby="disciplines-tab">
             <DisciplinesEditor name={this.state.newDisciplineName} 
@@ -214,7 +218,7 @@ class MdaViewer extends React.Component {
                                onDisciplineUpdate={this.handleDisciplineUpdate}
              />
           </div>
-          <div className="tab-pane fade show active" id="connections" role="tabpanel" aria-labelledby="connections-tab">
+          <div className="tab-pane fade" id="connections" role="tabpanel" aria-labelledby="connections-tab">
             <ConnectionsEditor nodes={this.state.mda.nodes} edges={this.state.mda.edges} 
                                filter={this.state.filter} onFilterChange={this.handleFilterChange}
                                newConnectionName={this.state.newConnectionName}
@@ -224,6 +228,10 @@ class MdaViewer extends React.Component {
                                onConnectionDelete={this.handleConnectionDelete}
             />
           </div>
+          <div className="tab-pane fade show active" id="variables" role="tabpanel" aria-labelledby="variables-tab">
+            <VariablesEditor mda={this.state.mda} filter={this.state.filter} onFilterChange={this.handleFilterChange}
+                         onConnectionChange={this.handleConnectionChange} isEditing={this.state.isEditing} />   
+          </div>      
         </div>
       </div>);      
     };
@@ -237,8 +245,8 @@ class MdaViewer extends React.Component {
              filter={this.state.filter} onFilterChange={this.handleFilterChange}/>
         </div>
         <div className="mda-section">
-          <Connections mda={this.state.mda} filter={this.state.filter} onFilterChange={this.handleFilterChange}
-                       onConnectionChange={this.handleConnectionChange}/>
+          <VariablesEditor mda={this.state.mda} filter={this.state.filter} onFilterChange={this.handleFilterChange}
+                       onConnectionChange={this.handleConnectionChange} isEditing={this.state.isEditing} />
         </div>
       </div>
     );

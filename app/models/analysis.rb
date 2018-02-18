@@ -25,7 +25,7 @@ class Analysis < ApplicationRecord
   after_save :_ensure_driver_presence
   
   validate :check_mda_import_error, on: :create, if: :attachment_exists
-  validates :name, presence: true
+  validates :name, presence: true, allow_blank: false
 
   def driver
     self.disciplines.driver&.take
@@ -105,14 +105,6 @@ class Analysis < ApplicationRecord
   def owner
     owners = User.with_role(:owner, self)
     owners.take.login if owners
-  end
-  
-  def find_discipline(id)
-#    if id == "_U_"
-#      self.driver
-#    else
-      Discipline.find(id)
-#    end
   end
   
   private
