@@ -1,6 +1,7 @@
 import React from 'react';
 import XdsmViewer from 'mda_viewer/components/XdsmViewer'
 import ToolBar from 'mda_viewer/components/ToolBar'
+import Error from 'mda_viewer/components/Error'
 import AnalysisEditor from 'mda_viewer/components/AnalysisEditor'
 import DisciplinesEditor from 'mda_viewer/components/DisciplinesEditor'
 import ConnectionsEditor from 'mda_viewer/components/ConnectionsEditor'
@@ -17,10 +18,6 @@ class MdaViewer extends React.Component {
     super(props);
     let isEditing = props.isEditing;
     let filter = { fr: undefined, to: undefined };
-//    if (isEditing) {
-//      let driverId = this.props.mda.nodes[0].id
-//      filter = { fr: driverId, to: driverId };
-//    } 
     this.state = {
       filter: filter,
       isEditing: isEditing,
@@ -51,10 +48,12 @@ class MdaViewer extends React.Component {
       delete connAttrs['init'];
     }
     api.updateConnection(
-      connId, connAttrs, (response) => { 
-        this.renderXdsm(); 
-      }
-    ); 
+      connId, connAttrs, (response) => { this.renderXdsm(); },
+      (error) => { 
+        let message = error.response.data.message;
+        let newState = update(this.state, {errors: {$set: [message]}});
+        this.setState(newState);
+      }); 
   }
   
   handleFilterChange(filter) { 
@@ -176,6 +175,10 @@ class MdaViewer extends React.Component {
   }
   
   render() {
+    let errors = this.state.errors.map((message, i) => {
+      return ( <Error key={i} msg={message} /> );
+    });  
+      
     if (this.state.isEditing) {
       return(
       <div>
@@ -204,6 +207,7 @@ class MdaViewer extends React.Component {
           </li>
         </ul>
         <div className="tab-content" id="myTabContent">
+          {errors}  
           <div className="tab-pane fade" id="analysis" role="tabpanel" aria-labelledby="analysis-tab">
             <AnalysisEditor newAnalysisName={this.state.newAnalysisName} 
                             onAnalysisUpdate={this.handleAnalysisUpdate} 

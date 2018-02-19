@@ -207,7 +207,7 @@ class VariablesEditor extends React.Component {
                     vName: varname, desc: desc,
                     toName: conn.toName.join(', '),
                     type: vartype, shape: shape, init: init, units: units};
-      console.log(JSON.stringify(infos));
+      // console.log(JSON.stringify(infos));
       return infos;
     }
       

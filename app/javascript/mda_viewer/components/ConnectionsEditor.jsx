@@ -118,15 +118,6 @@ class ConnectionsViewer extends React.Component {
   }
 }
 
-class Error extends React.Component {
-
-  render() {
-    return (<div className="alert alert-warning" role="alert">
-              {this.props.msg}
-            </div>);  
-  }
-}
-
 class ConnectionsForm extends React.Component {
   
   render() {
@@ -168,12 +159,8 @@ class ConnectionsEditor extends React.Component {
   }
     
   render() {
-    let form, errors;
+    let form;
     if (this.props.filter.fr !== this.props.filter.to) {
-        errors = this.props.connectionErrors.map((message, i) => {
-            return ( <Error key={i} msg={message} /> );
-        });
-
         form = (<div className="row editor-section">
                 <div className="col-12">
                  <ConnectionsForm newConnectionName={this.props.newConnectionName} 
@@ -202,7 +189,6 @@ class ConnectionsEditor extends React.Component {
                                    onConnectionDelete={this.props.onConnectionDelete}/>
             </div>
           </div>
-          {errors}
           {form}
       </div>
     );
