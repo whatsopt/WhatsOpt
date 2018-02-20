@@ -1,8 +1,15 @@
 <h1>CHANGELOG</h1>
 
+<h3>0.5.2 (20/02/2019)</h3>
+<ul>
+  <li>Implement MDA edition: initial version</li>
+  <li>Add Geometry Models view buttons.</li>
+  <li>Add 'Edit' button access<li>
+</ul>
+
 <h3>0.5.1 (13/02/2019)</h3>
 <ul>
-  <li>Implementation: add Connection model to reprsent connection between variables.</li>
+  <li>Implementation: add Connection model to represent connection between variables.</li>
   <li>"User discipline" added on XDSM to allow filtering for global inputs/outputs of the MDA<li>
 </ul>
 
