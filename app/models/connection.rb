@@ -32,7 +32,7 @@ class Connection < ApplicationRecord
               .joins(:to).where(tos_connections: {discipline_id: disc_to_id})
   end 
 
-  def destroy_variables  
+  def destroy_variables!  
     Connection.transaction do
       conns_count = Connection.where(from_id: from_id).count
       if conns_count == 1
@@ -43,12 +43,25 @@ class Connection < ApplicationRecord
     end
   end
     
-  def update!(params)
+  def update_variables!(params)
     Connection.transaction do
-      params[:fullname] = params[:name]
-      Variable.find(to_id).update!(params)
+      # update to connection
+      var_to = Variable.find(to_id)
+      if params[:name]
+        fullname = var_to.fullname
+        params[:fullname] = fullname.gsub(var_to.name, params[:name])
+      end 
+      var_to.update!(params)
+      
+      # update other related variables
+      var_from = Variable.find(from_id)
+      Connection.where(from_id: var_from.id).each do |conn|
+        conn.to.update!(params)
+      end
+      
+      # update from variable
       params = params.except(:parameter_attributes)
-      Variable.find(from_id).update!(params)
+      var_from.update!(params)
     end
   end
 end

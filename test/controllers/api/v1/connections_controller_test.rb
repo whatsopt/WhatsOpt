@@ -17,6 +17,8 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
                                      connection: {from: @from.id, to: @to.id, names: ["newvar"]}}), 
          as: :json, headers: @auth_headers 
     assert_response :success
+    var = Variable.where(name: 'newvar').take
+    assert_equal var.name, var.fullname
   end
 
   test "should fail to create connection if var name already exists" do
@@ -62,10 +64,20 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
   end
   
   test "should update a connection" do
-    put api_v1_connection_url(@conn, {connection: {name: 'test', type: "Integer", shape: "(1, 2)", units: "m",
-                                      desc: "test description", parameter_attributes: {init: "[[1,2]]"} }} ), 
-        as: :json, headers: @auth_headers
+    attrs = [:name, :type, :shape, :units, :desc]
+    values = ['test', 'Integer', '(1, 2)', 'm', 'test description']
+    update_attrs = attrs.zip(values).to_h
+    update_attrs[:parameter_attributes] = {init: "[[1,2]]"}
+    put api_v1_connection_url(@conn, {connection: update_attrs}), as: :json, headers: @auth_headers
     assert_response :success
-    assert_equal 'test', @conn.from.name
+    attrs.each_with_index do |attr, i|
+      assert_equal values[i], @conn.from.send(attr)
+      assert_equal values[i], @conn.to.send(attr)
+    end
+    assert @conn.from.name, @conn.from.fullname
+    assert @conn.to.name, @conn.to.fullname
+    refute @conn.from.parameter
+    assert @conn.to.parameter
+    assert_equal "[[1,2]]", @conn.to.parameter.init
   end  
 end

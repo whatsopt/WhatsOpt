@@ -37,14 +37,14 @@ class Api::V1::ConnectionsController < Api::ApiController
   # PUT /api/v1/connections/1
   def update
     @connection = Connection.find(params[:id])
-    @connection.update!(connection_update_params)      
+    @connection.update_variables!(connection_update_params)      
     head :no_content    
   end
   
   # DELETE /api/v1/connections/1
   def destroy
     @connection = Connection.find(params[:id])
-    @connection.destroy_variables
+    @connection.destroy_variables!
     head :no_content
   end
 
