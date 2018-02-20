@@ -21,7 +21,7 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
 
   test "should fail to create connection if var name already exists" do
     post api_v1_mda_connections_url({mda_id: @mda.id, 
-                                     connection: {from: @from.id, to: @to.id, names: [@var.name]}}), 
+                                     connection: {from: @from.id, to: @to.id, names: [@varyg.name]}}), 
          as: :json, headers: @auth_headers 
     assert_match /Variable (\w+) already consumed/, JSON.parse(response.body)["message"]
     assert_response :unprocessable_entity 
@@ -29,7 +29,7 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
   
   test "should create connection from same discipline to other ones" do
     post api_v1_mda_connections_url({mda_id: @mda.id, 
-                                     connection: {from: @from.id, to: @mda.driver.id, names: [@var.name]}}), 
+                                     connection: {from: @from.id, to: @mda.driver.id, names: [@varyg.name]}}), 
          as: :json, headers: @auth_headers 
     assert_response :success
   end
