@@ -42,7 +42,7 @@ class MdaViewer extends React.Component {
   }
   
   handleConnectionChange(connId, connAttrs) {
-    console.log('change conn '+connId+ ' with '+JSON.stringify(connAttrs));
+    console.log('Change variable connection '+connId+ ' with '+JSON.stringify(connAttrs));
     if (connAttrs.init) {
       connAttrs['parameter_attributes'] = { init: connAttrs.init };
       delete connAttrs['init'];

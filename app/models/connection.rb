@@ -34,7 +34,10 @@ class Connection < ApplicationRecord
 
   def destroy_variables  
     Connection.transaction do
-      Variable.find(from_id).destroy!
+      conns_count = Connection.where(from_id: from_id).count
+      if conns_count == 1
+        Variable.find(from_id).destroy!
+      end
       Variable.find(to_id).destroy!
       destroy!
     end

@@ -18,11 +18,11 @@ class Api::V1::ConnectionsController < Api::ApiController
           vout = @from_disc.output_variables.find_by_name(name)
           unless vout 
             vout = @from_disc.variables.build(name: name, io_mode: "out", 
-                      shape: 1, type: "Float", desc: "", units: "")   
+                      shape: 1, type: "Float", desc: "", units: "")  
+            vout.save! 
           end
           vin = @to_disc.variables.build(name: name, io_mode: "in", shape: 1, type: "Float", desc: "", units: "")
-          
-          vout.save!
+
           vin.save!
           Connection.create!(from_id: vout.id, to_id: vin.id)
         end

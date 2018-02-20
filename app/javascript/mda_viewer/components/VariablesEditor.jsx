@@ -90,37 +90,39 @@ class VariablesEditor extends React.Component {
     this.connections = this.compute();  
     let columns = [
                    {
-                     Header: "From",
+                     Header: (cellInfo) => this.renderHeader(cellInfo, 'From'),
                      accessor: "from",
                    },
                    {
-                     Header: "To",
+                     Header: (cellInfo) => this.renderHeader(cellInfo, 'To'),
                      accessor: "to",
                      minWidth: 300,
                    },
                    {
-                     Header: "Variable",
+                     Header: (cellInfo) => this.renderHeader(cellInfo, 'Name'),
                      accessor: "name", 
                      minWidth: 300, 
                      Cell: this.renderEditable 
                    },
                    {
-                     Header: "Type",
+                     Header: (cellInfo) => this.renderHeader(cellInfo, 'Type', ),
                      accessor: "type", 
-                     Cell: this.renderEditable 
+                     Cell: (cellInfo) => this.renderEditable(cellInfo, [{id:'Float', text: 'Float'},
+                                                                        {id:'Integer', text: 'Integer'},
+                                                                        {id:'String', text: 'String'}]) 
                    },
                    {
-                     Header: "Shape",
+                     Header: (cellInfo) => this.renderHeader(cellInfo, 'Shape'),
                      accessor: "shape", 
                      Cell: this.renderEditable
                    },
                    {
-                     Header: "Init",
+                     Header: (cellInfo) => this.renderHeader(cellInfo, 'Init'),
                      accessor: "init", 
                      Cell: this.renderEditable
                    },
                    {
-                     Header: "Units",
+                     Header: (cellInfo) => this.renderHeader(cellInfo, 'Units'),
                      accessor: "units", 
                      Cell: this.renderEditable
                    }
@@ -133,7 +135,7 @@ class VariablesEditor extends React.Component {
       });
     }
     return (
-            <div>
+            <div className="mt-3"> 
               <ReactTable
                 data={this.connections}
                 columns={columns}
@@ -145,14 +147,29 @@ class VariablesEditor extends React.Component {
           );   
   };
 
-  renderEditable(cellInfo) {
+  renderHeader(cellInfo, title) {
+    return (<strong>{title}</strong>);  
+  }
+  
+  renderEditable(cellInfo, selectOptions) {
 //    console.log(cellInfo.column.id);
 //    console.log(this.connections[cellInfo.index][cellInfo.column.id]);
     if (this.props.isEditing) {
-      return ( <RIEInput
-        value={this.connections[cellInfo.index][cellInfo.column.id]}
-        change={(attr) => this.props.onConnectionChange(this.connections[cellInfo.index].id, attr)}
-        propName={cellInfo.column.id} /> );
+      if (selectOptions) {
+          let value = this.connections[cellInfo.index][cellInfo.column.id];
+          return ( <RIESelect
+                  value={{id: value, text: value }}
+                  change={(attr) => this.props.onConnectionChange(this.connections[cellInfo.index].id, {type: attr.type.id})}
+                  propName={cellInfo.column.id} 
+                  shouldBlockWhileLoading 
+                  options={selectOptions}/> );
+      } else {
+          return ( <RIEInput
+            value={this.connections[cellInfo.index][cellInfo.column.id]}
+            change={(attr) => this.props.onConnectionChange(this.connections[cellInfo.index].id, attr)}
+            propName={cellInfo.column.id} 
+            shouldBlockWhileLoading /> );
+      }
     } else {  		
       return (<div>{this.connections[cellInfo.index][cellInfo.column.id]}</div>);
     }

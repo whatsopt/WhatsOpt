@@ -22,7 +22,8 @@ class Variable < ApplicationRecord
   accepts_nested_attributes_for :parameter, reject_if: proc { |attr| attr['init'].blank? }, allow_destroy: true
 
   validates :name, :io_mode, :type, :shape, presence: true, allow_blank: false
-  validates :name, uniqueness: { scope: [:discipline, :io_mode], message: "should be single per discipline and io mode." }
+  validates :name, uniqueness: { scope: [:discipline, :io_mode], message: "should be unique per discipline and io mode." }
+  validates :name, uniqueness: { scope: [:discipline], message: "should be unique per discipline." }
   validate  :shape_is_well_formed
       
   scope :numeric, -> { where.not(type: STRING_T) }
@@ -66,4 +67,5 @@ class Variable < ApplicationRecord
       errors.add(:shape, e.message)
     end
   end
+  
 end
