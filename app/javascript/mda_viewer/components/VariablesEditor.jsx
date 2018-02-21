@@ -86,6 +86,23 @@ class VariablesEditor extends React.Component {
       return connections;
   }
   
+  componentDidMount() {
+    $(".table-tooltip").attr("data-toggle", "tooltip")
+    $(() => { $('.table-tooltip').tooltip({placement: 'right'}); });  
+  }
+  
+  componentWillUnmount() {
+    $('.table-tooltip').tooltip('dispose');
+  }
+
+  componentWillUpdate() {
+    this.componentWillUnmount();
+  }
+  
+  componentDidUpdate() {
+    this.componentDidMount();
+  }
+  
   render() {  
     this.connections = this.compute();  
     let columns = [
@@ -129,7 +146,7 @@ class VariablesEditor extends React.Component {
                  ];
     if (this.props.isEditing) {
       columns.splice(3, 0, {
-        Header: "Description",
+        Header: (cellInfo) => this.renderHeader(cellInfo, 'Description'),
         accessor: "desc", 
         Cell: this.renderEditable 
       });
@@ -171,7 +188,12 @@ class VariablesEditor extends React.Component {
             shouldBlockWhileLoading /> );
       }
     } else {  		
-      return (<div>{this.connections[cellInfo.index][cellInfo.column.id]}</div>);
+      if (cellInfo.column.id==='name') {
+        let title = this.connections[cellInfo.index]['desc']; 
+        return (<span className='table-tooltip' title={title}>{this.connections[cellInfo.index][cellInfo.column.id]}</span>);
+      } else {
+        return (<span>{this.connections[cellInfo.index][cellInfo.column.id]}</span>);
+      }
     }
   };
   
