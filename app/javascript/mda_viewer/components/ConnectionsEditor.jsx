@@ -9,7 +9,6 @@ class DisciplineSelector extends React.Component {
   
   handleSelectChange(event) {
     event.preventDefault();
-    this.setState({selected: event.target.value});
     this.props.onSelection(event.target.value);
   }
   
@@ -18,13 +17,15 @@ class DisciplineSelector extends React.Component {
       let name = node.id===this.props.nodes[0].id?this.props.ulabel:node.name
       return (<option key={node.id} value={node.id}>{name}</option>);
     }); 
-      
+
+    let selected = this.props.selected || this.props.nodes[0].id;
+
     return (  
       <div className="input-group mt-3">
         <div className="input-group-prepend" htmlFor={this.props.label}>
           <label className="input-group-text editor-header">{this.props.label}</label>
         </div>
-        <select id={this.props.label} className="custom-select" id="type" value={this.props.selected} onChange={this.handleSelectChange}>
+        <select id={this.props.label} className="custom-select" id="type" value={selected} onChange={this.handleSelectChange}>
           {disciplines}
         </select>
       </div>
@@ -145,17 +146,18 @@ class ConnectionsForm extends React.Component {
 class ConnectionsEditor extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { nodes: [], from: '', to: '' };
     this.handleFromDisciplineSelected = this.handleFromDisciplineSelected.bind(this);
     this.handleToDisciplineSelected = this.handleToDisciplineSelected.bind(this);
   }
   
   handleFromDisciplineSelected(nodeId) {
-    this.props.onFilterChange({fr: nodeId, to: this.props.filter.to});
+    this.props.onFilterChange({fr: nodeId, 
+      to: this.props.filter.to || this.props.nodes[0].id});
   }
   
   handleToDisciplineSelected(nodeId) {
-    this.props.onFilterChange({to: nodeId, fr: this.props.filter.fr});
+    this.props.onFilterChange({to: nodeId, 
+      fr: this.props.filter.fr || this.props.nodes[0].id});
   }
     
   render() {
