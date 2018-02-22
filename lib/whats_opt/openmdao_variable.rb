@@ -36,15 +36,15 @@ module WhatsOpt
     def default_py_value
       if self.dim == 1
         if self.type == FLOAT_T
-          "0.0"
+          "1.0"
         else 
-          "0"
+          "1"
         end
       else
         if self.type == FLOAT_T
-          "np.zeros(#{self.shape})"
+          "np.ones(#{self.shape})"
         else 
-          "np.zeros(#{self.shape}, dtype=np.int)"
+          "np.ones(#{self.shape}, dtype=np.int)"
         end
       end
     end
