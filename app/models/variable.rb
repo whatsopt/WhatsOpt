@@ -27,10 +27,10 @@ class Variable < ApplicationRecord
   validate  :shape_is_well_formed
       
   scope :numeric, -> { where.not(type: STRING_T) }
-  scope :inputs, -> { numeric.where(io_mode: IN) }
-  scope :outputs, -> { numeric.where(io_mode: OUT) }
-  scope :objectives, -> { numeric.where("name LIKE '#{OBJECTIVE_PREFIX}%'") }
-  scope :constraints, -> { numeric.where("name LIKE '#{CONSTRAINT_PREFIX}%'") }
+  scope :inputs, -> { where(io_mode: IN) }
+  scope :outputs, -> { where(io_mode: OUT) }
+  scope :objectives, -> { where("name LIKE '#{OBJECTIVE_PREFIX}%'") }
+  scope :constraints, -> { where("name LIKE '#{CONSTRAINT_PREFIX}%'") }
     
   after_initialize :set_defaults, unless: :persisted?
 

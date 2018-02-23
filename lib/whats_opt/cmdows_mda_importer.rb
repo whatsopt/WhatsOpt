@@ -13,7 +13,7 @@ module WhatsOpt
     
     def initialize(filename, mda_name=nil)
       @filename = filename
-      @mda_name = mda_name || File.basename(@filename, '.cmdows').camelcase
+      @mda_name = mda_name || File.basename(@filename, '.*').camelcase
       @doc = Nokogiri::XML(File.read(filename))
       XSD.validate(@doc).each do |error|
         raise CmdowsMdaImportError.new(error.message)

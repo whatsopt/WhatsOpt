@@ -179,7 +179,7 @@ class MdaViewer extends React.Component {
     let errors = this.state.errors.map((message, i) => {
       return ( <Error key={i} msg={message} /> );
     });  
-      
+    
     if (this.state.isEditing) {
       return(
       <div>

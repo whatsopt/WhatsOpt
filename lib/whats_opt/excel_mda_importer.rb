@@ -8,16 +8,18 @@ module WhatsOpt
     include WhatsOpt::Utils
     
     GSV_SHEET_NAME = 'Global State Vector'
-    DISCIPLINE_RANGE_NAME = 'discipline_list'
     GLOBAL_STATE_VECTOR = 'global_state_vector'
+    DISCIPLINE_SHEET_NAME = 'Disciplines'
+    DISCIPLINE_RANGE_NAME = 'discipline_list'
     
     class ExcelMdaImportError < MdaImportError
     end
     
     attr_reader :line_count, :mda, :disciplines, :variables, :connections, :defined_names
     
-    def initialize(filename)
+    def initialize(filename, mda_name=nil)
       @filename = filename
+      @mda_name = mda_name || File.basename(@filename, '.*').camelcase
       begin
         @workbook = RubyXL::Parser.parse(filename)
       rescue Zip::Error => e
@@ -25,11 +27,12 @@ module WhatsOpt
         raise ExcelMdaImportError.new(e)
       end 
       _initialize_defined_names
-      @worksheet = @workbook[GSV_SHEET_NAME]
+      @worksheet = @workbook[DISCIPLINE_SHEET_NAME]
       top_right, bottom_left = _get_coordinates(DISCIPLINE_RANGE_NAME)
       @disc_table = @worksheet[top_right[0]...bottom_left[0]]
       @disc_data = @disc_table.map{|row| row && row[top_right[1]..bottom_left[1]]}
         
+      @worksheet = @workbook[GSV_SHEET_NAME]
       top_right, bottom_left = _get_coordinates(GLOBAL_STATE_VECTOR)
       @main_table = @worksheet[top_right[0]...bottom_left[0]]
       @workdata = @main_table.map{|row| row && row[top_right[1]..bottom_left[1]]} 
@@ -57,7 +60,7 @@ module WhatsOpt
     end
       
     def get_mda_attributes
-      { name: @worksheet[1][1].value }
+      { name: @mda_name }
     end 
     
     def get_disciplines_attributes
@@ -173,9 +176,10 @@ module WhatsOpt
           end
           type = _getstr(row[7])
           type = case type
-                 when /int/
+                 when /int/, /Integer/
                    Variable::INTEGER_T
-                 when /string/  
+                 when /string/, /String/  
+                   p "OK String "+name
                    Variable::STRING_T
                  else # 
                    Variable::FLOAT_T

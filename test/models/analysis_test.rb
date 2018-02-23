@@ -14,7 +14,7 @@ class AnalysisTest < ActiveSupport::TestCase
     mda = Analysis.create!(attachment_attributes: {data: attach})
     assert mda.to_mda_viewer_json
     assert mda.valid?
-    assert_equal 3, mda.design_variables.count
+    assert_equal 3, mda.indep_variables.count
     assert_equal 1, mda.optimization_variables.count
   end
 

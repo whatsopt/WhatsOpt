@@ -4,7 +4,7 @@ require 'whats_opt/excel_mda_importer'
 class ExcelMdaImporterTest < ActiveSupport::TestCase
 
   def setup
-    @emi = WhatsOpt::ExcelMdaImporter.new(sample_file("excel_mda_simple_sample.xlsx").path)  
+    @emi = WhatsOpt::ExcelMdaImporter.new(sample_file("excel_mda_dummy.xlsx").path)  
   end
 
   test "should get 6 defined names" do
@@ -13,12 +13,12 @@ class ExcelMdaImporterTest < ActiveSupport::TestCase
   
   test "should get discipline table coordinates" do
     top_left, bottom_right = @emi._get_coordinates(WhatsOpt::ExcelMdaImporter::DISCIPLINE_RANGE_NAME)
-    assert_equal [7, 2], top_left
-    assert_equal [10, 2], bottom_right
+    assert_equal [4, 2], top_left
+    assert_equal [7, 2], bottom_right
   end
   
   test "should get mda attributes" do
-    assert_equal({name: "PRF CICAV"}, @emi.get_mda_attributes)
+    assert_equal({name: "ExcelMdaDummy"}, @emi.get_mda_attributes)
   end
   
   test "should get disciplines attributes" do
@@ -121,6 +121,12 @@ class ExcelMdaImporterTest < ActiveSupport::TestCase
 
   test "should import Excel Glider" do
     @emi = WhatsOpt::ExcelMdaImporter.new(sample_file("excel_glider.xlsx").path)
+    vars = @emi.get_variables_attributes
+    assert vars
+  end
+  
+  test "should import Excel Cicav" do
+    @emi = WhatsOpt::ExcelMdaImporter.new(sample_file("CICAV V5R10.xlsx").path)
     vars = @emi.get_variables_attributes
     assert vars
   end

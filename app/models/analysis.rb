@@ -31,7 +31,7 @@ class Analysis < ApplicationRecord
     self.disciplines.driver&.take
   end
   
-  def design_variables
+  def indep_variables
     return self.driver.output_variables if driver
     []
   end
@@ -133,7 +133,7 @@ class Analysis < ApplicationRecord
         if self.attachment.exists?
           if self.attachment.mda_excel?
             self.name = File.basename(self.attachment.original_filename, '.xlsx').camelcase
-            importer = WhatsOpt::ExcelMdaImporter.new(self.attachment.path)
+            importer = WhatsOpt::ExcelMdaImporter.new(self.attachment.path, self.name)
           elsif self.attachment.mda_cmdows?
             self.name = File.basename(self.attachment.original_filename, '.*').camelcase
             importer = WhatsOpt::CmdowsMdaImporter.new(self.attachment.path, self.name)

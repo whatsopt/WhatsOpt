@@ -30,13 +30,13 @@ class VariableTest < ActiveSupport::TestCase
 
   def test_should_have_a_valid_py_default_value_taking_into_account_type_and_shape
     var = variables(:var_scalar_float)
-    assert_equal '0.0', var.default_py_value 
+    assert_equal '1.0', var.default_py_value 
     var = variables(:var_scalar_int)
-    assert_equal '0', var.default_py_value 
+    assert_equal '1', var.default_py_value 
     var = variables(:var_array_float)
-    assert_equal 'np.zeros((3,))', var.default_py_value  
+    assert_equal 'np.ones((3,))', var.default_py_value  
     var = variables(:var_nparray_float)
-    assert_equal 'np.zeros((3, 5))', var.default_py_value 
+    assert_equal 'np.ones((3, 5))', var.default_py_value 
     var = variables(:var_string)
     assert_equal 'test_init_string', var.parameter.init
   end
