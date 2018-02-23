@@ -10,11 +10,11 @@ class AnalysisTest < ActiveSupport::TestCase
   end
    
   test "should create an mda from a mda template excel file" do
-    attach = sample_file('excel_mda_simple_sample.xlsx')
+    attach = sample_file('excel_mda_dummy.xlsx')
     mda = Analysis.create!(attachment_attributes: {data: attach})
     assert mda.to_mda_viewer_json
     assert mda.valid?
-    assert_equal 3, mda.indep_variables.count
+    assert_equal 4, mda.indep_variables.count
     assert_equal 1, mda.optimization_variables.count
   end
 

@@ -32,7 +32,7 @@ class AnalysesControllerTest < ActionDispatch::IntegrationTest
   test "should import analysis from excel" do
     assert_difference('Analysis.count') do
       post mdas_url, params: { 
-        analysis: { attachment_attributes: {data: fixture_file_upload('excel_mda_simple_sample.xlsx') }} }
+        analysis: { attachment_attributes: {data: fixture_file_upload('excel_mda_dummy.xlsx') }} }
     end
     assert_redirected_to mda_url(Analysis.last)
   end  

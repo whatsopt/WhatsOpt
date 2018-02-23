@@ -179,7 +179,6 @@ module WhatsOpt
                  when /int/, /Integer/
                    Variable::INTEGER_T
                  when /string/, /String/  
-                   p "OK String "+name
                    Variable::STRING_T
                  else # 
                    Variable::FLOAT_T
