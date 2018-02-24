@@ -24,8 +24,7 @@
   for (var i=0; i<views.length; i++) { 
 		$('button[data-view="'+views[i]+'"]').on('click', function() {
 		  var view = $(this).attr('data-view');
-			$('#geometry-model__'+view).attr("set_bind", true);
-			$('#geometry-model__'+view).attr("set_bind", null);
+			$('Viewpoint#geometry-model__'+view).attr("set_bind", "true");
 		});
   }
 </script>

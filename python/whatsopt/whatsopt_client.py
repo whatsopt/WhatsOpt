@@ -1,5 +1,6 @@
 from __future__ import print_function
 from six import iteritems
+from shutil import move
 import os
 import sys
 import json
@@ -7,6 +8,10 @@ import getpass
 import requests
 import copy
 import re
+import zipfile
+import tempfile
+
+
 from openmdao.devtools.problem_viewer.problem_viewer import _get_viewer_data, view_model
 from openmdao.api import IndepVarComp, Problem, Group
 from tabulate import tabulate
@@ -50,7 +55,7 @@ class WhatsOpt(object):
 
     @property
     def default_url(self):
-        env = os.getenv("WHATSOPT_ENV")
+        env = os.getenv("WOP_ENV")
         if env=="development":
             self._default_url = DEV_URL
         elif env=="test":
@@ -99,10 +104,10 @@ class WhatsOpt(object):
         resp = self.session.get(url, headers=self.headers)
         if resp.ok:
             mdas = resp.json()
-            headers = ["name", "updated at"]
+            headers = ["id", "name", "updated at"]
             data = []
             for mda in mdas:
-                data.append([mda['name'], mda['updated_at']])
+                data.append([mda['id'], mda['name'], mda['updated_at']])
             print(tabulate(data, headers))
         else:
             resp.raise_for_status()
@@ -167,6 +172,48 @@ class WhatsOpt(object):
                 #print(resp.json())
                 resp.raise_for_status()
 
+    def pull_mda(self, mda_id, options):
+        url =  self._url('/api/v1/analyses/%s/mda_exports/new.openmdao' % mda_id)
+        resp = self.session.get(url, headers=self.headers, stream=True)
+        if resp.ok:
+            name = ""
+            with tempfile.NamedTemporaryFile(suffix='.zip', mode='wb', delete=False) as fd:
+                for chunk in resp.iter_content(chunk_size=128):
+                    fd.write(chunk)
+                name = fd.name
+            zip = zipfile.ZipFile(name, 'r')
+            zip.extractall(tempfile.tempdir)
+            filenames = zip.namelist()
+            zip.close()
+            for f in filenames:
+                file_from = os.path.join(tempfile.tempdir, f)
+                file_to = os.path.basename(f)
+                if os.path.exists(file_to):
+                    if options['--force']:
+                        print("wop pull: overwrite %s" % file_to)
+                        if not options['--dry-run']:
+                            os.remove(file_to)
+                    else:
+                        print("wop pull: file %s in the way, move it or pull in another directory or use --force to overwrite" % file_to)
+                        exit(-1)
+                else:
+                    print("wop pull: create %s" % file_to) 
+            if not options['--dry-run']:
+                for f in filenames:
+                    file_from = os.path.join(tempfile.tempdir, f)
+                    file_to = os.path.basename(f)
+                    move(file_from, '.')
+        else:
+            resp.raise_for_status()
+        
+    @staticmethod
+    def _extract_mda_name(name):
+        match = re.match(r"openmdao_(\w+)_", name)
+        if match:
+            return match.group(1)
+        else:
+            return 'mda'
+        
     # see _get_tree_dict at
     # https://github.com/OpenMDAO/OpenMDAO/blob/master/openmdao/devtools/problem_viewer/problem_viewer.py
     def _collect_discnames_and_vars(self, system, tree, group_prefix=''):

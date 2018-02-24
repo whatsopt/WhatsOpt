@@ -17,6 +17,7 @@ Rails.application.routes.draw do
         resources :disciplines, only: [:show, :create, :update, :destroy], :shallow => true 
         resources :connections, only: [:create, :update, :destroy]
         post 'openmdao_checking', to: 'openmdao_checking#create' 
+        get 'mda_exports/new'
       end
     end
   end

@@ -17,15 +17,15 @@ def logout():
 	
 @cli.command()
 def list():
-	""" List multi disciplinary analyses """
+	""" List analyses """
 	WhatsOpt().list_analyses()
 	
 @cli.command()
-@click.option('--dry-run', is_flag=True, default=False, help='generate analysis data without actually pushing')
+@click.option('--dry-run', is_flag=True, default=False, help='generate analysis push data without actually pushing')
 @click.option('--name', help='find analysis with given name')
 @click.argument('py_filename')
 def push(dry_run, name, py_filename):
-	""" Push multi disciplinary analysis specified within given PY_FILENAME """
+	""" Push analysis from within given PY_FILENAME """
 	wop = WhatsOpt()
 	options = {'--dry-run': dry_run, '--name': name}
 	wop.execute(py_filename, wop.push_mda_cmd, options)
@@ -35,5 +35,15 @@ def push(dry_run, name, py_filename):
 	else:
 		print("Error: analysis not found")
 	exit(-1)
+	
+@cli.command()
+@click.option('--dry-run', is_flag=True, default=False, help='print analysis pull infos without actually pulling')
+@click.option('--force', is_flag=True, default=False, help='overwrite existing files')
+@click.argument('mda_id')
+def pull(dry_run, force, mda_id):
+	""" Pull analysis given its identifier """	
+	wop = WhatsOpt()
+	options = {'--dry-run': dry_run, '--force': force}
+	WhatsOpt().pull_mda(mda_id, options)
 	
 cli(prog_name='wop')
