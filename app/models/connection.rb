@@ -27,7 +27,7 @@ class Connection < ApplicationRecord
   end 
   
   def self.between(disc_from_id, disc_to_id)
-    Connection.joins(:from).where(variables: {discipline_id: disc_from_id}).where.not(variables: {type: :String})
+    Connection.joins(:from).where(variables: {discipline_id: disc_from_id}) #.where.not(variables: {type: :String})
               .order('variables.fullname')
               .joins(:to).where(tos_connections: {discipline_id: disc_to_id})
   end 
