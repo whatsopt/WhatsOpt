@@ -28,7 +28,8 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     Dir.mktmpdir do |dir|
       filepath = @ogen._generate_mda dir
       basenames = @ogen.genfiles.map {|fp| File.basename(fp)}.sort
-      expected = ["aerodynamics_base.py", "cicav_base.py", "geometry_base.py"]
+      expected = ["aerodynamics.py", "aerodynamics_base.py", "cicav.py", 
+                  "cicav_base.py", "geometry.py", "geometry_base.py"]
       assert_equal expected, basenames
     end
   end 

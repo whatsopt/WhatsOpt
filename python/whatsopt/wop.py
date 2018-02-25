@@ -42,7 +42,6 @@ def push(dry_run, name, py_filename):
 @click.argument('mda_id')
 def pull(dry_run, force, mda_id):
 	""" Pull analysis given its identifier """	
-	wop = WhatsOpt()
 	options = {'--dry-run': dry_run, '--force': force}
 	WhatsOpt().pull_mda(mda_id, options)
 	

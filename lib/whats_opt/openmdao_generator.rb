@@ -61,13 +61,15 @@ module WhatsOpt
     end
 
     def _generate_main gendir
+      _generate(@mda.py_basefilename, 'openmdao_main_base.py.erb', gendir)
       _generate(@mda.py_filename, 'openmdao_main.py.erb', gendir)
     end
     
-    def _generate_discipline(disc, gendir)
-      @discipline = disc
-      if @discipline
-        _generate(@discipline.py_filename, 'openmdao_discipline.py.erb', gendir)
+    def _generate_discipline(discipline, gendir)
+      @discipline=discipline  # @discipline used in template
+      if discipline
+        _generate(discipline.py_basefilename, 'openmdao_discipline_base.py.erb', gendir)
+        _generate(discipline.py_filename, 'openmdao_discipline.py.erb', gendir)
       else
         raise DisciplineNotFoundException.new("Discipline " +
           discname + " not found in " + @mda.disciplines)

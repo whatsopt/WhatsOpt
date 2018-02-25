@@ -1,0 +1,42 @@
+import numpy as np
+
+from openmdao.api import Problem, Group
+from openmdao.api import IndepVarComp
+from openmdao.api import NonlinearBlockGS, ScipyKrylov
+<% @mda.disciplines.nodes.each do |d| %>
+from <%= d.py_modulename %> import <%= d.py_classname %><% end %>
+
+class <%= @mda.py_classname %>Base(Group):
+    """ An OpenMDAO base component to encapsulate <%= @mda.py_classname %> MDA """
+    
+    def setup(self): 
+    
+        <% if @mda.indep_variables.size > 0 %>
+        indeps = self.add_subsystem('indeps', IndepVarComp(), promotes=['*'])
+		<% @mda.indep_variables.each do |dv| %>
+        indeps.add_output('<%= dv.name %>', <%= dv.default_py_value%>)<% end %>		    
+ 		<% end %>
+ 		<% @mda.disciplines.nodes.each do |d| %>
+        self.add_subsystem('<%= d.py_classname %>', <%= d.py_classname %>(), promotes=[<%= d.variables.map(&:py_varname).map{|v| "'#{v}'"}.join(', ') %>])<% end %>         
+
+        self.nonlinear_solver = NonlinearBlockGS() 
+        self.linear_solver = ScipyKrylov()
+
+# if __name__ == "__main__":
+#     from openmdao.api import view_model
+#     from optparse import OptionParser
+# 
+#     parser = OptionParser()
+#     parser.add_option("-n", "--no-n2", action="store_false", dest='n2_view', default=True, 
+#                       help="display N2 openmdao viewer")
+#     (options, args) = parser.parse_args()
+# 
+#     problem = Problem()
+#     problem.model = <%= @mda.py_classname %>Base()
+# 
+#     problem.setup()
+#     problem.final_setup()
+#     
+#     if options.n2_view:
+#         view_model(problem)
+    

@@ -89,7 +89,7 @@ RUN wget https://bootstrap.pypa.io/get-pip.py \
 
 RUN pip install --upgrade pip \
 	&& pip install jupyter \
-	&& pip install openmdao==2.0.2
+	&& pip install openmdao==2.2.0
 
 # OpenVSP
 RUN apt-get install -y git cmake libxml2-dev \

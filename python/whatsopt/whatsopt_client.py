@@ -173,6 +173,7 @@ class WhatsOpt(object):
                 resp.raise_for_status()
 
     def pull_mda(self, mda_id, options):
+        print("Pull Analysis #%s from %s ..." % (mda_id, self.url))
         url =  self._url('/api/v1/analyses/%s/mda_exports/new.openmdao' % mda_id)
         resp = self.session.get(url, headers=self.headers, stream=True)
         if resp.ok:
@@ -190,19 +191,20 @@ class WhatsOpt(object):
                 file_to = os.path.basename(f)
                 if os.path.exists(file_to):
                     if options['--force']:
-                        print("wop pull: overwrite %s" % file_to)
+                        print("Overwrite %s" % file_to)
                         if not options['--dry-run']:
                             os.remove(file_to)
                     else:
-                        print("wop pull: file %s in the way, move it or pull in another directory or use --force to overwrite" % file_to)
+                        print("File %s in the way, move it or pull in another directory or use --force to overwrite" % file_to)
                         exit(-1)
                 else:
-                    print("wop pull: create %s" % file_to) 
+                    print("Create %s" % file_to) 
             if not options['--dry-run']:
                 for f in filenames:
                     file_from = os.path.join(tempfile.tempdir, f)
                     file_to = os.path.basename(f)
                     move(file_from, '.')
+                print("... Analysis #%s pulled." % mda_id)                
         else:
             resp.raise_for_status()
         
@@ -237,7 +239,7 @@ class WhatsOpt(object):
                                     io_mode = 'out'
                                 else:
                                     raise Exception('Unhandled variable type ' + typ)
-                                meta = system._var_abs2meta[typ][abs_name]
+                                meta = system._var_abs2meta[abs_name]
                                 vtype = 'Float'
                                 if re.match('int', type(meta['value']).__name__):
                                     vtype = 'Integer' 
