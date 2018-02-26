@@ -94,7 +94,7 @@ class ExcelMdaImporterTest < ActiveSupport::TestCase
                   desc: "Nombre de points des tables de profil aérodynamique", :disabled=>false},
                   'airfoil_extrados_p0_table'=> {name: 'airfoil_extrados_p0_table', shape: '1', type: 'Float', units: '', 
                   desc: "Profil aérodynamique au plan 0, coordonnées de l'extrados (BA vers BF)", :disabled=>false},
-                  'disabled_var'=> {:name=>"disabled_var", :shape=>"(10,)", :type=>"Float", :units=>"", :desc=>"Disabled variable", :disabled=>true},
+#                  'disabled_var'=> {:name=>"disabled_var", :shape=>"(10,)", :type=>"Float", :units=>"", :desc=>"Disabled variable", :disabled=>true},
                   'test_string'=> {:name=>"test_string", :shape=>"1", :type=>"String", :units=>"", :desc=>"Test String", :disabled=>false}
                   } 
      actual = @emi._import_variables_data
@@ -115,7 +115,8 @@ class ExcelMdaImporterTest < ActiveSupport::TestCase
       'Y12'=> ['wing_reference_surface', 'wing_airfoils_number_of_point', 'airfoil_extrados_p0_table'],
       'Y21'=> ['handling_qualities_inputs_table'], 
       'Y2x'=> ['eigen_values_table'],
-      'Y2'=> ['eigen_values_table', 'disabled_var']
+      'Y2'=> ['eigen_values_table']
+#      'Y2'=> ['eigen_values_table', 'disabled_var']
     }, @emi._import_connections_data)
   end
 

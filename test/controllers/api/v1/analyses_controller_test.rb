@@ -30,7 +30,7 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
   
   test "should update a mda with attachment" do
     @mda.build_attachment()
-    @mda.attachment.data = sample_file("excel_mda_simple_sample.xlsx")
+    @mda.attachment.data = sample_file("excel_mda_dummy.xlsx")
     @mda.save!
     put api_v1_mda_url(@mda), params: { analysis: { name: "TestNewName" } }, as: :json, headers: @auth_headers
     assert_response :success

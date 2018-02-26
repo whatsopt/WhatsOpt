@@ -5,7 +5,7 @@ class <%= @discipline.py_classname %>(<%= @discipline.py_classname %>Base):
 		
     def compute(self, inputs, outputs):
         """ <%= @discipline.py_classname %> computation """
-    <% @discipline.output_variables.each do |var_out| %>
+    <% @discipline.output_variables.numeric.each do |var_out| %>
         outputs['<%= var_out.py_varname %>'] = <%= var_out.default_py_value %> <% end %>  
 				
         
