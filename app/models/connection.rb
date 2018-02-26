@@ -45,23 +45,22 @@ class Connection < ApplicationRecord
     
   def update_variables!(params)
     Connection.transaction do
-      # update to connection
+      # update from variable
+      var_from = Variable.find(from_id)
+      var_from.update!(params)
+      
+      # update to related variables
+      params = params.except(:parameter_attributes)
+      
       var_to = Variable.find(to_id)
       if params[:name]
         fullname = var_to.fullname
         params[:fullname] = fullname.gsub(var_to.name, params[:name])
       end 
-      var_to.update!(params)
       
-      # update other related variables
-      var_from = Variable.find(from_id)
       Connection.where(from_id: var_from.id).each do |conn|
         conn.to.update!(params)
-      end
-      
-      # update from variable
-      params = params.except(:parameter_attributes)
-      var_from.update!(params)
+      end      
     end
   end
 end

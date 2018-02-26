@@ -82,37 +82,37 @@ module WhatsOpt
           if k =~ /Y(\d)x/
             src = _to_discipline($1) 
             dsts = _to_other_disciplines($1)
-            v = varattr.merge(io_mode: 'out')
-            res[src].append(v) unless res[src].include?(v) 
             dsts.each do |dst|
               v = varattr.merge(io_mode: 'in')
-              v.merge!(parameter_attributes: {init: @init_values[v[:name]]}) if @init_values[v[:name]]
               res[dst].append(v) unless res[dst].include?(v)
             end  
+            v = varattr.merge(io_mode: 'out')
+            v.merge!(parameter_attributes: {init: @init_values[v[:name]]}) if @init_values[v[:name]]
+            res[src].append(v) unless res[src].include?(v) 
           elsif k =~ /[CY](\d)(\d)/
             src = _to_discipline($1) 
             dst = _to_discipline($2)
-            v = varattr.merge(io_mode: 'out')
-            res[src].append(v) unless res[src].include?(v) 
             v = varattr.merge(io_mode: 'in')
-            v.merge!(parameter_attributes: {init: @init_values[v[:name]]}) if @init_values[v[:name]]
             res[dst].append(v) unless res[dst].include?(v) 
+            v = varattr.merge(io_mode: 'out')
+            v.merge!(parameter_attributes: {init: @init_values[v[:name]]}) if @init_values[v[:name]]
+            res[src].append(v) unless res[src].include?(v) 
           elsif k =~ /Y(\d)/
             src = _to_discipline($1)
             dst = WhatsOpt::Discipline::NULL_DRIVER_NAME
-            v = varattr.merge(io_mode: 'out')
-            res[src].append(v) unless res[src].include?(v) 
             v = varattr.merge(io_mode: 'in')
-            v.merge!(parameter_attributes: {init: @init_values[v[:name]]}) if @init_values[v[:name]]
             res[dst].append(v) unless res[dst].include?(v) 
+            v = varattr.merge(io_mode: 'out')
+            v.merge!(parameter_attributes: {init: @init_values[v[:name]]}) if @init_values[v[:name]]
+            res[src].append(v) unless res[src].include?(v) 
           elsif k =~ /X(\d)/
             src = WhatsOpt::Discipline::NULL_DRIVER_NAME
             dst = _to_discipline($1)
-            v = varattr.merge(io_mode: 'out')
-            res[src].append(v) unless res[src].include?(v) 
             v = varattr.merge(io_mode: 'in')
-            v.merge!(parameter_attributes: {init: @init_values[v[:name]]}) if @init_values[v[:name]]
             res[dst].append(v) unless res[dst].include?(v) 
+            v = varattr.merge(io_mode: 'out')
+            v.merge!(parameter_attributes: {init: @init_values[v[:name]]}) if @init_values[v[:name]]
+            res[src].append(v) unless res[src].include?(v) 
           else     
             raise ExcelMdaImportError.new("Bad flow '#{k}' for variable #{varname}")
           end

@@ -49,6 +49,15 @@ class Variable < ApplicationRecord
               end
   end
   
+  # TODO: create parameter.rb as for variable.rb
+  def init_py_value
+    if self.parameter
+      self.parameter.init
+    else
+      default_py_value
+    end
+  end
+  
   private
   
   def set_defaults

@@ -65,4 +65,22 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     assert_match /Error: Variable name .* already exists/, log.join(' ')
   end
 
+  test "should use init value for independant variables" do
+    var = variables(:varx1_out)
+    zippath = Tempfile.new('test_mda_file.zip')
+    File.open(zippath, 'w') do |f|
+      stringio, _ = @ogen.generate
+      f.write stringio.read
+    end
+    assert File.exists?(zippath)
+    Zip::File.open(zippath) do |zip|
+      zip.each do |entry|
+        if entry.name =~ /cicav_base\.py/
+          assert entry.get_input_stream.read=~
+            Regexp.new(Regexp.escape("indeps.add_output('x1', 3.14)"), Regexp::MULTILINE)
+        end
+      end
+    end
+  end
+  
 end
