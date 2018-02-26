@@ -12,8 +12,8 @@ float:
   upper: 
   variable: var_scalar_float
 
-var_x_geo_in_init:
+varx1_out_init:
   init: "3.14"
   lower: 
   upper: 
-  variable: varx1_geo_in
+  variable: varx1_out

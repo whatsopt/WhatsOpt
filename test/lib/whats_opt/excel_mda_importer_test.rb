@@ -29,32 +29,32 @@ class ExcelMdaImporterTest < ActiveSupport::TestCase
 
   test "should get variables attributes" do
     expected = {WhatsOpt::Discipline::NULL_DRIVER_NAME =>[{:name=>"wing_span", :shape=>"(3,)", :type=>"Float", :units=>"N", :desc=>"Envergure totale du véhicule", :io_mode=>"out"}, 
-        {:name=>"control_surfaces_number", :shape=>"1", :type=>"Integer", :units=>"deg", :desc=>"Nombre de gouvernes", :io_mode=>"out"}, 
+        {:name=>"control_surfaces_number", :shape=>"1", :type=>"Integer", :units=>"deg", :desc=>"Nombre de gouvernes", :io_mode=>"out", :parameter_attributes=>{:init=>"4"}}, 
         {:name=>"handling_qualities_inputs_table", :shape=>"(10, 4, 3)", :type=>"Float", :units=>"", :desc=>"Points de vol pour l'analyse des QdV", :io_mode=>"out"},
-        {:name=>"test_string", :shape=>"1", :type=>"String", :units=>"", :desc=>"Test String", :io_mode=>"out"},
-      {:name=>"eigen_values_table", :shape=>'(5,)', :type => 'Float', :units => 'deg', :io_mode=>"in", :parameter_attributes => {init: "[1,2,3,4,5]"}, :desc => "Valeurs propres des modes avion"}], 
+        {:name=>"test_string", :shape=>"1", :type=>"String", :units=>"", :desc=>"Test String", :io_mode=>"out", :parameter_attributes => {init: "test"}},
+      {:name=>"eigen_values_table", :shape=>'(5,)', :type => 'Float', :units => 'deg', :io_mode=>"in", :desc => "Valeurs propres des modes avion"}], 
       "Geometry"=>[{:name=>"wing_span", :shape=>'(3,)', :type => 'Float', :units=>"N", :io_mode=>"in", :desc => "Envergure totale du véhicule"}, 
-        {:name=>"control_surfaces_number", :shape=>'1', :type => 'Integer', :units => 'deg', :io_mode=>"in", :parameter_attributes => {init: "4"}, :desc => "Nombre de gouvernes"},
-        {:name=>"cockpit_length", :shape=>'(3,)', :type => 'Float', :units=>"Pa", :io_mode=>"out", :desc => "Longueur du cockpit"}, 
-        {:name=>"control_surfaces_number", :shape=>'1', :type => 'Integer', :units => 'deg', :io_mode=>"out", :desc => "Nombre de gouvernes"}, 
+        {:name=>"control_surfaces_number", :shape=>'1', :type => 'Integer', :units => 'deg', :io_mode=>"in", :desc => "Nombre de gouvernes"},
+        {:name=>"cockpit_length", :shape=>'(3,)', :type => 'Float', :units=>"Pa", :io_mode=>"out", :parameter_attributes => {init: "[25.0, 2.1, 3]"}, :desc => "Longueur du cockpit"}, 
+        {:name=>"control_surfaces_number", :shape=>'1', :type => 'Integer', :units => 'deg', :io_mode=>"out", :desc => "Nombre de gouvernes", :parameter_attributes=>{:init=>"4"}}, 
         {:name=>"airfoil_extrados_p0_table", :shape=>'1', :type => 'Float', :units => '', :io_mode=>"in", :desc => "Profil aérodynamique au plan 0, coordonnées de l'extrados (BA vers BF)"}, 
-        {:name=>"eigen_values_table", :shape=>'(5,)', :type => 'Float', :units => 'deg', :io_mode=>"in", :parameter_attributes => {init: "[1,2,3,4,5]"}, :desc => "Valeurs propres des modes avion"}],
-      "Aerodynamics"=>[{:name=>"wing_reference_surface", :shape=>'1', :type => 'Float', :units=>"Hz", :io_mode=>"out", :desc => "Surface de référence totale du véhicule"}, 
-        {:name=>"wing_airfoils_number_of_point", :shape=>'(2,)', :type => 'Integer', :units => '', :io_mode=>"out", :desc => "Nombre de points des tables de profil aérodynamique"}, 
+        {:name=>"eigen_values_table", :shape=>'(5,)', :type => 'Float', :units => 'deg', :io_mode=>"in", :desc => "Valeurs propres des modes avion"}],
+      "Aerodynamics"=>[{:name=>"wing_reference_surface", :shape=>'1', :type => 'Float', :units=>"Hz", :io_mode=>"out", :parameter_attributes => {init: "1"}, :desc => "Surface de référence totale du véhicule"}, 
+        {:name=>"wing_airfoils_number_of_point", :shape=>'(2,)', :type => 'Integer', :units => '', :io_mode=>"out", :parameter_attributes => {:init=>"[2, 6]"}, :desc => "Nombre de points des tables de profil aérodynamique"}, 
         {:name=>"airfoil_extrados_p0_table", :shape=>'1', :type => 'Float', :units => '', :io_mode=>"out", :desc => "Profil aérodynamique au plan 0, coordonnées de l'extrados (BA vers BF)"}, 
-        {:name=>"cockpit_length", :shape=>'(3,)', :type => 'Float', :units=>"Pa", :io_mode=>"in", :parameter_attributes => {init: "[25.0, 2.1, 3]"}, :desc => "Longueur du cockpit"}, 
-        {:name=>"control_surfaces_number", :shape=>'1', :type => 'Integer', :units => 'deg', :io_mode=>"in", :parameter_attributes => {init: "4"}, :desc => "Nombre de gouvernes"},  
+        {:name=>"cockpit_length", :shape=>'(3,)', :type => 'Float', :units=>"Pa", :io_mode=>"in", :desc => "Longueur du cockpit"}, 
+        {:name=>"control_surfaces_number", :shape=>'1', :type => 'Integer', :units => 'deg', :io_mode=>"in", :desc => "Nombre de gouvernes"},  
         {:name=>"handling_qualities_inputs_table", :shape=>'(10, 4, 3)', :type => 'Float', :units => '', :io_mode=>"in", :desc => "Points de vol pour l'analyse des QdV"},
-        {:name=>"test_string", :shape=>"1", :type=>"String", :units=>"", :desc=>"Test String", :io_mode=>"in", :parameter_attributes => {init: "test"}},
-        {:name=>"eigen_values_table", :shape=>'(5,)', :type => 'Float', :units => 'deg', :io_mode=>"in", :parameter_attributes => {init: "[1,2,3,4,5]"}, :desc => "Valeurs propres des modes avion"}],
-      "Control"=>[{:name=>"wing_reference_surface", :shape=>'1', :type => 'Float', :units=>"Hz", :io_mode=>"in", :parameter_attributes => {init: "1"}, :desc => "Surface de référence totale du véhicule"}, 
-        {:name=>"wing_airfoils_number_of_point", :shape=>'(2,)', :type => 'Integer', :units => '', :io_mode=>"in", :parameter_attributes => {:init=>"[2, 6]"}, :desc => "Nombre de points des tables de profil aérodynamique"}, 
+        {:name=>"test_string", :shape=>"1", :type=>"String", :units=>"", :desc=>"Test String", :io_mode=>"in"},
+        {:name=>"eigen_values_table", :shape=>'(5,)', :type => 'Float', :units => 'deg', :io_mode=>"in", :desc => "Valeurs propres des modes avion"}],
+      "Control"=>[{:name=>"wing_reference_surface", :shape=>'1', :type => 'Float', :units=>"Hz", :io_mode=>"in", :desc => "Surface de référence totale du véhicule"}, 
+        {:name=>"wing_airfoils_number_of_point", :shape=>'(2,)', :type => 'Integer', :units => '', :io_mode=>"in", :desc => "Nombre de points des tables de profil aérodynamique"}, 
         {:name=>"airfoil_extrados_p0_table", :shape=>'1', :type => 'Float', :units => '', :io_mode=>"in", :desc => "Profil aérodynamique au plan 0, coordonnées de l'extrados (BA vers BF)"}, 
-        {:name=>"cockpit_length", :shape=>'(3,)', :type => 'Float', :units =>"Pa", :io_mode=>"in", :parameter_attributes => {init: "[25.0, 2.1, 3]"}, :desc => "Longueur du cockpit"}, 
-        {:name=>"control_surfaces_number", :shape=>'1', :type => 'Integer', :units => 'deg', :io_mode=>"in", :parameter_attributes => {init: "4"}, :desc => "Nombre de gouvernes"}, 
+        {:name=>"cockpit_length", :shape=>'(3,)', :type => 'Float', :units =>"Pa", :io_mode=>"in", :desc => "Longueur du cockpit"}, 
+        {:name=>"control_surfaces_number", :shape=>'1', :type => 'Integer', :units => 'deg', :io_mode=>"in", :desc => "Nombre de gouvernes"}, 
         {:name=>"handling_qualities_inputs_table", :shape=>'(10, 4, 3)', :type => 'Float', :units => '', :io_mode=>"in", :desc => "Points de vol pour l'analyse des QdV"}, 
         {:name=>"handling_qualities_inputs_table" , :shape=>'(10, 4, 3)', :type => 'Float', :units => '', :io_mode=>"out", :desc => "Points de vol pour l'analyse des QdV"}, 
-        {:name=>"eigen_values_table", :shape=>'(5,)', :type => 'Float', :units => 'deg', :io_mode=>"out", :desc => "Valeurs propres des modes avion"}]}
+        {:name=>"eigen_values_table", :shape=>'(5,)', :type => 'Float', :units => 'deg', :io_mode=>"out", :parameter_attributes => {init: "[1,2,3,4,5]"}, :desc => "Valeurs propres des modes avion"}]}
     actual = @emi.get_variables_attributes
     assert_equal expected.size, actual.size, "Bad discipline count"
     expected.each do |k, vars| 
@@ -119,7 +119,7 @@ class ExcelMdaImporterTest < ActiveSupport::TestCase
 #      'Y2'=> ['eigen_values_table', 'disabled_var']
     }, @emi._import_connections_data)
   end
-
+  
   test "should import Excel Glider" do
     @emi = WhatsOpt::ExcelMdaImporter.new(sample_file("excel_glider.xlsx").path)
     vars = @emi.get_variables_attributes

@@ -231,16 +231,16 @@ class VariablesEditor extends React.Component {
   
   _findInfos(conn) { 
       let vfr = this._findVariableInfo(conn.fr, conn.varname, "out");
-      let vto = this._findVariableInfo(conn.to[0], conn.varname, "in");
+      //let vto = this._findVariableInfo(conn.to[0], conn.varname, "in");
       let desc = vfr.desc; 
       let vartype = vfr.type;
       let shape = vfr.shape;    
       let varname = vfr.name 
       let units = vfr.units 
       let init = "";
-
-      if (vto.parameter) { // 'to variable' used to retrieve init info
-        init = vto.parameter.init;
+      
+      if (vfr.parameter) { 
+        init = vfr.parameter.init;
       }
       let infos = { id: conn.connId, idfrName: conn.frName, frUnits: vfr.units, 
                     vName: varname, desc: desc,
