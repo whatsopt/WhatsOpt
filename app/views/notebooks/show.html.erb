@@ -1,6 +1,7 @@
 <h1><%= @notebook.title %></h1>
 
+<p>
 <small>created from <%= link_to @notebook.attachment.data_file_name, attachment_path(@notebook.attachment) %> by <%= @notebook.owner %></small>
-
+</p>
 <iframe width="1000" height="1000" src=<%= attachment_url(@notebook.attachment, :format => "notebook_view") %>>
 </iframe>

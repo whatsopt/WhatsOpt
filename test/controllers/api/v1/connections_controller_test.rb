@@ -76,8 +76,8 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
     end
     assert @conn.from.name, @conn.from.fullname
     assert @conn.to.name, @conn.to.fullname
-    refute @conn.from.parameter
-    assert @conn.to.parameter
-    assert_equal "[[1,2]]", @conn.to.parameter.init
+    assert @conn.from.parameter
+    assert_equal "[[1,2]]", @conn.from.parameter.init
+    refute @conn.to.parameter
   end  
 end

@@ -1,5 +1,14 @@
 <h1>CHANGELOG</h1>
 
+<h3>0.6.0 (26/02/2019)</h3>
+<ul>
+  <li>Manage new Excel template</li>
+  <li>OpenMDAO code generation: use OpenMDAO 2.2, manage setup method in base classes, comment comute_partials</li>
+  <li>Show string connections in XDSM but exclude them from OpenMDAO generation</li>
+  <li>Fix Hangar 3D view control buttons</li>
+  <li>Initial version of wop pull command</li>
+</ul>
+
 <h3>0.5.3 (22/02/2019)</h3>
 <ul>
   <li>Fix bugs in variable attributes editions</li>
@@ -9,13 +18,13 @@
 <ul>
   <li>Implement MDA edition: initial version</li>
   <li>Add Geometry Models view buttons</li>
-  <li>Add 'Edit' button access<li>
+  <li>Add 'Edit' button access</li>
 </ul>
 
 <h3>0.5.1 (13/02/2019)</h3>
 <ul>
   <li>Implementation: add Connection model to represent connection between variables</li>
-  <li>"User discipline" added on XDSM to allow filtering for global inputs/outputs of the MDA<li>
+  <li>"User discipline" added on XDSM to allow filtering for global inputs/outputs of the MDA</li>
 </ul>
 
 <h3>0.5.0 (24/01/2019)</h3>

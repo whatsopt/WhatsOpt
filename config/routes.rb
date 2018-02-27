@@ -22,8 +22,10 @@ Rails.application.routes.draw do
     end
   end
 
-  get '/jupyterhub' => redirect('https://rdri206h.onecert.fr')
-  get '/oneramdao' => redirect('http://dcps.onera/redmine/projects/oneramdao/files')
+  #get '/jupyterhub' => redirect('https://rdri206h.onecert.fr')
+  get '/toolbox' => redirect('http://dcps.onera/redmine/projects/oneramdao/files')
+  get '/issues' => redirect('http://dcps.onera/redmine/projects/whatsopt/issues')
+  get '/wiki' => redirect('http://dcps.onera/redmine/projects/whatsopt/wiki')
   get '/changelog' => 'infos#changelog'
   
   authenticated :user do

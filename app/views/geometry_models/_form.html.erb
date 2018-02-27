@@ -4,15 +4,13 @@
 	<div class="col-md-4">
 	  <div class="form-group">
 	  	<%= f.label :title %>
-			<%= f.text_field :title, class: "form-control" %>
+		<%= f.text_field :title, class: "form-control" %>
 	  </div>
 
-      <% unless action == :edit %>
-          <div class="form-group">
-            <label>OpenVSP .vsp3 file</label>
-            <%= render "attachments/attachment_form", :f => f %>
-          </div>
-      <% end %>
+      <div class="form-group">
+        <label>OpenVSP .vsp3 file</label>
+        <%= render "attachments/attachment_form", :f => f %>
+      </div>
       	
 	  <div class="form-group">
 	    <%= f.submit "Submit", class: "btn btn-primary" %>
