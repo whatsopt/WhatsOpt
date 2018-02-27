@@ -127,7 +127,7 @@ class ExcelMdaImporterTest < ActiveSupport::TestCase
   end
   
   test "should import Excel Cicav" do
-    @emi = WhatsOpt::ExcelMdaImporter.new(sample_file("CICAV V5R10.xlsx").path)
+    @emi = WhatsOpt::ExcelMdaImporter.new(sample_file("CICAV_V5R10.xlsx").path)
     vars = @emi.get_variables_attributes
     assert vars
   end
