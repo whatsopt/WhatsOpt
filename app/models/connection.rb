@@ -47,8 +47,11 @@ class Connection < ApplicationRecord
     Connection.transaction do
       # update from variable
       var_from = Variable.find(from_id)
+      if var_from.parameter
+        params[:parameter_attributes][:id] = var_from.parameter.id
+      end
       var_from.update!(params)
-      
+
       # update to related variables
       params = params.except(:parameter_attributes)
       
