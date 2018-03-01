@@ -23,14 +23,18 @@ class AnalysesController < ApplicationController
   # POST /mdas
   def create
     if params[:cancel_button]
-      redirect_to mdas_url, notice: "MDA creation cancelled."
+      redirect_to mdas_url, notice: "Analysis creation cancelled."
     else 
       @mda = Analysis.new(mda_params)
       if @mda.save
         Connection.create_connections(@mda)
         current_user.add_role(:owner, @mda)
         current_user.save
-        redirect_to mda_url(@mda), notice: 'MDA was successfully created.'
+        if @mda.disciplines.empty?
+          redirect_to edit_mda_url(@mda)
+        else
+          redirect_to mda_url(@mda), notice: 'Analysis #{@mda.name} was successfully created.'
+        end
       else
         @import = params[:import]
         render :new
