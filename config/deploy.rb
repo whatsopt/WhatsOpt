@@ -1,6 +1,6 @@
 lock '3.10.1'
 
-set :application, 'WhatsOpt'# config valid only for current version of Capistrano
+set :application, 'WhatsOpt' # config valid only for current version of Capistrano
 #set :deploy_user, 'rlafage'
 
 set :repo_url, 'ssh://designlab@endymion/iesta-base/designlab/gitrepos/WhatsOpt.git'
@@ -9,7 +9,6 @@ set :repo_url, 'ssh://designlab@endymion/iesta-base/designlab/gitrepos/WhatsOpt.
 set :branch, :master
 set :keep_releases, 5
 
-set :deploy_to, "/var/www/html/rails/whatsopt"
 
 set :log_level, :info
 
