@@ -45,4 +45,8 @@ def pull(dry_run, force, mda_id):
 	options = {'--dry-run': dry_run, '--force': force}
 	WhatsOpt().pull_mda(mda_id, options)
 	
+@cli.command()
+def update():
+	WhatsOpt().update_mda()
+	
 cli(prog_name='wop')

@@ -141,7 +141,6 @@ class WhatsOpt(object):
 
     def push_mda(self, problem, options):
         name = problem.model.__class__.__name__
-        print("Push %s to %s ..." % (name, self.url))
         data = _get_viewer_data(problem)
         tree = data['tree']
         #print(tree)
@@ -167,17 +166,17 @@ class WhatsOpt(object):
             resp = self.session.post(url, headers=self.headers, json=mda_params)
             if resp.ok:
                 #print(resp.json())
-                print("... %s pushed." % resp.json()['name'])
+                print("Done.")
             else:
                 #print(resp.json())
                 resp.raise_for_status()
 
     def pull_mda(self, mda_id, options):
-        print("Pull Analysis #%s from %s ..." % (mda_id, self.url))
-        url =  self._url('/api/v1/analyses/%s/mda_exports/new.openmdao' % mda_id)
+        base = '_base' if options.get('--base') else '' 
+        url =  self._url(('/api/v1/analyses/%s/exports/new.openmdao'+base) % mda_id)
         resp = self.session.get(url, headers=self.headers, stream=True)
         if resp.ok:
-            name = ""
+            name = None
             with tempfile.NamedTemporaryFile(suffix='.zip', mode='wb', delete=False) as fd:
                 for chunk in resp.iter_content(chunk_size=128):
                     fd.write(chunk)
@@ -190,24 +189,48 @@ class WhatsOpt(object):
                 file_from = os.path.join(tempfile.tempdir, f)
                 file_to = os.path.basename(f)
                 if os.path.exists(file_to):
-                    if options['--force']:
+                    if options.get('--force'):
                         print("Overwrite %s" % file_to)
-                        if not options['--dry-run']:
+                        if not options.get('--dry-run'):
                             os.remove(file_to)
                     else:
                         print("File %s in the way, move it or pull in another directory or use --force to overwrite" % file_to)
                         exit(-1)
                 else:
                     print("Create %s" % file_to) 
-            if not options['--dry-run']:
+            if not options.get('--dry-run'):
                 for f in filenames:
                     file_from = os.path.join(tempfile.tempdir, f)
                     file_to = os.path.basename(f)
                     move(file_from, '.')
-                print("... Analysis #%s pulled." % mda_id)                
         else:
             resp.raise_for_status()
+    
+    def update_mda(self):
+        files = self._find_mda_files()
+        for f in files:
+            ident = self._extract_mda_id(f)
+        self.pull_mda(ident, {'--base': True, '--force': True})
         
+    @staticmethod
+    def _find_mda_files():
+        files = []
+        for f in os.listdir("."):
+            if f.endswith("_base.py"):
+                files.append(f)
+        return files    
+    
+    @staticmethod
+    def _extract_mda_id(file):
+        ident = None
+        with open(file, 'r') as f:
+            for line in f:
+                match = re.match(r"^# analyses: (\d+)$", line) 
+                if match:
+                    ident = match.group(1)
+                    break
+        return ident
+    
     @staticmethod
     def _extract_mda_name(name):
         match = re.match(r"openmdao_(\w+)_", name)

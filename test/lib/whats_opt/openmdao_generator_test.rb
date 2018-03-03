@@ -9,11 +9,12 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     @ogen = WhatsOpt::OpenmdaoGenerator.new(@mda)
   end
     
-  test "should generate openmdao component for a given discipline an mda" do
+  test "should generate openmdao component for a given discipline in mda" do
     Dir.mktmpdir do |dir|
       disc = @mda.disciplines[0]
       filepath = @ogen._generate_discipline disc, dir
       assert File.exists?(filepath)
+      assert_match /(\w+)_base\.py/, filepath
     end
   end
   
@@ -37,8 +38,8 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
   test "should generate openmdao mda zip file" do
     zippath = Tempfile.new('test_mda_file.zip')
     File.open(zippath, 'w') do |f|
-      stringio, _ = @ogen.generate
-      f.write stringio.read
+      content, _ = @ogen.generate
+      f.write content
     end
     assert File.exists?(zippath)
     Zip::File.open(zippath) do |zip|
@@ -49,13 +50,27 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
       end
     end
   end 
-  
+
+  test "should generate openmdao mda zip base files" do
+    zippath = Tempfile.new('test_mda_file.zip')
+    File.open(zippath, 'w') do |f|
+      content, _ = @ogen.generate(only_base=true)
+      f.write content
+    end
+    assert File.exists?(zippath)
+    Zip::File.open(zippath) do |zip|
+      zip.each do |entry|
+        assert_match /_base\.py/, entry.name
+      end
+    end
+  end 
+
+    
   test "should run openmdao check and return true when valid" do
     ok, log = @ogen.check_mda_setup
     assert ok  # ok even if discipline without connections
     #assert_empty log
   end
-  
 
   test "should run openmdao check and return false when invalid" do
     mda = analyses(:fast)
@@ -69,8 +84,8 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     var = variables(:varx1_out)
     zippath = Tempfile.new('test_mda_file.zip')
     File.open(zippath, 'w') do |f|
-      stringio, _ = @ogen.generate
-      f.write stringio.read
+      content, _ = @ogen.generate
+      f.write content
     end
     assert File.exists?(zippath)
     Zip::File.open(zippath) do |zip|

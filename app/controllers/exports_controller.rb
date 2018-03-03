@@ -1,7 +1,7 @@
 require 'whats_opt/cmdows_generator'
 require 'whats_opt/openmdao_generator'
 
-class MdaExportsController < ApplicationController
+class ExportsController < ApplicationController
 
   def new
     mda_id = params[:mda_id]
@@ -11,8 +11,8 @@ class MdaExportsController < ApplicationController
         mda = Analysis.find(mda_id)
         if format == "openmdao"
           ogen = WhatsOpt::OpenmdaoGenerator.new(mda)
-          stringio, filename = ogen.generate
-          send_data stringio.read, filename: filename
+          content, filename = ogen.generate
+          send_data content, filename: filename
         elsif format == "cmdows"
           cmdowsgen = WhatsOpt::CmdowsGenerator.new(mda)
           content, filename = cmdowsgen.generate

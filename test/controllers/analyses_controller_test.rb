@@ -45,14 +45,14 @@ class AnalysesControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to mda_url(Analysis.last)
   end    
  
-test "should import glider analysis from excel and export cmdows" do
-  assert_difference('Analysis.count') do
-    post mdas_url, params: { 
-      analysis: { attachment_attributes: {data: fixture_file_upload('excel_glider.xlsx') }} }
-  end
-  assert_redirected_to mda_url(Analysis.last)
-  get mda_mda_exports_new_url(Analysis.last, format: "cmdows")
-end     
+  test "should import glider analysis from excel and export cmdows" do
+    assert_difference('Analysis.count') do
+      post mdas_url, params: { 
+        analysis: { attachment_attributes: {data: fixture_file_upload('excel_glider.xlsx') }} }
+    end
+    assert_redirected_to mda_url(Analysis.last)
+    get mda_exports_new_url(Analysis.last, format: "cmdows")
+  end     
      
   test "should show analysis" do
     get mda_url(@mda)
