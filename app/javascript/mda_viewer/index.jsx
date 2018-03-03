@@ -143,7 +143,12 @@ class MdaViewer extends React.Component {
   }
   
   handleDisciplineDelete(node, pos) {
-    api.deleteDiscipline(node.id, (response) => { this.renderXdsm(); });
+    api.deleteDiscipline(node.id, (response) => {
+      if (this.state.filter.fr===node.id || this.state.filter.to===node.id) {
+        this.handleFilterChange({fr: undefined, to: undefined}); 
+      }
+      this.renderXdsm(); 
+    });
   }
   
   // *** Analysis ************************************************************
