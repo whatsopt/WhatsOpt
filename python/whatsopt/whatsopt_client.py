@@ -164,11 +164,7 @@ class WhatsOpt(object):
         else:
             url =  self._url('/api/v1/analyses')
             resp = self.session.post(url, headers=self.headers, json=mda_params)
-            if resp.ok:
-                #print(resp.json())
-                print("Done.")
-            else:
-                #print(resp.json())
+            if not resp.ok:
                 resp.raise_for_status()
 
     def pull_mda(self, mda_id, options):
@@ -190,14 +186,14 @@ class WhatsOpt(object):
                 file_to = os.path.basename(f)
                 if os.path.exists(file_to):
                     if options.get('--force'):
-                        print("Overwrite %s" % file_to)
+                        print("Update %s" % file_to)
                         if not options.get('--dry-run'):
                             os.remove(file_to)
                     else:
                         print("File %s in the way, move it or pull in another directory or use --force to overwrite" % file_to)
                         exit(-1)
                 else:
-                    print("Create %s" % file_to) 
+                    print("Pull %s" % file_to) 
             if not options.get('--dry-run'):
                 for f in filenames:
                     file_from = os.path.join(tempfile.tempdir, f)
