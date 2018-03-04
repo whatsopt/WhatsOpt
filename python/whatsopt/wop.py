@@ -47,6 +47,7 @@ def pull(dry_run, force, mda_id):
 	
 @cli.command()
 def update():
+	""" Update analysis connections """
 	WhatsOpt().update_mda()
 	
 cli(prog_name='wop')
