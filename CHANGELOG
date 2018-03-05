@@ -1,5 +1,11 @@
 <h1>CHANGELOG</h1>
 
+<h3>0.6.1 (05/03/2019)</h3>
+<ul>
+  <li>Consolidate command: wop pull</li>
+  <li>Implement command: wop update</li>
+</ul>
+
 <h3>0.6.0 (26/02/2019)</h3>
 <ul>
   <li>Manage new Excel template</li>
