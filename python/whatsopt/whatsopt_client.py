@@ -207,8 +207,7 @@ class WhatsOpt(object):
         files = self._find_mda_files()
         for f in files:
             ident = self._extract_mda_id(f)
-        print("********* MDA %s" % ident)
-        #self.pull_mda(ident, {'--base': True, '--force': True})
+        self.pull_mda(ident, {'--base': True, '--force': True})
         
     @staticmethod
     def _find_mda_files():
@@ -223,7 +222,7 @@ class WhatsOpt(object):
         ident = None
         with open(file, 'r') as f:
             for line in f:
-                match = re.match(r"^# analyses: (\d+)$", line) 
+                match = re.match(r"^# analyses: (\d+)", line) 
                 if match:
                     ident = match.group(1)
                     break
