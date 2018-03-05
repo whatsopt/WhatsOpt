@@ -52,11 +52,11 @@ staging:
   # <<: *AUTHORIZATIONS
 
 production:
-  host: localhost
-  port: 636
+  host: ldap
+  port: 389
   attribute: cn
-  base: ou=people,dc=test,dc=com
-  admin_user: cn=admin,dc=test,dc=com
+  base: ou=people,o=onera
+  admin_user: ou=people,o=onera
   admin_password: admin_password
-  ssl: start_tls
+  ssl: false
   # <<: *AUTHORIZATIONS

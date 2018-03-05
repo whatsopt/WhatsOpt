@@ -21,8 +21,9 @@ API_KEY_FILENAME = os.path.join(WHATSOPT_DIRNAME, 'api_key')
 NULL_DRIVER_NAME = '__DRIVER__'  # check WhatsOpt Discipline model
 
 PROD_URL = "http://rdri206h.onecert.fr/whatsopt"
+STAG_URL = "http://rdri206h.onecert.fr/whatsopt"
 TEST_URL = "http://endymion:3000"
-DEV_URL = "http://192.168.99.100:3000"
+DEV_URL  = "http://192.168.99.100:3000"
 
 class WhatsOptImportMdaError(Exception):
     pass
@@ -206,7 +207,8 @@ class WhatsOpt(object):
         files = self._find_mda_files()
         for f in files:
             ident = self._extract_mda_id(f)
-        self.pull_mda(ident, {'--base': True, '--force': True})
+        print("********* MDA %s" % ident)
+        #self.pull_mda(ident, {'--base': True, '--force': True})
         
     @staticmethod
     def _find_mda_files():
