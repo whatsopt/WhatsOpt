@@ -13,7 +13,7 @@ before_script:
   - conda install --yes -n condaenv pip
   - source activate condaenv
   - conda install -c conda-forge --yes scikit-learn scipy python=2.7 pip jupyter
-  - pip install openmdao==2.0.2
+  - pip install openmdao==2.2.0
   - curl -sL https://deb.nodesource.com/setup_6.x | bash -
   - apt-get install -y nodejs
   - node --version

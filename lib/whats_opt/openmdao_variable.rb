@@ -7,7 +7,7 @@ module WhatsOpt
     include Variable
     
     def py_varname
-      name = self.fullname.tr('./', '_')
+      name = self.name.tr('./', '_')
       name.downcase
     end
     

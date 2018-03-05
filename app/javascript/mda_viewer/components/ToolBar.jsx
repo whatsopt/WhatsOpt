@@ -44,7 +44,7 @@ class ToolBar extends React.Component {
       btnStatusClass = "btn btn-info";
       btnIcon = <i className="fa fa-cog fa-spin" />;
     }
-    let base = "/analyses/"+this.props.mdaId+"/mda_exports/new"
+    let base = "/analyses/"+this.props.mdaId+"/exports/new"
     let href_om = url(base+".openmdao");
     let href_cd = url(base+".cmdows");
     return (
