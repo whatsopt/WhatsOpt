@@ -54,7 +54,7 @@ staging:
 production:
   host: ldap
   port: 389
-  attribute: cn
+  attribute: uid
   base: ou=people,o=onera
   admin_user: ou=people,o=onera
   admin_password: admin_password
