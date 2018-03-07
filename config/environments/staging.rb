@@ -83,16 +83,6 @@ Rails.application.configure do
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
-  
-  # Scripts
-  if `hostname`.strip == "rdri206h"
-    # rdri206h
-    config.jupyter_script='/tmp_user/rdri206h/rlafage/anaconda2/bin/jupyter'
-    config.openvsp_script='/tmp_user/rdri206h/rlafage/OpenVSP-3.13.3-Linux/vspscript'
-  else
-    config.jupyter_script='jupyter'
-    config.openvsp_script='vspscript'
-  end  
 
   # set the relative root, because we're deploying to /whatsopt
   config.action_controller.relative_url_root  = "/whatsopt"

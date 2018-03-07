@@ -7,7 +7,7 @@ module WhatsOpt
     SORRY_MESSAGE = "Oops, can not convert notebook to html!"
     SORRY_MESSAGE_HTML = "<p><strong>"+SORRY_MESSAGE+"</strong></p>"
 
-    JUPYTER = Rails.configuration.jupyter_script || "jupyter"
+    JUPYTER = APP_CONFIG['jupyter_cmd'] || "jupyter"
     
     class HtmlConversionError < StandardError
     end

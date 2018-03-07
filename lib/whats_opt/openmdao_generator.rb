@@ -7,6 +7,8 @@ module WhatsOpt
   
   class OpenmdaoGenerator
     
+    PYTHON = APP_CONFIG['python_cmd'] || "python"
+    
     attr_accessor :genfiles 
     
     class DisciplineNotFoundException < StandardError
@@ -57,7 +59,7 @@ module WhatsOpt
         
     def _check_mda(gendir)
       script = File.join(gendir, @mda.py_filename) 
-      stdouterr, status = Open3.capture2e('python', script, '--no-n2')
+      stdouterr, status = Open3.capture2e(PYTHON, script, '--no-n2')
       return status.success?, stdouterr
     end
 

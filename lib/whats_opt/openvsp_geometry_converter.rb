@@ -9,7 +9,7 @@ module WhatsOpt
     SORRY_MESSAGE = "Oops, can not convert geometry!"
     SORRY_MESSAGE_HTML = "<p><strong>"+SORRY_MESSAGE+"</strong></p>"
 
-    OPENVSP_SCRIPT = Rails.configuration.openvsp_script || "openvsp_script"
+    OPENVSP_SCRIPT = APP_CONFIG['openvsp_cmd'] || "vspscript"
     GEN_VSPSCRIPT = "convert_vsp3_to_x3d.script"
     
     class GeometryConversionError < StandardError

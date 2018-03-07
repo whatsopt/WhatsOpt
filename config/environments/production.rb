@@ -85,5 +85,12 @@ Rails.application.configure do
   config.active_record.dump_schema_after_migration = false
   
   # Jupyter script
-  config.jupyter_script='/home/rlafage/anaconda2/bin/jupyter'
+  config.jupyter_cmd='/dtis-app/miniconda2/envs/whatsopt/bin/jupyter'
+  
+  # Python command
+  config.python_cmd='/dtis-app/miniconda2/envs/whatsopt/bin/python'
+
+  # OpenVSP command
+  config.openvsp_cmd='/dtis-app/OpenVSP-3.13.3-Linux/vspscript'
+  
 end
