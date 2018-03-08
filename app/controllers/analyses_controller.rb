@@ -33,7 +33,7 @@ class AnalysesController < ApplicationController
         if @mda.disciplines.empty?
           redirect_to edit_mda_url(@mda)
         else
-          redirect_to mda_url(@mda), notice: 'Analysis #{@mda.name} was successfully created.'
+          redirect_to mda_url(@mda), notice: "Analysis #{@mda.name} was successfully created."
         end
       else
         @import = params[:import]
