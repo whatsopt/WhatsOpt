@@ -17,5 +17,5 @@ staging:
 production:
   python_cmd:  /dtis-app/miniconda2/envs/whatsopt/bin/python
   jupyter_cmd: /dtis-app/miniconda2/envs/whatsopt/bin/jupyter
-  openvsp_cmd: /dtis-app/OpenVSP-3.13.3-Linux/vspscript
-  
+  openvsp_cmd: /dtis-app/OpenVSP-3.13.3/vspscript
+
