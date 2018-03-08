@@ -21,7 +21,7 @@ class AnalysesControllerTest < ActionDispatch::IntegrationTest
       post mdas_url, params: { 
         analysis: { name: 'test' } }
     end
-    assert_redirected_to mda_url(Analysis.last)
+    assert_redirected_to edit_mda_url(Analysis.last)
   end
   
   test "should assign owner on creation" do

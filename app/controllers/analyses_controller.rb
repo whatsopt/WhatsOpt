@@ -30,7 +30,7 @@ class AnalysesController < ApplicationController
         Connection.create_connections(@mda)
         current_user.add_role(:owner, @mda)
         current_user.save
-        if @mda.disciplines.empty?
+        if @mda.disciplines.nodes.empty?
           redirect_to edit_mda_url(@mda)
         else
           redirect_to mda_url(@mda), notice: "Analysis #{@mda.name} was successfully created."
