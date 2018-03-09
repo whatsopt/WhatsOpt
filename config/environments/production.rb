@@ -84,13 +84,7 @@ Rails.application.configure do
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
   
-  # Jupyter script
-  config.jupyter_cmd='/dtis-app/miniconda2/envs/whatsopt/bin/jupyter'
-  
-  # Python command
-  config.python_cmd='/dtis-app/miniconda2/envs/whatsopt/bin/python'
+  # set the relative root, because we're deploying to /whatsopt
+  config.action_controller.relative_url_root  = "/whatsopt"
 
-  # OpenVSP command
-  config.openvsp_cmd='/dtis-app/OpenVSP-3.13.3-Linux/vspscript'
-  
 end
