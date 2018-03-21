@@ -40,15 +40,16 @@ class ConnectionList extends React.Component {
     let href="#";
     let vars = varnames.map((varname, i) => {
       let id = this.props.conn_ids[i];
+      let btn = this.props.active?"btn":"btn text-inactive";
       return (<div key={varname} className="btn-group m-1" role="group">
-                <button className="btn">{varname}</button>
+                <button className={btn}>{varname}</button>
                 <button className="btn text-danger" onClick={(e) => this.props.onConnectionDelete(id)}>
                   <i className="fa fa-close" />
                 </button>
               </div>);
     });
       
-    return (<div className="mb-3">{vars}</div> );
+    return (<span className="mb-3">{vars}</span> );
   }
 }
 
@@ -65,10 +66,11 @@ class VariableList extends React.Component {
     let sorted = this.props.vars.sort(this.compare);
     let vars = this.props.vars.map((v, i) => {
       let badgeKind = "badge " + ((v.ioMode==="in")?"badge-primary":"badge-secondary");
-      return <button key={v.name} className="btn m-1">{v.name} <span className={badgeKind}>{v.ioMode}</span></button>
+      let klass = v.active?"btn m-1":"btn m-1 text-inactive";
+      return <button key={v.name} className={klass}>{v.name} <span className={badgeKind}>{v.ioMode}</span></button>
     });
       
-    return (<div className="mb-3">{vars}</div> );
+    return (<span className="mb-3">{vars}</span> );
   }
 }
 
@@ -90,7 +92,7 @@ class ConnectionsViewer extends React.Component {
       edges.forEach((edge, i) => {
         edge.name.split(',').forEach((name, j) => {  
           if (!uniqNames.includes(name)) {
-            uniqEdges.push({name: name, ioMode: (edge.to === this.props.filter.to)?"in":"out"}); 
+            uniqEdges.push({name: name, ioMode: (edge.to === this.props.filter.to)?"in":"out", active: edge.active}); 
             uniqNames.push(name);
           }  
         }, this); 
@@ -107,13 +109,15 @@ class ConnectionsViewer extends React.Component {
       }, this);    
       connections = edges.map((edge, i) => {
         count += edge.name.split(',').length;
-        return ( <ConnectionList key={i} names={edge.name} conn_ids={edge.conn_ids} onConnectionDelete={this.props.onConnectionDelete}/> );
+        return ( <ConnectionList key={i} names={edge.name} active={edge.active} conn_ids={edge.conn_ids} onConnectionDelete={this.props.onConnectionDelete}/> );
       });
     }
 
     return (<div>
               <label className="editor-header">{title}  <span className="badge badge-info">{count}</span></label>
-              {connections} 
+              <div>
+                {connections} 
+              </div>
             </div>
             );
   }

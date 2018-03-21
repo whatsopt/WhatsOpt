@@ -1,5 +1,10 @@
 <h1>CHANGELOG</h1>
 
+<h3>0.6.2 (21/03/2019)</h3>
+<ul>
+  <li>Analysis edition: implement variable deactivation</li>
+</ul>
+
 <h3>0.6.1 (05/03/2019)</h3>
 <ul>
   <li>Consolidate command: wop pull</li>

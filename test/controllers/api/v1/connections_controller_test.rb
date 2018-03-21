@@ -64,8 +64,8 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
   end
   
   test "should update a connection" do
-    attrs = [:name, :type, :shape, :units, :desc]
-    values = ['test', 'Integer', '(1, 2)', 'm', 'test description']
+    attrs = [:name, :type, :shape, :units, :desc, :active]
+    values = ['test', 'Integer', '(1, 2)', 'm', 'test description', false]
     update_attrs = attrs.zip(values).to_h
     update_attrs[:parameter_attributes] = {init: "[[1,2]]"}
     put api_v1_connection_url(@conn, {connection: update_attrs}), as: :json, headers: @auth_headers
@@ -79,5 +79,7 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
     assert @conn.from.parameter
     assert_equal "[[1,2]]", @conn.from.parameter.init
     refute @conn.to.parameter
+    refute @conn.to.active
+    refute @conn.from.active
   end  
 end

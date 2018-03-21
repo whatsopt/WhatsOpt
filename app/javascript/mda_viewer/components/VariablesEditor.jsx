@@ -9,10 +9,12 @@ class VariablesEditor extends React.Component {
     this.state = { editingConnId: null };
     this.connections = this.compute();
     this.renderEditable = this.renderEditable.bind(this);
+    this.renderReadonly = this.renderReadonly.bind(this);
+    this.renderCheckButton = this.renderCheckButton.bind(this);
   }
 
   compute() {
-      let edges = this.props.mda.edges;
+      let edges = this.props.edges;
       let filter = this.props.filter;
       let nodeSelected = filter.fr && (filter.fr === filter.to);
       
@@ -78,7 +80,7 @@ class VariablesEditor extends React.Component {
             }
           }
           let val = { id: conn.connId, from: conn.frName, to: conn.toName.join(', '), name: infos.vName, desc: infos.desc,
-                      type: infos.type, shape: infos.shape, units: infos.units, init: infos.init };
+                      type: infos.type, shape: infos.shape, units: infos.units, init: infos.init, active: infos.active };
           return val;
           
       });
@@ -109,11 +111,13 @@ class VariablesEditor extends React.Component {
                    {
                      Header: (cellInfo) => this.renderHeader(cellInfo, 'From'),
                      accessor: "from",
+                     Cell: (cellInfo) => this.renderReadonly(cellInfo),
                    },
                    {
                      Header: (cellInfo) => this.renderHeader(cellInfo, 'To'),
                      accessor: "to",
                      minWidth: 300,
+                     Cell: (cellInfo) => this.renderReadonly(cellInfo),
                    },
                    {
                      Header: (cellInfo) => this.renderHeader(cellInfo, 'Name'),
@@ -145,7 +149,13 @@ class VariablesEditor extends React.Component {
                    }
                  ];
     if (this.props.isEditing) {
-      columns.splice(3, 0, {
+      columns.splice(0, 0, {
+        Header: (cellInfo) => this.renderHeader(cellInfo, '#'),
+        accessor: "active",
+        maxWidth: 25,
+        Cell: this.renderCheckButton 
+      });
+      columns.splice(4, 0, {
         Header: (cellInfo) => this.renderHeader(cellInfo, 'Description'),
         accessor: "desc", 
         Cell: this.renderEditable 
@@ -168,43 +178,56 @@ class VariablesEditor extends React.Component {
     return (<strong>{title}</strong>);  
   }
   
+  renderCheckButton(cellInfo) {
+    let isChecked = this.connections[cellInfo.index].active;
+//    console.log(this.connections[cellInfo.index]);
+    return (<input type="checkbox" value="true" checked={isChecked}
+            onChange={() => this.props.onConnectionChange(this.connections[cellInfo.index].id, {active: !isChecked})}/>);  
+  }
+  
   renderEditable(cellInfo, selectOptions) {
 //    console.log(cellInfo.column.id);
 //    console.log(this.connections[cellInfo.index][cellInfo.column.id]);
-    if (this.props.isEditing) {
+    if (this.props.isEditing && this.connections[cellInfo.index].active) {
       if (selectOptions) {
-          let value = this.connections[cellInfo.index][cellInfo.column.id];
-          return ( <RIESelect
-                  value={{id: value, text: value }}
-                  change={(attr) => this.props.onConnectionChange(this.connections[cellInfo.index].id, {type: attr.type.id})}
-                  propName={cellInfo.column.id} 
-                  shouldBlockWhileLoading 
-                  options={selectOptions}/> );
+        let value = this.connections[cellInfo.index][cellInfo.column.id];
+        return ( <RIESelect
+          value={{id: value, text: value }}
+          change={(attr) => this.props.onConnectionChange(this.connections[cellInfo.index].id, {type: attr.type.id})}
+          propName={cellInfo.column.id} 
+          shouldBlockWhileLoading 
+          options={selectOptions}/> );
       } else {
-          return ( <RIEInput
-            value={this.connections[cellInfo.index][cellInfo.column.id]}
-            change={(attr) => this.props.onConnectionChange(this.connections[cellInfo.index].id, attr)}
-            propName={cellInfo.column.id} 
-            shouldBlockWhileLoading /> );
+        return ( <RIEInput
+          value={this.connections[cellInfo.index][cellInfo.column.id]}
+          change={(attr) => this.props.onConnectionChange(this.connections[cellInfo.index].id, attr)}
+          propName={cellInfo.column.id} 
+          shouldBlockWhileLoading /> );
       }
     } else {  		
-      if (cellInfo.column.id==='name') {
-        let title = this.connections[cellInfo.index]['desc']; 
-        return (<span className='table-tooltip' title={title}>{this.connections[cellInfo.index][cellInfo.column.id]}</span>);
-      } else {
-        return (<span>{this.connections[cellInfo.index][cellInfo.column.id]}</span>);
-      }
+      return this.renderReadonly(cellInfo);
     }
   };
   
+  renderReadonly(cellInfo) {
+    let textStyle = this.connections[cellInfo.index].active?"":"text-inactive";
+    if (cellInfo.column.id==='name') {
+      let title = this.connections[cellInfo.index]['desc']; 
+      textStyle += " table-tooltip";
+      return (<span className={textStyle} title={title}>{this.connections[cellInfo.index][cellInfo.column.id]}</span>);
+    } else {
+      return (<span className={textStyle}>{this.connections[cellInfo.index][cellInfo.column.id]}</span>);
+    }      
+  }
+  
   _findNode(id) { 
-    for (var i=0; i < this.props.mda.nodes.length; i++) {
-      let node = this.props.mda.nodes[i];
+    for (var i=0; i < this.props.nodes.length; i++) {
+      let node = this.props.nodes[i];
       if (node.id === id) {
         return (i==0)?{id: id, name: "Driver"}:{id: node.id, name: node.name};
       }
     };
-    throw Error("Node id ("+ id +") unknown: " + JSON.stringify(this.props.mda.nodes));  
+    throw Error("Node id ("+ id +") unknown: " + JSON.stringify(this.props.nodes));  
   };
   
   _connectionCompare(nodeSelected, conna, connb) {
@@ -238,6 +261,7 @@ class VariablesEditor extends React.Component {
       let varname = vfr.name 
       let units = vfr.units 
       let init = "";
+      let active = vfr.active;
       
       if (vfr.parameter) { 
         init = vfr.parameter.init;
@@ -245,14 +269,14 @@ class VariablesEditor extends React.Component {
       let infos = { id: conn.connId, idfrName: conn.frName, frUnits: vfr.units, 
                     vName: varname, desc: desc,
                     toName: conn.toName.join(', '),
-                    type: vartype, shape: shape, init: init, units: units};
+                    type: vartype, shape: shape, init: init, units: units, active: active};
       // console.log(JSON.stringify(infos));
       return infos;
     }
       
     _findVariableInfo(disc, vname, io_mode) {
-      let vars = this.props.mda.vars;
-      let vinfo = {units: '', desc: '', type: '', shape: '', init: ''};
+      let vars = this.props.vars;
+      let vinfo = {units: '', desc: '', type: '', shape: '', init: '', active: true};
       let vinfos = vars[disc][io_mode].filter((v) => { 
         return v.name === vname; 
       });

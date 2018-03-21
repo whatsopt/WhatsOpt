@@ -32,22 +32,22 @@ class Analysis < ApplicationRecord
   end
   
   def indep_variables
-    return self.driver.output_variables if driver
+    return self.driver.output_variables.active if driver
     []
   end
 
   def optimization_variables
-    return self.driver.input_variables if driver
+    return self.driver.input_variables.active if driver
     []
   end  
   
   def objective_variables
-    return self.driver.input_variables.objectives if driver
+    return self.driver.input_variables.objectives.active if driver
     []
   end
 
   def constraint_variables
-    self.driver.input_variables.constraints if driver
+    self.driver.input_variables.constraints.active if driver
     []
   end
   
@@ -57,6 +57,7 @@ class Analysis < ApplicationRecord
       name: self.name,
       nodes: build_nodes,
       edges: build_edges,
+      inactive_edges: build_edges(active: false),
       vars: build_var_infos
     }.to_json
     end
@@ -67,7 +68,7 @@ class Analysis < ApplicationRecord
     }
   end
 
-  def build_edges
+  def build_edges(active: true)
     edges = []
     self.disciplines.each do |d_from|
       #from_id = (d_from.name == WhatsOpt::Discipline::NULL_DRIVER_NAME)?"_U_":d_from.id.to_s 
@@ -76,14 +77,18 @@ class Analysis < ApplicationRecord
         next if d_from == d_to
         #to_id = (d_to.name == WhatsOpt::Discipline::NULL_DRIVER_NAME)?"_U_":d_to.id.to_s  
         to_id = d_to.id.to_s  
-        conns = Connection.between(d_from.id, d_to.id)
+        if active
+          conns = Connection.between(d_from.id, d_to.id).active
+        else
+          conns = Connection.between(d_from.id, d_to.id).inactive
+        end
         if self.attachment&.mda_cmdows?
           names = conns.map{ |c| c.from.fullname }.join(",")
         else
           names = conns.map{ |c| c.from.name }.join(",")
         end
         ids = conns.map(&:id)
-        edges << { from: from_id, to: to_id, name: names, conn_ids: ids } unless conns.empty?
+        edges << { from: from_id, to: to_id, name: names, conn_ids: ids, active: active } unless conns.empty?
       end
     end
     edges

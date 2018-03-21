@@ -42,7 +42,7 @@ class MdaViewer extends React.Component {
   }
   
   handleConnectionChange(connId, connAttrs) {
-    console.log('Change variable connection '+connId+ ' with '+JSON.stringify(connAttrs));
+    //console.log('Change variable connection '+connId+ ' with '+JSON.stringify(connAttrs));
     if (connAttrs.init === "") {
       connAttrs['parameter_attributes'] = { _destroy: '1' };
     } else if (connAttrs.init) {
@@ -175,6 +175,7 @@ class MdaViewer extends React.Component {
           let newState = update(this.state, 
              {mda: {nodes: {$set: response.data.nodes}, 
                     edges: {$set: response.data.edges}, 
+                    inactive_edges: {$set: response.data.inactive_edges},
                     vars:  {$set: response.data.vars}}});
           this.setState(newState);
           let mda = {nodes: response.data.nodes, edges: response.data.edges};
@@ -186,7 +187,8 @@ class MdaViewer extends React.Component {
     let errors = this.state.errors.map((message, i) => {
       return ( <Error key={i} msg={message} /> );
     });  
-    
+    let edges = this.state.mda.edges.concat(this.state.mda.inactive_edges);
+        
     if (this.state.isEditing) {
       return(
       <div>
@@ -231,7 +233,7 @@ class MdaViewer extends React.Component {
              />
           </div>
           <div className="tab-pane fade" id="connections" role="tabpanel" aria-labelledby="connections-tab">
-            <ConnectionsEditor nodes={this.state.mda.nodes} edges={this.state.mda.edges} 
+            <ConnectionsEditor nodes={this.state.mda.nodes} edges={edges} 
                                filter={this.state.filter} onFilterChange={this.handleFilterChange}
                                newConnectionName={this.state.newConnectionName}
                                connectionErrors={this.state.errors}
@@ -241,8 +243,10 @@ class MdaViewer extends React.Component {
             />
           </div>
           <div className="tab-pane fade show active" id="variables" role="tabpanel" aria-labelledby="variables-tab">
-            <VariablesEditor mda={this.state.mda} filter={this.state.filter} onFilterChange={this.handleFilterChange}
-                         onConnectionChange={this.handleConnectionChange} isEditing={this.state.isEditing} />   
+            <VariablesEditor nodes={this.state.mda.nodes} edges={edges} vars={this.state.mda.vars}
+                             filter={this.state.filter} onFilterChange={this.handleFilterChange}
+                             onConnectionChange={this.handleConnectionChange} 
+                             isEditing={this.state.isEditing} />   
           </div>      
         </div>
       </div>);      
@@ -254,11 +258,13 @@ class MdaViewer extends React.Component {
         </div>
         <div className="mda-section">      
             <XdsmViewer ref={xdsmViewer => this.xdsmViewer = xdsmViewer} mda={this.state.mda} 
-             filter={this.state.filter} onFilterChange={this.handleFilterChange}/>
+                        filter={this.state.filter} onFilterChange={this.handleFilterChange}/>
         </div>
         <div className="mda-section">
-          <VariablesEditor mda={this.state.mda} filter={this.state.filter} onFilterChange={this.handleFilterChange}
-                       onConnectionChange={this.handleConnectionChange} isEditing={this.state.isEditing} />
+          <VariablesEditor nodes={this.state.mda.nodes} edges={edges} vars={this.state.mda.vars}
+                           filter={this.state.filter} onFilterChange={this.handleFilterChange}
+                           onConnectionChange={this.handleConnectionChange} 
+                           isEditing={this.state.isEditing} />
         </div>
       </div>
     );

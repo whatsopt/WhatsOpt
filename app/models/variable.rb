@@ -27,6 +27,7 @@ class Variable < ApplicationRecord
   validate  :shape_is_well_formed
       
   scope :numeric, -> { where.not(type: STRING_T) }
+  scope :active, -> { where(active: true) }
   scope :inputs, -> { where(io_mode: IN) }
   scope :outputs, -> { where(io_mode: OUT) }
   scope :objectives, -> { where("name LIKE '#{OBJECTIVE_PREFIX}%'") }

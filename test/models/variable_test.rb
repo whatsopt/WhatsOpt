@@ -6,6 +6,7 @@ class VariableTest < ActiveSupport::TestCase
     var = Variable.new(name: 'test', io_mode: Variable::IN)
     assert_equal Variable::DEFAULT_SHAPE, var.shape
     assert_equal Variable::DEFAULT_TYPE, var.type
+    assert var.active
   end
 
   test "should be invalid if bad-formed shape" do
@@ -16,6 +17,7 @@ class VariableTest < ActiveSupport::TestCase
   test "should be valid if well-formed shape and have the right dim" do
     var = Variable.new(name: 'test', io_mode: Variable::IN, shape:'3')
     assert var.valid?
+    assert var.active
     assert_equal 3, var.dim
     var = Variable.new(name: 'test', io_mode: Variable::IN, shape:'(12,)')
     assert var.valid? 
@@ -44,7 +46,7 @@ class VariableTest < ActiveSupport::TestCase
   def test_as_json
     var = variables(:varx1_out)
     adapter = ActiveModelSerializers::SerializableResource.new(var)
-    assert_equal [:desc, :fullname, :io_mode, :name, :parameter, :shape, :type, :units], adapter.as_json.keys.sort
+    assert_equal [:active, :desc, :fullname, :io_mode, :name, :parameter, :shape, :type, :units], adapter.as_json.keys.sort
     assert_equal({:init=>"3.14"}, adapter.as_json[:parameter])
   end
   

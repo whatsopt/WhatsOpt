@@ -6,6 +6,9 @@ class Connection < ApplicationRecord
   validates :from, presence: true
   validates :to, presence: true
 
+  scope :active, -> { joins(:from).where(variables: {active: true}) }
+  scope :inactive, -> { joins(:from).where(variables: {active: false}) }
+    
   def self.create_connections(mda, based_on = :name)
     varouts = Variable.outputs.joins(discipline: :analysis).where(analyses: {id: mda.id})
     varins = Variable.inputs.joins(discipline: :analysis).where(analyses: {id: mda.id})
@@ -32,6 +35,10 @@ class Connection < ApplicationRecord
               .joins(:to).where(tos_connections: {discipline_id: disc_to_id})
   end 
 
+  def active?
+    from.active
+  end
+  
   def destroy_variables!  
     Connection.transaction do
       conns_count = Connection.where(from_id: from_id).count

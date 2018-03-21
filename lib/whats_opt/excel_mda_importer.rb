@@ -29,12 +29,12 @@ module WhatsOpt
       _initialize_defined_names
       @worksheet = @workbook[DISCIPLINE_SHEET_NAME]
       top_right, bottom_left = _get_coordinates(DISCIPLINE_RANGE_NAME)
-      @disc_table = @worksheet[top_right[0]...bottom_left[0]]
+      @disc_table = @worksheet[top_right[0]...bottom_left[0]]  # ... to avoid last "do not use" comment line
       @disc_data = @disc_table.map{|row| row && row[top_right[1]..bottom_left[1]]}
         
       @worksheet = @workbook[GSV_SHEET_NAME]
       top_right, bottom_left = _get_coordinates(GLOBAL_STATE_VECTOR)
-      @main_table = @worksheet[top_right[0]...bottom_left[0]]
+      @main_table = @worksheet[top_right[0]..bottom_left[0]]  # .. used because last line gives an empty name
       @workdata = @main_table.map{|row| row && row[top_right[1]..bottom_left[1]]} 
       @workdata.compact!
     end
@@ -77,8 +77,6 @@ module WhatsOpt
       @connections.keys.each do |k|
         connections[k].each do |varname|
           varattr = self.variables[varname]
-          next if varattr[:disabled]
-          varattr.except!(:disabled)  # not an attribute of variable in database
           if k =~ /Y(\d)x/
             src = _to_discipline($1) 
             dsts = _to_other_disciplines($1)
@@ -193,9 +191,9 @@ module WhatsOpt
                     units
                   end
           desc = _getstr(row[4])
-          disabled = (_getstr(row[0]) == 'false')  
+          active = (_getstr(row[0]) == 'true')  
           @variables[name] = {name: name, shape: shape, type: type, 
-                              units: units, desc: desc, disabled: disabled}
+                              units: units, desc: desc, active: active}
           unless initval.blank?
             @init_values[name] = initval  # used as is
           end
