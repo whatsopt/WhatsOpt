@@ -1,5 +1,12 @@
 <div class="container">
   <div class="row">
+    <% if `hostname`.chomp == "rdri206h" %>
+      <div class="col-12 alert alert-warning" role="alert">
+        <a href="#" data-dismiss="alert" class="close">×</a>
+        Please use <%= link_to "WhatsOpt on selene", "http://selene.onecert.fr/whatsopt" %> unless you want to do some tests.  
+        Data persistence is not guaranteed on this server. 
+      </div>
+    <% end %>
     <div class="absolute-center is-responsive">
       <h1><%= t('.login', :default => "Log in") %></h1>
       <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
