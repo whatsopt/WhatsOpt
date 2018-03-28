@@ -12,17 +12,16 @@ from smt.sampling_methods import Clustered, FullFactorial, LHS, Random
 
 _sampling_methods = {'Clustered': Clustered, 'FullFactorial': FullFactorial, 'LHS': LHS, 'Random': Random}
 
-class DoeDriver(Driver):
+class SmtDoeDriver(Driver):
     """
     Baseclass for design-of-experiments Drivers 
     """
 
     def __init__(self, **kwargs):
-        super(DoeDriver, self).__init__()
+        super(SmtDoeDriver, self).__init__()
 
         self.options.declare('sampling_method', 'LHS', values=_sampling_methods.keys(),
                              desc='Name of SMT sampling method used to generate doe cases')
-
         self.options.declare('n_cases', int,
                              desc='number of sampling cases to generate')
         self._method_name = None
@@ -30,7 +29,7 @@ class DoeDriver(Driver):
         self.options.update(kwargs)
 
     def _setup_driver(self, problem):
-        super(DoeDriver, self)._setup_driver(problem)
+        super(SmtDoeDriver, self)._setup_driver(problem)
         self._method_name = self.options['sampling_method']
         self._n_cases = self.options['n_cases']
 
@@ -62,7 +61,6 @@ class DoeDriver(Driver):
         """
         Execute the Problem for each generated cases.
         """
-        
         model = self._problem.model
         self.iter_count = 0
         
@@ -70,8 +68,6 @@ class DoeDriver(Driver):
             j=0
             for name, meta in iteritems(self._designvars):
                 size = meta['size']
-                print(size)
-                print(self._cases[i, j:j + size])
                 self.set_design_var(name, self._cases[i, j:j + size])
                 j += size
             
