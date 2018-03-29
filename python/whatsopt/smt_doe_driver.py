@@ -14,7 +14,7 @@ _sampling_methods = {'Clustered': Clustered, 'FullFactorial': FullFactorial, 'LH
 
 class SmtDoeDriver(Driver):
     """
-    Baseclass for design-of-experiments Drivers 
+    Baseclass for SMT design-of-experiments Drivers 
     """
 
     def __init__(self, **kwargs):

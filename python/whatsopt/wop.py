@@ -6,6 +6,11 @@ def cli():
 	pass
 	
 @cli.command()
+def url():
+	""" WhatsOpt server url """
+	print(WhatsOpt(login=False).url)
+
+@cli.command()
 def login():
 	""" Authenticate and store api key """
 	WhatsOpt().login(echo=True)

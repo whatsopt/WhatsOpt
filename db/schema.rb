@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 33) do
+ActiveRecord::Schema.define(version: 35) do
 
   create_table "analyses", force: :cascade do |t|
     t.string "name"
@@ -30,6 +30,12 @@ ActiveRecord::Schema.define(version: 33) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["container_type", "container_id"], name: "index_attachments_on_container_type_and_container_id"
+  end
+
+  create_table "cases", force: :cascade do |t|
+    t.integer "operation_id"
+    t.integer "variable_id"
+    t.text "values"
   end
 
   create_table "connections", force: :cascade do |t|
@@ -59,6 +65,12 @@ ActiveRecord::Schema.define(version: 33) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "title"
+  end
+
+  create_table "operations", force: :cascade do |t|
+    t.integer "analysis_id"
+    t.string "category"
+    t.string "category_method"
   end
 
   create_table "parameters", force: :cascade do |t|

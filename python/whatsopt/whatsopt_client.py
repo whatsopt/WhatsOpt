@@ -20,7 +20,7 @@ WHATSOPT_DIRNAME = os.path.join(os.path.expanduser('~'), '.whatsopt')
 API_KEY_FILENAME = os.path.join(WHATSOPT_DIRNAME, 'api_key')
 NULL_DRIVER_NAME = '__DRIVER__'  # check WhatsOpt Discipline model
 
-PROD_URL = "http://rdri206h.onecert.fr/whatsopt"
+PROD_URL = "http://selene.onecert.fr/whatsopt"
 STAG_URL = "http://rdri206h.onecert.fr/whatsopt"
 TEST_URL = "http://endymion:3000"
 DEV_URL  = "http://192.168.99.100:3000"
@@ -32,9 +32,9 @@ class WhatsOpt(object):
     
     def __init__(self, url=None, api_key=None, login=True):
         if url:
-            self.url = url
+            self._url = url
         else:
-            self.url = self.default_url
+            self._url = self.default_url
         
         # config session object
         self.session = requests.Session()  
@@ -51,16 +51,22 @@ class WhatsOpt(object):
         if login:
             self.login(api_key)
 
-    def _url(self, path):
-        return self.url + path
+    @property
+    def url(self):
+        return self._url
+
+    def _endpoint(self, path):
+        return self._url + path
 
     @property
     def default_url(self):
         env = os.getenv("WOP_ENV")
         if env=="development":
-            self._default_url = DEV_URL
+            self._default_url = DEV_URLs
         elif env=="test":
             self._default_url = TEST_URL
+        elif env=="staging":
+            self._default_url = STAG_URL
         else: # env=="production":
             self._default_url = PROD_URL
         return self._default_url    
@@ -81,27 +87,36 @@ class WhatsOpt(object):
             api_key = f.read()
             return api_key
 
-    def login(self, api_key=None, echo = None):
+    def login(self, api_key=None, echo=None):
+        already_logged=False
+        retry=1
         if api_key:
             self.api_key = api_key
         elif os.path.exists(API_KEY_FILENAME):
+            already_logged=True
             self.api_key = self._read_api_key()
         else:
             self.api_key = self._ask_and_write_api_key()
         self.headers = {'Authorization': 'Token token=' + self.api_key}
-        url =  self._url('/api/v1/analyses')
+        url =  self._endpoint('/api/v1/analyses')
         resp = self.session.get(url, headers=self.headers)
+        if already_logged and not resp.ok and retry>0:
+            self.logout(echo=False)  # log out silently, suppose one was logged on another server
+            retry -= 1
+            resp=self.login(api_key, echo)
         resp.raise_for_status() 
         if echo:
-            print("Sucessfully login to WhatsOpt (%s)" % self.url)
+            print("Sucessfully logged in to WhatsOpt (%s)" % self.url)
+        return resp
 
-    def logout(self):
+    def logout(self, echo=True):
         if os.path.exists(API_KEY_FILENAME):
             os.remove(API_KEY_FILENAME)
-        print("Sucessfully logout from WhatsOpt (%s)" % self.url)
+        if echo:
+            print("Sucessfully logged out from WhatsOpt (%s)" % self.url)
 
     def list_analyses(self):
-        url =  self._url('/api/v1/analyses')
+        url =  self._endpoint('/api/v1/analyses')
         resp = self.session.get(url, headers=self.headers)
         if resp.ok:
             mdas = resp.json()
@@ -163,45 +178,44 @@ class WhatsOpt(object):
         if options['--dry-run']:
             print(mda_params)
         else:
-            url =  self._url('/api/v1/analyses')
+            url =  self._endpoint('/api/v1/analyses')
             resp = self.session.post(url, headers=self.headers, json=mda_params)
-            if not resp.ok:
-                resp.raise_for_status()
+            resp.raise_for_status()
+            print("Analysis %s pushed" % name)
 
     def pull_mda(self, mda_id, options):
         base = '_base' if options.get('--base') else '' 
-        url =  self._url(('/api/v1/analyses/%s/exports/new.openmdao'+base) % mda_id)
+        url =  self._endpoint(('/api/v1/analyses/%s/exports/new.openmdao'+base) % mda_id)
         resp = self.session.get(url, headers=self.headers, stream=True)
-        if resp.ok:
-            name = None
-            with tempfile.NamedTemporaryFile(suffix='.zip', mode='wb', delete=False) as fd:
-                for chunk in resp.iter_content(chunk_size=128):
-                    fd.write(chunk)
-                name = fd.name
-            zip = zipfile.ZipFile(name, 'r')
-            zip.extractall(tempfile.tempdir)
-            filenames = zip.namelist()
-            zip.close()
+        resp.raise_for_status()
+        name = None
+        with tempfile.NamedTemporaryFile(suffix='.zip', mode='wb', delete=False) as fd:
+            for chunk in resp.iter_content(chunk_size=128):
+                fd.write(chunk)
+            name = fd.name
+        zip = zipfile.ZipFile(name, 'r')
+        zip.extractall(tempfile.tempdir)
+        filenames = zip.namelist()
+        zip.close()
+        for f in filenames:
+            file_from = os.path.join(tempfile.tempdir, f)
+            file_to = os.path.basename(f)
+            if os.path.exists(file_to):
+                if options.get('--force'):
+                    print("Update %s" % file_to)
+                    if not options.get('--dry-run'):
+                        os.remove(file_to)
+                else:
+                    print("File %s in the way, move it or pull in another directory or use --force to overwrite" % file_to)
+                    exit(-1)
+            else:
+                print("Pull %s" % file_to) 
+        if not options.get('--dry-run'):
             for f in filenames:
                 file_from = os.path.join(tempfile.tempdir, f)
                 file_to = os.path.basename(f)
-                if os.path.exists(file_to):
-                    if options.get('--force'):
-                        print("Update %s" % file_to)
-                        if not options.get('--dry-run'):
-                            os.remove(file_to)
-                    else:
-                        print("File %s in the way, move it or pull in another directory or use --force to overwrite" % file_to)
-                        exit(-1)
-                else:
-                    print("Pull %s" % file_to) 
-            if not options.get('--dry-run'):
-                for f in filenames:
-                    file_from = os.path.join(tempfile.tempdir, f)
-                    file_to = os.path.basename(f)
-                    move(file_from, '.')
-        else:
-            resp.raise_for_status()
+                move(file_from, '.')
+            print('Analysis %s pulled' % mda_id)
     
     def update_mda(self):
         files = self._find_mda_files()
