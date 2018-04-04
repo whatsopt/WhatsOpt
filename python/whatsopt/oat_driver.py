@@ -16,7 +16,7 @@ class OatDriver(Driver):
     """
 
     def __init__(self, **kwargs):
-        super(SenibilityAnalysisDriver, self).__init__()
+        super(OatDriver, self).__init__()
 
         self.options.declare('sampling_method', 'LHS', values=_sampling_methods.keys(),
                              desc='Name of SMT sampling method used to generate doe cases')

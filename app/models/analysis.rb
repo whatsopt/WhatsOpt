@@ -50,7 +50,20 @@ class Analysis < ApplicationRecord
     self.driver.input_variables.constraints.active if driver
     []
   end
+
+  def response_variables
+    return self.driver.input_variables.active if driver
+  end
   
+  def input_dim
+    indep_variables.inject(0){|s, v| s+v.dim}
+  end
+  
+  def output_dim
+    response_variables.inject(0){|s, v| s+v.dim}
+  end
+
+    
   def to_mda_viewer_json
     { 
       id: self.id,

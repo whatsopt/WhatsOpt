@@ -55,6 +55,7 @@ module WhatsOpt
         _generate_discipline(disc, gendir, only_base)
       end 
       _generate_main(gendir, only_base)
+      _generate_screening(gendir)
     end
         
     def _check_mda(gendir)
@@ -73,7 +74,11 @@ module WhatsOpt
       _generate(@mda.py_filename, 'openmdao_main.py.erb', gendir) unless only_base
       _generate(@mda.py_basefilename, 'openmdao_main_base.py.erb', gendir)
     end    
-        
+       
+    def _generate_screening(gendir)
+      _generate('run_screening.py', 'run_screening.py.erb', gendir)
+    end
+     
     def _generate(filename, template_filename, gendir)
       template = File.join(@template_dir, template_filename)
       Rails.logger.info "Creating #{filename} from #{File.basename(template)}"

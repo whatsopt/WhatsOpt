@@ -49,35 +49,57 @@ pb.run_driver()
 reader = CaseReader(case_recorder_filename)
 cases = reader.system_cases.list_cases()
 n = len(cases)
-data = { 'inputs': {'x': np.zeros((n, 1)), 'z': np.zeros((n, 2))}, 
-         'outputs': {'obj': [], 'g1': [], 'g2': [], 'y1': [], 'y2': []} }
+# data = { 'inputs': {'x': np.zeros((n, 1)), 'z': np.zeros((n, 2))}, 
+#          'outputs': {'obj': [], 'g1': [], 'g2': [], 'y1': [], 'y2': []} }
+
+data = {'inputs': {}, 'outputs': {}}
+data['inputs']['x'] = np.zeros((n,)+(1,))
+data['inputs']['z'] = np.zeros((n,)+(2,))
+data['outputs']['obj'] = np.zeros((n,)+(1,))
+data['outputs']['g1'] = np.zeros((n,)+(1,))
+data['outputs']['g2'] = np.zeros((n,)+(1,))
+data['outputs']['y1'] = np.zeros((n,)+(1,))
+data['outputs']['y2'] = np.zeros((n,)+(1,))
 
 for i, case_id in enumerate(cases):
     case = reader.system_cases.get_case(case_id)
-    data['inputs']['x'][i,:] = case.inputs['x']
-    data['inputs']['z'][i,:] = case.inputs['z']
+    data['inputs']['x'][i, :] = case.inputs['x']
+    data['inputs']['z'][i, :] = case.inputs['z']
 
-for case_id in reader.system_cases.list_cases():
-    case = reader.system_cases.get_case(case_id)
-    data['outputs']['obj'].append(to_list(case.outputs['obj']))
-    data['outputs']['g1'].append(to_list(case.outputs['g1']))
-    data['outputs']['g2'].append(to_list(case.outputs['g2']))
-    data['outputs']['y1'].append(to_list(case.outputs['y1']))
-    data['outputs']['y2'].append(to_list(case.outputs['y2']))
+    data['outputs']['obj'][i, :] = case.outputs['obj']
+    data['outputs']['g1'][i, :] = case.outputs['g1']
+    data['outputs']['g2'][i, :] = case.outputs['g2']
+    data['outputs']['y1'][i, :] = case.outputs['y1']
+    data['outputs']['y2'][i, :] = case.outputs['y2']
     
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D   
   
 plt.subplot(5,3,1)
-plt.plot(data['inputs']['x'], data['outputs']['obj'], '.')
+input = data['inputs']['x'].reshape((-1,))
+output = data['outputs']['obj'].reshape((-1,))
+plt.plot(input, output, '.')
 plt.xlabel('x')
 plt.ylabel('obj')
+
+
+#plt.plot(data['inputs']['z'][:,0], data['outputs']['obj'], '.')
+input = data['inputs']['z'].reshape((-1,))
+print(data['inputs']['z'])
+print(input)
+print(input[0::2])
+output = data['outputs']['obj'].reshape((-1,))
 plt.subplot(5,3,2)
-plt.plot(data['inputs']['z'][:,0], data['outputs']['obj'], '.')
+plt.plot(input[0::2], output, '.')
 plt.xlabel('z[0]')
 plt.ylabel('obj')
+
+#plt.plot(data['inputs']['z'][:,1], data['outputs']['obj'], '.')
+print(data['inputs']['z'])
+print(input)
+print(input[1::2])
 plt.subplot(5,3,3)
-plt.plot(data['inputs']['z'][:,1], data['outputs']['obj'], '.')
+plt.plot(input[1::2], output, '.')
 plt.xlabel('z[1]')
 plt.ylabel('obj')
 
