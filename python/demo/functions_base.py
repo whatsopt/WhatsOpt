@@ -14,9 +14,9 @@ class FunctionsBase(ExplicitComponent):
     def setup(self):
 		
         self.add_input('z', val=np.ones((2,)), desc='')
-        self.add_input('x', val=1.0, desc='')
         self.add_input('y1', val=1.0, desc='')
         self.add_input('y2', val=1.0, desc='')
+        self.add_input('x', val=1.0, desc='')
 		
         self.add_output('obj', val=1.0, desc='')
         self.add_output('g1', val=1.0, desc='constraint')
@@ -35,18 +35,18 @@ class FunctionsBase(ExplicitComponent):
     
    		
 #       	partials['obj', 'z'] = np.zeros((1, 2))
-#       	partials['obj', 'x'] = np.zeros((1, 1))
 #       	partials['obj', 'y1'] = np.zeros((1, 1))
 #       	partials['obj', 'y2'] = np.zeros((1, 1))
+#       	partials['obj', 'x'] = np.zeros((1, 1))
    		
 #       	partials['g1', 'z'] = np.zeros((1, 2))
-#       	partials['g1', 'x'] = np.zeros((1, 1))
 #       	partials['g1', 'y1'] = np.zeros((1, 1))
 #       	partials['g1', 'y2'] = np.zeros((1, 1))
+#       	partials['g1', 'x'] = np.zeros((1, 1))
    		
 #       	partials['g2', 'z'] = np.zeros((1, 2))
-#       	partials['g2', 'x'] = np.zeros((1, 1))
 #       	partials['g2', 'y1'] = np.zeros((1, 1))
-#       	partials['g2', 'y2'] = np.zeros((1, 1))        
+#       	partials['g2', 'y2'] = np.zeros((1, 1))
+#       	partials['g2', 'x'] = np.zeros((1, 1))        
 
         

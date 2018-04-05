@@ -28,7 +28,7 @@ class SellarBase(Group):
  		
         self.add_subsystem('Disc1', Disc1(), promotes=['y1', 'y2', 'x', 'z'])
         self.add_subsystem('Disc2', Disc2(), promotes=['y1', 'y2', 'z'])
-        self.add_subsystem('Functions', Functions(), promotes=['z', 'x', 'y1', 'y2', 'obj', 'g1', 'g2'])         
+        self.add_subsystem('Functions', Functions(), promotes=['z', 'y1', 'y2', 'obj', 'g1', 'g2', 'x'])         
 
         self.nonlinear_solver = NonlinearBlockGS() 
         self.linear_solver = ScipyKrylov()
