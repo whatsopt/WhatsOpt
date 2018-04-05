@@ -10,7 +10,7 @@ import numpy as np
 from openmdao.core.driver import Driver, RecordingDebugging
 from smt.sampling_methods import Clustered, FullFactorial, LHS, Random
 
-_sampling_methods = {'Clustered': Clustered, 'FullFactorial': FullFactorial, 'LHS': LHS, 'Random': Random}
+_sampling_methods = {'FullFactorial': FullFactorial, 'LHS': LHS, 'Random': Random}
 
 class SmtDoeDriver(Driver):
     """
