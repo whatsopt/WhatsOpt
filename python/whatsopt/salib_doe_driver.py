@@ -22,12 +22,15 @@ class SalibDoeDriver(Driver):
                              desc='number of trajectories to apply morris method')
         self.options.declare('n_levels', types=int, default=4,
                              desc='number of grid levels')
+        self.options.declare('grid_step_size', types=int , default=2,
+                             desc='grid jump size')
         self.options.update(kwargs)
 
     def _setup_driver(self, problem):
         super(SalibDoeDriver, self)._setup_driver(problem)
         n_trajs = self.options['n_trajs']
         n_levels = self.options['n_levels']
+        grid_jump = self.options['grid_step_size']
 
         bounds=[]
         names=[]
@@ -36,10 +39,8 @@ class SalibDoeDriver(Driver):
             meta_low = meta['lower']
             meta_high = meta['upper']
             for j in range(size):
-                name_var=name
                 if isinstance(meta_low, np.ndarray):
                     p_low = meta_low[j]
-                    name_var += "_"+str(j)
                 else:
                     p_low = meta_low
 
@@ -48,20 +49,22 @@ class SalibDoeDriver(Driver):
                 else:
                     p_high = meta_high
                     
-                names.append(name_var)
+                display_name = name.split('.')[-1]
+                if size>1:
+                    display_name += str(j)
+                names.append(display_name)
                 bounds.append((p_low, p_high))
 
-        self.pb = {'num_vars': len(names), 
-                   'names': names, 
-                   'bounds': bounds, 'groups': None}
-
-        print(self.pb)
-
-        self._cases = ms.sample(self.pb, n_trajs, n_levels, grid_jump=2)
-        print(self._cases)
+        self._pb = {'num_vars': len(names), 
+                    'names': names, 
+                    'bounds': bounds, 'groups': None}
+        self._cases = ms.sample(self._pb, n_trajs, n_levels, grid_jump)
 
     def get_cases(self):
         return self._cases
+
+    def get_salib_problem(self):
+        return self._pb
 
     def run(self):
         """

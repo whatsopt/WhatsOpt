@@ -9,7 +9,7 @@ from whatsopt.salib_doe_driver import SalibDoeDriver
 from sellar import Sellar
 
 pb = Problem(Sellar())
-pb.driver = SalibDoeDriver(n_trajs=5, n_levels=4)
+pb.driver = SalibDoeDriver(n_trajs=100, n_levels=4)
 case_recorder_filename = 'sellar_screening.sqlite'        
 recorder = SqliteRecorder(case_recorder_filename)
 pb.driver.add_recorder(recorder)
@@ -49,14 +49,7 @@ from SALib.plotting import morris as mp
 
 print(data['outputs']['obj'])
 
-Si = ma.analyze(pb.driver.pb, pb.driver._cases, data['outputs']['obj'].reshape((-1,)), print_to_console=False)
-print("{:20s} {:>7s} {:>7s} {:>7s}".format("Name", "mu", "mu_star", "sigma"))
-for name, s1, st, mean in zip(pb.driver.pb['names'], 
-                              Si['mu'], 
-                              Si['mu_star'], 
-                              Si['sigma']):
-    print("{:20s} {:=7.2f} {:=7.2f} {:=7.2f}".format(name, s1, st, mean))
-
+Si = ma.analyze(pb.driver._pb, pb.driver._cases, data['outputs']['obj'].reshape((-1,)))
 import matplotlib.pyplot as plt
 
 fig, (ax1, ax2) = plt.subplots(1,2)

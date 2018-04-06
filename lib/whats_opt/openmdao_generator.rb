@@ -76,6 +76,7 @@ module WhatsOpt
     end    
        
     def _generate_screening(gendir)
+      _generate('run_scatterplot.py', 'run_scatterplot.py.erb', gendir)
       _generate('run_screening.py', 'run_screening.py.erb', gendir)
     end
      

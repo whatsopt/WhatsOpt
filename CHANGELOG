@@ -1,5 +1,10 @@
 <h1>CHANGELOG</h1>
 
+<h3>0.7.0 (06/04/2019)</h3>
+<ul>
+  <li>Initial screening capability based on SMT and SALib libraries.</li>
+</ul>
+
 <h3>0.6.2 (21/03/2019)</h3>
 <ul>
   <li>Analysis edition: implement variable deactivation</li>

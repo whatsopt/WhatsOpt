@@ -30,7 +30,8 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
       filepath = @ogen._generate_mda dir
       basenames = @ogen.genfiles.map {|fp| File.basename(fp)}.sort
       expected = ["aerodynamics.py", "aerodynamics_base.py", "cicav.py", 
-                  "cicav_base.py", "geometry.py", "geometry_base.py", "run_screening.py"]
+                  "cicav_base.py", "geometry.py", "geometry_base.py", 
+                  "run_scatterplot.py", "run_screening.py"]
       assert_equal expected, basenames
     end
   end 
@@ -60,7 +61,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     assert File.exists?(zippath)
     Zip::File.open(zippath) do |zip|
       zip.each do |entry|
-        assert_match /_base\.py|screening/, entry.name
+        assert_match /_base\.py|screening|scatterplot/, entry.name
       end
     end
   end 
