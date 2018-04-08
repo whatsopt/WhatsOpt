@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
   
+  get 'operations/show'
+
   resources :variables
   resources :analyses, as: :mdas do
     get 'exports/new'
