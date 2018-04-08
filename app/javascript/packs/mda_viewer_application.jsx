@@ -3,10 +3,12 @@ import ReactDOM from 'react-dom';
 import { MdaViewer } from 'mda_viewer';
 
 document.addEventListener('DOMContentLoaded', () => {
-    let mdaViewerElt = $('#plotter');
-    let mda = mdaViewerElt.data('cases');
+    let mdaViewerElt = $('#mda-viewer');
+    let mda = mdaViewerElt.data('mda');
+    let isEditing = mdaViewerElt.data('is-editing');
     let apiKey = mdaViewerElt.data('api-key');
     ReactDOM.render(
-	    <Plotter mda={mda} apiKey={apiKey}/>, mdaViewerElt[0]
+	    <MdaViewer mda={mda} isEditing={isEditing} apiKey={apiKey}/>,
+	    mdaViewerElt[0]
 	  );
 	});

@@ -8,6 +8,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let apiKey = plotterElt.data('api-key');
     ReactDOM.render(
 	    <Plotter plotting={plotting} apiKey={apiKey}/>,
-	    mdaViewerElt[0]
+	    plotterElt[0]
 	  );
 	});
