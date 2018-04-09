@@ -1,0 +1,12 @@
+<h1>Plot</h1>
+
+<div id="plotter" data-plotting="<%= @operation %>" data-api-key="<%=current_user.api_key%>"></div> 
+
+<script>var API_KEY = "<%=current_user.api_key%>"</script>
+
+<% if Rails.env == 'development' and `hostname` =~ /(wdcps601h)/ %>
+    <script src="http://192.168.99.100:3035/packs/plotter_application.js"></script>
+<% else %>
+  <%= javascript_pack_tag 'plotter_application' %>
+<% end%>
+

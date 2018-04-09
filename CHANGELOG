@@ -1,5 +1,10 @@
 <h1>CHANGELOG</h1>
 
+<h3>0.7.1 (09/04/2019)</h3>
+<ul>
+  <li>Technical release: upgrade rails to 5.1.6, upgrade to webpacker 3.4.3 </li>
+</ul>
+
 <h3>0.7.0 (06/04/2019)</h3>
 <ul>
   <li>Initial screening capability based on SMT and SALib libraries.</li>
