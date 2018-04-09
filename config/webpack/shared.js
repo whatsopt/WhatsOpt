@@ -41,7 +41,8 @@ module.exports = {
     new ManifestPlugin({
       publicPath: output.publicPath,
       writeToFileEmit: true
-    })
+    }),
+    new webpack.IgnorePlugin(/vertx/),
   ],
 
   resolve: {

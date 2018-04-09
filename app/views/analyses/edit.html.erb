@@ -2,16 +2,8 @@
 
 <script>var API_KEY = "<%=current_user.api_key%>"</script>
 
-<% if Rails.env == 'development' %>
-  <% if `hostname` =~ /(rdri206h)/ %>
-    <script src="http://rdri206h:8081/packs/mda_viewer_application.js"></script>
-    <!-- <script src="http://127.0.0.1:8080/packs/mda_viewer_application.js"></script> -->
-  <% elsif `hostname` =~ /(endymion)/%>
-    <script src="http://endymion:8081/packs/mda_viewer_application.js"></script>
-    <!-- <script src="http://127.0.0.1:8080/packs/mda_viewer_application.js"></script> -->
-  <% else %>
-    <script src="http://192.168.99.100:8080/packs/mda_viewer_application.js"></script>
-  <% end %>    
+<% if Rails.env == 'development' and `hostname` =~ /(wdcps601h)/ %>
+  <script src="http://192.168.99.100:3035/packs/mda_viewer_application.js"></script>
 <% else %>
   <%= javascript_pack_tag 'mda_viewer_application' %>
 <% end%>
