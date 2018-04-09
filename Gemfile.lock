@@ -161,6 +161,7 @@ GEM
     minitest (5.11.3)
     multi_json (1.13.1)
     multipart-post (2.0.0)
+    mysql2 (0.4.10)
     nenv (0.3.0)
     net-ldap (0.16.1)
     net-scp (1.2.1)
@@ -330,6 +331,7 @@ DEPENDENCIES
   jquery-rails
   jquery-ui-rails
   listen (>= 3.0.5, < 3.2)
+  mysql2 (~> 0.4.10)
   paperclip
   popper
   puma (~> 3.7)
