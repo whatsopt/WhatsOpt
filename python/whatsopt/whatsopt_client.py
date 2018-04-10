@@ -218,13 +218,26 @@ class WhatsOpt(object):
             print('Analysis %s pulled' % mda_id)
     
     def update_mda(self):
-        files = self._find_mda_files()
+        id = self.get_analysis_id()
+        self.pull_mda(id, {'--base': True, '--force': True})
+        
+    def upload(self, sqlite_filename):
+        id = self.get_analysis_id()
+        self._upload_data()
+        
+    def get_analysis_id(self):
+        files = self._find_analysis_base_files()
+        id = None
         for f in files:
-            ident = self._extract_mda_id(f)
-        self.pull_mda(ident, {'--base': True, '--force': True})
+            ident = self._extract_mda_id(f) 
+            if id and id != ident:
+                raise Exception ('Warning: several analysis identifier detected. \
+                                  Find %s got %s. Check header comments of %s files .' % (id, ident, str(files)))  
+            id = ident    
+        return id 
         
     @staticmethod
-    def _find_mda_files():
+    def _find_analysis_base_files():
         files = []
         for f in os.listdir("."):
             if f.endswith("_base.py"):
@@ -244,7 +257,7 @@ class WhatsOpt(object):
     
     @staticmethod
     def _extract_mda_name(name):
-        match = re.match(r"openmdao_(\w+)_", name)
+        match = re.match(r"(\w+)_\w+.sqlite", name)
         if match:
             return match.group(1)
         else:
@@ -356,3 +369,6 @@ class WhatsOpt(object):
                             'at least one dot, but got %s' % fullname)
         disc = WhatsOpt._format_name(disc)
         return disc, var, disc+"."+var
+
+    def _upload_data(self, id, sqlite_filename):
+        pass

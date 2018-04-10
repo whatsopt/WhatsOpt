@@ -55,4 +55,10 @@ def update():
 	""" Update analysis connections """
 	WhatsOpt().update_mda()
 	
+@cli.command()
+@click.argument('sqlite_filename')
+def upload(sqlite_filename):
+	""" Upload data stored in given SQLITE_FILENAME """
+	WhatsOpt().upload(sqlite_filename)
+	
 cli(prog_name='wop')

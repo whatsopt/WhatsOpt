@@ -42,148 +42,61 @@ data['outputs']['g2'] = np.zeros((n,)+(1,))
 
 for i, case_id in enumerate(cases):
     case = reader.system_cases.get_case(case_id)
-
     data['inputs']['x'][i,:] = case.inputs['x']
-
     data['inputs']['z'][i,:] = case.inputs['z']
-
-
     data['outputs']['obj'][i,:] = case.outputs['obj']
-
     data['outputs']['g1'][i,:] = case.outputs['g1']
-
     data['outputs']['g2'][i,:] = case.outputs['g2']
-
       
-
-
 
 output = data['outputs']['obj'].reshape((-1, ))
 
-
-
-
 input = data['inputs']['x'].reshape((-1,))
-
 plt.subplot(3, 3, 1)
 plt.plot(input[0::1], output[0::1], '.')
-
 plt.ylabel('obj')
-
-
 plt.xlabel('x')
 
-
-
-
-
 input = data['inputs']['z'].reshape((-1,))
-
 plt.subplot(3, 3, 2)
 plt.plot(input[0::2], output[0::1], '.')
-
-
 plt.xlabel('z 1')
-
-
-
 plt.subplot(3, 3, 3)
 plt.plot(input[1::2], output[0::1], '.')
-
-
 plt.xlabel('z 2')
-
-
-
-
-
-
-
 
 
 output = data['outputs']['g1'].reshape((-1, ))
 
-
-
-
 input = data['inputs']['x'].reshape((-1,))
-
 plt.subplot(3, 3, 4)
 plt.plot(input[0::1], output[0::1], '.')
-
 plt.ylabel('g1')
-
-
 plt.xlabel('x')
 
-
-
-
-
 input = data['inputs']['z'].reshape((-1,))
-
 plt.subplot(3, 3, 5)
 plt.plot(input[0::2], output[0::1], '.')
-
-
 plt.xlabel('z 1')
-
-
-
 plt.subplot(3, 3, 6)
 plt.plot(input[1::2], output[0::1], '.')
-
-
 plt.xlabel('z 2')
-
-
-
-
-
-
-
 
 
 output = data['outputs']['g2'].reshape((-1, ))
 
-
-
-
 input = data['inputs']['x'].reshape((-1,))
-
 plt.subplot(3, 3, 7)
 plt.plot(input[0::1], output[0::1], '.')
-
 plt.ylabel('g2')
-
-
 plt.xlabel('x')
 
-
-
-
-
 input = data['inputs']['z'].reshape((-1,))
-
 plt.subplot(3, 3, 8)
 plt.plot(input[0::2], output[0::1], '.')
-
-
 plt.xlabel('z 1')
-
-
-
 plt.subplot(3, 3, 9)
 plt.plot(input[1::2], output[0::1], '.')
-
-
 plt.xlabel('z 2')
-
-
-
-
-
-
-
 
 plt.show()

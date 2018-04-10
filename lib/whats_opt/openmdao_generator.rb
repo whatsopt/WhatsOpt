@@ -1,5 +1,3 @@
-require 'erubi'
-require 'tmpdir'
 require 'zip'
 require 'open3'
 
@@ -95,7 +93,8 @@ module WhatsOpt
     end
         
     def _run_template(name)
-      erb = ERB.new(File.open(name, "rb:utf-8").read, nil, '-')
+      p "COUCOU"
+      erb = ERB.new(File.open(name, "rb:utf-8").read, nil, "-")
       erb.result(binding)
     end
     
