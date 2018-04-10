@@ -41,11 +41,9 @@ data['outputs']['<%= r.name %>'] = np.zeros((n,)+<%= r.shape=="1"?"(1,)":r.shape
 for i, case_id in enumerate(cases):
     case = reader.system_cases.get_case(case_id)
 <% @mda.indep_variables.each do |dv| -%>
-    data['inputs']['<%= dv.name %>'][i,:] = case.inputs['<%= dv.name %>']
-<% end -%>
+    data['inputs']['<%= dv.name %>'][i,:] = case.inputs['<%= dv.name %>']<% end -%>
 <% @mda.response_variables.each do |r| -%>
-    data['outputs']['<%= r.name %>'][i,:] = case.outputs['<%= r.name %>']
-<% end -%>
+    data['outputs']['<%= r.name %>'][i,:] = case.outputs['<%= r.name %>']<% end -%>
 
 salib_pb = pb.driver.get_salib_problem()
 inputs = pb.driver.get_cases()
