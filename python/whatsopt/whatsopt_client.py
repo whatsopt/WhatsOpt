@@ -236,7 +236,7 @@ class WhatsOpt(object):
         ident = None
         with open(file, 'r') as f:
             for line in f:
-                match = re.match(r"^# analyses: (\d+)", line) 
+                match = re.match(r"^# analysis_id: (\d+)", line) 
                 if match:
                     ident = match.group(1)
                     break
