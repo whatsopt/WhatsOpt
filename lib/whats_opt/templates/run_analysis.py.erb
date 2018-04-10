@@ -1,0 +1,10 @@
+from openmdao.api import Problem
+from <%= @mda.py_modulename %> import <%= @mda.py_classname %>
+
+pb = Problem(<%= @mda.py_classname %>())
+pb.setup()  
+
+pb.run_model()   
+pb.model.list_inputs(print_arrays=True)
+pb.model.list_outputs(print_arrays=True)
+

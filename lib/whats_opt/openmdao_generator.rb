@@ -55,7 +55,7 @@ module WhatsOpt
         _generate_discipline(disc, gendir, only_base)
       end 
       _generate_main(gendir, only_base)
-      _generate_screening(gendir)
+      _generate_run_scripts(gendir)
     end
         
     def _check_mda(gendir)
@@ -75,7 +75,8 @@ module WhatsOpt
       _generate(@mda.py_basefilename, 'openmdao_main_base.py.erb', gendir)
     end    
        
-    def _generate_screening(gendir)
+    def _generate_run_scripts(gendir)
+      _generate('run_analysis.py', 'run_analysis.py.erb', gendir)
       _generate('run_scatterplot.py', 'run_scatterplot.py.erb', gendir)
       _generate('run_screening.py', 'run_screening.py.erb', gendir)
     end

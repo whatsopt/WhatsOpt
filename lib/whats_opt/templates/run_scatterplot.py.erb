@@ -1,5 +1,4 @@
 import numpy as np
-import six
 import matplotlib.pyplot as plt
 from openmdao.api import Problem, SqliteRecorder, CaseReader
 from whatsopt.smt_doe_driver import SmtDoeDriver
@@ -14,7 +13,7 @@ pb.model.add_recorder(recorder)
 pb.model.nonlinear_solver.add_recorder(recorder)
 
 <%- @mda.indep_variables.each do |dv| %>
-pb.model.add_design_var('<%= dv.name %>', lower=0, upper=10)<% end %>
+pb.model.add_design_var('<%= dv.name %>', lower=<%= dv.lower_py_value %>, upper=<%= dv.upper_py_value %>)<% end %>
 <% @mda.response_variables.each do |voi| %>
 pb.model.add_objective('<%= voi.name %>')<% end %>
 pb.setup()  

@@ -60,6 +60,22 @@ class Variable < ApplicationRecord
     end
   end
   
+  def lower_py_value
+    if self.parameter
+      self.parameter.lower
+    else
+      super
+    end    
+  end
+  
+  def upper_py_value
+    if self.parameter
+      self.parameter.upper
+    else
+      super
+    end
+  end
+  
   private
   
   def set_defaults

@@ -22,7 +22,7 @@ class SellarBase(Group):
         
         indeps = self.add_subsystem('indeps', IndepVarComp(), promotes=['*'])
 		
-        indeps.add_output('x', 1)
+        indeps.add_output('x', 2)
         indeps.add_output('z', [5, 2])		    
  		
  		

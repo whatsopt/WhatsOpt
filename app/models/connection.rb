@@ -57,9 +57,7 @@ class Connection < ApplicationRecord
       if var_from.parameter && params[:parameter_attributes]
         params[:parameter_attributes][:id] = var_from.parameter.id
       end
-      p params
       var_from.update!(params)
-      p var_from.parameter
 
       # update to related variables
       params = params.except(:parameter_attributes)
