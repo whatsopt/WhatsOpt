@@ -40,7 +40,8 @@ class VariablesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update variable" do
-    patch variable_url(@variable), params: { variable: { discipline_id: @variable.discipline_id, io_mode: @variable.io_mode, name: @variable.name } }
+    patch variable_url(@variable), params: { variable: { discipline_id: @variable.discipline_id, 
+                                             io_mode: @variable.io_mode, name: @variable.name} }
     assert_redirected_to variable_url(@variable)
   end
 

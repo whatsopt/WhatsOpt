@@ -4,6 +4,6 @@ class VariableSerializer < ActiveModel::Serializer
   has_one :parameter  
   
   class ParameterSerializer < ActiveModel::Serializer
-    attributes :init
+    attributes :init, :lower, :upper
   end
 end

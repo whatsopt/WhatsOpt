@@ -1,19 +1,19 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 string:
-  init: "test_init_string"
+  init: test_init_string
   lower: 
   upper: 
   variable: var_string
 
 float:
-  init: "3.14"
-  lower: 
-  upper: 
+  init: 3.14
+  lower: 2
+  upper: 4
   variable: var_scalar_float
 
 varx1_out_init:
-  init: "3.14"
-  lower: 
-  upper: 
+  init: 3.14
+  lower: 1
+  upper: 10
   variable: varx1_out

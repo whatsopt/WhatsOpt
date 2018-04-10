@@ -37,6 +37,7 @@ class Api::V1::ConnectionsController < Api::ApiController
   # PUT /api/v1/connections/1
   def update
     @connection = Connection.find(params[:id])
+    p connection_update_params
     @connection.update_variables!(connection_update_params)      
     head :no_content    
   end
@@ -67,7 +68,7 @@ class Api::V1::ConnectionsController < Api::ApiController
 
     def connection_update_params
       params.require(:connection).permit(:name, :type, :shape, :units, :desc, :active, 
-                                         parameter_attributes: [:_destroy, :init])
+                                         parameter_attributes: [:_destroy, :init, :lower, :upper])
     end
 
 end

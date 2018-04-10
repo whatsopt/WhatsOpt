@@ -20,7 +20,7 @@ class Variable < ApplicationRecord
   has_many :outgoing_connections, -> { includes :to }, class_name: 'Connection', foreign_key: 'from_id', dependent: :destroy
   has_many :cases  
     
-  accepts_nested_attributes_for :parameter, reject_if: proc { |attr| attr['init'].blank? }, allow_destroy: true
+  accepts_nested_attributes_for :parameter, reject_if: proc { |attr| attr['init'].blank? and attr['lower'].blank? and attr['upper'].blank?  }, allow_destroy: true
 
   validates :name, :io_mode, :type, :shape, presence: true, allow_blank: false
   validates :name, uniqueness: { scope: [:discipline, :io_mode], message: "should be unique per discipline and io mode." }

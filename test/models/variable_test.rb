@@ -47,7 +47,7 @@ class VariableTest < ActiveSupport::TestCase
     var = variables(:varx1_out)
     adapter = ActiveModelSerializers::SerializableResource.new(var)
     assert_equal [:active, :desc, :fullname, :io_mode, :name, :parameter, :shape, :type, :units], adapter.as_json.keys.sort
-    assert_equal({:init=>"3.14"}, adapter.as_json[:parameter])
+    assert_equal({:init=>"3.14", :lower=>"1", :upper=>"10"}, adapter.as_json[:parameter])
   end
   
   test "may have several outgoings when output" do

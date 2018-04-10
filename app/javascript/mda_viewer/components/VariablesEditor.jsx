@@ -80,7 +80,8 @@ class VariablesEditor extends React.Component {
             }
           }
           let val = { id: conn.connId, from: conn.frName, to: conn.toName.join(', '), name: infos.vName, desc: infos.desc,
-                      type: infos.type, shape: infos.shape, units: infos.units, init: infos.init, active: infos.active };
+                      type: infos.type, shape: infos.shape, units: infos.units, init: infos.init, lower: infos.lower, 
+                      upper: infos.upper, active: infos.active };
           return val;
           
       });
@@ -138,15 +139,25 @@ class VariablesEditor extends React.Component {
                      Cell: this.renderEditable
                    },
                    {
+                     Header: (cellInfo) => this.renderHeader(cellInfo, 'Units'),
+                     accessor: "units", 
+                     Cell: this.renderEditable
+                   },
+                   {
                      Header: (cellInfo) => this.renderHeader(cellInfo, 'Init'),
                      accessor: "init", 
                      Cell: this.renderEditable
                    },
                    {
-                     Header: (cellInfo) => this.renderHeader(cellInfo, 'Units'),
-                     accessor: "units", 
+                     Header: (cellInfo) => this.renderHeader(cellInfo, 'Lower'),
+                     accessor: "lower", 
                      Cell: this.renderEditable
-                   }
+                   },
+                   {
+                     Header: (cellInfo) => this.renderHeader(cellInfo, 'Upper'),
+                     accessor: "upper", 
+                     Cell: this.renderEditable
+                   },
                  ];
     if (this.props.isEditing) {
       columns.splice(0, 0, {
@@ -261,22 +272,27 @@ class VariablesEditor extends React.Component {
       let varname = vfr.name 
       let units = vfr.units 
       let init = "";
+      let lower = "";
+      let upper = "";
       let active = vfr.active;
       
       if (vfr.parameter) { 
         init = vfr.parameter.init;
+        lower = vfr.parameter.lower;
+        upper = vfr.parameter.upper;
       }
       let infos = { id: conn.connId, idfrName: conn.frName, frUnits: vfr.units, 
                     vName: varname, desc: desc,
                     toName: conn.toName.join(', '),
-                    type: vartype, shape: shape, init: init, units: units, active: active};
+                    type: vartype, shape: shape, init: init, lower: lower, upper:upper, 
+                    units: units, active: active};
       // console.log(JSON.stringify(infos));
       return infos;
     }
       
     _findVariableInfo(disc, vname, io_mode) {
       let vars = this.props.vars;
-      let vinfo = {units: '', desc: '', type: '', shape: '', init: '', active: true};
+      let vinfo = {units: '', desc: '', type: '', shape: '', init: '', lower: '', upper: '', active: true};
       let vinfos = vars[disc][io_mode].filter((v) => { 
         return v.name === vname; 
       });
