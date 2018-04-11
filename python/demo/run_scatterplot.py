@@ -12,7 +12,7 @@ from whatsopt.smt_doe_driver import SmtDoeDriver
 from sellar import Sellar
 
 pb = Problem(Sellar())
-pb.driver = SmtDoeDriver(sampling_method='LHS', n_cases=100)
+pb.driver = SmtDoeDriver(sampling_method='LHS', n_cases=200)
 case_recorder_filename = 'sellar_scatterplot.sqlite'        
 recorder = SqliteRecorder(case_recorder_filename)
 pb.driver.add_recorder(recorder)
@@ -20,8 +20,8 @@ pb.model.add_recorder(recorder)
 pb.model.nonlinear_solver.add_recorder(recorder)
 
 
-pb.model.add_design_var('x', lower=1, upper=5)
-pb.model.add_design_var('z', lower=0, upper=6)
+pb.model.add_design_var('x', lower=0, upper=10)
+pb.model.add_design_var('z', lower=0, upper=10)
 
 pb.model.add_objective('obj')
 pb.model.add_objective('g1')
@@ -60,10 +60,10 @@ plt.xlabel('x')
 input = data['inputs']['z'].reshape((-1,))
 plt.subplot(3, 3, 2)
 plt.plot(input[0::2], output[0::1], '.')
-plt.xlabel('z 1')
+plt.xlabel('z 0')
 plt.subplot(3, 3, 3)
 plt.plot(input[1::2], output[0::1], '.')
-plt.xlabel('z 2')
+plt.xlabel('z 1')
 
 
 output = data['outputs']['g1'].reshape((-1, ))
@@ -77,10 +77,10 @@ plt.xlabel('x')
 input = data['inputs']['z'].reshape((-1,))
 plt.subplot(3, 3, 5)
 plt.plot(input[0::2], output[0::1], '.')
-plt.xlabel('z 1')
+plt.xlabel('z 0')
 plt.subplot(3, 3, 6)
 plt.plot(input[1::2], output[0::1], '.')
-plt.xlabel('z 2')
+plt.xlabel('z 1')
 
 
 output = data['outputs']['g2'].reshape((-1, ))
@@ -94,9 +94,9 @@ plt.xlabel('x')
 input = data['inputs']['z'].reshape((-1,))
 plt.subplot(3, 3, 8)
 plt.plot(input[0::2], output[0::1], '.')
-plt.xlabel('z 1')
+plt.xlabel('z 0')
 plt.subplot(3, 3, 9)
 plt.plot(input[1::2], output[0::1], '.')
-plt.xlabel('z 2')
+plt.xlabel('z 1')
 
 plt.show()

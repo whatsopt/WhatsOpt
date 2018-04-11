@@ -13,7 +13,7 @@ import tempfile
 
 
 from openmdao.devtools.problem_viewer.problem_viewer import _get_viewer_data, view_model
-from openmdao.api import IndepVarComp, Problem, Group
+from openmdao.api import IndepVarComp, Problem, Group, CaseReader
 from tabulate import tabulate
 
 WHATSOPT_DIRNAME = os.path.join(os.path.expanduser('~'), '.whatsopt')
@@ -223,7 +223,7 @@ class WhatsOpt(object):
         
     def upload(self, sqlite_filename):
         id = self.get_analysis_id()
-        self._upload_data()
+        self._upload_data(id, sqlite_filename)
         
     def get_analysis_id(self):
         files = self._find_analysis_base_files()
@@ -371,4 +371,53 @@ class WhatsOpt(object):
         return disc, var, disc+"."+var
 
     def _upload_data(self, id, sqlite_filename):
-        pass
+        reader = CaseReader(sqlite_filename)
+        cases = reader.system_cases.list_cases()
+        inputs = {}
+        outputs = {}
+        for i, case_id in enumerate(cases):
+            case = reader.system_cases.get_case(case_id)
+            if case.inputs is not None:
+                self._format_data(case.inputs, inputs)
+            if case.outputs is not None:
+                self._format_data(case.outputs, outputs)
+        data = {'inputs': inputs, 'outputs': outputs}
+        print(data)
+        inputs_count = self._check_count(inputs)
+        outputs_count = self._check_count(outputs)
+        assert inputs_count==outputs_count
+        
+    def _check_count(self, ios):
+        count = None
+        for name in ios:
+            if count and count != len(ios[name]):
+                raise Exception('Bad value count between (%s, %d) and (%s, %d)' % \
+                                (refname, count, name, len(ios[name])))
+            else:
+                refname, count = name, len(ios[name])
+        return count
+                            
+    def _format_data(self, data_io, result):
+        done = {}
+        for n in data_io._values.dtype.names:
+            values = data_io._values[n]
+            name = n.split('.')[-1]
+            if name in done:
+                continue
+            if values.size>1:
+                values = values.reshape(-1)
+                for i in range(values.size):
+                    name_num = name+' {}'.format(i)
+                    if name_num in result:
+                        result[name_num].append(float(values[i]))
+                    else:
+                        result[name_num] = [float(values[i])]                            
+            else:
+                if name in result:
+                    result[name].append(float(values))
+                else:
+                    result[name] = [float(values)]
+            done[name]=True
+
+
+

@@ -42,20 +42,20 @@ for i, case_id in enumerate(cases):
 <% row = 0 -%>
 <% @mda.response_variables.each_with_index do |r, j| -%>
 
-output = data['outputs']['<%= r.name %>'].reshape((-1, ))
+output = data['outputs']['<%= r.name %>'].reshape(-1)
 <% (0...r.dim).each do |kj| -%>
 <% col = 0 -%>
 <% @mda.indep_variables.each_with_index do |dv, i| -%>
 
-input = data['inputs']['<%= dv.name %>'].reshape((-1,))
+input = data['inputs']['<%= dv.name %>'].reshape(-1)
 <% (0...dv.dim).each do |ki| -%>
 plt.subplot(<%= @mda.output_dim %>, <%= @mda.input_dim %>, <%= @mda.input_dim*row+col+1 %>)
 plt.plot(input[<%= ki %>::<%= dv.dim %>], output[<%= kj %>::<%= r.dim %>], '.')
 <% if col == 0 -%>
-plt.ylabel('<%= r.dim==1?"#{r.name}":"#{r.name} #{kj+1}" %>')
+plt.ylabel('<%= r.dim==1?"#{r.name}":"#{r.name} #{kj}" %>')
 <% end -%>
 <% if true or row == @mda.output_dim-1 -%>
-plt.xlabel('<%= dv.dim==1?"#{dv.name}":"#{dv.name} #{ki+1}" %>')
+plt.xlabel('<%= dv.dim==1?"#{dv.name}":"#{dv.name} #{ki}" %>')
 <% end -%>
 <% col += 1 -%>
 <% end -%>
