@@ -12,7 +12,7 @@ from whatsopt.smt_doe_driver import SmtDoeDriver
 from sellar import Sellar
 
 pb = Problem(Sellar())
-pb.driver = SmtDoeDriver(sampling_method='LHS', n_cases=200)
+pb.driver = SmtDoeDriver(sampling_method='LHS', n_cases=5)
 case_recorder_filename = 'sellar_scatterplot.sqlite'        
 recorder = SqliteRecorder(case_recorder_filename)
 pb.driver.add_recorder(recorder)
@@ -20,8 +20,8 @@ pb.model.add_recorder(recorder)
 pb.model.nonlinear_solver.add_recorder(recorder)
 
 
-pb.model.add_design_var('x', lower=0, upper=10)
-pb.model.add_design_var('z', lower=0, upper=10)
+pb.model.add_design_var('x', lower=1, upper=5)
+pb.model.add_design_var('z', lower=0, upper=6)
 
 pb.model.add_objective('obj')
 pb.model.add_objective('g1')
@@ -49,15 +49,15 @@ for i, case_id in enumerate(cases):
     data['outputs']['g2'][i,:] = case.outputs['g2']
       
 
-output = data['outputs']['obj'].reshape((-1, ))
+output = data['outputs']['obj'].reshape(-1)
 
-input = data['inputs']['x'].reshape((-1,))
+input = data['inputs']['x'].reshape(-1)
 plt.subplot(3, 3, 1)
 plt.plot(input[0::1], output[0::1], '.')
 plt.ylabel('obj')
 plt.xlabel('x')
 
-input = data['inputs']['z'].reshape((-1,))
+input = data['inputs']['z'].reshape(-1)
 plt.subplot(3, 3, 2)
 plt.plot(input[0::2], output[0::1], '.')
 plt.xlabel('z 0')
@@ -66,15 +66,15 @@ plt.plot(input[1::2], output[0::1], '.')
 plt.xlabel('z 1')
 
 
-output = data['outputs']['g1'].reshape((-1, ))
+output = data['outputs']['g1'].reshape(-1)
 
-input = data['inputs']['x'].reshape((-1,))
+input = data['inputs']['x'].reshape(-1)
 plt.subplot(3, 3, 4)
 plt.plot(input[0::1], output[0::1], '.')
 plt.ylabel('g1')
 plt.xlabel('x')
 
-input = data['inputs']['z'].reshape((-1,))
+input = data['inputs']['z'].reshape(-1)
 plt.subplot(3, 3, 5)
 plt.plot(input[0::2], output[0::1], '.')
 plt.xlabel('z 0')
@@ -83,15 +83,15 @@ plt.plot(input[1::2], output[0::1], '.')
 plt.xlabel('z 1')
 
 
-output = data['outputs']['g2'].reshape((-1, ))
+output = data['outputs']['g2'].reshape(-1)
 
-input = data['inputs']['x'].reshape((-1,))
+input = data['inputs']['x'].reshape(-1)
 plt.subplot(3, 3, 7)
 plt.plot(input[0::1], output[0::1], '.')
 plt.ylabel('g2')
 plt.xlabel('x')
 
-input = data['inputs']['z'].reshape((-1,))
+input = data['inputs']['z'].reshape(-1)
 plt.subplot(3, 3, 8)
 plt.plot(input[0::2], output[0::1], '.')
 plt.xlabel('z 0')

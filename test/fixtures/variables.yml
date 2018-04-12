@@ -7,8 +7,8 @@ varx1_out:
   shape: 1
 
 vary2_in:
-  name: x1
-  fullname: x1
+  name: y2
+  fullname: y2
   discipline: driver_cicav
   io_mode: in
   type: Float

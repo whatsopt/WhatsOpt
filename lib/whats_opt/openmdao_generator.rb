@@ -93,7 +93,6 @@ module WhatsOpt
     end
         
     def _run_template(name)
-      p "COUCOU"
       erb = ERB.new(File.open(name, "rb:utf-8").read, nil, "-")
       erb.result(binding)
     end

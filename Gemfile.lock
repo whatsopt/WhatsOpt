@@ -311,7 +311,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  active_model_serializers (~> 0.10.0)
+  active_model_serializers (~> 0.10.7)
   acts_as_list
   bootstrap (~> 4.0.0)
   byebug

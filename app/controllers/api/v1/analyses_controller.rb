@@ -23,7 +23,7 @@ class Api::V1::AnalysesController < Api::ApiController
     Connection.create_connections(@mda)
     current_user.add_role(:owner, @mda)
     current_user.save!
-    json_response @mda
+    json_response @mda, :created
   end
 
   # PUT/PATCH /api/v1/mdas/1

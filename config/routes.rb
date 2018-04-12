@@ -10,13 +10,13 @@ Rails.application.routes.draw do
   resources :notebooks
   resources :geometry_models
   resources :attachments, only: [:show, :index]
-  resources :operations, only: [:show, :index]  
     
   namespace :api do
     namespace :v1, defaults: { format: :json } do
       resources :analyses, shallow: true, as: :mdas, only: [:index, :show, :create, :update] do
         resources :disciplines, only: [:show, :create, :update, :destroy], :shallow => true 
         resources :connections, only: [:create, :update, :destroy]
+        resources :operations, only: [:show, :create, :destroy]  
         post 'openmdao_checking', to: 'openmdao_checking#create' 
         get 'exports/new'
       end

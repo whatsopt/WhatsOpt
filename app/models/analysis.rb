@@ -14,6 +14,7 @@ class Analysis < ApplicationRecord
   validates_associated :attachment
   
   has_many :disciplines, -> { order(position: :asc) }, :dependent => :destroy 
+  has_many :operations, :dependent => :destroy 
     
   accepts_nested_attributes_for :disciplines, 
     reject_if: proc { |attr| attr['name'].blank? }, allow_destroy: true

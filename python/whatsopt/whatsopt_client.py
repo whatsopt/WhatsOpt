@@ -222,8 +222,16 @@ class WhatsOpt(object):
         self.pull_mda(id, {'--base': True, '--force': True})
         
     def upload(self, sqlite_filename):
-        id = self.get_analysis_id()
-        self._upload_data(id, sqlite_filename)
+        mda_id = self.get_analysis_id()
+        data = self._format_upload_data(sqlite_filename)
+        url =  self._endpoint(('/api/v1/analyses/%s/operations') % mda_id)
+        operation_params = {'name': os.path.splitext(sqlite_filename)[0],
+                            'inputs': data['inputs'],
+                            'outputs': data['outputs']}
+        resp = self.session.post(url, headers=self.headers, 
+                                 json={'operation': operation_params})
+        resp.raise_for_status()
+        print("Results data from %s uploaded" % sqlite_filename)
         
     def get_analysis_id(self):
         files = self._find_analysis_base_files()
@@ -370,22 +378,25 @@ class WhatsOpt(object):
         disc = WhatsOpt._format_name(disc)
         return disc, var, disc+"."+var
 
-    def _upload_data(self, id, sqlite_filename):
+    def _format_upload_data(self, sqlite_filename):
         reader = CaseReader(sqlite_filename)
         cases = reader.system_cases.list_cases()
         inputs = {}
         outputs = {}
         for i, case_id in enumerate(cases):
             case = reader.system_cases.get_case(case_id)
+            print(case.inputs._prom2abs['input'])
+            print(case.inputs._prom2abs['output'])
             if case.inputs is not None:
-                self._format_data(case.inputs, inputs)
+                self._insert_data(case.inputs, inputs)
             if case.outputs is not None:
-                self._format_data(case.outputs, outputs)
+                self._insert_data(case.outputs, outputs)
         data = {'inputs': inputs, 'outputs': outputs}
         print(data)
         inputs_count = self._check_count(inputs)
         outputs_count = self._check_count(outputs)
         assert inputs_count==outputs_count
+        return data
         
     def _check_count(self, ios):
         count = None
@@ -397,7 +408,7 @@ class WhatsOpt(object):
                 refname, count = name, len(ios[name])
         return count
                             
-    def _format_data(self, data_io, result):
+    def _insert_data(self, data_io, result):
         done = {}
         for n in data_io._values.dtype.names:
             values = data_io._values[n]
@@ -418,6 +429,7 @@ class WhatsOpt(object):
                 else:
                     result[name] = [float(values)]
             done[name]=True
+
 
 
 

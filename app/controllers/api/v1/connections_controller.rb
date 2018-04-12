@@ -27,7 +27,7 @@ class Api::V1::ConnectionsController < Api::ApiController
           Connection.create!(from_id: vout.id, to_id: vin.id)
         end
         resp = { from: @from_disc.id.to_s, to: @to_disc.id.to_s, names: @names }
-        json_response(resp)
+        json_response resp, :created
       end
     rescue VariableAlreadyExistsError => e
       json_response({ message: e }, :unprocessable_entity)
