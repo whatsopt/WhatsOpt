@@ -1,0 +1,9 @@
+case1:
+    operation: doe
+    variable: varx1_out
+    values: [1, 2, 3]
+    
+case2:
+    operation: doe
+    variable: varobj_objective_in
+    values: [4, 5, 6]
