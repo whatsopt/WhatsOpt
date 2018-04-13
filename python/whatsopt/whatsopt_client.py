@@ -223,9 +223,15 @@ class WhatsOpt(object):
         
     def upload(self, sqlite_filename):
         mda_id = self.get_analysis_id()
-        cases = self._format_upload_cases(sqlite_filename)
+        reader = CaseReader(sqlite_filename)
+        driver_first_coord = reader.driver_cases.get_iteration_coordinate(0)
+        name = os.path.splitext(sqlite_filename)[0]
+        m = re.match(r"\w+:(\w+)|.*", driver_first_coord)
+        if m:
+            name = m.group(1)
+        cases = self._format_upload_cases(reader)
         url =  self._endpoint(('/api/v1/analyses/%s/operations') % mda_id)
-        operation_params = {'name': os.path.splitext(sqlite_filename)[0],
+        operation_params = {'name': name,
                             'cases': cases }
         resp = self.session.post(url, headers=self.headers, 
                                  json={'operation': operation_params})
@@ -377,8 +383,7 @@ class WhatsOpt(object):
         disc = WhatsOpt._format_name(disc)
         return disc, var, disc+"."+var
 
-    def _format_upload_cases(self, sqlite_filename):
-        reader = CaseReader(sqlite_filename)
+    def _format_upload_cases(self, reader):
         cases = reader.system_cases.list_cases()
         inputs = {}
         outputs = {}

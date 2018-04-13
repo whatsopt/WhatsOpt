@@ -57,27 +57,33 @@ class WhatsOptApi {
       .catch(error => console.log(error));
   }
 
-  createConnection(mdaId, connection_attributes, callback, onError) {
+  createConnection(mdaId, connectionAttributes, callback, onError) {
     let path = `/api/v1/analyses/${mdaId}/connections`
-    axios.post(url(path), {connection: connection_attributes})
+    axios.post(url(path), {connection: connectionAttributes})
       .then(callback)
       .catch(onError);
   } 
 
-  updateConnection(connection_id, connection_attributes, callback, onError) {
+  updateConnection(connectionId, connectionAttributes, callback, onError) {
     let path = `/api/v1/connections/${connection_id}`
-    axios.put(url(path), {connection: connection_attributes})
+    axios.put(url(path), {connection: connectionAttributes})
       .then(callback)
       .catch(onError);
   }
   
-  deleteConnection(connection_id, callback) {
+  deleteConnection(connectionId, callback) {
     let path = `/api/v1/connections/${connection_id}`
     axios.delete(url(path))
       .then(callback)
       .catch(error => console.log(error));
   }
   
+  getOperation(operationId) {
+    let path = `/api/v1/operations/${operationId}`
+    axios.get(url(path))
+      .then(callback)
+      .catch(error => console.log(error));
+  }
 };
 
 let api = new WhatsOptApi();

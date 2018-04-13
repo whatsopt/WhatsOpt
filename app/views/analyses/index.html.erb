@@ -14,6 +14,7 @@
 		  <th class="col-md-2">Name</th>
 		  <th class="col-md-2">Owner</th>
 		  <th class="col-md-3">Updated</th>
+		  <th class="col-md-1">Operations</th>
 		  <th class="col-md-1">Action(s)</th>
 		</tr>
 	</thead>
@@ -24,6 +25,11 @@
 	      <td><%= link_to mda.name, mda_path(mda) %></td>
           <td><%= mda.owner %></td>
           <td><%= time_ago_in_words(mda.updated_at) %> ago</td>
+          <td>
+              <% mda.operations.each do |ope| %>
+                <span><%= link_to ope.name, operation_path(ope) %><span> 
+              <% end%>
+          </td>
 	      <td>
 	        <% if policy(mda).update? %>
 	          <%= link_to edit_mda_path(mda), 

@@ -1,4 +1,4 @@
 class OperationSerializer < ActiveModel::Serializer
-  attributes :name
+  attributes :id, :name
   has_many :cases
 end

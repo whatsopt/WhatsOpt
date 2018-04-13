@@ -20,6 +20,7 @@ class Api::V1::OperationsControllerTest < ActionDispatch::IntegrationTest
   test "should get an operation" do
     get api_v1_operation_url(@ope), as: :json, headers: @auth_headers
     assert_response :success
+    p response.body
   end
     
 end

@@ -74,8 +74,8 @@ class Analysis < ApplicationRecord
       inactive_edges: build_edges(active: false),
       vars: build_var_infos
     }.to_json
-    end
-
+  end
+  
   def build_nodes
     return self.disciplines.map {|d| 
       { id: "#{d.id}", type: d.type , name: d.name } 

@@ -12,7 +12,7 @@ from whatsopt.smt_doe_driver import SmtDoeDriver
 from sellar import Sellar
 
 pb = Problem(Sellar())
-pb.driver = SmtDoeDriver(sampling_method='LHS', n_cases=5)
+pb.driver = SmtDoeDriver(sampling_method='LHS', n_cases=100)
 case_recorder_filename = 'sellar_scatterplot.sqlite'        
 recorder = SqliteRecorder(case_recorder_filename)
 pb.driver.add_recorder(recorder)
