@@ -1,6 +1,6 @@
 class CaseSerializer < ActiveModel::Serializer
 
-  attributes :values, :varname
+  attributes :values, :varname, :coord_index
   
   def varname
     var = object.send(:variable)

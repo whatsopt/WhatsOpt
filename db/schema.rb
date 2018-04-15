@@ -35,6 +35,7 @@ ActiveRecord::Schema.define(version: 36) do
   create_table "cases", force: :cascade do |t|
     t.integer "operation_id"
     t.integer "variable_id"
+    t.integer "coord_index", default: 0
     t.text "values"
   end
 
@@ -74,8 +75,8 @@ ActiveRecord::Schema.define(version: 36) do
 
   create_table "parameters", force: :cascade do |t|
     t.string "init"
-    t.string "lower"
-    t.string "upper"
+    t.string "lower", default: ""
+    t.string "upper", default: ""
     t.integer "variable_id"
   end
 

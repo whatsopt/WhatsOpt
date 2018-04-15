@@ -35,6 +35,7 @@ RUN apt-get update \
 	libxml2-dev \
 	libcurl4-openssl-dev \
 	python-software-properties \
+	python-pip \
 &&  apt-get clean \
 &&  rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/*
 
@@ -47,8 +48,8 @@ RUN curl --silent --location https://deb.nodesource.com/setup_6.x | bash - \
 RUN curl -o- -L https://yarnpkg.com/install.sh | bash
 
 # pip install
-RUN wget https://bootstrap.pypa.io/get-pip.py \
-&&  python get-pip.py
+#RUN wget https://bootstrap.pypa.io/get-pip.py \
+#&&  python get-pip.py
 
 # Ruby
 RUN git clone git://github.com/rbenv/rbenv.git /usr/local/rbenv \
@@ -84,12 +85,8 @@ RUN curl -o- -L https://yarnpkg.com/install.sh | bash
 ENV PATH "$PATH:/root/.yarn/bin"
 
 # pip install
-RUN wget https://bootstrap.pypa.io/get-pip.py \
-&& python get-pip.py
-
-RUN pip install --upgrade pip \
-	&& pip install jupyter \
-	&& pip install openmdao==2.2.0
+RUN pip install jupyter \
+	&& pip install openmdao==2.2.1
 
 # OpenVSP
 RUN apt-get install -y git cmake libxml2-dev \
@@ -121,5 +118,6 @@ RUN bundle install --jobs 20 --retry 5
 COPY . ./
 
 EXPOSE 3000
+EXPOSE 3035
 
 CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0"]

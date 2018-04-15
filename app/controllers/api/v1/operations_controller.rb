@@ -9,9 +9,8 @@ class Api::V1::OperationsController < Api::ApiController
   # POST /api/v1/{mda_id}/operations
   def create
     mda = Analysis.find(params[:mda_id])
-    @operation = mda.operations.create!(name: params[:operation][:name])
-    data = params[:operation].slice(:cases)
-    @operation.create_cases!(data[:cases])
+    @operation = Operation.build_operation(mda, params[:operation])
+    @operation.save!
     render json: @operation, status: :created
   end
 

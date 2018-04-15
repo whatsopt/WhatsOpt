@@ -1,12 +1,8 @@
-<h1>Plots from @mda.name operations</h1>
+<h1>Plots from <%= @mda.name %> <%= @ope.name %></h1>
 
 <div id="plotter" data-mda="<%= @mda.to_mda_viewer_json %>" data-ope="<%= @ope.to_plotter_json %>" data-api-key="<%=current_user.api_key%>"></div> 
 
 <script>var API_KEY = "<%=current_user.api_key%>"</script>
 
-<% if Rails.env == 'development' and `hostname` =~ /(wdcps601h)/ %>
-    <script src="http://192.168.99.100:3035/packs/plotter_application.js"></script>
-<% else %>
-  <%= javascript_pack_tag 'plotter_application' %>
-<% end%>
+<%= javascript_pack_tag 'plotter_application' %>
 

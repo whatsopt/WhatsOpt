@@ -62,7 +62,7 @@ class WhatsOpt(object):
     def default_url(self):
         env = os.getenv("WOP_ENV")
         if env=="development":
-            self._default_url = DEV_URLs
+            self._default_url = DEV_URL
         elif env=="test":
             self._default_url = TEST_URL
         elif env=="staging":
@@ -221,8 +221,9 @@ class WhatsOpt(object):
         id = self.get_analysis_id()
         self.pull_mda(id, {'--base': True, '--force': True})
         
-    def upload(self, sqlite_filename):
-        mda_id = self.get_analysis_id()
+    def upload(self, sqlite_filename, analysis_id=None):
+        mda_id = self.get_analysis_id() if not analysis_id else analysis_id
+        print("mda_id=%s" % mda_id)
         reader = CaseReader(sqlite_filename)
         driver_first_coord = reader.driver_cases.get_iteration_coordinate(0)
         name = os.path.splitext(sqlite_filename)[0]
@@ -231,8 +232,8 @@ class WhatsOpt(object):
             name = m.group(1)
         cases = self._format_upload_cases(reader)
         url =  self._endpoint(('/api/v1/analyses/%s/operations') % mda_id)
-        operation_params = {'name': name,
-                            'cases': cases }
+        operation_params = { 'name': name,
+                             'cases': cases }
         resp = self.session.post(url, headers=self.headers, 
                                  json={'operation': operation_params})
         resp.raise_for_status()
@@ -398,7 +399,10 @@ class WhatsOpt(object):
         inputs_count = self._check_count(inputs)
         outputs_count = self._check_count(outputs)
         assert inputs_count==outputs_count
-        return cases
+        data = []
+        for key, values in iteritems(cases):
+            data.append({'varname': key[0], 'coord_index': key[1], 'values': values})
+        return data
         
     def _check_count(self, ios):
         count = None
@@ -417,19 +421,12 @@ class WhatsOpt(object):
             name = n.split('.')[-1]
             if name in done:
                 continue
-            if values.size>1:
-                values = values.reshape(-1)
-                for i in range(values.size):
-                    name_num = name+' {}'.format(i)
-                    if name_num in result:
-                        result[name_num].append(float(values[i]))
-                    else:
-                        result[name_num] = [float(values[i])]
-            else:
-                if name in result:
-                    result[name].append(float(values))
+            values = values.reshape(-1)
+            for i in range(values.size):
+                if (name, i) in result:
+                    result[(name, i)].append(float(values[i]))
                 else:
-                    result[name] = [float(values)]
+                    result[(name, i)] = [float(values[i])]
             done[name]=True
 
 

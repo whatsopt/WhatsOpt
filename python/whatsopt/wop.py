@@ -44,11 +44,11 @@ def push(dry_run, name, py_filename):
 @cli.command()
 @click.option('--dry-run', is_flag=True, default=False, help='print analysis pull infos without actually pulling')
 @click.option('--force', is_flag=True, default=False, help='overwrite existing files')
-@click.argument('mda_id')
-def pull(dry_run, force, mda_id):
+@click.argument('analysis_id')
+def pull(dry_run, force, analysis_id):
 	""" Pull analysis given its identifier """	
 	options = {'--dry-run': dry_run, '--force': force}
-	WhatsOpt().pull_mda(mda_id, options)
+	WhatsOpt().pull_mda(analysis_id, options)
 	
 @cli.command()
 def update():
@@ -57,8 +57,9 @@ def update():
 	
 @cli.command()
 @click.argument('sqlite_filename')
-def upload(sqlite_filename):
+@click.option('--analysis-id')
+def upload(sqlite_filename, analysis_id):
 	""" Upload data stored in given SQLITE_FILENAME """
-	WhatsOpt().upload(sqlite_filename)
+	WhatsOpt().upload(sqlite_filename, analysis_id)
 	
 cli(prog_name='wop')

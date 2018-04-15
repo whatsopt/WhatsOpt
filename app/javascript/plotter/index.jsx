@@ -37,7 +37,7 @@ class Plotter extends React.Component {
       <div>
           <Plot
             data={data}
-            layout={{ width: 800, height: 400, title: this.state.name }}
+            layout={{ width: 1000, height: 400, title: this.state.name }}
           />
       </div>
     );
