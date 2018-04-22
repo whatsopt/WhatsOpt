@@ -14,6 +14,14 @@ class Operation < ApplicationRecord
     adapter.to_json
 	end
 	
+	def category
+	  if name == "SLSQP"
+	    'optimization'
+	  elses
+	    'sampling'
+	  end 
+	end
+	
   def _build_cases_from(vars, varscope=Variable)
      var = {}
      vars.each do |c|
