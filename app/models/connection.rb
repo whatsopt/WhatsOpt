@@ -57,6 +57,10 @@ class Connection < ApplicationRecord
       if var_from.parameter && params[:parameter_attributes]
         params[:parameter_attributes][:id] = var_from.parameter.id
       end
+      if params[:name]
+        fullname = var_from.fullname
+        params[:fullname] = fullname.gsub('.'+var_from.name, '.'+params[:name])
+      end 
       var_from.update!(params)
 
       # update to related variables
@@ -65,7 +69,7 @@ class Connection < ApplicationRecord
       var_to = Variable.find(to_id)
       if params[:name]
         fullname = var_to.fullname
-        params[:fullname] = fullname.gsub(var_to.name, params[:name])
+        params[:fullname] = fullname.gsub('.'+var_to.name, '.'+params[:name])
       end 
       
       Connection.where(from_id: var_from.id).each do |conn|
@@ -73,4 +77,5 @@ class Connection < ApplicationRecord
       end      
     end
   end
+  
 end
