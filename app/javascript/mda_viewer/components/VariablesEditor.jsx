@@ -117,13 +117,13 @@ class VariablesEditor extends React.Component {
                    {
                      Header: (cellInfo) => this.renderHeader(cellInfo, 'To'),
                      accessor: "to",
-                     minWidth: 300,
+                     minWidth: 200,
                      Cell: (cellInfo) => this.renderReadonly(cellInfo),
                    },
                    {
                      Header: (cellInfo) => this.renderHeader(cellInfo, 'Name'),
                      accessor: "name", 
-                     minWidth: 300, 
+                     minWidth: 200, 
                      Cell: this.renderEditable 
                    },
                    {
