@@ -18,9 +18,5 @@
 
 <script>var API_KEY = "<%=current_user.api_key%>"</script>
 
-<% if Rails.env == 'development' and `hostname` =~ /(wdcps601h)/ %>
-  <script src="http://192.168.99.100:8081/packs/mda_viewer_application.js"></script>
-<% else %>
-  <%= javascript_pack_tag 'mda_viewer_application' %>
-<% end%>
+<%= javascript_pack_tag 'mda_viewer_application' %>
  
