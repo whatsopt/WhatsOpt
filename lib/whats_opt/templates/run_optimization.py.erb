@@ -1,0 +1,47 @@
+# DO NOT EDIT unless you know what you are doing
+# analysis_id: <%= @mda.id %>
+
+import numpy as np
+import matplotlib.pyplot as plt
+from openmdao.api import Problem, SqliteRecorder, CaseReader, ScipyOptimizer
+from <%= @mda.py_modulename %> import <%= @mda.py_classname %>
+
+pb = Problem(<%= @mda.py_classname %>())
+pb.driver = ScipyOptimizer()
+pb.driver.options['optimizer'] = 'SLSQP'
+pb.driver.options['tol'] = 1e-9
+pb.driver.options['disp'] = True
+
+case_recorder_filename = '<%= @mda.py_modulename %>_optimization.sqlite'        
+recorder = SqliteRecorder(case_recorder_filename)
+pb.driver.add_recorder(recorder)
+pb.model.add_recorder(recorder)
+pb.model.nonlinear_solver.add_recorder(recorder)
+
+<%- @mda.indep_variables.each do |dv| %>
+pb.model.add_design_var('<%= dv.name %>', lower=<%= dv.lower_py_value %>, upper=<%= dv.upper_py_value %>)<% end %>
+<% @mda.objective_variables.each do |voi| %>
+pb.model.add_objective('<%= voi.name %>')<% end %>
+<% @mda.constraint_variables.each do |voi| %>
+pb.model.add_constraint('<%= voi.name %>')<% end %>
+
+pb.setup()  
+pb.run_driver()        
+reader = CaseReader(case_recorder_filename)
+cases = reader.system_cases.list_cases()
+n = len(cases)
+data = {'inputs': {}, 'outputs': {} }
+<% @mda.indep_variables.each do |dv| %>
+data['inputs']['<%= dv.name %>'] = np.zeros((n,)+<%= dv.shape=="1"?"(1,)":dv.shape %>)<% end %>
+<% @mda.response_variables.each do |r| %>
+data['outputs']['<%= r.name %>'] = np.zeros((n,)+<%= r.shape=="1"?"(1,)":r.shape %>)<% end %>
+
+for i, case_id in enumerate(cases):
+    case = reader.system_cases.get_case(case_id)
+<% @mda.indep_variables.each do |dv| -%>
+    data['inputs']['<%= dv.name %>'][i,:] = case.inputs['<%= dv.name %>']
+<% end -%>
+<% @mda.response_variables.each do |r| -%>
+    data['outputs']['<%= r.name %>'][i,:] = case.outputs['<%= r.name %>']
+<% end -%>
+      

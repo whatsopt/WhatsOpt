@@ -77,6 +77,7 @@ module WhatsOpt
       _generate('run_analysis.py', 'run_analysis.py.erb', gendir)
       _generate('run_scatterplot.py', 'run_scatterplot.py.erb', gendir)
       _generate('run_screening.py', 'run_screening.py.erb', gendir)
+      _generate('run_optimization.py', 'run_optimization.py.erb', gendir)
     end
      
     def _generate(filename, template_filename, gendir)
