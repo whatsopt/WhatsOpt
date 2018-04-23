@@ -26,7 +26,7 @@ class ParallelCoordinates extends React.Component {
       dimensions: dimensions,
     };    
     let data = [trace];
-    let title = this.props.ope.name + " " + dimensions[0].values.length + " points in parallel coordinates"
+    let title = "Parallel Coordinates"
 
     return (
       <div>
@@ -47,9 +47,8 @@ class ParallelCoordinates extends React.Component {
   
   _dimensionFromCases(cases) {
     let dimensions = cases.map(c => {
-      let variable = this.db.find(c.varname);
       let label = c.varname;
-      label += variable.shape==="(1,)"?"":" "+c.coord_index;
+      label += c.coord_index===-1?"":" "+c.coord_index;
       return { label: label,
                values: c.values,
                range: [Math.floor(Math.min(...c.values)), 

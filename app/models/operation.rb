@@ -22,12 +22,20 @@ class Operation < ApplicationRecord
 	  end 
 	end
 	
-  def _build_cases_from(vars, varscope=Variable)
+	def nb_of_points
+	  if cases.empty?
+	    0
+	  else
+	    cases[0].nb_of_points
+	  end
+	end
+	
+  def _build_cases_from(case_attrs)
      var = {}
-     vars.each do |c|
+     case_attrs.each do |c|
        name = c[:varname]
        coord_index = c[:coord_index]
-       var[name] ||= varscope.where(name: name)
+       var[name] ||= Variable.where(name: name)
                        .joins(discipline: :analysis)
                        .where(analyses: {id: self.analysis.id})
                        .take

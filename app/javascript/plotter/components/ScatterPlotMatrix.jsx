@@ -12,54 +12,64 @@ class ScatterPlotMatrix extends React.Component {
   
   render() {
     let cases = this.props.ope.cases;
+    cases.sort(this._sortCases);
     
     let designVarCases = cases.filter(c => { return this.db.isDesignVarCases(c); })
     let outputVarCases = cases.filter(c => { return this.db.isOutputVarCases(c) })
     let couplingVarCases = cases.filter(c => { return this.db.isCouplingVarCases(c) })
     
+    let inputs = designVarCases.concat(couplingVarCases);
+    let outputs = couplingVarCases.concat(outputVarCases);
+    
     let data = [];
     let layout = {};
-    let nOut = outputVarCases.length;
-    let nDes = designVarCases.length;
-    //nOut = 1;
-    //nDes = 2;
-    console.log(JSON.stringify(designVarCases));
-    console.log(JSON.stringify(outputVarCases));
+    let nOut = outputs.length;
+    let nDes = inputs.length;
+    let pdh = 1./nDes;
+    let pdv = 1./nOut;
+
     for (let i=0; i<nOut; i++) {
       for (let j=0; j<nDes; j++) {
-        let trace = { y: outputVarCases[i].values, type: 'scatter', mode: 'markers'};
-        trace['x'] = designVarCases[j].values;
-        let xname = 'x'+(nDes*i+j+1);
-        let yname = 'y'+(nDes*i+j+1);
-        if ((i+j)!==0) {
-          trace.xaxis = xname;
-          trace.yaxis = yname;
-        }
+        let xlabel = inputs[j].varname;
+        xlabel += inputs[j].coord_index===-1?"":" "+inputs[j].coord_index;
+        let ylabel = outputs[i].varname;
+        ylabel += outputs[i].coord_index===-1?"":" "+outputs[i].coord_index;
+    
+        let trace = { x: inputs[j].values, y: outputs[i].values, 
+                      type: 'scatter', mode: 'markers'};
+        let n = nDes*i+j+1;
+        let xname = 'x'+n;
+        let yname = 'y'+n;
+        trace.xaxis = xname;
+        trace.yaxis = yname;
+        trace.name = ylabel + " vs " + xlabel;
         data.push(trace);
-        let pdh = 1./nDes;
-        let pdv = 1./nOut;
-        let pdh10 = pdh/10.;
-        let pdv10 = pdv/10.;
-        if ((i+j)===0) {
-          layout['xaxis'] = {domain: [0+pdh10, pdh-pdh10]};
-          layout['yaxis'] = {domain: [0+pdv10, pdh-pdv10]};
-        } else {
-          layout['xaxis'+(nDes*i+j+1)] = {domain: [(j+0.1)*pdh, (j+0.9)*pdh], anchor: yname};
-          layout['yaxis'+(nDes*i+j+1)] = {domain: [(i+0.1)*pdv, (i+0.9)*pdv], anchor: xname};
+
+        layout['xaxis'+n] = {domain: [(j+0.1)*pdh, (j+0.9)*pdh], anchor: yname};
+        layout['yaxis'+n] = {domain: [(i+0.1)*pdv, (i+0.9)*pdv], anchor: xname};
+        if (j===0) {
+          layout['yaxis'+n].title = ylabel;
+        }  
+        if (i===0) {
+          layout['xaxis'+n].title = xlabel;
         }
       } 
     }
     layout.width = nDes*250;
     layout.height = nOut*250;
     
-    let title = this.props.ope.name + " " + cases[0].values.length + " points in scatterplot matrix"
-    layout.title = title;
-    console.log(JSON.stringify(data));
-    console.log(JSON.stringify(layout));
+    let title = "Scatterplot Matrix";
+    layout.title  = title;
 
     return (<Plot data={data} layout={layout} />);
   }
   
+  _sortCases(a, b) {
+    if (a.varname === b.varname) {
+      return a.coord_index < b.coord_index ? -1:1
+    } 
+    return a.varname.localeCompare(b.varname);
+  }
 }
 
 export default ScatterPlotMatrix;
