@@ -217,8 +217,8 @@ class WhatsOpt(object):
                 move(file_from, '.')
             print('Analysis %s pulled' % mda_id)
     
-    def update_mda(self):
-        id = self.get_analysis_id()
+    def update_mda(self, analysis_id=None):
+        id = analysis_id or self.get_analysis_id()
         self.pull_mda(id, {'--base': True, '--force': True})
         
     def upload(self, sqlite_filename, analysis_id=None):

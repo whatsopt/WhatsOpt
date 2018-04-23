@@ -51,9 +51,10 @@ def pull(dry_run, force, analysis_id):
 	WhatsOpt().pull_mda(analysis_id, options)
 	
 @cli.command()
-def update():
+@click.option('--analysis-id')
+def update(analysis_id):
 	""" Update analysis connections """
-	WhatsOpt().update_mda()
+	WhatsOpt().update_mda(analysis_id)
 	
 @cli.command()
 @click.argument('sqlite_filename')
