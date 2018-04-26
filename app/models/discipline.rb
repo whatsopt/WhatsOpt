@@ -30,6 +30,10 @@ class Discipline < ApplicationRecord
     self.variables.outputs
   end
 
+  def is_driver?
+    self.type == WhatsOpt::Discipline::NULL_DRIVER
+  end
+  
   private
   
   def set_defaults

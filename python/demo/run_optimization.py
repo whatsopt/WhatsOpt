@@ -5,6 +5,7 @@
 # DO NOT EDIT unless you know what you are doing
 # analysis_id: 44
 
+import sys
 import numpy as np
 import matplotlib.pyplot as plt
 from openmdao.api import Problem, SqliteRecorder, CaseReader, ScipyOptimizer
@@ -23,8 +24,8 @@ pb.model.add_recorder(recorder)
 pb.model.nonlinear_solver.add_recorder(recorder)
 
 
-pb.model.add_design_var('x', lower=-sys.float_info.max, upper=sys.float_info.max)
-pb.model.add_design_var('z', lower=-sys.float_info.max, upper=sys.float_info.max)
+pb.model.add_design_var('x', lower=0, upper=10)
+pb.model.add_design_var('z', lower=0, upper=10)
 
 pb.model.add_objective('obj')
 

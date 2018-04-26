@@ -55,13 +55,13 @@ class AnalysesControllerTest < ActionDispatch::IntegrationTest
   end     
      
   test "should show analysis" do
-    skip "MDA vizualization disabled"
+    #skip "MDA vizualization disabled"
     get mda_url(@mda)
     assert_response :success
   end
 
   test "should get edit" do
-    skip "MDA vizualization disabled"
+    #skip "MDA vizualization disabled"
     get edit_mda_url(@mda)
     assert_response :success
   end

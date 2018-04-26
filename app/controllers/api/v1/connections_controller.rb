@@ -16,12 +16,17 @@ class Api::V1::ConnectionsController < Api::ApiController
           check_variable_existence(@mda, @from_disc, @to_disc, name)
          
           vout = @from_disc.output_variables.find_by_name(name)
+          role = vout&.role || WhatsOpt::Variable::PLAIN_ROLE
           unless vout 
+            role = WhatsOpt::Variable::PARAMETER if @from_disc.is_driver?
+            role = WhatsOpt::Variable::RESPONSE if @to_disc.is_driver?
             vout = @from_disc.variables.build(name: name, io_mode: "out", 
-                      shape: 1, type: "Float", desc: "", units: "")  
+                      shape: 1, type: "Float", desc: "", units: "", role: role)  
             vout.save! 
           end
-          vin = @to_disc.variables.build(name: name, io_mode: "in", shape: 1, type: "Float", desc: "", units: "")
+          vin = @to_disc.variables.build(name: name, io_mode: "in", shape: 1, 
+                                         type: "Float", desc: "", units: "", 
+                                         role: WhatsOpt::Variable::PLAIN_ROLE)
 
           vin.save!
           Connection.create!(from_id: vout.id, to_id: vin.id)
@@ -66,7 +71,7 @@ class Api::V1::ConnectionsController < Api::ApiController
     end
 
     def connection_update_params
-      params.require(:connection).permit(:name, :type, :shape, :units, :desc, :active, 
+      params.require(:connection).permit(:name, :type, :shape, :units, :desc, :active, :role,
                                          parameter_attributes: [:_destroy, :init, :lower, :upper])
     end
 

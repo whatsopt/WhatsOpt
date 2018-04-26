@@ -83,8 +83,9 @@ class Variable < ApplicationRecord
     self.io_mode = DEFAULT_IOMODE if self.io_mode.blank?
     self.shape = DEFAULT_SHAPE if self.shape.blank?
     self.type  = DEFAULT_TYPE if self.type.blank?
-    self.units  = "" if self.units.blank?
+    self.units = "" if self.units.blank?
     self.desc  = "" if self.desc.blank?
+    self.role  = default_role if self.role.blank?  
   end
 
   def shape_is_well_formed
@@ -92,6 +93,18 @@ class Variable < ApplicationRecord
       self.dim
     rescue BadShapeAttributeError => e
       errors.add(:shape, e.message)
+    end
+  end
+  
+  def default_role
+    if discipline&.is_driver?
+      if io_mode == OUT
+        DESIGN_VAR_ROLE
+      else
+        RESPONSE_ROLE
+      end
+    else
+      PLAIN_ROLE
     end
   end
   
