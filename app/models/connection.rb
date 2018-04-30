@@ -8,6 +8,8 @@ class Connection < ApplicationRecord
 
   scope :active, -> { joins(:from).where(variables: {active: true}) }
   scope :inactive, -> { joins(:from).where(variables: {active: false}) }
+  scope :of_analysis, -> (analysis_id) { joins(from: :discipline).where(disciplines: {analysis_id: analysis_id}) }
+  scope :with_role, -> (role) { where(role: role)}
     
   def self.create_connections(mda, based_on = :name)
     varouts = Variable.outputs.joins(discipline: :analysis).where(analyses: {id: mda.id})
@@ -20,15 +22,18 @@ class Connection < ApplicationRecord
         vins = varins.where(name: vout.name)
       end
       vins.each do |vin|
-        Connection.create!(from_id: vout.id, to_id: vin.id)
+        role = WhatsOpt::Variable::PLAIN_ROLE
+        if vout.discipline.is_driver?
+          role = WhatsOpt::Variable::PARAMETER_ROLE
+        end
+        if vin.discipline.is_driver?
+          role = WhatsOpt::Variable::RESPONSE_ROLE
+        end
+        Connection.create!(from_id: vout.id, to_id: vin.id, role: role)
       end
     end
   end
-  
-  def self.of_analysis(mda_id)
-    Connection.joins(from: :discipline).where(disciplines: {analysis_id: mda_id})
-  end 
-  
+    
   def self.between(disc_from_id, disc_to_id)
     Connection.joins(:from).where(variables: {discipline_id: disc_from_id}) #.where.not(variables: {type: :String})
               .order('variables.fullname')
@@ -52,6 +57,11 @@ class Connection < ApplicationRecord
     
   def update_variables!(params)
     Connection.transaction do
+      if (params[:role])
+        # update role of all connections from the source variable
+        Connection.where(from_id: from_id).map {|c| c.update!(role: params[:role])}  
+        params = params.except(:role)
+      end
       # update from variable
       var_from = Variable.find(from_id)
       if var_from.parameter && params[:parameter_attributes]

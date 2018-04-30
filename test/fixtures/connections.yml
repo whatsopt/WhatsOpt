@@ -1,28 +1,34 @@
 driver_z_geo:
   from_id: <%= ActiveRecord::FixtureSet.identify(:varz_design_out) %>
   to_id: <%= ActiveRecord::FixtureSet.identify(:varz_geo_in) %>
+  role: "parameter"
 
 driver_z_aero:
   from_id: <%= ActiveRecord::FixtureSet.identify(:varz_design_out) %>
   to_id: <%= ActiveRecord::FixtureSet.identify(:varz_aero_in) %>
+  role: "parameter"
 
 objgeo_driver:
   from_id: <%= ActiveRecord::FixtureSet.identify(:varobj_geo_out) %>
   to_id: <%= ActiveRecord::FixtureSet.identify(:varobj_objective_in) %>
+  role: "objective"
   
 geo_aero:
   from_id: <%= ActiveRecord::FixtureSet.identify(:varyg_geo_out) %>
   to_id: <%= ActiveRecord::FixtureSet.identify(:varyg_aero_in) %>
+  role: "plain"
   
 aero_geo:
   from_id: <%= ActiveRecord::FixtureSet.identify(:varya_aero_out) %>
   to_id: <%= ActiveRecord::FixtureSet.identify(:varya_geo_in) %>
+  role: "plain"
   
 driver_x1_geo:
   from_id: <%= ActiveRecord::FixtureSet.identify(:varx1_out) %>
   to_id: <%= ActiveRecord::FixtureSet.identify(:varx1_geo_in) %>
+  role: "design_var"
   
 aero_y2_driver:
   from_id: <%= ActiveRecord::FixtureSet.identify(:vary2_aero_out) %>
   to_id: <%= ActiveRecord::FixtureSet.identify(:vary2_in) %>
-  
+  role: "response"

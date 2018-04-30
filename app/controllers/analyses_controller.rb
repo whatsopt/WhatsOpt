@@ -27,7 +27,7 @@ class AnalysesController < ApplicationController
     else 
       @mda = Analysis.new(mda_params)
       if @mda.save
-        Connection.create_connections(@mda)
+        #Connection.create_connections(@mda)
         current_user.add_role(:owner, @mda)
         current_user.save
         if @mda.disciplines.nodes.empty?
@@ -60,15 +60,12 @@ class AnalysesController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
     def set_mda
       @mda = Analysis.find(params[:id])
     end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
     def mda_params
       params.require(:analysis)
-        .permit(:name, :attachment_attributes => [:id, :data, :_destroy], 
-                       :disciplines_attributes => [:id, :name, :_destroy])
+        .permit(:name, :attachment_attributes => [:id, :data, :_destroy])
     end
 end

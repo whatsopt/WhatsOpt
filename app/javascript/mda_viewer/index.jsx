@@ -41,31 +41,6 @@ class MdaViewer extends React.Component {
     this.handleConnectionChange = this.handleConnectionChange.bind(this); 
   }
   
-  handleConnectionChange(connId, connAttrs) {
-    //console.log('Change variable connection '+connId+ ' with '+JSON.stringify(connAttrs));
-    if (connAttrs.init === "") {
-      connAttrs['parameter_attributes'] = { _destroy: '1' };
-    } else if (connAttrs.init) {
-      connAttrs['parameter_attributes'] = { init: connAttrs.init };
-    }
-    if (connAttrs.lower) {
-      connAttrs['parameter_attributes'] = { lower: connAttrs.lower};
-    }
-    if (connAttrs.upper) {
-      connAttrs['parameter_attributes'] = { upper: connAttrs.upper };
-    }
-    delete connAttrs['init'];
-    delete connAttrs['lower'];
-    delete connAttrs['upper'];
-    api.updateConnection(
-      connId, connAttrs, (response) => { this.renderXdsm(); },
-      (error) => { 
-        let message = error.response.data.message;
-        let newState = update(this.state, {errors: {$set: [message]}});
-        this.setState(newState);
-      }); 
-  }
-  
   handleFilterChange(filter) { 
     let newState = update(this.state, {filter: {$set: filter}});
     this.setState(newState);
@@ -121,6 +96,32 @@ class MdaViewer extends React.Component {
           this.setState(newState);
         });
   };
+  
+  handleConnectionChange(connId, connAttrs) {
+    //console.log('Change variable connection '+connId+ ' with '+JSON.stringify(connAttrs));
+    if (connAttrs.init === "") {
+      connAttrs['parameter_attributes'] = { _destroy: '1' };
+    } else if (connAttrs.init) {
+      connAttrs['parameter_attributes'] = { init: connAttrs.init };
+    }
+    if (connAttrs.lower) {
+      connAttrs['parameter_attributes'] = { lower: connAttrs.lower};
+    }
+    if (connAttrs.upper) {
+      connAttrs['parameter_attributes'] = { upper: connAttrs.upper };
+    }
+    delete connAttrs['init'];
+    delete connAttrs['lower'];
+    delete connAttrs['upper'];
+    api.updateConnection(
+      connId, connAttrs, (response) => { this.renderXdsm(); },
+      (error) => { 
+        let message = error.response.data.message;
+        let newState = update(this.state, {errors: {$set: [message]}});
+        this.setState(newState);
+      }); 
+  }
+  
   
   handleConnectionDelete(connId) {
     api.deleteConnection(connId, (response) => { this.renderXdsm(); });

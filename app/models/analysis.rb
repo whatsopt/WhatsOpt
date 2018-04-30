@@ -23,6 +23,11 @@ class Analysis < ApplicationRecord
     _create_from_attachment if attachment_exists
   end
   
+  after_save(on: :create) do
+    Connection.create_connections(self)
+  end
+  
+    
   after_save :_ensure_driver_presence
   
   validate :check_mda_import_error, on: :create, if: :attachment_exists
@@ -31,39 +36,43 @@ class Analysis < ApplicationRecord
   def driver
     self.disciplines.driver&.take
   end
-  
-  def indep_variables
-    return self.driver.output_variables.active if driver
-    []
-  end
 
-  def optimization_variables
-    return self.driver.input_variables.active if driver
-    []
-  end  
-  
+  def variables
+    @variables ||= Variable.of_analysis(id).active
+  end
+    
+  def parameter_variables
+    @params ||= variables.with_role(WhatsOpt::Variable::PARAMETER_ROLE) + design_variables
+  end
+ 
+  def design_variables
+    @desvars ||= variables.with_role(WhatsOpt::Variable::DESIGN_VAR_ROLE)
+  end
+ 
   def objective_variables
-    return self.driver.input_variables.objectives.active if driver
-    []
+    @objs ||= variables.with_role(WhatsOpt::Variable::OBJECTIVE_ROLE) 
   end
 
-  def constraint_variables
-    self.driver.input_variables.constraints.active if driver
-    []
+  def eq_constraint_variables
+    @eqs ||= variables.with_role(WhatsOpt::Variable::EQ_CONSTRAINT_ROLE)  
   end
 
+  def ineq_constraint_variables
+    @ineqs ||= variables.with_role(WhatsOpt::Variable::INEQ_CONSTRAINT_ROLE)  
+  end
+  
   def response_variables
-    return self.driver.input_variables.active if driver
+    @resps ||= variables.with_role(WhatsOpt::Variable::RESPONSE_ROLE) + 
+      objective_variables + eq_constraint_variables + ineq_constraint_variables
   end
   
   def input_dim
-    indep_variables.inject(0){|s, v| s+v.dim}
+    parameter_variables.inject(0){|s, v| s+v.dim}
   end
   
   def output_dim
     response_variables.inject(0){|s, v| s+v.dim}
   end
-
     
   def to_mda_viewer_json
     { 
@@ -85,11 +94,9 @@ class Analysis < ApplicationRecord
   def build_edges(active: true)
     edges = []
     self.disciplines.each do |d_from|
-      #from_id = (d_from.name == WhatsOpt::Discipline::NULL_DRIVER_NAME)?"_U_":d_from.id.to_s 
       from_id = d_from.id.to_s 
       self.disciplines.each do |d_to|
         next if d_from == d_to
-        #to_id = (d_to.name == WhatsOpt::Discipline::NULL_DRIVER_NAME)?"_U_":d_to.id.to_s  
         to_id = d_to.id.to_s  
         if active
           conns = Connection.between(d_from.id, d_to.id).active
@@ -102,7 +109,10 @@ class Analysis < ApplicationRecord
           names = conns.map{ |c| c.from.name }.join(",")
         end
         ids = conns.map(&:id)
-        edges << { from: from_id, to: to_id, name: names, conn_ids: ids, active: active } unless conns.empty?
+        roles = conns.map {|c| c[:role]}
+        unless conns.empty?
+          edges << { from: from_id, to: to_id, name: names, conn_ids: ids, active: active, roles: roles }
+        end
       end
     end
     edges

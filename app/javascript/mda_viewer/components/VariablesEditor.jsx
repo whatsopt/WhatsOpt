@@ -14,79 +14,80 @@ class VariablesEditor extends React.Component {
   }
 
   compute() {
-      let edges = this.props.edges;
-      let filter = this.props.filter;
-      let nodeSelected = filter.fr && (filter.fr === filter.to);
-      
-      if (filter.fr && filter.to) {
-        let nodeFrom = this._findNode(filter.fr);
-        let nodeTo = this._findNode(filter.to);
-        if (nodeSelected) { // node selected
-          nodeSelected = nodeFrom;
-          edges = edges.filter((edge) => {
-            return edge.from === nodeFrom.id || edge.to === nodeTo.id;
-          });
-        } else {
-          edges = edges.filter((edge) => { // edge selected
-            return edge.from === nodeFrom.id && edge.to === nodeTo.id;
-          });
-        }
+    let edges = this.props.edges;
+    let filter = this.props.filter;
+    let nodeSelected = filter.fr && (filter.fr === filter.to);
+    
+    if (filter.fr && filter.to) {
+      let nodeFrom = this._findNode(filter.fr);
+      let nodeTo = this._findNode(filter.to);
+      if (nodeSelected) { // node selected
+        nodeSelected = nodeFrom;
+        edges = edges.filter((edge) => {
+          return edge.from === nodeFrom.id || edge.to === nodeTo.id;
+        });
+      } else {
+        edges = edges.filter((edge) => { // edge selected
+          return edge.from === nodeFrom.id && edge.to === nodeTo.id;
+        });
       }
+    }
 
-      let hconns = {};
-      edges.forEach((edge) => {
-        let vars = edge.name.split(",");
-        let fromName = this._findNode(edge.from).name;
-        let toName = this._findNode(edge.to).name;
-        vars.forEach((v, i) => {
-          let id = edge.from + '_' + v;
-          if (hconns[id]) {
-            hconns[id].to.push(edge.to);
-            hconns[id].toName.push(toName);
-          } else {
-            hconns[id] = {
-                id: id,
-                fr: edge.from,
-                to: [edge.to],
-                frName: fromName,
-                toName: [toName], 
-                varname: v,
-                connId: edge.conn_ids[i]
-            }
+    let hconns = {};
+    edges.forEach((edge) => {
+      let vars = edge.name.split(",");
+      let fromName = this._findNode(edge.from).name;
+      let toName = this._findNode(edge.to).name;
+      vars.forEach((v, i) => {
+        let id = edge.from + '_' + v;
+        if (hconns[id]) {
+          hconns[id].to.push(edge.to);
+          hconns[id].toName.push(toName);
+        } else {
+          hconns[id] = {
+            id: id,
+            fr: edge.from,
+            to: [edge.to],
+            frName: fromName,
+            toName: [toName], 
+            varname: v,
+            connId: edge.conn_ids[i],
+            role: edge.roles[i]
           }
-        }, this);
+        }
       }, this);
-      
-      let conns = [];
-      for (let id in hconns) {
-        conns.push(hconns[id]);
-      }
-      conns.sort((a, b) => this._connectionCompare(nodeSelected, a, b));
-      
-      let connections = conns.map((conn) => {
-          let infos = this._findInfos(conn); 
-          let badge, highlightFr, highlightTo = {};
-          
-          if (nodeSelected) {
-            let badgeType = "badge "; 
-            let ioType = "in"; 
-            if (nodeSelected.id===conn.fr) {
-              highlightFr = {'fontWeight': 'bold'};  
-              badgeType += "badge-secondary";
-              ioType = "out";
-            } else { 
-              highlightTo = {'fontWeight': 'bold'};  
-              badgeType += "badge-primary";
-            }
-          }
-          let val = { id: conn.connId, from: conn.frName, to: conn.toName.join(', '), name: infos.vName, desc: infos.desc,
-                      type: infos.type, shape: infos.shape, units: infos.units, init: infos.init, lower: infos.lower, 
-                      upper: infos.upper, active: infos.active, role: infos.role, fromId: conn.fr, toIds: conn.to };
-          return val;
-          
-      });
+    }, this);
+    
+    let conns = [];
+    for (let id in hconns) {
+      conns.push(hconns[id]);
+    }
+    conns.sort((a, b) => this._connectionCompare(nodeSelected, a, b));
+    
+    let connections = conns.map((conn) => {
+        let infos = this._findInfos(conn); 
+        let badge, highlightFr, highlightTo = {};
         
-      return connections;
+        if (nodeSelected) {
+          let badgeType = "badge "; 
+          let ioType = "in"; 
+          if (nodeSelected.id===conn.fr) {
+            highlightFr = {'fontWeight': 'bold'};  
+            badgeType += "badge-secondary";
+            ioType = "out";
+          } else { 
+            highlightTo = {'fontWeight': 'bold'};  
+            badgeType += "badge-primary";
+          }
+        }
+        let val = { id: conn.connId, from: conn.frName, to: conn.toName.join(', '), name: infos.vName, desc: infos.desc,
+                    type: infos.type, shape: infos.shape, units: infos.units, init: infos.init, lower: infos.lower, 
+                    upper: infos.upper, active: infos.active, role: conn.role, fromId: conn.fr, toIds: conn.to };
+        return val;
+        
+    });
+      
+    return connections;
   }
   
   componentDidMount() {
@@ -129,6 +130,7 @@ class VariablesEditor extends React.Component {
                    {
                      Header: (cellInfo) => this.renderHeader(cellInfo, 'Role'),
                      accessor: "role",  
+                     minWidth: 150, 
                      Cell: (cellInfo) => this.renderEditable(cellInfo, this._computeRoleSelection(this.connections[cellInfo.index]))
                    },
                    {
@@ -194,13 +196,11 @@ class VariablesEditor extends React.Component {
   
   renderCheckButton(cellInfo) {
     let isChecked = this.connections[cellInfo.index].active;
-//    console.log(this.connections[cellInfo.index]);
     return (<input type="checkbox" value="true" checked={isChecked}
             onChange={() => this.props.onConnectionChange(this.connections[cellInfo.index].id, {active: !isChecked})}/>);  
   }
   
   renderEditable(cellInfo, selectOptions) {
-    console.log(this.connections[cellInfo.index]);
     if (this.props.isEditing && this.connections[cellInfo.index].active) {
       if (selectOptions) {
         let id = this.connections[cellInfo.index][cellInfo.column.id];
@@ -222,24 +222,32 @@ class VariablesEditor extends React.Component {
           propName={cellInfo.column.id} 
           shouldBlockWhileLoading /> );
       }
-    } else {  		
-      return this.renderReadonly(cellInfo);
+    } else {
+      return this.renderReadonly(cellInfo, selectOptions);
     }
   };
   
-  renderReadonly(cellInfo) {
+  renderReadonly(cellInfo, selectOptions) {
     let textStyle = this.connections[cellInfo.index].active?"":"text-inactive";
-    if (cellInfo.column.id==='name') {
+    let info = this.connections[cellInfo.index][cellInfo.column.id];
+    if (selectOptions) {
+      for (let i=0; i<selectOptions.length; i++) {
+        if (info === selectOptions[i].id) {
+          info = selectOptions[i].text;
+          break;
+        }
+      } 
+    } 
+    if (cellInfo.column.id === 'name') {
       let title = this.connections[cellInfo.index]['desc']; 
       textStyle += " table-tooltip";
-      return (<span className={textStyle} title={title}>{this.connections[cellInfo.index][cellInfo.column.id]}</span>);
+      return (<span className={textStyle} title={title}>{info}</span>);
     } else {
-      return (<span className={textStyle}>{this.connections[cellInfo.index][cellInfo.column.id]}</span>);
+      return (<span className={textStyle}>{info}</span>);
     }      
   }
   
   _computeTypeSelection(conn) {
-    console.log(conn);
     let driver = this.props.nodes[0].id;
     let options = [{id:'Float', text: 'Float'},
                    {id:'Integer', text: 'Integer'},
@@ -259,12 +267,12 @@ class VariablesEditor extends React.Component {
                    {id:'ineq_constraint', text: 'Ineq. Constraint'},
                    {id:'eq_constraint', text: 'Eq. Constraint'},
                    {id:'plain', text: 'Coupling'}];
-    if (driver === conn.fromId) {
+    if (conn.role == "parameter" || conn.role == "design_var") {
       options.splice(2, 5); 
       if (conn.type === "String") {
         options.splice(options.length-1, 1);
       }
-    } else if (conn.toIds.includes(driver)) {
+    } else if (conn.role !== "plain") {
       options.splice(options.length-1, 1);
       options.splice(0, 2);
     }
@@ -315,7 +323,6 @@ class VariablesEditor extends React.Component {
       let lower = "";
       let upper = "";
       let active = vfr.active;
-      let role = vfr.role
       
       if (vfr.parameter) { 
         init = vfr.parameter.init;
@@ -326,7 +333,7 @@ class VariablesEditor extends React.Component {
                     vName: varname, desc: desc,
                     toName: conn.toName.join(', '),
                     type: vartype, shape: shape, init: init, lower: lower, upper:upper, 
-                    units: units, active: active, role: role};
+                    units: units, active: active};
       // console.log(JSON.stringify(infos));
       return infos;
     }

@@ -35,13 +35,14 @@ ActiveRecord::Schema.define(version: 38) do
   create_table "cases", force: :cascade do |t|
     t.integer "operation_id"
     t.integer "variable_id"
-    t.integer "coord_index", default: 0
+    t.integer "coord_index", default: -1
     t.text "values"
   end
 
   create_table "connections", force: :cascade do |t|
     t.integer "from_id"
     t.integer "to_id"
+    t.string "role", default: ""
     t.index ["from_id"], name: "index_connections_on_from_id"
     t.index ["to_id"], name: "index_connections_on_to_id"
   end
@@ -152,7 +153,6 @@ ActiveRecord::Schema.define(version: 38) do
     t.datetime "updated_at", null: false
     t.string "fullname"
     t.boolean "active", default: true
-    t.string "role", default: ""
     t.index ["discipline_id"], name: "index_variables_on_discipline_id"
   end
 

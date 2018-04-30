@@ -5,6 +5,7 @@ varx1_out:
   io_mode: out
   type: Float
   shape: 1
+  active: true
 
 vary2_in:
   name: y2
@@ -13,6 +14,7 @@ vary2_in:
   io_mode: in
   type: Float
   shape: 1
+  active: true
 
 varz_design_out:
   name: z
@@ -21,6 +23,7 @@ varz_design_out:
   io_mode: out
   type: Float
   shape: 1
+  active: true
   
 varobj_objective_in:
   name: obj
@@ -29,6 +32,7 @@ varobj_objective_in:
   io_mode: in
   type: Float
   shape: 1  
+  active: true
   
 varobj_geo_out:
   name: obj
@@ -37,6 +41,7 @@ varobj_geo_out:
   io_mode: out
   type: Float
   shape: 1
+  active: true
   
 varz_geo_in:
   name: z
@@ -45,7 +50,8 @@ varz_geo_in:
   io_mode: in
   type: Float
   shape: 1
-  
+  active: true
+    
 varya_geo_in:
   name: ya
   fullname: ya
@@ -53,6 +59,7 @@ varya_geo_in:
   io_mode: in
   type: Float
   shape: 1  
+  active: true
   
 varx1_geo_in:
   name: x1
@@ -61,6 +68,7 @@ varx1_geo_in:
   io_mode: in
   type: Float
   shape: 1
+  active: true
   
 varyg_geo_out:
   name: yg
@@ -69,6 +77,7 @@ varyg_geo_out:
   io_mode: out
   type: Float
   shape: 1
+  active: true
   
 varya_aero_out:
   name: ya
@@ -77,6 +86,7 @@ varya_aero_out:
   io_mode: out
   type: Float
   shape: 1
+  active: true
   
 vary2_aero_out:
   name: y2
@@ -85,6 +95,7 @@ vary2_aero_out:
   io_mode: out
   type: Float
   shape: 1
+  active: true
     
 varyg_aero_in:
   name: yg
@@ -93,7 +104,8 @@ varyg_aero_in:
   io_mode: in
   type: Float
   shape: 1
-
+  active: true
+  
 varz_aero_in:
   name: z
   fullname: z
@@ -101,7 +113,8 @@ varz_aero_in:
   io_mode: in
   type: Float
   shape: 1
-
+  active: true
+  
 varx_fastdisc_in:
   name: z1
   fullname: z1
@@ -109,7 +122,8 @@ varx_fastdisc_in:
   io_mode: in
   type: Float
   shape: 1
-
+  active: true
+  
 varx_fastdisc_doublon_in:
   name: z1
   fullname: z1
@@ -117,7 +131,8 @@ varx_fastdisc_doublon_in:
   io_mode: in
   type: Float
   shape: 1
-  
+  active: true
+    
 var_scalar_float:
   name: y0
   fullname: y0
@@ -125,7 +140,8 @@ var_scalar_float:
   io_mode: in
   type: Float
   shape: 1  
-  
+  active: true
+    
 var_array_float:
   name: y1
   fullname: y1
@@ -133,7 +149,8 @@ var_array_float:
   io_mode: in
   type: Float
   shape: (3,)  
-
+  active: true
+  
 var_nparray_float:
   name: y2
   fullname: y2
@@ -141,7 +158,8 @@ var_nparray_float:
   io_mode: in
   type: Float
   shape: (3, 5)  
-
+  active: true
+  
 var_scalar_int:
   name: y3
   fullname: y3
@@ -149,7 +167,8 @@ var_scalar_int:
   io_mode: in
   type: Integer
   shape: 1  
-  
+  active: true
+    
 var_scalar_int:
   name: y4
   fullname: y4
@@ -157,7 +176,8 @@ var_scalar_int:
   io_mode: in
   type: Integer
   shape: 1  
-
+  active: true
+  
 var_string:
   name: y5
   fullname: y5
@@ -165,5 +185,6 @@ var_string:
   io_mode: in
   type: String
   shape: 1  
+  active: true
 
 

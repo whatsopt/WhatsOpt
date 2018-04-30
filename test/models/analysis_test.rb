@@ -14,8 +14,8 @@ class AnalysisTest < ActiveSupport::TestCase
     mda = Analysis.create!(attachment_attributes: {data: attach})
     assert mda.to_mda_viewer_json
     assert mda.valid?
-    assert_equal 4, mda.indep_variables.count
-    assert_equal 1, mda.optimization_variables.count
+    assert_equal 4, mda.parameter_variables.count
+    assert_equal 1, mda.response_variables.count
   end
 
   test "should be able to build nodes" do
@@ -57,4 +57,21 @@ class AnalysisTest < ActiveSupport::TestCase
     assert_equal ["y2", "ya"], tree[aero_id][:out].map{|h| h[:name]}.sort
   end
 
+  test "should get design variables" do
+    mda = analyses(:cicav)
+    assert_equal ["x1"], mda.design_variables.map(&:name).sort
+  end  
+  test "should get parameters" do
+    mda = analyses(:cicav)
+    assert_equal ["x1", "z"], mda.parameter_variables.map(&:name).sort
+  end  
+  test "should get objectives" do
+    mda = analyses(:cicav)
+    assert_equal ["obj"], mda.objective_variables.map(&:name).sort
+  end  
+  test "should get responses" do
+    mda = analyses(:cicav)
+    assert_equal ["obj", "y2"], mda.response_variables.map(&:name).sort
+  end  
+  
 end

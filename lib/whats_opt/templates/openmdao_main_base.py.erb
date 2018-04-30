@@ -13,9 +13,9 @@ class <%= @mda.py_classname %>Base(Group):
     
     def setup(self): 
     
-        <% if @mda.indep_variables.size > 0 %>
+    <% if @mda.parameter_variables.size > 0 %>
         indeps = self.add_subsystem('indeps', IndepVarComp(), promotes=['*'])
-		<% @mda.indep_variables.each do |dv| %>
+		<% @mda.parameter_variables.each do |dv| %>
         indeps.add_output('<%= dv.name %>', <%= dv.init_py_value %>)<% end %>		    
  		<% end %>
  		<% @mda.disciplines.nodes.each do |d| %>

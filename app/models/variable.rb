@@ -31,8 +31,9 @@ class Variable < ApplicationRecord
   scope :active, -> { where(active: true) }
   scope :inputs, -> { where(io_mode: IN) }
   scope :outputs, -> { where(io_mode: OUT) }
-  scope :objectives, -> { where("name LIKE '#{OBJECTIVE_PREFIX}%'") }
-  scope :constraints, -> { where("name LIKE '#{CONSTRAINT_PREFIX}%'") }
+    
+  scope :of_analysis, -> (analysis_id) { Variable.joins(discipline: :analysis).where(analyses: {id: analysis_id}) }
+  scope :with_role, -> (role) { joins(:outgoing_connections).where(connections: {role: role}).uniq }
     
   after_initialize :set_defaults, unless: :persisted?
 
@@ -85,7 +86,6 @@ class Variable < ApplicationRecord
     self.type  = DEFAULT_TYPE if self.type.blank?
     self.units = "" if self.units.blank?
     self.desc  = "" if self.desc.blank?
-    self.role  = default_role if self.role.blank?  
   end
 
   def shape_is_well_formed
@@ -95,17 +95,5 @@ class Variable < ApplicationRecord
       errors.add(:shape, e.message)
     end
   end
-  
-  def default_role
-    if discipline&.is_driver?
-      if io_mode == OUT
-        DESIGN_VAR_ROLE
-      else
-        RESPONSE_ROLE
-      end
-    else
-      PLAIN_ROLE
-    end
-  end
-  
+    
 end

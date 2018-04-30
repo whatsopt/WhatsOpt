@@ -78,8 +78,9 @@ module WhatsOpt
         connections[k].each do |varname|
           varattr = self.variables[varname]
           if k =~ /Y(\d)x/
-            src = _to_discipline($1) 
-            dsts = _to_other_disciplines($1)
+            idx = $1
+            src = _to_discipline(idx) 
+            dsts = _to_other_disciplines(idx)
             dsts.each do |dst|
               v = varattr.merge(io_mode: 'in')
               res[dst].append(v) unless res[dst].include?(v)
@@ -88,8 +89,9 @@ module WhatsOpt
             v.merge!(parameter_attributes: {init: @init_values[v[:name]]}) if @init_values[v[:name]]
             res[src].append(v) unless res[src].include?(v) 
           elsif k =~ /[CY](\d)(\d)/
-            src = _to_discipline($1) 
-            dst = _to_discipline($2)
+            idx1, idx2 = $1, $2
+            src = _to_discipline(idx1) 
+            dst = _to_discipline(idx2)
             v = varattr.merge(io_mode: 'in')
             res[dst].append(v) unless res[dst].include?(v) 
             v = varattr.merge(io_mode: 'out')
@@ -100,7 +102,7 @@ module WhatsOpt
             dst = WhatsOpt::Discipline::NULL_DRIVER_NAME
             v = varattr.merge(io_mode: 'in')
             res[dst].append(v) unless res[dst].include?(v) 
-            v = varattr.merge(io_mode: 'out')
+            v = varattr.merge(io_mode: 'out') 
             v.merge!(parameter_attributes: {init: @init_values[v[:name]]}) if @init_values[v[:name]]
             res[src].append(v) unless res[src].include?(v) 
           elsif k =~ /X(\d)/
@@ -124,7 +126,7 @@ module WhatsOpt
       if idx =~ /\d/ && idx.to_i+1 < self.disciplines.length
         d = self.disciplines[idx.to_i+1] 
       else
-        d = WhatsOpt::Discipline::NULL_DRIVER_NAME
+        raise ExcelMdaImportError.new("Bad discipline index '#{idx}'")
       end
       d
     end
@@ -135,6 +137,7 @@ module WhatsOpt
       if idx =~ /\d/ && idx.to_i+1 < self.disciplines.length
         d = self.disciplines - [self.disciplines[idx.to_i+1]] - [WhatsOpt::Discipline::NULL_DRIVER_NAME]
       end
+      raise ExcelMdaImportError.new("No other discipline (for '#{idx}' index) to connect") if d.empty?
       d
     end
 
@@ -193,7 +196,7 @@ module WhatsOpt
           desc = _getstr(row[4])
           active = (_getstr(row[0]) == 'true')  
           @variables[name] = {name: name, shape: shape, type: type, 
-                              units: units, desc: desc, active: active}
+                              units: units, desc: desc, active: active }
           unless initval.blank?
             @init_values[name] = initval  # used as is
           end
