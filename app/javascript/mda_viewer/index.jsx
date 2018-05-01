@@ -83,7 +83,6 @@ class MdaViewer extends React.Component {
     names = names.filter((name) => name !== '');
     
     let data = {from: this.state.filter.fr, to: this.state.filter.to, names: names};
-    console.log(data);
     api.createConnection(this.props.mda.id, data,
         (response) => {
             let newState = update(this.state, {newConnectionName: {$set: ''}});

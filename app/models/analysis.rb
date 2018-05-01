@@ -66,14 +66,22 @@ class Analysis < ApplicationRecord
       objective_variables + eq_constraint_variables + ineq_constraint_variables
   end
   
-  def input_dim
+  def response_dim
+    response_variables.inject(0){|s, v| s+v.dim}
+  end
+  
+  def design_var_dim
+    design_variables.inject(0){|s, v| s+v.dim}
+  end
+  
+  def parameter_dim
     parameter_variables.inject(0){|s, v| s+v.dim}
   end
   
-  def output_dim
-    response_variables.inject(0){|s, v| s+v.dim}
+  def input_dim
+    parameter_variables.inject(0){|s, v| s+v.dim}
   end
-    
+      
   def to_mda_viewer_json
     { 
       id: self.id,

@@ -4,11 +4,11 @@
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
-from openmdao.api import Problem, SqliteRecorder, CaseReader, ScipyOptimizer
+from openmdao.api import Problem, SqliteRecorder, CaseReader, ScipyOptimizeDriver
 from <%= @mda.py_modulename %> import <%= @mda.py_classname %>
 
 pb = Problem(<%= @mda.py_classname %>())
-pb.driver = ScipyOptimizer()
+pb.driver = ScipyOptimizeDriver()
 pb.driver.options['optimizer'] = 'SLSQP'
 pb.driver.options['tol'] = 1e-9
 pb.driver.options['disp'] = True
@@ -24,7 +24,7 @@ pb.model.add_design_var('<%= dv.name %>', lower=<%= dv.lower_py_value %>, upper=
 <% @mda.objective_variables.each do |voi| %>
 pb.model.add_objective('<%= voi.name %>')<% end %>
 <% @mda.ineq_constraint_variables.each do |voi| %>
-pb.model.add_constraint('<%= voi.name %>')<% end %>
+pb.model.add_constraint('<%= voi.name %>', upper=0.)<% end %>
 
 pb.setup()  
 pb.run_driver()        

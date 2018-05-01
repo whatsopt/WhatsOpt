@@ -4,7 +4,7 @@ class InitializeConnectionRole < ActiveRecord::Migration[5.1]
     Connection.all.each do |conn|
       if conn.role.blank?
         if conn.from.discipline.is_driver?  
-          role = WhatsOpt::Variable::PARAMETER_ROLE
+          role = WhatsOpt::Variable::DESIGN_VAR_ROLE
         elsif conn.to.discipline.is_driver?
           role = WhatsOpt::Variable::RESPONSE_ROLE
         else

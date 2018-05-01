@@ -19,6 +19,8 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     var = Variable.where(name: 'newvar').take
     assert_equal var.name, var.fullname
+    conn = Connection.last
+    assert_equal conn.role, WhatsOpt::Variable::PLAIN_ROLE
   end
 
   test "should fail to create connection if var name already exists" do

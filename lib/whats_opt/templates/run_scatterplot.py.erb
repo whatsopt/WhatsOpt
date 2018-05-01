@@ -51,7 +51,7 @@ output = data['outputs']['<%= r.name %>'].reshape(-1)
 
 input = data['inputs']['<%= dv.name %>'].reshape(-1)
 <% (0...dv.dim).each do |ki| -%>
-plt.subplot(<%= @mda.output_dim %>, <%= @mda.input_dim %>, <%= @mda.input_dim*row+col+1 %>)
+plt.subplot(<%= @mda.response_dim %>, <%= @mda.design_var_dim %>, <%= @mda.design_var_dim*row+col+1 %>)
 plt.plot(input[<%= ki %>::<%= dv.dim %>], output[<%= kj %>::<%= r.dim %>], '.')
 <% if col == 0 -%>
 plt.ylabel('<%= r.dim==1?"#{r.name}":"#{r.name} #{kj}" %>')

@@ -11,6 +11,8 @@ class Connection < ApplicationRecord
   scope :of_analysis, -> (analysis_id) { joins(from: :discipline).where(disciplines: {analysis_id: analysis_id}) }
   scope :with_role, -> (role) { where(role: role)}
     
+  before_validation :_ensure_role_presence  
+    
   def self.create_connections(mda, based_on = :name)
     varouts = Variable.outputs.joins(discipline: :analysis).where(analyses: {id: mda.id})
     varins = Variable.inputs.joins(discipline: :analysis).where(analyses: {id: mda.id})
@@ -87,5 +89,19 @@ class Connection < ApplicationRecord
       end      
     end
   end
+  
+  private
+  
+    def _ensure_role_presence
+      if self.role.blank?
+        self.role = WhatsOpt::Variable::PLAIN_ROLE
+        if from&.discipline&.is_driver?
+          self.role = WhatsOpt::Variable::DESIGN_VAR_ROLE
+        end
+        if to&.discipline&.is_driver?
+          self.role = WhatsOpt::Variable::RESPONSE_ROLE
+        end        
+      end
+    end
   
 end
