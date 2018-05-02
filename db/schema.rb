@@ -76,8 +76,8 @@ ActiveRecord::Schema.define(version: 38) do
 
   create_table "parameters", force: :cascade do |t|
     t.string "init"
-    t.string "lower", default: ""
-    t.string "upper", default: ""
+    t.string "lower"
+    t.string "upper"
     t.integer "variable_id"
   end
 

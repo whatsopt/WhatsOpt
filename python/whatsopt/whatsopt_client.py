@@ -401,7 +401,10 @@ class WhatsOpt(object):
         assert inputs_count==outputs_count
         data = []
         for key, values in iteritems(cases):
-            data.append({'varname': key[0], 'coord_index': key[1], 'values': values})
+            idx = key[1]
+            if key[2] == 1:
+                idx = -1 # consider it is a scalar not an array of 1 elt
+            data.append({'varname': key[0], 'coord_index': idx, 'values': values})
         return data
         
     def _check_count(self, ios):
@@ -423,10 +426,10 @@ class WhatsOpt(object):
                 continue
             values = values.reshape(-1)
             for i in range(values.size):
-                if (name, i) in result:
-                    result[(name, i)].append(float(values[i]))
+                if (name, i, values.size) in result:
+                    result[(name, i, values.size)].append(float(values[i]))
                 else:
-                    result[(name, i)] = [float(values[i])]
+                    result[(name, i, values.size)] = [float(values[i])]
             done[name]=True
 
 
