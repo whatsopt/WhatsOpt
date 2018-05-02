@@ -19,6 +19,10 @@ pb.driver.add_recorder(recorder)
 pb.model.add_recorder(recorder)
 pb.model.nonlinear_solver.add_recorder(recorder)
 
+# Derivatives are compute via finite-difference method
+# to be commnented out if partial derivatives are declared
+pb.model.approx_totals(method='fd', step=1e-6, form='central')
+
 <%- @mda.design_variables.each do |dv| %>
 pb.model.add_design_var('<%= dv.name %>', lower=<%= dv.lower_py_value %>, upper=<%= dv.upper_py_value %>)<% end %>
 <% @mda.objective_variables.each do |voi| %>

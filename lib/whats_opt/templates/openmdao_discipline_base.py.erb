@@ -12,17 +12,6 @@ class <%= @discipline.py_classname %>Base(ExplicitComponent):
         self.add_input('<%= var.py_varname %>', val=<%= var.init_py_value %>, desc='<%= var.escaped_desc %>')<% end %>
 		<% @discipline.output_variables.numeric.each do |var| %>
         self.add_output('<%= var.py_varname %>', val=<%= var.init_py_value %>, desc='<%= var.escaped_desc %>')<% end %>
-#        self.declare_partials('*', '*')
 		
-#    def compute(self, inputs, outputs):
-#        """ <%= @discipline.py_classname %> computation """
-    <% @discipline.output_variables.numeric.each do |var_out| %>
-#        outputs['<%= var_out.py_varname %>'] = <%= var_out.default_py_value %> <% end %>  
-				
-#    def compute_partials(self, inputs, partials):
-#        """ Jacobian for <%= @discipline.py_classname %> """
-    <% @discipline.output_variables.numeric.each do |var_out| %>
-   		<% @discipline.input_variables.numeric.each do |var_in| %>
-#       	partials['<%= var_out.py_varname %>', '<%= var_in.py_varname %>'] = np.zeros((<%= var_out.dim %>, <%= var_in.dim %>))<% end %><% end %>        
 
         
