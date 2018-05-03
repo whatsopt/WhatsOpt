@@ -1,7 +1,7 @@
 set :stage, :staging
 
 set :repo_url, 'ssh://designlab@endymion/iesta-base/designlab/gitrepos/WhatsOpt.git'
-set :branch, :master
+#set :branch, :plotter
 
 set :deploy_to, "/var/www/html/rails/whatsopt"
 
