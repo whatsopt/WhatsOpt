@@ -156,12 +156,12 @@ class ConnectionsEditor extends React.Component {
   
   handleFromDisciplineSelected(nodeId) {
     this.props.onFilterChange({fr: nodeId, 
-      to: this.props.filter.to || this.props.nodes[0].id});
+      to: this.props.filter.to || this.props.db.driver.id});
   }
   
   handleToDisciplineSelected(nodeId) {
     this.props.onFilterChange({to: nodeId, 
-      fr: this.props.filter.fr || this.props.nodes[0].id});
+      fr: this.props.filter.fr || this.props.db.driver.id});
   }
     
   render() {
@@ -174,7 +174,7 @@ class ConnectionsEditor extends React.Component {
                                 onConnectionNameChange={this.props.onConnectionNameChange}
                                 connectionErrors={this.props.connectionErrors}
                                 filter={this.props.filter}
-                                edges={this.props.edges}/>
+                                edges={this.props.db.edges}/>
                 </div>
                 </div>);  
     } 
@@ -183,15 +183,19 @@ class ConnectionsEditor extends React.Component {
         <div className="container-fluid">
           <div className="row editor-section">
             <div className="col-2">
-              <DisciplineSelector label="From" ulabel="Driver" nodes={this.props.nodes} selected={this.props.filter.fr} onSelection={this.handleFromDisciplineSelected}/>
+              <DisciplineSelector label="From" ulabel="Driver" nodes={this.props.db.nodes} 
+                                  selected={this.props.filter.fr} 
+                                  onSelection={this.handleFromDisciplineSelected}/>
             </div>
             <div className="col-2">  
-              <DisciplineSelector label="To" ulabel="Driver" nodes={this.props.nodes} selected={this.props.filter.to} onSelection={this.handleToDisciplineSelected}/>
+              <DisciplineSelector label="To" ulabel="Driver" nodes={this.props.db.nodes} 
+                                  selected={this.props.filter.to} 
+                                  onSelection={this.handleToDisciplineSelected}/>
             </div>
           </div>
           <div className="row editor-section">
             <div className="col-12">
-                <ConnectionsViewer filter={this.props.filter} edges={this.props.edges} 
+                <ConnectionsViewer filter={this.props.filter} edges={this.props.db.edges} 
                                    onConnectionDelete={this.props.onConnectionDelete}/>
             </div>
           </div>

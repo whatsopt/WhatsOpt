@@ -29,7 +29,8 @@ pb.model.add_design_var('<%= dv.name %>', lower=<%= dv.lower_py_value %>, upper=
 pb.model.add_objective('<%= voi.name %>')<% end %>
 <% @mda.ineq_constraint_variables.each do |voi| %>
 pb.model.add_constraint('<%= voi.name %>', upper=0.)<% end %>
-
+<% @mda.eq_constraint_variables.each do |voi| %>
+pb.model.add_constraint('<%= voi.name %>', equals=0.)<% end %>
 pb.setup()  
 pb.run_driver()        
 reader = CaseReader(case_recorder_filename)

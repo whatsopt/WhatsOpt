@@ -1,22 +1,17 @@
 import React from 'react';
 import Plot from 'react-plotly.js';
 import update from 'immutability-helper'
-import { analysisDatabase } from '../../utils/AnalysisDatabase';
 
 class ScatterPlotMatrix extends React.Component {
-    
-  constructor(props) {
-    super(props);
-    this.db = analysisDatabase(this.props.mda)
-  }
   
   render() {
+    let db = this.props.db;
     let cases = this.props.ope.cases;
     cases.sort(this._sortCases);
     
-    let designVarCases = cases.filter(c => { return this.db.isDesignVarCases(c); })
-    let outputVarCases = cases.filter(c => { return this.db.isOutputVarCases(c) })
-    let couplingVarCases = cases.filter(c => { return this.db.isCouplingVarCases(c) })
+    let designVarCases = cases.filter(c => { return db.isDesignVarCases(c); })
+    let outputVarCases = cases.filter(c => { return db.isOutputVarCases(c) })
+    let couplingVarCases = cases.filter(c => { return db.isCouplingVarCases(c) })
     
     let inputs = designVarCases.concat(couplingVarCases);
     let outputs = couplingVarCases.concat(outputVarCases);

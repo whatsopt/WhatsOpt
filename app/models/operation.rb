@@ -17,7 +17,7 @@ class Operation < ApplicationRecord
 	def category
 	  if name == "SLSQP"
 	    'optimization'
-	  elses
+	  else
 	    'sampling'
 	  end 
 	end

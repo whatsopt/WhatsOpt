@@ -1,14 +1,15 @@
 import React from 'react';
-import XdsmViewer from 'mda_viewer/components/XdsmViewer'
-import ToolBar from 'mda_viewer/components/ToolBar'
-import Error from 'mda_viewer/components/Error'
-import AnalysisEditor from 'mda_viewer/components/AnalysisEditor'
-import DisciplinesEditor from 'mda_viewer/components/DisciplinesEditor'
-import ConnectionsEditor from 'mda_viewer/components/ConnectionsEditor'
-import VariablesEditor from 'mda_viewer/components/VariablesEditor'
-import update from 'immutability-helper'
+import XdsmViewer from 'mda_viewer/components/XdsmViewer';
+import ToolBar from 'mda_viewer/components/ToolBar';
+import Error from 'mda_viewer/components/Error';
+import AnalysisEditor from 'mda_viewer/components/AnalysisEditor';
+import DisciplinesEditor from 'mda_viewer/components/DisciplinesEditor';
+import ConnectionsEditor from 'mda_viewer/components/ConnectionsEditor';
+import VariablesEditor from 'mda_viewer/components/VariablesEditor';
+import update from 'immutability-helper';
 let Graph = require('XDSMjs/src/graph');
 import {api, url} from '../utils/WhatsOptApi';
+import AnalysisDatabase from '../utils/AnalysisDatabase';
 
 let VAR_REGEXP = /^[a-zA-Z][a-zA-Z0-9]*$/;
 
@@ -195,7 +196,7 @@ class MdaViewer extends React.Component {
     let errors = this.state.errors.map((message, i) => {
       return ( <Error key={i} msg={message} /> );
     });  
-    let edges = this.state.mda.edges.concat(this.state.mda.inactive_edges);
+    let db = new AnalysisDatabase(this.state.mda);
         
     if (this.state.isEditing) {
       return(
@@ -233,7 +234,7 @@ class MdaViewer extends React.Component {
           </div>
           <div className="tab-pane fade" id="disciplines" role="tabpanel" aria-labelledby="disciplines-tab">
             <DisciplinesEditor name={this.state.newDisciplineName} 
-                               nodes={this.state.mda.nodes} 
+                               nodes={db.nodes} 
                                onDisciplineNameChange={this.handleDisciplineNameChange}
                                onDisciplineCreate={this.handleDisciplineCreate} 
                                onDisciplineDelete={this.handleDisciplineDelete}
@@ -241,7 +242,7 @@ class MdaViewer extends React.Component {
              />
           </div>
           <div className="tab-pane fade" id="connections" role="tabpanel" aria-labelledby="connections-tab">
-            <ConnectionsEditor nodes={this.state.mda.nodes} edges={edges} 
+            <ConnectionsEditor db={db} 
                                filter={this.state.filter} onFilterChange={this.handleFilterChange}
                                newConnectionName={this.state.newConnectionName}
                                connectionErrors={this.state.errors}
@@ -251,8 +252,8 @@ class MdaViewer extends React.Component {
             />
           </div>
           <div className="tab-pane fade show active" id="variables" role="tabpanel" aria-labelledby="variables-tab">
-            <VariablesEditor nodes={this.state.mda.nodes} edges={edges} vars={this.state.mda.vars}
-                             filter={this.state.filter} onFilterChange={this.handleFilterChange}
+            <VariablesEditor db={db} filter={this.state.filter} 
+                             onFilterChange={this.handleFilterChange}
                              onConnectionChange={this.handleConnectionChange} 
                              isEditing={this.state.isEditing} />   
           </div>      
@@ -269,7 +270,7 @@ class MdaViewer extends React.Component {
                         filter={this.state.filter} onFilterChange={this.handleFilterChange}/>
         </div>
         <div className="mda-section">
-          <VariablesEditor nodes={this.state.mda.nodes} edges={edges} vars={this.state.mda.vars}
+          <VariablesEditor db={db}
                            filter={this.state.filter} onFilterChange={this.handleFilterChange}
                            onConnectionChange={this.handleConnectionChange} 
                            isEditing={this.state.isEditing} />
