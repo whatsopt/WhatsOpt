@@ -1,7 +1,7 @@
 class AnalysisPolicy < ApplicationPolicy
 
   def index?
-    @true
+    true
   end
     
   def update?

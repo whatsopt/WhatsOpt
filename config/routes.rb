@@ -10,7 +10,7 @@ Rails.application.routes.draw do
   resources :notebooks
   resources :geometry_models
   resources :attachments, only: [:show, :index]
-  resources :operations, only: [:show]  
+  resources :operations, only: [:show, :destroy]  
     
   namespace :api do
     namespace :v1, defaults: { format: :json } do

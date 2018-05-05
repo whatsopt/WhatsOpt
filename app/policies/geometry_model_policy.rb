@@ -1,7 +1,7 @@
 class GeometryModelPolicy < ApplicationPolicy
 
   def index?
-    @true
+    true
   end
     
   def update?

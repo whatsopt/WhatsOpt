@@ -8,7 +8,7 @@ class AnalysisDatabase {
     for (let d in mda.vars) {
       varList.push(...mda.vars[d]['out']);
     }
-    this.designVariables = mda.vars[mda.nodes[0].id]['out'].map((vinfo) => {return vinfo.name;}).sort();
+    this.inputVariables = mda.vars[mda.nodes[0].id]['out'].map((vinfo) => {return vinfo.name;}).sort();
     this.outputVariables = mda.vars[mda.nodes[0].id]['in'].map((vinfo) => {return vinfo.name;}).sort();
     this.driver = this.mda.nodes[0];
     this.nodes = this.mda.nodes;
@@ -16,12 +16,15 @@ class AnalysisDatabase {
     this.connections = this.computeConnections(this.edges)
   }
   
-  isDesignVarCases(c) { 
-    return this.designVariables.includes(c.varname); 
+  isInputVarCases(c) { 
+    return this.inputVariables.includes(c.varname); 
   }
   isOutputVarCases(c) { return this.outputVariables.includes(c.varname); }
-  isCouplingVarCases(c) { return !(this.designVariables.includes(c.varname) 
+  isCouplingVarCases(c) { return !(this.inputVariables.includes(c.varname) 
                                    || this.outputVariables.includes(c.varname)); }
+  isObjective(c) {
+    return this.findObjective().name === c.varname;
+  }
   
   findObjective() {
     for (let i=0; i<this.connections.length; i++) {

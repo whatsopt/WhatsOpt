@@ -1,19 +1,17 @@
 import React from 'react';
 import Plot from 'react-plotly.js';
-import update from 'immutability-helper'
 
 class ScatterPlotMatrix extends React.Component {
   
   render() {
     let db = this.props.db;
-    let cases = this.props.ope.cases;
-    cases.sort(this._sortCases);
+    let cases = this.props.cases;
     
-    let designVarCases = cases.filter(c => { return db.isDesignVarCases(c); })
+    let inputVarCases = cases.filter(c => { return db.isInputVarCases(c); })
     let outputVarCases = cases.filter(c => { return db.isOutputVarCases(c) })
     let couplingVarCases = cases.filter(c => { return db.isCouplingVarCases(c) })
     
-    let inputs = designVarCases.concat(couplingVarCases);
+    let inputs = inputVarCases.concat(couplingVarCases);
     let outputs = couplingVarCases.concat(outputVarCases);
     
     let data = [];
@@ -57,13 +55,6 @@ class ScatterPlotMatrix extends React.Component {
     layout.title  = title;
 
     return (<Plot data={data} layout={layout} />);
-  }
-  
-  _sortCases(a, b) {
-    if (a.varname === b.varname) {
-      return a.coord_index < b.coord_index ? -1:1
-    } 
-    return a.varname.localeCompare(b.varname);
   }
 }
 

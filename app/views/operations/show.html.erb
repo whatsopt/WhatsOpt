@@ -1,4 +1,15 @@
-<h1>Plots for <%= @mda.name %> <%= @ope.name %> <%= @ope.category %> with <%= "#{@ope.nb_of_points} points" %></h1>
+<% if policy(@ope).destroy? %>
+  <%= button_to operation_url(@ope), method: :delete, data: { title: 'Are you sure?', 
+	                                                            confirm: "Remove #{@mda.name} #{@ope.name} operation?",
+	                                                            commit: 'Yes',
+	                                                            cancel: 'No, cancel' }, 
+	              class: "btn float-right", title:"Delete" do %>
+    <span class="fa fa-close"></span>
+      Delete
+  <% end %> 
+<% end %>
+	
+<h1>Plots for <%= @mda.name %> <%= @ope.name %> <%= @ope.category %> <%= "(#{@ope.nb_of_points} points)" %></h1>
 
 <div id="plotter" data-mda="<%= @mda.to_mda_viewer_json %>" data-ope="<%= @ope.to_plotter_json %>" data-api-key="<%=current_user.api_key%>"></div> 
 
