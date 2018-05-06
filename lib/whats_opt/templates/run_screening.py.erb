@@ -18,11 +18,11 @@ pb.model.add_recorder(recorder)
 pb.model.nonlinear_solver.add_recorder(recorder)
 
 <% @mda.design_variables.each do |dv| -%>
-pb.model.add_design_var('<%= dv.name %>', lower=<%= dv.lower_py_value %>, upper=<%= dv.upper_py_value %>)
-<% end -%>
-<% @mda.objective_variables.each do |voi| -%>
-pb.model.add_objective('<%= voi.name %>')
-<% end -%>
+pb.model.add_design_var('<%= dv.name %>', lower=<%= dv.lower_py_value %>, upper=<%= dv.upper_py_value %>)<% end %>
+<% @mda.min_objective_variables.each do |voi| -%>
+pb.model.add_objective('<%= voi.name %>')<% end %>
+<% @mda.max_objective_variables.each do |voi| -%>
+pb.model.add_objective('<%= voi.name %>')<% end %>
 <% @mda.ineq_constraint_variables.each do |voi| -%>
 pb.model.add_constraint('<%= voi.name %>', upper=0.)
 <% end -%>

@@ -28,7 +28,9 @@ class AnalysisDatabase {
   
   findObjective() {
     for (let i=0; i<this.connections.length; i++) {
-      if (this.connections[i].role === "objective") {
+      if (this.connections[i].role === "min_objective" 
+          || this.connections[i].role === "max_objective"
+          || this.connections[i].role === "objective") {
         return this.connections[i];
       }
     }

@@ -177,12 +177,13 @@ class VariablesEditor extends React.Component {
     let options = [{id:'parameter', text: 'Parameter'},
                    {id:'design_var', text: 'Design Var.'},
                    {id:'response', text: 'Response'},
-                   {id:'objective', text: 'Objective'},
-                   {id:'ineq_constraint', text: 'Ineq. Constraint'},
-                   {id:'eq_constraint', text: 'Eq. Constraint'},
+                   {id:'min_objective', text: 'Min Objective'},
+                   {id:'max_objective', text: 'Max Objective'},
+                   {id:'ineq_constraint', text: 'Ineq Constraint'},
+                   {id:'eq_constraint', text: 'Eq Constraint'},
                    {id:'plain', text: 'Coupling'}];
     if (conn.role == "parameter" || conn.role == "design_var") {
-      options.splice(2, 5); 
+      options.splice(2, 6); 
       if (conn.type === "String") {
         options.splice(options.length-1, 1);
       }

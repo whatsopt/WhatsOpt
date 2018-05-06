@@ -25,8 +25,10 @@ pb.model.approx_totals(method='fd', step=1e-6, form='central')
 
 <%- @mda.design_variables.each do |dv| %>
 pb.model.add_design_var('<%= dv.name %>', lower=<%= dv.lower_py_value %>, upper=<%= dv.upper_py_value %>)<% end %>
-<% @mda.objective_variables.each do |voi| %>
+<% @mda.min_objective_variables.each do |voi| %>
 pb.model.add_objective('<%= voi.name %>')<% end %>
+<% @mda.max_objective_variables.each do |voi| %>
+pb.model.add_objective('<%= voi.name %>', scaler=-1)<% end %>
 <% @mda.ineq_constraint_variables.each do |voi| %>
 pb.model.add_constraint('<%= voi.name %>', upper=0.)<% end %>
 <% @mda.eq_constraint_variables.each do |voi| %>

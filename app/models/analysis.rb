@@ -49,8 +49,12 @@ class Analysis < ApplicationRecord
     @desvars ||= variables.with_role(WhatsOpt::Variable::DESIGN_VAR_ROLE)
   end
  
-  def objective_variables
-    @objs ||= variables.with_role(WhatsOpt::Variable::OBJECTIVE_ROLE) 
+  def min_objective_variables
+    @minobjs = variables.with_role(WhatsOpt::Variable::MIN_OBJECTIVE_ROLE)
+  end
+  
+  def max_objective_variables
+    @maxobjs = variables.with_role(WhatsOpt::Variable::MAX_OBJECTIVE_ROLE) 
   end
 
   def eq_constraint_variables
@@ -63,7 +67,7 @@ class Analysis < ApplicationRecord
   
   def response_variables
     @resps ||= variables.with_role(WhatsOpt::Variable::RESPONSE_ROLE) + 
-      objective_variables + eq_constraint_variables + ineq_constraint_variables
+      min_objective_variables + max_objective_variables + eq_constraint_variables + ineq_constraint_variables
   end
   
   def response_dim
