@@ -1,42 +1,67 @@
-
-
 class AnalysisDatabase {
 
   constructor(mda) {
     this.mda = mda;
+    this.driver = this.mda.nodes[0];
     let varList = [];
     for (let d in mda.vars) {
       varList.push(...mda.vars[d]['out']);
     }
-    this.inputVariables = mda.vars[mda.nodes[0].id]['out'].map((vinfo) => {return vinfo.name;}).sort();
-    this.outputVariables = mda.vars[mda.nodes[0].id]['in'].map((vinfo) => {return vinfo.name;}).sort();
-    this.driver = this.mda.nodes[0];
+    this.inputVariables = mda.vars[this.driver.id]['out'].sort();
+    this.outputVariables = mda.vars[this.driver.id]['in'].sort();
     this.nodes = this.mda.nodes;
     this.edges = this.mda.edges.concat(this.mda.inactive_edges);
-    this.connections = this.computeConnections(this.edges)
+    this.connections = this.computeConnections(this.edges);
   }
   
   isInputVarCases(c) { 
-    return this.inputVariables.includes(c.varname); 
+    return this.inputVariables.find(v => v.name === c.varname); 
   }
-  isOutputVarCases(c) { return this.outputVariables.includes(c.varname); }
-  isCouplingVarCases(c) { return !(this.inputVariables.includes(c.varname) 
-                                   || this.outputVariables.includes(c.varname)); }
-  isObjective(c) {
-    return this.findObjective().name === c.varname;
+  isOutputVarCases(c) { 
+    return this.outputVariables.find(v => v.name === c.varname); 
+  }
+  isCouplingVarCases(c) { 
+    return !(this.inputVariables.find(v => v.name === c.varname) 
+             || this.outputVariables.find(v => v.name === c.varname)); 
   }
   
-  findObjective() {
+  isObjective(c) {
+    this.objective = this.objective || this.getObjective();
+    if (this.objective) {
+      return this.objective.name === c.varname;
+    }
+    return false;
+  }
+  isConstraint(c) {
+    this.constraints = this.constraints || this.getConstraints();
+    return this.constraints.map(cstr => cstr.name).includes(c.varname);
+  }
+  
+  getObjective() {
+    let objective;
+    let conn;
     for (let i=0; i<this.connections.length; i++) {
       if (this.connections[i].role === "min_objective" 
           || this.connections[i].role === "max_objective"
           || this.connections[i].role === "objective") {
-        return this.connections[i];
+        conn = this.connections[i];
+        break;
       }
     }
-    throw Error("Objective not found in "+JSON.stringify(this.connections.map(c => {c.role})));
+    if (conn) {
+      objective = this.outputVariables.find((v) => v.name === conn.name)
+    }
+    return objective;
   }
-  
+
+  getConstraints() {
+    console.log(this.connections);
+    let connCstrs = this.connections.filter(c => c.role === "ineq_constraint" || c.role === "eq_constraint")
+    console.log(connCstrs);
+    let cstrNames = connCstrs.map(c => c.name);
+    return this.outputVariables.filter(v => cstrNames.includes(v.name));
+  }
+
   computeConnections(filter) {
     let edges = this.edges;
     let nodeSelected = filter && filter.fr && (filter.fr === filter.to);

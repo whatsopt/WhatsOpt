@@ -1,5 +1,14 @@
 <h1>CHANGELOG</h1>
 
+<h3>0.8.1 (10/05/2018)</h3>
+<ul>
+	<li>Implement run_optimization script generation</li>
+  <li>Add line plot for displaying optimization operations</li>
+  <li>Allow to select min or max optimization</li>
+  <li>Add delete button for operations</li>
+	<li>Add variables selection to be plotted, implement sensible initial variable selection</li>
+</ul>
+
 <h3>0.8.0 (03/05/2018)</h3>
 <ul>
   <li>Plot data from analysis operations with plotly: parallel coordinates, scatterplot matrix</li>

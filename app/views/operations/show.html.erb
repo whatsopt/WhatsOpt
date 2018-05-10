@@ -9,7 +9,7 @@
   <% end %> 
 <% end %>
 	
-<h1>Plots for <%= @mda.name %> <%= @ope.name %> <%= @ope.category %> <%= "(#{@ope.nb_of_points} points)" %></h1>
+<h1>Plots for <%= @mda.name %> <%= @ope.name %> <%= @ope.category %></h1>
 
 <div id="plotter" data-mda="<%= @mda.to_mda_viewer_json %>" data-ope="<%= @ope.to_plotter_json %>" data-api-key="<%=current_user.api_key%>"></div> 
 

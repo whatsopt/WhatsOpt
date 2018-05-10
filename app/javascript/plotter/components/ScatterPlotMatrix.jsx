@@ -1,18 +1,12 @@
 import React from 'react';
 import Plot from 'react-plotly.js';
+import * as caseUtils from '../../utils/cases.js'; 
 
 class ScatterPlotMatrix extends React.Component {
   
   render() {
-    let db = this.props.db;
-    let cases = this.props.cases;
-    
-    let inputVarCases = cases.filter(c => { return db.isInputVarCases(c); })
-    let outputVarCases = cases.filter(c => { return db.isOutputVarCases(c) })
-    let couplingVarCases = cases.filter(c => { return db.isCouplingVarCases(c) })
-    
-    let inputs = inputVarCases.concat(couplingVarCases);
-    let outputs = couplingVarCases.concat(outputVarCases);
+    let inputs = this.props.cases.i.concat(this.props.cases.c);
+    let outputs = this.props.cases.c.concat(this.props.cases.o);
     
     let data = [];
     let layout = {};
@@ -23,10 +17,8 @@ class ScatterPlotMatrix extends React.Component {
 
     for (let i=0; i<nOut; i++) {
       for (let j=0; j<nDes; j++) {
-        let xlabel = inputs[j].varname;
-        xlabel += inputs[j].coord_index===-1?"":" "+inputs[j].coord_index;
-        let ylabel = outputs[i].varname;
-        ylabel += outputs[i].coord_index===-1?"":" "+outputs[i].coord_index;
+        let xlabel = caseUtils.label(inputs[j]);
+        let ylabel = caseUtils.label(outputs[i]);
     
         let trace = { x: inputs[j].values, y: outputs[i].values, 
                       type: 'scatter', mode: 'markers'};
@@ -49,10 +41,8 @@ class ScatterPlotMatrix extends React.Component {
       } 
     }
     layout.width = nDes*250;
-    layout.height = nOut*250;
-    
-    let title = "Scatterplot Matrix";
-    layout.title  = title;
+    layout.height = nOut*250+100;
+    layout.title  = this.props.title;
 
     return (<Plot data={data} layout={layout} />);
   }

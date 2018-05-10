@@ -1,48 +1,56 @@
 import React from 'react';
 import Plot from 'react-plotly.js';
+import * as caseUtils from '../../utils/cases.js'; 
 
 class ParallelCoordinates extends React.Component {
   
   render() {  
-    let db = this.props.db;
-    let cases = this.props.cases;
+    let dimensions = this._dimensionFromCases(this.props.cases.i);
+    dimensions.push(...this._dimensionFromCases(this.props.cases.o)); 
+    dimensions.push(...this._dimensionFromCases(this.props.cases.c));
     
-    let inputVarCases = cases.filter(c => { return db.isInputVarCases(c); })
-    let outputVarCases = cases.filter(c => { return db.isOutputVarCases(c) })
-    let couplingVarCases = cases.filter(c => { return db.isCouplingVarCases(c) })
-    
-    let dimensions = this._dimensionFromCases(inputVarCases);
-    dimensions.push(...this._dimensionFromCases(couplingVarCases)); 
-    dimensions.push(...this._dimensionFromCases(outputVarCases));
     let trace = {
       type: 'parcoords',
       dimensions: dimensions,
-    };    
+    };
+    let obj = this.props.cases.o.find(c => this.props.db.isObjective(c  ));
+    let mini = Math.min(...obj.values);
+    let maxi = Math.max(...obj.values);
+    if (obj) {
+      trace.line = {
+        color: obj.values,
+        colorscale: 'Jet',
+        cmin: mini,
+        cmax: maxi,
+        showscale: true,
+      };
+    }
+    
     let data = [trace];
-    let title = "Parallel Coordinates"
+    let title = this.props.title;
 
     return (
       <div>
           <Plot
             data={data}
-            layout={{ width: 1000, height: 400, title: title }}
+            layout={{ width: 1200, height: 500, title: title }}
           />
       </div>
     );
   }
   
   _dimensionFromCases(cases) {
-    let obj = this.props.db.findObjective();
+    let obj = this.props.db.getObjective();
     let dimensions = cases.map(c => {
-      let label = c.varname;
-      label += c.coord_index===-1?"":" "+c.coord_index;
-      let mini = Math.floor(Math.min(...c.values));
+      let label = caseUtils.label(c);
+      let minim = Math.min(...c.values);
+      let mini = Math.floor(minim);
       let maxi = Math.ceil(Math.max(...c.values));
       let dim = { label: label,
                   values: c.values,
                   range: [mini, maxi] };
       if (this.props.db.isObjective(c)) {
-        dim['constraintrange'] = [mini, mini+0.1*(maxi - mini)];
+        dim['constraintrange'] = [minim - 0.05*(maxi - mini), minim + 0.05*(maxi - mini)];
       }
       return dim;  
     });

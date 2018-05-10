@@ -5,4 +5,14 @@ function compare(casea, caseb) {
   return casea.varname.localeCompare(caseb.varname);
 }
 
-export default compare
+function label(c) {
+  let label = c.varname;
+  label += c.coord_index===-1?"":"["+c.coord_index+"]";
+  return label;
+}
+
+function names(casearr) {
+  casearr.map(c => label(c));
+}
+
+export { compare, label };

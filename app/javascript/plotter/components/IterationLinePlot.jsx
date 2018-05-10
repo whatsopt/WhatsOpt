@@ -1,25 +1,18 @@
 import React from 'react';
 import Plot from 'react-plotly.js';
+import * as caseUtils from '../../utils/cases.js'; 
 
 class IterationLinePlot extends React.Component {
 
   render() {
-    let db = this.props.db;
-    let cases = this.props.cases;
-    
-    let inputVarCases = cases.filter(c => { return db.isInputVarCases(c); })
-    let outputVarCases = cases.filter(c => { return db.isOutputVarCases(c) })
-    let couplingVarCases = cases.filter(c => { return db.isCouplingVarCases(c) })
-    
-    let variables = inputVarCases.concat(couplingVarCases);
-    variables = variables.concat(outputVarCases);
+    let variables = this.props.cases.i.concat(this.props.cases.c);
+    variables = variables.concat(this.props.cases.o);
     
     let data = [];
     
     
     for (let i=0; i<variables.length; i++) {
-      let ylabel = variables[i].varname;
-      ylabel += variables[i].coord_index===-1?"":" "+variables[i].coord_index;
+      let ylabel = caseUtils.label(variables[i]);
     
       let trace = {
         x: Array.from({length: variables[i].values.length}, (v, k) => k+1),
@@ -31,8 +24,8 @@ class IterationLinePlot extends React.Component {
       data.push(trace);
     }
     
-    let title = "Line plots";
-    let layout = { width: 1000, height: 500, title: title };
+    let title = this.props.title;
+    let layout = { width: 1200, height: 500, title: title };
 
     return (<Plot data={data} layout={layout} />);
 
