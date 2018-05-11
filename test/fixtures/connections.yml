@@ -11,7 +11,7 @@ driver_z_aero:
 objgeo_driver:
   from_id: <%= ActiveRecord::FixtureSet.identify(:varobj_geo_out) %>
   to_id: <%= ActiveRecord::FixtureSet.identify(:varobj_objective_in) %>
-  role: "objective"
+  role: "min_objective"
   
 geo_aero:
   from_id: <%= ActiveRecord::FixtureSet.identify(:varyg_geo_out) %>
