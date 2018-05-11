@@ -67,7 +67,7 @@ class AnalysisTest < ActiveSupport::TestCase
   end  
   test "should get objectives" do
     mda = analyses(:cicav)
-    assert_equal ["obj"], mda.objective_variables.map(&:name).sort
+    assert_equal ["obj"], mda.min_objective_variables.map(&:name).sort
   end  
   test "should get responses" do
     mda = analyses(:cicav)
