@@ -10,7 +10,6 @@ class IterationLinePlot extends React.Component {
     
     let data = [];
     
-    
     for (let i=0; i<variables.length; i++) {
       let ylabel = caseUtils.label(variables[i]);
     
@@ -25,7 +24,7 @@ class IterationLinePlot extends React.Component {
     }
     
     let title = this.props.title;
-    let layout = { width: 1200, height: 500, title: title };
+    let layout = { width: 600, height: 500, title: title };
 
     return (<Plot data={data} layout={layout} />);
 

@@ -28,9 +28,15 @@ class AnalysisDatabase {
   isObjective(c) {
     this.objective = this.objective || this.getObjective();
     if (this.objective) {
-      return this.objective.name === c.varname;
+      return this.objective.variable.name === c.varname;
     }
     return false;
+  }
+  isMinObjective() {
+    return this.getObjective().isMin;
+  }
+  isMaxObjective() {
+    return !this.getObjective().isMin;
   }
   isConstraint(c) {
     this.constraints = this.constraints || this.getConstraints();
@@ -38,28 +44,34 @@ class AnalysisDatabase {
   }
   
   getObjective() {
-    let objective;
-    let conn;
+    if (this.objective) {
+      return this.objective;
+    }
+    let isMin;
+    let conn, kind;
     for (let i=0; i<this.connections.length; i++) {
       if (this.connections[i].role === "min_objective" 
-          || this.connections[i].role === "max_objective"
-          || this.connections[i].role === "objective") {
+          || this.connections[i].role === "max_objective") {
         conn = this.connections[i];
+        isMin = (conn.role === "min_objective"); 
         break;
       }
     }
     if (conn) {
-      objective = this.outputVariables.find((v) => v.name === conn.name)
+      this.objective = { variable: this.outputVariables.find((v) => v.name === conn.name),
+                         isMin: isMin };
     }
-    return objective;
+    return this.objective;
   }
 
   getConstraints() {
-    console.log(this.connections);
+    if (this.constraints) {
+      return this.constraints;
+    }
     let connCstrs = this.connections.filter(c => c.role === "ineq_constraint" || c.role === "eq_constraint")
-    console.log(connCstrs);
     let cstrNames = connCstrs.map(c => c.name);
-    return this.outputVariables.filter(v => cstrNames.includes(v.name));
+    this.constraints = this.outputVariables.filter(v => cstrNames.includes(v.name));
+    return this.constraints;
   }
 
   computeConnections(filter) {

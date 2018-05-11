@@ -13,17 +13,20 @@ class ParallelCoordinates extends React.Component {
       type: 'parcoords',
       dimensions: dimensions,
     };
-    let obj = this.props.cases.o.find(c => this.props.db.isObjective(c  ));
-    let mini = Math.min(...obj.values);
-    let maxi = Math.max(...obj.values);
+    let obj = this.props.cases.o.find(c => this.props.db.isObjective(c));
     if (obj) {
+      let mini = Math.min(...obj.values);
+      let maxi = Math.max(...obj.values);
       trace.line = {
         color: obj.values,
-        colorscale: 'Jet',
+        colorscale: 'Blues',
         cmin: mini,
         cmax: maxi,
         showscale: true,
       };
+      if (this.props.db.isMaxObjective()) {
+        trace.line.reversescale = true;
+      }
     }
     
     let data = [trace];
@@ -40,17 +43,20 @@ class ParallelCoordinates extends React.Component {
   }
   
   _dimensionFromCases(cases) {
-    let obj = this.props.db.getObjective();
+    let isMin = this.props.db.getObjective().isMin;
     let dimensions = cases.map(c => {
       let label = caseUtils.label(c);
       let minim = Math.min(...c.values);
+      let maxim = Math.max(...c.values);
       let mini = Math.floor(minim);
-      let maxi = Math.ceil(Math.max(...c.values));
+      let maxi = Math.ceil(maxim);
       let dim = { label: label,
                   values: c.values,
                   range: [mini, maxi] };
+      let obj = isMin?minim:maxim;
+      let crange = [obj - 0.05*(maxi - mini), obj + 0.05*(maxi - mini)];
       if (this.props.db.isObjective(c)) {
-        dim['constraintrange'] = [minim - 0.05*(maxi - mini), minim + 0.05*(maxi - mini)];
+        dim['constraintrange'] = crange;
       }
       return dim;  
     });

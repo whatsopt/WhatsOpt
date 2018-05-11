@@ -4,6 +4,7 @@ import update from 'immutability-helper' //import {api, url} from '../utils/What
 import ParallelCoordinates from 'plotter/components/ParallelCoordinates';
 import ScatterPlotMatrix from 'plotter/components/ScatterPlotMatrix';
 import IterationLinePlot from 'plotter/components/IterationLinePlot';
+import IterationRadarPlot from 'plotter/components/IterationRadarPlot';
 import VariableSelector from 'plotter/components/VariableSelector';
 import AnalysisDatabase from '../utils/AnalysisDatabase';
 import * as caseUtils from '../utils/cases.js'; 
@@ -35,7 +36,6 @@ class Plotter extends React.Component {
     } else {
       let obj = this.outputVarCases.find(c => this.db.isObjective(c));
       let cstrs = this.outputVarCases.filter(c => this.db.isConstraint(c));
-      console.log(JSON.stringify(cstrs));
       if (obj) {
         sel.push(...this.inputVarCases.slice(0, 5), obj, ...cstrs.slice(0, 4));
       } else {
@@ -66,11 +66,19 @@ class Plotter extends React.Component {
                     o: cases.o.filter(c => selection.includes(c)),
                     c: cases.c.filter(c => selection.includes(c)),};    
     let nbPts = this.cases[0]?this.cases[0].values.length:0; 
-    let ptKind = isOptim?"iterations":"cases"
-    let title = `${this.props.mda.name} ${this.props.ope.name} ${this.props.ope.category} (${nbPts} ${ptKind})`;
-    let plotoptim = (<ScatterPlotMatrix db={this.db} optim={isOptim} cases={selCases} title={title}/>);
+    let details = `${nbPts} cases`;
     if (isOptim) {
-        plotoptim = (<IterationLinePlot db={this.db} optim={isOptim} cases={selCases} title={title}/>);
+        let objname = this.db.getObjective().variable.name;
+        let extremization = this.db.getObjective().isMin?"minimization":"maximization"
+        details = `Variable '${objname}' ${extremization} in ${nbPts} evaluations`;
+    }
+    let title = `${this.props.ope.name} on ${this.props.mda.name} - ${details}`;
+    let plotoptim = (<ScatterPlotMatrix db={this.db} optim={isOptim} cases={selCases} title={title}/>);
+    if (isOptim) {    
+        plotoptim = (<div>
+                       <IterationLinePlot db={this.db} optim={isOptim} cases={selCases} title={title}/>
+                       <IterationRadarPlot db={this.db} optim={isOptim} cases={selCases} title={title}/>
+                     </div>);
     }
 
     return (      
