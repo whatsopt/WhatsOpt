@@ -45,10 +45,14 @@
   },
   "devDependencies": {
     "babel-eslint": "^7.2.3",
-    "eslint": "^3.19.0",
-    "eslint-config-google": "^0.8.0",
+    "eslint": "^4.19.1",
+    "eslint-config-google": "^0.9.1",
     "eslint-config-react": "^1.1.7",
-    "eslint-plugin-react": "^7.0.1",
+    "eslint-loader": "^2.0.0",
+    "eslint-plugin-react": "^7.7.0",
     "webpack-dev-server": "2.11.2"
+  },
+  "scripts": {
+    "lint": "yarn run eslint -- --ext .js --ext .jsx app/javascript"
   }
 }
