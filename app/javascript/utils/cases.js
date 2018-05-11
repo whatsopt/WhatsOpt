@@ -1,6 +1,6 @@
 function compare(casea, caseb) {
   if (casea.varname === caseb.varname) {
-    return casea.coord_index < caseb.coord_index ? -1 : 1
+    return casea.coord_index < caseb.coord_index ? -1 : 1;
   }
   return casea.varname.localeCompare(caseb.varname);
 }
@@ -11,8 +11,4 @@ function label(c) {
   return label;
 }
 
-function names(casearr) {
-  casearr.map(c => label(c));
-}
-
-export { compare, label };
+export {compare, label};

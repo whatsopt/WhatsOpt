@@ -14,7 +14,6 @@ function url(path) {
 };
 
 class WhatsOptApi {
-
   openmdaoChecking(mdaId, callback) {
     let path = `/api/v1/analyses/${mdaId}/openmdao_checking`;
     axios.post(url(path))

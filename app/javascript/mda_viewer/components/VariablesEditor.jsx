@@ -1,6 +1,6 @@
 import React from 'react';
-import ReactTable from 'react-table'
-import { RIEToggle, RIEInput, RIETextArea, RIENumber, RIETags, RIESelect } from 'riek'
+import ReactTable from 'react-table';
+import {RIEInput, RIESelect} from 'riek';
 
 class VariablesEditor extends React.Component {
   constructor(props) {
@@ -10,19 +10,19 @@ class VariablesEditor extends React.Component {
     this.renderReadonly = this.renderReadonly.bind(this);
     this.renderCheckButton = this.renderCheckButton.bind(this);
   }
-  
+
   componentDidMount() {
-    $(".table-tooltip").attr("data-toggle", "tooltip")
-    $(() => { $('.table-tooltip').tooltip({placement: 'right'}); });  
+    $(".table-tooltip").attr("data-toggle", "tooltip");
+    $(() => {$('.table-tooltip').tooltip({placement: 'right'});});
   }
-  
+
   componentWillUnmount() {
     $('.table-tooltip').tooltip('dispose');
   }
-  
-  render() {  
+
+  render() {
     this.connections = this.props.db.computeConnections(this.props.filter);
-      
+
     let columns = [
                    {
                      Header: (cellInfo) => this.renderHeader(cellInfo, 'From'),
@@ -37,45 +37,45 @@ class VariablesEditor extends React.Component {
                    },
                    {
                      Header: (cellInfo) => this.renderHeader(cellInfo, 'Name'),
-                     accessor: "name", 
-                     minWidth: 200, 
-                     Cell: this.renderEditable 
+                     accessor: "name",
+                     minWidth: 200,
+                     Cell: this.renderEditable,
                    },
                    {
                      Header: (cellInfo) => this.renderHeader(cellInfo, 'Role'),
-                     accessor: "role",  
-                     minWidth: 150, 
-                     Cell: (cellInfo) => this.renderEditable(cellInfo, this._computeRoleSelection(this.connections[cellInfo.index]))
+                     accessor: "role",
+                     minWidth: 150,
+                     Cell: (cellInfo) => this.renderEditable(cellInfo, this._computeRoleSelection(this.connections[cellInfo.index])),
                    },
                    {
                      Header: (cellInfo) => this.renderHeader(cellInfo, 'Type'),
-                     accessor: "type", 
-                     Cell: (cellInfo) => this.renderEditable(cellInfo, this._computeTypeSelection(this.connections[cellInfo.index])) 
+                     accessor: "type",
+                     Cell: (cellInfo) => this.renderEditable(cellInfo, this._computeTypeSelection(this.connections[cellInfo.index])),
                    },
                    {
                      Header: (cellInfo) => this.renderHeader(cellInfo, 'Shape'),
-                     accessor: "shape", 
-                     Cell: this.renderEditable
+                     accessor: "shape",
+                     Cell: this.renderEditable,
                    },
                    {
                      Header: (cellInfo) => this.renderHeader(cellInfo, 'Units'),
-                     accessor: "units", 
-                     Cell: this.renderEditable
+                     accessor: "units",
+                     Cell: this.renderEditable,
                    },
                    {
                      Header: (cellInfo) => this.renderHeader(cellInfo, 'Init'),
-                     accessor: "init", 
-                     Cell: this.renderEditable
+                     accessor: "init",
+                     Cell: this.renderEditable,
                    },
                    {
                      Header: (cellInfo) => this.renderHeader(cellInfo, 'Lower'),
-                     accessor: "lower", 
-                     Cell: this.renderEditable
+                     accessor: "lower",
+                     Cell: this.renderEditable,
                    },
                    {
                      Header: (cellInfo) => this.renderHeader(cellInfo, 'Upper'),
-                     accessor: "upper", 
-                     Cell: this.renderEditable
+                     accessor: "upper",
+                     Cell: this.renderEditable,
                    },
                  ];
     if (this.props.isEditing) {
@@ -83,16 +83,16 @@ class VariablesEditor extends React.Component {
         Header: (cellInfo) => this.renderHeader(cellInfo, '#'),
         accessor: "active",
         maxWidth: 25,
-        Cell: this.renderCheckButton 
+        Cell: this.renderCheckButton,
       });
       columns.splice(5, 0, {
         Header: (cellInfo) => this.renderHeader(cellInfo, 'Description'),
-        accessor: "desc", 
-        Cell: this.renderEditable 
+        accessor: "desc",
+        Cell: this.renderEditable,
       });
     }
     return (
-            <div className="mt-3"> 
+            <div className="mt-3">
               <ReactTable
                 data={this.connections}
                 columns={columns}
@@ -101,46 +101,46 @@ class VariablesEditor extends React.Component {
                 pageSize={this.connections.length}
               />
             </div>
-          );   
+          );
   };
 
   renderHeader(cellInfo, title) {
-    return (<strong>{title}</strong>);  
+    return (<strong>{title}</strong>);
   }
-  
+
   renderCheckButton(cellInfo) {
     let isChecked = this.connections[cellInfo.index].active;
     return (<input type="checkbox" value="true" checked={isChecked}
-            onChange={() => this.props.onConnectionChange(this.connections[cellInfo.index].id, {active: !isChecked})}/>);  
+            onChange={() => this.props.onConnectionChange(this.connections[cellInfo.index].id, {active: !isChecked})}/>);
   }
-  
+
   renderEditable(cellInfo, selectOptions) {
     if (this.props.isEditing && this.connections[cellInfo.index].active) {
       if (selectOptions) {
         let id = this.connections[cellInfo.index][cellInfo.column.id];
-        let selected = selectOptions.filter(choice => choice.id === id);
+        let selected = selectOptions.filter((choice) => choice.id === id);
         return ( <RIESelect
-          value={{id: id, text: selected[0].text }}
+          value={{id: id, text: selected[0].text}}
           change={ (attr) => {
             let change = {};
             change[cellInfo.column.id] = attr[cellInfo.column.id].id;
-            this.props.onConnectionChange(this.connections[cellInfo.index].id, change)
+            this.props.onConnectionChange(this.connections[cellInfo.index].id, change);
           } }
-          propName={cellInfo.column.id} 
-          shouldBlockWhileLoading 
+          propName={cellInfo.column.id}
+          shouldBlockWhileLoading
           options={selectOptions}/> );
       } else {
         return ( <RIEInput
           value={this.connections[cellInfo.index][cellInfo.column.id]}
           change={(attr) => this.props.onConnectionChange(this.connections[cellInfo.index].id, attr)}
-          propName={cellInfo.column.id} 
+          propName={cellInfo.column.id}
           shouldBlockWhileLoading /> );
       }
     } else {
       return this.renderReadonly(cellInfo, selectOptions);
     }
   };
-  
+
   renderReadonly(cellInfo, selectOptions) {
     let textStyle = this.connections[cellInfo.index].active?"":"text-inactive";
     let info = this.connections[cellInfo.index][cellInfo.column.id];
@@ -150,40 +150,40 @@ class VariablesEditor extends React.Component {
           info = selectOptions[i].text;
           break;
         }
-      } 
-    } 
+      }
+    }
     if (cellInfo.column.id === 'name') {
-      let title = this.connections[cellInfo.index]['desc']; 
+      let title = this.connections[cellInfo.index]['desc'];
       textStyle += " table-tooltip";
       return (<span className={textStyle} title={title}>{info}</span>);
     } else {
       return (<span className={textStyle}>{info}</span>);
-    }      
+    }
   }
-  
+
   _computeTypeSelection(conn) {
     let driver = this.props.db.driver.id;
-    let options = [{id:'Float', text: 'Float'},
-                   {id:'Integer', text: 'Integer'},
-                   {id:'String', text: 'String'}];
+    let options = [{id: 'Float', text: 'Float'},
+                   {id: 'Integer', text: 'Integer'},
+                   {id: 'String', text: 'String'}];
     if (driver !== conn.fromId) {
-      options.splice(2, 1);  // suppress String, String only as parameter
+      options.splice(2, 1); // suppress String, String only as parameter
     }
     return options;
   }
 
   _computeRoleSelection(conn) {
     let driver = this.props.db.driver.id;
-    let options = [{id:'parameter', text: 'Parameter'},
-                   {id:'design_var', text: 'Design Var.'},
-                   {id:'response', text: 'Response'},
-                   {id:'min_objective', text: 'Min Objective'},
-                   {id:'max_objective', text: 'Max Objective'},
-                   {id:'ineq_constraint', text: 'Ineq Constraint'},
-                   {id:'eq_constraint', text: 'Eq Constraint'},
-                   {id:'plain', text: 'Coupling'}];
+    let options = [{id: 'parameter', text: 'Parameter'},
+                   {id: 'design_var', text: 'Design Var.'},
+                   {id: 'response', text: 'Response'},
+                   {id: 'min_objective', text: 'Min Objective'},
+                   {id: 'max_objective', text: 'Max Objective'},
+                   {id: 'ineq_constraint', text: 'Ineq Constraint'},
+                   {id: 'eq_constraint', text: 'Eq Constraint'},
+                   {id: 'plain', text: 'Coupling'}];
     if (conn.role == "parameter" || conn.role == "design_var") {
-      options.splice(2, 6); 
+      options.splice(2, 6);
       if (conn.type === "String") {
         options.splice(options.length-1, 1);
       }
@@ -193,7 +193,6 @@ class VariablesEditor extends React.Component {
     }
     return options;
   }
-  
 }
 
 export default VariablesEditor;

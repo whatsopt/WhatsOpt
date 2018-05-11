@@ -1,11 +1,9 @@
-import * as d3 from 'd3';
 import React from 'react';
 let Graph = require('XDSMjs/src/graph');
 let Xdsm = require('XDSMjs/src/xdsm');
 let Selectable = require('XDSMjs/src/selectable');
 
 class XdsmViewer extends React.Component {
-
   componentDidMount() {
     let config = {
         labelizer: {
@@ -13,7 +11,7 @@ class XdsmViewer extends React.Component {
           subSupScript: false,
           showLinkNbOnly: true,
         },
-        layout: { 
+        layout: {
           origin: {x: 50, y: 20},
           cellsize: {w: 150, h: 50},
           padding: 10,
@@ -43,8 +41,8 @@ class XdsmViewer extends React.Component {
     this.xdsm.graph.nodes[0].name = 'Driver';
     this.xdsm.graph.nodes[0].type = 'driver';
     this._refresh();
-  } 
-  
+  }
+
   addDiscipline(discattrs) {
     this.xdsm.graph.addNode(discattrs);
     this.xdsm.draw();
@@ -57,35 +55,35 @@ class XdsmViewer extends React.Component {
     this.xdsm.graph.nodes.splice(index, 1, newNode);
     this._refresh();
   }
-  
+
   removeDiscipline(index) {
     this.xdsm.graph.removeNode(index);
     this.xdsm.draw();
   }
-  
+
   addConnection(connattrs) {
     connattrs.names.map((name) =>
       this.xdsm.graph.addEdgeVar(connattrs.from, connattrs.to, name));
     this._refresh();
   }
-    
+
   removeConnection(connattrs) {
     connattrs.names.map((name) =>
       this.xdsm.graph.removeEdgeVar(connattrs.from, connattrs.to, name));
     this._refresh();
   }
-    
+
   setSelection(filter) {
-    this.selectable.setFilter(filter); 
+    this.selectable.setFilter(filter);
   }
-  
+
   _onSelectionChange(filter) {
-    this.props.onFilterChange(filter);    
+    this.props.onFilterChange(filter);
   }
-  
+
   _refresh() {
     $(".ellipsized").tooltip('dispose');
-    // remove and redraw xdsm 
+    // remove and redraw xdsm
     this.xdsm.refresh();
     // reattach selection
     this.selectable.enable();
@@ -94,11 +92,11 @@ class XdsmViewer extends React.Component {
     // reattach tooltips
     this._setTooltips();
   }
-  
+
   _setTooltips() {
     // bootstrap tooltip for connections
-    $(".ellipsized").attr("data-toggle", "tooltip")
-    $(() => { $('.ellipsized').tooltip({placement: 'right'}); });  
+    $(".ellipsized").attr("data-toggle", "tooltip");
+    $(() => {$('.ellipsized').tooltip({placement: 'right'});});
   }
 }
 

@@ -1,5 +1,4 @@
 class AnalysisDatabase {
-
   constructor(mda) {
     this.mda = mda;
     this.driver = this.mda.nodes[0];
@@ -13,18 +12,18 @@ class AnalysisDatabase {
     this.edges = this.mda.edges.concat(this.mda.inactive_edges);
     this.connections = this.computeConnections(this.edges);
   }
-  
-  isInputVarCases(c) { 
-    return this.inputVariables.find(v => v.name === c.varname); 
+
+  isInputVarCases(c) {
+    return this.inputVariables.find((v) => v.name === c.varname);
   }
-  isOutputVarCases(c) { 
-    return this.outputVariables.find(v => v.name === c.varname); 
+  isOutputVarCases(c) {
+    return this.outputVariables.find((v) => v.name === c.varname);
   }
-  isCouplingVarCases(c) { 
-    return !(this.inputVariables.find(v => v.name === c.varname) 
-             || this.outputVariables.find(v => v.name === c.varname)); 
+  isCouplingVarCases(c) {
+    return !(this.inputVariables.find((v) => v.name === c.varname)
+             || this.outputVariables.find((v) => v.name === c.varname));
   }
-  
+
   isObjective(c) {
     this.objective = this.objective || this.getObjective();
     if (this.objective) {
@@ -40,26 +39,26 @@ class AnalysisDatabase {
   }
   isConstraint(c) {
     this.constraints = this.constraints || this.getConstraints();
-    return this.constraints.map(cstr => cstr.name).includes(c.varname);
+    return this.constraints.map((cstr) => cstr.name).includes(c.varname);
   }
-  
+
   getObjective() {
     if (this.objective) {
       return this.objective;
     }
     let isMin;
-    let conn, kind;
+    let conn;
     for (let i=0; i<this.connections.length; i++) {
-      if (this.connections[i].role === "min_objective" 
+      if (this.connections[i].role === "min_objective"
           || this.connections[i].role === "max_objective") {
         conn = this.connections[i];
-        isMin = (conn.role === "min_objective"); 
+        isMin = (conn.role === "min_objective");
         break;
       }
     }
     if (conn) {
-      this.objective = { variable: this.outputVariables.find((v) => v.name === conn.name),
-                         isMin: isMin };
+      this.objective = {variable: this.outputVariables.find((v) => v.name === conn.name),
+                         isMin: isMin};
     }
     return this.objective;
   }
@@ -68,16 +67,16 @@ class AnalysisDatabase {
     if (this.constraints) {
       return this.constraints;
     }
-    let connCstrs = this.connections.filter(c => c.role === "ineq_constraint" || c.role === "eq_constraint")
-    let cstrNames = connCstrs.map(c => c.name);
-    this.constraints = this.outputVariables.filter(v => cstrNames.includes(v.name));
+    let connCstrs = this.connections.filter((c) => c.role === "ineq_constraint" || c.role === "eq_constraint");
+    let cstrNames = connCstrs.map((c) => c.name);
+    this.constraints = this.outputVariables.filter((v) => cstrNames.includes(v.name));
     return this.constraints;
   }
 
   computeConnections(filter) {
     let edges = this.edges;
     let nodeSelected = filter && filter.fr && (filter.fr === filter.to);
-    
+
     if (filter && filter.fr && filter.to) {
       let nodeFrom = this._findNode(filter.fr);
       let nodeTo = this._findNode(filter.to);
@@ -92,7 +91,7 @@ class AnalysisDatabase {
         });
       }
     }
-    
+
     let hconns = {};
     edges.forEach((edge) => {
       let vars = edge.name.split(",");
@@ -109,124 +108,123 @@ class AnalysisDatabase {
             fr: edge.from,
             to: [edge.to],
             frName: fromName,
-            toName: [toName], 
+            toName: [toName],
             varname: v,
             connId: edge.conn_ids[i],
-            role: edge.roles[i]
-          }
+            role: edge.roles[i],
+          };
         }
       }, this);
     }, this);
-    
+
     let conns = [];
     for (let id in hconns) {
       conns.push(hconns[id]);
     }
     conns.sort((a, b) => this._connectionCompare(nodeSelected, a, b));
-    
+
     let connections = conns.map((conn) => {
-      let infos = this._findInfos(conn); 
-      let val = { id: conn.connId, from: conn.frName, to: conn.toName.join(', '), name: infos.vName, desc: infos.desc,
-                  type: infos.type, shape: infos.shape, units: infos.units, init: infos.init, lower: infos.lower, 
-                  upper: infos.upper, active: infos.active, role: conn.role, fromId: conn.fr, toIds: conn.to };
+      let infos = this._findInfos(conn);
+      let val = {id: conn.connId, from: conn.frName, to: conn.toName.join(', '), name: infos.vName, desc: infos.desc,
+                  type: infos.type, shape: infos.shape, units: infos.units, init: infos.init, lower: infos.lower,
+                  upper: infos.upper, active: infos.active, role: conn.role, fromId: conn.fr, toIds: conn.to};
       return val;
-        
     });
-      
+
     return connections;
   }
-  
-  _findNode(id) { 
+
+  _findNode(id) {
     for (var i=0; i < this.mda.nodes.length; i++) {
       let node = this.mda.nodes[i];
       if (node.id === id) {
         return (i==0)?{id: id, name: "Driver"}:{id: node.id, name: node.name};
       }
     };
-    throw Error("Node id ("+ id +") unknown: " + JSON.stringify(this.mda.nodes));  
+    throw Error("Node id ("+ id +") unknown: " + JSON.stringify(this.mda.nodes));
   };
-  
-  _findInfos(conn) { 
+
+  _findInfos(conn) {
     let vfr = this._findVariable(conn.fr, conn.varname, "out");
-    let desc = vfr.desc; 
+    let desc = vfr.desc;
     let vartype = vfr.type;
-    let shape = vfr.shape;    
-    let varname = vfr.name 
-    let units = vfr.units 
+    let shape = vfr.shape;
+    let varname = vfr.name;
+    let units = vfr.units;
     let init = "";
     let lower = "";
     let upper = "";
     let active = vfr.active;
-    
-    if (vfr.parameter) { 
+
+    if (vfr.parameter) {
       init = vfr.parameter.init;
       lower = vfr.parameter.lower;
       upper = vfr.parameter.upper;
     }
-    let infos = { id: conn.connId, idfrName: conn.frName, frUnits: vfr.units, 
+    let infos = {id: conn.connId, idfrName: conn.frName, frUnits: vfr.units,
                   vName: varname, desc: desc,
                   toName: conn.toName.join(', '),
-                  type: vartype, shape: shape, init: init, lower: lower, upper:upper, 
+                  type: vartype, shape: shape, init: init, lower: lower, upper: upper,
                   units: units, active: active};
     return infos;
   }
 
-  _findVariable(disc, vname, io_mode) {
+  _findVariable(disc, vname, ioMode) {
     let vars = this.mda.vars;
     let vinfo = {units: '', desc: '', type: '', shape: '', init: '', lower: '', upper: '', active: true};
-    let vinfos = vars[disc][io_mode].filter((v) => { 
-      return v.name === vname; 
+    let vinfos = vars[disc][ioMode].filter((v) => {
+      return v.name === vname;
     });
     if (vinfos.length === 1) {
       vinfo = vinfos[0];
     } else if (vinfos.length > 1) {
-      console.log("Find several occurences of " + vname + "("+io_mode +"): " + JSON.stringify(vinfos));
+      console.log("Find several occurences of " + vname + "("+ioMode +"): " + JSON.stringify(vinfos));
       console.log("Check against fullnames");
-      vinfos = vars[disc][io_mode].filter((v) => { 
-        return v.fullname === vname; 
+      vinfos = vars[disc][ioMode].filter((v) => {
+        return v.fullname === vname;
       });
       if (vinfos.length === 1) {
         vinfo = vinfos[0];
       } else {
-        throw Error(`Expected one variable ${vname} found ${vinfos.length} in ${JSON.stringify(vars[disc][io_mode])}`);
+        throw Error(`Expected one variable ${vname} found ${vinfos.length} in ${JSON.stringify(vars[disc][ioMode])}`);
       }
     } else {
-      // console.log("Find no occurence of " + vname + "(" + io_mode + "): " +
+      // console.log("Find no occurence of " + vname + "(" + ioMode + "): " +
       // JSON.stringify(vinfos));
       // console.log("Check against fullnames");
-      vinfos = vars[disc][io_mode].filter((v) => { 
-        return v.fullname === vname; 
+      vinfos = vars[disc][ioMode].filter((v) => {
+        return v.fullname === vname;
       });
       if (vinfos.length === 1) {
         vinfo = vinfos[0];
       } else {
-        throw Error(`Expected one variable ${vname} found ${vinfos.length} in ${JSON.stringify(vars[disc][io_mode])}`);
+        throw Error(`Expected one variable ${vname} found ${vinfos.length} in ${JSON.stringify(vars[disc][ioMode])}`);
       }
     }
     return vinfo;
   }
-  
+
   _connectionCompare(nodeSelected, conna, connb) {
     let ret;
     if (nodeSelected) {
       if (conna.fr === nodeSelected.id) {
-        if (connb.fr === nodeSelected.id) {  
-          ret = conna.varname.localeCompare(connb.varname); 
+        if (connb.fr === nodeSelected.id) {
+          ret = conna.varname.localeCompare(connb.varname);
         } else {
-          ret = 1;  
+          ret = 1;
         }
       } else {
-        if (connb.fr === nodeSelected.id) {  
+        if (connb.fr === nodeSelected.id) {
           ret = -1;
-        } else { 
-          ret = conna.varname.localeCompare(connb.varname);  
+        } else {
+          ret = conna.varname.localeCompare(connb.varname);
         }
       }
     } else {
-      ret = conna.varname.localeCompare(connb.varname);  
+      ret = conna.varname.localeCompare(connb.varname);
     }
-    return ret;  
+    return ret;
   }
 }
-  
+
 export default AnalysisDatabase;

@@ -1,7 +1,8 @@
 {
   "plugins": ["react"],
   "extends": [
-    "google"
+	"google",
+    "plugin:react/recommended"
   ],
   "parserOptions": {
     "ecmaVersion": 6,
@@ -19,6 +20,7 @@
       "error",
       120
     ],
+	"guard-for-in": "off",
     "quotes": "off",
     "no-var": "off",
     "linebreak-style": "off",
