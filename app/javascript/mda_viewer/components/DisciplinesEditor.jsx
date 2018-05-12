@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import update from 'immutability-helper';
 
 class Discipline extends React.Component {
@@ -56,15 +57,15 @@ class Discipline extends React.Component {
   }
 
   render() {
-    // let nodes = update(this.nodes,)
-
     if (this.state.isEditing) {
       return (
           <li className="list-group-item editor-discipline">
             <form className="form-inline" onSubmit={this.handleUpdate}>
               <div className="form-group mr-3">
-                <input className="form-control" id="name" type="text" defaultValue={this.state.discName} placeholder='Enter Name...' onChange={this.handleDiscNameChange}/>
-                <select className="form-control ml-1" id="type" value={this.state.discType} onChange={this.handleSelectChange}>
+                <input className="form-control" id="name" type="text" defaultValue={this.state.discName}
+                       placeholder='Enter Name...' onChange={this.handleDiscNameChange}/>
+                <select className="form-control ml-1" id="type" value={this.state.discType}
+                        onChange={this.handleSelectChange}>
                   <option value="analysis">Analysis</option>
                   <option value="function">Function</option>
                 </select>
@@ -74,7 +75,6 @@ class Discipline extends React.Component {
             </form>
           </li>);
       } else {
-        let confirm = `Remove ${this.props.node.name} discipline?`;
         return (
           <li className="list-group-item editor-discipline col-md-4">
             <span className="align-bottom">{this.props.node.name}</span>
@@ -90,11 +90,14 @@ class Discipline extends React.Component {
   }
 }
 
-class DisciplinesEditor extends React.Component {
-  constructor(props) {
-    super(props);
-  }
+Discipline.propTypes = {
+  node: PropTypes.object.isRequired,
+  pos: PropTypes.number.isRequired,
+  onDisciplineUpdate: PropTypes.func.isRequired,
+  onDisciplineDelete: PropTypes.func.isRequired,
+};
 
+class DisciplinesEditor extends React.Component {
   render() {
     let nodes = this.props.nodes.slice(1);
     let disciplines = nodes.map((node, i) => {
@@ -126,5 +129,14 @@ class DisciplinesEditor extends React.Component {
         );
   }
 }
+
+DisciplinesEditor.propTypes = {
+  name: PropTypes.string.isRequired,
+  nodes: PropTypes.array.isRequired,
+  onDisciplineUpdate: PropTypes.func.isRequired,
+  onDisciplineDelete: PropTypes.func.isRequired,
+  onDisciplineCreate: PropTypes.func.isRequired,
+  onDisciplineNameChange: PropTypes.func.isRequired,
+};
 
 export default DisciplinesEditor;

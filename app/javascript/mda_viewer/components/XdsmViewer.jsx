@@ -1,4 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
 let Graph = require('XDSMjs/src/graph');
 let Xdsm = require('XDSMjs/src/xdsm');
 let Selectable = require('XDSMjs/src/selectable');
@@ -99,5 +101,11 @@ class XdsmViewer extends React.Component {
     $(() => {$('.ellipsized').tooltip({placement: 'right'});});
   }
 }
+
+XdsmViewer.propTypes = {
+  mda: PropTypes.object.isRequired,
+  filter: PropTypes.object.isRequired,
+  onFilterChange: PropTypes.func.isRequired,
+};
 
 export default XdsmViewer;

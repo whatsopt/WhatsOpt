@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Plot from 'react-plotly.js';
 import * as caseUtils from '../../utils/cases.js';
 
@@ -62,5 +63,15 @@ class ParallelCoordinates extends React.Component {
     return dimensions;
   }
 }
+
+ParallelCoordinates.propTypes = {
+  db: PropTypes.object.isRequired,
+  cases: PropTypes.shape({
+    i: PropTypes.array.isRequired,
+    o: PropTypes.array.isRequired,
+    c: PropTypes.array.isRequired,
+  }),
+  title: PropTypes.string,
+};
 
 export default ParallelCoordinates;

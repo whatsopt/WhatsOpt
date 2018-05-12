@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import {api, url} from '../../utils/WhatsOptApi';
 
 class OpenMDAOLogLine extends React.Component {
@@ -10,6 +11,11 @@ class OpenMDAOLogLine extends React.Component {
     return (<div className="listing-line">{this.props.line}</div>);
   }
 }
+
+OpenMDAOLogLine.propTypes= {
+  line: PropTypes.string.isRequired,
+};
+
 
 class ToolBar extends React.Component {
   constructor(props) {
@@ -42,17 +48,18 @@ class ToolBar extends React.Component {
       btnIcon = <i className="fa fa-cog fa-spin" />;
     }
     let base = "/analyses/"+this.props.mdaId+"/exports/new";
-    let href_om = url(base+".openmdao");
-    let href_cd = url(base+".cmdows");
+    let hrefOm = url(base+".openmdao");
+    let hrefCd = url(base+".cmdows");
     return (
       <div>
         <div className="btn-toolbar" role="toolbar">
           <div className="btn-group mr-2" role="group">
-            <button className={btnStatusClass} type="button" data-toggle="collapse" data-target="#collapseListing" aria-expanded="false">{btnIcon}</button>
-            <a className="btn btn-primary" href={href_om}>OpenMDAO Export</a>
+            <button className={btnStatusClass} type="button" data-toggle="collapse"
+                    data-target="#collapseListing" aria-expanded="false">{btnIcon}</button>
+            <a className="btn btn-primary" href={hrefOm}>OpenMDAO Export</a>
           </div>
           <div className="btn-group mr-2" role="group">
-            <a className="btn btn-primary" href={href_cd}>Cmdows Export</a>
+            <a className="btn btn-primary" href={hrefCd}>Cmdows Export</a>
           </div>
         </div>
         <div className="collapse" id="collapseListing">
@@ -66,5 +73,9 @@ class ToolBar extends React.Component {
     );
   }
 }
+
+ToolBar.propTypes= {
+  mdaId: PropTypes.number.isRequired,
+};
 
 export default ToolBar;

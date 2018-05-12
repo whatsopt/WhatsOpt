@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 class Error extends React.Component {
   render() {
@@ -8,5 +9,9 @@ class Error extends React.Component {
             </div>);
   }
 }
+
+Error.propTypes = {
+  msg: PropTypes.string.isRequired,
+};
 
 export default Error;

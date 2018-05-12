@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import XdsmViewer from 'mda_viewer/components/XdsmViewer';
 import ToolBar from 'mda_viewer/components/ToolBar';
 import Error from 'mda_viewer/components/Error';
@@ -280,5 +281,13 @@ class MdaViewer extends React.Component {
     );
   }
 }
+
+MdaViewer.propTypes = {
+  isEditing: PropTypes.bool.isRequired,
+  mda: PropTypes.shape({
+    name: PropTypes.string,
+    id: PropTypes.number,
+  }),
+};
 
 export {MdaViewer};

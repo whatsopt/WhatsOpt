@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import * as caseUtils from '../../utils/cases.js';
 
 class VariableList extends React.Component {
@@ -19,8 +20,14 @@ class VariableList extends React.Component {
               </div>
            );
   }
-}
+};
 
+VariableList.propTypes = {
+  cases: PropTypes.array.isRequired,
+  title: PropTypes.string.isRequired,
+  selection: PropTypes.array.isRequired,
+  onSelectionChange: PropTypes.func.isRequired,
+};
 
 class VariableSelector extends React.Component {
   render() {
@@ -33,6 +40,21 @@ class VariableSelector extends React.Component {
                             selection={this.props.selCases.c} onSelectionChange={this.props.onSelectionChange}/>
             </div>);
   }
-}
+};
+
+VariableSelector.propTypes = {
+  cases: PropTypes.shape({
+    i: PropTypes.array.isRequired,
+    o: PropTypes.array.isRequired,
+    c: PropTypes.array.isRequired,
+  }),
+  selCases: PropTypes.shape({
+    i: PropTypes.array.isRequired,
+    o: PropTypes.array.isRequired,
+    c: PropTypes.array.isRequired,
+  }),
+  onSelectionChange: PropTypes.func.isRequired,
+};
+
 
 export default VariableSelector;

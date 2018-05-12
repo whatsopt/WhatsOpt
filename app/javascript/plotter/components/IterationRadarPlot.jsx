@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Plot from 'react-plotly.js';
 import * as caseUtils from '../../utils/cases.js';
 
@@ -28,12 +29,18 @@ class IterationRadarPlot extends React.Component {
       trace.r = r;
       data.push(trace);
     }
-    console.log(JSON.stringify(data));
     let title = this.props.title;
     let layout = {width: 600, height: 500, title: title};
 
     return (<Plot data={data} layout={layout} />);
   }
 }
+
+IterationRadarPlot.propTypes = {
+  cases: PropTypes.shape({
+    i: PropTypes.array.isRequired,
+  }),
+  title: PropTypes.string,
+};
 
 export default IterationRadarPlot;

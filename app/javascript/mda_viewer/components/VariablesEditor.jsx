@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import ReactTable from 'react-table';
 import {RIEInput, RIESelect} from 'riek';
 
@@ -45,12 +46,14 @@ class VariablesEditor extends React.Component {
                      Header: (cellInfo) => this.renderHeader(cellInfo, 'Role'),
                      accessor: "role",
                      minWidth: 150,
-                     Cell: (cellInfo) => this.renderEditable(cellInfo, this._computeRoleSelection(this.connections[cellInfo.index])),
+                     Cell: (cellInfo) => this.renderEditable(cellInfo,
+                       this._computeRoleSelection(this.connections[cellInfo.index])),
                    },
                    {
                      Header: (cellInfo) => this.renderHeader(cellInfo, 'Type'),
                      accessor: "type",
-                     Cell: (cellInfo) => this.renderEditable(cellInfo, this._computeTypeSelection(this.connections[cellInfo.index])),
+                     Cell: (cellInfo) => this.renderEditable(cellInfo,
+                       this._computeTypeSelection(this.connections[cellInfo.index])),
                    },
                    {
                      Header: (cellInfo) => this.renderHeader(cellInfo, 'Shape'),
@@ -111,7 +114,8 @@ class VariablesEditor extends React.Component {
   renderCheckButton(cellInfo) {
     let isChecked = this.connections[cellInfo.index].active;
     return (<input type="checkbox" value="true" checked={isChecked}
-            onChange={() => this.props.onConnectionChange(this.connections[cellInfo.index].id, {active: !isChecked})}/>);
+            onChange={() => this.props.onConnectionChange(this.connections[cellInfo.index].id,
+                                                          {active: !isChecked})}/>);
   }
 
   renderEditable(cellInfo, selectOptions) {
@@ -173,7 +177,6 @@ class VariablesEditor extends React.Component {
   }
 
   _computeRoleSelection(conn) {
-    let driver = this.props.db.driver.id;
     let options = [{id: 'parameter', text: 'Parameter'},
                    {id: 'design_var', text: 'Design Var.'},
                    {id: 'response', text: 'Response'},
@@ -194,5 +197,12 @@ class VariablesEditor extends React.Component {
     return options;
   }
 }
+
+VariablesEditor.propTypes = {
+  isEditing: PropTypes.bool,
+  db: PropTypes.object.isRequired,
+  filter: PropTypes.object.isRequired,
+  onConnectionChange: PropTypes.func,
+};
 
 export default VariablesEditor;

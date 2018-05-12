@@ -1,5 +1,5 @@
 import React from 'react';
-import update from 'immutability-helper';
+import PropTypes from 'prop-types';
 
 class DisciplineSelector extends React.Component {
   constructor(props) {
@@ -25,7 +25,8 @@ class DisciplineSelector extends React.Component {
         <div className="input-group-prepend" htmlFor={this.props.label}>
           <label className="input-group-text editor-header">{this.props.label}</label>
         </div>
-        <select id={this.props.label} className="custom-select" id="type" value={selected} onChange={this.handleSelectChange}>
+        <select id={this.props.label} className="custom-select" value={selected}
+                onChange={this.handleSelectChange}>
           {disciplines}
         </select>
       </div>
@@ -33,10 +34,17 @@ class DisciplineSelector extends React.Component {
   }
 }
 
+DisciplineSelector.propTypes = {
+  onSelection: PropTypes.func.isRequired,
+  nodes: PropTypes.array.isRequired,
+  ulabel: PropTypes.string.isRequired,
+  label: PropTypes.string.isRequired,
+  selected: PropTypes.number,
+};
+
 class ConnectionList extends React.Component {
   render() {
     let varnames = this.props.names.split(',');
-    let href="#";
     let vars = varnames.map((varname, i) => {
       let id = this.props.conn_ids[i];
       let btn = this.props.active?"btn":"btn text-inactive";
@@ -52,6 +60,13 @@ class ConnectionList extends React.Component {
   }
 }
 
+ConnectionList.propTypes = {
+  names: PropTypes.array.isRequired,
+  conn_ids: PropTypes.array.isRequired,
+  active: PropTypes.bool.isRequired,
+  onConnectionDelete: PropTypes.func.isRequired,
+};
+
 class VariableList extends React.Component {
   compare(a, b) {
     if (a.ioMode === b.ioMode) {
@@ -62,7 +77,7 @@ class VariableList extends React.Component {
 
   render() {
     let sorted = this.props.vars.sort(this.compare);
-    let vars = this.props.vars.map((v, i) => {
+    let vars = sorted.map((v, i) => {
       let badgeKind = "badge " + ((v.ioMode==="in")?"badge-primary":"badge-secondary");
       let klass = v.active?"btn m-1":"btn m-1 text-inactive";
       return <button key={v.name} className={klass}>{v.name} <span className={badgeKind}>{v.ioMode}</span></button>;
@@ -71,6 +86,10 @@ class VariableList extends React.Component {
     return (<span className="mb-3">{vars}</span> );
   }
 }
+
+VariableList.propTypes = {
+  vars: PropTypes.array.isRequired,
+};
 
 class ConnectionsViewer extends React.Component {
   render() {
@@ -106,7 +125,8 @@ class ConnectionsViewer extends React.Component {
       }, this);
       connections = edges.map((edge, i) => {
         count += edge.name.split(',').length;
-        return ( <ConnectionList key={i} names={edge.name} active={edge.active} conn_ids={edge.conn_ids} onConnectionDelete={this.props.onConnectionDelete}/> );
+        return ( <ConnectionList key={i} names={edge.name} active={edge.active}
+                 conn_ids={edge.conn_ids} onConnectionDelete={this.props.onConnectionDelete}/> );
       });
     }
 
@@ -120,6 +140,15 @@ class ConnectionsViewer extends React.Component {
   }
 }
 
+ConnectionsViewer.propTypes = {
+  edges: PropTypes.array.isRequired,
+  filter: PropTypes.shape({
+    fr: PropTypes.number,
+    to: PropTypes.number,
+  }),
+  onConnectionDelete: PropTypes.func.isRequired,
+};
+
 class ConnectionsForm extends React.Component {
   render() {
     let isErroneous = (this.props.connectionErrors.length > 0);
@@ -131,7 +160,8 @@ class ConnectionsForm extends React.Component {
         <form className="form" onSubmit={this.props.onConnectionCreate} noValidate>
           <div className="form-group">
             <label htmlFor="name" className="sr-only">Name</label>
-            <input type="text" value={this.props.newConnectionName} placeholder='Enter name or comma separated names...'
+            <input type="text" value={this.props.newConnectionName}
+                   placeholder='Enter name or comma separated names...'
                    className={inputClass} id="name" onChange={this.props.onConnectionNameChange}
             />
           </div>
@@ -142,6 +172,13 @@ class ConnectionsForm extends React.Component {
       );
   }
 }
+
+ConnectionsForm.propTypes = {
+  newConnectionName: PropTypes.isRequired,
+  connectionErrors: PropTypes.array.isRequired,
+  onConnectionCreate: PropTypes.func.isRequired,
+  onConnectionNameChange: PropTypes.func.isRequired,
+};
 
 class ConnectionsEditor extends React.Component {
   constructor(props) {
@@ -200,5 +237,16 @@ class ConnectionsEditor extends React.Component {
     );
   }
 }
+
+ConnectionsEditor.propTypes = {
+  db: PropTypes.object.isRequired,
+  filter: PropTypes.object.isRequired,
+  newConnectionName: PropTypes.string.isRequired,
+  connectionErrors: PropTypes.array.isRequired,
+  onFilterChange: PropTypes.func.isRequired,
+  onConnectionCreate: PropTypes.func.isRequired,
+  onConnectionNameChange: PropTypes.func.isRequired,
+  onConnectionDelete: PropTypes.func.isRequired,
+};
 
 export default ConnectionsEditor;

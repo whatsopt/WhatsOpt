@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Plot from 'react-plotly.js';
 import * as caseUtils from '../../utils/cases.js';
 
@@ -28,5 +29,14 @@ class IterationLinePlot extends React.Component {
     return (<Plot data={data} layout={layout} />);
   }
 }
+
+IterationLinePlot.propTypes = {
+  cases: PropTypes.shape({
+    i: PropTypes.array.isRequired,
+    o: PropTypes.array.isRequired,
+    c: PropTypes.array.isRequired,
+  }),
+  title: PropTypes.string,
+};
 
 export default IterationLinePlot;
