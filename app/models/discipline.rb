@@ -19,6 +19,7 @@ class Discipline < ApplicationRecord
   
   scope :driver, -> { where( type: WhatsOpt::Discipline::NULL_DRIVER ) }
   scope :nodes, -> { where.not( type: WhatsOpt::Discipline::NULL_DRIVER ) }
+  scope :by_position, -> { order(position: :asc) }
 
   after_initialize :set_defaults, unless: :persisted?  
     
@@ -32,6 +33,16 @@ class Discipline < ApplicationRecord
 
   def is_driver?
     self.type == WhatsOpt::Discipline::NULL_DRIVER
+  end
+  
+  def update_discipline(params)
+    Discipline.transaction do 
+      if params[:position]
+        self.insert_at(params[:position])
+        params = params.except(:role) 
+      end
+      self.update(params)
+    end
   end
   
   private

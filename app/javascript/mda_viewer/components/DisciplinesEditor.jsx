@@ -106,9 +106,19 @@ Discipline.propTypes = {
   onDisciplineDelete: PropTypes.func.isRequired,
 };
 
+const reorder = (list, startIndex, endIndex) => {
+  const result = Array.from(list);
+  const [removed] = result.splice(startIndex, 1);
+  result.splice(endIndex, 0, removed);
+
+  return result;
+};
+
 class DisciplinesEditor extends React.Component {
   constructor(props) {
     super(props);
+
+    this.state = {nodes: this.props.nodes.slice(1)};
     
     this.onDragStart = this.onDragStart.bind(this);
     this.onDragUpdate = this.onDragUpdate.bind(this);
@@ -126,15 +136,18 @@ class DisciplinesEditor extends React.Component {
       return;
     }
 
-    console.log(
+//    console.log(result.source.index, result.destination.index);
+    const items = reorder(
+      this.state.nodes,
       result.source.index,
       result.destination.index
     );
+    this.setState({nodes: items});
+    this.props.onDisciplineUpdate(this.props.nodes[result.source.index+1], {position: result.destination.index+1});
   };
   
   render() {
-    let nodes = this.props.nodes.slice(1);
-    let disciplines = nodes.map((node, i) => {
+    let disciplines = this.state.nodes.map((node, i) => {
       return (<Discipline key={node.id} pos={i+1} index={i} node={node}
                 onDisciplineUpdate={this.props.onDisciplineUpdate}
                 onDisciplineDelete={this.props.onDisciplineDelete}
