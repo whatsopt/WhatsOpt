@@ -1,5 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import update from 'immutability-helper';
+
 import XdsmViewer from 'mda_viewer/components/XdsmViewer';
 import ToolBar from 'mda_viewer/components/ToolBar';
 import Error from 'mda_viewer/components/Error';
@@ -144,12 +146,12 @@ class MdaViewer extends React.Component {
     return false;
   }
 
-  handleDisciplineUpdate(node, pos, discAttrs) {
+  handleDisciplineUpdate(node, discAttrs) {
     api.updateDiscipline(node.id, discAttrs,
         (response) => {this.renderXdsm();});
   }
 
-  handleDisciplineDelete(node, pos) {
+  handleDisciplineDelete(node) {
     api.deleteDiscipline(node.id, (response) => {
       if (this.state.filter.fr===node.id || this.state.filter.to===node.id) {
         this.handleFilterChange({fr: undefined, to: undefined});

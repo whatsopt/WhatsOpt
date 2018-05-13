@@ -98,7 +98,7 @@ class Analysis < ApplicationRecord
   end
   
   def build_nodes
-    return self.disciplines.map {|d| 
+    return self.disciplines.by_position.map {|d| 
       { id: "#{d.id}", type: d.type , name: d.name } 
     }
   end

@@ -6,6 +6,7 @@ class Api::V1::DisciplineControllerTest < ActionDispatch::IntegrationTest
     @auth_headers = {"Authorization" => "Token " + TEST_API_KEY}
     @mda = analyses(:cicav)
     @disc = @mda.disciplines.nodes.first
+    @disc2 = @mda.disciplines.nodes.last
   end
   
   test "should get given discipline" do
@@ -28,13 +29,20 @@ class Api::V1::DisciplineControllerTest < ActionDispatch::IntegrationTest
   end
   
   test "should update discipline" do
-    patch api_v1_discipline_url(@disc), params: { discipline: {  name: "NewName", type: 'function' } }, as: :json, headers: @auth_headers
+    assert_equal 'Geometry', @disc.name
+    assert_equal 'analysis', @disc.type
+    assert_equal 1, @disc.position
+    assert_equal 2, @disc2.position
+    patch api_v1_discipline_url(@disc), params: { discipline: {  name: "NewName", type: 'function', position: 2} }, as: :json, headers: @auth_headers
     assert_response :success
     get api_v1_discipline_url(@disc), as: :json, headers: @auth_headers
     assert_response :success
     resp = JSON.parse(response.body)
     assert_equal 'NewName', resp['name']
     assert_equal 'function', resp['type']
+    assert_equal 2, resp['position'].to_i
+    @disc2.reload
+    assert_equal 1, @disc2.position
   end
 
   test "should delete discipline" do
@@ -43,5 +51,6 @@ class Api::V1::DisciplineControllerTest < ActionDispatch::IntegrationTest
     end
     assert_response :success
   end
-  
+
+    
 end

@@ -15,7 +15,7 @@ class Api::V1::DisciplinesController < Api::ApiController
 
   # PATCH/PUT /api/v1/disciplines/1
   def update
-    @discipline.update(discipline_params)
+    @discipline.update_discipline(discipline_params)
     head :no_content
   end
 
@@ -33,6 +33,6 @@ class Api::V1::DisciplinesController < Api::ApiController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def discipline_params
-      params.require(:discipline).permit(:name, :analysis_id, :type)
+      params.require(:discipline).permit(:name, :analysis_id, :type, :position)
     end
 end
