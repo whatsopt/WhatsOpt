@@ -41,7 +41,7 @@ class ScatterPlotMatrix extends React.Component {
       }
     }
     layout.width = nDes*250;
-    layout.height = nOut*250+100;
+    layout.height = nOut*250;
     layout.title = this.props.title;
 
     return (<Plot data={data} layout={layout} />);
