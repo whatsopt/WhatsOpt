@@ -43,7 +43,7 @@ class ParallelCoordinates extends React.Component {
   }
 
   _dimensionFromCases(cases) {
-    let isMin = this.props.db.getObjective().isMin;
+    let isMin = this.props.db.getObjective() && this.props.db.getObjective().isMin;
     let dimensions = cases.map((c) => {
       let label = caseUtils.label(c);
       let minim = Math.min(...c.values);

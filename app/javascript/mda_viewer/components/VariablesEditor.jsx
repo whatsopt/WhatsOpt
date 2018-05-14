@@ -124,7 +124,7 @@ class VariablesEditor extends React.Component {
         let id = this.connections[cellInfo.index][cellInfo.column.id];
         let selected = selectOptions.filter((choice) => choice.id === id);
         return ( <RIESelect
-          value={{id: id, text: selected[0].text}}
+          value={{id: id, text: selected.length>0?selected[0].text:"undefined"}}
           change={ (attr) => {
             let change = {};
             change[cellInfo.column.id] = attr[cellInfo.column.id].id;
@@ -170,9 +170,9 @@ class VariablesEditor extends React.Component {
     let options = [{id: 'Float', text: 'Float'},
                    {id: 'Integer', text: 'Integer'},
                    {id: 'String', text: 'String'}];
-    if (driver !== conn.fromId) {
-      options.splice(2, 1); // suppress String, String only as parameter
-    }
+//    if (driver !== conn.fromId) {
+//      options.splice(2, 1); // suppress String, String only as parameter
+//    }
     return options;
   }
 
@@ -184,12 +184,12 @@ class VariablesEditor extends React.Component {
                    {id: 'max_objective', text: 'Max Objective'},
                    {id: 'ineq_constraint', text: 'Ineq Constraint'},
                    {id: 'eq_constraint', text: 'Eq Constraint'},
-                   {id: 'plain', text: 'Coupling'}];
+                   {id: 'plain', text: 'State Var.'}];
     if (conn.role == "parameter" || conn.role == "design_var") {
       options.splice(2, 6);
-      if (conn.type === "String") {
-        options.splice(options.length-1, 1);
-      }
+//      if (conn.type === "String") {
+//        options.splice(options.length-1, 1);
+//      }
     } else if (conn.role !== "plain") {
       options.splice(options.length-1, 1);
       options.splice(0, 2);
