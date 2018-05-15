@@ -166,7 +166,6 @@ class VariablesEditor extends React.Component {
   }
 
   _computeTypeSelection(conn) {
-    let driver = this.props.db.driver.id;
     let options = [{id: 'Float', text: 'Float'},
                    {id: 'Integer', text: 'Integer'},
                    {id: 'String', text: 'String'}];

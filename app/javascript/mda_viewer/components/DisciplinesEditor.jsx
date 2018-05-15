@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import update from 'immutability-helper';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import {DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
 
 class Discipline extends React.Component {
   constructor(props) {
@@ -62,7 +62,8 @@ class Discipline extends React.Component {
       return (
           <Draggable draggableId={this.props.node.id} index={this.props.index}>
             {(provided, snapshot) => (
-              <li ref={provided.innerRef} {...provided.dragHandleProps} {...provided.draggableProps} className="list-group-item editor-discipline" >
+              <li ref={provided.innerRef} {...provided.dragHandleProps} {...provided.draggableProps}
+                  className="list-group-item editor-discipline" >
                 <form className="form-inline" onSubmit={this.handleUpdate}>
                   <div className="form-group mr-3">
                     <input className="form-control" id="name" type="text" defaultValue={this.state.discName}
@@ -83,7 +84,8 @@ class Discipline extends React.Component {
         return (
           <Draggable draggableId={this.props.node.id} index={this.props.index}>
             {(provided, snapshot) => (
-              <li ref={provided.innerRef} {...provided.dragHandleProps} {...provided.draggableProps} className="list-group-item editor-discipline col-md-4">
+              <li ref={provided.innerRef} {...provided.dragHandleProps} {...provided.draggableProps}
+                  className="list-group-item editor-discipline col-md-4">
                 <span className="align-bottom">{this.props.node.name}</span>
                 <button className="d-inline btn btn-light btn-inverse btn-sm float-right text-danger"
                  onClick={this.handleDelete}>
@@ -119,7 +121,7 @@ class DisciplinesEditor extends React.Component {
     super(props);
 
     this.state = {nodes: this.props.nodes.slice(1)};
-    
+
     this.onDragStart = this.onDragStart.bind(this);
     this.onDragUpdate = this.onDragUpdate.bind(this);
     this.onDragEnd = this.onDragEnd.bind(this);
@@ -127,10 +129,10 @@ class DisciplinesEditor extends React.Component {
 
   onDragStart(result) {
   }
-  
+
   onDragUpdate(result) {
   }
-  
+
   onDragEnd(result) {
     if (!result.destination) {
       return;
@@ -145,14 +147,15 @@ class DisciplinesEditor extends React.Component {
     this.setState({nodes: items});
     this.props.onDisciplineUpdate(this.props.nodes[result.source.index+1], {position: result.destination.index+1});
   };
-  
+
   render() {
     let disciplines = this.state.nodes.map((node, i) => {
       return (<Discipline key={node.id} pos={i+1} index={i} node={node}
                 onDisciplineUpdate={this.props.onDisciplineUpdate}
                 onDisciplineDelete={this.props.onDisciplineDelete}
-              />)});
-    
+              />);
+    });
+
     return (
         <div className='container-fluid'>
           <div className="editor-section">
