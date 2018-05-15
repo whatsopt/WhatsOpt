@@ -10,8 +10,9 @@ from <%= @mda.py_modulename %> import <%= @mda.py_classname %>
 pb = Problem(<%= @mda.py_classname %>())
 pb.driver = ScipyOptimizeDriver()
 pb.driver.options['optimizer'] = 'SLSQP'
-pb.driver.options['tol'] = 1e-9
+pb.driver.options['tol'] = 1e-6
 pb.driver.options['disp'] = True
+pb.driver.options['debug_print'] = ['desvars','ln_cons','nl_cons','objs']
 
 case_recorder_filename = '<%= @mda.py_modulename %>_optimization.sqlite'        
 recorder = SqliteRecorder(case_recorder_filename)
