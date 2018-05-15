@@ -88,4 +88,5 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
     refute @conn.to.active
     refute @conn.from.active
   end  
+
 end

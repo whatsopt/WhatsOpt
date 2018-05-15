@@ -91,7 +91,7 @@ class MdaViewer extends React.Component {
             this.renderXdsm();
           },
         (error) => {
-          let message = error.response.data.message;
+          let message = error.response.data.message || "Error: Creation failed";
           let newState = update(this.state, {errors: {$set: [message]}});
           this.setState(newState);
         });
@@ -99,27 +99,27 @@ class MdaViewer extends React.Component {
 
   handleConnectionChange(connId, connAttrs) {
     // console.log('Change variable connection '+connId+ ' with '+JSON.stringify(connAttrs));
-    if (connAttrs.init === "") {
-      connAttrs['parameter_attributes'] = {_destroy: '1'};
-    } else if (connAttrs.init) {
+    if (connAttrs.init || connAttrs.init === "") {
       connAttrs['parameter_attributes'] = {init: connAttrs.init};
     }
-    if (connAttrs.lower) {
+    if (connAttrs.lower || connAttrs.lower === "") {
       connAttrs['parameter_attributes'] = {lower: connAttrs.lower};
     }
-    if (connAttrs.upper) {
+    if (connAttrs.upper || connAttrs.upper === "") {
       connAttrs['parameter_attributes'] = {upper: connAttrs.upper};
     }
     delete connAttrs['init'];
     delete connAttrs['lower'];
     delete connAttrs['upper'];
-    api.updateConnection(
-      connId, connAttrs, (response) => {this.renderXdsm();},
-      (error) => {
-        let message = error.response.data.message;
-        let newState = update(this.state, {errors: {$set: [message]}});
-        this.setState(newState);
-      });
+    if (Object.keys(connAttrs).length !== 0) {
+        api.updateConnection(
+          connId, connAttrs, (response) => {this.renderXdsm();},
+          (error) => {
+            let message = error.response.data.message || "Error: Update failed";
+            let newState = update(this.state, {errors: {$set: [message]}});
+            this.setState(newState);
+          });
+    }
   }
 
 
