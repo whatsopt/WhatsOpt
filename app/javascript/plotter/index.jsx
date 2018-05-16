@@ -9,6 +9,57 @@ import VariableSelector from 'plotter/components/VariableSelector';
 import AnalysisDatabase from '../utils/AnalysisDatabase';
 import * as caseUtils from '../utils/cases.js';
 
+class PlotPanel extends React.Component {
+  render() {
+    let plotoptim = (<ScatterPlotMatrix db={this.props.db} optim={this.props.optim}
+                                        cases={this.props.cases} title={this.props.title}/>);
+    if (this.props.optim) {
+      plotoptim = (<div>
+                     <IterationLinePlot db={this.props.db} optim={this.props.optim}
+                                        cases={this.props.cases} title={this.props.title}/>
+                     <IterationRadarPlot db={this.props.db} optim={this.props.optim}
+                                         cases={this.props.cases} title={this.props.title}/>
+                   </div>);
+    }
+    let klass = "tab-pane fade"+this.props.active?" show active":"";
+    return (<div className={klass} id="plots" role="tabpanel" aria-labelledby="plots-tab">
+              <ParallelCoordinates db={this.props.db} optim={this.props.optim}
+                                   cases={this.props.cases} title={this.props.title}/>
+              {plotoptim}
+            </div>);
+  }
+};
+
+PlotPanel.propTypes = {
+  db: PropTypes.object.isRequired,
+  active: PropTypes.bool.isRequired,
+  optim: PropTypes.bool.isRequired,
+  cases: PropTypes.object.isRequired,
+  title: PropTypes.string.isRequired,
+};
+
+class VariablePanel extends React.Component {
+  render() {
+    let klass = "tab-pane fade "+this.props.active?" show active":"";
+    return (
+      <div className={klass} id="variables" role="tabpanel" aria-labelledby="variables-tab">
+        <VariableSelector db={this.props.db} optim={this.props.optim}
+                          cases={this.props.cases} selCases={this.props.selCases}
+                          onSelectionChange={this.props.onSelectionChange}/>
+      </div>
+    );
+  };
+};
+
+VariablePanel.propTypes = {
+  db: PropTypes.object.isRequired,
+  active: PropTypes.bool.isRequired,
+  optim: PropTypes.bool.isRequired,
+  cases: PropTypes.object.isRequired,
+  selCases: PropTypes.object.isRequired,
+  onSelectionChange: PropTypes.func.isRequired,
+};
+
 class Plotter extends React.Component {
   constructor(props) {
     super(props);
@@ -19,10 +70,11 @@ class Plotter extends React.Component {
     this.outputVarCases = this.cases.filter((c) => this.db.isOutputVarCases(c));
     this.couplingVarCases = this.cases.filter((c) => this.db.isCouplingVarCases(c));
 
-    let sel = this.initializeSelection(this.inputVarCases, this.outputVarCases);
-    this.state = {selection: sel};
+    let selection = this.initializeSelection(this.inputVarCases, this.outputVarCases);
+    this.state = {selection: selection, plotActive: true};
 
     this.handleSelectionChange = this.handleSelectionChange.bind(this);
+    this.activatePlot = this.activatePlot.bind(this);
   }
 
   initializeSelection(inputs, outputs) {
@@ -57,6 +109,11 @@ class Plotter extends React.Component {
     this.setState({selection: newSelection});
   }
 
+  activatePlot(active) {
+    let newState = update(this.state, {plotActive: {$set: active}});
+    this.setState(newState);
+  }
+
   render() {
     let isOptim = (this.props.ope.category === "optimization");
     let selection = this.state.selection;
@@ -72,35 +129,29 @@ class Plotter extends React.Component {
         details = `Variable '${objname}' ${extremization} in ${nbPts} evaluations`;
     }
     let title = `${this.props.ope.name} on ${this.props.mda.name} - ${details}`;
-    let plotoptim = (<ScatterPlotMatrix db={this.db} optim={isOptim} cases={selCases} title={title}/>);
-    if (isOptim) {
-        plotoptim = (<div>
-                       <IterationLinePlot db={this.db} optim={isOptim} cases={selCases} title={title}/>
-                       <IterationRadarPlot db={this.db} optim={isOptim} cases={selCases} title={title}/>
-                     </div>);
+    let child = (<PlotPanel db={this.db} optim={isOptim} cases={selCases}
+                 title={title} active={this.state.plotActive}/>);
+    if (!this.state.plotActive) {
+      child = (<VariablePanel db={this.db} optim={isOptim} cases={cases} selCases={selCases}
+                active={!this.state.plotActive} onSelectionChange={this.handleSelectionChange}/>);
     }
 
     return (
       <div>
         <ul className="nav nav-tabs" id="myTab" role="tablist">
           <li className="nav-item">
-            <a className="nav-link active" id="plots-tab" data-toggle="tab" href="#plots"
-               role="tab" aria-controls="plots" aria-selected="true">Plots</a>
+            <a className="nav-link active" id="plots-tab" href="#plots"
+               role="tab" aria-controls="plots" data-toggle="tab" aria-selected="true"
+               onClick={(e) => this.activatePlot(true)}>Plots</a>
           </li>
           <li className="nav-item">
-            <a className="nav-link" id="variables-tab" data-toggle="tab" href="#variables"
-               role="tab" aria-controls="variables" aria-selected="false">Variables</a>
+            <a className="nav-link" id="variables-tab" href="#variables"
+               role="tab" aria-controls="variables" data-toggle="tab" aria-selected="false"
+               onClick={(e) => this.activatePlot(false)}>Variables</a>
           </li>
         </ul>
         <div className="tab-content" id="myTabContent">
-          <div className="tab-pane fade show active" id="plots" role="tabpanel" aria-labelledby="plots-tab">
-            <ParallelCoordinates db={this.db} optim={isOptim} cases={selCases} title={title}/>
-            {plotoptim}
-          </div>
-          <div className="tab-pane fade" id="variables" role="tabpanel" aria-labelledby="variables-tab">
-            <VariableSelector db={this.db} optim={isOptim} cases={cases} selCases={selCases}
-                              onSelectionChange={this.handleSelectionChange}/>
-          </div>
+          {child}
         </div>
       </div>
     );
