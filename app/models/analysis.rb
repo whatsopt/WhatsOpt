@@ -21,9 +21,11 @@ class Analysis < ApplicationRecord
       
   before_validation(on: :create) do
     _create_from_attachment if attachment_exists
-    Connection.create_connections(self)
   end
     
+  after_save do
+    Connection.create_connections(self) if Connection.of_analysis(self).empty?
+  end
   after_save :_ensure_driver_presence
   
   validate :check_mda_import_error, on: :create, if: :attachment_exists

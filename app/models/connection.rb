@@ -87,7 +87,6 @@ class Connection < ApplicationRecord
       end 
       
       Connection.where(from_id: var_from.id).each do |conn|
-        p params
         conn.to.update!(params)
       end      
     end

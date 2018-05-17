@@ -120,7 +120,7 @@ class DisciplinesEditor extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = { nodes: this.props.nodes.slice(1) };
+    this.state = {nodes: this.props.nodes.slice(1)};
 
     this.onDragStart = this.onDragStart.bind(this);
     this.onDragUpdate = this.onDragUpdate.bind(this);
@@ -148,8 +148,14 @@ class DisciplinesEditor extends React.Component {
                                   {position: result.destination.index+1});
   };
 
+  // Take into account in this.state of discipline changes coming
+  // from Discipline components that should arrive through new props
+  static getDerivedStateFromProps(nextProps, prevState) {
+    return {nodes: nextProps.nodes.slice(1)};
+  }
+
   render() {
-    let disciplines = this.props.nodes.slice(1).map((node, i) => {
+    let disciplines = this.state.nodes.map((node, i) => {
       return (<Discipline key={node.id} pos={i+1} index={i} node={node}
                 onDisciplineUpdate={this.props.onDisciplineUpdate}
                 onDisciplineDelete={this.props.onDisciplineDelete} />);
@@ -159,7 +165,7 @@ class DisciplinesEditor extends React.Component {
         <div className='container-fluid'>
           <div className="editor-section">
             <label className="editor-header">Nodes</label>
-            <DragDropContext onDragStart={this.onDragStart} 
+            <DragDropContext onDragStart={this.onDragStart}
                              onDragUpdate={this.onDragUpdate}
                              onDragEnd={this.onDragEnd}>
               <Droppable droppableId="droppable">
