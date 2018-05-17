@@ -177,7 +177,7 @@ class VariablesEditor extends React.Component {
 
   _computeRoleSelection(conn) {
     let options = [{id: 'parameter', text: 'Parameter'},
-                   {id: 'design_var', text: 'Design Var.'},
+                   {id: 'design_var', text: 'Design Variable'},
                    {id: 'response', text: 'Response'},
                    {id: 'min_objective', text: 'Min Objective'},
                    {id: 'max_objective', text: 'Max Objective'},

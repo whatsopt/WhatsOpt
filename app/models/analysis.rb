@@ -21,12 +21,8 @@ class Analysis < ApplicationRecord
       
   before_validation(on: :create) do
     _create_from_attachment if attachment_exists
-  end
-  
-  after_save(on: :create) do
     Connection.create_connections(self)
   end
-  
     
   after_save :_ensure_driver_presence
   

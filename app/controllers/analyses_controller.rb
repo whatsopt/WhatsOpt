@@ -27,7 +27,6 @@ class AnalysesController < ApplicationController
     else 
       @mda = Analysis.new(mda_params)
       if @mda.save
-        #Connection.create_connections(@mda)
         current_user.add_role(:owner, @mda)
         current_user.save
         if @mda.disciplines.nodes.empty?

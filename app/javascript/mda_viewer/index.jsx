@@ -122,7 +122,6 @@ class MdaViewer extends React.Component {
     }
   }
 
-
   handleConnectionDelete(connId) {
     api.deleteConnection(connId, (response) => {this.renderXdsm();});
   }
@@ -143,12 +142,10 @@ class MdaViewer extends React.Component {
     event.preventDefault();
     let newState = update(this.state, {newDisciplineName: {$set: event.target.value}});
     this.setState(newState);
-    return false;
   }
 
   handleDisciplineUpdate(node, discAttrs) {
-    api.updateDiscipline(node.id, discAttrs,
-        (response) => {this.renderXdsm();});
+    api.updateDiscipline(node.id, discAttrs, (response) => {this.renderXdsm();});
   }
 
   handleDisciplineDelete(node) {
@@ -169,27 +166,26 @@ class MdaViewer extends React.Component {
   }
 
   handleAnalysisUpdate(event) {
-      event.preventDefault();
-      api.updateAnalysis(this.props.mda.id, {name: this.state.newAnalysisName},
-        (response) => {
-          let newState = update(this.state, {mda: {name: {$set: this.state.newAnalysisName}}});
-          this.setState(newState);
-        });
-    }
-
+    event.preventDefault();
+    api.updateAnalysis(this.props.mda.id, {name: this.state.newAnalysisName},
+      (response) => {
+        let newState = update(this.state, {mda: {name: {$set: this.state.newAnalysisName}}});
+        this.setState(newState);
+      });
+  }
 
   renderXdsm() {
     api.getAnalysisXdsm(this.props.mda.id,
-        (response) => {
-          let newState = update(this.state,
-             {mda: {nodes: {$set: response.data.nodes},
-                    edges: {$set: response.data.edges},
-                    inactive_edges: {$set: response.data.inactive_edges},
-                    vars: {$set: response.data.vars}}});
-          this.setState(newState);
-          let mda = {nodes: response.data.nodes, edges: response.data.edges};
-          this.xdsmViewer.update(mda);
-        });
+      (response) => {
+        let newState = update(this.state,
+          {mda: {nodes: {$set: response.data.nodes},
+                 edges: {$set: response.data.edges},
+                 inactive_edges: {$set: response.data.inactive_edges},
+                 vars: {$set: response.data.vars}}});
+        this.setState(newState);
+        let mda = {nodes: response.data.nodes, edges: response.data.edges};
+        this.xdsmViewer.update(mda);
+      });
   }
 
   render() {

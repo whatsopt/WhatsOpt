@@ -60,8 +60,10 @@ class Connection < ApplicationRecord
   def update_variables!(params)
     Connection.transaction do
       if (params[:role])
-        # update role of all connections from the source variable
-        Connection.where(from_id: from_id).map {|c| c.update!(role: params[:role])}  
+       # update role of all connections from the source variable
+        Connection.where(from_id: from_id).map do |c| 
+          c.update!(role: params[:role])
+        end
         params = params.except(:role)
       end
       # update from variable
@@ -85,6 +87,7 @@ class Connection < ApplicationRecord
       end 
       
       Connection.where(from_id: var_from.id).each do |conn|
+        p params
         conn.to.update!(params)
       end      
     end

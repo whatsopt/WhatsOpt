@@ -39,7 +39,7 @@ DisciplineSelector.propTypes = {
   nodes: PropTypes.array.isRequired,
   ulabel: PropTypes.string.isRequired,
   label: PropTypes.string.isRequired,
-  selected: PropTypes.number,
+  selected: PropTypes.string,
 };
 
 class ConnectionList extends React.Component {
@@ -61,7 +61,7 @@ class ConnectionList extends React.Component {
 }
 
 ConnectionList.propTypes = {
-  names: PropTypes.array.isRequired,
+  names: PropTypes.string.isRequired,
   conn_ids: PropTypes.array.isRequired,
   active: PropTypes.bool.isRequired,
   onConnectionDelete: PropTypes.func.isRequired,
@@ -143,8 +143,8 @@ class ConnectionsViewer extends React.Component {
 ConnectionsViewer.propTypes = {
   edges: PropTypes.array.isRequired,
   filter: PropTypes.shape({
-    fr: PropTypes.number,
-    to: PropTypes.number,
+    fr: PropTypes.string,
+    to: PropTypes.string,
   }),
   onConnectionDelete: PropTypes.func.isRequired,
 };
@@ -174,7 +174,7 @@ class ConnectionsForm extends React.Component {
 }
 
 ConnectionsForm.propTypes = {
-  newConnectionName: PropTypes.isRequired,
+  newConnectionName: PropTypes.string.isRequired,
   connectionErrors: PropTypes.array.isRequired,
   onConnectionCreate: PropTypes.func.isRequired,
   onConnectionNameChange: PropTypes.func.isRequired,

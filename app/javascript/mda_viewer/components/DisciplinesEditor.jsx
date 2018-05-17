@@ -120,7 +120,7 @@ class DisciplinesEditor extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {nodes: this.props.nodes.slice(1)};
+    this.state = { nodes: this.props.nodes.slice(1) };
 
     this.onDragStart = this.onDragStart.bind(this);
     this.onDragUpdate = this.onDragUpdate.bind(this);
@@ -138,33 +138,30 @@ class DisciplinesEditor extends React.Component {
       return;
     }
 
-//    console.log(result.source.index, result.destination.index);
     const items = reorder(
       this.state.nodes,
       result.source.index,
       result.destination.index
     );
     this.setState({nodes: items});
-    this.props.onDisciplineUpdate(this.props.nodes[result.source.index+1], {position: result.destination.index+1});
+    this.props.onDisciplineUpdate(this.props.nodes[result.source.index+1],
+                                  {position: result.destination.index+1});
   };
 
   render() {
-    let disciplines = this.state.nodes.map((node, i) => {
+    let disciplines = this.props.nodes.slice(1).map((node, i) => {
       return (<Discipline key={node.id} pos={i+1} index={i} node={node}
                 onDisciplineUpdate={this.props.onDisciplineUpdate}
-                onDisciplineDelete={this.props.onDisciplineDelete}
-              />);
+                onDisciplineDelete={this.props.onDisciplineDelete} />);
     });
 
     return (
         <div className='container-fluid'>
           <div className="editor-section">
             <label className="editor-header">Nodes</label>
-            <DragDropContext
-              onDragStart={this.onDragStart}
-              onDragUpdate={this.onDragUpdate}
-              onDragEnd={this.onDragEnd}
-            >
+            <DragDropContext onDragStart={this.onDragStart} 
+                             onDragUpdate={this.onDragUpdate}
+                             onDragEnd={this.onDragEnd}>
               <Droppable droppableId="droppable">
                 {(provided, snapshot) => (
                   (<ul ref={provided.innerRef} {...provided.droppableProps} className="list-group">
