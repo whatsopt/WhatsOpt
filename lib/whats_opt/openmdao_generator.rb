@@ -75,7 +75,7 @@ module WhatsOpt
        
     def _generate_run_scripts(gendir)
       _generate('run_analysis.py', 'run_analysis.py.erb', gendir)
-      _generate('run_scatterplot.py', 'run_scatterplot.py.erb', gendir)
+      _generate('run_doe.py', 'run_doe.py.erb', gendir)
       _generate('run_screening.py', 'run_screening.py.erb', gendir)
       _generate('run_optimization.py', 'run_optimization.py.erb', gendir)
     end

@@ -9,7 +9,7 @@ from <%= @mda.py_modulename %> import <%= @mda.py_classname %>
 
 pb = Problem(<%= @mda.py_classname %>())
 pb.driver = SmtDoeDriver(sampling_method='LHS', n_cases=50)
-case_recorder_filename = '<%= @mda.py_modulename %>_scatterplot.sqlite'        
+case_recorder_filename = '<%= @mda.py_modulename %>_doe.sqlite'        
 recorder = SqliteRecorder(case_recorder_filename)
 pb.driver.add_recorder(recorder)
 pb.model.add_recorder(recorder)

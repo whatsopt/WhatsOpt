@@ -31,8 +31,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
       basenames = @ogen.genfiles.map {|fp| File.basename(fp)}.sort
       expected = ["aerodynamics.py", "aerodynamics_base.py", "cicav.py", 
                   "cicav_base.py", "geometry.py", "geometry_base.py", 
-                  "run_analysis.py", "run_optimization.py", 
-                  "run_scatterplot.py", "run_screening.py"]
+                  "run_analysis.py", "run_doe.py", "run_optimization.py", "run_screening.py"]
       assert_equal expected, basenames
     end
   end 
