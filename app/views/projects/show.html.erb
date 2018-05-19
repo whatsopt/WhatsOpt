@@ -1,8 +1,0 @@
-<h1>Project <%= @project.name %></h1> 
-<div id="accordion" role="tablist" aria-multiselectable="true">
-  <%= render :partial => 'management_card', :locals => { project: @project }%>  
-  <%= render :partial => 'requirements_card', :locals => { project: @project }%>  
-  <%= render :partial => 'process_card', :locals => { project: @project }%>
-  <%= render :partial => 'studies_index_card', :locals => { project: @project }%>					       
-</div>
-

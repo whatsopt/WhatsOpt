@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 38) do
+ActiveRecord::Schema.define(version: 39) do
 
   create_table "analyses", force: :cascade do |t|
     t.string "name"
@@ -76,16 +76,9 @@ ActiveRecord::Schema.define(version: 38) do
 
   create_table "parameters", force: :cascade do |t|
     t.string "init"
-    t.string "lower"
-    t.string "upper"
+    t.string "lower", default: ""
+    t.string "upper", default: ""
     t.integer "variable_id"
-  end
-
-  create_table "projects", force: :cascade do |t|
-    t.string "name", limit: 30, default: "", null: false
-    t.string "description", default: "", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
   end
 
   create_table "roles", force: :cascade do |t|
@@ -97,21 +90,6 @@ ActiveRecord::Schema.define(version: 38) do
     t.index ["name", "resource_type", "resource_id"], name: "index_roles_on_name_and_resource_type_and_resource_id"
     t.index ["name"], name: "index_roles_on_name"
     t.index ["resource_type", "resource_id"], name: "index_roles_on_resource_type_and_resource_id"
-  end
-
-  create_table "runs", force: :cascade do |t|
-    t.integer "study_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "studies", force: :cascade do |t|
-    t.integer "project_id"
-    t.string "name", limit: 30, default: "", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.text "tree_json"
-    t.text "conns_json"
   end
 
   create_table "users", force: :cascade do |t|
