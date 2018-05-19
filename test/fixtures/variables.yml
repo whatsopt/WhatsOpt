@@ -1,6 +1,5 @@
 varx1_out:
   name: x1
-  fullname: x1
   discipline: driver_cicav
   io_mode: out
   type: Float
@@ -9,7 +8,6 @@ varx1_out:
 
 vary2_in:
   name: y2
-  fullname: y2
   discipline: driver_cicav
   io_mode: in
   type: Float
@@ -18,7 +16,6 @@ vary2_in:
 
 varz_design_out:
   name: z
-  fullname: z
   discipline: driver_cicav
   io_mode: out
   type: Float
@@ -27,7 +24,6 @@ varz_design_out:
   
 varobj_objective_in:
   name: obj
-  fullname: obj
   discipline: driver_cicav
   io_mode: in
   type: Float
@@ -36,7 +32,6 @@ varobj_objective_in:
   
 varobj_geo_out:
   name: obj
-  fullname: obj
   discipline: geometry
   io_mode: out
   type: Float
@@ -45,7 +40,6 @@ varobj_geo_out:
   
 varz_geo_in:
   name: z
-  fullname: z
   discipline: geometry
   io_mode: in
   type: Float
@@ -54,7 +48,6 @@ varz_geo_in:
     
 varya_geo_in:
   name: ya
-  fullname: ya
   discipline: geometry
   io_mode: in
   type: Float
@@ -63,7 +56,6 @@ varya_geo_in:
   
 varx1_geo_in:
   name: x1
-  fullname: x1
   discipline: geometry
   io_mode: in
   type: Float
@@ -72,7 +64,6 @@ varx1_geo_in:
   
 varyg_geo_out:
   name: yg
-  fullname: yg
   discipline: geometry
   io_mode: out
   type: Float
@@ -81,7 +72,6 @@ varyg_geo_out:
   
 varya_aero_out:
   name: ya
-  fullname: ya
   discipline: aerodynamics
   io_mode: out
   type: Float
@@ -90,7 +80,6 @@ varya_aero_out:
   
 vary2_aero_out:
   name: y2
-  fullname: y2
   discipline: aerodynamics
   io_mode: out
   type: Float
@@ -99,7 +88,6 @@ vary2_aero_out:
     
 varyg_aero_in:
   name: yg
-  fullname: yg
   discipline: aerodynamics
   io_mode: in
   type: Float
@@ -108,7 +96,6 @@ varyg_aero_in:
   
 varz_aero_in:
   name: z
-  fullname: z
   discipline: aerodynamics
   io_mode: in
   type: Float
@@ -117,7 +104,6 @@ varz_aero_in:
   
 varx_fastdisc_in:
   name: z1
-  fullname: z1
   discipline: fast_discipline
   io_mode: in
   type: Float
@@ -126,7 +112,6 @@ varx_fastdisc_in:
   
 varx_fastdisc_doublon_in:
   name: z1
-  fullname: z1
   discipline: fast_discipline
   io_mode: in
   type: Float
@@ -135,7 +120,6 @@ varx_fastdisc_doublon_in:
     
 var_scalar_float:
   name: y0
-  fullname: y0
   discipline: dummy
   io_mode: in
   type: Float
@@ -144,7 +128,6 @@ var_scalar_float:
     
 var_array_float:
   name: y1
-  fullname: y1
   discipline: dummy
   io_mode: in
   type: Float
@@ -153,7 +136,6 @@ var_array_float:
   
 var_nparray_float:
   name: y2
-  fullname: y2
   discipline: dummy
   io_mode: in
   type: Float
@@ -162,7 +144,6 @@ var_nparray_float:
   
 var_scalar_int:
   name: y3
-  fullname: y3
   discipline: dummy
   io_mode: in
   type: Integer
@@ -171,7 +152,6 @@ var_scalar_int:
     
 var_scalar_int:
   name: y4
-  fullname: y4
   discipline: dummy
   io_mode: in
   type: Integer
@@ -180,7 +160,6 @@ var_scalar_int:
   
 var_string:
   name: y5
-  fullname: y5
   discipline: dummy
   io_mode: in
   type: String

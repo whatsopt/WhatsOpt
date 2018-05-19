@@ -178,28 +178,11 @@ class AnalysisDatabase {
     if (vinfos.length === 1) {
       vinfo = vinfos[0];
     } else if (vinfos.length > 1) {
-      console.log("Find several occurences of " + vname + "("+ioMode +"): " + JSON.stringify(vinfos));
-      console.log("Check against fullnames");
-      vinfos = vars[disc][ioMode].filter((v) => {
-        return v.fullname === vname;
-      });
-      if (vinfos.length === 1) {
-        vinfo = vinfos[0];
-      } else {
-        throw Error(`Expected one variable ${vname} found ${vinfos.length} in ${JSON.stringify(vars[disc][ioMode])}`);
-      }
+      console.log("Warning: Find several occurences of " + vname + "("+ioMode +"): " + JSON.stringify(vinfos));
+      vinfo = vinfos[0];
+      console.log("Take the first: "+JSON.stringify(vinfo));
     } else {
-      // console.log("Find no occurence of " + vname + "(" + ioMode + "): " +
-      // JSON.stringify(vinfos));
-      // console.log("Check against fullnames");
-      vinfos = vars[disc][ioMode].filter((v) => {
-        return v.fullname === vname;
-      });
-      if (vinfos.length === 1) {
-        vinfo = vinfos[0];
-      } else {
-        throw Error(`Expected one variable ${vname} found ${vinfos.length} in ${JSON.stringify(vars[disc][ioMode])}`);
-      }
+      throw Error(`Expected one variable ${vname} found ${vinfos.length} in ${JSON.stringify(vars[disc][ioMode])}`);
     }
     return vinfo;
   }

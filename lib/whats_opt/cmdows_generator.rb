@@ -69,14 +69,14 @@ class WhatsOpt::CmdowsGenerator
     xml.inputs do
       disc.input_variables.each do |ivar|
         xml.input do
-          xml.parameterUID ivar.fullname
+          xml.parameterUID ivar.name
         end
       end
     end
     xml.outputs do
-      disc.output_variables.each do |ivar|
+      disc.output_variables.each do |ovar|
         xml.output do
-          xml.parameterUID ivar.fullname
+          xml.parameterUID ovar.name
         end
       end
     end
@@ -86,11 +86,11 @@ class WhatsOpt::CmdowsGenerator
     vars = {}
     @mda.disciplines.each do |d|
       d.variables.each do |v|
-        vars[v.fullname] = v
+        vars[v.name] = v
       end
     end
-    vars.each do |fullname, var|
-      xml.parameter uID: fullname do |xml|
+    vars.each do |name, var|
+      xml.parameter uID: name do |xml|
         xml.label var[:name]
       end
     end  

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 39) do
+ActiveRecord::Schema.define(version: 20180519194015) do
 
   create_table "analyses", force: :cascade do |t|
     t.string "name"
@@ -129,7 +129,6 @@ ActiveRecord::Schema.define(version: 39) do
     t.string "desc"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "fullname"
     t.boolean "active", default: true
     t.index ["discipline_id"], name: "index_variables_on_discipline_id"
   end

@@ -19,18 +19,18 @@ class CmdowsMdaImporterTest < ActiveSupport::TestCase
 
   test "should get variables attributes" do
     expected = {WhatsOpt::Discipline::NULL_DRIVER_NAME => [],
-      "14"=>[{:name=>"x1", :fullname=>"x1", :shape=>"1", :type=>"Float", :units=>"", :desc=>"", :io_mode=>"in"}, 
-        {:name=>"z", :fullname=>"z", :shape=>"1", :type=>"Float", :units=>"", :desc=>"", :io_mode=>"in"}, 
-        {:name=>"y2", :fullname=>"y2", :shape=>"1", :type=>"Float", :units=>"", :desc=>"", :io_mode=>"in"}, 
-        {:name=>"y", :fullname=>"y1", :shape=>"1", :type=>"Float", :units=>"", :desc=>"", :io_mode=>"out"}], 
-      "15"=>[{:name=>"x2", :fullname=>"x2", :shape=>"1", :type=>"Float", :units=>"", :desc=>"", :io_mode=>"in"}, 
-        {:name=>"z", :fullname=>"z", :shape=>"1", :type=>"Float", :units=>"", :desc=>"", :io_mode=>"in"}, 
-        {:name=>"y", :fullname=>"y1", :shape=>"1", :type=>"Float", :units=>"", :desc=>"", :io_mode=>"in"}, 
-        {:name=> "y2", :fullname=>"y2", :shape=>"1", :type=>"Float", :units=>"", :desc=>"", :io_mode=>"out"}, 
-        {:name=>"y", :fullname=>"y3", :shape=>"1", :type=>"Float", :units=>"", :desc=>"", :io_mode=>"out"}], 
-      "16"=>[{:name=>"y", :fullname=>"y1", :shape=>"1", :type=>"Float", :units=>"", :desc=>"", :io_mode=>"in"}, 
-        {:name=>"y2", :fullname=>"y2", :shape=>"1", :type=>"Float", :units=>"", :desc=>"", :io_mode=>"in"},
-        {:name=>"z", :fullname=>"z", :shape=>"1", :type=>"Float", :units=>"", :desc=>"", :io_mode=>"out"}]
+      "14"=>[{:name=>"x1", :shape=>"1", :type=>"Float", :units=>"", :desc=>"", :io_mode=>"in"}, 
+        {:name=>"z", :shape=>"1", :type=>"Float", :units=>"", :desc=>"", :io_mode=>"in"}, 
+        {:name=>"y2", :shape=>"1", :type=>"Float", :units=>"", :desc=>"", :io_mode=>"in"}, 
+        {:name=>"y", :shape=>"1", :type=>"Float", :units=>"", :desc=>"", :io_mode=>"out"}], 
+      "15"=>[{:name=>"x2", :shape=>"1", :type=>"Float", :units=>"", :desc=>"", :io_mode=>"in"}, 
+        {:name=>"z", :shape=>"1", :type=>"Float", :units=>"", :desc=>"", :io_mode=>"in"}, 
+        {:name=>"y", :shape=>"1", :type=>"Float", :units=>"", :desc=>"", :io_mode=>"in"}, 
+        {:name=> "y2", :shape=>"1", :type=>"Float", :units=>"", :desc=>"", :io_mode=>"out"}, 
+        {:name=>"y", :shape=>"1", :type=>"Float", :units=>"", :desc=>"", :io_mode=>"out"}], 
+      "16"=>[{:name=>"y", :shape=>"1", :type=>"Float", :units=>"", :desc=>"", :io_mode=>"in"}, 
+        {:name=>"y2", :shape=>"1", :type=>"Float", :units=>"", :desc=>"", :io_mode=>"in"},
+        {:name=>"z", :shape=>"1", :type=>"Float", :units=>"", :desc=>"", :io_mode=>"out"}]
     }
     assert_equal(expected, @cmi.get_variables_attributes)
   end

@@ -83,7 +83,6 @@ class Variable < ApplicationRecord
   private
   
   def set_defaults
-    self.fullname = self.name if self.fullname.blank?
     self.io_mode = DEFAULT_IOMODE if self.io_mode.blank?
     self.shape = DEFAULT_SHAPE if self.shape.blank?
     self.type  = DEFAULT_TYPE if self.type.blank?

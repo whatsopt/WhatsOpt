@@ -13,16 +13,12 @@ class Connection < ApplicationRecord
     
   before_validation :_ensure_role_presence  
     
-  def self.create_connections(mda, based_on = :name)
+  def self.create_connections(mda)
     varouts = Variable.outputs.joins(discipline: :analysis).where(analyses: {id: mda.id})
     varins = Variable.inputs.joins(discipline: :analysis).where(analyses: {id: mda.id})
     
     varouts.each do |vout|
-      if based_on == :fullname
-        vins = varins.where(fullname: vout.fullname)
-      else
-        vins = varins.where(name: vout.name)
-      end
+      vins = varins.where(name: vout.name)
       vins.each do |vin|
         role = WhatsOpt::Variable::PLAIN_ROLE
         if vout.discipline.is_driver?
@@ -38,7 +34,7 @@ class Connection < ApplicationRecord
     
   def self.between(disc_from_id, disc_to_id)
     Connection.joins(:from).where(variables: {discipline_id: disc_from_id}) #.where.not(variables: {type: :String})
-              .order('variables.fullname')
+              .order('variables.name')
               .joins(:to).where(tos_connections: {discipline_id: disc_to_id})
   end 
 
@@ -71,21 +67,11 @@ class Connection < ApplicationRecord
       if var_from.parameter && params[:parameter_attributes]
         params[:parameter_attributes][:id] = var_from.parameter.id
       end
-      if params[:name]
-        fullname = var_from.fullname
-        params[:fullname] = fullname.gsub('.'+var_from.name, '.'+params[:name])
-      end 
       var_from.update!(params)
 
       # update to related variables
       params = params.except(:parameter_attributes)
-      
-      var_to = Variable.find(to_id)
-      if params[:name]
-        fullname = var_to.fullname
-        params[:fullname] = fullname.gsub('.'+var_to.name, '.'+params[:name])
-      end 
-      
+      var_to = Variable.find(to_id)      
       Connection.where(from_id: var_from.id).each do |conn|
         conn.to.update!(params)
       end      

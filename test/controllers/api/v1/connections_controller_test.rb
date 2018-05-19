@@ -17,8 +17,6 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
                                      connection: {from: @from.id, to: @to.id, names: ["newvar"]}}), 
          as: :json, headers: @auth_headers 
     assert_response :success
-    var = Variable.where(name: 'newvar').take
-    assert_equal var.name, var.fullname
     conn = Connection.last
     assert_equal conn.role, WhatsOpt::Variable::PLAIN_ROLE
   end
@@ -78,8 +76,6 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
       assert_equal values[i], @conn.from.send(attr)
       assert_equal values[i], @conn.to.send(attr)
     end
-    assert @conn.from.name, @conn.from.fullname
-    assert @conn.to.name, @conn.to.fullname
     assert @conn.from.parameter
     assert_equal "[[1,2]]", @conn.from.parameter.init
     assert_equal "0", @conn.from.parameter.lower

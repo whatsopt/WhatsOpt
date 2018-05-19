@@ -329,7 +329,6 @@ class WhatsOpt(object):
             self._create_varattr_from_connection(conn['tgt'], 'in')
 
         self._create_varattr_for_global_outputs(connections)
-
             
     def _create_varattr_from_connection(self, fullname, io_mode):
         disc, var, fname = WhatsOpt._extract_disc_var(fullname)
@@ -342,7 +341,6 @@ class WhatsOpt(object):
         elif varattr not in self.varattrs[NULL_DRIVER_NAME]:
             self.varattrs[NULL_DRIVER_NAME].append(varattr)
             
-        
     def _create_varattr_for_global_outputs(self, connections):
         for fullname, varattr in iteritems(self.vars): 
             if varattr['io_mode'] == 'out':

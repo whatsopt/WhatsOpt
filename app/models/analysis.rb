@@ -113,11 +113,7 @@ class Analysis < ApplicationRecord
         else
           conns = Connection.between(d_from.id, d_to.id).inactive
         end
-        if self.attachment&.mda_cmdows?
-          names = conns.map{ |c| c.from.fullname }.join(",")
-        else
-          names = conns.map{ |c| c.from.name }.join(",")
-        end
+        names = conns.map{ |c| c.from.name }.join(",")
         ids = conns.map(&:id)
         roles = conns.map {|c| c[:role]}
         unless conns.empty?
