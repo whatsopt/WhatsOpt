@@ -20,7 +20,7 @@ class VariablesEditor extends React.Component {
   componentWillUnmount() {
     $('.table-tooltip').tooltip('dispose');
   }
-
+  
   render() {
     this.connections = this.props.db.computeConnections(this.props.filter);
 
@@ -159,7 +159,7 @@ class VariablesEditor extends React.Component {
     if (cellInfo.column.id === 'name') {
       let title = this.connections[cellInfo.index]['desc'];
       textStyle += " table-tooltip";
-      return (<span className={textStyle} title={title}>{info}</span>);
+      return (<span className={textStyle} title={title} data-original-title={title}>{info}</span>);
     } else {
       return (<span className={textStyle}>{info}</span>);
     }
