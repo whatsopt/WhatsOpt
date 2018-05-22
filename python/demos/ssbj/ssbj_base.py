@@ -24,7 +24,7 @@ class SsbjBase(Group):
     
         indeps = self.add_subsystem('indeps', IndepVarComp(), promotes=['*'])
 		
-        indeps.add_output('x_aer', 1.0)
+        indeps.add_output('x_aer', 1.2)
         indeps.add_output('z', np.ones((6,)))
         indeps.add_output('x_pro', 1.0)
         indeps.add_output('x_str', np.ones((2,)))		    

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180519194015) do
+ActiveRecord::Schema.define(version: 42) do
 
   create_table "analyses", force: :cascade do |t|
     t.string "name"
@@ -75,7 +75,7 @@ ActiveRecord::Schema.define(version: 20180519194015) do
   end
 
   create_table "parameters", force: :cascade do |t|
-    t.string "init"
+    t.string "init", default: ""
     t.string "lower", default: ""
     t.string "upper", default: ""
     t.integer "variable_id"
