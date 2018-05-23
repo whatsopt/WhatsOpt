@@ -13,10 +13,10 @@ class Disc2Base(ExplicitComponent):
 
     def setup(self):
 		
-        self.add_input('z', val=np.ones((2,)), desc='')
-        self.add_input('y1', val=1.0, desc='')
+        self.add_input('z', val=np.ones((2,)), desc='global variable')
+        self.add_input('y1', val=1.0, desc='disc1 state')
 		
-        self.add_output('y2', val=1.0, desc='')
+        self.add_output('y2', val=1.0, desc='disc2 state')
 		
 
         
