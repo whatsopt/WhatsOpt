@@ -22,19 +22,19 @@ class Ssbj(SsbjBase):
         super(Ssbj, self).__init__()
         self.scalers = init_ssbj_mda()
 
-    def createStructure(self):
+    def create_structure(self):
         return Structure(self.scalers)
 
-    def createAerodynamics(self):
+    def create_aerodynamics(self):
         return Aerodynamics(self.scalers)
 
-    def createPropulsion(self):
+    def create_propulsion(self):
         return Propulsion(self.scalers)
 
-    def createPerformance(self):
+    def create_performance(self):
         return Performance(self.scalers)
 
-    def createConstraints(self):
+    def create_constraints(self):
         return Constraints(self.scalers)
 
 

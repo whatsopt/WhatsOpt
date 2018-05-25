@@ -15,7 +15,7 @@ class WhatsOpt::CmdowsGenerator
   
   def generate(validate=true)
     @doc ||= @builder.doc
-    filename = "#{@mda.to_basename}.xml"
+    filename = "#{@mda.basename}.xml"
     return @doc.to_xml, filename 
   end
   

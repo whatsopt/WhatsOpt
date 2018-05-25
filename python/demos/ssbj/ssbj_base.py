@@ -40,18 +40,18 @@ class SsbjBase(Group):
         self.linear_solver = ScipyKrylov()
 
     
-    def createStructure(self):
+    def create_structure(self):
     	return Structure()
     
-    def createAerodynamics(self):
+    def create_aerodynamics(self):
     	return Aerodynamics()
     
-    def createPropulsion(self):
+    def create_propulsion(self):
     	return Propulsion()
     
-    def createPerformance(self):
+    def create_performance(self):
     	return Performance()
     
-    def createConstraints(self):
+    def create_constraints(self):
     	return Constraints()
     

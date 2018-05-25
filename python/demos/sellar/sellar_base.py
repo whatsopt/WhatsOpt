@@ -34,12 +34,12 @@ class SellarBase(Group):
         self.linear_solver = ScipyKrylov()
 
     
-    def createDisc1(self):
+    def create_disc1(self):
     	return Disc1()
     
-    def createDisc2(self):
+    def create_disc2(self):
     	return Disc2()
     
-    def createFunctions(self):
+    def create_functions(self):
     	return Functions()
     

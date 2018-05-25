@@ -5,24 +5,24 @@ module WhatsOpt
   module OpenmdaoModule
     using WhatsOpt
 
-    def to_basename
+    def basename
       "#{self.name.snakize}"
     end
         
     def py_modulename
-      "#{self.to_basename}"
+      "#{self.basename}"
     end
     
     def py_classname
-      self.name.snakize.camelize
+      self.basename.camelize
     end
 
     def py_filename
-      "#{self.py_modulename}.py"
+      "#{self.basename}.py"
     end
 
     def py_basefilename
-      "#{self.py_modulename}_base.py"
+      "#{self.basename}_base.py"
     end
         
   end
