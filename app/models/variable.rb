@@ -57,26 +57,26 @@ class Variable < ApplicationRecord
   
   # TODO: create parameter.rb as for variable.rb
   def init_py_value
-    if self.parameter&.init
-      self.parameter.init
-    else
+    if self.parameter&.init.blank?
       default_py_value
+    else
+      self.parameter.init
     end
   end
   
   def lower_py_value
-    if self.parameter&.lower
-      self.parameter.lower
-    else
+    if self.parameter&.lower.blank?
       super
+    else
+      self.parameter.lower
     end    
   end
   
   def upper_py_value
-    if self.parameter
-      self.parameter&.upper
-    else
+    if self.parameter&.upper.blank?
       super
+    else
+      self.parameter.upper
     end
   end
   
