@@ -37,7 +37,7 @@ struct FunctionsOutput {
 }
 
 service Sellar {
-    Disc1Output computeDisc1(1:Disc1Input input)
-    Disc2Output computeDisc2(1:Disc1Input input)
-    FunctionsOutput computeFunctions(1:FunctionsInput input)
+    Disc1Output computeDisc1(1:Disc1Input ins)
+    Disc2Output computeDisc2(1:Disc1Input ins)
+    FunctionsOutput computeFunctions(1:FunctionsInput ins)
 }

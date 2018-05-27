@@ -20,14 +20,14 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
   
   test "should generate openmdao process for an mda" do
     Dir.mktmpdir do |dir|
-      filepath = @ogen._generate_mda dir
+      filepath = @ogen._generate_code dir
       assert File.exists?(filepath)
     end
   end
   
   test "should maintain a list of generated filepaths" do
     Dir.mktmpdir do |dir|
-      filepath = @ogen._generate_mda dir
+      filepath = @ogen._generate_code dir
       basenames = @ogen.genfiles.map {|fp| File.basename(fp)}.sort
       expected = ["aerodynamics.py", "aerodynamics_base.py", "cicav.py", 
                   "cicav_base.py", "geometry.py", "geometry_base.py", 

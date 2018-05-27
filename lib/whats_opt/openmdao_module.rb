@@ -1,7 +1,6 @@
 require 'whats_opt/string'
 
 module WhatsOpt
-
   module OpenmdaoModule
     using WhatsOpt
 
@@ -23,8 +22,6 @@ module WhatsOpt
 
     def py_basefilename
       "#{self.basename}_base.py"
-    end
-        
+    end   
   end
-
 end

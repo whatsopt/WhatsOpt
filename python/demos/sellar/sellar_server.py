@@ -16,15 +16,15 @@ class SellarHandler:
         self.disc2 = factory.create_disc2()
         self.functions = factory.create_functions()
 
-    def compute_disc1(self, input):
-        return to_thrift_disc1_output(self.disc1.compute(to_openmdao_disc1_inputs(input)))
+    def compute_disc1(self, ins):
+        return to_thrift_disc1_output(self.disc1.compute(to_openmdao_disc1_inputs(ins)))
 
-    def compute_disc2(self, input):
-        return to_thrift_disc2_output(self.disc2.compute(to_openmdao_disc2_inputs(input)))
+    def compute_disc2(self, ins):
+        return to_thrift_disc2_output(self.disc2.compute(to_openmdao_disc2_inputs(ins)))
 
-    def compute_functions(self, input):
-        return to_thrift_functions_output(self.functions.compute(to_openmdao_functions_inputs(input)))
-    
+    def compute_functions(self, ins):
+        return to_thrift_functions_output(self.functions.compute(to_openmdao_functions_inputs(ins)))
+
 
 handler = SellarHandler()
 processor = SellarService.Processor(handler)

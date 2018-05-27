@@ -7,11 +7,8 @@ from sellar_conversions import *
 
 class Disc2(Disc2Base):
     """ An OpenMDAO component to encapsulate Disc2 discipline """
-		
+
     def compute(self, inputs, outputs):
         """ Disc2 computation """
-
         outputs = to_openmdao_disc2_outputs(to_thrift_disc2_input(inputs))
-
-				
         
