@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM ubuntu:16.04
 MAINTAINER remi.lafage@onera.fr
 
 #ENV http_proxy=http://proxy.onecert.fr:80
@@ -75,39 +75,63 @@ RUN eval "$(rbenv init -)"; rbenv install 2.3.3 \
 &&  eval "$(rbenv init -)"; gem update --system \
 && eval "$(rbenv init -)"; gem install bundler --force
 
-# node.js LTS install
-RUN curl --silent --location https://deb.nodesource.com/setup_6.x | bash - \
-    && apt-get install -y nodejs \
-    && npm -g up
-
-# yarn install
-RUN curl -o- -L https://yarnpkg.com/install.sh | bash
-ENV PATH "$PATH:/root/.yarn/bin"
-
 # pip install
 RUN pip install jupyter \
+    && pip install thrift==0.11.0 \
 	&& pip install openmdao==2.2.1
 
 # OpenVSP
-RUN apt-get install -y git cmake libxml2-dev \
-			g++ libcpptest-dev libeigen3-dev \
-			libcminpack-dev swig \
-  && apt-get update \
-  && mkdir OpenVSP \
-  && cd OpenVSP \
-  && mkdir repo \
-  && git clone https://github.com/OpenVSP/OpenVSP.git repo \
-  && mkdir build \
-  && cd build \
-  && echo $PWD \
-  && cmake -DCMAKE_BUILD_TYPE=Release \
-	-DVSP_USE_SYSTEM_CPPTEST=false \
-	-DVSP_USE_SYSTEM_LIBXML2=true \
-	-DVSP_USE_SYSTEM_EIGEN=false \
-	-DVSP_USE_SYSTEM_CMINPACK=true \
-	-DCMAKE_INSTALL_PREFIX=/usr/local/bin \
-	-DVSP_NO_GRAPHICS=1 ../repo/SuperProject \
-  && make 
+#RUN apt-get install -y git cmake libxml2-dev \
+#			g++ libcpptest-dev libeigen3-dev \
+#			libcminpack-dev swig \
+#  && apt-get update \
+#  && mkdir OpenVSP \
+#  && cd OpenVSP \
+#  && mkdir repo \
+#  && git clone https://github.com/OpenVSP/OpenVSP.git repo \
+#  && mkdir build \
+#  && cd build \
+#  && echo $PWD \
+#  && cmake -DCMAKE_BUILD_TYPE=Release \
+#	-DVSP_USE_SYSTEM_CPPTEST=false \
+#	-DVSP_USE_SYSTEM_LIBXML2=true \
+#	-DVSP_USE_SYSTEM_EIGEN=false \
+#	-DVSP_USE_SYSTEM_CMINPACK=true \
+#	-DCMAKE_INSTALL_PREFIX=/usr/local/bin \
+#	-DVSP_NO_GRAPHICS=1 ../repo/SuperProject \
+#  && make 
+
+# Thrift
+ENV THRIFT_VERSION 0.11.0
+
+RUN buildDeps=" \
+		automake \
+		bison \
+		curl \
+		flex \
+		g++ \
+		libboost-dev \
+		libboost-filesystem-dev \
+		libboost-program-options-dev \
+		libboost-system-dev \
+		libboost-test-dev \
+		libevent-dev \
+		libssl-dev \
+		libtool \
+		make \
+		pkg-config \
+	"; \
+	apt-get update && apt-get install -y --no-install-recommends $buildDeps && rm -rf /var/lib/apt/lists/* \
+	&& curl -sSL "http://apache.mirrors.spacedump.net/thrift/$THRIFT_VERSION/thrift-$THRIFT_VERSION.tar.gz" -o thrift.tar.gz \
+	&& mkdir -p /thrift \
+	&& tar zxf thrift.tar.gz -C /thrift --strip-components=1 \
+	&& rm thrift.tar.gz \
+	&& cd /thrift \
+	&& ./configure  --without-python --without-cpp --without-ruby --without-nodejs --without-py3 \
+	&& make \
+	&& make install \
+	&& cd / \
+    && rm -rf /thrift 
 
 RUN mkdir -p /whatsopt 
 WORKDIR /whatsopt
