@@ -24,9 +24,9 @@ if len(sys.argv) <= 1 or sys.argv[1] == '--help':
     print('Usage: ' + sys.argv[0] + ' [-h host[:port]] [-u url] [-f[ramed]] [-s[sl]] [-novalidate] [-ca_certs certs] [-keyfile keyfile] [-certfile certfile] function [arg1 [arg2...]]')
     print('')
     print('Functions:')
-    print('  Disc1Output computeDisc1(Disc1Input input)')
-    print('  Disc2Output computeDisc2(Disc1Input input)')
-    print('  FunctionsOutput computeFunctions(FunctionsInput input)')
+    print('  Disc1Output compute_disc1(Disc1Input ins)')
+    print('  Disc2Output compute_disc2(Disc2Input ins)')
+    print('  FunctionsOutput compute_functions(FunctionsInput ins)')
     print('')
     sys.exit(0)
 
@@ -106,23 +106,23 @@ protocol = TBinaryProtocol(transport)
 client = Sellar.Client(protocol)
 transport.open()
 
-if cmd == 'computeDisc1':
+if cmd == 'compute_disc1':
     if len(args) != 1:
-        print('computeDisc1 requires 1 args')
+        print('compute_disc1 requires 1 args')
         sys.exit(1)
-    pp.pprint(client.computeDisc1(eval(args[0]),))
+    pp.pprint(client.compute_disc1(eval(args[0]),))
 
-elif cmd == 'computeDisc2':
+elif cmd == 'compute_disc2':
     if len(args) != 1:
-        print('computeDisc2 requires 1 args')
+        print('compute_disc2 requires 1 args')
         sys.exit(1)
-    pp.pprint(client.computeDisc2(eval(args[0]),))
+    pp.pprint(client.compute_disc2(eval(args[0]),))
 
-elif cmd == 'computeFunctions':
+elif cmd == 'compute_functions':
     if len(args) != 1:
-        print('computeFunctions requires 1 args')
+        print('compute_functions requires 1 args')
         sys.exit(1)
-    pp.pprint(client.computeFunctions(eval(args[0]),))
+    pp.pprint(client.compute_functions(eval(args[0]),))
 
 else:
     print('Unrecognized method %s' % cmd)

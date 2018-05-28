@@ -9,6 +9,7 @@ typedef list<Matrix> Cube
 struct Disc1Input {
     1: Float  x
     2: Vector z   
+    3: Float y2   
 }
 
 struct Disc1Output {
@@ -17,6 +18,7 @@ struct Disc1Output {
 
 struct Disc2Input {
     1: Vector z   
+    2: Float y1
 }
 
 struct Disc2Output {
@@ -37,7 +39,7 @@ struct FunctionsOutput {
 }
 
 service Sellar {
-    Disc1Output computeDisc1(1:Disc1Input ins)
-    Disc2Output computeDisc2(1:Disc1Input ins)
-    FunctionsOutput computeFunctions(1:FunctionsInput ins)
+    Disc1Output compute_disc1(1:Disc1Input ins)
+    Disc2Output compute_disc2(1:Disc2Input ins)
+    FunctionsOutput compute_functions(1:FunctionsInput ins)
 }

@@ -21,12 +21,14 @@ class Disc1Input(object):
     Attributes:
      - x
      - z
+     - y2
     """
 
 
-    def __init__(self, x=None, z=None,):
+    def __init__(self, x=None, z=None, y2=None,):
         self.x = x
         self.z = z
+        self.y2 = y2
 
     def read(self, iprot):
         if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
@@ -52,6 +54,11 @@ class Disc1Input(object):
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
+            elif fid == 3:
+                if ftype == TType.DOUBLE:
+                    self.y2 = iprot.readDouble()
+                else:
+                    iprot.skip(ftype)
             else:
                 iprot.skip(ftype)
             iprot.readFieldEnd()
@@ -72,6 +79,10 @@ class Disc1Input(object):
             for iter6 in self.z:
                 oprot.writeDouble(iter6)
             oprot.writeListEnd()
+            oprot.writeFieldEnd()
+        if self.y2 is not None:
+            oprot.writeFieldBegin('y2', TType.DOUBLE, 3)
+            oprot.writeDouble(self.y2)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
@@ -151,11 +162,13 @@ class Disc2Input(object):
     """
     Attributes:
      - z
+     - y1
     """
 
 
-    def __init__(self, z=None,):
+    def __init__(self, z=None, y1=None,):
         self.z = z
+        self.y1 = y1
 
     def read(self, iprot):
         if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
@@ -176,6 +189,11 @@ class Disc2Input(object):
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
+            elif fid == 2:
+                if ftype == TType.DOUBLE:
+                    self.y1 = iprot.readDouble()
+                else:
+                    iprot.skip(ftype)
             else:
                 iprot.skip(ftype)
             iprot.readFieldEnd()
@@ -192,6 +210,10 @@ class Disc2Input(object):
             for iter13 in self.z:
                 oprot.writeDouble(iter13)
             oprot.writeListEnd()
+            oprot.writeFieldEnd()
+        if self.y1 is not None:
+            oprot.writeFieldBegin('y1', TType.DOUBLE, 2)
+            oprot.writeDouble(self.y1)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
@@ -445,6 +467,7 @@ Disc1Input.thrift_spec = (
     None,  # 0
     (1, TType.DOUBLE, 'x', None, None, ),  # 1
     (2, TType.LIST, 'z', (TType.DOUBLE, None, False), None, ),  # 2
+    (3, TType.DOUBLE, 'y2', None, None, ),  # 3
 )
 all_structs.append(Disc1Output)
 Disc1Output.thrift_spec = (
@@ -455,6 +478,7 @@ all_structs.append(Disc2Input)
 Disc2Input.thrift_spec = (
     None,  # 0
     (1, TType.LIST, 'z', (TType.DOUBLE, None, False), None, ),  # 1
+    (2, TType.DOUBLE, 'y1', None, None, ),  # 2
 )
 all_structs.append(Disc2Output)
 Disc2Output.thrift_spec = (

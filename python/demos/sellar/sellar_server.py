@@ -17,18 +17,27 @@ class SellarHandler:
         self.functions = factory.create_functions()
 
     def compute_disc1(self, ins):
-        return to_thrift_disc1_output(self.disc1.compute(to_openmdao_disc1_inputs(ins)))
+        outputs = {}
+        inputs = to_openmdao_disc1_inputs(ins)
+        self.disc1.compute(inputs, outputs)
+        return to_thrift_disc1_output(outputs)
 
     def compute_disc2(self, ins):
-        return to_thrift_disc2_output(self.disc2.compute(to_openmdao_disc2_inputs(ins)))
+        outputs = {}
+        inputs = to_openmdao_disc2_inputs(ins)
+        self.disc2.compute(inputs, outputs)
+        return to_thrift_disc2_output(outputs)
 
     def compute_functions(self, ins):
-        return to_thrift_functions_output(self.functions.compute(to_openmdao_functions_inputs(ins)))
+        outputs = {}
+        inputs = to_openmdao_functions_inputs(ins)
+        self.functions.compute(inputs, outputs)
+        return to_thrift_functions_output(outputs)
 
 
 handler = SellarHandler()
 processor = SellarService.Processor(handler)
-transport = TSocket.TServerSocket(port=30303)
+transport = TSocket.TServerSocket(port=31400)
 tfactory = TTransport.TBufferedTransportFactory()
 pfactory = TBinaryProtocol.TBinaryProtocolFactory()
 
