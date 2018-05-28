@@ -7,21 +7,25 @@ module WhatsOpt
     def basename
       "#{self.name.snakize}"
     end
+    
+    def camelname
+      basename.camelize
+    end    
         
     def py_modulename
-      "#{self.basename}"
+      basename
     end
     
     def py_classname
-      self.basename.camelize
+      camelname
     end
 
     def py_filename
-      "#{self.basename}.py"
+      "#{basename}.py"
     end
 
     def py_basefilename
-      "#{self.basename}_base.py"
+      "#{basename}_base.py"
     end   
   end
 end

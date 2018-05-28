@@ -2,6 +2,7 @@ defaults: &defaults
   python_cmd:  python
   jupyter_cmd: jupyter
   openvsp_cmd: vspscript
+  thrift_cmd: thrift
 
 development:
   <<: *defaults

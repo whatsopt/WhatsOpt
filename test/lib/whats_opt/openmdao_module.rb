@@ -16,5 +16,10 @@ class OpenmdaoMappingTest < ActiveSupport::TestCase
     assert_equal 'prf_cicav', @module.py_modulename
   end
 
+  def test_should_have_a_camelname
+    @module = FakeOpenmdaoModule.new('PRF CICAV')
+      assert_equal 'PrfCicav', @module.camelname
+    end
+  end
 end 
 

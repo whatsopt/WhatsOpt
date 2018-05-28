@@ -1,5 +1,6 @@
 require 'whats_opt/variable'
 require 'whats_opt/openmdao_variable'
+require 'whats_opt/thrift_variable'
 
 class BadShapeAttributeError < StandardError
 end
@@ -8,6 +9,7 @@ class Variable < ApplicationRecord
 
   include WhatsOpt::Variable
   include WhatsOpt::OpenmdaoVariable
+  include WhatsOpt::ThriftVariable
 
   DEFAULT_SHAPE = '1' # either 'n', '(n,), (n, m) or (n, m, p)'
   DEFAULT_TYPE = FLOAT_T
@@ -39,21 +41,6 @@ class Variable < ApplicationRecord
     
   after_initialize :set_defaults, unless: :persisted?
   before_save :mark_parameter_for_removal
-  
-  def dim
-    @dim ||=  case self.shape
-              when /^(\d+)$/
-                $1.to_i
-              when /^\((\d+),\)$/ 
-                $1.to_i
-              when /^\((\d+), (\d+)\)$/
-                $1.to_i * $2.to_i
-              when /^\((\d+), (\d+), (\d+)\)$/
-                $1.to_i * $2.to_i * $3.to_i
-              else
-                raise BadShapeAttributeError.new("should be either n, (n,), (n, m) or (n, m, p) but found #{self.shape}")
-              end
-  end
   
   # TODO: create parameter.rb as for variable.rb
   def init_py_value

@@ -1,0 +1,30 @@
+namespace py sellar
+
+typedef double Float
+typedef i32 Integer
+typedef list<Float> Vector
+typedef list<Integer> IVector
+typedef list<Vector> Matrix
+typedef list<IVector> IMatrix
+typedef list<Matrix> Cube
+typedef list<IMatrix> ICube
+
+<% @mda.disciplines.nodes.each do |disc| -%>
+struct <%= disc.camelname %>Input {
+<% disc.input_variables.active.numeric.each_with_index do |var, i| -%>
+    <%= "#{i+1}: #{var.thrift_type} #{var.name}" %>      
+<% end -%>
+}
+
+struct <%= disc.camelname %>Output {
+<% disc.output_variables.active.numeric.each_with_index do |var, i| -%>
+    <%= "#{i+1}: #{var.thrift_type} #{var.name}" %>     
+<% end -%>
+}
+<% end -%>
+
+service Sellar {
+<% @mda.disciplines.nodes.each do |disc| -%>
+    <%= disc.camelname %>Output compute_<%= disc.basename %>(1:<%= disc.camelname %>Input input)
+<% end -%>
+}
