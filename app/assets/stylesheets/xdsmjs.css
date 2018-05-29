@@ -4,62 +4,62 @@
  */
 
 /* Component types */
-.xdsm .driver {
+.driver {
     fill: #CCCCFF;
     stroke: black;
     stroke-width: 1px;
 }
 
-.xdsm .optimization {
+.optimization {
     fill: #CCCCFF;
     stroke: black;
     stroke-width: 1px;
 }
 
-.xdsm .lp_optimization {
+.lp_optimization {
     fill: #CCCCFF;
     stroke: black;
     stroke-width: 1px;
 }
 
-.xdsm .analysis {
+.analysis {
     fill: #CCFFCC;
     stroke: black;
     stroke-width: 1px;
 }
 
-.xdsm .mdo {
+.mdo {
     fill: #FFCCCC;
     stroke: black;
     stroke-width: 1px;
 }
 
-.xdsm .function {
+.function {
     fill: #F2CCD9;
     stroke: black;
     stroke-width: 1px;
 }
 
-.xdsm .mda {
+.mda {
     fill: #FFE5CC;
     stroke: black;
     stroke-width: 1px;
 }
 
-.xdsm .metamodel {
+.metamodel {
     fill: #FFFCCC;
     stroke: black;
     stroke-width: 1px;
 }
 
-.xdsm .doe {
+.doe {
     fill: #FFFCCC;
     stroke: black;
     stroke-width: 1px;
 }
 
 /* Title */
-.xdsm g.title text {
+g.title text {
     display: block;
     font-size: 2em;
     margin-top: 0.67em;
@@ -68,13 +68,13 @@
     margin-right: 0;
     font-weight: bold;
 }
-.xdsm g.title rect {
+g.title rect {
     fill: none;
 }
 
 
 /* Text Default */
-.xdsm text {
+text {
   fill: black;
   stroke: none;
   font-family: Arial, sans-serif;
@@ -86,35 +86,35 @@
   font-size: small;
 }
 
-.xdsm tspan.sub {
+tspan.sub {
   font-size: smaller;
 }
-.xdsm tspan.sup {
+tspan.sup {
   font-size: smaller;
 }
 
 /* Data */
-.xdsm .dataInter polygon {
+.dataInter polygon {
   fill: #E5E5E5;
   stroke: black;
   stroke-width: 1px;
 }
 
-.xdsm .dataIO polygon {
+.dataIO polygon {
   fill: #FFFFFF;
   stroke: black;
   stroke-width: 1px;
 }
 
 /* Dataflow */
-.xdsm g.dataflow {
+g.dataflow {
     fill: none;
     stroke: grey;
     stroke-width: 8px;
 }
 
 /* Workflow */
-.xdsm g.workflow {
+g.workflow {
     fill: none;
     stroke: black;
     stroke-width: 2px;

@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import d3 from 'd3';
 
 let Graph = require('XDSMjs/src/graph');
 let Xdsm = require('XDSMjs/src/xdsm');
@@ -31,7 +32,7 @@ class XdsmViewer extends React.Component {
   }
 
   render() {
-    return ( <div className="xdsm"></div> );
+    return ( <div id="xdsm" className="xdsm"></div> );
   }
 
   shouldComponentUpdate() {

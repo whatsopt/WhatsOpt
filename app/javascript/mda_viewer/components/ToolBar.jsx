@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import saveSvgAsPng from 'save-svg-as-png';
 import {api, url} from '../../utils/WhatsOptApi';
 
 class OpenMDAOLogLine extends React.Component {
@@ -25,6 +26,8 @@ class ToolBar extends React.Component {
       statusOk: false,
       log: [],
     };
+    
+    this.saveAsPng = this.saveAsPng.bind(this);
   }
 
   componentDidMount() {
@@ -37,6 +40,14 @@ class ToolBar extends React.Component {
         (response) => {this.setState({loading: false, statusOk: response.data.statusOk, log: response.data.log});});
   }
 
+  saveAsPng() {
+    let elt = d3.select('svg').node();
+    let bbox = elt.getBBox();
+    saveSvgAsPng.saveSvgAsPng(elt, "xdsm.png", {backgroundColor: 'white', 
+                                                width: bbox.width-100,
+                                                height: bbox.height-20 });  
+  }
+  
   render() {
     let lines = this.state.log.map((l, i) => {
       return ( <OpenMDAOLogLine key={i} line={l}/> );
@@ -60,6 +71,9 @@ class ToolBar extends React.Component {
           </div>
           <div className="btn-group mr-2" role="group">
             <a className="btn btn-primary" href={hrefCd}>Cmdows Export</a>
+          </div>
+          <div className="btn-group mr-2" role="group">
+            <a className="btn btn-primary" href="#" onClick={this.saveAsPng}>Image Export</a>
           </div>
         </div>
         <div className="collapse" id="collapseListing">
