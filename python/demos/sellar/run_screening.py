@@ -32,7 +32,6 @@ pb.model.add_objective('obj')
 
 
 pb.model.add_constraint('g1', upper=0.)
-
 pb.model.add_constraint('g2', upper=0.)
 
 pb.setup()  
