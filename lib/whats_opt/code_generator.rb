@@ -1,5 +1,6 @@
 require 'zip'
 require 'open3'
+require 'pathname'
 
 module WhatsOpt
   class CodeGenerator
@@ -21,11 +22,13 @@ module WhatsOpt
       stringio = nil
       @genfiles = []
       Dir.mktmpdir("#{prefix}_#{@mda.basename}_") do |dir|
+        zip_rootpath = Pathname.new(dir)
         zip_filename = File.basename(dir)+".zip"
         _generate_code dir, only_base
         stringio = Zip::OutputStream.write_buffer do |zio|
           @genfiles.each do |filename|
-            zio.put_next_entry(File.join(File.basename(dir), File.basename(filename)))
+            entry = Pathname.new(filename).relative_path_from(zip_rootpath)
+            zio.put_next_entry(entry)
             File.open(filename) do |f|
               zio.write f.read
             end
@@ -39,7 +42,7 @@ module WhatsOpt
     def _generate(filename, template_filename, gendir)
       template = File.join(@template_dir, template_filename)
       Rails.logger.info "Creating #{filename} from #{File.basename(template)}"
-      filepath = File.join(gendir, filename) if gendir      
+      filepath = File.join(gendir, filename) if gendir   
       result = _comment_header(filepath)
       result += _run_template(template)
       fh = File.open(filepath, "w:utf-8") 

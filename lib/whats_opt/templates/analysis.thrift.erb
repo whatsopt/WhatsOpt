@@ -1,4 +1,4 @@
-namespace py sellar
+namespace py <%= @mda.py_modulename %>
 
 typedef double Float
 typedef i32 Integer
@@ -23,7 +23,7 @@ struct <%= disc.camelname %>Output {
 }
 <% end -%>
 
-service Sellar {
+service <%= @mda.camelname %> {
 <% @mda.disciplines.nodes.each do |disc| -%>
     <%= disc.camelname %>Output compute_<%= disc.basename %>(1:<%= disc.camelname %>Input input)
 <% end -%>

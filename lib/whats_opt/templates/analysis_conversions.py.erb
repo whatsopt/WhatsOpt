@@ -1,0 +1,28 @@
+from .<%= @mda.py_modulename %>.ttypes import *
+
+<% @mda.disciplines.nodes.each do |disc| -%>
+
+# <%= disc.py_classname %> 
+def to_openmdao_<%= disc.basename%>_inputs(ins, inputs={}):
+    <% disc.input_variables.active.numeric.each do |var| %>
+    inputs['<%= var.name %>'] = ins.<%= var.name %><% end %>
+    return inputs
+
+def to_thrift_<%= disc.basename%>_input(inputs):
+    ins = <%= disc.camelname%>Input()
+    <% disc.input_variables.active.numeric.each do |var| %>
+    ins.<%= var.name %> = inputs['<%= var.name %>']<% end %>
+    return ins
+
+def to_openmdao_<%= disc.basename%>_outputs(output, outputs={}):
+    <% disc.output_variables.active.numeric.each do |var| %>
+    outputs['<%= var.name %>'] = output.<%= var.name %><% end %>
+    return outputs
+
+def to_thrift_<%= disc.basename%>_output(outputs):
+    output = <%= disc.camelname%>Output()
+    <% disc.output_variables.active.numeric.each do |var| %>
+    output.<%= var.name %> = outputs['<%= var.name %>']<% end %>
+    return output
+<% end -%>
+

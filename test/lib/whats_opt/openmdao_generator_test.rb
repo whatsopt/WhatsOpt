@@ -27,7 +27,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
   
   test "should maintain a list of generated filepaths" do
     Dir.mktmpdir do |dir|
-      filepath = @ogen._generate_code dir
+      @ogen._generate_code dir
       basenames = @ogen.genfiles.map {|fp| File.basename(fp)}.sort
       expected = ["aerodynamics.py", "aerodynamics_base.py", "cicav.py", 
                   "cicav_base.py", "geometry.py", "geometry_base.py", 

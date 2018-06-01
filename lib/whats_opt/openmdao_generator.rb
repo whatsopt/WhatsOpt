@@ -1,4 +1,5 @@
 require 'whats_opt/code_generator'
+require 'whats_opt/server_generator'
 
 module WhatsOpt
   class OpenmdaoGenerator < CodeGenerator
@@ -6,9 +7,11 @@ module WhatsOpt
     class DisciplineNotFoundException < StandardError
     end
     
-    def initialize(mda)
+    def initialize(mda, remote=false)
       super(mda)
       @prefix = "openmdao"
+      @remote = remote
+      @sgen = WhatsOpt::ServerGenerator.new(mda)
     end
                     
     def check_mda_setup
@@ -27,6 +30,8 @@ module WhatsOpt
       end 
       _generate_main(gendir, only_base)
       _generate_run_scripts(gendir)
+      @sgen._generate_code(gendir)
+      @genfiles += @sgen.genfiles
     end
         
     def _check_mda(gendir)

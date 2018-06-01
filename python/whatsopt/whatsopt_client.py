@@ -194,12 +194,13 @@ class WhatsOpt(object):
                 fd.write(chunk)
             name = fd.name
         zip = zipfile.ZipFile(name, 'r')
-        zip.extractall(tempfile.tempdir)
+        tempdir = tempfile.mkdtemp(suffix='wop', dir=tempfile.tempdir)
+        zip.extractall(tempdir)
         filenames = zip.namelist()
         zip.close()
         for f in filenames:
-            file_from = os.path.join(tempfile.tempdir, f)
-            file_to = os.path.basename(f)
+            file_from = os.path.join(tempdir, f)
+            file_to = f
             if os.path.exists(file_to):
                 if options.get('--force'):
                     print("Update %s" % file_to)
@@ -212,9 +213,14 @@ class WhatsOpt(object):
                 print("Pull %s" % file_to) 
         if not options.get('--dry-run'):
             for f in filenames:
-                file_from = os.path.join(tempfile.tempdir, f)
-                file_to = os.path.basename(f)
-                move(file_from, '.')
+                file_from = os.path.join(tempdir, f)
+                dir_to = os.path.dirname(f)
+                if dir_to == "":
+                    dir_to = '.'
+                elif not os.path.exists(dir_to):
+                    os.makedirs(dir_to)
+                #print("Move {} to {}".format(file_from, dir_to))
+                move(file_from, dir_to)
             print('Analysis %s pulled' % mda_id)
     
     def update_mda(self, analysis_id=None):

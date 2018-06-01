@@ -19,24 +19,24 @@ all_structs = []
 
 
 class Iface(object):
-    def compute_disc1(self, ins):
+    def compute_disc1(self, input):
         """
         Parameters:
-         - ins
+         - input
         """
         pass
 
-    def compute_disc2(self, ins):
+    def compute_disc2(self, input):
         """
         Parameters:
-         - ins
+         - input
         """
         pass
 
-    def compute_functions(self, ins):
+    def compute_functions(self, input):
         """
         Parameters:
-         - ins
+         - input
         """
         pass
 
@@ -48,18 +48,18 @@ class Client(Iface):
             self._oprot = oprot
         self._seqid = 0
 
-    def compute_disc1(self, ins):
+    def compute_disc1(self, input):
         """
         Parameters:
-         - ins
+         - input
         """
-        self.send_compute_disc1(ins)
+        self.send_compute_disc1(input)
         return self.recv_compute_disc1()
 
-    def send_compute_disc1(self, ins):
+    def send_compute_disc1(self, input):
         self._oprot.writeMessageBegin('compute_disc1', TMessageType.CALL, self._seqid)
         args = compute_disc1_args()
-        args.ins = ins
+        args.input = input
         args.write(self._oprot)
         self._oprot.writeMessageEnd()
         self._oprot.trans.flush()
@@ -79,18 +79,18 @@ class Client(Iface):
             return result.success
         raise TApplicationException(TApplicationException.MISSING_RESULT, "compute_disc1 failed: unknown result")
 
-    def compute_disc2(self, ins):
+    def compute_disc2(self, input):
         """
         Parameters:
-         - ins
+         - input
         """
-        self.send_compute_disc2(ins)
+        self.send_compute_disc2(input)
         return self.recv_compute_disc2()
 
-    def send_compute_disc2(self, ins):
+    def send_compute_disc2(self, input):
         self._oprot.writeMessageBegin('compute_disc2', TMessageType.CALL, self._seqid)
         args = compute_disc2_args()
-        args.ins = ins
+        args.input = input
         args.write(self._oprot)
         self._oprot.writeMessageEnd()
         self._oprot.trans.flush()
@@ -110,18 +110,18 @@ class Client(Iface):
             return result.success
         raise TApplicationException(TApplicationException.MISSING_RESULT, "compute_disc2 failed: unknown result")
 
-    def compute_functions(self, ins):
+    def compute_functions(self, input):
         """
         Parameters:
-         - ins
+         - input
         """
-        self.send_compute_functions(ins)
+        self.send_compute_functions(input)
         return self.recv_compute_functions()
 
-    def send_compute_functions(self, ins):
+    def send_compute_functions(self, input):
         self._oprot.writeMessageBegin('compute_functions', TMessageType.CALL, self._seqid)
         args = compute_functions_args()
-        args.ins = ins
+        args.input = input
         args.write(self._oprot)
         self._oprot.writeMessageEnd()
         self._oprot.trans.flush()
@@ -171,7 +171,7 @@ class Processor(Iface, TProcessor):
         iprot.readMessageEnd()
         result = compute_disc1_result()
         try:
-            result.success = self._handler.compute_disc1(args.ins)
+            result.success = self._handler.compute_disc1(args.input)
             msg_type = TMessageType.REPLY
         except TTransport.TTransportException:
             raise
@@ -194,7 +194,7 @@ class Processor(Iface, TProcessor):
         iprot.readMessageEnd()
         result = compute_disc2_result()
         try:
-            result.success = self._handler.compute_disc2(args.ins)
+            result.success = self._handler.compute_disc2(args.input)
             msg_type = TMessageType.REPLY
         except TTransport.TTransportException:
             raise
@@ -217,7 +217,7 @@ class Processor(Iface, TProcessor):
         iprot.readMessageEnd()
         result = compute_functions_result()
         try:
-            result.success = self._handler.compute_functions(args.ins)
+            result.success = self._handler.compute_functions(args.input)
             msg_type = TMessageType.REPLY
         except TTransport.TTransportException:
             raise
@@ -240,12 +240,12 @@ class Processor(Iface, TProcessor):
 class compute_disc1_args(object):
     """
     Attributes:
-     - ins
+     - input
     """
 
 
-    def __init__(self, ins=None,):
-        self.ins = ins
+    def __init__(self, input=None,):
+        self.input = input
 
     def read(self, iprot):
         if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
@@ -258,8 +258,8 @@ class compute_disc1_args(object):
                 break
             if fid == 1:
                 if ftype == TType.STRUCT:
-                    self.ins = Disc1Input()
-                    self.ins.read(iprot)
+                    self.input = Disc1Input()
+                    self.input.read(iprot)
                 else:
                     iprot.skip(ftype)
             else:
@@ -272,9 +272,9 @@ class compute_disc1_args(object):
             oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
             return
         oprot.writeStructBegin('compute_disc1_args')
-        if self.ins is not None:
-            oprot.writeFieldBegin('ins', TType.STRUCT, 1)
-            self.ins.write(oprot)
+        if self.input is not None:
+            oprot.writeFieldBegin('input', TType.STRUCT, 1)
+            self.input.write(oprot)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
@@ -295,7 +295,7 @@ class compute_disc1_args(object):
 all_structs.append(compute_disc1_args)
 compute_disc1_args.thrift_spec = (
     None,  # 0
-    (1, TType.STRUCT, 'ins', [Disc1Input, None], None, ),  # 1
+    (1, TType.STRUCT, 'input', [Disc1Input, None], None, ),  # 1
 )
 
 
@@ -363,12 +363,12 @@ compute_disc1_result.thrift_spec = (
 class compute_disc2_args(object):
     """
     Attributes:
-     - ins
+     - input
     """
 
 
-    def __init__(self, ins=None,):
-        self.ins = ins
+    def __init__(self, input=None,):
+        self.input = input
 
     def read(self, iprot):
         if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
@@ -381,8 +381,8 @@ class compute_disc2_args(object):
                 break
             if fid == 1:
                 if ftype == TType.STRUCT:
-                    self.ins = Disc2Input()
-                    self.ins.read(iprot)
+                    self.input = Disc2Input()
+                    self.input.read(iprot)
                 else:
                     iprot.skip(ftype)
             else:
@@ -395,9 +395,9 @@ class compute_disc2_args(object):
             oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
             return
         oprot.writeStructBegin('compute_disc2_args')
-        if self.ins is not None:
-            oprot.writeFieldBegin('ins', TType.STRUCT, 1)
-            self.ins.write(oprot)
+        if self.input is not None:
+            oprot.writeFieldBegin('input', TType.STRUCT, 1)
+            self.input.write(oprot)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
@@ -418,7 +418,7 @@ class compute_disc2_args(object):
 all_structs.append(compute_disc2_args)
 compute_disc2_args.thrift_spec = (
     None,  # 0
-    (1, TType.STRUCT, 'ins', [Disc2Input, None], None, ),  # 1
+    (1, TType.STRUCT, 'input', [Disc2Input, None], None, ),  # 1
 )
 
 
@@ -486,12 +486,12 @@ compute_disc2_result.thrift_spec = (
 class compute_functions_args(object):
     """
     Attributes:
-     - ins
+     - input
     """
 
 
-    def __init__(self, ins=None,):
-        self.ins = ins
+    def __init__(self, input=None,):
+        self.input = input
 
     def read(self, iprot):
         if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
@@ -504,8 +504,8 @@ class compute_functions_args(object):
                 break
             if fid == 1:
                 if ftype == TType.STRUCT:
-                    self.ins = FunctionsInput()
-                    self.ins.read(iprot)
+                    self.input = FunctionsInput()
+                    self.input.read(iprot)
                 else:
                     iprot.skip(ftype)
             else:
@@ -518,9 +518,9 @@ class compute_functions_args(object):
             oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
             return
         oprot.writeStructBegin('compute_functions_args')
-        if self.ins is not None:
-            oprot.writeFieldBegin('ins', TType.STRUCT, 1)
-            self.ins.write(oprot)
+        if self.input is not None:
+            oprot.writeFieldBegin('input', TType.STRUCT, 1)
+            self.input.write(oprot)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
@@ -541,7 +541,7 @@ class compute_functions_args(object):
 all_structs.append(compute_functions_args)
 compute_functions_args.thrift_spec = (
     None,  # 0
-    (1, TType.STRUCT, 'ins', [FunctionsInput, None], None, ),  # 1
+    (1, TType.STRUCT, 'input', [FunctionsInput, None], None, ),  # 1
 )
 
 

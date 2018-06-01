@@ -2,8 +2,11 @@
 # analysis_id: <%= @mda.id %>
 
 from openmdao.api import Problem
-from <%= @mda.py_modulename %> import <%= @mda.py_classname %>
-
+<% if @remote -%>
+from <%= @mda.py_modulename %>_proxy import <%= @mda.py_classname %>Proxy as <%= @mda.py_classname %> 
+<% else -%>
+from <%= @mda.py_modulename %> import <%= @mda.py_classname %> 
+<% end %>
 pb = Problem(<%= @mda.py_classname %>())
 pb.setup()  
 

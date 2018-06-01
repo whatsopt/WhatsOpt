@@ -1,0 +1,43 @@
+from <%= @mda.py_modulename %> import <%= @mda.py_classname %>
+from <%= @mda.basename %>_conversions import *
+
+from thrift import Thrift
+from thrift.transport import TSocket
+from thrift.transport import TTransport
+from thrift.protocol import TBinaryProtocol
+
+from <%= @mda.basename %>_base import <%= @mda.camelname %>Base
+<% @mda.disciplines.nodes.each do |disc| -%>
+from <%= disc.basename %>_base import <%= disc.camelname %>Base
+<% end %>
+
+<% @mda.disciplines.nodes.each do |disc| -%>
+class <%= disc.camelname %>Proxy(<%= disc.camelname %>Base):
+    def __init__(self, proxy):
+        super(<%= disc.camelname %>Proxy, self).__init__()
+        self._proxy = proxy
+        
+    def compute(self, inputs, outputs):
+        output = self._proxy.compute_<%= disc.basename %>(to_thrift_<%= disc.basename %>_input(inputs))
+        to_openmdao_<%= disc.basename %>_outputs(output, outputs)
+<% end %>
+
+
+class <%= @mda.camelname %>Proxy(<%= @mda.camelname %>Base):
+    
+    def __init__(self):
+        super(<%= @mda.camelname %>Proxy, self).__init__()
+        transport = TSocket.TSocket('endymion', 31400)
+        transport = TTransport.TBufferedTransport(transport)
+        protocol = TBinaryProtocol.TBinaryProtocol(transport)
+        self._proxy = <%= @mda.py_classname %>.Client(protocol)
+        transport.open()
+        
+    <% @mda.disciplines.nodes.each do |disc| %>
+    def create_<%= disc.basename %>(self):
+        return <%= disc.camelname %>Proxy(self._proxy)
+    <% end %>
+
+
+
+    
