@@ -7,6 +7,11 @@ class OperationsController < ApplicationController
     @mda = @ope.analysis
   end
   
+  # GET /operations/new
+  def new
+    @ope = Operation.new
+  end
+  
   # DELETE /operations/1
   def destroy
     authorize @ope

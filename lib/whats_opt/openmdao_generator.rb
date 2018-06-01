@@ -17,9 +17,15 @@ module WhatsOpt
     def check_mda_setup
       ok, lines = false, []
       Dir.mktmpdir("check_#{@mda.basename}_") do |dir|
-        _generate_code dir
-        ok, log = _check_mda dir   
-        lines = log.lines.map(&:chomp)     
+        begin
+          _generate_code dir
+        rescue ServerGenerator::ThriftError => e
+          ok = false
+          lines = [e.to_s]
+        else
+          ok, log = _check_mda dir   
+          lines = log.lines.map(&:chomp)
+        end     
       end
       return ok, lines
     end

@@ -1,7 +1,8 @@
 Rails.application.routes.draw do
   
   resources :variables
-  resources :analyses, as: :mdas do
+  resources :analyses, shallow: true, as: :mdas do
+    resources :operations, only: [:new, :create, :show, :destroy]  
     get 'exports/new'
   end
   devise_for :users
@@ -10,7 +11,7 @@ Rails.application.routes.draw do
   resources :notebooks
   resources :geometry_models
   resources :attachments, only: [:show, :index]
-  resources :operations, only: [:show, :destroy]  
+  
     
   namespace :api do
     namespace :v1, defaults: { format: :json } do
