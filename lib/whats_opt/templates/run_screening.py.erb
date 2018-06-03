@@ -9,7 +9,7 @@ from whatsopt.salib_doe_driver import SalibDoeDriver
 from SALib.analyze import morris as ma
 from SALib.plotting import morris as mp
 <% if @remote -%>
-from <%= @mda.py_modulename %>_proxy import <%= @mda.py_classname %>Proxy as <%= @mda.py_classname %> 
+from <%= @server_module %>.<%= @mda.py_modulename %>_proxy import <%= @mda.py_classname %>Proxy as <%= @mda.py_classname %> 
 <% else -%>
 from <%= @mda.py_modulename %> import <%= @mda.py_classname %> 
 <% end %>

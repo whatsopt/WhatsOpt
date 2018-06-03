@@ -22,9 +22,9 @@ module WhatsOpt
       ok, log = _generate_with_thrift(server_dir)
       @comment_delimiters={begin: '"""', end: '"""'}
       raise ThriftError.new(log) if !ok
-      _generate("#{@mda.basename}_conversions.py", 'analysis_conversions.py.erb', server_dir) unless only_base
-      _generate("#{@mda.basename}_proxy.py", 'analysis_proxy.py.erb', server_dir) unless only_base
-      _generate("run_server.py", 'run_server.py.erb', gendir) unless only_base
+      _generate("#{@mda.basename}_conversions.py", 'analysis_conversions.py.erb', server_dir)
+      _generate("#{@mda.basename}_proxy.py", 'analysis_proxy.py.erb', server_dir)
+      _generate("run_server.py", 'run_server.py.erb', gendir)
     end    
     
     def _generate_with_thrift(gendir)

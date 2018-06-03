@@ -38,7 +38,7 @@ module WhatsOpt
       stringio.rewind
       return stringio.read, zip_filename
     end
-         
+    
     def _generate(filename, template_filename, gendir)
       template = File.join(@template_dir, template_filename)
       Rails.logger.info "Creating #{filename} from #{File.basename(template)}"

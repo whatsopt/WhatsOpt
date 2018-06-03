@@ -27,7 +27,7 @@ class <%= @mda.camelname %>Proxy(<%= @mda.camelname %>Base):
     
     def __init__(self):
         super(<%= @mda.camelname %>Proxy, self).__init__()
-        transport = TSocket.TSocket('endymion', 31400)
+        transport = TSocket.TSocket('192.168.1.20', 31400)
         transport = TTransport.TBufferedTransport(transport)
         protocol = TBinaryProtocol.TBinaryProtocol(transport)
         self._proxy = <%= @mda.py_classname %>.Client(protocol)

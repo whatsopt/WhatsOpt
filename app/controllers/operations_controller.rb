@@ -1,3 +1,5 @@
+require 'whats_opt/openmdao_generator'
+
 class OperationsController < ApplicationController
   before_action :set_ope, only: [:show, :destroy]
 
@@ -7,9 +9,20 @@ class OperationsController < ApplicationController
     @mda = @ope.analysis
   end
   
-  # GET /operations/new
+  # GET /analyses/:mda_id/operations/new
   def new
-    @ope = Operation.new
+    @mda = Analysis.find(params[:mda_id])
+    @mda.operations.build
+    @ope = @mda.operations.last
+  end
+  
+  # POST /analyses/:mda_id/operations
+  def create
+    @mda = Analysis.find(params[:mda_id])
+    @mda.operations.build
+    @ope = @mda.operations.last
+    ogen = WhatsOpt::OpenmdaoGenerator.new(@mda, remote=true)
+    ogen.run_remote
   end
   
   # DELETE /operations/1

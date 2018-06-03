@@ -29,6 +29,34 @@ module WhatsOpt
       end
       return ok, lines
     end
+             
+    def run_remote(method="analysis")
+      Dir.mktmpdir("run_#{@mda.basename}_#{method}") do |dir|
+        begin
+          _generate_code dir
+        rescue ServerGenerator::ThriftError => e
+          ok = false
+          lines = [e.to_s]
+        else
+          ok, log = _run_mda(dir, method)   
+          lines = log.lines.map(&:chomp)
+        end
+      end
+    end
+    
+    def _check_mda(dir)
+      script = File.join(dir, @mda.py_filename) 
+      stdouterr, status = Open3.capture2e(PYTHON, script, '--no-n2')
+      return status.success?, stdouterr
+    end
+    
+    def _run_mda(dir, method)
+      script = File.join(dir, "run_#{method}.py")
+      puts PYTHON, script
+      stdouterr, status = Open3.capture2e(PYTHON, script)
+      p stdouterr
+      return status.success?, stdouterr
+    end
     
     def _generate_code(gendir, only_base=false)
       @mda.disciplines.nodes.each do |disc|
@@ -39,13 +67,7 @@ module WhatsOpt
       @sgen._generate_code(gendir)
       @genfiles += @sgen.genfiles
     end
-        
-    def _check_mda(gendir)
-      script = File.join(gendir, @mda.py_filename) 
-      stdouterr, status = Open3.capture2e(PYTHON, script, '--no-n2')
-      return status.success?, stdouterr
-    end
-
+     
     def _generate_discipline(discipline, gendir, only_base=false)
       @discipline=discipline  # @discipline used in template
       _generate(discipline.py_filename, 'openmdao_discipline.py.erb', gendir) unless only_base
