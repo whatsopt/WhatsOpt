@@ -63,4 +63,6 @@ Rails.application.configure do
 
   # webpacker config
   config.x.webpacker[:dev_server_host] = 'endymion'
+    
+  config.webpacker.check_yarn_integrity = false
 end

@@ -1,7 +1,9 @@
-app:
-  build: .
-  command: bundle exec rails server -p 3000 -b '0.0.0.0'
-  volumes:
-    - /WhatsOpt:/whatsopt:rw
-  ports:
-    - "3000:3000"
+version: "2"
+services:
+  app:
+    build: .
+    command: bundle exec rails server -p 3000 -b '0.0.0.0'
+    volumes:
+      - /WhatsOpt:/whatsopt:rw
+    ports:
+      - "3000:3000"

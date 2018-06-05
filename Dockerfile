@@ -133,6 +133,8 @@ RUN buildDeps=" \
 	&& cd / \
     && rm -rf /thrift 
 
+RUN apt-get update && apt-get install -y iputils-ping
+	
 RUN mkdir -p /whatsopt 
 WORKDIR /whatsopt
 
