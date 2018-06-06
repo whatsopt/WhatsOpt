@@ -1,8 +1,14 @@
 <% if policy(@mda).update? %>
-  <%= button_to edit_mda_url(@mda), method: :get, class:"btn float-right" do |b|%>
+  <div class="btn-toolbar float-right">  
+  <%= button_to new_mda_operation_url(@mda), method: :get, class:"btn mr-2" do |b|%>
+    <span class="fa fa-rocket"></span>
+      Operate
+  <% end %> 
+  <%= button_to edit_mda_url(@mda), method: :get, class:"btn" do |b|%>
     <span class="fa fa-pencil"></span>
       Edit
   <% end %> 
+  </div>
 <% end %>
       
 

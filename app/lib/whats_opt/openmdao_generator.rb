@@ -7,11 +7,11 @@ module WhatsOpt
     class DisciplineNotFoundException < StandardError
     end
     
-    def initialize(mda, remote=false)
+    def initialize(mda, mda_host=nil)
       super(mda)
       @prefix = "openmdao"
-      @remote = remote
-      @sgen = WhatsOpt::ServerGenerator.new(mda)
+      @remote = !mda_host.nil?
+      @sgen = WhatsOpt::ServerGenerator.new(mda, mda_host)
     end
                     
     def check_mda_setup
@@ -21,7 +21,7 @@ module WhatsOpt
           _generate_code dir
         rescue ServerGenerator::ThriftError => e
           ok = false
-          lines = [e.to_s]
+          lines = e.to_s.lines.map(&:chomp)
         else
           ok, log = _check_mda dir   
           lines = log.lines.map(&:chomp)
@@ -30,31 +30,34 @@ module WhatsOpt
       return ok, lines
     end
              
-    def run_remote(method="analysis")
+    def run(method="analysis")
+      ok, lines = false, []
       Dir.mktmpdir("run_#{@mda.basename}_#{method}") do |dir|
+        #dir = "/tmp"
         begin
           _generate_code dir
         rescue ServerGenerator::ThriftError => e
           ok = false
-          lines = [e.to_s]
+          lines = e.to_s.lines.map(&:chomp)
         else
           ok, log = _run_mda(dir, method)   
           lines = log.lines.map(&:chomp)
         end
       end
+      return ok, lines
     end
     
     def _check_mda(dir)
       script = File.join(dir, @mda.py_filename) 
+      Rails.logger.info "#{PYTHON} #{script} --no-n2"
       stdouterr, status = Open3.capture2e(PYTHON, script, '--no-n2')
       return status.success?, stdouterr
     end
     
     def _run_mda(dir, method)
       script = File.join(dir, "run_#{method}.py")
-      puts PYTHON, script
+      Rails.logger.info "#{PYTHON} #{script}"
       stdouterr, status = Open3.capture2e(PYTHON, script)
-      p stdouterr
       return status.success?, stdouterr
     end
     

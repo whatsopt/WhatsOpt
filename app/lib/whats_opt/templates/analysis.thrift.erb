@@ -27,4 +27,7 @@ service <%= @mda.camelname %> {
 <% @mda.disciplines.nodes.each do |disc| -%>
     <%= disc.camelname %>Output compute_<%= disc.basename %>(1:<%= disc.camelname %>Input input)
 <% end -%>
+
+    void ping()
+    oneway void shutdown()
 }

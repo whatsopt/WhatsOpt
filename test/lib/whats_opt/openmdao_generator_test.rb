@@ -7,8 +7,16 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
   def setup
     @mda = analyses(:cicav)
     @ogen = WhatsOpt::OpenmdaoGenerator.new(@mda)
+    @pid=nil
   end
     
+  def teardown
+    if @pid
+      #puts "KILL #{@pid}"
+      Process.kill("TERM", @pid)
+    end
+  end
+ 
   test "should generate openmdao component for a given discipline in mda" do
     Dir.mktmpdir do |dir|
       disc = @mda.disciplines[0]
@@ -86,6 +94,23 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     assert_match /already been used/, log.join(' ')
   end
 
+  test "should run remote mda successfully when valid" do
+    Dir.mktmpdir do |dir|
+      @ogen._generate_code dir
+      @pid = spawn("#{WhatsOpt::OpenmdaoGenerator::PYTHON} #{File.join(dir, 'run_server.py')}", [:out, :err]=> '/dev/null')
+      @ogen_remote = WhatsOpt::OpenmdaoGenerator.new(@mda, 'localhost')
+      ok, log = @ogen_remote.run
+      assert ok  
+    end
+  end
+
+  test "should run remote mda and return false when failed" do
+    @ogen_remote = WhatsOpt::OpenmdaoGenerator.new(@mda, 'localhost')
+    ok, log = @ogen_remote.run
+    refute ok 
+    assert_match /Could not connect/, log.join(' ')
+  end  
+  
   test "should use init value for independant variables" do
     var = variables(:varx1_out)
     zippath = Tempfile.new('test_mda_file.zip')

@@ -27,17 +27,20 @@ class <%= @mda.camelname %>Proxy(<%= @mda.camelname %>Base):
     
     def __init__(self):
         super(<%= @mda.camelname %>Proxy, self).__init__()
-        transport = TSocket.TSocket('192.168.1.20', 31400)
+        transport = TSocket.TSocket('<%= @server_host %>', <%= @server_port %>)
         transport = TTransport.TBufferedTransport(transport)
         protocol = TBinaryProtocol.TBinaryProtocol(transport)
         self._proxy = <%= @mda.py_classname %>.Client(protocol)
         transport.open()
-        
+
     <% @mda.disciplines.nodes.each do |disc| %>
     def create_<%= disc.basename %>(self):
         return <%= disc.camelname %>Proxy(self._proxy)
     <% end %>
 
+    def ping(self):
+        self._proxy.ping()
 
-
+    def shutdown(self):
+        self._proxy.shutdown()
     

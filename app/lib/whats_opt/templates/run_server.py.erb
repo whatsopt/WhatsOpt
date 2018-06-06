@@ -10,12 +10,23 @@ from <%= @server_module %>.<%= @mda.py_modulename %>_conversions import *
 from <%= @mda.py_modulename %> import <%= @mda.py_classname %> as Factory
 
 class <%= @mda.camelname %>Handler:
+    server = None
+
     def __init__(self):
         factory = Factory()
         <% @mda.disciplines.nodes.each do |disc| %>
         self.<%= disc.basename %> = factory.create_<%= disc.basename %>()
         <% end %>
 
+    # Admin interface
+    def ping(self):
+        print("Ping!")
+
+    def shutdown(self):
+        print("Shutting down <%= @mda.py_classname %> server...")
+        exit(0)
+
+    # <%= @mda.camelname %> interface
     <% @mda.disciplines.nodes.each do |disc| %>
     def compute_<%= disc.basename %>(self, ins):
         outputs = {}
@@ -24,14 +35,15 @@ class <%= @mda.camelname %>Handler:
         return to_thrift_<%= disc.basename %>_output(outputs)
     <% end %>
 
-handler = SellarHandler()
-processor = SellarService.Processor(handler)
-transport = TSocket.TServerSocket(port=31400)
+
+handler = <%= @mda.camelname %>Handler()
+processor = <%= @mda.camelname %>Service.Processor(handler)
+transport = TSocket.TServerSocket(port=<%= @server_port %>)
 tfactory = TTransport.TBufferedTransportFactory()
 pfactory = TBinaryProtocol.TBinaryProtocolFactory()
 
-server = TServer.TSimpleServer(processor, transport, tfactory, pfactory)
+server = handler.server = TServer.TSimpleServer(processor, transport, tfactory, pfactory)
 
-print("Starting python server...")
+print("Starting <%= @mda.py_classname %> server...")
 server.serve()
 print("done!")

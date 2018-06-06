@@ -19,15 +19,15 @@ all_structs = []
 class Disc1Input(object):
     """
     Attributes:
-     - x
      - y2
+     - x
      - z
     """
 
 
-    def __init__(self, x=None, y2=None, z=None,):
-        self.x = x
+    def __init__(self, y2=None, x=None, z=None,):
         self.y2 = y2
+        self.x = x
         self.z = z
 
     def read(self, iprot):
@@ -40,32 +40,22 @@ class Disc1Input(object):
             if ftype == TType.STOP:
                 break
             if fid == 1:
-                if ftype == TType.LIST:
-                    self.x = []
-                    (_etype3, _size0) = iprot.readListBegin()
-                    for _i4 in range(_size0):
-                        _elem5 = iprot.readDouble()
-                        self.x.append(_elem5)
-                    iprot.readListEnd()
+                if ftype == TType.DOUBLE:
+                    self.y2 = iprot.readDouble()
                 else:
                     iprot.skip(ftype)
             elif fid == 2:
-                if ftype == TType.LIST:
-                    self.y2 = []
-                    (_etype9, _size6) = iprot.readListBegin()
-                    for _i10 in range(_size6):
-                        _elem11 = iprot.readDouble()
-                        self.y2.append(_elem11)
-                    iprot.readListEnd()
+                if ftype == TType.DOUBLE:
+                    self.x = iprot.readDouble()
                 else:
                     iprot.skip(ftype)
             elif fid == 3:
                 if ftype == TType.LIST:
                     self.z = []
-                    (_etype15, _size12) = iprot.readListBegin()
-                    for _i16 in range(_size12):
-                        _elem17 = iprot.readDouble()
-                        self.z.append(_elem17)
+                    (_etype3, _size0) = iprot.readListBegin()
+                    for _i4 in range(_size0):
+                        _elem5 = iprot.readDouble()
+                        self.z.append(_elem5)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
@@ -79,25 +69,19 @@ class Disc1Input(object):
             oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
             return
         oprot.writeStructBegin('Disc1Input')
-        if self.x is not None:
-            oprot.writeFieldBegin('x', TType.LIST, 1)
-            oprot.writeListBegin(TType.DOUBLE, len(self.x))
-            for iter18 in self.x:
-                oprot.writeDouble(iter18)
-            oprot.writeListEnd()
-            oprot.writeFieldEnd()
         if self.y2 is not None:
-            oprot.writeFieldBegin('y2', TType.LIST, 2)
-            oprot.writeListBegin(TType.DOUBLE, len(self.y2))
-            for iter19 in self.y2:
-                oprot.writeDouble(iter19)
-            oprot.writeListEnd()
+            oprot.writeFieldBegin('y2', TType.DOUBLE, 1)
+            oprot.writeDouble(self.y2)
+            oprot.writeFieldEnd()
+        if self.x is not None:
+            oprot.writeFieldBegin('x', TType.DOUBLE, 2)
+            oprot.writeDouble(self.x)
             oprot.writeFieldEnd()
         if self.z is not None:
             oprot.writeFieldBegin('z', TType.LIST, 3)
             oprot.writeListBegin(TType.DOUBLE, len(self.z))
-            for iter20 in self.z:
-                oprot.writeDouble(iter20)
+            for iter6 in self.z:
+                oprot.writeDouble(iter6)
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
@@ -138,13 +122,8 @@ class Disc1Output(object):
             if ftype == TType.STOP:
                 break
             if fid == 1:
-                if ftype == TType.LIST:
-                    self.y1 = []
-                    (_etype24, _size21) = iprot.readListBegin()
-                    for _i25 in range(_size21):
-                        _elem26 = iprot.readDouble()
-                        self.y1.append(_elem26)
-                    iprot.readListEnd()
+                if ftype == TType.DOUBLE:
+                    self.y1 = iprot.readDouble()
                 else:
                     iprot.skip(ftype)
             else:
@@ -158,11 +137,8 @@ class Disc1Output(object):
             return
         oprot.writeStructBegin('Disc1Output')
         if self.y1 is not None:
-            oprot.writeFieldBegin('y1', TType.LIST, 1)
-            oprot.writeListBegin(TType.DOUBLE, len(self.y1))
-            for iter27 in self.y1:
-                oprot.writeDouble(iter27)
-            oprot.writeListEnd()
+            oprot.writeFieldBegin('y1', TType.DOUBLE, 1)
+            oprot.writeDouble(self.y1)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
@@ -204,22 +180,17 @@ class Disc2Input(object):
             if ftype == TType.STOP:
                 break
             if fid == 1:
-                if ftype == TType.LIST:
-                    self.y1 = []
-                    (_etype31, _size28) = iprot.readListBegin()
-                    for _i32 in range(_size28):
-                        _elem33 = iprot.readDouble()
-                        self.y1.append(_elem33)
-                    iprot.readListEnd()
+                if ftype == TType.DOUBLE:
+                    self.y1 = iprot.readDouble()
                 else:
                     iprot.skip(ftype)
             elif fid == 2:
                 if ftype == TType.LIST:
                     self.z = []
-                    (_etype37, _size34) = iprot.readListBegin()
-                    for _i38 in range(_size34):
-                        _elem39 = iprot.readDouble()
-                        self.z.append(_elem39)
+                    (_etype10, _size7) = iprot.readListBegin()
+                    for _i11 in range(_size7):
+                        _elem12 = iprot.readDouble()
+                        self.z.append(_elem12)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
@@ -234,17 +205,14 @@ class Disc2Input(object):
             return
         oprot.writeStructBegin('Disc2Input')
         if self.y1 is not None:
-            oprot.writeFieldBegin('y1', TType.LIST, 1)
-            oprot.writeListBegin(TType.DOUBLE, len(self.y1))
-            for iter40 in self.y1:
-                oprot.writeDouble(iter40)
-            oprot.writeListEnd()
+            oprot.writeFieldBegin('y1', TType.DOUBLE, 1)
+            oprot.writeDouble(self.y1)
             oprot.writeFieldEnd()
         if self.z is not None:
             oprot.writeFieldBegin('z', TType.LIST, 2)
             oprot.writeListBegin(TType.DOUBLE, len(self.z))
-            for iter41 in self.z:
-                oprot.writeDouble(iter41)
+            for iter13 in self.z:
+                oprot.writeDouble(iter13)
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
@@ -285,13 +253,8 @@ class Disc2Output(object):
             if ftype == TType.STOP:
                 break
             if fid == 1:
-                if ftype == TType.LIST:
-                    self.y2 = []
-                    (_etype45, _size42) = iprot.readListBegin()
-                    for _i46 in range(_size42):
-                        _elem47 = iprot.readDouble()
-                        self.y2.append(_elem47)
-                    iprot.readListEnd()
+                if ftype == TType.DOUBLE:
+                    self.y2 = iprot.readDouble()
                 else:
                     iprot.skip(ftype)
             else:
@@ -305,11 +268,8 @@ class Disc2Output(object):
             return
         oprot.writeStructBegin('Disc2Output')
         if self.y2 is not None:
-            oprot.writeFieldBegin('y2', TType.LIST, 1)
-            oprot.writeListBegin(TType.DOUBLE, len(self.y2))
-            for iter48 in self.y2:
-                oprot.writeDouble(iter48)
-            oprot.writeListEnd()
+            oprot.writeFieldBegin('y2', TType.DOUBLE, 1)
+            oprot.writeDouble(self.y2)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
@@ -332,18 +292,18 @@ class Disc2Output(object):
 class FunctionsInput(object):
     """
     Attributes:
-     - x
+     - z
      - y1
      - y2
-     - z
+     - x
     """
 
 
-    def __init__(self, x=None, y1=None, y2=None, z=None,):
-        self.x = x
+    def __init__(self, z=None, y1=None, y2=None, x=None,):
+        self.z = z
         self.y1 = y1
         self.y2 = y2
-        self.z = z
+        self.x = x
 
     def read(self, iprot):
         if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
@@ -356,42 +316,27 @@ class FunctionsInput(object):
                 break
             if fid == 1:
                 if ftype == TType.LIST:
-                    self.x = []
-                    (_etype52, _size49) = iprot.readListBegin()
-                    for _i53 in range(_size49):
-                        _elem54 = iprot.readDouble()
-                        self.x.append(_elem54)
+                    self.z = []
+                    (_etype17, _size14) = iprot.readListBegin()
+                    for _i18 in range(_size14):
+                        _elem19 = iprot.readDouble()
+                        self.z.append(_elem19)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
             elif fid == 2:
-                if ftype == TType.LIST:
-                    self.y1 = []
-                    (_etype58, _size55) = iprot.readListBegin()
-                    for _i59 in range(_size55):
-                        _elem60 = iprot.readDouble()
-                        self.y1.append(_elem60)
-                    iprot.readListEnd()
+                if ftype == TType.DOUBLE:
+                    self.y1 = iprot.readDouble()
                 else:
                     iprot.skip(ftype)
             elif fid == 3:
-                if ftype == TType.LIST:
-                    self.y2 = []
-                    (_etype64, _size61) = iprot.readListBegin()
-                    for _i65 in range(_size61):
-                        _elem66 = iprot.readDouble()
-                        self.y2.append(_elem66)
-                    iprot.readListEnd()
+                if ftype == TType.DOUBLE:
+                    self.y2 = iprot.readDouble()
                 else:
                     iprot.skip(ftype)
             elif fid == 4:
-                if ftype == TType.LIST:
-                    self.z = []
-                    (_etype70, _size67) = iprot.readListBegin()
-                    for _i71 in range(_size67):
-                        _elem72 = iprot.readDouble()
-                        self.z.append(_elem72)
-                    iprot.readListEnd()
+                if ftype == TType.DOUBLE:
+                    self.x = iprot.readDouble()
                 else:
                     iprot.skip(ftype)
             else:
@@ -404,33 +349,24 @@ class FunctionsInput(object):
             oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
             return
         oprot.writeStructBegin('FunctionsInput')
-        if self.x is not None:
-            oprot.writeFieldBegin('x', TType.LIST, 1)
-            oprot.writeListBegin(TType.DOUBLE, len(self.x))
-            for iter73 in self.x:
-                oprot.writeDouble(iter73)
+        if self.z is not None:
+            oprot.writeFieldBegin('z', TType.LIST, 1)
+            oprot.writeListBegin(TType.DOUBLE, len(self.z))
+            for iter20 in self.z:
+                oprot.writeDouble(iter20)
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         if self.y1 is not None:
-            oprot.writeFieldBegin('y1', TType.LIST, 2)
-            oprot.writeListBegin(TType.DOUBLE, len(self.y1))
-            for iter74 in self.y1:
-                oprot.writeDouble(iter74)
-            oprot.writeListEnd()
+            oprot.writeFieldBegin('y1', TType.DOUBLE, 2)
+            oprot.writeDouble(self.y1)
             oprot.writeFieldEnd()
         if self.y2 is not None:
-            oprot.writeFieldBegin('y2', TType.LIST, 3)
-            oprot.writeListBegin(TType.DOUBLE, len(self.y2))
-            for iter75 in self.y2:
-                oprot.writeDouble(iter75)
-            oprot.writeListEnd()
+            oprot.writeFieldBegin('y2', TType.DOUBLE, 3)
+            oprot.writeDouble(self.y2)
             oprot.writeFieldEnd()
-        if self.z is not None:
-            oprot.writeFieldBegin('z', TType.LIST, 4)
-            oprot.writeListBegin(TType.DOUBLE, len(self.z))
-            for iter76 in self.z:
-                oprot.writeDouble(iter76)
-            oprot.writeListEnd()
+        if self.x is not None:
+            oprot.writeFieldBegin('x', TType.DOUBLE, 4)
+            oprot.writeDouble(self.x)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
@@ -453,16 +389,16 @@ class FunctionsInput(object):
 class FunctionsOutput(object):
     """
     Attributes:
-     - g2
      - obj
      - g1
+     - g2
     """
 
 
-    def __init__(self, g2=None, obj=None, g1=None,):
-        self.g2 = g2
+    def __init__(self, obj=None, g1=None, g2=None,):
         self.obj = obj
         self.g1 = g1
+        self.g2 = g2
 
     def read(self, iprot):
         if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
@@ -474,33 +410,18 @@ class FunctionsOutput(object):
             if ftype == TType.STOP:
                 break
             if fid == 1:
-                if ftype == TType.LIST:
-                    self.g2 = []
-                    (_etype80, _size77) = iprot.readListBegin()
-                    for _i81 in range(_size77):
-                        _elem82 = iprot.readDouble()
-                        self.g2.append(_elem82)
-                    iprot.readListEnd()
+                if ftype == TType.DOUBLE:
+                    self.obj = iprot.readDouble()
                 else:
                     iprot.skip(ftype)
             elif fid == 2:
-                if ftype == TType.LIST:
-                    self.obj = []
-                    (_etype86, _size83) = iprot.readListBegin()
-                    for _i87 in range(_size83):
-                        _elem88 = iprot.readDouble()
-                        self.obj.append(_elem88)
-                    iprot.readListEnd()
+                if ftype == TType.DOUBLE:
+                    self.g1 = iprot.readDouble()
                 else:
                     iprot.skip(ftype)
             elif fid == 3:
-                if ftype == TType.LIST:
-                    self.g1 = []
-                    (_etype92, _size89) = iprot.readListBegin()
-                    for _i93 in range(_size89):
-                        _elem94 = iprot.readDouble()
-                        self.g1.append(_elem94)
-                    iprot.readListEnd()
+                if ftype == TType.DOUBLE:
+                    self.g2 = iprot.readDouble()
                 else:
                     iprot.skip(ftype)
             else:
@@ -513,26 +434,17 @@ class FunctionsOutput(object):
             oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
             return
         oprot.writeStructBegin('FunctionsOutput')
-        if self.g2 is not None:
-            oprot.writeFieldBegin('g2', TType.LIST, 1)
-            oprot.writeListBegin(TType.DOUBLE, len(self.g2))
-            for iter95 in self.g2:
-                oprot.writeDouble(iter95)
-            oprot.writeListEnd()
-            oprot.writeFieldEnd()
         if self.obj is not None:
-            oprot.writeFieldBegin('obj', TType.LIST, 2)
-            oprot.writeListBegin(TType.DOUBLE, len(self.obj))
-            for iter96 in self.obj:
-                oprot.writeDouble(iter96)
-            oprot.writeListEnd()
+            oprot.writeFieldBegin('obj', TType.DOUBLE, 1)
+            oprot.writeDouble(self.obj)
             oprot.writeFieldEnd()
         if self.g1 is not None:
-            oprot.writeFieldBegin('g1', TType.LIST, 3)
-            oprot.writeListBegin(TType.DOUBLE, len(self.g1))
-            for iter97 in self.g1:
-                oprot.writeDouble(iter97)
-            oprot.writeListEnd()
+            oprot.writeFieldBegin('g1', TType.DOUBLE, 2)
+            oprot.writeDouble(self.g1)
+            oprot.writeFieldEnd()
+        if self.g2 is not None:
+            oprot.writeFieldBegin('g2', TType.DOUBLE, 3)
+            oprot.writeDouble(self.g2)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
@@ -553,40 +465,40 @@ class FunctionsOutput(object):
 all_structs.append(Disc1Input)
 Disc1Input.thrift_spec = (
     None,  # 0
-    (1, TType.LIST, 'x', (TType.DOUBLE, None, False), None, ),  # 1
-    (2, TType.LIST, 'y2', (TType.DOUBLE, None, False), None, ),  # 2
+    (1, TType.DOUBLE, 'y2', None, None, ),  # 1
+    (2, TType.DOUBLE, 'x', None, None, ),  # 2
     (3, TType.LIST, 'z', (TType.DOUBLE, None, False), None, ),  # 3
 )
 all_structs.append(Disc1Output)
 Disc1Output.thrift_spec = (
     None,  # 0
-    (1, TType.LIST, 'y1', (TType.DOUBLE, None, False), None, ),  # 1
+    (1, TType.DOUBLE, 'y1', None, None, ),  # 1
 )
 all_structs.append(Disc2Input)
 Disc2Input.thrift_spec = (
     None,  # 0
-    (1, TType.LIST, 'y1', (TType.DOUBLE, None, False), None, ),  # 1
+    (1, TType.DOUBLE, 'y1', None, None, ),  # 1
     (2, TType.LIST, 'z', (TType.DOUBLE, None, False), None, ),  # 2
 )
 all_structs.append(Disc2Output)
 Disc2Output.thrift_spec = (
     None,  # 0
-    (1, TType.LIST, 'y2', (TType.DOUBLE, None, False), None, ),  # 1
+    (1, TType.DOUBLE, 'y2', None, None, ),  # 1
 )
 all_structs.append(FunctionsInput)
 FunctionsInput.thrift_spec = (
     None,  # 0
-    (1, TType.LIST, 'x', (TType.DOUBLE, None, False), None, ),  # 1
-    (2, TType.LIST, 'y1', (TType.DOUBLE, None, False), None, ),  # 2
-    (3, TType.LIST, 'y2', (TType.DOUBLE, None, False), None, ),  # 3
-    (4, TType.LIST, 'z', (TType.DOUBLE, None, False), None, ),  # 4
+    (1, TType.LIST, 'z', (TType.DOUBLE, None, False), None, ),  # 1
+    (2, TType.DOUBLE, 'y1', None, None, ),  # 2
+    (3, TType.DOUBLE, 'y2', None, None, ),  # 3
+    (4, TType.DOUBLE, 'x', None, None, ),  # 4
 )
 all_structs.append(FunctionsOutput)
 FunctionsOutput.thrift_spec = (
     None,  # 0
-    (1, TType.LIST, 'g2', (TType.DOUBLE, None, False), None, ),  # 1
-    (2, TType.LIST, 'obj', (TType.DOUBLE, None, False), None, ),  # 2
-    (3, TType.LIST, 'g1', (TType.DOUBLE, None, False), None, ),  # 3
+    (1, TType.DOUBLE, 'obj', None, None, ),  # 1
+    (2, TType.DOUBLE, 'g1', None, None, ),  # 2
+    (3, TType.DOUBLE, 'g2', None, None, ),  # 3
 )
 fix_spec(all_structs)
 del all_structs

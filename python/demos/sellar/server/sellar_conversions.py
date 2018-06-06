@@ -5,20 +5,19 @@
 from .sellar.ttypes import *
 
 
-
 # Disc1 
 def to_openmdao_disc1_inputs(ins, inputs={}):
     
-    inputs['x'] = ins.x
     inputs['y2'] = ins.y2
+    inputs['x'] = ins.x
     inputs['z'] = ins.z
     return inputs
 
 def to_thrift_disc1_input(inputs):
     ins = Disc1Input()
     
-    ins.x = inputs['x']
     ins.y2 = inputs['y2']
+    ins.x = inputs['x']
     ins.z = inputs['z']
     return ins
 
@@ -32,7 +31,6 @@ def to_thrift_disc1_output(outputs):
     
     output.y1 = outputs['y1']
     return output
-
 
 # Disc2 
 def to_openmdao_disc2_inputs(ins, inputs={}):
@@ -59,38 +57,36 @@ def to_thrift_disc2_output(outputs):
     output.y2 = outputs['y2']
     return output
 
-
 # Functions 
 def to_openmdao_functions_inputs(ins, inputs={}):
     
-    inputs['x'] = ins.x
+    inputs['z'] = ins.z
     inputs['y1'] = ins.y1
     inputs['y2'] = ins.y2
-    inputs['z'] = ins.z
+    inputs['x'] = ins.x
     return inputs
 
 def to_thrift_functions_input(inputs):
     ins = FunctionsInput()
     
-    ins.x = inputs['x']
+    ins.z = inputs['z']
     ins.y1 = inputs['y1']
     ins.y2 = inputs['y2']
-    ins.z = inputs['z']
+    ins.x = inputs['x']
     return ins
 
 def to_openmdao_functions_outputs(output, outputs={}):
     
-    outputs['g2'] = output.g2
     outputs['obj'] = output.obj
     outputs['g1'] = output.g1
+    outputs['g2'] = output.g2
     return outputs
 
 def to_thrift_functions_output(outputs):
     output = FunctionsOutput()
     
-    output.g2 = outputs['g2']
     output.obj = outputs['obj']
     output.g1 = outputs['g1']
+    output.g2 = outputs['g2']
     return output
-
 

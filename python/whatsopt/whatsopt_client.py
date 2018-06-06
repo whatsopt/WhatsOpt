@@ -200,7 +200,7 @@ class WhatsOpt(object):
         zip.close()
         for f in filenames:
             file_from = os.path.join(tempdir, f)
-            file_to = os.path.join(*(f.split('/')[1:]))
+            file_to = f
             if os.path.exists(file_to):
                 if options.get('--force'):
                     print("Update %s" % file_to)
@@ -214,7 +214,7 @@ class WhatsOpt(object):
         if not options.get('--dry-run'):
             for f in filenames:
                 file_from = os.path.join(tempdir, f)
-                dir_to = os.path.dirname(os.path.join(*(f.split('/')[1:])))
+                dir_to = os.path.dirname(f)
                 if dir_to == "":
                     dir_to = '.'
                 elif not os.path.exists(dir_to):
