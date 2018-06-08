@@ -45,5 +45,5 @@ Rails.application.configure do
   
   Paperclip::Attachment.default_options[:path] = "#{Rails.root}/spec/test_files/:class/:id_partition/:style.:extension"
 
-
+  config.active_record.sqlite3.represent_boolean_as_integer = true
 end
