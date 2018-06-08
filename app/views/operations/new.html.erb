@@ -1,3 +1,17 @@
-<h1>New Operation for <%= @ope.analysis.name %> on <%= @default_host %></h1>
+<h1>New Operation for <%= @ope.analysis.name %></h1>
 
-<%= link_to "Run", mda_operations_path, method: :post, class: "btn btn-primary" %>
+<%= form_for(:operation, url: mda_operations_path, :html => { :role => "form" }) do |f| %>
+  <div class="row">
+    <div class=" col-4">
+      <div class="form-group">
+        <%= f.label :hostname_or_ip %>
+        <%= f.text_field :hostname_or_ip, class: "form-control" %>
+      </div>
+        
+      <div class="form-group">
+        <%= f.submit "Run", class: "btn btn-primary" %>
+        <%= f.submit "Cancel", class: "btn", name: "cancel_button" %>
+      </div>
+    </div>
+  </div>  
+<% end %>

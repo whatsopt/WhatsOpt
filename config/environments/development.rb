@@ -65,4 +65,6 @@ Rails.application.configure do
   config.x.webpacker[:dev_server_host] = 'endymion'
     
   config.webpacker.check_yarn_integrity = false
+  
+  config.active_record.sqlite3.represent_boolean_as_integer = true
 end

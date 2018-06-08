@@ -11,14 +11,6 @@ class Operation < ApplicationRecord
 	  operation
 	end
 	
-	def self.build_operation_from_run(mda, mda_host)
-    mda.operations.build
-    ope = mda.operations.last
-    ogen = WhatsOpt::OpenmdaoGenerator.new(mda, mda_host)
-    ok, log = ogen.run_remote
-    return ope, ok, log
-	end
-	
 	def to_plotter_json
     adapter = ActiveModelSerializers::SerializableResource.new(self)
     adapter.to_json

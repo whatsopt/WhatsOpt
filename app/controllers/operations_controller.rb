@@ -10,23 +10,18 @@ class OperationsController < ApplicationController
   # GET /analyses/:mda_id/operations/new
   def new
     @mda = Analysis.find(params[:mda_id])
-    @mda.operations.build
-    @ope = @mda.operations.last
-    @default_host = request.remote_ip
+    @ope = @mda.operations.build
   end
   
   # POST /analyses/:mda_id/operations
   def create
-    @mda = Analysis.find(params[:mda_id])
-    @ope, @ok, @log = Operation.build_operation_from_run(@mda, request.remote_ip)
-    if @ok 
-      if @ope.save
-        redirect_to operation_url(@ope)
-      else
-        redirect_to new_mda_operations_url(@mda)
-      end
-    else
-      redirect_to new_mda_operation_url(@mda), alert: "Error in operation"
+    if params[:cancel_button]
+      redirect_to mda_url(params[:mda_id]), notice: "Operation creation cancelled."
+    else 
+      @mda = Analysis.find(params[:mda_id])
+      @ope = @mda.operations.create
+      OperationJob.perform_later(@mda, ope_params[:hostname_or_ip]) 
+      redirect_to edit_operation_url(@ope)
     end 
   end
   
@@ -43,4 +38,7 @@ class OperationsController < ApplicationController
       @ope = Operation.find(params[:id])
     end
 
+    def ope_params
+      params.require(:operation).permit(:hostname_or_ip)
+    end
 end
