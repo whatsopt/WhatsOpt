@@ -1,4 +1,4 @@
-version: "2"
+version: "3"
 services:
   app:
     build: .
@@ -7,3 +7,17 @@ services:
       - /WhatsOpt:/whatsopt:rw
     ports:
       - "3000:3000"
+    networks:
+      - mynet
+  analysis_server:
+    build: .
+    command: python python/demos/sellar/run_server.py
+    volumes:
+      - /WhatsOpt:/whatsopt:rw
+    ports:
+      - "31400:31400"
+    networks:
+      - mynet
+networks:
+  mynet:
+    driver: "bridge"  
