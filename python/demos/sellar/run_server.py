@@ -14,6 +14,8 @@ from server.sellar_conversions import *
 from sellar import Sellar as Factory
 
 class SellarHandler:
+    server = None
+
     def __init__(self):
         factory = Factory()
         
@@ -24,6 +26,15 @@ class SellarHandler:
         self.functions = factory.create_functions()
         
 
+    # Admin interface
+    def ping(self):
+        print("Ping!")
+
+    def shutdown(self):
+        print("Shutting down Sellar server...")
+        exit(0)
+
+    # Sellar interface
     
     def compute_disc1(self, ins):
         outputs = {}
@@ -44,13 +55,14 @@ class SellarHandler:
         return to_thrift_functions_output(outputs)
     
 
+
 handler = SellarHandler()
 processor = SellarService.Processor(handler)
 transport = TSocket.TServerSocket(port=31400)
 tfactory = TTransport.TBufferedTransportFactory()
 pfactory = TBinaryProtocol.TBinaryProtocolFactory()
 
-server = TServer.TSimpleServer(processor, transport, tfactory, pfactory)
+server = handler.server = TServer.TSimpleServer(processor, transport, tfactory, pfactory)
 
 print("Starting Sellar server...")
 server.serve()

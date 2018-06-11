@@ -53,12 +53,12 @@ class SellarProxy(SellarBase):
     
     def __init__(self):
         super(SellarProxy, self).__init__()
-        transport = TSocket.TSocket('endymion', 31400)
+        transport = TSocket.TSocket('localhost', 31400)
         transport = TTransport.TBufferedTransport(transport)
         protocol = TBinaryProtocol.TBinaryProtocol(transport)
         self._proxy = Sellar.Client(protocol)
         transport.open()
-        
+
     
     def create_disc1(self):
         return Disc1Proxy(self._proxy)
@@ -70,6 +70,9 @@ class SellarProxy(SellarBase):
         return FunctionsProxy(self._proxy)
     
 
+    def ping(self):
+        self._proxy.ping()
 
-
+    def shutdown(self):
+        self._proxy.shutdown()
     
