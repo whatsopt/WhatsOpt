@@ -2,12 +2,11 @@ Rails.application.routes.draw do
   
   resources :variables
   resources :analyses, shallow: true, as: :mdas do
-    resources :operations, only: [:new, :create, :show, :destroy]  
+    resources :operations
     get 'exports/new'
   end
   devise_for :users
   resources :users, only: [:show]
-  resources :projects
   resources :notebooks
   resources :geometry_models
   resources :attachments, only: [:show, :index]

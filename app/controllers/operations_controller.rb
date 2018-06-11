@@ -1,9 +1,8 @@
 class OperationsController < ApplicationController
-  before_action :set_ope, only: [:show, :destroy]
+  before_action :set_ope, only: [:show, :edit, :update, :destroy]
 
   # GET /operations/1
   def show
-    @ope = Operation.find(params[:id])
     @mda = @ope.analysis
   end
   
@@ -11,6 +10,10 @@ class OperationsController < ApplicationController
   def new
     @mda = Analysis.find(params[:mda_id])
     @ope = @mda.operations.build
+  end
+  
+  # GET /operations/1/edit
+  def edit
   end
   
   # POST /analyses/:mda_id/operations
@@ -23,6 +26,13 @@ class OperationsController < ApplicationController
       OperationJob.perform_later(@mda, ope_params[:hostname_or_ip]) 
       redirect_to edit_operation_url(@ope)
     end 
+  end
+  
+  # PATCH/PUT /operations/1
+  def update
+    @mda = @ope.analysis
+    OperationJob.perform_later(@mda, ope_params[:hostname_or_ip]) 
+    redirect_to edit_operation_url(@ope), notice: 'Run...' 
   end
   
   # DELETE /operations/1

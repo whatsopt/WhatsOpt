@@ -1,0 +1,17 @@
+<h1>New Operation for <%= @ope.analysis.name %></h1>
+
+<%= form_for([@mda, @ope], :html => { :role => "form" }) do |f| %>
+  <div class="row">
+    <div class=" col-4">
+      <div class="form-group">
+        <%= f.label :hostname_or_ip %>
+        <%= f.text_field :hostname_or_ip, class: "form-control" %>
+      </div>
+        
+      <div class="form-group">
+        <%= f.submit "Run", class: "btn btn-primary" %>
+        <%= f.submit "Cancel", class: "btn", name: "cancel_button" %>
+      </div>
+    </div>
+  </div>  
+<% end %>

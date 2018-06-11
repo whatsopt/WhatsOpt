@@ -33,7 +33,7 @@ module WhatsOpt
     def run(method="analysis")
       ok, lines = false, []
       Dir.mktmpdir("run_#{@mda.basename}_#{method}") do |dir|
-        #dir = "/tmp"
+        dir = "/tmp"
         begin
           _generate_code dir
         rescue ServerGenerator::ThriftError => e
