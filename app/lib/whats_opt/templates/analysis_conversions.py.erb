@@ -1,3 +1,4 @@
+import numpy as np
 from .<%= @mda.py_modulename %>.ttypes import *
 
 <% @mda.disciplines.nodes.each do |disc| -%>
@@ -5,24 +6,32 @@ from .<%= @mda.py_modulename %>.ttypes import *
 # <%= disc.py_classname %> 
 def to_openmdao_<%= disc.basename%>_inputs(ins, inputs={}):
     <% disc.input_variables.active.numeric.each do |var| %>
-    inputs['<%= var.name %>'] = ins.<%= var.name %><% end %>
+    inputs['<%= var.name %>'] = np.array(ins.<%= var.name %>)<% end %>
     return inputs
 
 def to_thrift_<%= disc.basename%>_input(inputs):
     ins = <%= disc.camelname%>Input()
     <% disc.input_variables.active.numeric.each do |var| %>
-    ins.<%= var.name %> = inputs['<%= var.name %>']<% end %>
+    <% if var.ndim > 0 %>
+    ins.<%= var.name %> = inputs['<%= var.name %>'].tolist()
+    <% else %>
+    ins.<%= var.name %> = <%= var.type=="Integer"?"int":"float"%>(inputs['<%= var.name %>'])
+    <% end %><% end %>
     return ins
 
 def to_openmdao_<%= disc.basename%>_outputs(output, outputs={}):
     <% disc.output_variables.active.numeric.each do |var| %>
-    outputs['<%= var.name %>'] = output.<%= var.name %><% end %>
+    outputs['<%= var.name %>'] = np.array(output.<%= var.name %>)<% end %>
     return outputs
 
 def to_thrift_<%= disc.basename%>_output(outputs):
     output = <%= disc.camelname%>Output()
     <% disc.output_variables.active.numeric.each do |var| %>
-    output.<%= var.name %> = outputs['<%= var.name %>']<% end %>
+    <% if var.ndim > 0 %>
+    output.<%= var.name %> = outputs['<%= var.name %>'].tolist()
+    <% else %>
+    output.<%= var.name %> = <%= var.type=="Integer"?"int":"float"%>(outputs['<%= var.name %>'])
+    <% end %><% end %>
     return output
 <% end -%>
 
