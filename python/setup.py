@@ -1,7 +1,8 @@
 from setuptools import setup
+from whatsopt import __version__
 
 setup(name='whatsopt',
-      version='0.4.1',
+      version=__version__,
       description='Remote client command line tool',
       url='http://gitlab.com/relf/WhatsOpt',
       author='Remi Lafage',

@@ -1,10 +1,11 @@
 import click
-from whatsopt.whatsopt_client import WhatsOpt
+from whatsopt import __version__, WhatsOpt
 
 @click.group()
-def cli():
+@click.version_option(__version__)
+def cli(version):
 	pass
-	
+
 @cli.command()
 def url():
 	""" WhatsOpt server url """
