@@ -41,7 +41,7 @@ class ServerGeneratorTest < ActiveSupport::TestCase
   test "should generate server as zip content" do
     zippath = File.new('/tmp/test_mda_file.zip', 'w')
     File.open(zippath, 'w') do |f|
-      content, _ = @sgen.generate
+      content, _ = @sgen.generate user_agent: "wop/0.4.2"
       f.write content
     end
     assert File.exists?(zippath)
