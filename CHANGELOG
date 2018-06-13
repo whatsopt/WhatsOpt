@@ -3,6 +3,7 @@
 <h3>0.9.1 (01/06/2018)</h3>
 <ul>
   <li>wop pull/update: generate thrift server code for a given analysis</li>
+  <li>wop --version and version</li>
 </ul>
 
 <h3>0.9.0 (31/05/2018)</h3>

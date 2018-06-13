@@ -20,7 +20,7 @@ module WhatsOpt
       @server_port = 31400
     end
         
-    def generate(only_base=false)
+    def generate(only_base: false, user_agent: nil)
       zip_filename = nil
       stringio = nil
       @genfiles = []
@@ -29,9 +29,14 @@ module WhatsOpt
         zip_rootpath = Pathname.new(dir)
         zip_filename = File.basename(dir)+".zip"
         _generate_code dir, only_base
-        stringio = Zip::OutputStream.write_buffer do |zio|
+        stringio = Zip::OutputStream.write_buffer do |zio|  
           @genfiles.each do |filename|
-            entry = Pathname.new(filename).relative_path_from(zip_rootpath)
+            if user_agent=~/wop/
+              entry = Pathname.new(filename).relative_path_from(zip_rootpath)
+            else # wop < 0.4.2 User-Agent is not set at all
+              # TODO: to be removed when wop < 0.4.2 obsolete
+              entry = filename.split('/')[2..-1].join('/')
+            end
             zio.put_next_entry(entry)
             File.open(filename) do |f|
               zio.write f.read

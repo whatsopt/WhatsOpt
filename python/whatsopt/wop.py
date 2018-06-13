@@ -3,7 +3,7 @@ from whatsopt import __version__, WhatsOpt
 
 @click.group()
 @click.version_option(__version__)
-def cli(version):
+def cli():
 	pass
 
 @cli.command()
@@ -63,5 +63,10 @@ def update(analysis_id):
 def upload(sqlite_filename, analysis_id):
 	""" Upload data stored in given SQLITE_FILENAME """
 	WhatsOpt().upload(sqlite_filename, analysis_id)
-	
+
+@cli.command()
+def version():
+	""" Show versions of WhatsOpt app and recommended wop command line """
+	WhatsOpt().check_versions()
+		
 cli(prog_name='wop')

@@ -11,10 +11,10 @@ import re
 import zipfile
 import tempfile
 
-
 from openmdao.devtools.problem_viewer.problem_viewer import _get_viewer_data, view_model
 from openmdao.api import IndepVarComp, Problem, Group, CaseReader
 from tabulate import tabulate
+from whatsopt import __version__
 
 WHATSOPT_DIRNAME = os.path.join(os.path.expanduser('~'), '.whatsopt')
 API_KEY_FILENAME = os.path.join(WHATSOPT_DIRNAME, 'api_key')
@@ -23,7 +23,7 @@ NULL_DRIVER_NAME = '__DRIVER__'  # check WhatsOpt Discipline model
 PROD_URL = "http://selene.onecert.fr/whatsopt"
 STAG_URL = "http://rdri206h.onecert.fr/whatsopt"
 TEST_URL = "http://endymion:3000"
-DEV_URL  = "http://192.168.99.100:3000"
+DEV_URL  = "http://192.168.99.101:3000"
 
 class WhatsOptImportMdaError(Exception):
     pass
@@ -97,7 +97,7 @@ class WhatsOpt(object):
             self.api_key = self._read_api_key()
         else:
             self.api_key = self._ask_and_write_api_key()
-        self.headers = {'Authorization': 'Token token=' + self.api_key}
+        self.headers = {'Authorization': 'Token token=' + self.api_key, 'User-Agent': 'wop/{}'.format(__version__)}
         url =  self._endpoint('/api/v1/analyses')
         resp = self.session.get(url, headers=self.headers)
         if already_logged and not resp.ok and retry>0:
@@ -106,7 +106,7 @@ class WhatsOpt(object):
             resp=self.login(api_key, echo)
         resp.raise_for_status() 
         if echo:
-            print("Sucessfully logged in to WhatsOpt (%s)" % self.url)
+            print("Successfully logged into WhatsOpt (%s)" % self.url)
         return resp
 
     def logout(self, echo=True):
@@ -229,7 +229,7 @@ class WhatsOpt(object):
         
     def upload(self, sqlite_filename, analysis_id=None):
         mda_id = self.get_analysis_id() if not analysis_id else analysis_id
-        print("mda_id=%s" % mda_id)
+        print("analysis_id=%s" % mda_id)
         reader = CaseReader(sqlite_filename)
         driver_first_coord = reader.driver_cases.get_iteration_coordinate(0)
         name = os.path.splitext(sqlite_filename)[0]
@@ -244,6 +244,14 @@ class WhatsOpt(object):
                                  json={'operation': operation_params})
         resp.raise_for_status()
         print("Results data from %s uploaded" % sqlite_filename)
+
+    def check_versions(self):
+        url =  self._endpoint('/api/v1/versioning')
+        resp = self.session.get(url, headers=self.headers)
+        resp.raise_for_status()
+        version = resp.json()
+        print("WhatsOpt:{} recommended wop:{}".format(version['whatsopt'], version['wop']))
+        print("current wop:{}".format(__version__))
         
     def get_analysis_id(self):
         files = self._find_analysis_base_files()
@@ -255,6 +263,7 @@ class WhatsOpt(object):
                                   Find %s got %s. Check header comments of %s files .' % (id, ident, str(files)))  
             id = ident    
         return id 
+
         
     @staticmethod
     def _find_analysis_base_files():

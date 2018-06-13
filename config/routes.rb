@@ -1,19 +1,20 @@
 Rails.application.routes.draw do
+
+  devise_for :users
+  resources :users, only: [:show]
   
   resources :variables
   resources :analyses, shallow: true, as: :mdas do
     resources :operations
     get 'exports/new'
   end
-  devise_for :users
-  resources :users, only: [:show]
   resources :notebooks
   resources :geometry_models
   resources :attachments, only: [:show, :index]
-  
     
   namespace :api do
     namespace :v1, defaults: { format: :json } do
+      resource :versioning, only: [:show]  
       resources :analyses, shallow: true, as: :mdas, only: [:index, :show, :create, :update] do
         resources :disciplines, only: [:show, :create, :update, :destroy], :shallow => true 
         resources :connections, only: [:create, :update, :destroy]
@@ -24,7 +25,6 @@ Rails.application.routes.draw do
     end
   end
 
-  #get '/jupyterhub' => redirect('https://rdri206h.onecert.fr')
   get '/toolbox' => redirect('http://dcps.onera/redmine/projects/oneramdao/files')
   get '/issues' => redirect('http://dcps.onera/redmine/projects/whatsopt/issues')
   get '/wiki' => redirect('http://dcps.onera/redmine/projects/whatsopt/wiki')

@@ -68,7 +68,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
   test "should generate openmdao mda zip base files" do
     zippath = Tempfile.new('test_mda_file.zip')
     File.open(zippath, 'w') do |f|
-      content, _ = @ogen.generate(only_base=true)
+      content, _ = @ogen.generate(only_base: true)
       f.write content
     end
     assert File.exists?(zippath)
