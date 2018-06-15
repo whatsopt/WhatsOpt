@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@rails/webpacker": "3.4",
+    "actioncable": "^5.2.0",
     "autoprefixer": "^7.1.1",
     "axios": "^0.16.2",
     "babel-core": "^6.25.0",
