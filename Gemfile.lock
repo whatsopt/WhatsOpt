@@ -239,6 +239,7 @@ GEM
     rb-fsevent (0.10.3)
     rb-inotify (0.9.10)
       ffi (>= 0.5.0, < 2)
+    redis (4.0.1)
     responders (2.4.0)
       actionpack (>= 4.2.0, < 5.3)
       railties (>= 4.2.0, < 5.3)
@@ -348,6 +349,7 @@ DEPENDENCIES
   rack-cors
   rails (~> 5.2.0)
   rails-assets-tether (>= 1.1.0)!
+  redis
   rolify
   rubyXL
   sass-rails (~> 5.0)

@@ -1,7 +1,17 @@
-<h1>New Operation for <%= @mda.name %></h1>
+<h1>New Operation for <%= @ope.analysis.name %></h1>
 
-<div id="runner" data-mda="<%= @mda.to_mda_viewer_json %>" data-ope="<%= @ope %>" data-api-key="<%=current_user.api_key%>"></div> 
-
-<script>var API_KEY = "<%=current_user.api_key%>"</script>
-
-<%= javascript_pack_tag 'runner_application' %>
+<%= form_for(@ope, url: mda_operations_path(@mda), :html => { :role => "form" }) do |f| %>
+  <div class="row">
+    <div class=" col-4">
+      <div class="form-group">
+        <%= f.label :hostname_or_ip %>
+        <%= f.text_field :hostname_or_ip, class: "form-control" %>
+      </div>
+        
+      <div class="form-group">
+        <%= f.submit "Run", class: "btn btn-primary" %>
+        <%= f.submit "Cancel", class: "btn", name: "cancel_button" %>
+      </div>
+    </div>
+  </div>  
+<% end %>

@@ -4,6 +4,8 @@ development:
 test:
   adapter: async
 
-production:
+production: &redis
   adapter: redis
-  url: redis://localhost:6379/1
+  url: redis://selene.onecert.fr:6379/1
+
+staging: *redis

@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let mda = runnerElt.data('mda');
     let ope = runnerElt.data('ope');
     let apiKey = runnerElt.data('api-key');
-    ReactDOM.render(<Runner mda={mda} ope={ope} apiKey={apiKey}/>,
+    ReactDOM.render(<Runner mda={mda} ope={ope} apiKey={apiKey} />,
                     runnerElt[0] );
   }
 );

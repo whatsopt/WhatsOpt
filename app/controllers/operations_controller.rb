@@ -14,6 +14,7 @@ class OperationsController < ApplicationController
   
   # GET /operations/1/edit
   def edit
+    @host = "endymion"
   end
   
   # POST /analyses/:mda_id/operations
@@ -23,7 +24,6 @@ class OperationsController < ApplicationController
     else 
       @mda = Analysis.find(params[:mda_id])
       @ope = @mda.operations.create
-      OperationJob.perform_later(@mda, ope_params[:hostname_or_ip]) 
       redirect_to edit_operation_url(@ope)
     end 
   end

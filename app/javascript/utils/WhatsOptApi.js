@@ -83,6 +83,13 @@ class WhatsOptApi {
       .then(callback)
       .catch((error) => console.log(error));
   }
+  
+  updateOperation(operationId, host, callback, onError) {
+    let path = `/api/v1/operations/${operationId}`;
+    axios.patch(url(path), {hostname_or_ip: host})
+      .then(callback)
+      .catch((error) => console.log(error));
+  }
 };
 
 let api = new WhatsOptApi();

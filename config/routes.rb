@@ -18,7 +18,7 @@ Rails.application.routes.draw do
       resources :analyses, shallow: true, as: :mdas, only: [:index, :show, :create, :update] do
         resources :disciplines, only: [:show, :create, :update, :destroy], :shallow => true 
         resources :connections, only: [:create, :update, :destroy]
-        resources :operations, only: [:show, :create, :destroy]  
+        resources :operations, only: [:show, :create, :update, :destroy]  
         post 'openmdao_checking', to: 'openmdao_checking#create' 
         get 'exports/new'
       end
@@ -35,4 +35,5 @@ Rails.application.routes.draw do
   end
   root to: redirect('users/sign_in')
   
+  mount ActionCable.server => '/cable'
 end

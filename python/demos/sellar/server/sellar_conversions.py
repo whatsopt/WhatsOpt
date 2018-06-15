@@ -10,17 +10,23 @@ from .sellar.ttypes import *
 # Disc1 
 def to_openmdao_disc1_inputs(ins, inputs={}):
     
-    inputs['x'] = np.array(ins.x)
     inputs['y2'] = np.array(ins.y2)
+    inputs['x'] = np.array(ins.x)
     inputs['z'] = np.array(ins.z)
     return inputs
 
 def to_thrift_disc1_input(inputs):
     ins = Disc1Input()
     
-    ins.x = inputs['x'].tolist()
-    ins.y2 = inputs['y2'].tolist()
+    
+    ins.y2 = float(inputs['y2'])
+    
+    
+    ins.x = float(inputs['x'])
+    
+    
     ins.z = inputs['z'].tolist()
+    
     return ins
 
 def to_openmdao_disc1_outputs(output, outputs={}):
@@ -31,7 +37,9 @@ def to_openmdao_disc1_outputs(output, outputs={}):
 def to_thrift_disc1_output(outputs):
     output = Disc1Output()
     
-    output.y1 = outputs['y1'].tolist()
+    
+    output.y1 = float(outputs['y1'])
+    
     return output
 
 
@@ -45,8 +53,12 @@ def to_openmdao_disc2_inputs(ins, inputs={}):
 def to_thrift_disc2_input(inputs):
     ins = Disc2Input()
     
-    ins.y1 = inputs['y1'].tolist()
+    
+    ins.y1 = float(inputs['y1'])
+    
+    
     ins.z = inputs['z'].tolist()
+    
     return ins
 
 def to_openmdao_disc2_outputs(output, outputs={}):
@@ -57,26 +69,36 @@ def to_openmdao_disc2_outputs(output, outputs={}):
 def to_thrift_disc2_output(outputs):
     output = Disc2Output()
     
-    output.y2 = outputs['y2'].tolist()
+    
+    output.y2 = float(outputs['y2'])
+    
     return output
 
 
 # Functions 
 def to_openmdao_functions_inputs(ins, inputs={}):
     
-    inputs['x'] = np.array(ins.x)
+    inputs['z'] = np.array(ins.z)
     inputs['y1'] = np.array(ins.y1)
     inputs['y2'] = np.array(ins.y2)
-    inputs['z'] = np.array(ins.z)
+    inputs['x'] = np.array(ins.x)
     return inputs
 
 def to_thrift_functions_input(inputs):
     ins = FunctionsInput()
     
-    ins.x = inputs['x'].tolist()
-    ins.y1 = inputs['y1'].tolist()
-    ins.y2 = inputs['y2'].tolist()
+    
     ins.z = inputs['z'].tolist()
+    
+    
+    ins.y1 = float(inputs['y1'])
+    
+    
+    ins.y2 = float(inputs['y2'])
+    
+    
+    ins.x = float(inputs['x'])
+    
     return ins
 
 def to_openmdao_functions_outputs(output, outputs={}):
@@ -89,9 +111,15 @@ def to_openmdao_functions_outputs(output, outputs={}):
 def to_thrift_functions_output(outputs):
     output = FunctionsOutput()
     
-    output.obj = outputs['obj'].tolist()
-    output.g1 = outputs['g1'].tolist()
-    output.g2 = outputs['g2'].tolist()
+    
+    output.obj = float(outputs['obj'])
+    
+    
+    output.g1 = float(outputs['g1'])
+    
+    
+    output.g2 = float(outputs['g2'])
+    
     return output
 
 
