@@ -32,10 +32,6 @@ class Operation < ApplicationRecord
 	  end
 	end
 	
-	def hostname_or_ip
-	  ""
-	end
-	
   def _build_cases_from(case_attrs)
      var = {}
      case_attrs.each do |c|

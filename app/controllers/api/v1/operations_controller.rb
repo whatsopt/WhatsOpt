@@ -10,14 +10,14 @@ class Api::V1::OperationsController < Api::ApiController
   def create
     # called by wop upload data.sqlite
     mda = Analysis.find(params[:mda_id])
-    @operation = Operation.build_operation(mda, params[:operation])
+    @operation = Operation.build_operation(mda, ope_params)
     @operation.save!
     render json: @operation, status: :created
   end
 
   # PATCH /api/v1/operations/1
   def update
-    OperationJob.perform_later(@operation, params[:hostname_or_ip]) 
+    OperationJob.perform_later(@operation) 
     head :no_content
   end
   
@@ -32,5 +32,9 @@ class Api::V1::OperationsController < Api::ApiController
     def set_operation
       @operation = Operation.find(params[:id])
     end
-
+  
+    def ope_params
+      params.require(:operation).permit(:host, :name, cases: [:varname, :coord_index, values: []])
+    end
+    
 end

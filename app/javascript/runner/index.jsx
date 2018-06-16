@@ -39,7 +39,8 @@ class Runner extends React.Component {
   componentDidMount() {
     //Action Cable setup
     const cableApp = {};
-    cableApp.cable = actionCable.createConsumer(`ws://endymion:3000/cable`);
+    //cableApp.cable = actionCable.createConsumer(`ws://endymion:3000/cable`);
+    cableApp.cable = actionCable.createConsumer(`ws://192.168.99.100:3000/cable`);
 
     console.log("Create OperationRunChannel "+this.props.ope.id);
     cableApp.cable.subscriptions.create({channel: "OperationRunChannel", 
@@ -48,9 +49,9 @@ class Runner extends React.Component {
         connected: () => {
           // Called when the subscription is ready for use on the server
           console.log("connected");
-          api.updateOperation(this.props.ope.id, "endymion", 
-                  (response) => console.log(response)
-                  );
+          let ope_attrs={};
+          api.updateOperation(this.props.ope.id, ope_attrs, 
+                  (response) => console.log(response));
         },
 
         disconnected: function() {
@@ -76,8 +77,10 @@ class Runner extends React.Component {
     
     return (
       <div className="container-fluid editor-section">   
-        <div className="listing-line">Status: {this.state.status}</div>
-        {lines}
+        <div>Status: {this.state.status}</div>
+        <div className="listing">
+          {lines}
+        </div>
       </div>
     );
   }

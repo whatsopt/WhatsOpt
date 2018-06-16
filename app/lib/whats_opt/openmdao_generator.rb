@@ -36,10 +36,12 @@ module WhatsOpt
         dir = "/tmp"
         begin
           _generate_code dir
+          Rails.logger.info "##### AFTER GENERATE ################################################"
         rescue ServerGenerator::ThriftError => e
           ok = false
           lines = e.to_s.lines.map(&:chomp)
         else
+          Rails.logger.info "##### RUN ################################################"
           ok, log = _run_mda(dir, method)   
           lines = log.lines.map(&:chomp)
         end
@@ -55,6 +57,7 @@ module WhatsOpt
     end
     
     def _run_mda(dir, method)
+      Rails.logger.info "**************************************************************"
       script = File.join(dir, "run_#{method}.py")
       Rails.logger.info "#{PYTHON} #{script}"
       stdouterr, status = Open3.capture2e(PYTHON, script)

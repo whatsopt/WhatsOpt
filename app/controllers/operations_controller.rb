@@ -14,7 +14,6 @@ class OperationsController < ApplicationController
   
   # GET /operations/1/edit
   def edit
-    @host = "endymion"
   end
   
   # POST /analyses/:mda_id/operations
@@ -23,16 +22,14 @@ class OperationsController < ApplicationController
       redirect_to mda_url(params[:mda_id]), notice: "Operation creation cancelled."
     else 
       @mda = Analysis.find(params[:mda_id])
-      @ope = @mda.operations.create
+      @ope = @mda.operations.create(ope_params)
       redirect_to edit_operation_url(@ope)
     end 
   end
   
   # PATCH/PUT /operations/1
   def update
-    @mda = @ope.analysis
-    OperationJob.perform_later(@mda, ope_params[:hostname_or_ip]) 
-    redirect_to edit_operation_url(@ope), notice: 'Run...' 
+    redirect_to edit_operation_url(@ope) 
   end
   
   # DELETE /operations/1
@@ -49,6 +46,6 @@ class OperationsController < ApplicationController
     end
 
     def ope_params
-      params.require(:operation).permit(:hostname_or_ip)
+      params.require(:operation).permit(:host, :name, cases: [:varname, :coord_index, values: []])
     end
 end
