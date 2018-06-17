@@ -18,7 +18,7 @@ pb.driver.options['tol'] = 1e-6
 pb.driver.options['disp'] = True
 pb.driver.options['debug_print'] = ['desvars','ln_cons','nl_cons','objs']
 
-case_recorder_filename = '<%= @mda.py_modulename %>_optimization.sqlite'        
+case_recorder_filename = '<%= @sqlite_file_prefix %><%= @mda.py_modulename %>_optimization.sqlite'        
 recorder = SqliteRecorder(case_recorder_filename)
 pb.driver.add_recorder(recorder)
 pb.model.add_recorder(recorder)

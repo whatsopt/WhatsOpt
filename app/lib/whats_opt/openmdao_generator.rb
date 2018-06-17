@@ -12,6 +12,7 @@ module WhatsOpt
       @prefix = "openmdao"
       @remote = !mda_host.nil?
       @sgen = WhatsOpt::ServerGenerator.new(mda, mda_host)
+      @sqlite_filename = 'cases.sqlite'
     end
                     
     def check_mda_setup
@@ -30,18 +31,16 @@ module WhatsOpt
       return ok, lines
     end
              
-    def run(method="analysis")
+    def run(method="analysis", sqlite_filename=nil)
+      @sqlite_filename = sqlite_filename || "#{@mda.py_modulename}_#{method}.sqlite"
       ok, lines = false, []
       Dir.mktmpdir("run_#{@mda.basename}_#{method}") do |dir|
-        dir = "/tmp"
         begin
           _generate_code dir
-          Rails.logger.info "##### AFTER GENERATE ################################################"
         rescue ServerGenerator::ThriftError => e
           ok = false
           lines = e.to_s.lines.map(&:chomp)
         else
-          Rails.logger.info "##### RUN ################################################"
           ok, log = _run_mda(dir, method)   
           lines = log.lines.map(&:chomp)
         end
@@ -57,7 +56,6 @@ module WhatsOpt
     end
     
     def _run_mda(dir, method)
-      Rails.logger.info "**************************************************************"
       script = File.join(dir, "run_#{method}.py")
       Rails.logger.info "#{PYTHON} #{script}"
       stdouterr, status = Open3.capture2e(PYTHON, script)
@@ -87,8 +85,11 @@ module WhatsOpt
        
     def _generate_run_scripts(gendir)
       _generate('run_analysis.py', 'run_analysis.py.erb', gendir)
+      @sqlite_filename = "#{@mda.py_modulename}_doe.sqlite"
       _generate('run_doe.py', 'run_doe.py.erb', gendir)
+      @sqlite_filename = "#{@mda.py_modulename}_screening.sqlite"
       _generate('run_screening.py', 'run_screening.py.erb', gendir)
+      @sqlite_filename = "#{@mda.py_modulename}_optimization.sqlite"
       _generate('run_optimization.py', 'run_optimization.py.erb', gendir)
     end    
   end

@@ -1,0 +1,16 @@
+# DO NOT EDIT unless you know what you are doing
+# analysis_id: <%= @mda.id %>
+
+from openmdao.api import Problem
+<% if @remote -%>
+from <%= @server_module %>.<%= @mda.py_modulename %>_proxy import <%= @mda.py_classname %>Proxy as <%= @mda.py_classname %> 
+<% else -%>
+from <%= @mda.py_modulename %> import <%= @mda.py_classname %> 
+<% end %>
+pb = Problem(<%= @mda.py_classname %>())
+pb.setup()  
+
+pb.run_model()   
+pb.model.list_inputs(print_arrays=True)
+pb.model.list_outputs(print_arrays=True)
+

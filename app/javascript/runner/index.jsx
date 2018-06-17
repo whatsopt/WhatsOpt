@@ -50,17 +50,14 @@ class Runner extends React.Component {
          this.handleRun()
        },
        disconnected: function() {
-         // Called when the subscription has been terminated by the server
          console.log("disconnected");
        },
        received: (data) => {
          let newState = update(this.state, {status: {$set: data.status},
                                             log: {$set: data.log}});
          this.setState(newState);
-         // Called when there's incoming data on the websocket for this channel
-         console.log("receive "+JSON.stringify(data));  
        }
-     });
+      });
    }
 
   render() {
