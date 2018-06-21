@@ -1,5 +1,5 @@
 class OperationSerializer < ActiveModel::Serializer
-  attributes :id, :name, :category
+  attributes :id, :name, :driver, :category
   has_many :cases
   
   def category

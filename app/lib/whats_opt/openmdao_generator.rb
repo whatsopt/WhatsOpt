@@ -32,11 +32,11 @@ module WhatsOpt
     end
              
     def run(method="analysis", sqlite_filename=nil)
-      @sqlite_filename = sqlite_filename || "#{@mda.py_modulename}_#{method}.sqlite"
       ok, lines = false, []
       Dir.mktmpdir("run_#{@mda.basename}_#{method}") do |dir|
+        dir = "/tmp"
         begin
-          _generate_code dir
+          _generate_code dir, sqlite_filename: sqlite_filename
         rescue ServerGenerator::ThriftError => e
           ok = false
           lines = e.to_s.lines.map(&:chomp)
@@ -62,12 +62,12 @@ module WhatsOpt
       return status.success?, stdouterr
     end
     
-    def _generate_code(gendir, only_base=false)
+    def _generate_code(gendir, only_base: false, sqlite_filename: nil)
       @mda.disciplines.nodes.each do |disc|
         _generate_discipline(disc, gendir, only_base)
       end 
       _generate_main(gendir, only_base)
-      _generate_run_scripts(gendir)
+      _generate_run_scripts(gendir, sqlite_filename)
       @sgen._generate_code(gendir)
       @genfiles += @sgen.genfiles
     end
@@ -78,18 +78,18 @@ module WhatsOpt
       _generate(discipline.py_basefilename, 'openmdao_discipline_base.py.erb', gendir)
     end
     
-    def _generate_main(gendir, only_base=false)
+    def _generate_main(gendir, only_base)
       _generate(@mda.py_filename, 'openmdao_main.py.erb', gendir) unless only_base
       _generate(@mda.py_basefilename, 'openmdao_main_base.py.erb', gendir)
     end    
        
-    def _generate_run_scripts(gendir)
+    def _generate_run_scripts(gendir, sqlite_filename=nil)
       _generate('run_analysis.py', 'run_analysis.py.erb', gendir)
-      @sqlite_filename = "#{@mda.py_modulename}_doe.sqlite"
+      @sqlite_filename = sqlite_filename || "#{@mda.basename}_doe.sqlite"
       _generate('run_doe.py', 'run_doe.py.erb', gendir)
-      @sqlite_filename = "#{@mda.py_modulename}_screening.sqlite"
+      @sqlite_filename = sqlite_filename || "#{@mda.basename}_screening.sqlite"
       _generate('run_screening.py', 'run_screening.py.erb', gendir)
-      @sqlite_filename = "#{@mda.py_modulename}_optimization.sqlite"
+      @sqlite_filename = sqlite_filename || "#{@mda.basename}_optimization.sqlite"
       _generate('run_optimization.py', 'run_optimization.py.erb', gendir)
     end    
   end

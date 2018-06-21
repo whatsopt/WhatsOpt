@@ -7,14 +7,6 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
   def setup
     @mda = analyses(:cicav)
     @ogen = WhatsOpt::OpenmdaoGenerator.new(@mda)
-    @pid=nil
-  end
-    
-  def teardown
-    if @pid
-      #puts "KILL #{@pid}"
-      Process.kill("TERM", @pid)
-    end
   end
  
   test "should generate openmdao component for a given discipline in mda" do
@@ -97,10 +89,12 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
   test "should run remote mda successfully when valid" do
     Dir.mktmpdir do |dir|
       @ogen._generate_code dir
-      @pid = spawn("#{WhatsOpt::OpenmdaoGenerator::PYTHON} #{File.join(dir, 'run_server.py')}", [:out, :err]=> '/dev/null')
+      pid = spawn("#{WhatsOpt::OpenmdaoGenerator::PYTHON} #{File.join(dir, 'run_server.py')}", [:out]=> '/dev/null')
       @ogen_remote = WhatsOpt::OpenmdaoGenerator.new(@mda, 'localhost')
       ok, log = @ogen_remote.run
-      assert ok  
+      assert ok
+      Process.kill("TERM", pid)
+      Process.waitpid pid
     end
   end
 

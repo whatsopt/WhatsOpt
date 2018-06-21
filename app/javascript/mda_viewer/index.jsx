@@ -9,7 +9,6 @@ import AnalysisEditor from 'mda_viewer/components/AnalysisEditor';
 import DisciplinesEditor from 'mda_viewer/components/DisciplinesEditor';
 import ConnectionsEditor from 'mda_viewer/components/ConnectionsEditor';
 import VariablesEditor from 'mda_viewer/components/VariablesEditor';
-import {api, url} from '../utils/WhatsOptApi';
 import AnalysisDatabase from '../utils/AnalysisDatabase';
 
 let VAR_REGEXP = /^[a-zA-Z][a-zA-Z0-9]*$/;
@@ -17,6 +16,7 @@ let VAR_REGEXP = /^[a-zA-Z][a-zA-Z0-9]*$/;
 class MdaViewer extends React.Component {
   constructor(props) {
     super(props);
+    this.api = this.props.api;
     let isEditing = props.isEditing;
     let filter = {fr: undefined, to: undefined};
     this.state = {
@@ -84,7 +84,7 @@ class MdaViewer extends React.Component {
     names = names.filter((name) => name !== '');
 
     let data = {from: this.state.filter.fr, to: this.state.filter.to, names: names};
-    api.createConnection(this.props.mda.id, data,
+    this.api.createConnection(this.props.mda.id, data,
         (response) => {
             let newState = update(this.state, {newConnectionName: {$set: ''}});
             this.setState(newState);
@@ -112,7 +112,7 @@ class MdaViewer extends React.Component {
     delete connAttrs['lower'];
     delete connAttrs['upper'];
     if (Object.keys(connAttrs).length !== 0) {
-        api.updateConnection(
+        this.api.updateConnection(
           connId, connAttrs, (response) => {this.renderXdsm();},
           (error) => {
             let message = error.response.data.message || "Error: Update failed";
@@ -123,14 +123,14 @@ class MdaViewer extends React.Component {
   }
 
   handleConnectionDelete(connId) {
-    api.deleteConnection(connId, (response) => {this.renderXdsm();});
+    this.api.deleteConnection(connId, (response) => {this.renderXdsm();});
   }
 
   // *** Disciplines ************************************************************
 
   handleDisciplineCreate(event) {
     event.preventDefault();
-    api.createDiscipline(this.props.mda.id, {name: this.state.newDisciplineName, type: 'analysis'},
+    this.api.createDiscipline(this.props.mda.id, {name: this.state.newDisciplineName, type: 'analysis'},
       (response) => {
         let newState = update(this.state, {newDisciplineName: {$set: ''}});
         this.setState(newState);
@@ -145,11 +145,11 @@ class MdaViewer extends React.Component {
   }
 
   handleDisciplineUpdate(node, discAttrs) {
-    api.updateDiscipline(node.id, discAttrs, (response) => {this.renderXdsm();});
+    this.api.updateDiscipline(node.id, discAttrs, (response) => {this.renderXdsm();});
   }
 
   handleDisciplineDelete(node) {
-    api.deleteDiscipline(node.id, (response) => {
+    this.api.deleteDiscipline(node.id, (response) => {
       if (this.state.filter.fr===node.id || this.state.filter.to===node.id) {
         this.handleFilterChange({fr: undefined, to: undefined});
       }
@@ -167,7 +167,7 @@ class MdaViewer extends React.Component {
 
   handleAnalysisUpdate(event) {
     event.preventDefault();
-    api.updateAnalysis(this.props.mda.id, {name: this.state.newAnalysisName},
+    this.api.updateAnalysis(this.props.mda.id, {name: this.state.newAnalysisName},
       (response) => {
         let newState = update(this.state, {mda: {name: {$set: this.state.newAnalysisName}}});
         this.setState(newState);
@@ -175,7 +175,7 @@ class MdaViewer extends React.Component {
   }
 
   renderXdsm() {
-    api.getAnalysisXdsm(this.props.mda.id,
+    this.api.getAnalysisXdsm(this.props.mda.id,
       (response) => {
         let newState = update(this.state,
           {mda: {nodes: {$set: response.data.nodes},
@@ -197,7 +197,7 @@ class MdaViewer extends React.Component {
     if (this.state.isEditing) {
       return (
       <div>
-        <form className="button_to" method="get" action={url(`/analyses/${this.props.mda.id}`)}>
+        <form className="button_to" method="get" action={this.api.url(`/analyses/${this.props.mda.id}`)}>
           <button className="btn float-right" type="submit">
             <i className="fa fa-times-circle" /> Close
           </button>
@@ -263,7 +263,7 @@ class MdaViewer extends React.Component {
     return (
       <div>
         <div className="mda-section">
-          <ToolBar mdaId={this.props.mda.id}/>
+          <ToolBar mdaId={this.props.mda.id} api={this.api}/>
         </div>
         <div className="mda-section">
             <XdsmViewer ref={(xdsmViewer) => this.xdsmViewer = xdsmViewer} mda={this.state.mda}
@@ -288,4 +288,4 @@ MdaViewer.propTypes = {
   }),
 };
 
-export {MdaViewer};
+export default MdaViewer;

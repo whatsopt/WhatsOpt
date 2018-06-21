@@ -20,7 +20,7 @@ module WhatsOpt
       @server_port = 31400
     end
         
-    def generate(only_base: false, user_agent: nil)
+    def generate(only_base: false, user_agent: nil, sqlite_filename: nil)
       zip_filename = nil
       stringio = nil
       @genfiles = []
@@ -28,7 +28,7 @@ module WhatsOpt
         #dir='/tmp/test'
         zip_rootpath = Pathname.new(dir)
         zip_filename = File.basename(dir)+".zip"
-        _generate_code dir, only_base
+        _generate_code dir, only_base: only_base, sqlite_filename: sqlite_filename
         stringio = Zip::OutputStream.write_buffer do |zio|  
           @genfiles.each do |filename|
             if user_agent=~/wop/

@@ -3,17 +3,26 @@ class OperationsController < ApplicationController
 
   # GET /operations/1
   def show
+    if @ope.cases.empty?
+      redirect_to edit_operation_url(@ope)
+    end
     @mda = @ope.analysis
   end
   
   # GET /analyses/:mda_id/operations/new
   def new
     @mda = Analysis.find(params[:mda_id])
-    @ope = @mda.operations.build
+    @ope = Operation.in_progress(@mda).take 
+    if @ope
+      redirect_to edit_operation_url(@ope)
+    else 
+      @ope = @mda.operations.build
+    end
   end
   
   # GET /operations/1/edit
   def edit
+    @server=`hostname`+((Rails.env=='development') ? ':3000':'')
   end
   
   # POST /analyses/:mda_id/operations

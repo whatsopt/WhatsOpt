@@ -6,4 +6,11 @@ class OperationTest < ActiveSupport::TestCase
     adapter = ActiveModelSerializers::SerializableResource.new(ope)
     assert ope.as_json
   end
+  
+  def test_operations_in_progress_with_no_case
+    mda = analyses(:cicav)
+    ope = Operation.in_progress(mda).take
+    assert_equal operations(:inprogress).id, ope.id 
+  end
+
 end

@@ -52,14 +52,14 @@ def pull(dry_run, force, analysis_id):
 	WhatsOpt().pull_mda(analysis_id, options)
 	
 @cli.command()
-@click.option('--analysis-id')
+@click.option('--analysis-id', help='specify the analysis to update from (otherwise guessed from current files)')
 def update(analysis_id):
 	""" Update analysis connections """
 	WhatsOpt().update_mda(analysis_id)
 	
 @cli.command()
 @click.argument('sqlite_filename')
-@click.option('--analysis-id')
+@click.option('--analysis-id', help='specify the analysis to update from (otherwise guessed from current files)')
 def upload(sqlite_filename, analysis_id):
 	""" Upload data stored in given SQLITE_FILENAME """
 	WhatsOpt().upload(sqlite_filename, analysis_id)

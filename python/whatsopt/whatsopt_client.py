@@ -99,7 +99,9 @@ class WhatsOpt(object):
             self.api_key = self._ask_and_write_api_key()
         self.headers = {'Authorization': 'Token token=' + self.api_key, 'User-Agent': 'wop/{}'.format(__version__)}
         url =  self._endpoint('/api/v1/analyses')
+        print("Test login");
         resp = self.session.get(url, headers=self.headers)
+        print("AFTER Test login");
         if already_logged and not resp.ok and retry>0:
             self.logout(echo=False)  # log out silently, suppose one was logged on another server
             retry -= 1
@@ -228,6 +230,7 @@ class WhatsOpt(object):
         self.pull_mda(id, {'--base': True, '--force': True})
         
     def upload(self, sqlite_filename, analysis_id=None):
+        from socket import gethostname
         mda_id = self.get_analysis_id() if not analysis_id else analysis_id
         print("analysis_id=%s" % mda_id)
         reader = CaseReader(sqlite_filename)
@@ -239,6 +242,8 @@ class WhatsOpt(object):
         cases = self._format_upload_cases(reader)
         url =  self._endpoint(('/api/v1/analyses/%s/operations') % mda_id)
         operation_params = { 'name': name,
+                             'driver': name.lower(),
+                             'host': gethostname(),
                              'cases': cases }
         resp = self.session.post(url, headers=self.headers, 
                                  json={'operation': operation_params})

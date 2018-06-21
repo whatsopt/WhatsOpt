@@ -13,7 +13,5 @@
 
 <div id="plotter" data-mda="<%= @mda.to_mda_viewer_json %>" data-ope="<%= @ope.to_plotter_json %>" data-api-key="<%=current_user.api_key%>"></div> 
 
-<script>var API_KEY = "<%=current_user.api_key%>"</script>
-
 <%= javascript_pack_tag 'plotter_application' %>
 

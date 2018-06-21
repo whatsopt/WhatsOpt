@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import saveSvgAsPng from 'save-svg-as-png';
-import {api, url} from '../../utils/WhatsOptApi';
 
 class OpenMDAOLogLine extends React.Component {
   constructor(props) {
@@ -21,6 +20,8 @@ OpenMDAOLogLine.propTypes= {
 class ToolBar extends React.Component {
   constructor(props) {
     super(props);
+    this.api = props.api;
+    
     this.state = {
       loading: true,
       statusOk: false,
@@ -35,7 +36,7 @@ class ToolBar extends React.Component {
   }
 
   getStatus() {
-    api.openmdaoChecking(
+    this.api.openmdaoChecking(
         this.props.mdaId,
         (response) => {this.setState({loading: false, statusOk: response.data.statusOk, log: response.data.log});});
   }
@@ -59,8 +60,8 @@ class ToolBar extends React.Component {
       btnIcon = <i className="fa fa-cog fa-spin" />;
     }
     let base = "/analyses/"+this.props.mdaId+"/exports/new";
-    let hrefOm = url(base+".openmdao");
-    let hrefCd = url(base+".cmdows");
+    let hrefOm = this.api.url(base+".openmdao");
+    let hrefCd = this.api.url(base+".cmdows");
     return (
       <div>
         <div className="btn-toolbar" role="toolbar">

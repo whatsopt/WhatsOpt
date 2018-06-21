@@ -16,7 +16,7 @@ module WhatsOpt
       @comment_delimiters={begin: '/*', end: '*/'}
     end
                         
-    def _generate_code(gendir, only_base=false)
+    def _generate_code(gendir, only_base: false, sqlite_filename: nil)
       server_dir = File.join(gendir, @server_module)
       Dir.mkdir(server_dir) unless File.exists?(server_dir)
       ok, log = _generate_with_thrift(server_dir)

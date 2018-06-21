@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_05_19_194015) do
+ActiveRecord::Schema.define(version: 45) do
 
   create_table "analyses", force: :cascade do |t|
     t.string "name"
@@ -35,7 +35,7 @@ ActiveRecord::Schema.define(version: 2018_05_19_194015) do
   create_table "cases", force: :cascade do |t|
     t.integer "operation_id"
     t.integer "variable_id"
-    t.integer "coord_index", default: 0
+    t.integer "coord_index", default: -1
     t.text "values"
   end
 
@@ -73,6 +73,7 @@ ActiveRecord::Schema.define(version: 2018_05_19_194015) do
     t.integer "analysis_id"
     t.string "name"
     t.string "host", default: ""
+    t.string "driver", default: "runonce"
   end
 
   create_table "parameters", force: :cascade do |t|

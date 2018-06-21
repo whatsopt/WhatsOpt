@@ -5,22 +5,36 @@ class Operation < ApplicationRecord
   belongs_to :analysis
 	has_many :cases, :dependent => :destroy
 	
+  scope :in_progress, ->(analysis) { Operation.where(analysis: analysis).left_outer_joins(:cases).where(cases: {operation_id: nil}) }
+  scope :done, ->(analysis) { Operation.where(analysis: analysis).left_outer_joins(:cases).where.not(cases: {operation_id: nil}).uniq }
+	
 	def self.build_operation(mda, ope_attrs)
-	  operation = mda.operations.build(name: ope_attrs[:name])
+	  operation = mda.operations.build(ope_attrs.except(:cases))
 	  operation._build_cases_from(ope_attrs[:cases])
 	  operation
 	end
-	
+
+	def update_operation(ope_attrs)
+    name = ope_attrs[:name]
+    driver = ope_attrs[:driver]
+    _build_cases_from(ope_attrs[:cases])
+  end
+
 	def to_plotter_json
     adapter = ActiveModelSerializers::SerializableResource.new(self)
     adapter.to_json
 	end
 	
 	def category
-	  if name == "SLSQP"
-	    'optimization'
-	  else
-	    'sampling'
+    case driver
+    when "runonce"
+      'analysis'
+    when "slsqp"
+      'optimization'
+    when "morris"
+      'screening'
+    else
+      'doe'
 	  end 
 	end
 	

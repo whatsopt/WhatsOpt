@@ -26,7 +26,7 @@
           <td><%= mda.owner %></td>
           <td><%= time_ago_in_words(mda.created_at) %> ago</td>
           <td>
-              <% mda.operations.each do |ope| %>
+              <% Operation.done(mda).each do |ope| %>
                 <span><%= link_to ope.name, operation_path(ope) %><span> 
               <% end%>
           </td>

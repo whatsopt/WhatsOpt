@@ -1,64 +1,66 @@
 import axios from 'axios';
 
-let token = document.getElementsByName('csrf-token')[0].getAttribute('content');
-axios.defaults.headers.common['X-CSRF-Token'] = token;
-axios.defaults.headers.common['Accept'] = 'application/json';
-axios.defaults.headers.common['Authorization'] = 'Token '+API_KEY;
-
-let relativeUrlRoot = document.getElementsByName('relative-url-root')[0].getAttribute('content');
-// axios.defaults.baseURL = 'http://endymion:3000'
-
-// prepend relative_url_root
-function url(path) {
-  return relativeUrlRoot + path;
-};
-
 class WhatsOptApi {
+  
+  constructor(csrfToken, apiKey, relativeUrlRoot) {
+//    console.log(csrfToken);
+//    console.log(apiKey);
+//    console.log(relativeUrlRoot);
+    axios.defaults.headers.common['X-CSRF-Token'] = csrfToken;
+    axios.defaults.headers.common['Accept'] = 'application/json';
+    axios.defaults.headers.common['Authorization'] = 'Token '+apiKey;
+    this.relativeUrlRoot = relativeUrlRoot;
+  }
+  
+  url(path) {
+    return this.relativeUrlRoot + path;
+  };
+  
   openmdaoChecking(mdaId, callback) {
     let path = `/api/v1/analyses/${mdaId}/openmdao_checking`;
-    axios.post(url(path))
+    axios.post(this.url(path))
       .then(callback)
       .catch((error) => console.log(error));
   };
 
   getAnalysisXdsm(mdaId, callback) {
     let path = `/api/v1/analyses/${mdaId}.xdsm`;
-    axios.get(url(path))
+    axios.get(this.url(path))
       .then(callback)
       .catch((error) => console.log(error));
   };
 
   createDiscipline(mdaId, disciplineAttributes, callback) {
     let path = `/api/v1/analyses/${mdaId}/disciplines`;
-    axios.post(url(path), {discipline: disciplineAttributes})
+    axios.post(this.url(path), {discipline: disciplineAttributes})
       .then(callback)
       .catch((error) => console.log(error));
   }
 
   updateDiscipline(discId, disciplineAttributes, callback) {
     let path = `/api/v1/disciplines/${discId}`;
-    axios.put(url(path), {discipline: disciplineAttributes})
+    axios.put(this.url(path), {discipline: disciplineAttributes})
       .then(callback)
       .catch((error) => console.log(error));
   }
 
   deleteDiscipline(discId, callback) {
     let path = `/api/v1/disciplines/${discId}`;
-    axios.delete(url(path))
+    axios.delete(this.url(path))
       .then(callback)
       .catch((error) => console.log(error));
   }
 
   updateAnalysis(mdaId, mdaAttrs, callback) {
     let path = `/api/v1/analyses/${mdaId}`;
-    axios.put(url(path), {analysis: mdaAttrs})
+    axios.put(this.url(path), {analysis: mdaAttrs})
       .then(callback)
       .catch((error) => console.log(error));
   }
 
   createConnection(mdaId, connectionAttributes, callback, onError) {
     let path = `/api/v1/analyses/${mdaId}/connections`;
-    axios.post(url(path), {connection: connectionAttributes})
+    axios.post(this.url(path), {connection: connectionAttributes})
       .then(callback)
       .catch(onError);
   }
@@ -72,26 +74,24 @@ class WhatsOptApi {
 
   deleteConnection(connectionId, callback) {
     let path = `/api/v1/connections/${connectionId}`;
-    axios.delete(url(path))
+    axios.delete(this.url(path))
       .then(callback)
       .catch((error) => console.log(error));
   }
 
   getOperation(operationId) {
     let path = `/api/v1/operations/${operationId}`;
-    axios.get(url(path))
+    axios.get(this.url(path))
       .then(callback)
       .catch((error) => console.log(error));
   }
   
   updateOperation(operationId, host, callback, onError) {
     let path = `/api/v1/operations/${operationId}`;
-    axios.patch(url(path), {hostname_or_ip: host})
+    axios.patch(this.url(path), {operation: host})
       .then(callback)
       .catch((error) => console.log(error));
   }
 };
 
-let api = new WhatsOptApi();
-
-export {api, url};
+export default WhatsOptApi;

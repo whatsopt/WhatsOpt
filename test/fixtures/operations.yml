@@ -1,4 +1,16 @@
-doe:
-    name: doe
+inprogress:
+    name: SLSQP
+    driver: 
     analysis: cicav
+
+inprogress2:
+    name: SLSQP
+    driver: 
+    analysis: fast
+
+doe:
+    name: LHS
+    driver: lhs
+    analysis: cicav
+    
     

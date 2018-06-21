@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import update from 'immutability-helper';
-import {api, url} from '../utils/WhatsOptApi';
 import actionCable from 'actioncable'
 
 
@@ -18,41 +17,55 @@ class LogLine extends React.Component {
 class Runner extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {hostNameOrIp: "", status: "UNKNOWN" ,log:[]};
+    this.cableApp = {};
+    this.api = this.props.api
+    
+    this.state = {host: this.props.ope.host, driver: 'runonce', status: "UNKNOWN", log:[]};
     
     this.handleHostChange = this.handleHostChange.bind(this); 
+    this.handleHostUpdate = this.handleHostUpdate.bind(this); 
     this.handleRun = this.handleRun.bind(this); 
+    this.handleDriverChange = this.handleDriverChange.bind(this);
   }
 
   handleHostChange(event) {
-    let newState = update(this.state, {hostNameOrIp:{$set: event.target.value}});
+    let newState = update(this.state, {host:{$set: event.target.value}});
+    this.setState(newState);
+  }
+    
+  handleHostUpdate(event) {
+    event.preventDefault();
+    this.handleRun();
+  }
+    
+  handleDriverChange(event) {
+    let newState = update(this.state, {driver:{$set: event.target.value}});
     this.setState(newState);
   }
   
   handleRun() {
-    let ope_attrs={};
-    api.updateOperation(this.props.ope.id, ope_attrs, 
+    let ope_attrs = { host: this.state.host, driver: this.state.driver };
+    console.log(JSON.stringify(ope_attrs));
+    this.api.updateOperation(this.props.ope.id, ope_attrs, 
             (response) => console.log(response));
   }
   
   componentDidMount() {
     //Action Cable setup
-    const cableApp = {};
-    //cableApp.cable = actionCable.createConsumer(`ws://endymion:3000/cable`);
-    cableApp.cable = actionCable.createConsumer(`ws://192.168.99.100:3000/cable`);
+    this.cableApp.cable = actionCable.createConsumer(`${this.props.wsServer}/cable`);
 
     console.log("Create OperationRunChannel "+this.props.ope.id);
-    cableApp.cable.subscriptions.create(
+    this.cableApp.cable.subscriptions.create(
       {channel: "OperationRunChannel", ope_id: this.props.ope.id},
       {connected: () => {
          // Called when the subscription is ready for use on the server
          console.log("connected");
-         this.handleRun()
        },
        disconnected: function() {
          console.log("disconnected");
        },
        received: (data) => {
+         console.log("received: "+JSON.stringify(data));
          let newState = update(this.state, {status: {$set: data.status},
                                             log: {$set: data.log}});
          this.setState(newState);
@@ -61,6 +74,7 @@ class Runner extends React.Component {
    }
 
   render() {
+    console.log(JSON.stringify(this.state.log));
     let lines = this.state.log.map((l, i) => {
       return ( <LogLine key={i} line={l}/> );
     });
@@ -69,11 +83,11 @@ class Runner extends React.Component {
     let btnIcon = this.state.status === "DONE"?<i className="fa fa-check"/>:<i className="fa fa-exclamation-triangle" />;
     if (this.state.status === "RUNNING") {
       btnStatusClass = "btn btn-info";
-      btnIcon = <i className="fa fa-cog fa-spin" />;
+      btnIcon = <i className="fa fa-cog fa-spin"/>;
     }
     if (this.state.status === "UNKNOWN") {
       btnStatusClass = "btn btn-info";
-      btnIcon = <i className="fa fa-question" />;
+      btnIcon = <i className="fa fa-question"/>;
     }    
 
     let saveEnabled=false;
@@ -85,29 +99,52 @@ class Runner extends React.Component {
     if (this.state.status === "FAILED") {
       runEnabled=true;      
     }     
-    return (        
-      <div className="container-fluid editor-section">   
+    return (   
+      <div className="container-fluid">
+      <div className="editor-section">   
         <div className="btn-toolbar" role="toolbar">
           <div className="btn-group mr-4" role="group">
             <button className={btnStatusClass + " btn-primary"} style={{width: "120px"}} type="button" data-toggle="collapse"
-                    data-target="#collapseListing" aria-expanded="true">
+                    data-target="#collapseListing" aria-expanded="false">
               {btnIcon}<span className="ml-1">{this.state.status}</span>
             </button>
           </div>
-          <div className="btn-group mr-2" role="group">
-            <button className="btn btn-primary" onClick={this.handleRun} disabled={!runEnabled}>Re-run</button>
-          </div>
-          <div className="btn-group mr-2" role="group">
-            <button className="btn btn-primary" disabled={!saveEnabled}>Save</button>
-          </div>
         </div>
-        <div className="collapse show" id="collapseListing">
+        <div className="collapse" id="collapseListing">
           <div className="card card-block">
             <div className="listing">
               {lines}
             </div>
           </div>
         </div>
+      </div>
+      <div className="editor-section">
+        <form className="form" onSubmit={this.handleHostUpdate}>
+          <div className="form-group col-3">
+            <label htmlFor="host">Analysis Server</label>
+            <input type="text" value={this.state.host} className="form-control"
+                   id="hosr" onChange={this.handleHostChange}/>
+          </div>
+          <div className="form-group col-3">
+            <label htmlFor="host">Driver</label>
+            <select value={this.state.driver} onChange={this.handleDriverChange} className="form-control">
+              <optgroup label="Analysis">
+                <option value="analysis">RunOnce</option> 
+              </optgroup>
+              <optgroup label="Design of Experiment">
+                <option value="lhs">LHS</option>
+                <option value="morris">Morris</option>
+              </optgroup>
+              <optgroup label="Optimization">
+                <option value="slsqp">SLSQP</option>
+              </optgroup>
+            </select>
+          </div>
+          <div className="form-group col-3">
+            <button type="submit" className="btn btn-primary">Run</button>
+          </div>
+        </form>
+      </div>
       </div>
     );
   } 
@@ -119,4 +156,4 @@ Runner.propTypes = {
   }),
 };
 
-export {Runner};
+export default Runner;

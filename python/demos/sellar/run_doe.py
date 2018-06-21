@@ -12,6 +12,11 @@ from whatsopt.smt_doe_driver import SmtDoeDriver
 
 from sellar import Sellar 
 
+from optparse import OptionParser
+parser.add_option("-p", "--plot",
+                  action="store_true", dest="show", default=False,
+                  help="Plot outputs vs inputs")
+(options, args) = parser.parse_args()
 
 pb = Problem(Sellar())
 pb.driver = SmtDoeDriver(sampling_method='LHS', n_cases=50)
@@ -33,6 +38,9 @@ pb.model.add_constraint('g2', upper=0.)
 
 pb.setup()  
 pb.run_driver()        
+
+if not options.show:
+    exit(0)
 reader = CaseReader(case_recorder_filename)
 cases = reader.system_cases.list_cases()
 n = len(cases)

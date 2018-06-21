@@ -11,13 +11,14 @@ from <%= @server_module %>.<%= @mda.py_modulename %>_proxy import <%= @mda.py_cl
 from <%= @mda.py_modulename %> import <%= @mda.py_classname %> 
 <% end %>
 from optparse import OptionParser
+parser = OptionParser()
 parser.add_option("-p", "--plot",
                   action="store_true", dest="show", default=False,
                   help="Plot outputs vs inputs")
 (options, args) = parser.parse_args()
 
 pb = Problem(<%= @mda.py_classname %>())
-pb.driver = SmtDoeDriver(sampling_method='LHS', n_cases=50)
+pb.driver = SmtDoeDriver(sampling_method='LHS', n_cases=10)
 case_recorder_filename = '<%= @sqlite_filename %>'        
 recorder = SqliteRecorder(case_recorder_filename)
 pb.driver.add_recorder(recorder)

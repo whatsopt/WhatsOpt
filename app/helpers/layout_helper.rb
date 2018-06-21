@@ -27,7 +27,7 @@ module LayoutHelper
 
   def version
     v = "#{version_major}.#{version_minor}.#{version_patch}"
-    v << "-#{version_release}" if version_release!="0"
+    v << "-#{version_release}" unless version_release=="0" or version_release.blank?
     v
   end
 end

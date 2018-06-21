@@ -169,4 +169,4 @@ Plotter.propTypes = {
   }),
 };
 
-export {Plotter};
+export default Plotter;
