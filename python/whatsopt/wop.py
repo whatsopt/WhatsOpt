@@ -68,5 +68,10 @@ def upload(sqlite_filename, analysis_id):
 def version():
 	""" Show versions of WhatsOpt app and recommended wop command line """
 	WhatsOpt().check_versions()
+	
+@cli.command()
+def serve():
+	""" Launch analysis server """
+	WhatsOpt(login=False).serve()
 		
 cli(prog_name='wop')

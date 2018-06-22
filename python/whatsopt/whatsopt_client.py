@@ -258,6 +258,11 @@ class WhatsOpt(object):
         print("WhatsOpt:{} recommended wop:{}".format(version['whatsopt'], version['wop']))
         print("current wop:{}".format(__version__))
         
+    def serve(self):
+        print("Running...")
+        from subprocess import call
+        retcode = call(['python', 'run_server.py'])
+        
     def get_analysis_id(self):
         files = self._find_analysis_base_files()
         id = None
@@ -268,7 +273,6 @@ class WhatsOpt(object):
                                   Find %s got %s. Check header comments of %s files .' % (id, ident, str(files)))  
             id = ident    
         return id 
-
         
     @staticmethod
     def _find_analysis_base_files():
