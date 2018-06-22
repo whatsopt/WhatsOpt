@@ -13,13 +13,14 @@ from whatsopt.smt_doe_driver import SmtDoeDriver
 from sellar import Sellar 
 
 from optparse import OptionParser
+parser = OptionParser()
 parser.add_option("-p", "--plot",
                   action="store_true", dest="show", default=False,
                   help="Plot outputs vs inputs")
 (options, args) = parser.parse_args()
 
 pb = Problem(Sellar())
-pb.driver = SmtDoeDriver(sampling_method='LHS', n_cases=50)
+pb.driver = SmtDoeDriver(sampling_method='LHS', n_cases=10)
 case_recorder_filename = 'sellar_doe.sqlite'        
 recorder = SqliteRecorder(case_recorder_filename)
 pb.driver.add_recorder(recorder)

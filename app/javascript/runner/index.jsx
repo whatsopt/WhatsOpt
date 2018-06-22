@@ -20,10 +20,14 @@ class Runner extends React.Component {
     this.cableApp = {};
     this.api = this.props.api
     
-    this.state = {host: this.props.ope.host, driver: 'runonce', status: "UNKNOWN", log:[]};
+    this.state = {host: this.props.ope.host, 
+                  name: this.props.ope.name, 
+                  driver: 'runonce', 
+                  status: "UNKNOWN", 
+                  log:[]};
     
     this.handleHostChange = this.handleHostChange.bind(this); 
-    this.handleHostUpdate = this.handleHostUpdate.bind(this); 
+    this.handleNameChange = this.handleNameChange.bind(this); 
     this.handleRun = this.handleRun.bind(this); 
     this.handleDriverChange = this.handleDriverChange.bind(this);
   }
@@ -32,19 +36,20 @@ class Runner extends React.Component {
     let newState = update(this.state, {host:{$set: event.target.value}});
     this.setState(newState);
   }
-    
-  handleHostUpdate(event) {
-    event.preventDefault();
-    this.handleRun();
+
+  handleNameChange(event) {
+    let newState = update(this.state, {name:{$set: event.target.value}});
+    this.setState(newState);
   }
-    
+  
   handleDriverChange(event) {
     let newState = update(this.state, {driver:{$set: event.target.value}});
     this.setState(newState);
   }
   
-  handleRun() {
-    let ope_attrs = { host: this.state.host, driver: this.state.driver };
+  handleRun(event) {
+    event.preventDefault()
+    let ope_attrs = { host: this.state.host, driver: this.state.driver, name: this.state.driver };
     console.log(JSON.stringify(ope_attrs));
     this.api.updateOperation(this.props.ope.id, ope_attrs, 
             (response) => console.log(response));
@@ -119,11 +124,16 @@ class Runner extends React.Component {
         </div>
       </div>
       <div className="editor-section">
-        <form className="form" onSubmit={this.handleHostUpdate}>
+        <form className="form" onSubmit={this.handleRun}>
+          <div className="form-group col-3">
+            <label htmlFor="host">Operation Name</label>
+            <input type="text" value={this.state.name} className="form-control"
+                   id="name" onChange={this.handleNameChange}/>
+          </div>
           <div className="form-group col-3">
             <label htmlFor="host">Analysis Server</label>
             <input type="text" value={this.state.host} className="form-control"
-                   id="hosr" onChange={this.handleHostChange}/>
+                   id="host" onChange={this.handleHostChange}/>
           </div>
           <div className="form-group col-3">
             <label htmlFor="host">Driver</label>

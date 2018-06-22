@@ -13,11 +13,10 @@ class OperationsController < ApplicationController
   def new
     @mda = Analysis.find(params[:mda_id])
     @ope = Operation.in_progress(@mda).take 
-    if @ope
-      redirect_to edit_operation_url(@ope)
-    else 
-      @ope = @mda.operations.build
+    unless @ope
+      @ope = @mda.operations.create(name: 'Unnamed', host: 'endymion')
     end
+    redirect_to edit_operation_url(@ope)
   end
   
   # GET /operations/1/edit

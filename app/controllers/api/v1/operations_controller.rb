@@ -16,13 +16,14 @@ class Api::V1::OperationsController < Api::ApiController
       @operation = Operation.build_operation(mda, ope_params)
     end
     @operation.save!
+    p @operation, "IS SAVED!!!!!!!!!!!"
     render json: @operation, status: :created
   end
 
   # PATCH /api/v1/operations/1
   def update
     @operation.update_attributes(ope_params)
-    OperationJob.perform_later(@operation) 
+    OperationJob.perform_later(current_user, @operation) 
     head :no_content
   end
   

@@ -98,18 +98,17 @@ class WhatsOpt(object):
         else:
             self.api_key = self._ask_and_write_api_key()
         self.headers = {'Authorization': 'Token token=' + self.api_key, 'User-Agent': 'wop/{}'.format(__version__)}
-        url =  self._endpoint('/api/v1/analyses')
-        print("Test login");
-        resp = self.session.get(url, headers=self.headers)
-        print("AFTER Test login");
-        if already_logged and not resp.ok and retry>0:
-            self.logout(echo=False)  # log out silently, suppose one was logged on another server
-            retry -= 1
-            resp=self.login(api_key, echo)
-        resp.raise_for_status() 
+        
+        if api_key is None:  # check unless api_key is given
+            url =  self._endpoint('/api/v1/analyses')
+            resp = self.session.get(url, headers=self.headers)
+            if already_logged and not resp.ok and retry>0:
+                self.logout(echo=False)  # log out silently, suppose one was logged on another server
+                retry -= 1
+                resp=self.login(api_key, echo)
+            resp.raise_for_status() 
         if echo:
             print("Successfully logged into WhatsOpt (%s)" % self.url)
-        return resp
 
     def logout(self, echo=True):
         if os.path.exists(API_KEY_FILENAME):
