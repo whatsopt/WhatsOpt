@@ -10,11 +10,11 @@ class OperationJob < ActiveJob::Base
     
     Dir.mktmpdir("sqlite") do |dir|
       ok, log = ogen.run(ope.category, sqlite_filename) 
-      state = ok ? "DONE":"FAILED"
-      OperationRunChannel.broadcast_to(ope, status: state, log: log)
       if ok
         # upload
         UploadJob.perform_later(user, ope, sqlite_filename) 
+      else
+        OperationRunChannel.broadcast_to(ope, status: "FAILED", log: log)
       end
       Rails.logger.info "JOB STATUS = #{state}"
     end

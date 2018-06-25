@@ -65,11 +65,12 @@ def update(ctx, analysis_id):
 	
 @cli.command()
 @click.argument('sqlite_filename')
-@click.option('--analysis-id', help='specify the analysis to update from (otherwise guessed from current files)')
+@click.option('--analysis-id', help='specify the analysis to create a new operation otherwise use default analysis')
+@click.option('--operation-id', help='specify the operation to be updated with new cases')
 @click.pass_context
-def upload(ctx, sqlite_filename, analysis_id):
+def upload(ctx, sqlite_filename, analysis_id, operation_id):
 	""" Upload data stored in given SQLITE_FILENAME """
-	WhatsOpt(api_key=ctx.obj['api_key']).upload(sqlite_filename, analysis_id)
+	WhatsOpt(api_key=ctx.obj['api_key']).upload(sqlite_filename, analysis_id, operation_id)
 
 @cli.command()
 @click.pass_context

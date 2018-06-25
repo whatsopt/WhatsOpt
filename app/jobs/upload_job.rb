@@ -8,7 +8,7 @@ class UploadJob < ActiveJob::Base
       Rails.logger.info "Upload data #{sqlite_filename}"
       pid = Process.spawn("wop", "--credentials", user.api_key, 
                           "upload", sqlite_filename, 
-                          "--analysis-id", ope.analysis.id.to_s) 
+                          "--operation-id", ope.id.to_s) 
       Rails.logger.info "Data #{sqlite_filename} uploaded via wop upload (PID=#{pid})"
       CleanupJob.set(wait: 5.seconds).perform_later(ope, pid, sqlite_filename)
     else 

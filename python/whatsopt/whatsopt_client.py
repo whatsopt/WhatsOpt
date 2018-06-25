@@ -228,10 +228,9 @@ class WhatsOpt(object):
         id = analysis_id or self.get_analysis_id()
         self.pull_mda(id, {'--base': True, '--force': True})
         
-    def upload(self, sqlite_filename, analysis_id=None):
+    def upload(self, sqlite_filename, analysis_id=None, operation_id=None):
         from socket import gethostname
         mda_id = self.get_analysis_id() if not analysis_id else analysis_id
-        print("analysis_id=%s" % mda_id)
         reader = CaseReader(sqlite_filename)
         driver_first_coord = reader.driver_cases.get_iteration_coordinate(0)
         name = os.path.splitext(sqlite_filename)[0]
@@ -240,10 +239,13 @@ class WhatsOpt(object):
             name = m.group(1)
         cases = self._format_upload_cases(reader)
         url =  self._endpoint(('/api/v1/analyses/%s/operations') % mda_id)
-        operation_params = { 'name': name,
-                             'driver': name.lower(),
-                             'host': gethostname(),
-                             'cases': cases }
+        operation_params = {'name': name,
+                            'driver': name.lower(),
+                            'host': gethostname(),
+                            'cases': cases}
+        if operation_id:
+            url =  self._endpoint(('/api/v1/operations/%s') % operation_id)
+            operation_params = {'cases': cases}
         resp = self.session.post(url, headers=self.headers, 
                                  json={'operation': operation_params})
         resp.raise_for_status()

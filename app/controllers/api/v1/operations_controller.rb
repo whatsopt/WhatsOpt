@@ -9,21 +9,17 @@ class Api::V1::OperationsController < Api::ApiController
   # POST /api/v1/{mda_id}/operations
   def create
     mda = Analysis.find(params[:mda_id])
-    @operation = Operation.in_progress(mda).take  
-    if @operation # called by wop upload data.sqlite run by user
-      @operation.update_operation(ope_params.except(:host))
-    else  # called by wop upload data.sqlite run by user
-      @operation = Operation.build_operation(mda, ope_params)
-    end
+    @operation = Operation.build_operation(mda, ope_params)
     @operation.save!
-    p @operation, "IS SAVED!!!!!!!!!!!"
     render json: @operation, status: :created
   end
 
   # PATCH /api/v1/operations/1
   def update
-    @operation.update_attributes(ope_params)
-    OperationJob.perform_later(current_user, @operation) 
+    @operation.update_operation(ope_params)
+    unless ope_params[:cases]
+      OperationJob.perform_later(current_user, @operation)
+    end
     head :no_content
   end
   

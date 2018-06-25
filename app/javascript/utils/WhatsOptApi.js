@@ -3,9 +3,9 @@ import axios from 'axios';
 class WhatsOptApi {
   
   constructor(csrfToken, apiKey, relativeUrlRoot) {
-//    console.log(csrfToken);
-//    console.log(apiKey);
-//    console.log(relativeUrlRoot);
+// console.log(csrfToken);
+// console.log(apiKey);
+// console.log(relativeUrlRoot);
     axios.defaults.headers.common['X-CSRF-Token'] = csrfToken;
     axios.defaults.headers.common['Accept'] = 'application/json';
     axios.defaults.headers.common['Authorization'] = 'Token '+apiKey;
@@ -86,9 +86,9 @@ class WhatsOptApi {
       .catch((error) => console.log(error));
   }
   
-  updateOperation(operationId, host, callback, onError) {
+  updateOperation(operationId, ope_attrs, callback, onError) {
     let path = `/api/v1/operations/${operationId}`;
-    axios.patch(this.url(path), {operation: host})
+    axios.patch(this.url(path), {operation: ope_attrs})
       .then(callback)
       .catch((error) => console.log(error));
   }

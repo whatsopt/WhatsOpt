@@ -10,14 +10,14 @@ class Operation < ApplicationRecord
 	
 	def self.build_operation(mda, ope_attrs)
 	  operation = mda.operations.build(ope_attrs.except(:cases))
-	  operation._build_cases_from(ope_attrs[:cases])
+	  operation._build_cases_from(ope_attrs[:cases]) if ope_attrs[:cases]
 	  operation
 	end
 
 	def update_operation(ope_attrs)
     name = ope_attrs[:name]
     driver = ope_attrs[:driver]
-    _build_cases_from(ope_attrs[:cases])
+    _build_cases_from(ope_attrs[:cases]) if ope_attrs[:cases]
   end
 
 	def to_plotter_json

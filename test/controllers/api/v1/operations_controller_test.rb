@@ -9,14 +9,10 @@ class Api::V1::OperationsControllerTest < ActionDispatch::IntegrationTest
   end
   
   test "should create an operation" do
-    assert_difference('Operation.count', 2-Operation.in_progress(@mda).count) do
-      post api_v1_mda_operations_url(@mda), 
-        params: {operation: {name: 'update_doe', cases: [{varname: 'x1', coord_index: 0, values: [10, 20, 30]}, 
-                                              {varname: 'obj', coord_index: 0, values: [40, 50, 60]}]}}, 
-          as: :json, headers: @auth_headers
+    assert_difference('Operation.count', 1) do
       post api_v1_mda_operations_url(@mda), 
         params: {operation: {name: 'new_doe', cases: [{varname: 'x1', coord_index: 0, values: [10, 20, 30]}, 
-                                            {varname: 'obj', coord_index: 0, values: [40, 50, 60]}]}}, 
+                                              {varname: 'obj', coord_index: 0, values: [40, 50, 60]}]}}, 
           as: :json, headers: @auth_headers
     end
     assert_response :success
@@ -36,5 +32,13 @@ class Api::V1::OperationsControllerTest < ActionDispatch::IntegrationTest
     get api_v1_operation_url(@ope), as: :json, headers: @auth_headers
     assert_response :success
   end
-    
+
+  test "should update an operation" do
+    patch api_v1_operation_url(@ope), 
+      params: {operation: {name: 'update_doe', driver: 'slsqp', cases: [{varname: 'x1', coord_index: 0, values: [5, 25, 35]}, 
+                                                                        {varname: 'obj', coord_index: 0, values: [10, 0, 65]}]}},
+      as: :json, headers: @auth_headers
+    assert_response :success
+  end
+      
 end
