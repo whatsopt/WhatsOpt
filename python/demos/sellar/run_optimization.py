@@ -12,6 +12,12 @@ from openmdao.api import Problem, SqliteRecorder, CaseReader, ScipyOptimizeDrive
 
 from sellar import Sellar 
 
+from optparse import OptionParser
+parser = OptionParser()
+parser.add_option("-b", "--batch",
+                  action="store_true", dest="batch", default=False,
+                  help="do not plot anything")
+(options, args) = parser.parse_args()
 
 pb = Problem(Sellar())
 pb.driver = ScipyOptimizeDriver()
@@ -41,7 +47,10 @@ pb.model.add_constraint('g1', upper=0.)
 pb.model.add_constraint('g2', upper=0.)
 
 pb.setup()  
-pb.run_driver()        
+pb.run_driver()      
+
+if options.batch:
+    exit(0)  
 reader = CaseReader(case_recorder_filename)
 cases = reader.system_cases.list_cases()
 n = len(cases)

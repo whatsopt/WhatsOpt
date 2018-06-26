@@ -3,10 +3,12 @@ from whatsopt import __version__, WhatsOpt
 
 @click.group()
 @click.version_option(__version__)
-@click.option('--credentials', help='allow to specify authentication information (API key)')
+@click.option('--credentials', help='specify authentication information (API key)')
+@click.option('--url', help='specify WhatsOpt application server URL (default: {})'.format(WhatsOpt(login=False).default_url))
 @click.pass_context
-def cli(ctx, credentials):
+def cli(ctx, credentials, url):
 	ctx.obj['api_key']=credentials
+	ctx.obj['url']=url
 	
 @cli.command()
 def url():

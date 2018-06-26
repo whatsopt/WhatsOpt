@@ -14,9 +14,9 @@ from sellar import Sellar
 
 from optparse import OptionParser
 parser = OptionParser()
-parser.add_option("-p", "--plot",
-                  action="store_true", dest="show", default=False,
-                  help="Plot outputs vs inputs")
+parser.add_option("-b", "--batch",
+                  action="store_true", dest="batch", default=False,
+                  help="do not plot anything")
 (options, args) = parser.parse_args()
 
 pb = Problem(Sellar())
@@ -40,7 +40,7 @@ pb.model.add_constraint('g2', upper=0.)
 pb.setup()  
 pb.run_driver()        
 
-if not options.show:
+if options.batch:
     exit(0)
 reader = CaseReader(case_recorder_filename)
 cases = reader.system_cases.list_cases()

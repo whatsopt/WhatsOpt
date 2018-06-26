@@ -238,16 +238,21 @@ class WhatsOpt(object):
         if m:
             name = m.group(1)
         cases = self._format_upload_cases(reader)
-        url =  self._endpoint(('/api/v1/analyses/%s/operations') % mda_id)
-        operation_params = {'name': name,
-                            'driver': name.lower(),
-                            'host': gethostname(),
-                            'cases': cases}
+        
+        resp = None
         if operation_id:
             url =  self._endpoint(('/api/v1/operations/%s') % operation_id)
             operation_params = {'cases': cases}
-        resp = self.session.post(url, headers=self.headers, 
-                                 json={'operation': operation_params})
+            resp = self.session.patch(url, headers=self.headers, 
+                                      json={'operation': operation_params})
+        else:
+            url =  self._endpoint(('/api/v1/analyses/%s/operations') % mda_id)
+            operation_params = {'name': name,
+                                'driver': name.lower(),
+                                'host': gethostname(),
+                                'cases': cases}
+            resp = self.session.post(url, headers=self.headers, 
+                                     json={'operation': operation_params})
         resp.raise_for_status()
         print("Results data from %s uploaded" % sqlite_filename)
 
@@ -260,7 +265,6 @@ class WhatsOpt(object):
         print("current wop:{}".format(__version__))
         
     def serve(self):
-        print("Running...")
         from subprocess import call
         retcode = call(['python', 'run_server.py'])
         
