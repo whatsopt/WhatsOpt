@@ -1,8 +1,1 @@
-<h1>Operation on <%= @ope.analysis.name %></h1>
-
-<div id="runner" data-mda="<%= @ope.analysis.to_mda_viewer_json %>" 
-                 data-ope="<%= @ope.to_json %>" 
-                 data-api-key="<%= current_user.api_key %>"
-                 data-ws-server="<%= root_url(root_url, protocol: 'ws') %>"></div> 
-
-<%= javascript_pack_tag 'runner_application' %>
+<%= render 'form', ope: @ope %>

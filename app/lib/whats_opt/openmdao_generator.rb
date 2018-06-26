@@ -58,7 +58,7 @@ module WhatsOpt
     def _run_mda(dir, method)
       script = File.join(dir, "run_#{method}.py")
       Rails.logger.info "#{PYTHON} #{script}"
-      stdouterr, status = Open3.capture2e(PYTHON, script)
+      stdouterr, status = Open3.capture2e(PYTHON, script, '--batch')
       return status.success?, stdouterr
     end
     

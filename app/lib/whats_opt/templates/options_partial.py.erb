@@ -1,0 +1,6 @@
+from optparse import OptionParser
+parser = OptionParser()
+parser.add_option("-b", "--batch",
+                  action="store_true", dest="batch", default=False,
+                  help="do not plot anything")
+(options, args) = parser.parse_args()

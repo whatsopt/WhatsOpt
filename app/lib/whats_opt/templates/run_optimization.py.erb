@@ -10,7 +10,7 @@ from <%= @server_module %>.<%= @mda.py_modulename %>_proxy import <%= @mda.py_cl
 <% else -%>
 from <%= @mda.py_modulename %> import <%= @mda.py_classname %> 
 <% end %>
-
+<%= ERB.new(File.read(File.join(@template_dir, 'options_partial.py.erb')), nil, nil, eoutvar='_sub01').result(binding) %>
 pb = Problem(<%= @mda.py_classname %>())
 pb.driver = ScipyOptimizeDriver()
 pb.driver.options['optimizer'] = 'SLSQP'
@@ -39,7 +39,10 @@ pb.model.add_constraint('<%= voi.name %>', upper=0.)<% end %>
 <% @mda.eq_constraint_variables.each do |voi| %>
 pb.model.add_constraint('<%= voi.name %>', equals=0.)<% end %>
 pb.setup()  
-pb.run_driver()        
+pb.run_driver()      
+
+if options.batch:
+    exit(0)  
 reader = CaseReader(case_recorder_filename)
 cases = reader.system_cases.list_cases()
 n = len(cases)

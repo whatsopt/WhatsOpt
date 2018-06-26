@@ -44,6 +44,6 @@ pfactory = TBinaryProtocol.TBinaryProtocolFactory()
 
 server = handler.server = TServer.TSimpleServer(processor, transport, tfactory, pfactory)
 
-print("Starting <%= @mda.py_classname %> server...")
+print("Starting <%= @mda.py_classname %> analysis server...")
 server.serve()
 print("done!")

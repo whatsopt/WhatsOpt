@@ -9,14 +9,20 @@ class OperationJob < ActiveJob::Base
     Rails.logger.info sqlite_filename
     
     Dir.mktmpdir("sqlite") do |dir|
+      p ope.category
       ok, log = ogen.run(ope.category, sqlite_filename) 
       if ok
-        # upload
-        UploadJob.perform_later(user, ope, sqlite_filename) 
+        if ope.driver == "runonce"
+          OperationRunChannel.broadcast_to(ope, status: "DONE", log: log)
+          Rails.logger.info "JOB STATUS = DONE"          
+        else
+          # upload
+          UploadJob.perform_later(user, ope, sqlite_filename)
+        end 
       else
         OperationRunChannel.broadcast_to(ope, status: "FAILED", log: log)
+        Rails.logger.info "JOB STATUS = FAILED"
       end
-      Rails.logger.info "JOB STATUS = #{state}"
     end
   end
 end

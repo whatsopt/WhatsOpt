@@ -1,17 +1,1 @@
-<h1>New Operation for <%= @ope.analysis.name %></h1>
-
-<%= form_for(@ope, url: mda_operations_path(@mda), :html => { :role => "form" }) do |f| %>
-  <div class="row">
-    <div class=" col-4">
-      <div class="form-group">
-        <%= f.label :host %>
-        <%= f.text_field :host, class: "form-control" %>
-      </div>
-        
-      <div class="form-group">
-        <%= f.submit "Create", class: "btn btn-primary" %>
-        <%= f.submit "Cancel", class: "btn", name: "cancel_button" %>
-      </div>
-    </div>
-  </div>  
-<% end %>
+<%= render 'form', ope: @ope %>

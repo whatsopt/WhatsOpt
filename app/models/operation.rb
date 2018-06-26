@@ -15,9 +15,9 @@ class Operation < ApplicationRecord
 	end
 
 	def update_operation(ope_attrs)
-    name = ope_attrs[:name]
-    driver = ope_attrs[:driver]
-    _build_cases_from(ope_attrs[:cases]) if ope_attrs[:cases]
+    self.name = ope_attrs[:name] if ope_attrs[:name]
+    self.driver = ope_attrs[:driver] if ope_attrs[:driver]
+    self._build_cases_from(ope_attrs[:cases]) if ope_attrs[:cases]
   end
 
 	def to_plotter_json
@@ -55,7 +55,7 @@ class Operation < ApplicationRecord
                        .joins(discipline: :analysis)
                        .where(analyses: {id: self.analysis.id})
                        .take
-       cases.build(variable_id: var[name].id, coord_index: coord_index, values: c[:values])
+       self.cases.build(variable_id: var[name].id, coord_index: coord_index, values: c[:values])
      end     
    end
 	

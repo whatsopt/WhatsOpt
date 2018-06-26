@@ -17,6 +17,7 @@ class Api::V1::OperationsController < Api::ApiController
   # PATCH /api/v1/operations/1
   def update
     @operation.update_operation(ope_params)
+    @operation.save!
     unless ope_params[:cases]
       OperationJob.perform_later(current_user, @operation)
     end

@@ -49,7 +49,7 @@ class Runner extends React.Component {
   
   handleRun(event) {
     event.preventDefault()
-    let ope_attrs = { host: this.state.host, driver: this.state.driver, name: this.state.driver };
+    let ope_attrs = { host: this.state.host, driver: this.state.driver, name: this.state.name };
     console.log(JSON.stringify(ope_attrs));
     this.api.updateOperation(this.props.ope.id, ope_attrs, 
             (response) => console.log(response));
