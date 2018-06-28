@@ -8,4 +8,5 @@ production: &redis
   adapter: redis
   url: redis://selene.onecert.fr:6379/1
 
-staging: *redis
+staging:
+  adapter: async

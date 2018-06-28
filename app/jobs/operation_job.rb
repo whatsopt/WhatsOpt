@@ -9,7 +9,6 @@ class OperationJob < ActiveJob::Base
     Rails.logger.info sqlite_filename
     
     Dir.mktmpdir("sqlite") do |dir|
-      p ope.category
       ok, log = ogen.run(ope.category, sqlite_filename) 
       if ok
         if ope.driver == "runonce"
