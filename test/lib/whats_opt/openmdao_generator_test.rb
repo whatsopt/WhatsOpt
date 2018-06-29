@@ -105,6 +105,20 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     assert_match /Could not connect/, log.join(' ')
   end  
   
+  test "should monitor remote mda" do
+    @ogen_remote = WhatsOpt::OpenmdaoGenerator.new(@mda, 'localhost')
+    lines = []
+    status = @ogen_remote.monitor do |stdin, stdouterr, wait_thr|
+      stdin.close
+      while line = stdouterr.gets('\n')
+        lines << line.chomp
+      end
+      wait_thr.value
+    end
+    refute status.success? 
+    assert_match /Could not connect/, lines.join(' ')
+  end  
+  
   test "should use init value for independant variables" do
     var = variables(:varx1_out)
     zippath = Tempfile.new('test_mda_file.zip')

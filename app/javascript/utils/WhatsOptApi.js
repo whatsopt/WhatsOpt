@@ -92,6 +92,41 @@ class WhatsOptApi {
       .then(callback)
       .catch((error) => console.log(error));
   }
+  
+  pollOperation(operationId, check, callback, onError) {
+    let path = `/api/v1/operations/${operationId}`;
+    this._pollStatus(() => axios.get(this.url(path)), check, callback, 300000, 2000)
+      .then(callback)
+      .catch(onError);    
+  }
+  
+  _pollStatus(fn, check, callback, timeout, interval) {
+    let endTime = Number(new Date()) + (timeout || 2000);
+    interval = interval || 100;
+
+    console.log("_pollStatus");
+    let checkCondition = function(resolve, reject) { 
+      var ajax = fn();
+      // dive into the ajax promise
+      ajax.then( function(response){
+        // If the condition is met, we're done!
+        if (check(response.data)) {
+          resolve(response);
+        }
+        // If the condition isn't met but the timeout hasn't elapsed, go again
+        else if (Number(new Date()) < endTime) {
+          callback(response);
+          setTimeout(checkCondition, interval, resolve, reject);
+        }
+        // Didn't match and too much time, reject!
+        else {
+          reject(new Error('timed out for ' + fn + ': ' + arguments));
+        }
+      });
+    };
+
+    return new Promise(checkCondition);
+  }
 };
 
 export default WhatsOptApi;

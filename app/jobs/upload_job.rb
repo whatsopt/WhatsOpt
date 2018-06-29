@@ -10,6 +10,7 @@ class UploadJob < ActiveJob::Base
                           "upload", sqlite_filename, 
                           "--operation-id", ope.id.to_s) 
       Rails.logger.info "Data #{sqlite_filename} uploaded via wop upload (PID=#{pid})"
+      # delay to avoid deadlock
       CleanupJob.set(wait: 5.seconds).perform_later(ope, pid, sqlite_filename)
     else 
       Rails.logger.warn "#{sqlite_filename} DOES NOT EXIST"

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import update from 'immutability-helper';
-import actionCable from 'actioncable'
+// disable actioncable: import actionCable from 'actioncable'
 
 
 class LogLine extends React.Component {
@@ -22,14 +22,15 @@ class Runner extends React.Component {
     
     this.state = {host: this.props.ope.host, 
                   name: this.props.ope.name, 
-                  driver: 'runonce', 
-                  status: "UNKNOWN", 
-                  log:[]};
+                  driver: this.props.ope.driver, 
+                  status: this.props.ope.job.status, 
+                  log: this.props.ope.job.log};
     
     this.handleHostChange = this.handleHostChange.bind(this); 
     this.handleNameChange = this.handleNameChange.bind(this); 
     this.handleRun = this.handleRun.bind(this); 
     this.handleDriverChange = this.handleDriverChange.bind(this);
+    this.updateJob = this.updateJob.bind(this);
   }
 
   handleHostChange(event) {
@@ -52,35 +53,25 @@ class Runner extends React.Component {
     let ope_attrs = { host: this.state.host, driver: this.state.driver, name: this.state.name };
     console.log(JSON.stringify(ope_attrs));
     this.api.updateOperation(this.props.ope.id, ope_attrs, 
-            (response) => console.log(response));
+        (response) => { this.api.pollOperation(this.props.ope.id,
+                            (respData) => { return (respData.job.status === 'DONE'|| respData.job.status === 'FAILED')},
+                            (response) => { console.log(response.data); 
+                              this.updateJob(response.data.job);
+                            },
+                            (error) => { console.log(error); });
+        },
+        (error) => { console.log(error); });
+  }
+
+  updateJob(job) {
+    console.log(JSON.stringify(job));
+    let newState = update(this.state, {status: {$set: job.status}, log: {$set: job.log}});
+    this.setState(newState);  
   }
   
-  componentDidMount() {
-    //Action Cable setup
-    this.cableApp.cable = actionCable.createConsumer(`${this.props.wsServer}/cable`);
-
-    console.log("Create OperationRunChannel "+this.props.ope.id);
-    this.cableApp.cable.subscriptions.create(
-      {channel: "OperationRunChannel", ope_id: this.props.ope.id},
-      {connected: () => {
-         // Called when the subscription is ready for use on the server
-         console.log("connected");
-       },
-       disconnected: function() {
-         console.log("disconnected");
-       },
-       received: (data) => {
-         console.log("received: "+JSON.stringify(data));
-         let newState = update(this.state, {status: {$set: data.status},
-                                            log: {$set: data.log}});
-         this.setState(newState);
-       }
-      });
-   }
-
   render() {
     console.log(JSON.stringify(this.state.log));
-    let lines = this.state.log.map((l, i) => {
+    let lines = this.state.log.split('\n').map((l, i) => {
       return ( <LogLine key={i} line={l}/> );
     });
 
@@ -90,7 +81,7 @@ class Runner extends React.Component {
       btnStatusClass = "btn btn-info";
       btnIcon = <i className="fa fa-cog fa-spin"/>;
     }
-    if (this.state.status === "UNKNOWN") {
+    if (this.state.status === "PENDING") {
       btnStatusClass = "btn btn-info";
       btnIcon = <i className="fa fa-question"/>;
     }    

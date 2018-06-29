@@ -2,8 +2,12 @@ require 'whats_opt/openmdao_generator'
 
 class Operation < ApplicationRecord
 	
+  TERMINATION_STATUSES = %w(DONE, FAILED, KILLED)
+  STATUSES = %w(PENDING, RUNNING)+TERMINATION_STATUSES
+    
   belongs_to :analysis
 	has_many :cases, :dependent => :destroy
+	has_one :job, :dependent => :destroy
 	
   scope :in_progress, ->(analysis) { Operation.where(analysis: analysis).left_outer_joins(:cases).where(cases: {operation_id: nil}) }
   scope :done, ->(analysis) { Operation.where(analysis: analysis).left_outer_joins(:cases).where.not(cases: {operation_id: nil}).uniq }
@@ -11,6 +15,7 @@ class Operation < ApplicationRecord
 	def self.build_operation(mda, ope_attrs)
 	  operation = mda.operations.build(ope_attrs.except(:cases))
 	  operation._build_cases_from(ope_attrs[:cases]) if ope_attrs[:cases]
+	  operation.build_job(status: 'PENDING', pid: -1, log: "")
 	  operation
 	end
 

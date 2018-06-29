@@ -82,7 +82,7 @@ gem 'rubyXL'
 gem 'rack-cors'
 gem 'acts_as_list'
 gem 'active_model_serializers', '~> 0.10.7'
-gem 'sucker_punch', '~> 2.0'
+gem 'sucker_punch'
 
 gem 'popper'
 gem 'bootstrap', '~> 4.0.0'

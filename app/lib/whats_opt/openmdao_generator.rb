@@ -48,6 +48,15 @@ module WhatsOpt
       return ok, lines
     end
     
+    def monitor(method="analysis", sqlite_filename=nil, &block)
+      ok, lines = false, []
+      Dir.mktmpdir("run_#{@mda.basename}_#{method}") do |dir|
+        dir = "/tmp"
+        _generate_code dir, sqlite_filename: sqlite_filename
+        _monitor_mda(dir, method, &block)   
+      end
+    end
+    
     def _check_mda(dir)
       script = File.join(dir, @mda.py_filename) 
       Rails.logger.info "#{PYTHON} #{script} --no-n2"
@@ -60,6 +69,12 @@ module WhatsOpt
       Rails.logger.info "#{PYTHON} #{script}"
       stdouterr, status = Open3.capture2e(PYTHON, script, '--batch')
       return status.success?, stdouterr
+    end
+    
+    def _monitor_mda(dir, method, &block)
+      script = File.join(dir, "run_#{method}.py")
+      Rails.logger.info "#{PYTHON} #{script}"
+      Open3.popen2e(PYTHON, script, '--batch', &block)
     end
     
     def _generate_code(gendir, only_base: false, sqlite_filename: nil)
