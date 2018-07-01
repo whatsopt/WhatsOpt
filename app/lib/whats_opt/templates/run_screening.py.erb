@@ -3,7 +3,9 @@
 
 import sys
 import numpy as np
-import matplotlib.pyplot as plt
+import matplotlib
+# matplotlib.use('Agg')
+# import matplotlib.pyplot as plt
 from openmdao.api import Problem, SqliteRecorder, CaseReader
 from whatsopt.salib_doe_driver import SalibDoeDriver
 from SALib.analyze import morris as ma

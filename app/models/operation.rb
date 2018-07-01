@@ -21,6 +21,7 @@ class Operation < ApplicationRecord
 
 	def update_operation(ope_attrs)
     self.name = ope_attrs[:name] if ope_attrs[:name]
+    self.host = ope_attrs[:host] if ope_attrs[:host]
     self.driver = ope_attrs[:driver] if ope_attrs[:driver]
     self._build_cases_from(ope_attrs[:cases]) if ope_attrs[:cases]
   end

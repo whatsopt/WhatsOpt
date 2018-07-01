@@ -34,6 +34,7 @@ class Runner extends React.Component {
   }
 
   handleHostChange(event) {
+    console.log("HOST "+event.target.value);
     let newState = update(this.state, {host:{$set: event.target.value}});
     this.setState(newState);
   }
@@ -51,7 +52,6 @@ class Runner extends React.Component {
   handleRun(event) {
     event.preventDefault()
     let ope_attrs = { host: this.state.host, driver: this.state.driver, name: this.state.name };
-    console.log(JSON.stringify(ope_attrs));
     this.api.updateOperation(this.props.ope.id, ope_attrs, 
         (response) => { this.api.pollOperation(this.props.ope.id,
                             (respData) => { return (respData.job.status === 'DONE'|| respData.job.status === 'FAILED')},
@@ -64,13 +64,11 @@ class Runner extends React.Component {
   }
 
   updateJob(job) {
-    console.log(JSON.stringify(job));
     let newState = update(this.state, {status: {$set: job.status}, log: {$set: job.log}});
     this.setState(newState);  
   }
   
   render() {
-    console.log(JSON.stringify(this.state.log));
     let lines = this.state.log.split('\n').map((l, i) => {
       return ( <LogLine key={i} line={l}/> );
     });
@@ -117,7 +115,7 @@ class Runner extends React.Component {
       <div className="editor-section">
         <form className="form" onSubmit={this.handleRun}>
           <div className="form-group col-3">
-            <label htmlFor="host">Operation Name</label>
+            <label htmlFor="name">Operation Name</label>
             <input type="text" value={this.state.name} className="form-control"
                    id="name" onChange={this.handleNameChange}/>
           </div>
@@ -127,7 +125,7 @@ class Runner extends React.Component {
                    id="host" onChange={this.handleHostChange}/>
           </div>
           <div className="form-group col-3">
-            <label htmlFor="host">Driver</label>
+            <label htmlFor="driver">Driver</label>
             <select value={this.state.driver} onChange={this.handleDriverChange} className="form-control">
               <optgroup label="Analysis">
                 <option value="analysis">RunOnce</option> 

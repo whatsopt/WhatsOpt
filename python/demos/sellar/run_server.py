@@ -64,6 +64,6 @@ pfactory = TBinaryProtocol.TBinaryProtocolFactory()
 
 server = handler.server = TServer.TSimpleServer(processor, transport, tfactory, pfactory)
 
-print("Starting Sellar server...")
+print("Starting Sellar analysis server...")
 server.serve()
 print("done!")

@@ -14,7 +14,8 @@ class OperationsController < ApplicationController
     @mda = Analysis.find(params[:mda_id])
     @ope = Operation.in_progress(@mda).take 
     unless @ope
-      @ope = @mda.operations.create(name: 'Unnamed', host: 'endymion')
+      @ope = @mda.operations.create(name: 'Unnamed', host: 'localhost')
+      @ope.create_job(status: 'PENDING')
     end
     redirect_to edit_operation_url(@ope)
   end

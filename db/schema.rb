@@ -35,7 +35,7 @@ ActiveRecord::Schema.define(version: 46) do
   create_table "cases", force: :cascade do |t|
     t.integer "operation_id"
     t.integer "variable_id"
-    t.integer "coord_index", default: -1
+    t.integer "coord_index", default: 0
     t.text "values"
   end
 
@@ -65,8 +65,8 @@ ActiveRecord::Schema.define(version: 46) do
 
   create_table "jobs", force: :cascade do |t|
     t.string "status"
-    t.text "log"
-    t.integer "pid"
+    t.text "log", default: ""
+    t.integer "pid", default: -1
     t.integer "operation_id"
   end
 

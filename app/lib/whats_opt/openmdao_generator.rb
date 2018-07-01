@@ -34,7 +34,6 @@ module WhatsOpt
     def run(method="analysis", sqlite_filename=nil)
       ok, lines = false, []
       Dir.mktmpdir("run_#{@mda.basename}_#{method}") do |dir|
-        dir = "/tmp"
         begin
           _generate_code dir, sqlite_filename: sqlite_filename
         rescue ServerGenerator::ThriftError => e
@@ -51,7 +50,6 @@ module WhatsOpt
     def monitor(method="analysis", sqlite_filename=nil, &block)
       ok, lines = false, []
       Dir.mktmpdir("run_#{@mda.basename}_#{method}") do |dir|
-        dir = "/tmp"
         _generate_code dir, sqlite_filename: sqlite_filename
         _monitor_mda(dir, method, &block)   
       end
@@ -105,6 +103,7 @@ module WhatsOpt
       @sqlite_filename = sqlite_filename || "#{@mda.basename}_screening.sqlite"
       _generate('run_screening.py', 'run_screening.py.erb', gendir)
       @sqlite_filename = sqlite_filename || "#{@mda.basename}_optimization.sqlite"
+      p ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", @sqlite_filename
       _generate('run_optimization.py', 'run_optimization.py.erb', gendir)
     end    
   end

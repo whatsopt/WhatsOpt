@@ -77,7 +77,10 @@ RUN eval "$(rbenv init -)"; rbenv install 2.3.3 \
 
 # pip install
 RUN pip install jupyter \
+    && pip install matplotlib \
     && pip install thrift==0.11.0 \
+	&& pip install Click \
+	&& pip install tabulate \
 	&& pip install openmdao==2.2.1
 
 # OpenVSP
@@ -142,6 +145,9 @@ COPY Gemfile Gemfile.lock ./
 RUN bundle install --jobs 20 --retry 5
 
 COPY . ./
+
+ENV WOP_ENV=development
+RUN pip install -e ./python
 
 EXPOSE 3000
 EXPOSE 3035
