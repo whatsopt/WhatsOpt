@@ -13,10 +13,11 @@ class OperationsController < ApplicationController
   def new
     @mda = Analysis.find(params[:mda_id])
     @ope = Operation.in_progress(@mda).take 
-    unless @ope
-      @ope = @mda.operations.create(name: 'Unnamed', host: 'localhost')
-      @ope.create_job(status: 'PENDING')
+    if @ope
+      @ope = @mda.operations.build(name: 'Unnamed', host: 'localhost')
+      @ope.build_job(status: 'PENDING')
     end
+    authorize @ope
     redirect_to edit_operation_url(@ope)
   end
   
@@ -31,8 +32,14 @@ class OperationsController < ApplicationController
       redirect_to mda_url(params[:mda_id]), notice: "Operation creation cancelled."
     else 
       @mda = Analysis.find(params[:mda_id])
-      @ope = @mda.operations.create(ope_params)
-      redirect_to edit_operation_url(@ope)
+      @ope = @mda.operations.build(ope_params)
+      authorize @ope
+      if @ope.save
+        redirect_to edit_operation_url(@ope)
+      else
+        flash[:error] = "Notebook import failed: invalid input data."
+        render :action => 'new'
+      end
     end 
   end
   
@@ -52,6 +59,7 @@ class OperationsController < ApplicationController
   
     def set_ope
       @ope = Operation.find(params[:id])
+      authorize @ope
     end
 
     def ope_params

@@ -4,20 +4,11 @@ class OpenmdaoGenerationController < ApplicationController
 
   def new
     mda_id = params[:mda_id]
-    if mda_id
-      begin
-        mda = Analysis.find(mda_id)
-        ogen = WhatsOpt::OpenmdaoGenerator.new(mda)
-        stringio, filename = ogen.generate
-        send_data stringio.read, filename: filename
-      rescue ActiveRecord::RecordNotFound
-        redirect_to mdas_url, 
-                    alert: "MDA(id=#{mda_id}) not found!"
-      end
-    else
-      redirect_to mdas_url,
-                  alert: 'MDA not specified. Openmdao generation aborted!'
-    end
+    mda = Analysis.find(mda_id)
+    authorize mda
+    ogen = WhatsOpt::OpenmdaoGenerator.new(mda)
+    stringio, filename = ogen.generate
+    send_data stringio.read, filename: filename
   end  
   
 end

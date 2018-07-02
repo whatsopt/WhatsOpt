@@ -2,6 +2,7 @@ class Api::V1::VersioningsController < Api::ApiController
   before_action :set_versions
   
   def show
+    authorize :info
     json_response(@version)
   end
   

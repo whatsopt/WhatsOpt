@@ -1,8 +1,7 @@
 class UserPolicy < ApplicationPolicy
-  class Scope < Struct.new(:user, :scope)
-    def resolve
-      scope
-    end
+
+  def create?
+    @user.admin?
   end
   
   def update?

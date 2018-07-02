@@ -9,6 +9,7 @@ class Api::V1::OperationsController < Api::ApiController
   # POST /api/v1/{mda_id}/operations
   def create
     mda = Analysis.find(params[:mda_id])
+    authorize mda
     @operation = Operation.build_operation(mda, ope_params)
     @operation.save!
     render json: @operation, status: :created
@@ -34,6 +35,7 @@ class Api::V1::OperationsController < Api::ApiController
     # Use callbacks to share common setup or constraints between actions.
     def set_operation
       @operation = Operation.find(params[:id])
+      authorize @operation.analysis
     end
   
     def ope_params

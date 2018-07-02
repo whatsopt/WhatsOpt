@@ -12,7 +12,8 @@ class NotebooksController < ApplicationController
 
   # GET /notebooks/new
   def new
-    @notebook = policy_scope(Notebook).new
+    @notebook = Notebook.new
+    authorize @notebook
   end
   
   # GET /notebooks/1/edit
@@ -24,7 +25,8 @@ class NotebooksController < ApplicationController
     if params[:cancel_button]
       redirect_to notebooks_url, notice: "Notebook import cancelled."
     else 
-      @notebook = Notebook.create(notebook_params)
+      @notebook = Notebook.new(notebook_params)
+      authorize @notebook
       if @notebook.save
         current_user.add_role(:owner, @notebook)
         current_user.save
@@ -53,7 +55,6 @@ class NotebooksController < ApplicationController
   
   # DELETE /notebooks/1
   def destroy
-    authorize @notebook
     @notebook.destroy
     flash[:notice] = "Successfully deleted notebook."
     redirect_to notebooks_url

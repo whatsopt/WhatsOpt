@@ -12,7 +12,8 @@ class GeometryModelsController < ApplicationController
 
   # GET /geometry_models/new
   def new
-    @geomodel = policy_scope(GeometryModel).new
+    @geomodel = GeometryModel.new
+    authorize @geomodel
   end
   
   # GET /geometry_models/1/edit
@@ -24,7 +25,8 @@ class GeometryModelsController < ApplicationController
     if params[:cancel_button]
       redirect_to geometry_models_url, notice: "GeometryModel import cancelled."
     else 
-      @geomodel = GeometryModel.create(geomodel_params)
+      @geomodel = GeometryModel.new(geomodel_params)
+      authorize @geomodel
       if @geomodel.save
         current_user.add_role(:owner, @geomodel)
         current_user.save

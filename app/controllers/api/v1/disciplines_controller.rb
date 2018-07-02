@@ -9,6 +9,7 @@ class Api::V1::DisciplinesController < Api::ApiController
   # POST /api/v1/{mda_id}/disciplines
   def create
     mda = Analysis.find(params[:mda_id])
+    authorize mda
     @discipline = mda.disciplines.create!(discipline_params)
     json_response @discipline, :created
   end
@@ -29,6 +30,7 @@ class Api::V1::DisciplinesController < Api::ApiController
     # Use callbacks to share common setup or constraints between actions.
     def set_discipline
       @discipline = Discipline.find(params[:id])
+      authorize @discipline.analysis
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.

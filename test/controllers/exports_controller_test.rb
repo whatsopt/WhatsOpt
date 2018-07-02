@@ -11,12 +11,6 @@ class ExportsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test "should get display alert if specified mda not found" do
-    get mda_exports_new_url({:mda_id => '42'})
-    assert_redirected_to(controller: 'analyses', action: 'index')
-    assert_equal 'MDA(id=42) not found!', flash[:alert]
-  end
-
   test "should get cmdows file given an mda_id" do
     get mda_exports_new_url(mda_id: @mda.id, format: :cmdows)
     assert_response :success

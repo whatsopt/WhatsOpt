@@ -8,18 +8,17 @@ class AnalysesController < ApplicationController
 
   # GET /mdas/1
   def show
-    authorize @mda
   end
 
   # GET /mdas/new
   def new
     @import = !!params[:import]
-    @mda = policy_scope(Analysis).new
+    @mda = Analysis.new
+    authorize @mda
   end
 
   # GET /mdas/1/edit
   def edit
-    authorize @mda
   end
 
   # POST /mdas
@@ -28,6 +27,7 @@ class AnalysesController < ApplicationController
       redirect_to mdas_url, notice: "Analysis creation cancelled."
     else 
       @mda = Analysis.new(mda_params)
+      authorize @mda
       if @mda.save
         current_user.add_role(:owner, @mda)
         current_user.save
@@ -45,7 +45,6 @@ class AnalysesController < ApplicationController
 
   # PATCH/PUT /mdas/1
   def update
-    authorize @mda
     if @mda.update(mda_params)
       redirect_to mda_url(@mda), notice: 'MDA was successfully updated.' 
     else
@@ -55,7 +54,6 @@ class AnalysesController < ApplicationController
 
   # DELETE /mdas/1
   def destroy
-    authorize @mda
     @mda.destroy
     redirect_to mdas_url, notice: 'MDA was successfully destroyed.'
   end
@@ -63,6 +61,7 @@ class AnalysesController < ApplicationController
   private
     def set_mda
       @mda = Analysis.find(params[:id])
+      authorize @mda
     end
 
     def mda_params

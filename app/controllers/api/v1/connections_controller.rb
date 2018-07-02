@@ -6,7 +6,8 @@ class Api::V1::ConnectionsController < Api::ApiController
   
   # POST /api/v1/connections
   def create
-    @mda = Analysis.find(params[:mda_id])        
+    @mda = Analysis.find(params[:mda_id])
+    authorize @mda        
     @names = connection_create_params[:names]
     @from_disc = @mda.disciplines.find(connection_create_params[:from])
     @to_disc = @mda.disciplines.find(connection_create_params[:to])
@@ -38,6 +39,7 @@ class Api::V1::ConnectionsController < Api::ApiController
   # PUT /api/v1/connections/1
   def update
     @connection = Connection.find(params[:id])
+    authorize @connection.from.discipline.analysis
     @connection.update_variables!(connection_update_params)      
     head :no_content    
   end
@@ -45,6 +47,7 @@ class Api::V1::ConnectionsController < Api::ApiController
   # DELETE /api/v1/connections/1
   def destroy
     @connection = Connection.find(params[:id])
+    authorize @connection.from.discipline.analysis
     @connection.destroy_variables!
     head :no_content
   end

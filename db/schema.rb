@@ -35,7 +35,7 @@ ActiveRecord::Schema.define(version: 46) do
   create_table "cases", force: :cascade do |t|
     t.integer "operation_id"
     t.integer "variable_id"
-    t.integer "coord_index", default: 0
+    t.integer "coord_index", default: -1
     t.text "values"
   end
 
@@ -68,6 +68,8 @@ ActiveRecord::Schema.define(version: 46) do
     t.text "log", default: ""
     t.integer "pid", default: -1
     t.integer "operation_id"
+    t.datetime "started_at"
+    t.datetime "ended_at"
   end
 
   create_table "notebooks", force: :cascade do |t|

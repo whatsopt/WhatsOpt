@@ -1,12 +1,11 @@
 class InfoPolicy < ApplicationPolicy
-  class Scope < Struct.new(:user, :scope)
-    def resolve
-      scope
-    end
-  end
-  
+
   def changelog?
     true
   end
-  
+
+  def show?
+    true
+  end
+    
 end

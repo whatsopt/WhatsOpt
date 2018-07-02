@@ -68,5 +68,5 @@ Rails.application.configure do
   
   config.active_record.sqlite3.represent_boolean_as_integer = true
   
-  config.action_cable.disable_request_forgery_protection = true
+  # config.action_cable.disable_request_forgery_protection = true
 end

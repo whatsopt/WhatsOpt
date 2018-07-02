@@ -8,6 +8,7 @@ class Api::V1::ExportsController < Api::ApiController
     format = params[:format]
     user_agent = request.headers['User-Agent'] 
     mda = Analysis.find(mda_id)
+    authorize mda
     if format == "openmdao" || format == "openmdao_base"
       ogen = WhatsOpt::OpenmdaoGenerator.new(mda)
       content, filename = ogen.generate(only_base: (format == "openmdao_base"), user_agent: user_agent)

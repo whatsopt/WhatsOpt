@@ -103,7 +103,6 @@ module WhatsOpt
       @sqlite_filename = sqlite_filename || "#{@mda.basename}_screening.sqlite"
       _generate('run_screening.py', 'run_screening.py.erb', gendir)
       @sqlite_filename = sqlite_filename || "#{@mda.basename}_optimization.sqlite"
-      p ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", @sqlite_filename
       _generate('run_optimization.py', 'run_optimization.py.erb', gendir)
     end    
   end

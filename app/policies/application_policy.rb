@@ -6,6 +6,12 @@ class ApplicationPolicy
     @record = record
   end
 
+  class Scope < Struct.new(:user, :scope)
+    def resolve
+      scope
+    end
+  end
+  
   def index?
     false
   end
