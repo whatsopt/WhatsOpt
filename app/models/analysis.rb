@@ -110,10 +110,8 @@ class Analysis < ApplicationRecord
         to_id = d_to.id.to_s  
         if active
           conns = Connection.between(d_from.id, d_to.id).active
-          p "ACTIVE ", conns
         else
           conns = Connection.between(d_from.id, d_to.id).inactive
-          p "INACTIVE ", conns
         end
         names = conns.map{ |c| c.from.name }.join(",")
         ids = conns.map(&:id)
