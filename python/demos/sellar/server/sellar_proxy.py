@@ -11,13 +11,9 @@ from thrift.transport import TTransport
 from thrift.protocol import TBinaryProtocol
 
 from sellar_base import SellarBase
-
 from disc1_base import Disc1Base
-
 from disc2_base import Disc2Base
-
 from functions_base import FunctionsBase
-
 
 
 class Disc1Proxy(Disc1Base):
@@ -28,7 +24,6 @@ class Disc1Proxy(Disc1Base):
     def compute(self, inputs, outputs):
         output = self._proxy.compute_disc1(to_thrift_disc1_input(inputs))
         to_openmdao_disc1_outputs(output, outputs)
-
 class Disc2Proxy(Disc2Base):
     def __init__(self, proxy):
         super(Disc2Proxy, self).__init__()
@@ -37,7 +32,6 @@ class Disc2Proxy(Disc2Base):
     def compute(self, inputs, outputs):
         output = self._proxy.compute_disc2(to_thrift_disc2_input(inputs))
         to_openmdao_disc2_outputs(output, outputs)
-
 class FunctionsProxy(FunctionsBase):
     def __init__(self, proxy):
         super(FunctionsProxy, self).__init__()
