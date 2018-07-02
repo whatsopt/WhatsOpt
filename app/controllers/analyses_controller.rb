@@ -3,21 +3,23 @@ class AnalysesController < ApplicationController
 
   # GET /mdas
   def index
-    @mdas = Analysis.all
+    @mdas = policy_scope(Analysis).all
   end
 
   # GET /mdas/1
   def show
+    authorize @mda
   end
 
   # GET /mdas/new
   def new
     @import = !!params[:import]
-    @mda = Analysis.new
+    @mda = policy_scope(Analysis).new
   end
 
   # GET /mdas/1/edit
   def edit
+    authorize @mda
   end
 
   # POST /mdas

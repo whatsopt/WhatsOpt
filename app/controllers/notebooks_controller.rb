@@ -3,7 +3,7 @@ class NotebooksController < ApplicationController
     
   # GET /notebooks
   def index
-    @notebooks = Notebook.all
+    @notebooks = policy_scope(Notebook).all
   end
   
   # GET /notebooks/1
@@ -12,7 +12,7 @@ class NotebooksController < ApplicationController
 
   # GET /notebooks/new
   def new
-    @notebook = Notebook.new
+    @notebook = policy_scope(Notebook).new
   end
   
   # GET /notebooks/1/edit
@@ -63,6 +63,7 @@ class NotebooksController < ApplicationController
   # Use callbacks to share common setup or constraints between actions.
   def set_notebook
     @notebook = Notebook.find(params[:id])
+    authorize @notebook
   end
   
   def notebook_params

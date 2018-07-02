@@ -1,15 +1,16 @@
 class UsersController < ApplicationController   
    
   def index
-    @users = User.all
+    @users = policy_scope(User).all
   end
   
   def show
-    @user = User.find(params[:id]);
+    @user = User.find(params[:id])
+    authorize @user
   end
 
   def new
-    @user = User.new
+    @user = policy_scope(User).new
   end
   
   def edit

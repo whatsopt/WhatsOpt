@@ -3,7 +3,7 @@ class GeometryModelsController < ApplicationController
     
   # GET /geometry_models
   def index
-    @geomodels = GeometryModel.all
+    @geomodels = policy_scope(GeometryModel).all
   end
   
   # GET /geometry_models/1
@@ -12,7 +12,7 @@ class GeometryModelsController < ApplicationController
 
   # GET /geometry_models/new
   def new
-    @geomodel = GeometryModel.new
+    @geomodel = policy_scope(GeometryModel).new
   end
   
   # GET /geometry_models/1/edit
@@ -41,7 +41,6 @@ class GeometryModelsController < ApplicationController
     if params[:cancel_button]
       redirect_to geometry_model_url, notice: "Geometry Model update cancelled."
     else  
-      authorize @geomodel
       if @geomodel.update(geomodel_params)
         flash[:notice] = "Successfully updated Geometry Model."
         redirect_to geometry_model_url
@@ -53,7 +52,6 @@ class GeometryModelsController < ApplicationController
   
   # DELETE /geometry_models/1
   def destroy
-    authorize @geomodel
     @geomodel.destroy
     flash[:notice] = "Successfully deleted project."
     redirect_to geometry_models_url
@@ -63,6 +61,7 @@ class GeometryModelsController < ApplicationController
   # Use callbacks to share common setup or constraints between actions.
   def set_geomodel
     @geomodel = GeometryModel.find(params[:id])
+    authorize @geomodel
   end
   
   def geomodel_params

@@ -9,6 +9,7 @@ class ExportsController < ApplicationController
     if mda_id
       begin
         mda = Analysis.find(mda_id)
+        authorize mda, :show?
         if format == "openmdao"
           ogen = WhatsOpt::OpenmdaoGenerator.new(mda)
           content, filename = ogen.generate
