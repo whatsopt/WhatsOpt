@@ -13,9 +13,9 @@ class OperationsController < ApplicationController
   def new
     @mda = Analysis.find(params[:mda_id])
     @ope = Operation.in_progress(@mda).take 
-    if @ope
-      @ope = @mda.operations.build(name: 'Unnamed', host: 'localhost')
-      @ope.build_job(status: 'PENDING')
+    unless @ope
+      @ope = @mda.operations.create(name: 'Unnamed', host: 'localhost')
+      @ope.create_job(status: 'PENDING', pid: -1, log: "")
     end
     authorize @ope
     redirect_to edit_operation_url(@ope)

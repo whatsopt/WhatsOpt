@@ -35,10 +35,17 @@ class Api::V1::OperationsControllerTest < ActionDispatch::IntegrationTest
 
   test "should update an operation" do
     patch api_v1_operation_url(@ope), 
-      params: {operation: {name: 'update_doe', driver: 'slsqp', cases: [{varname: 'x1', coord_index: 0, values: [5, 25, 35]}, 
-                                                                        {varname: 'obj', coord_index: 0, values: [10, 0, 65]}]}},
+      params: {operation: {name: 'update_doe', driver: 'slsqp', cases: [{varname: 'x1', coord_index: 0, values: [4, 5, 6]},
+                                                                        {varname: 'y2', coord_index: 0, values: [1, 2, 3]}]}},
       as: :json, headers: @auth_headers
     assert_response :success
+    get api_v1_operation_url(@ope), as: :json, headers: @auth_headers
+    resp = JSON.parse(response.body)
+    assert_equal 'update_doe', resp['name']
+    assert_equal 'slsqp', resp['driver']
+    assert_equal ['x1', 'y2'], resp['cases'].map{|c| c['varname']}.sort 
+    assert_equal [0, 0], resp['cases'].map{|c| c['coord_index']}.sort
+    assert_equal [1, 2, 3, 4, 5, 6], resp['cases'].map{|c| c['values']}.flatten.sort
   end
       
 end

@@ -14,7 +14,7 @@ class Operation < ApplicationRecord
 	
 	def self.build_operation(mda, ope_attrs)
 	  operation = mda.operations.build(ope_attrs.except(:cases))
-	  operation._build_cases_from(ope_attrs[:cases]) if ope_attrs[:cases]
+	  operation._build_cases(ope_attrs[:cases]) if ope_attrs[:cases]
 	  operation.build_job(status: 'PENDING', pid: -1, log: "")
 	  operation
 	end
@@ -23,7 +23,7 @@ class Operation < ApplicationRecord
     self.name = ope_attrs[:name] if ope_attrs[:name]
     self.host = ope_attrs[:host] if ope_attrs[:host]
     self.driver = ope_attrs[:driver] if ope_attrs[:driver]
-    self._build_cases_from(ope_attrs[:cases]) if ope_attrs[:cases]
+    self._update_cases(ope_attrs[:cases]) if ope_attrs[:cases]
   end
 
 	def to_plotter_json
@@ -52,17 +52,21 @@ class Operation < ApplicationRecord
 	  end
 	end
 	
-  def _build_cases_from(case_attrs)
-     var = {}
-     case_attrs.each do |c|
-       name = c[:varname]
-       coord_index = c[:coord_index]
-       var[name] ||= Variable.where(name: name)
-                       .joins(discipline: :analysis)
-                       .where(analyses: {id: self.analysis.id})
-                       .take
-       self.cases.build(variable_id: var[name].id, coord_index: coord_index, values: c[:values])
-     end     
-   end
+  def _build_cases(case_attrs)
+    var = {}
+    case_attrs.each do |c|
+      vname = c[:varname]
+      var[vname] ||= Variable.where(name: vname)
+                            .joins(discipline: :analysis)
+                            .where(analyses: {id: self.analysis.id})
+                            .take
+      self.cases.build(variable_id: var[vname].id, coord_index: c[:coord_index], values: c[:values])
+    end     
+  end
 	
+  def _update_cases(case_attrs)
+    self.cases.map(&:destroy)
+    _build_cases(case_attrs)
+  end
+  
 end
