@@ -8,6 +8,14 @@ class AnalysisPolicy < ApplicationPolicy
     true
   end
   
+  def operate?
+    update?
+  end
+  
+  def edit?
+    update?
+  end
+  
   def update?
     @user.admin? or @user.has_role?(:owner, @record)
   end

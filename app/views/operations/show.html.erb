@@ -1,15 +1,25 @@
+<div class="btn-toolbar float-right">
+<% if policy(@ope).edit? %>
+  <%= button_to edit_operation_url(@ope), method: :get, class: "btn", title:"Edit" do %>
+    <span class="fa fa-pencil"></span>
+      Edit
+  <% end %> 
+<% end %>
 <% if policy(@ope).destroy? %>
   <%= button_to operation_url(@ope), method: :delete, data: { title: 'Are you sure?', 
 	                                                            confirm: "Remove #{@mda.name} #{@ope.name} operation?",
 	                                                            commit: 'Yes',
 	                                                            cancel: 'No, cancel' }, 
-	              class: "btn float-right", title:"Delete" do %>
+	              class: "btn ml-2", title:"Delete" do %>
     <span class="fa fa-close"></span>
       Delete
   <% end %> 
 <% end %>
-	
-<h1>Plots for <%= @mda.name %> <%= @ope.name %> <%= @ope.category %></h1>
+<%= button_to mda_url(@mda), method: :get, class:"btn ml-2" do |b|%>
+  <span class="fa fa-times-circle"></span>
+    Close
+<% end %>      
+</div>
 
 <div id="plotter" data-mda="<%= @mda.to_mda_viewer_json %>" data-ope="<%= @ope.to_plotter_json %>" data-api-key="<%=current_user.api_key%>"></div> 
 

@@ -10,6 +10,7 @@ class OperationJob < ActiveJob::Base
     Rails.logger.info sqlite_filename
     
     Dir.mktmpdir("sqlite") do |dir|
+      p "CATEGORY >>>> #{ope.driver} #{ope.category}"
       status = ogen.monitor(ope.category, sqlite_filename) do |stdin, stdouterr, wait_thr|
         job.update(status: :RUNNING, pid: wait_thr.pid)
         stdin.close
@@ -19,18 +20,13 @@ class OperationJob < ActiveJob::Base
         end
         wait_thr.value
       end
-      if File.exists?(sqlite_filename)
-        puts "FILE #{sqlite_filename} EXISTS"
-      else
-        puts "FILE #{sqlite_filename} DO NOOOOOOOOOOOOOT EXISTS"        
-      end
       if status.success?
         if ope.driver == "runonce"
           Rails.logger.info "JOB STATUS = DONE"          
           job.update(status: :DONE)
+          ope.update(cases: [])
         else
           # upload
-          #UploadJob.perform_later(user, ope, sqlite_filename)
           _upload(user, ope, sqlite_filename)
         end 
       else
@@ -51,7 +47,6 @@ class OperationJob < ActiveJob::Base
       Rails.logger.info "Data #{sqlite_filename} uploaded via wop upload (PID=#{pid})"
       # delay to avoid deadlock
       _cleanup(ope, pid, sqlite_filename)
-      #CleanupJob.perform_later(ope, pid, sqlite_filename)
     else 
       Rails.logger.warn "#{sqlite_filename} DOES NOT EXIST"
     end

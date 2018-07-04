@@ -138,6 +138,8 @@ class Plotter extends React.Component {
 
     return (
       <div>
+        <h1>Plots for {this.props.mda.name} {this.props.ope.driver} {this.props.ope.category} </h1>
+
         <ul className="nav nav-tabs" id="myTab" role="tablist">
           <li className="nav-item">
             <a className="nav-link active" id="plots-tab" href="#plots"

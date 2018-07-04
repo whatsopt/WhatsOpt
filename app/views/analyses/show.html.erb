@@ -1,15 +1,31 @@
-<% if policy(@mda).update? %>
-  <div class="btn-toolbar float-right">  
-  <%= button_to new_mda_operation_url(@mda), method: :get, class:"btn mr-2" do |b|%>
-    <span class="fa fa-rocket"></span>
-      Operate
-  <% end %> 
+<div class="btn-toolbar float-right">  
+<% if policy(@mda).edit? %>
   <%= button_to edit_mda_url(@mda), method: :get, class:"btn" do |b|%>
     <span class="fa fa-pencil"></span>
       Edit
-  <% end %> 
-  </div>
+  <% end %>
 <% end %>
+<% if policy(@mda).operate? %>      
+  <%= button_to new_mda_operation_url(@mda), method: :get, class:"btn ml-2" do |b|%>
+    <span class="fa fa-rocket"></span>
+      Operate
+  <% end %>  
+<% end %>
+<% if policy(@mda).destroy? %>      
+  <%= button_to operation_url(@mda), method: :delete, data: { title: 'Are you sure?', 
+                                                              confirm: "Remove #{@mda.name} analysis?",
+                                                              commit: 'Yes',
+                                                              cancel: 'No, cancel' }, 
+                  class: "btn ml-2", title:"Delete" do %>
+    <span class="fa fa-close"></span>
+      Delete
+  <% end %> 
+<% end %>  
+  <%= button_to mdas_url, method: :get, class:"btn ml-2" do |b|%>
+    <span class="fa fa-times-circle"></span>
+      Close
+  <% end %>      
+</div>
       
 
 <h1><%= @mda.name %></h1>

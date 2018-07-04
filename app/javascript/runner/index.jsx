@@ -20,11 +20,14 @@ class Runner extends React.Component {
     this.cableApp = {};
     this.api = this.props.api
     
+    let status = (this.props.ope.job && this.props.ope.job.status) || 'DONE'
+    let log = (this.props.ope.job && this.props.ope.job.log) || ''
+    
     this.state = {host: this.props.ope.host, 
                   name: this.props.ope.name, 
                   driver: this.props.ope.driver, 
-                  status: this.props.ope.job.status, 
-                  log: this.props.ope.job.log};
+                  status: status, 
+                  log: log};
     
     this.handleHostChange = this.handleHostChange.bind(this); 
     this.handleNameChange = this.handleNameChange.bind(this); 
@@ -34,8 +37,10 @@ class Runner extends React.Component {
   }
 
   handleHostChange(event) {
-    console.log("HOST "+event.target.value);
     let newState = update(this.state, {host:{$set: event.target.value}});
+    if (this.state.name === 'Pending') {
+      newState.name = event.target.value.toUpperCase();  
+    }
     this.setState(newState);
   }
 
@@ -46,6 +51,9 @@ class Runner extends React.Component {
   
   handleDriverChange(event) {
     let newState = update(this.state, {driver:{$set: event.target.value}});
+    if (this.state.name === 'Unnamed') {
+      newState.name = event.target.value.toUpperCase();  
+    }
     this.setState(newState);
   }
   
@@ -84,20 +92,18 @@ class Runner extends React.Component {
       btnIcon = <i className="fa fa-question"/>;
     }    
 
-    let saveEnabled=false;
-    let runEnabled=false;
-    if (this.state.status === "DONE") {
-      saveEnabled=true;
-      runEnabled=true;
+    let showEnabled=false;
+    if (this.state.status === "DONE" && this.state.driver!=="runonce") {
+      showEnabled=true;
     } 
-    if (this.state.status === "FAILED") {
-      runEnabled=true;      
-    }     
+    let showClass="btn btn-light";
+    showClass+=showEnabled?"":" disabled"; 
+    
     return (   
-      <div className="container-fluid">
+      <div>
       <div className="editor-section">   
         <div className="btn-toolbar" role="toolbar">
-          <div className="btn-group mr-4" role="group">
+          <div className="btn-group mr-2" role="group">
             <button className={btnStatusClass + " btn-primary"} style={{width: "120px"}} type="button" data-toggle="collapse"
                     data-target="#collapseListing" aria-expanded="false">
               {btnIcon}<span className="ml-1">{this.state.status}</span>
@@ -128,7 +134,7 @@ class Runner extends React.Component {
             <label htmlFor="driver">Driver</label>
             <select value={this.state.driver} onChange={this.handleDriverChange} className="form-control">
               <optgroup label="Analysis">
-                <option value="analysis">RunOnce</option> 
+                <option value="runonce">RunOnce</option> 
               </optgroup>
               <optgroup label="Design of Experiment">
                 <option value="lhs">LHS</option>
