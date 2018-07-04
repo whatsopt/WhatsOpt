@@ -1,3 +1,3 @@
 class AnalysisSerializer < ActiveModel::Serializer
-  attributes :id, :name, :updated_at
+  attributes :id, :name, :created_at
 end

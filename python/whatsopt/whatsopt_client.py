@@ -89,7 +89,6 @@ class WhatsOpt(object):
 
     def login(self, api_key=None, echo=None):
         already_logged=False
-        retry=1
         if api_key:
             self.api_key = api_key
         elif os.path.exists(API_KEY_FILENAME):
@@ -99,16 +98,15 @@ class WhatsOpt(object):
             self.api_key = self._ask_and_write_api_key()
         self.headers = {'Authorization': 'Token token=' + self.api_key, 'User-Agent': 'wop/{}'.format(__version__)}
         
-        if api_key is None:  # check unless api_key is given
-            url =  self._endpoint('/api/v1/analyses')
-            resp = self.session.get(url, headers=self.headers)
-            if already_logged and not resp.ok and retry>0:
-                self.logout(echo=False)  # log out silently, suppose one was logged on another server
-                retry -= 1
-                resp=self.login(api_key, echo)
-            resp.raise_for_status() 
+        url =  self._endpoint('/api/v1/analyses')
+        resp = self.session.get(url, headers=self.headers)
+        if not api_key and already_logged and not resp.ok:
+            self.logout(echo=False)  # log out silently, suppose one was logged on another server
+            resp = self.login(api_key, echo)
+        resp.raise_for_status() 
         if echo:
             print("Successfully logged into WhatsOpt (%s)" % self.url)
+        return resp
 
     def logout(self, echo=True):
         if os.path.exists(API_KEY_FILENAME):
@@ -121,10 +119,12 @@ class WhatsOpt(object):
         resp = self.session.get(url, headers=self.headers)
         if resp.ok:
             mdas = resp.json()
-            headers = ["id", "name", "updated at"]
+            headers = ["id", "name", "created at"]
             data = []
             for mda in mdas:
-                data.append([mda['id'], mda['name'], mda['updated_at']])
+                # TODO: remove 'updated_at' once 0.10.0 deployed
+                date = mda.get('created_at', None) or mda['updated_at']
+                data.append([mda['id'], mda['name'], date])
             print(tabulate(data, headers))
         else:
             resp.raise_for_status()
