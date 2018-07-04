@@ -26,6 +26,7 @@ class Api::V1::OperationsControllerTest < ActionDispatch::IntegrationTest
     assert_equal ['obj', 'x1'], resp['cases'].map{|c| c['varname']}.sort 
     assert_equal [0, 0], resp['cases'].map{|c| c['coord_index']}.sort
     assert_equal [10, 20, 30, 40, 50, 60], resp['cases'].map{|c| c['values']}.flatten.sort
+    assert_equal({'status'=> 'DONE', 'log'=> 'wop upload...\nData uploaded\n'}, resp['job'])
   end
 
   test "should get an operation" do
@@ -46,6 +47,7 @@ class Api::V1::OperationsControllerTest < ActionDispatch::IntegrationTest
     assert_equal ['x1', 'y2'], resp['cases'].map{|c| c['varname']}.sort 
     assert_equal [0, 0], resp['cases'].map{|c| c['coord_index']}.sort
     assert_equal [1, 2, 3, 4, 5, 6], resp['cases'].map{|c| c['values']}.flatten.sort
+    assert_equal({'status'=> 'DONE', 'log'=> 'wop upload...\nData uploaded\n'}, resp['job'])
   end
       
 end

@@ -15,7 +15,11 @@ class Operation < ApplicationRecord
 	def self.build_operation(mda, ope_attrs)
 	  operation = mda.operations.build(ope_attrs.except(:cases))
 	  operation._build_cases(ope_attrs[:cases]) if ope_attrs[:cases]
-	  operation.build_job(status: 'PENDING', pid: -1, log: "")
+    if ope_attrs[:cases]
+      operation.build_job(status: 'DONE', pid: -1, log: 'wop upload...\nData uploaded\n')
+    else
+      operation.build_job(status: 'PENDING', pid: -1, log: "")
+    end
 	  operation
 	end
 
@@ -26,6 +30,14 @@ class Operation < ApplicationRecord
     self._update_cases(ope_attrs[:cases]) if ope_attrs[:cases]
   end
 
+  def set_upload_job_done
+    if self.job
+      self.update_job(status: 'DONE', pid: -1, log: 'wop upload...\nData uploaded\n')
+    else
+      self.create_job(status: 'DONE', pid: -1, log: 'wop upload...\nData uploaded\n')
+    end
+  end
+  
 	def to_plotter_json
     adapter = ActiveModelSerializers::SerializableResource.new(self)
     adapter.to_json

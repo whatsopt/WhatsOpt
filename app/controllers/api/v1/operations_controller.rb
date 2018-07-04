@@ -19,7 +19,9 @@ class Api::V1::OperationsController < Api::ApiController
   def update
     @operation.update_operation(ope_params)
     @operation.save!
-    unless ope_params[:cases]
+    if ope_params[:cases]
+      @operation.set_upload_job_done
+    else
       OperationJob.perform_later(current_user, @operation)
     end
     head :no_content
