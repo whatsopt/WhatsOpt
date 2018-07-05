@@ -26,14 +26,15 @@ class Runner extends React.Component {
     this.state = {host: this.props.ope.host, 
                   name: this.props.ope.name, 
                   driver: this.props.ope.driver, 
-                  status: status, 
+                  cases: this.props.ope.cases,
+                  status: status,
                   log: log};
     
     this.handleHostChange = this.handleHostChange.bind(this); 
     this.handleNameChange = this.handleNameChange.bind(this); 
     this.handleRun = this.handleRun.bind(this); 
     this.handleDriverChange = this.handleDriverChange.bind(this);
-    this.updateJob = this.updateJob.bind(this);
+    this.handleOperationUpdate = this.handleOperationUpdate.bind(this);
   }
 
   handleHostChange(event) {
@@ -64,15 +65,18 @@ class Runner extends React.Component {
         (response) => { this.api.pollOperation(this.props.ope.id,
                             (respData) => { return (respData.job.status === 'DONE'|| respData.job.status === 'FAILED')},
                             (response) => { console.log(response.data); 
-                              this.updateJob(response.data.job);
+                              this.handleOperationUpdate(response.data);
                             },
                             (error) => { console.log(error); });
         },
         (error) => { console.log(error); });
   }
 
-  updateJob(job) {
-    let newState = update(this.state, {status: {$set: job.status}, log: {$set: job.log}});
+  handleOperationUpdate(ope) {
+    let newState = update(this.state, {status: {$set: ope.job.status}, 
+                                       log: {$set: ope.job.log},
+                                       cases: {$set: ope.cases}
+    });
     this.setState(newState);  
   }
   
@@ -99,8 +103,21 @@ class Runner extends React.Component {
     let showClass="btn btn-light";
     showClass+=showEnabled?"":" disabled"; 
     
+    let urlOnClose = `/analyses/${this.props.mda.id}`;
+    if (this.state.cases.length > 0) {
+      urlOnClose = `/operations/${this.props.ope.id}`;  
+    }
+    
     return (   
       <div>
+      <form className="button_to" method="get" action={this.api.url(urlOnClose)}>
+        <button className="btn float-right" type="submit">
+          <i className="fa fa-times-circle" /> Close
+        </button>
+      </form>
+
+      <h1>Operation on {this.props.mda.name}</h1>
+
       <div className="editor-section">   
         <div className="btn-toolbar" role="toolbar">
           <div className="btn-group mr-2" role="group">

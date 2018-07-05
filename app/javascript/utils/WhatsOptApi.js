@@ -3,9 +3,6 @@ import axios from 'axios';
 class WhatsOptApi {
   
   constructor(csrfToken, apiKey, relativeUrlRoot) {
-// console.log(csrfToken);
-// console.log(apiKey);
-// console.log(relativeUrlRoot);
     axios.defaults.headers.common['X-CSRF-Token'] = csrfToken;
     axios.defaults.headers.common['Accept'] = 'application/json';
     axios.defaults.headers.common['Authorization'] = 'Token '+apiKey;
@@ -103,11 +100,8 @@ class WhatsOptApi {
   _pollStatus(fn, check, callback, timeout, interval) {
     let endTime = Number(new Date()) + (timeout || 2000);
     interval = interval || 100;
-
-    console.log("_pollStatus");
     let checkCondition = function(resolve, reject) { 
       var ajax = fn();
-      // dive into the ajax promise
       ajax.then( function(response){
         // If the condition is met, we're done!
         if (check(response.data)) {
