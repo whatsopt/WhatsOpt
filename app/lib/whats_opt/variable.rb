@@ -24,7 +24,7 @@ module WhatsOpt
 
     def dim
       @dim ||=  case self.shape
-                when /^(\d+)$/
+                when /^1$/
                   $1.to_i
                 when /^\((\d+),\)$/ 
                   $1.to_i
@@ -33,13 +33,13 @@ module WhatsOpt
                 when /^\((\d+), (\d+), (\d+)\)$/
                   $1.to_i * $2.to_i * $3.to_i
                 else
-                  raise BadShapeAttributeError.new("should be either n, (n,), (n, m) or (n, m, p) but found #{self.shape}")
+                  raise BadShapeAttributeError.new("should be either 1, (n,), (n, m) or (n, m, p) but found #{self.shape}")
                 end
     end
 
     def ndim
       @dim ||=  case self.shape
-                when /^(\d+)$/
+                when /^1$/
                   0
                 when /^\((\d+),\)$/ 
                   1
@@ -48,7 +48,7 @@ module WhatsOpt
                 when /^\((\d+), (\d+), (\d+)\)$/
                   3
                 else
-                  raise BadShapeAttributeError.new("should be either n, (n,), (n, m) or (n, m, p) but found #{self.shape}")
+                  raise BadShapeAttributeError.new("should be either 1, (n,), (n, m) or (n, m, p) but found #{self.shape}")
                 end
     end
     

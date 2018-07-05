@@ -11,7 +11,7 @@ class Variable < ApplicationRecord
   include WhatsOpt::OpenmdaoVariable
   include WhatsOpt::ThriftVariable
 
-  DEFAULT_SHAPE = '1' # either 'n', '(n,), (n, m) or (n, m, p)'
+  DEFAULT_SHAPE = '1' # either '1', '(n,), (n, m) or (n, m, p)'
   DEFAULT_TYPE = FLOAT_T
   DEFAULT_IOMODE = IN
     
