@@ -58,7 +58,7 @@ class SellarHandler:
 
 handler = SellarHandler()
 processor = SellarService.Processor(handler)
-transport = TSocket.TServerSocket(port=31400)
+transport = TSocket.TServerSocket('0.0.0.0', port=31400)
 tfactory = TTransport.TBufferedTransportFactory()
 pfactory = TBinaryProtocol.TBinaryProtocolFactory()
 
