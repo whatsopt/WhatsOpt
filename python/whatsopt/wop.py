@@ -53,7 +53,7 @@ def push(ctx, dry_run, name, py_filename):
 @click.option('--force', is_flag=True, default=False, help='overwrite existing files')
 @click.argument('analysis_id')
 @click.pass_context
-def pull(dry_run, force, analysis_id):
+def pull(ctx, dry_run, force, analysis_id):
 	""" Pull analysis given its identifier """	
 	options = {'--dry-run': dry_run, '--force': force}
 	WhatsOpt(api_key=ctx.obj['api_key']).pull_mda(analysis_id, options)
