@@ -181,9 +181,9 @@ class VariablesEditor extends React.Component {
                    {id: 'response', text: 'Response'},
                    {id: 'min_objective', text: 'Min Objective'},
                    {id: 'max_objective', text: 'Max Objective'},
-                   {id: 'ineq_constraint', text: 'Ineq Constraint'},
+                   {id: 'ineq_constraint', text: 'Neg Constraint'},
                    {id: 'eq_constraint', text: 'Eq Constraint'},
-                   {id: 'plain', text: 'State Var.'}];
+                   {id: 'plain', text: 'State Variable'}];
     if (conn.role == "parameter" || conn.role == "design_var") {
       options.splice(2, 6);
 //      if (conn.type === "String") {
