@@ -16,6 +16,12 @@ class AnalysisDatabase {
   isInputVarCases(c) {
     return this.inputVariables.find((v) => v.name === c.varname);
   }
+  isDesignVarCases(c) {
+    return this.connections.find((conn) => {
+      return conn.role === 'design_var' && conn.name === c.varname
+    }); 
+  }
+  
   isOutputVarCases(c) {
     return this.outputVariables.find((v) => v.name === c.varname);
   }
@@ -95,10 +101,10 @@ class AnalysisDatabase {
     let hconns = {};
     edges.forEach((edge) => {
       let vars = edge.name.split(",");
-    let fromName = this._findNode(edge.from).name;
-    let toName = this._findNode(edge.to).name;
-    vars.forEach((v, i) => {
-      let id = edge.from + '_' + v;
+      let fromName = this._findNode(edge.from).name;
+      let toName = this._findNode(edge.to).name;
+      vars.forEach((v, i) => {
+        let id = edge.from + '_' + v;
         if (hconns[id]) {
           hconns[id].to.push(edge.to);
           hconns[id].toName.push(toName);
@@ -116,7 +122,6 @@ class AnalysisDatabase {
         }
       }, this);
     }, this);
-
     let conns = [];
     for (let id in hconns) {
       conns.push(hconns[id]);

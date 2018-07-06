@@ -66,7 +66,7 @@ class Plotter extends React.Component {
     this.db = new AnalysisDatabase(this.props.mda);
     this.cases = this.props.ope.cases.sort(caseUtils.compare);
 
-    this.inputVarCases = this.cases.filter((c) => this.db.isInputVarCases(c));
+    this.inputVarCases = this.cases.filter((c) => this.db.isDesignVarCases(c));
     this.outputVarCases = this.cases.filter((c) => this.db.isOutputVarCases(c));
     this.couplingVarCases = this.cases.filter((c) => this.db.isCouplingVarCases(c));
 
