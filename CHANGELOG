@@ -1,5 +1,10 @@
 <h1>CHANGELOG</h1>
 
+<h3>0.9.3 (06/07/2018)</h3>
+<ul>
+  <li>Fix minor issues (feedback from users)</li>
+</ul>
+
 <h3>0.9.2 (02/07/2018)</h3>
 <ul>
   <li>Initial version with optimization as a service (Operate button on Analysis page).</li>
