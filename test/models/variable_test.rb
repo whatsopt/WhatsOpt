@@ -16,9 +16,11 @@ class VariableTest < ActiveSupport::TestCase
   
   test "should be valid if well-formed shape and have the right dim" do
     var = Variable.new(name: 'test', io_mode: Variable::IN, shape:'3')
+    assert !var.valid?
+    var = Variable.new(name: 'test', io_mode: Variable::IN, shape:'1')
     assert var.valid?
     assert var.active
-    assert_equal 3, var.dim
+    assert_equal 1, var.dim
     var = Variable.new(name: 'test', io_mode: Variable::IN, shape:'(12,)')
     assert var.valid? 
     assert_equal 12, var.dim

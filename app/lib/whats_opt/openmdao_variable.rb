@@ -25,7 +25,7 @@ module WhatsOpt
     end
       
     def default_py_shape
-      if self.dim == 1
+      if self.ndim == 0
         "1"
       else
         "(#{self.dim},)"
@@ -33,7 +33,7 @@ module WhatsOpt
     end
     
     def default_py_value
-      if self.dim == 1
+      if self.ndim == 0
         if self.type == FLOAT_T
           "1.0"
         else 

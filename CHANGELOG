@@ -1,5 +1,10 @@
 <h1>CHANGELOG</h1>
 
+<h3>0.9.4 (16/08/2018)</h3>
+<ul>
+  <li>Fix bug related to code generation</li>
+</ul>
+
 <h3>0.9.3 (06/07/2018)</h3>
 <ul>
   <li>Fix minor issues (feedback from users)</li>
