@@ -92,7 +92,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
       pid = spawn("#{WhatsOpt::OpenmdaoGenerator::PYTHON} #{File.join(dir, 'run_server.py')}", [:out]=> '/dev/null')
       @ogen_remote = WhatsOpt::OpenmdaoGenerator.new(@mda, 'localhost')
       ok, log = @ogen_remote.run
-      assert ok
+      assert(ok, log)
       Process.kill("TERM", pid)
       Process.waitpid pid
     end

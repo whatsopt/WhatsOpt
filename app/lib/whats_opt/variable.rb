@@ -25,7 +25,7 @@ module WhatsOpt
     def dim
       @dim ||=  case self.shape
                 when /^1$/
-                  $1.to_i
+                  1
                 when /^\((\d+),\)$/ 
                   $1.to_i
                 when /^\((\d+), (\d+)\)$/
