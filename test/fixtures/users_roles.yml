@@ -2,18 +2,6 @@ users_roles1:
   user: admin 
   role: admin_role
 
-users_roles2:
-  user: admin 
-  role: user_role
-
-users_roles3:
-  user: user1 
-  role: user_role
-
-users_roles4:
-  user: user2 
-  role: user_role
-
 users_roles5:
   user: user1 
   role: owner_cicav_mda_role
@@ -26,4 +14,7 @@ users_roles7:
   user: user2 
   role: owner_fast_mda_role
 
+users_roles8:
+  user: user3 
+  role: member_cicav_mda_role
   

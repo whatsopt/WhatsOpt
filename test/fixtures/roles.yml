@@ -1,9 +1,6 @@
 admin_role: 
   name: :admin
   
-user_role:
-  name: :user
-
 owner_cicav_mda_role:
   name: :owner
   resource: cicav (Analysis)
@@ -15,3 +12,7 @@ owner_fast_mda_role:
 owner_dummy_mda_role:
   name: :owner
   resource: dummy (Analysis)
+  
+member_cicav_mda_role:
+  name: :member
+  resource: cicav (Analysis)

@@ -66,6 +66,6 @@ class AnalysesController < ApplicationController
 
     def mda_params
       params.require(:analysis)
-        .permit(:name, :attachment_attributes => [:id, :data, :_destroy])
+        .permit(:name, :public, :attachment_attributes => [:id, :data, :_destroy])
     end
 end

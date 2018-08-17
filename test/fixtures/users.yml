@@ -11,3 +11,6 @@ user2:
   login: bob
   email: bob.smith@onera.fr
   
+user3:
+  login: charles
+  email: charles.smith@onera.fr

@@ -7,6 +7,10 @@ class AnalysisPolicy < ApplicationPolicy
   def create?
     true
   end
+
+  def show?
+    @record.public or @user.admin? or @user.has_role?(:owner, @record) or @user.has_role?(:member, @record)
+  end
   
   def operate?
     update?

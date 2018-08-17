@@ -10,12 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 47) do
+ActiveRecord::Schema.define(version: 48) do
 
   create_table "analyses", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "public", default: false
   end
 
   create_table "attachments", force: :cascade do |t|

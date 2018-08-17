@@ -31,6 +31,8 @@ class Analysis < ApplicationRecord
   validate :check_mda_import_error, on: :create, if: :attachment_exists
   validates :name, presence: true, allow_blank: false
 
+  #scope private, -> { where(public: false) }
+  
   def driver
     self.disciplines.driver&.take
   end

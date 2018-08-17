@@ -29,6 +29,28 @@ class AnalysesControllerTest < ActionDispatch::IntegrationTest
     assert Analysis.last.owner, users(:user1)  
   end
 
+  test "should only authorized access to owner as default" do
+    post mdas_url, params: {analysis: { name: 'test2' } }
+    sign_out users(:user1)
+    sign_in users(:user2)    
+    get mda_url(Analysis.last)
+    assert_redirected_to root_path
+  end  
+
+  test "should authorized access if public attr is set" do
+    post mdas_url, params: {analysis: { name: 'test2', public: true } }
+    sign_out users(:user1)
+    sign_in users(:user2)    
+    get mda_url(Analysis.last)
+    assert_response :success
+  end  
+
+  test "should authorized access to members" do
+    sign_in users(:user3)    
+    get mda_url(@mda)
+    assert_response :success
+  end  
+    
   test "should import analysis from excel" do
     assert_difference('Analysis.count') do
       post mdas_url, params: { 
