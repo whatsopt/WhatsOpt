@@ -1,5 +1,5 @@
 class User < ActiveRecord::Base
-  rolify
+  rolify strict: true
   
   devise :database_authenticatable, :ldap_authenticatable, :trackable, :validatable, :timeoutable
   #devise :ldap_authenticatable, :trackable, :validatable, :timeoutable
@@ -7,6 +7,17 @@ class User < ActiveRecord::Base
   after_initialize :set_default_role, :if => :new_record?
   before_create :generate_api_key
 
+  # work around rolify with_role method bug: see https://github.com/RolifyCommunity/rolify/issues/362
+  scope :with_role_for_instance, ->(role_name, instance) do
+    resource_name = instance.class.name
+
+    joins(:roles).where(roles: {
+      name: role_name.to_s,
+      resource_type: resource_name,
+      resource_id: instance.id
+    })
+  end
+  
   # Used to create user on first LDAP authentication 
   def ldap_before_save
     self.email = Devise::LDAP::Adapter.get_ldap_param(self.login, "mail").first

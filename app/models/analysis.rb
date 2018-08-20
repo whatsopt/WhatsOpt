@@ -140,8 +140,8 @@ class Analysis < ApplicationRecord
   end
   
   def owner
-    owners = User.with_role(:owner, self)
-    owners.take.login if owners
+    owners = User.with_role_for_instance(:owner, self)
+    owners.take&.login
   end
   
   private
