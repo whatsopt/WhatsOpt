@@ -90,6 +90,7 @@ class Analysis < ApplicationRecord
     { 
       id: self.id,
       name: self.name,
+      public: self.public,
       nodes: build_nodes,
       edges: build_edges,
       inactive_edges: build_edges(active: false),

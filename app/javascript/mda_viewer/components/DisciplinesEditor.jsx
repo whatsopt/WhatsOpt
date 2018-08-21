@@ -160,11 +160,13 @@ class DisciplinesEditor extends React.Component {
                 onDisciplineUpdate={this.props.onDisciplineUpdate}
                 onDisciplineDelete={this.props.onDisciplineDelete} />);
     });
-
+    if (disciplines.length === 0) {
+      disciplines = 'None'  
+    }
     return (
         <div className='container-fluid'>
           <div className="editor-section">
-            <label className="editor-header">Nodes</label>
+            <label>Nodes</label>
             <DragDropContext onDragStart={this.onDragStart}
                              onDragUpdate={this.onDragUpdate}
                              onDragEnd={this.onDragEnd}>
@@ -186,7 +188,7 @@ class DisciplinesEditor extends React.Component {
                        placeholder='Enter Name...' className="form-control"
                        id="name" onChange={this.props.onDisciplineNameChange}/>
               </div>
-              <button type="submit" className="btn btn-primary ml-1">New</button>
+              <button type="submit" className="btn btn-primary ml-3">New</button>
             </form>
           </div>
         </div>

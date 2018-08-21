@@ -23,7 +23,7 @@ class DisciplineSelector extends React.Component {
     return (
       <div className="input-group mt-3">
         <div className="input-group-prepend" htmlFor={this.props.label}>
-          <label className="input-group-text editor-header">{this.props.label}</label>
+          <label className="input-group-text">{this.props.label}</label>
         </div>
         <select id={this.props.label} className="custom-select" value={selected}
                 onChange={this.handleSelectChange}>
@@ -131,7 +131,7 @@ class ConnectionsViewer extends React.Component {
     }
 
     return (<div>
-              <label className="editor-header">{title}  <span className="badge badge-info">{count}</span></label>
+              <label>{title}  <span className="badge badge-info">{count}</span></label>
               <div>
                 {connections}
               </div>

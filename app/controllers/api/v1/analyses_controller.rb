@@ -43,6 +43,7 @@ class Api::V1::AnalysesController < Api::ApiController
     def mda_params
       params.require(:analysis).permit(
       :name, 
+      :public,
       :disciplines_attributes => 
          [
           :name, 

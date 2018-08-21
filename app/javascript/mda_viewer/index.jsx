@@ -24,12 +24,14 @@ class MdaViewer extends React.Component {
       isEditing: isEditing,
       mda: props.mda,
       newAnalysisName: props.mda.name,
+      analysisPublic: props.mda.public,
       newDisciplineName: '',
       newConnectionName: '',
       errors: [],
     };
     this.handleFilterChange = this.handleFilterChange.bind(this);
     this.handleAnalysisNameChange = this.handleAnalysisNameChange.bind(this);
+    this.handleAnalysisPublicChange = this.handleAnalysisPublicChange.bind(this);
     this.handleAnalysisUpdate = this.handleAnalysisUpdate.bind(this);
     this.handleDisciplineNameChange = this.handleDisciplineNameChange.bind(this);
     this.handleDisciplineCreate = this.handleDisciplineCreate.bind(this);
@@ -164,12 +166,21 @@ class MdaViewer extends React.Component {
     this.setState(newState);
     return false;
   }
+  
+  handleAnalysisPublicChange(event) {
+    let newState = update(this.state, {analysisPublic: {$set: !this.state.analysisPublic}});
+    this.setState(newState);
+    return false;
+  }
 
   handleAnalysisUpdate(event) {
     event.preventDefault();
-    this.api.updateAnalysis(this.props.mda.id, {name: this.state.newAnalysisName},
+    this.api.updateAnalysis(this.props.mda.id, { name: this.state.newAnalysisName, 
+                                                 public: this.state.analysisPublic},
       (response) => {
-        let newState = update(this.state, {mda: {name: {$set: this.state.newAnalysisName}}});
+        let newState = update(this.state, {mda: {name: {$set: this.state.newAnalysisName},
+                                                 public: {$set: this.state.analysisPublic}
+                                                }});
         this.setState(newState);
       });
   }
@@ -229,8 +240,10 @@ class MdaViewer extends React.Component {
           {errors}
           <div className="tab-pane fade" id="analysis" role="tabpanel" aria-labelledby="analysis-tab">
             <AnalysisEditor newAnalysisName={this.state.newAnalysisName}
+                            analysisPublic={this.state.analysisPublic}
                             onAnalysisUpdate={this.handleAnalysisUpdate}
-                            onAnalysisNameChange={this.handleAnalysisNameChange}/>
+                            onAnalysisNameChange={this.handleAnalysisNameChange}
+                            onAnalysisPublicChange={this.handleAnalysisPublicChange}/>
           </div>
           <div className="tab-pane fade" id="disciplines" role="tabpanel" aria-labelledby="disciplines-tab">
             <DisciplinesEditor name={this.state.newDisciplineName}
