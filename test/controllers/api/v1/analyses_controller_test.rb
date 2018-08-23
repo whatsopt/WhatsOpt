@@ -46,4 +46,5 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     resp = JSON.parse(response.body)
     assert_equal @mda.disciplines.count, resp['nodes'].size
   end
+
 end

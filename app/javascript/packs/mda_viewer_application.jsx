@@ -11,9 +11,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let mda = mdaViewerElt.data('mda');
     let isEditing = mdaViewerElt.data('is-editing');
     let apiKey = mdaViewerElt.data('api-key');
+    let members = mdaViewerElt.data('members');
     
     let api = new WhatsOptApi(csrfToken, apiKey, relativeUrlRoot); 
     
-    ReactDOM.render(<MdaViewer mda={mda} isEditing={isEditing} api={api}/>, mdaViewerElt[0]);
+    ReactDOM.render(<MdaViewer mda={mda} isEditing={isEditing} api={api} members={members}/>, mdaViewerElt[0]);
   }
 );

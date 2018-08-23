@@ -14,7 +14,6 @@ Rails.application.routes.draw do
     
   namespace :api do
     namespace :v1, defaults: { format: :json } do
-      resource :versioning, only: [:show]  
       resources :analyses, shallow: true, as: :mdas, only: [:index, :show, :create, :update] do
         resources :disciplines, only: [:show, :create, :update, :destroy], :shallow => true 
         resources :connections, only: [:create, :update, :destroy]
@@ -22,6 +21,8 @@ Rails.application.routes.draw do
         post 'openmdao_checking', to: 'openmdao_checking#create' 
         get 'exports/new'
       end
+      resources :users, only: [:index, :update]  
+      resource :versioning, only: [:show]  
     end
   end
 
@@ -35,5 +36,5 @@ Rails.application.routes.draw do
   end
   root to: redirect('users/sign_in')
   
-  mount ActionCable.server => '/cable'
+  #mount ActionCable.server => '/cable'
 end

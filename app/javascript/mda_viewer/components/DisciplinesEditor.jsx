@@ -166,7 +166,7 @@ class DisciplinesEditor extends React.Component {
     return (
         <div className='container-fluid'>
           <div className="editor-section">
-            <label>Nodes</label>
+            <label>Nodes <span className="badge badge-info">{disciplines.length}</span></label>
             <DragDropContext onDragStart={this.onDragStart}
                              onDragUpdate={this.onDragUpdate}
                              onDragEnd={this.onDragEnd}>
@@ -183,12 +183,11 @@ class DisciplinesEditor extends React.Component {
           <div className="editor-section">
             <form className="form-inline" onSubmit={this.props.onDisciplineCreate}>
               <div className="form-group">
-                <label htmlFor="name" className="sr-only">Name</label>
                 <input type="text" value={this.props.name}
-                       placeholder='Enter Name...' className="form-control"
+                       placeholder='Enter Discipline Name...' className="form-control"
                        id="name" onChange={this.props.onDisciplineNameChange}/>
               </div>
-              <button type="submit" className="btn btn-primary ml-3">New</button>
+              <button type="submit" className="btn btn-primary ml-3">Add</button>
             </form>
           </div>
         </div>

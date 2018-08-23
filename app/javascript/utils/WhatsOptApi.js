@@ -20,12 +20,36 @@ class WhatsOptApi {
       .catch((error) => console.log(error));
   };
 
-  getAnalysisXdsm(mdaId, callback) {
-    let path = `/api/v1/analyses/${mdaId}.xdsm`;
+  getMemberCandidates(mdaId, callback) {
+    let path = `/api/v1/users?query[analysis_id]=${mdaId}&query[select]=member_candidates`;
+    axios.get(this.url(path))
+      .then(callback)
+      .catch((error) => console.log(error));
+  }
+  
+  addUserAsMember(userId, mdaId, callback) {
+    let path = `/api/v1/users/${userId}`;
+    axios.put(this.url(path), {user: {analysis_id: mdaId, role: 'member'}})
+      .then(callback)
+      .catch((error) => console.log(error));
+  }
+  
+  getAnalysis(mdaId, xdsmFormat, callback) {
+    let path = `/api/v1/analyses/${mdaId}`;
+    if (xdsmFormat) {
+      path += '.xdsm';
+    }
     axios.get(this.url(path))
       .then(callback)
       .catch((error) => console.log(error));
   };
+
+  updateAnalysis(mdaId, mdaAttrs, callback, onError) {
+    let path = `/api/v1/analyses/${mdaId}`;
+    axios.put(this.url(path), {analysis: mdaAttrs})
+      .then(callback)
+      .catch(onError);
+  }
 
   createDiscipline(mdaId, disciplineAttributes, callback) {
     let path = `/api/v1/analyses/${mdaId}/disciplines`;
@@ -44,13 +68,6 @@ class WhatsOptApi {
   deleteDiscipline(discId, callback) {
     let path = `/api/v1/disciplines/${discId}`;
     axios.delete(this.url(path))
-      .then(callback)
-      .catch((error) => console.log(error));
-  }
-
-  updateAnalysis(mdaId, mdaAttrs, callback) {
-    let path = `/api/v1/analyses/${mdaId}`;
-    axios.put(this.url(path), {analysis: mdaAttrs})
       .then(callback)
       .catch((error) => console.log(error));
   }

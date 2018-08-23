@@ -23,8 +23,8 @@ class MdaViewer extends React.Component {
       filter: filter,
       isEditing: isEditing,
       mda: props.mda,
-      newAnalysisName: props.mda.name,
-      analysisPublic: props.mda.public,
+      analysisMembers: this.props.members,
+      newAnalysisName: this.props.mda.name,
       newDisciplineName: '',
       newConnectionName: '',
       errors: [],
@@ -32,6 +32,9 @@ class MdaViewer extends React.Component {
     this.handleFilterChange = this.handleFilterChange.bind(this);
     this.handleAnalysisNameChange = this.handleAnalysisNameChange.bind(this);
     this.handleAnalysisPublicChange = this.handleAnalysisPublicChange.bind(this);
+    this.handleAnalysisMemberSearch = this.handleAnalysisMemberSearch.bind(this);
+    this.handleAnalysisMemberCreate = this.handleAnalysisMemberCreate.bind(this);
+    this.handleAnalysisMemberDelete = this.handleAnalysisMemberDelete.bind(this);
     this.handleAnalysisUpdate = this.handleAnalysisUpdate.bind(this);
     this.handleDisciplineNameChange = this.handleDisciplineNameChange.bind(this);
     this.handleDisciplineCreate = this.handleDisciplineCreate.bind(this);
@@ -162,31 +165,61 @@ class MdaViewer extends React.Component {
   // *** Analysis ************************************************************
   handleAnalysisNameChange(event) {
     event.preventDefault();
-    let newState = update(this.state, {newAnalysisName: {$set: event.target.value}});
+    let newState = update(this.state, {newAnalysisName: {$set: event.target.value},
+                                       errors: {$set: []}});
     this.setState(newState);
     return false;
   }
   
   handleAnalysisPublicChange(event) {
-    let newState = update(this.state, {analysisPublic: {$set: !this.state.analysisPublic}});
-    this.setState(newState);
+    this.api.updateAnalysis(this.props.mda.id, {public: !this.state.mda.public},
+      (response) => {
+        let newState = update(this.state, {mda: {public: {$set: !this.state.mda.public}}});
+        this.setState(newState);
+      },
+      (error) => { console.log(error); }
+      );
     return false;
+  }
+
+  handleAnalysisMemberSearch(query, callback) {
+    this.api.getMemberCandidates(this.props.mda.id,
+      (response) => { callback(response.data); }
+    );
+  }
+  handleAnalysisMemberCreate(selected) {
+    console.log("Selected:"+JSON.stringify(selected));
+    if (selected.length) { 
+      this.api.addUserAsMember(selected[0].id, this.props.mda.id, 
+        (response) => {
+          let newState = update(this.state, {analysisMembers: {$push: selected}});
+          this.setState(newState);
+        } 
+      );
+    }
+  }
+  handleAnalysisMemberDelete(event) {
   }
 
   handleAnalysisUpdate(event) {
     event.preventDefault();
-    this.api.updateAnalysis(this.props.mda.id, { name: this.state.newAnalysisName, 
-                                                 public: this.state.analysisPublic},
+    this.api.updateAnalysis(this.props.mda.id, { name: this.state.newAnalysisName },
       (response) => {
-        let newState = update(this.state, {mda: {name: {$set: this.state.newAnalysisName},
-                                                 public: {$set: this.state.analysisPublic}
-                                                }});
-        this.setState(newState);
+        this.api.getAnalysis(this.props.mda.id, false,
+          (response) => {
+            let newState = update(this.state, {mda: {name: {$set: this.state.newAnalysisName}}});
+            this.setState(newState);
+          });
+      },
+      (error) => {
+          let message = error.response.data.message || "Error: Update failed";
+          let newState = update(this.state, {errors: {$set: [message]}});
+          this.setState(newState);
       });
   }
 
   renderXdsm() {
-    this.api.getAnalysisXdsm(this.props.mda.id,
+    this.api.getAnalysis(this.props.mda.id, true,
       (response) => {
         let newState = update(this.state,
           {mda: {nodes: {$set: response.data.nodes},
@@ -238,12 +271,17 @@ class MdaViewer extends React.Component {
         </ul>
         <div className="tab-content" id="myTabContent">
           {errors}
-          <div className="tab-pane fade" id="analysis" role="tabpanel" aria-labelledby="analysis-tab">
+          <div className="tab-pane fade show active" id="analysis" role="tabpanel" aria-labelledby="analysis-tab">
             <AnalysisEditor newAnalysisName={this.state.newAnalysisName}
-                            analysisPublic={this.state.analysisPublic}
+                            analysisPublic={this.state.mda.public}
+                            analysisMembers={this.state.analysisMembers}
                             onAnalysisUpdate={this.handleAnalysisUpdate}
                             onAnalysisNameChange={this.handleAnalysisNameChange}
-                            onAnalysisPublicChange={this.handleAnalysisPublicChange}/>
+                            onAnalysisPublicChange={this.handleAnalysisPublicChange}
+                            onAnalysisMemberSearch={this.handleAnalysisMemberSearch}
+                            onAnalysisMemberCreate={this.handleAnalysisMemberCreate}
+                            onAnalysisMemberDelete={this.handleAnalysisMemberDelete}
+            />
           </div>
           <div className="tab-pane fade" id="disciplines" role="tabpanel" aria-labelledby="disciplines-tab">
             <DisciplinesEditor name={this.state.newDisciplineName}
@@ -264,7 +302,7 @@ class MdaViewer extends React.Component {
                                onConnectionDelete={this.handleConnectionDelete}
             />
           </div>
-          <div className="tab-pane fade show active" id="variables" role="tabpanel" aria-labelledby="variables-tab">
+          <div className="tab-pane fade" id="variables" role="tabpanel" aria-labelledby="variables-tab">
             <VariablesEditor db={db} filter={this.state.filter}
                              onFilterChange={this.handleFilterChange}
                              onConnectionChange={this.handleConnectionChange}
@@ -297,6 +335,7 @@ MdaViewer.propTypes = {
   isEditing: PropTypes.bool.isRequired,
   mda: PropTypes.shape({
     name: PropTypes.string,
+    public: PropTypes.bool,
     id: PropTypes.number,
   }),
 };
