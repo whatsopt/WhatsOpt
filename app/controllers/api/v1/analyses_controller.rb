@@ -2,6 +2,12 @@ class Api::V1::AnalysesController < Api::ApiController
 
   before_action :set_mda, only: [:show, :update]
   
+  # GET /api/v1/mdas
+  def index
+    @mdas = policy_scope(Analysis)
+    json_response @mdas
+  end    
+      
   # GET /api/v1/mda/1
   def show
     if params[:format] == 'xdsm'
@@ -9,12 +15,6 @@ class Api::V1::AnalysesController < Api::ApiController
     else
       json_response @mda
     end
-  end
-  
-  # GET /api/v1/mdas
-  def index
-    @mdas = policy_scope(Analysis).all
-    json_response @mdas
   end
   
   # POST /api/v1/mdas

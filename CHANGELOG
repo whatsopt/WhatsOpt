@@ -1,5 +1,12 @@
 <h1>CHANGELOG</h1>
 
+<h3>0.9.5 (16/08/2018)</h3>
+<ul>
+  <li>Manage restricted access to an analysis: owner is able to select team members 
+  with read access permission to the given analysis
+  </li>
+</ul>
+
 <h3>0.9.4 (16/08/2018)</h3>
 <ul>
   <li>Fix bug related to code generation</li>

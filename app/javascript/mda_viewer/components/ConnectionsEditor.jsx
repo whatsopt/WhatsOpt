@@ -21,7 +21,7 @@ class DisciplineSelector extends React.Component {
     let selected = this.props.selected || this.props.nodes[0].id;
 
     return (
-      <div className="input-group mt-3">
+      <div className="input-group">
         <div className="input-group-prepend" htmlFor={this.props.label}>
           <label className="input-group-text">{this.props.label}</label>
         </div>

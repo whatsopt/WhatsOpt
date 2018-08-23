@@ -3,7 +3,7 @@ class AnalysesController < ApplicationController
 
   # GET /mdas
   def index
-    @mdas = policy_scope(Analysis).all
+    @mdas = policy_scope(Analysis)
   end
 
   # GET /mdas/1

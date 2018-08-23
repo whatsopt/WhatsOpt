@@ -3,7 +3,7 @@ class GeometryModelsController < ApplicationController
     
   # GET /geometry_models
   def index
-    @geomodels = policy_scope(GeometryModel).all
+    @geomodels = policy_scope(GeometryModel)
   end
   
   # GET /geometry_models/1

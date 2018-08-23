@@ -33,6 +33,7 @@
     "rails-erb-loader": "^5.0.2",
     "react": "^16.3.1",
     "react-beautiful-dnd": "^7.1.2",
+    "react-bootstrap-typeahead": "^3.2.1",
     "react-dom": "^16.3.1",
     "react-plotly.js": "^2.1.0",
     "react-table": "^6.7.6",

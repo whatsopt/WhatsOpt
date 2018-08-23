@@ -1,7 +1,18 @@
 class AnalysisPolicy < ApplicationPolicy
-
+  class Scope < Scope
+    def resolve
+      if user.admin?
+        scope.all
+      else
+        scope.select do |record|
+          record.public or user.has_role?(:owner, record) or user.has_role?(:member, record) 
+        end
+      end
+    end
+  end
+  
   def index?
-    true
+    
   end
   
   def create?
