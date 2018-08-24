@@ -10,7 +10,7 @@ class UserSelector extends React.Component {
     this.state = { allowNew: false,
                    isLoading: false,
                    multiple: false,
-                   selectHintOnEnter: false,
+                   selectHintOnEnter: true,
                    options: [],
                  };
     this.handleSearch = this.handleSearch.bind(this);
@@ -35,7 +35,6 @@ class UserSelector extends React.Component {
     this.setState({isLoading: true});
     this.props.onMemberSearch(query, 
       (options) => {
-         console.log(JSON.stringify(options));
          this.setState({isLoading: false, options: options, });
       })
   }
