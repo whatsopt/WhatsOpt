@@ -16,7 +16,7 @@ ActiveRecord::Schema.define(version: 48) do
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.boolean "public", default: false
+    t.boolean "public", default: true
   end
 
   create_table "attachments", force: :cascade do |t|
