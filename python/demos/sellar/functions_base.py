@@ -11,6 +11,7 @@ from openmdao.api import ExplicitComponent
 class FunctionsBase(ExplicitComponent):
     """ An OpenMDAO base component to encapsulate Functions discipline """
 
+    
     def setup(self):
 		
         self.add_input('z', val=np.ones((2,)), desc='')
@@ -21,6 +22,6 @@ class FunctionsBase(ExplicitComponent):
         self.add_output('obj', val=1.0, desc='')
         self.add_output('g1', val=1.0, desc='constraint')
         self.add_output('g2', val=1.0, desc='')
-		
+	
 
         

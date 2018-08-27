@@ -39,7 +39,6 @@ pb.model.nonlinear_solver.add_recorder(recorder)
 pb.model.approx_totals(method='fd', step=1e-6, form='central')
 
 
-pb.model.add_design_var('x', lower=0, upper=10)
 pb.model.add_design_var('z', lower=0, upper=10)
 
 pb.model.add_objective('obj')
@@ -58,7 +57,6 @@ cases = reader.system_cases.list_cases()
 n = len(cases)
 data = {'inputs': {}, 'outputs': {} }
 
-data['inputs']['x'] = np.zeros((n,)+(1,))
 data['inputs']['z'] = np.zeros((n,)+(2,))
 
 data['outputs']['obj'] = np.zeros((n,)+(1,))
@@ -67,7 +65,6 @@ data['outputs']['g2'] = np.zeros((n,)+(1,))
 
 for i, case_id in enumerate(cases):
     case = reader.system_cases.get_case(case_id)
-    data['inputs']['x'][i,:] = case.inputs['x']
     data['inputs']['z'][i,:] = case.inputs['z']
     data['outputs']['obj'][i,:] = case.outputs['obj']
     data['outputs']['g1'][i,:] = case.outputs['g1']

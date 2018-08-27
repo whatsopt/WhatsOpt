@@ -63,7 +63,10 @@ class Runner extends React.Component {
     let ope_attrs = { host: this.state.host, driver: this.state.driver, name: this.state.name };
     this.api.updateOperation(this.props.ope.id, ope_attrs, 
         (response) => { this.api.pollOperation(this.props.ope.id,
-                            (respData) => { return (respData.job.status === 'DONE'|| respData.job.status === 'FAILED')},
+                            (respData) => { 
+                              console.log(respData);  
+                              return (respData.job && (respData.job.status === 'DONE'|| respData.job.status === 'FAILED'))
+                            },
                             (response) => { console.log(response.data); 
                               this.handleOperationUpdate(response.data);
                             },

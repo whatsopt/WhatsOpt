@@ -31,7 +31,6 @@ pb.driver.add_recorder(recorder)
 pb.model.add_recorder(recorder)
 pb.model.nonlinear_solver.add_recorder(recorder)
 
-pb.model.add_design_var('x', lower=0, upper=10)
 pb.model.add_design_var('z', lower=0, upper=10)
 pb.model.add_objective('obj')
 pb.model.add_constraint('g1', upper=0.)
@@ -45,7 +44,6 @@ reader = CaseReader(case_recorder_filename)
 cases = reader.system_cases.list_cases()
 n = len(cases)
 data = {'inputs': {}, 'outputs': {} }
-data['inputs']['x'] = np.zeros((n,)+(1,))
 data['inputs']['z'] = np.zeros((n,)+(2,))
 data['outputs']['obj'] = np.zeros((n,)+(1,))
 data['outputs']['g1'] = np.zeros((n,)+(1,))
@@ -53,7 +51,6 @@ data['outputs']['g2'] = np.zeros((n,)+(1,))
 
 for i, case_id in enumerate(cases):
     case = reader.system_cases.get_case(case_id)
-    data['inputs']['x'][i,:] = case.inputs['x']
     data['inputs']['z'][i,:] = case.inputs['z']
     data['outputs']['obj'][i,:] = case.outputs['obj']
     data['outputs']['g1'][i,:] = case.outputs['g1']

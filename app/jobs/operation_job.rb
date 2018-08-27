@@ -3,7 +3,7 @@ class OperationJob < ActiveJob::Base
   def perform(user, ope)
     ogen = WhatsOpt::OpenmdaoGenerator.new(ope.analysis, ope.host)
     Rails.logger.info "JOB STATUS = RUNNING"
-    job = ope.job
+    job = ope.job || ope.create_job(status: 'PENDING', pid: -1, log: "")
     job.update(status: :RUNNING, log: "")
 
     sqlite_filename = File.join(Dir.tmpdir, "#{SecureRandom.urlsafe_base64}.sqlite")
