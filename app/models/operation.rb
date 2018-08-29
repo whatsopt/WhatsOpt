@@ -16,7 +16,7 @@ class Operation < ApplicationRecord
 	  operation = mda.operations.build(ope_attrs.except(:cases))
 	  operation._build_cases(ope_attrs[:cases]) if ope_attrs[:cases]
     if ope_attrs[:cases]
-      operation.build_job(status: 'DONE', pid: -1, log: 'wop upload...\nData uploaded\n')
+      operation.build_job(status: 'DONE', pid: -1, log: "")
     else
       operation.build_job(status: 'PENDING', pid: -1, log: "")
     end
@@ -32,9 +32,9 @@ class Operation < ApplicationRecord
 
   def set_upload_job_done
     if self.job
-      self.update_job(status: 'DONE', pid: -1, log: 'wop upload...\nData uploaded\n')
+      self.job.update(status: 'DONE', pid: -1, log: self.job.log << 'Data uploaded')
     else
-      self.create_job(status: 'DONE', pid: -1, log: 'wop upload...\nData uploaded\n')
+      self.create_job(status: 'DONE', pid: -1, log: 'Data uploaded')
     end
   end
   

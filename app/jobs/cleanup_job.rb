@@ -7,6 +7,5 @@ class CleanupJob < ActiveJob::Base
     Rails.logger.info "Job #{pid} done"
     Rails.logger.info "Cleanup #{sqlite_filename}"
     File.delete(sqlite_filename)
-    ope.job.update(status: 'DONE', log: ope.job.log << "Data uploaded\n" )
   end
 end

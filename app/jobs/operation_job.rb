@@ -45,18 +45,18 @@ class OperationJob < ActiveJob::Base
                           "upload", sqlite_filename, 
                           "--operation-id", ope.id.to_s) 
       Rails.logger.info "Data #{sqlite_filename} uploaded via wop upload (PID=#{pid})"
-      # delay to avoid deadlock
-      _cleanup(ope, pid, sqlite_filename)
+      # 10s delay to avoid deadlock
+      CleanupJob.set(wait: 30.seconds).perform_later(ope, pid, sqlite_filename)
+      #_cleanup(ope, pid, sqlite_filename)
     else 
       Rails.logger.warn "#{sqlite_filename} DOES NOT EXIST"
     end
   end
   
   def _cleanup(ope, pid, sqlite_filename)
-    Process.wait pid
+    Process.wait pid, Process::WNOHANG
     Rails.logger.info "Job #{pid} done"
     Rails.logger.info "Cleanup #{sqlite_filename}"
     File.delete(sqlite_filename)
-    ope.job.update(status: 'DONE', log: ope.job.log << "Data uploaded\n" )
   end
 end
