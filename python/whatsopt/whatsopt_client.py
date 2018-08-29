@@ -228,7 +228,7 @@ class WhatsOpt(object):
         id = analysis_id or self.get_analysis_id()
         self.pull_mda(id, {'--base': True, '--force': True})
         
-    def upload(self, sqlite_filename, analysis_id=None, operation_id=None):
+    def upload(self, sqlite_filename, analysis_id=None, operation_id=None, cleanup=False):
         from socket import gethostname
         mda_id = self.get_analysis_id() if not analysis_id else analysis_id
         reader = CaseReader(sqlite_filename)
@@ -255,6 +255,9 @@ class WhatsOpt(object):
                                      json={'operation': operation_params})
         resp.raise_for_status()
         print("Results data from %s uploaded" % sqlite_filename)
+        if cleanup:
+            os.remove(sqlite_filename)
+            print("%s removed" % sqlite_filename)
 
     def check_versions(self):
         url =  self._endpoint('/api/v1/versioning')
