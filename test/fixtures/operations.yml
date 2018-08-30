@@ -1,11 +1,11 @@
 inprogress:
-    name: SLSQP
-    driver: 
+    name: RunOnce
+    driver: runonce
     analysis: cicav
 
 inprogress2:
     name: SLSQP
-    driver: 
+    driver: slsqp
     analysis: fast
 
 doe:

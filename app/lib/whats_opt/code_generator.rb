@@ -7,17 +7,25 @@ module WhatsOpt
     
     PYTHON = APP_CONFIG['python_cmd'] || "python"
     
+    GENERATOR_OPTIONS = {
+      lhs_nbpts: 50,
+      slsqp_tol: 1e-6,
+      slsqp_maxiter: 100,
+      slsqp_disp: true,
+    }
+      
     attr_accessor :genfiles, :prefix 
     
-    def initialize(mda)
+    def initialize(mda, server_host="localhost", options={})
       @prefix="code"
       @comment_delimiters={begin: '"""', end: '"""'}
       @mda = mda
       @template_dir = File.join(File.dirname(__FILE__), "templates")
       @genfiles = []
       @server_module = 'server'
-      @server_host = 'localhost'
-      @server_port = 31400
+      @server_host = server_host
+      @server_port = 31400      
+      @options = GENERATOR_OPTIONS.merge(options)
     end
         
     def generate(only_base: false, user_agent: nil, sqlite_filename: nil)

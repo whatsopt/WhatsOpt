@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import update from 'immutability-helper';
 // disable actioncable: import actionCable from 'actioncable'
-
+import Form from "react-jsonschema-form";
 
 class LogLine extends React.Component {
   constructor(props) {
@@ -14,73 +14,168 @@ class LogLine extends React.Component {
   }
 }
 
+const OPTTYPES = {
+  lhs_nbpts: "integer",    
+  slsqp_tol: "number",
+  slsqp_disp: "boolean",
+  slsqp_maxiter: "integer"
+};
+const OPTDEFAULTS = {
+  lhs_nbpts: 50,
+  slsqp_tol: 1e-6,
+  slsqp_maxiter: 100,
+  slsqp_disp: true,
+}
+
+const FORM = {
+  "type": "object",
+  "properties": {
+    "name": {"type": "string", "title": "Operation name"},
+    "host": {"type": "string", "title": "Analysis Server"},
+    "driver" : {"type": "string", "title": "Driver", 
+                "enum": ["runonce", "lhs", "slsqp"],
+                "enumNames": ["RunOnce", "LHS", "SLSQP"],
+                "default": "runonce"
+               }},
+  "required": [ "name", "host", "driver" ],
+  "dependencies": {
+    "driver": {
+      "oneOf": [
+        {
+          "properties": {"driver": {"enum": ["runonce"]}}
+        },   
+        {
+          "properties": {"driver": {"enum": ["lhs"]},
+                         "lhs_nbpts": {"title": "Number of sampling points", 
+                                       "type": OPTTYPES.lhs_nbpts,
+                                       "default": OPTDEFAULTS.lhs_nbpts}, },
+        },   
+        {
+          "properties": {"driver": {"enum": ["slsqp"]},
+                         "slsqp_tol": {"title": "Objective function tolerance for stopping criterion", 
+                                       "type": OPTTYPES.slsqp_tol, 
+                                       "default": OPTDEFAULTS.slsqp_tol },
+                         "slsqp_disp": {"title": "Print convergence messages", 
+                                        "type": OPTTYPES.slsqp_disp, 
+                                        "default": OPTDEFAULTS.slsqp_disp}, 
+                         "slsqp_maxiter": {"title": "Maximum of iterations", 
+                                           "type": OPTTYPES.slsqp_maxiter,
+                                           "default": OPTDEFAULTS.slsqp_maxiter }, },
+        },   
+      ]  
+    }  
+  }
+}
+
 class Runner extends React.Component {
   constructor(props) {
     super(props);
-    this.cableApp = {};
-    this.api = this.props.api
+    this.api = this.props.api;
     
-    let status = (this.props.ope.job && this.props.ope.job.status) || 'DONE'
-    let log = (this.props.ope.job && this.props.ope.job.log) || ''
+    let status = (this.props.ope.job && this.props.ope.job.status) || 'DONE';;
+    let log = (this.props.ope.job && this.props.ope.job.log) || '';
     
-    this.state = {host: this.props.ope.host, 
-                  name: this.props.ope.name, 
-                  driver: this.props.ope.driver, 
+    let formData = { 
+            host: this.props.ope.host, 
+            name: this.props.ope.name, 
+            driver: this.props.ope.driver || "runonce",
+          }
+    let formOptions = this._toFormOptions(this.props.ope.options);
+    let optionsIds = this.props.ope.options.map(opt => opt.id);
+    Object.assign(formData, formOptions);
+    
+    this.state = {formData: formData, 
+                  optionsIds: optionsIds,
                   cases: this.props.ope.cases,
                   status: status,
                   log: log};
     
-    this.handleHostChange = this.handleHostChange.bind(this); 
-    this.handleNameChange = this.handleNameChange.bind(this); 
     this.handleRun = this.handleRun.bind(this); 
-    this.handleDriverChange = this.handleDriverChange.bind(this);
+    this.handleChange = this.handleChange.bind(this); 
     this.handleOperationUpdate = this.handleOperationUpdate.bind(this);
   }
-
-  handleHostChange(event) {
-    let newState = update(this.state, {host:{$set: event.target.value}});
-    if (this.state.name === 'Pending') {
-      newState.name = event.target.value.toUpperCase();  
-    }
-    this.setState(newState);
-  }
-
-  handleNameChange(event) {
-    let newState = update(this.state, {name:{$set: event.target.value}});
-    this.setState(newState);
-  }
   
-  handleDriverChange(event) {
-    let newState = update(this.state, {driver:{$set: event.target.value}});
-    if (this.state.name === 'Unnamed') {
-      newState.name = event.target.value.toUpperCase();  
+  handleRun(data) {
+    let form = this._filterFormOptions(data.formData);
+    console.log("FORM DATA = "+JSON.stringify(form));
+    let opeAttrs = { name: form.name, host: form.host, driver: form.driver, options_attributes: []};
+    let ids = this.state.optionsIds.slice(); 
+    for (let opt in form) {
+      if (opt !== "name" && opt !== "host" && opt !== "driver") {
+        let optionAttrs = { name: opt, value: data.formData[opt] };
+        if (ids.length) {
+          optionAttrs.id = ids.shift();  
+        }        
+        opeAttrs.options_attributes.push(optionAttrs);  
+      }
     }
-    this.setState(newState);
-  }
-  
-  handleRun(event) {
-    event.preventDefault()
-    let ope_attrs = { host: this.state.host, driver: this.state.driver, name: this.state.name };
-    this.api.updateOperation(this.props.ope.id, ope_attrs, 
+    ids.forEach(id => opeAttrs.options_attributes.push({id: id, _destroy: '1'}));
+    console.log("OPT ATTRS = "+JSON.stringify(opeAttrs));
+
+    this.api.updateOperation(this.props.ope.id, opeAttrs, 
         (response) => { this.api.pollOperation(this.props.ope.id,
-                            (respData) => { 
-                              console.log(respData);  
-                              return (respData.job && (respData.job.status === 'DONE'|| respData.job.status === 'FAILED'))
-                            },
-                            (response) => { console.log(response.data); 
-                              this.handleOperationUpdate(response.data);
-                            },
-                            (error) => { console.log(error); });
+                        (respData) => {   
+                          return (respData.job && (respData.job.status === 'DONE'|| respData.job.status === 'FAILED'))
+                        },
+                        (response) => { console.log(response.data); 
+                          this.handleOperationUpdate(response.data);
+                        },
+                        (error) => { console.log(error); });
         },
         (error) => { console.log(error); });
   }
 
   handleOperationUpdate(ope) {
-    let newState = update(this.state, {status: {$set: ope.job.status}, 
+    let formData = { name: ope.name, host: ope.host, driver: ope.driver, }
+    let formOptions = this._toFormOptions(ope.options);
+    Object.assign(formData, formOptions);
+    let optionsIds = ope.options.map(opt => opt.id);
+    let newState = update(this.state, {formData: {$set: formData},
+                                       optionsIds: {$set: optionsIds},
+                                       cases: {$set: ope.cases},
+                                       status: {$set: ope.job.status}, 
                                        log: {$set: ope.job.log},
-                                       cases: {$set: ope.cases}
     });
     this.setState(newState);  
+  }
+  
+  handleChange(data) {
+    console.log(JSON.stringify(this._filterFormOptions(data.formData)));
+    let newState = update(this.state, {formData: {$set: data.formData}});
+    this.setState(newState);
+  }
+  
+  _filterFormOptions = (options) => {
+    let filteredOptions = {};
+    let re = new RegExp(`^${options['driver']}`);
+    for (let opt in options) {
+      if (opt === "name" || opt === "host" || opt === "driver") {
+        filteredOptions[opt] = options[opt];  
+      } else if (opt.match(re)) {
+        filteredOptions[opt] = options[opt];  
+      } 
+    }  
+    return filteredOptions;
+  }
+  
+  _toFormOptions = (options) => {
+    let formOptions = options.reduce((acc, val) => {
+      switch (OPTTYPES[val['name']]) {
+      case "boolean":
+        acc[val['name']] = (val['value']==='true');
+        break;
+      case "integer":
+        acc[val['name']] = parseInt(val['value']);
+        break;
+      case "number":
+        acc[val['name']] = parseFloat(val['value']);
+        break;
+      default:
+        acc[val['name']] = val['value']   
+      }
+      return acc;
+    }, {});
+    return formOptions;
   }
   
   render() {
@@ -138,37 +233,13 @@ class Runner extends React.Component {
           </div>
         </div>
       </div>
-      <div className="editor-section">
-        <form className="form" onSubmit={this.handleRun}>
-          <div className="form-group col-3">
-            <label htmlFor="name">Operation Name</label>
-            <input type="text" value={this.state.name} className="form-control"
-                   id="name" onChange={this.handleNameChange}/>
-          </div>
-          <div className="form-group col-3">
-            <label htmlFor="host">Analysis Server</label>
-            <input type="text" value={this.state.host} className="form-control"
-                   id="host" onChange={this.handleHostChange}/>
-          </div>
-          <div className="form-group col-3">
-            <label htmlFor="driver">Driver</label>
-            <select value={this.state.driver} onChange={this.handleDriverChange} className="form-control">
-              <optgroup label="Analysis">
-                <option value="runonce">RunOnce</option> 
-              </optgroup>
-              <optgroup label="Design of Experiment">
-                <option value="lhs">LHS</option>
-                <option value="morris">Morris</option>
-              </optgroup>
-              <optgroup label="Optimization">
-                <option value="slsqp">SLSQP</option>
-              </optgroup>
-            </select>
-          </div>
-          <div className="form-group col-3">
+      <div className="editor-section col-3">
+        <Form schema={FORM} formData={this.state.formData} 
+              onSubmit={this.handleRun} onChange={this.handleChange} >      
+          <div className="form-group">
             <button type="submit" className="btn btn-primary">Run</button>
           </div>
-        </form>
+        </Form>
       </div>
       </div>
     );

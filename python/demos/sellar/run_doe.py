@@ -21,7 +21,7 @@ parser.add_option("-b", "--batch",
 (options, args) = parser.parse_args()
 
 pb = Problem(Sellar())
-pb.driver = SmtDoeDriver(sampling_method='LHS', n_cases=10)
+pb.driver = SmtDoeDriver(sampling_method='LHS', n_cases=50)
 case_recorder_filename = 'sellar_doe.sqlite'        
 recorder = SqliteRecorder(case_recorder_filename)
 pb.driver.add_recorder(recorder)

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 48) do
+ActiveRecord::Schema.define(version: 49) do
 
   create_table "analyses", force: :cascade do |t|
     t.string "name"
@@ -84,6 +84,13 @@ ActiveRecord::Schema.define(version: 48) do
     t.string "name"
     t.string "host", default: ""
     t.string "driver", default: "runonce"
+  end
+
+  create_table "options", force: :cascade do |t|
+    t.string "name"
+    t.string "value"
+    t.integer "operation_id"
+    t.index ["operation_id"], name: "index_options_on_operation_id"
   end
 
   create_table "parameters", force: :cascade do |t|

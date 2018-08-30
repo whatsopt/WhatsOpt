@@ -7,11 +7,11 @@ module WhatsOpt
     class DisciplineNotFoundException < StandardError
     end
     
-    def initialize(mda, mda_host=nil)
-      super(mda)
+    def initialize(mda, server_host=nil, options={})
+      super(mda, server_host, options)
       @prefix = "openmdao"
-      @remote = !mda_host.nil?
-      @sgen = WhatsOpt::ServerGenerator.new(mda, mda_host)
+      @remote = !server_host.nil?
+      @sgen = WhatsOpt::ServerGenerator.new(mda, server_host, options)
       @sqlite_filename = 'cases.sqlite'
     end
                     

@@ -1,7 +1,7 @@
 class OperationJob < ActiveJob::Base
   
   def perform(user, ope)
-    ogen = WhatsOpt::OpenmdaoGenerator.new(ope.analysis, ope.host)
+    ogen = WhatsOpt::OpenmdaoGenerator.new(ope.analysis, ope.host, ope.option_hash)
     Rails.logger.info "JOB STATUS = RUNNING"
     job = ope.job || ope.create_job(status: 'PENDING', pid: -1, log: "")
     job.update(status: :RUNNING, log: "")
@@ -10,7 +10,6 @@ class OperationJob < ActiveJob::Base
     Rails.logger.info sqlite_filename
     
     Dir.mktmpdir("sqlite") do |dir|
-      p "CATEGORY >>>> #{ope.driver} #{ope.category}"
       status = ogen.monitor(ope.category, sqlite_filename) do |stdin, stdouterr, wait_thr|
         job.update(status: :RUNNING, pid: wait_thr.pid)
         stdin.close
@@ -45,18 +44,18 @@ class OperationJob < ActiveJob::Base
                           "upload", sqlite_filename, 
                           "--operation-id", ope.id.to_s) 
       Rails.logger.info "Data #{sqlite_filename} uploaded via wop upload (PID=#{pid})"
-      # 10s delay to avoid deadlock
-      CleanupJob.set(wait: 30.seconds).perform_later(ope, pid, sqlite_filename)
+      # 10s delay to avoid deadlock. cleanup cannot be synchrone related to GIL
+      # CleanupJob.set(wait: 30.seconds).perform_later(ope, pid, sqlite_filename)
       #_cleanup(ope, pid, sqlite_filename)
     else 
       Rails.logger.warn "#{sqlite_filename} DOES NOT EXIST"
     end
   end
-  
-  def _cleanup(ope, pid, sqlite_filename)
-    Process.wait pid, Process::WNOHANG
-    Rails.logger.info "Job #{pid} done"
-    Rails.logger.info "Cleanup #{sqlite_filename}"
-    File.delete(sqlite_filename)
-  end
+#  
+#  def _cleanup(ope, pid, sqlite_filename)
+#    _, status = Process.wait2 pid
+#    Rails.logger.info "Job #{pid} done (exitstatus = ${status})"
+#    Rails.logger.info "Cleanup #{sqlite_filename}"
+#    File.delete(sqlite_filename)
+#  end
 end

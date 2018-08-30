@@ -26,9 +26,22 @@ class Api::V1::OperationsControllerTest < ActionDispatch::IntegrationTest
     assert_equal ['obj', 'x1'], resp['cases'].map{|c| c['varname']}.sort 
     assert_equal [0, 0], resp['cases'].map{|c| c['coord_index']}.sort
     assert_equal [10, 20, 30, 40, 50, 60], resp['cases'].map{|c| c['values']}.flatten.sort
-    assert_equal({'status'=> 'DONE', 'log'=> 'wop upload...\nData uploaded\n'}, resp['job'])
+    assert_equal({'status'=> 'DONE', 'log'=> ''}, resp['job'])
   end
 
+  test "should create an operation with LHS options" do
+    assert_difference('Operation.count', 1) do
+      post api_v1_mda_operations_url(@mda), 
+        params: {operation: {name: 'new_doe', host:'localhost', driver:'lhs', 
+                             options_attributes: [{name: 'lhs_nbpts', value:'57'}]}}, 
+        as: :json, headers: @auth_headers
+    end
+    assert_response :success
+    opt = Operation.last.options.first
+    assert_equal 'lhs_nbpts', opt.name
+    assert_equal '57', opt.value
+  end
+  
   test "should get an operation" do
     get api_v1_operation_url(@ope), as: :json, headers: @auth_headers
     assert_response :success
@@ -47,7 +60,19 @@ class Api::V1::OperationsControllerTest < ActionDispatch::IntegrationTest
     assert_equal ['x1', 'y2'], resp['cases'].map{|c| c['varname']}.sort 
     assert_equal [0, 0], resp['cases'].map{|c| c['coord_index']}.sort
     assert_equal [1, 2, 3, 4, 5, 6], resp['cases'].map{|c| c['values']}.flatten.sort
-    assert_equal({'status'=> 'DONE', 'log'=> 'wop upload...\nData uploaded\n'}, resp['job'])
+    assert_equal({'status'=> 'DONE', 'log'=> 'Data uploaded'}, resp['job'])
   end
-      
+
+  test "should update an operation with LHS options" do
+    patch api_v1_operation_url(@ope), 
+    params: {operation: {name: 'update_doe', driver: 'lhs', 
+                         cases: [],
+                         options_attributes: [{id: @ope.options.first.id, name: 'lhs_nbpts', value:'20'}]}},
+      as: :json, headers: @auth_headers
+    assert_response :success
+    get api_v1_operation_url(@ope), as: :json, headers: @auth_headers
+    resp = JSON.parse(response.body)
+    assert_equal [{"id" => @ope.options.first.id, "name" => 'lhs_nbpts', "value" => '20'}], resp['options']
+  end
+  
 end

@@ -47,7 +47,7 @@ class SellarProxy(SellarBase):
     
     def __init__(self):
         super(SellarProxy, self).__init__()
-        transport = TSocket.TSocket('localhost', 31400)
+        transport = TSocket.TSocket('', 31400)
         transport = TTransport.TBufferedTransport(transport)
         protocol = TBinaryProtocol.TBinaryProtocol(transport)
         self._proxy = Sellar.Client(protocol)

@@ -21,7 +21,7 @@ class Api::V1::OperationsController < Api::ApiController
     @operation.save!
     if ope_params[:cases]
       @operation.set_upload_job_done
-    else
+    else # should generate cases i.e. run the operation
       OperationJob.perform_later(current_user, @operation)
     end
     head :no_content
@@ -41,7 +41,9 @@ class Api::V1::OperationsController < Api::ApiController
     end
   
     def ope_params
-      params.require(:operation).permit(:host, :driver, :name, cases: [:varname, :coord_index, values: []])
+      params.require(:operation).permit(:host, :driver, :name, 
+                                        cases: [:varname, :coord_index, values: []],
+                                        options_attributes: [:id, :name, :value, :_destroy])
     end
     
 end

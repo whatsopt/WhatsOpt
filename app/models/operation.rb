@@ -6,6 +6,9 @@ class Operation < ApplicationRecord
   STATUSES = %w(PENDING, RUNNING)+TERMINATION_STATUSES
     
   belongs_to :analysis
+  has_many :options, :dependent => :destroy
+  accepts_nested_attributes_for :options, reject_if: proc { |attr| attr['name'].blank? }, allow_destroy: true  
+  
 	has_many :cases, :dependent => :destroy
 	has_one :job, :dependent => :destroy
 	
@@ -24,9 +27,7 @@ class Operation < ApplicationRecord
 	end
 
 	def update_operation(ope_attrs)
-    self.name = ope_attrs[:name] if ope_attrs[:name]
-    self.host = ope_attrs[:host] if ope_attrs[:host]
-    self.driver = ope_attrs[:driver] if ope_attrs[:driver]
+	  self.update(ope_attrs.except(:cases))
     self._update_cases(ope_attrs[:cases]) if ope_attrs[:cases]
   end
 
@@ -62,6 +63,10 @@ class Operation < ApplicationRecord
 	  else
 	    cases[0].nb_of_points
 	  end
+	end
+	
+	def option_hash
+    options.map{|h| [h['name'].to_sym, h['value']]}.to_h
 	end
 	
   def _build_cases(case_attrs)

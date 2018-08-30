@@ -1,0 +1,9 @@
+lhs_nbpts:
+  name: lhs_nbpts
+  value: 13
+  operation: doe
+
+slsqp_maxiter:
+  name: slsqp_maxiter 
+  value: 5
+  operation: inprogress2

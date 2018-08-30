@@ -29,12 +29,13 @@ class AnalysesControllerTest < ActionDispatch::IntegrationTest
     assert Analysis.last.owner, users(:user1)  
   end
 
-  test "should only authorized access to owner as default" do
-    post mdas_url, params: {analysis: { name: 'test2' } }
+  test "should authorized access by default" do
+    post mdas_url, params: { analysis: { name: 'test2' } }
     sign_out users(:user1)
     sign_in users(:user2)    
     get mda_url(Analysis.last)
-    assert_redirected_to root_path
+    assert_response :success
+    #assert_redirected_to root_path
   end  
 
   test "should authorized access if public attr is set" do
