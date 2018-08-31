@@ -1,6 +1,16 @@
 <h1>CHANGELOG</h1>
 
-<h3>0.9.5 (16/08/2018)</h3>
+<h3>0.10.0 (31/08/2018)</h3>
+<ul>
+  <li>Manage operation options for lhs doe or slsqp optimizer:
+     <ul>
+       <li>LHS: number of sampling points</li>
+       <li>SLSQP: objective tolerance, convergence display and numbe max of iterations</li>
+     </ul> 
+  </li>
+</ul>
+
+<h3>0.9.5 (23/08/2018)</h3>
 <ul>
   <li>Manage restricted access to an analysis: owner is able to select team members 
   with read access permission to the given analysis
