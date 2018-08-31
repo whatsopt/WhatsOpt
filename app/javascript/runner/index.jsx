@@ -3,6 +3,13 @@ import PropTypes from 'prop-types';
 import update from 'immutability-helper';
 // disable actioncable: import actionCable from 'actioncable'
 import Form from "react-jsonschema-form";
+import CheckboxWidget from 'runner/components/CheckboxWidget'
+
+const widgets = {
+  CheckboxWidget,
+//  RadioWidget,
+}
+
 
 class LogLine extends React.Component {
   constructor(props) {
@@ -235,7 +242,7 @@ class Runner extends React.Component {
       </div>
       <div className="editor-section col-3">
         <Form schema={FORM} formData={this.state.formData} 
-              onSubmit={this.handleRun} onChange={this.handleChange} >      
+              onSubmit={this.handleRun} onChange={this.handleChange} widgets={widgets}>      
           <div className="form-group">
             <button type="submit" className="btn btn-primary">Run</button>
           </div>
