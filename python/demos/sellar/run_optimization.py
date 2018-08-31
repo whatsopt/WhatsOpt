@@ -24,7 +24,7 @@ pb = Problem(Sellar())
 pb.driver = ScipyOptimizeDriver()
 pb.driver.options['optimizer'] = 'SLSQP'
 pb.driver.options['tol'] = 1e-6
-pb.driver.options['disp'] = True
+pb.driver.options['disp'] = False
 pb.driver.options['debug_print'] = ['desvars','ln_cons','nl_cons','objs']
 
 case_recorder_filename = 'sellar_optimization.sqlite'

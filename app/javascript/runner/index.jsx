@@ -104,7 +104,7 @@ class Runner extends React.Component {
   
   handleRun(data) {
     let form = this._filterFormOptions(data.formData);
-    console.log("FORM DATA = "+JSON.stringify(form));
+    //console.log("FORM DATA = "+JSON.stringify(form));
     let opeAttrs = { name: form.name, host: form.host, driver: form.driver, options_attributes: []};
     let ids = this.state.optionsIds.slice(); 
     for (let opt in form) {
@@ -117,14 +117,14 @@ class Runner extends React.Component {
       }
     }
     ids.forEach(id => opeAttrs.options_attributes.push({id: id, _destroy: '1'}));
-    console.log("OPT ATTRS = "+JSON.stringify(opeAttrs));
+    //console.log("OPT ATTRS = "+JSON.stringify(opeAttrs));
 
     this.api.updateOperation(this.props.ope.id, opeAttrs, 
         (response) => { this.api.pollOperation(this.props.ope.id,
                         (respData) => {   
                           return (respData.job && (respData.job.status === 'DONE'|| respData.job.status === 'FAILED'))
                         },
-                        (response) => { console.log(response.data); 
+                        (response) => { //console.log(response.data); 
                           this.handleOperationUpdate(response.data);
                         },
                         (error) => { console.log(error); });
@@ -147,7 +147,8 @@ class Runner extends React.Component {
   }
   
   handleChange(data) {
-    console.log(JSON.stringify(this._filterFormOptions(data.formData)));
+    console.log("FORMDATA= "+JSON.stringify(data.formData));
+    console.log("FILTERDATA= "+JSON.stringify(this._filterFormOptions(data.formData)));
     let newState = update(this.state, {formData: {$set: data.formData}});
     this.setState(newState);
   }

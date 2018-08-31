@@ -67,7 +67,7 @@ class Api::V1::OperationsControllerTest < ActionDispatch::IntegrationTest
     patch api_v1_operation_url(@ope), 
     params: {operation: {name: 'update_doe', driver: 'lhs', 
                          cases: [],
-                         options_attributes: [{id: @ope.options.first.id, name: 'lhs_nbpts', value:'20'}]}},
+                         options_attributes: [{id: @ope.options.first.id, name: 'lhs_nbpts', value:20}]}},
       as: :json, headers: @auth_headers
     assert_response :success
     get api_v1_operation_url(@ope), as: :json, headers: @auth_headers
@@ -75,4 +75,23 @@ class Api::V1::OperationsControllerTest < ActionDispatch::IntegrationTest
     assert_equal [{"id" => @ope.options.first.id, "name" => 'lhs_nbpts', "value" => '20'}], resp['options']
   end
   
+  test "should update an operation with SLSQP options" do
+    prev_options_to_destroy = @ope.options.map{|opt| {id: opt.id, _destroy: 1}}
+    new_options = prev_options_to_destroy + [{name: 'slsqp_tol', value:1e-6},
+                                             {name: 'slsqp_disp', value:false},
+                                             {name: 'slsqp_maxiter', value:10}]
+    patch api_v1_operation_url(@ope), 
+    params: {operation: {name: 'update_optim', driver: 'slsqp', 
+                         cases: [],
+                         options_attributes: new_options }},
+      as: :json, headers: @auth_headers
+    assert_response :success
+    get api_v1_operation_url(@ope), as: :json, headers: @auth_headers
+    resp = JSON.parse(response.body)
+    @ope.reload
+    assert_equal 3, @ope.options.length
+    assert_equal [{"id" => @ope.options[0].id, "name" => 'slsqp_tol', "value" => '1.0e-06'},
+                  {"id" => @ope.options[1].id, "name" => 'slsqp_disp', "value" => 'false'}, 
+                  {"id" => @ope.options[2].id, "name" => 'slsqp_maxiter', "value" => '10'}], resp['options']
+  end
 end

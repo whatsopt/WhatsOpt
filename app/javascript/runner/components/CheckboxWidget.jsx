@@ -35,7 +35,7 @@ function CheckboxWidget(props) {
                 required={required}
                 disabled={disabled || readonly}
                 autoFocus={autofocus}
-                onChange={event => onChange(event.target.checked ? true : undefined)}
+                onChange={event => onChange(event.target.checked)}
             />
             <label className="form-check-label" htmlFor={id}>
                 {newLabel}

@@ -27,6 +27,11 @@ class Operation < ApplicationRecord
 	end
 
 	def update_operation(ope_attrs)
+	  if (ope_attrs[:options_attributes])
+      ope_attrs[:options_attributes].each do |opt|
+        opt[:value] = opt[:value].to_s
+      end
+	  end
 	  self.update(ope_attrs.except(:cases))
     self._update_cases(ope_attrs[:cases]) if ope_attrs[:cases]
   end
