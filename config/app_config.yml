@@ -11,8 +11,8 @@ test:
   <<: *defaults
 
 staging:
-  python_cmd:  /tmp_user/rdri206h/rlafage/anaconda2/bin/python
-  jupyter_cmd: /tmp_user/rdri206h/rlafage/anaconda2/bin/jupyter
+  python_cmd:  /d/rlafage/miniconda3/bin/python
+  jupyter_cmd: /d/rlafage/miniconda3/bin/jupyter
   openvsp_cmd: /tmp_user/rdri206h/rlafage/OpenVSP-3.13.3-Linux/vspscript
   
 production:
