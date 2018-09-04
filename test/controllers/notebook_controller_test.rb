@@ -8,6 +8,11 @@ class NotebookControllerTest < ActionDispatch::IntegrationTest
     @nb2 = fixture_file_upload 'notebook_sample.ipynb'
   end
 
+  test "should get notebooks list" do
+    get notebooks_url
+    assert_response :success  
+  end
+  
   test "should assign owner on creation" do
     assert_difference('Notebook.count') do
       post notebooks_url, params: { notebook: {title: "Test", attachment_attributes: { data: @nb }} }

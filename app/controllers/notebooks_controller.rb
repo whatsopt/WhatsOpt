@@ -3,7 +3,7 @@ class NotebooksController < ApplicationController
     
   # GET /notebooks
   def index
-    @notebooks = policy_scope(Notebook)
+    @notebooks = policy_scope(Notebook).all
   end
   
   # GET /notebooks/1

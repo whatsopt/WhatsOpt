@@ -8,6 +8,11 @@ class GeometryModelControllerTest < ActionDispatch::IntegrationTest
     @gm2 = fixture_file_upload 'launcher.vsp3'
   end
 
+  test "should get geometry models list" do
+    get geometry_models_url
+    assert_response :success  
+  end
+  
   test "should assign owner on creation" do
     assert_difference('GeometryModel.count') do
       post geometry_models_url, params: { geometry_model: {title: "Test", attachment_attributes: { data: @gm }} }

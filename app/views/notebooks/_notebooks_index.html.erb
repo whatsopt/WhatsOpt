@@ -11,7 +11,7 @@
 	</thead>
 	
 	<tbody>
-  <% for notebook in notebooks %>
+  <% notebooks.each do |notebook| %>
     <tr>
       <td><%= link_to notebook.title, notebook_path(notebook) %></td>
       <td><%= notebook.owner %></td>
