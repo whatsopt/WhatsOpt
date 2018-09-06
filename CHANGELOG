@@ -1,6 +1,11 @@
 <h1>CHANGELOG</h1>
 
-<h3>0.10.1 (31/08/2018)</h3>
+<h3>0.10.2 (06/09/2018)</h3>
+<ul>
+  <li>Fix deployment configuration: add wop_cmd and wop_env</li>
+</ul>
+
+<h3>0.10.1 (03/09/2018)</h3>
 <ul>
   <li>Python 3 compatibility</li>
   <li>OpenMDAO 2.4 compatibility</li>

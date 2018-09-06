@@ -1,5 +1,8 @@
 class OperationJob < ActiveJob::Base
   
+  WOP_CMD = APP_CONFIG['wop_cmd'] || wop
+  WOP_ENV = APP_CONFIG['wop_env'] || {}
+  
   def perform(user, ope)
     ogen = WhatsOpt::OpenmdaoGenerator.new(ope.analysis, ope.host, ope.option_hash)
     Rails.logger.info "JOB STATUS = RUNNING"
@@ -40,12 +43,12 @@ class OperationJob < ActiveJob::Base
     Rails.logger.info "About to load #{sqlite_filename}"
     if (File.exists?(sqlite_filename))
       Rails.logger.info "Upload data #{sqlite_filename}"
-      pid = Process.spawn("wop", "--credentials", user.api_key, 
-                          "upload", sqlite_filename, 
-                          "--operation-id", ope.id.to_s) 
+      cmd = [WOP_ENV, WOP_CMD, "--credentials", user.api_key, "upload", sqlite_filename, "--operation-id", ope.id.to_s]
+      Rails.logger.info cmd.join(" ")
+      pid = Process.spawn(*cmd) 
       Rails.logger.info "Data #{sqlite_filename} uploaded via wop upload (PID=#{pid})"
       # 10s delay to avoid deadlock. cleanup cannot be synchrone related to GIL
-      # CleanupJob.set(wait: 30.seconds).perform_later(ope, pid, sqlite_filename)
+      CleanupJob.set(wait: 5.seconds).perform_later(ope, pid, sqlite_filename)
       #_cleanup(ope, pid, sqlite_filename)
     else 
       Rails.logger.warn "#{sqlite_filename} DOES NOT EXIST"

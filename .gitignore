@@ -27,6 +27,7 @@
 # Python compiled
 **/*.pyc
 python/whatsopt.egg-info/
+python/wop.egg-info/
 python/dist
 
 # Uploaded files
