@@ -4,6 +4,13 @@ MAINTAINER remi.lafage@onera.fr
 #ENV http_proxy=http://proxy.onecert.fr:80
 #ENV https_proxy=http://proxy.onecert.fr:80
 
+RUN apt-get update \
+  && apt-get upgrade -y --force-yes \
+  && apt-get install -y python3-pip python3-dev \
+  && cd /usr/local/bin \
+  && ln -s /usr/bin/python3 python \
+  && pip3 install --upgrade pip
+
 # adapted from drecom/ubuntu-base drecom/ubuntu-ruby
 RUN apt-get update \
 &&  apt-get upgrade -y --force-yes \
@@ -26,16 +33,12 @@ RUN apt-get update \
     libxslt1-dev \
     redis-tools \
     xvfb \
-    python \
-	python-dev \
     tzdata \
 	libyaml-dev \
 	libsqlite3-dev \
 	sqlite3 \
 	libxml2-dev \
 	libcurl4-openssl-dev \
-	python-software-properties \
-	python-pip \
 &&  apt-get clean \
 &&  rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/*
 
@@ -46,10 +49,6 @@ RUN curl --silent --location https://deb.nodesource.com/setup_6.x | bash - \
 
 # yarn install
 RUN curl -o- -L https://yarnpkg.com/install.sh | bash
-
-# pip install
-#RUN wget https://bootstrap.pypa.io/get-pip.py \
-#&&  python get-pip.py
 
 # Ruby
 RUN git clone git://github.com/rbenv/rbenv.git /usr/local/rbenv \
@@ -81,7 +80,7 @@ RUN pip install jupyter \
     && pip install thrift==0.11.0 \
 	&& pip install Click \
 	&& pip install tabulate \
-	&& pip install openmdao==2.2.1
+	&& pip install openmdao==2.4
 
 # OpenVSP
 #RUN apt-get install -y git cmake libxml2-dev \
