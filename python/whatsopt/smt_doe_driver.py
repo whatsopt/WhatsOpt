@@ -8,7 +8,7 @@ from six.moves import range
 import numpy as np
 
 from openmdao.core.driver import Driver, RecordingDebugging
-from smt.sampling_methods import Clustered, FullFactorial, LHS, Random
+from smt.sampling_methods import FullFactorial, LHS, Random
 
 _sampling_methods = {'FullFactorial': FullFactorial, 'LHS': LHS, 'Random': Random}
 
@@ -20,7 +20,7 @@ class SmtDoeDriver(Driver):
     def __init__(self, **kwargs):
         super(SmtDoeDriver, self).__init__()
 
-        self.options.declare('sampling_method', 'LHS', values=_sampling_methods.keys(),
+        self.options.declare('sampling_method', 'LHS', values=list(_sampling_methods.keys()),
                              desc='Name of SMT sampling method used to generate doe cases')
         self.options.declare('n_cases', int,
                              desc='number of sampling cases to generate')

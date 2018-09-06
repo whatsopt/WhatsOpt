@@ -10,7 +10,7 @@
 	</thead>
 	
 	<tbody>
-  <% for geomodel in geomodels %>
+  <% geomodels.each do |geomodel| %>
     <tr>
       <td><%= link_to geomodel.title, geometry_model_path(geomodel) %></td>
       <td><%= geomodel.owner %></td>

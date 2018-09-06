@@ -1,5 +1,11 @@
 <h1>CHANGELOG</h1>
 
+<h3>0.10.1 (31/08/2018)</h3>
+<ul>
+  <li>Python 3 compatibility</li>
+  <li>OpenMDAO 2.4 compatibility</li>
+</ul>
+
 <h3>0.10.0 (31/08/2018)</h3>
 <ul>
   <li>Manage operation options for lhs doe or slsqp optimizer:
