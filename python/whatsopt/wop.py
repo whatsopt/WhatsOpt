@@ -1,5 +1,6 @@
 import click
-from whatsopt import __version__, WhatsOpt
+from whatsopt import __version__
+from .whatsopt_client import WhatsOpt
 
 @click.group()
 @click.version_option(__version__)
