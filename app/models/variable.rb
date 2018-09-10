@@ -7,7 +7,6 @@ end
 
 class Variable < ApplicationRecord
 
-  include WhatsOpt::Variable
   include WhatsOpt::OpenmdaoVariable
   include WhatsOpt::ThriftVariable
 

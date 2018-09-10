@@ -23,14 +23,6 @@ module WhatsOpt
         "np.float"
       end
     end
-      
-    def default_py_shape
-      if self.ndim == 0
-        "1"
-      else
-        "(#{self.dim},)"
-      end
-    end
     
     def default_py_value
       if self.ndim == 0

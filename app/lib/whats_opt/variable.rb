@@ -33,12 +33,13 @@ module WhatsOpt
                 when /^\((\d+), (\d+), (\d+)\)$/
                   $1.to_i * $2.to_i * $3.to_i
                 else
+                  p "ERROOR"
                   raise BadShapeAttributeError.new("should be either 1, (n,), (n, m) or (n, m, p) but found #{self.shape}")
                 end
     end
 
     def ndim
-      @dim ||=  case self.shape
+      @ndim ||=  case self.shape
                 when /^1$/
                   0
                 when /^\((\d+),\)$/ 
