@@ -9,8 +9,8 @@ module WhatsOpt
     class ThriftError < StandardError
     end
     
-    def initialize(mda, server_host=nil, options={})
-      super(mda, server_host, options)
+    def initialize(mda, server_host=nil)
+      super(mda, server_host)
       @prefix='remote_server'
       @comment_delimiters={begin: '/*', end: '*/'}
     end

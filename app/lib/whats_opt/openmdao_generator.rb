@@ -4,15 +4,19 @@ require 'whats_opt/server_generator'
 module WhatsOpt
   class OpenmdaoGenerator < CodeGenerator
     
+    DEFAULT_DOE_OPTIONS = {smt_doe_lhs_nbpts: 100}
+    DEFAULT_OPTIMIZATION_OPTIONS = {scipy_optimizer_slsqp_maxiter: 100}
+    
     class DisciplineNotFoundException < StandardError
     end
     
-    def initialize(mda, server_host=nil, options={})
-      super(mda, server_host, options)
+    def initialize(mda, server_host=nil, driver_options=nil)
+      super(mda, server_host)
       @prefix = "openmdao"
       @remote = !server_host.nil?
-      @sgen = WhatsOpt::ServerGenerator.new(mda, server_host, options)
+      @sgen = WhatsOpt::ServerGenerator.new(mda, server_host)
       @sqlite_filename = 'cases.sqlite'
+      @driver_options = driver_options
     end
                     
     def check_mda_setup
@@ -50,6 +54,7 @@ module WhatsOpt
     def monitor(method="analysis", sqlite_filename=nil, &block)
       ok, lines = false, []
       Dir.mktmpdir("run_#{@mda.basename}_#{method}") do |dir|
+        dir = '/tmp/'
         _generate_code dir, sqlite_filename: sqlite_filename
         _monitor_mda(dir, method, &block)   
       end
@@ -98,12 +103,25 @@ module WhatsOpt
        
     def _generate_run_scripts(gendir, sqlite_filename=nil)
       _generate('run_analysis.py', 'run_analysis.py.erb', gendir)
-      @sqlite_filename = sqlite_filename || "#{@mda.basename}_doe.sqlite"
-      _generate('run_doe.py', 'run_doe.py.erb', gendir)
+      if @driver_options 
+        @driver = DriverFactory.new(@driver_options).create_driver
+        if @driver.doe?
+          @sqlite_filename = sqlite_filename || "#{@mda.basename}_doe.sqlite"
+          _generate('run_doe.py', 'run_doe.py.erb', gendir)
+        else
+          @sqlite_filename = sqlite_filename || "#{@mda.basename}_optimization.sqlite"
+          _generate('run_optimization.py', 'run_optimization.py.erb', gendir)
+        end
+      else
+        @driver = DriverFactory.new(DEFAULT_DOE_OPTIONS).create_driver
+        @sqlite_filename = sqlite_filename || "#{@mda.basename}_doe.sqlite"
+        _generate('run_doe.py', 'run_doe.py.erb', gendir)
+        @driver = DriverFactory.new(DEFAULT_OPTIMIZATION_OPTIONS).create_driver
+        @sqlite_filename = sqlite_filename || "#{@mda.basename}_optimization.sqlite"
+        _generate('run_optimization.py', 'run_optimization.py.erb', gendir)        
+      end
       @sqlite_filename = sqlite_filename || "#{@mda.basename}_screening.sqlite"
       _generate('run_screening.py', 'run_screening.py.erb', gendir)
-      @sqlite_filename = sqlite_filename || "#{@mda.basename}_optimization.sqlite"
-      _generate('run_optimization.py', 'run_optimization.py.erb', gendir)
     end    
   end
 end

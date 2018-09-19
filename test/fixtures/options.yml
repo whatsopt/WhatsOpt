@@ -1,9 +1,9 @@
 lhs_nbpts:
-  name: lhs_nbpts
+  name: smt_doe_lhs_nbpts
   value: 13
   operation: doe
 
 slsqp_maxiter:
-  name: slsqp_maxiter 
+  name: scipy_optimizer_slsqp_maxiter 
   value: 5
   operation: inprogress2

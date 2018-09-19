@@ -2,6 +2,12 @@ require 'whats_opt/openmdao_generator'
 
 class Operation < ApplicationRecord
 	
+  CAT_RUNONCE = :analysis
+  CAT_OPTIMISATION = :optimization 
+  CAT_SCREENING = :screening
+  CAT_DOE = :doe 
+  CATEGORIES = [CAT_RUNONCE, CAT_OPTIMISATION, CAT_DOE, CAT_SCREENING]
+  
   TERMINATION_STATUSES = %w(DONE, FAILED, KILLED)
   STATUSES = %w(PENDING, RUNNING)+TERMINATION_STATUSES
     
@@ -53,9 +59,9 @@ class Operation < ApplicationRecord
     case driver
     when "runonce"
       'analysis'
-    when "slsqp"
+    when /optimizer/
       'optimization'
-    when "morris"
+    when /morris/
       'screening'
     else
       'doe'

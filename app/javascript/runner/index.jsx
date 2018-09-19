@@ -22,16 +22,20 @@ class LogLine extends React.Component {
 }
 
 const OPTTYPES = {
-  lhs_nbpts: "integer",    
-  slsqp_tol: "number",
-  slsqp_disp: "boolean",
-  slsqp_maxiter: "integer"
+  smt_doe_lhs_nbpts: "integer",    
+  scipy_optimizer_slsqp_tol: "number",
+  scipy_optimizer_slsqp_disp: "boolean",
+  scipy_optimizer_slsqp_maxiter: "integer",
+  pyoptsparse_optimizer_snopt_tol: "number",
+  pyoptsparse_optimizer_snopt_maxiter: "integer",
 };
 const OPTDEFAULTS = {
-  lhs_nbpts: 50,
-  slsqp_tol: 1e-6,
-  slsqp_maxiter: 100,
-  slsqp_disp: true,
+  smt_doe_lhs_nbpts: 50,
+  scipy_optimizer_slsqp_tol: 1e-6,
+  scipy_optimizer_slsqp_maxiter: 1000,
+  scipy_optimizer_slsqp_disp: true,
+  pyoptsparse_optimizer_snopt_tol: 1e-6,
+  pyoptsparse_optimizer_snopt_maxiter: 1000,
 }
 
 const FORM = {
@@ -40,8 +44,9 @@ const FORM = {
     "name": {"type": "string", "title": "Operation name"},
     "host": {"type": "string", "title": "Analysis Server"},
     "driver" : {"type": "string", "title": "Driver", 
-                "enum": ["runonce", "lhs", "slsqp"],
-                "enumNames": ["RunOnce", "LHS", "SLSQP"],
+                "enum": ["runonce", "smt_doe_lhs", 
+                         "scipy_optimizer_slsqp", "pyoptsparse_optimizer_snopt"],
+                "enumNames": ["RunOnce", "SMT - LHS", "Scipy - SLSQP", "pyOptSparse - SNOPT"],
                 "default": "runonce"
                }},
   "required": [ "name", "host", "driver" ],
@@ -52,23 +57,32 @@ const FORM = {
           "properties": {"driver": {"enum": ["runonce"]}}
         },   
         {
-          "properties": {"driver": {"enum": ["lhs"]},
-                         "lhs_nbpts": {"title": "Number of sampling points", 
-                                       "type": OPTTYPES.lhs_nbpts,
-                                       "default": OPTDEFAULTS.lhs_nbpts}, },
+          "properties": {"driver": {"enum": ["smt_doe_lhs"]},
+                         "smt_doe_lhs_nbpts": {"title": "Number of sampling points", 
+                                               "type": OPTTYPES.smt_doe_lhs_nbpts,
+                                               "default": OPTDEFAULTS.smt_doe_lhs_nbpts}, },
         },   
         {
-          "properties": {"driver": {"enum": ["slsqp"]},
-                         "slsqp_tol": {"title": "Objective function tolerance for stopping criterion", 
-                                       "type": OPTTYPES.slsqp_tol, 
-                                       "default": OPTDEFAULTS.slsqp_tol },
-                         "slsqp_disp": {"title": "Print convergence messages", 
-                                        "type": OPTTYPES.slsqp_disp, 
-                                        "default": OPTDEFAULTS.slsqp_disp}, 
-                         "slsqp_maxiter": {"title": "Maximum of iterations", 
-                                           "type": OPTTYPES.slsqp_maxiter,
-                                           "default": OPTDEFAULTS.slsqp_maxiter }, },
+          "properties": {"driver": {"enum": ["scipy_optimizer_slsqp"]},
+                         "scipy_optimizer_slsqp_tol": {"title": "Objective function tolerance for stopping criterion", 
+                                       "type": OPTTYPES.scipy_optimizer_slsqp_tol, 
+                                       "default": OPTDEFAULTS.scipy_optimizer_slsqp_tol },
+                         "scipy_optimizer_slsqp_disp": {"title": "Print convergence messages", 
+                                        "type": OPTTYPES.scipy_optimizer_slsqp_disp, 
+                                        "default": OPTDEFAULTS.scipy_optimizer_slsqp_disp}, 
+                         "scipy_optimizer_slsqp_maxiter": {"title": "Maximum of iterations", 
+                                           "type": OPTTYPES.scipy_optimizer_slsqp_maxiter,
+                                           "default": OPTDEFAULTS.scipy_optimizer_slsqp_maxiter }, },
         },   
+        {
+          "properties": {"driver": {"enum": ["pyoptsparse_optimizer_snopt"]},
+                         "pyoptsparse_optimizer_snopt_tol": {"title": "Nonlinear constraint violation tolerance", 
+                                                             "type": OPTTYPES.pyoptsparse_optimizer_snopt_tol, 
+                                                             "default": OPTDEFAULTS.pyoptsparse_optimizer_snopt_tol },
+                         "pyoptsparse_optimizer_snopt_maxiter": {"title": "Major iteration limit", 
+                                          "type": OPTTYPES.pyoptsparse_optimizer_snopt_maxiter,
+                                          "default": OPTDEFAULTS.pyoptsparse_optimizer_snopt_maxiter }, },
+        },       
       ]  
     }  
   }

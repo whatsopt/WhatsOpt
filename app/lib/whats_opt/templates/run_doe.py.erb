@@ -14,7 +14,7 @@ from <%= @mda.py_modulename %> import <%= @mda.py_classname %>
 <% end %>
 <%= ERB.new(File.read(File.join(@template_dir, 'options_partial.py.erb')), nil, nil, eoutvar='_sub01').result(binding) %>
 pb = Problem(<%= @mda.py_classname %>())
-pb.driver = SmtDoeDriver(sampling_method='LHS', n_cases=<%= @options[:lhs_nbpts]%>)
+pb.driver = SmtDoeDriver(sampling_method='LHS', n_cases=<%= @driver.options[:nbpts]%>)
 case_recorder_filename = '<%= @sqlite_filename %>'        
 recorder = SqliteRecorder(case_recorder_filename)
 pb.driver.add_recorder(recorder)

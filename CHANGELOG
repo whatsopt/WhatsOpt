@@ -1,5 +1,11 @@
 <h1>CHANGELOG</h1>
 
+<h3>0.10.3 (19/09/2018)</h3>
+<ul>
+  <li>Integrate pyOptSparse driver</li>
+  <li>add SNOPT optimizer</li>
+</ul>
+
 <h3>0.10.2 (06/09/2018)</h3>
 <ul>
   <li>Fix deployment configuration: add wop_cmd and wop_env</li>

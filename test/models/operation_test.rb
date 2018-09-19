@@ -13,8 +13,4 @@ class OperationTest < ActiveSupport::TestCase
     assert_equal operations(:inprogress).id, ope.id 
   end
 
-  def test_operation_hash
-    ope = operations(:doe)
-    assert_equal({lhs_nbpts: '13'}, ope.option_hash)
-  end 
 end
