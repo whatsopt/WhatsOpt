@@ -4,7 +4,7 @@ class OperationJob < ActiveJob::Base
   WOP_ENV = APP_CONFIG['wop_env'] || {}
   
   def perform(user, ope)
-    ogen = WhatsOpt::OpenmdaoGenerator.new(ope.analysis, ope.host, ope.option_hash)
+    ogen = WhatsOpt::OpenmdaoGenerator.new(ope.analysis, ope.host, ope.driver, ope.option_hash)
     Rails.logger.info "JOB STATUS = RUNNING"
     job = ope.job || ope.create_job(status: 'PENDING', pid: -1, log: "")
     job.update(status: :RUNNING, log: "")

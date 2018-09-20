@@ -4,18 +4,19 @@ require 'whats_opt/server_generator'
 module WhatsOpt
   class OpenmdaoGenerator < CodeGenerator
     
-    DEFAULT_DOE_OPTIONS = {smt_doe_lhs_nbpts: 100}
-    DEFAULT_OPTIMIZATION_OPTIONS = {scipy_optimizer_slsqp_maxiter: 100}
+    DEFAULT_DOE_DRIVER = :smt_doe_lhs
+    DEFAULT_OPTIMIZATION_DRIVER = :scipy_optimizer_slsqp
     
     class DisciplineNotFoundException < StandardError
     end
     
-    def initialize(mda, server_host=nil, driver_options=nil)
+    def initialize(mda, server_host=nil, driver_name=nil, driver_options={})
       super(mda, server_host)
       @prefix = "openmdao"
       @remote = !server_host.nil?
       @sgen = WhatsOpt::ServerGenerator.new(mda, server_host)
       @sqlite_filename = 'cases.sqlite'
+      @driver_name = driver_name.to_sym if driver_name
       @driver_options = driver_options
     end
                     
@@ -103,8 +104,8 @@ module WhatsOpt
        
     def _generate_run_scripts(gendir, sqlite_filename=nil)
       _generate('run_analysis.py', 'run_analysis.py.erb', gendir)
-      if @driver_options 
-        @driver = DriverFactory.new(@driver_options).create_driver
+      if @driver_name
+        @driver = OpenmdaoDriverFactory.new(@driver_name, @driver_options).create_driver
         if @driver.doe?
           @sqlite_filename = sqlite_filename || "#{@mda.basename}_doe.sqlite"
           _generate('run_doe.py', 'run_doe.py.erb', gendir)
@@ -113,10 +114,10 @@ module WhatsOpt
           _generate('run_optimization.py', 'run_optimization.py.erb', gendir)
         end
       else
-        @driver = DriverFactory.new(DEFAULT_DOE_OPTIONS).create_driver
+        @driver = OpenmdaoDriverFactory.new(DEFAULT_DOE_DRIVER).create_driver
         @sqlite_filename = sqlite_filename || "#{@mda.basename}_doe.sqlite"
         _generate('run_doe.py', 'run_doe.py.erb', gendir)
-        @driver = DriverFactory.new(DEFAULT_OPTIMIZATION_OPTIONS).create_driver
+        @driver = OpenmdaoDriverFactory.new(DEFAULT_OPTIMIZATION_DRIVER).create_driver
         @sqlite_filename = sqlite_filename || "#{@mda.basename}_optimization.sqlite"
         _generate('run_optimization.py', 'run_optimization.py.erb', gendir)        
       end

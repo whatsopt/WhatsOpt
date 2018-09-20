@@ -1,6 +1,6 @@
 module WhatsOpt
   
-  class Driver 
+  class OpenmdaoDriver 
     attr_reader :lib, :algo, :options
     
     def initialize(algoname, options)
@@ -36,17 +36,25 @@ module WhatsOpt
     end
   end
   
-  class OptimizerDriver < Driver 
+  class OpenmdaoOptimizerDriver < OpenmdaoDriver 
     attr_reader :opt_settings
     
-    OPT_SETTINGS = {scipy_optimizer_slsqp: {},
+    OPT_SETTINGS = {
+                    scipy_optimizer_cobyla: {}, 
+                    scipy_optimizer_bfgs: {}, 
+                    scipy_optimizer_slsqp: {}, 
+                    pyoptsparse_optimizer_conmin: {},
+                    pyoptsparse_optimizer_fsqp: {}, 
+                    pyoptsparse_optimizer_slsqp: {}, 
+                    pyoptsparse_optimizer_psqp: {}, 
+                    pyoptsparse_optimizer_nsga2: {}, 
                     pyoptsparse_optimizer_snopt: {tol: "Major feasibility tolerance", 
-                                                  maxiter: "Major iterations limit"}}
+                                                  maxiter: "Major iterations limit"},
+                   }
     
     # optimizer specific settings
     def initialize(algoname, options)
       super(algoname, options)
-      
       @opt_settings = {}
       unless OPT_SETTINGS[algoname]
         raise "Algoname #{algoname} not in #{OPT_SETTINGS.keys}"
@@ -64,58 +72,63 @@ module WhatsOpt
     end
   end
 
-  class DoeDriver < Driver 
+  class OpenmdaoDoeDriver < OpenmdaoDriver 
     def optimization?
       false
     end
   end
     
-  class DriverFactory
+  class OpenmdaoDriverFactory
     
     DEFAULT_OPTIONS = {
-      scipy_optimizer_slsqp: {tol: 1e-6, maxiter: 100, disp: true},
-      pyoptsparse_optimizer_snopt: {tol: 1e-6, maxiter: 100},
       smt_doe_lhs: {nbpts: 50},
+      scipy_optimizer_cobyla: {}, 
+      scipy_optimizer_bfgs: {}, 
+      scipy_optimizer_slsqp: {tol: 1e-6, maxiter: 100, disp: true}, 
+      pyoptsparse_optimizer_conmin: {},
+      pyoptsparse_optimizer_fsqp: {}, 
+      pyoptsparse_optimizer_slsqp: {}, 
+      pyoptsparse_optimizer_psqp: {}, 
+      pyoptsparse_optimizer_nsga2: {}, 
+      pyoptsparse_optimizer_snopt: {tol: 1e-6, maxiter: 100},
     }
     ALGO_NAMES = DEFAULT_OPTIONS.keys.sort
     
     class BadOptionError < StandardError
     end
     
-    def initialize(options_hash)
-      @dict = {}
-      _initialize(options_hash)
+    def initialize(algoname=:scipy_optimizer_slsqp, options_hash={})
+      @algoname = algoname
+      _initialize_options_dict(options_hash)
     end
 
     def create_driver
       if @algoname =~ /doe/
-        DoeDriver.new(@algoname, @dict[@algoname])
+        OpenmdaoDoeDriver.new(@algoname, @dict[@algoname])
       else
-        OptimizerDriver.new(@algoname, @dict[@algoname])
+        OpenmdaoOptimizerDriver.new(@algoname, @dict[@algoname])
       end
     end
     
     private 
     
-    def _initialize(options_hash)
+    def _initialize_options_dict(options_hash)
+      @dict = {}
+      unless ALGO_NAMES.include?(@algoname)
+        raise BadOptionError.new("Algorithm '#{@algoname}' should be in #{ALGO_NAMES}") 
+      end 
+      @dict[@algoname] = {}
       options_hash.each do |k, v|
         if k =~ /^(\w+)_(\w+)$/  
           algo, optname = $1.to_sym, $2.to_sym
-          unless ALGO_NAMES.include?(algo)
-            raise BadOptionError.new("Algorithm #{algo} is not a valid: should be in #{ALGO_NAMES}") 
-          end 
-          if @algoname && algo != @algoname
+          if algo != @algoname
             raise BadOptionError.new("Option #{k} is not a valid for algorithm #{@algoname}") 
           end
-          @algoname ||= algo
-          @dict[@algoname] ||= {}
           @dict[@algoname][optname] = v 
         else
-          raise BadOptionError.new("Option #{k} is not a valid: Option name should match /^(\w+)_(\w+)$/")
+          raise BadOptionError.new("Option #{k} is not valid: Option name should match /^(\w+)_(\w+)$/")
         end
       end
-      @algoname ||= :scipy_optimizer_slsqp
-      @dict[@algoname] ||= {}
       DEFAULT_OPTIONS[@algoname].each do |optname, defaultval|
         @dict[@algoname][optname] ||= defaultval
       end

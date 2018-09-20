@@ -22,6 +22,7 @@ class Api::V1::OperationsController < Api::ApiController
     if ope_params[:cases]
       @operation.set_upload_job_done
     else # should generate cases i.e. run the operation
+      p @operation
       OperationJob.perform_later(current_user, @operation)
     end
     head :no_content

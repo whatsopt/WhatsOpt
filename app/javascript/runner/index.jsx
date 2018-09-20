@@ -45,8 +45,20 @@ const FORM = {
     "host": {"type": "string", "title": "Analysis Server"},
     "driver" : {"type": "string", "title": "Driver", 
                 "enum": ["runonce", "smt_doe_lhs", 
-                         "scipy_optimizer_slsqp", "pyoptsparse_optimizer_snopt"],
-                "enumNames": ["RunOnce", "SMT - LHS", "Scipy - SLSQP", "pyOptSparse - SNOPT"],
+                         "scipy_optimizer_cobyla", 
+                         "scipy_optimizer_bfgs", 
+                         "scipy_optimizer_slsqp", 
+                         "pyoptsparse_optimizer_conmin",
+                         // "pyoptsparse_optimizer_fsqp", 
+                         "pyoptsparse_optimizer_slsqp", 
+                         "pyoptsparse_optimizer_psqp", 
+                         "pyoptsparse_optimizer_nsga2", 
+                         "pyoptsparse_optimizer_snopt"],
+                "enumNames": ["RunOnce", "SMT - LHS", "Scipy - COBYLA", "Scipy - BFGS", "Scipy - SLSQP",
+                              "pyOptSparse - CONMIN", 
+                              // "pyOptSparse - FSQP", 
+                              "pyOptSparse - SLSQP", 
+                              "pyOptSparse - PSQP", "pyOptSparse - NSGA2", "pyOptSparse - SNOPT"],
                 "default": "runonce"
                }},
   "required": [ "name", "host", "driver" ],
@@ -54,7 +66,14 @@ const FORM = {
     "driver": {
       "oneOf": [
         {
-          "properties": {"driver": {"enum": ["runonce"]}}
+          "properties": {"driver": {"enum": ["runonce",                  
+                                             "scipy_optimizer_cobyla", 
+                                             "scipy_optimizer_bfgs", 
+                                             "pyoptsparse_optimizer_conmin",
+                                             // "pyoptsparse_optimizer_fsqp", 
+                                             "pyoptsparse_optimizer_slsqp", 
+                                             "pyoptsparse_optimizer_psqp", 
+                                             "pyoptsparse_optimizer_nsga2"]}}
         },   
         {
           "properties": {"driver": {"enum": ["smt_doe_lhs"]},
