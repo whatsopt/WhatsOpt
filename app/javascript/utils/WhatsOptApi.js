@@ -116,7 +116,7 @@ class WhatsOptApi {
   
   pollOperation(operationId, check, callback, onError) {
     let path = `/api/v1/operations/${operationId}`;
-    this._pollStatus(() => axios.get(this.url(path)), check, callback, 300000, 10000)
+    this._pollStatus(() => axios.get(this.url(path)), check, callback, 300000, 2000)
       .then(callback)
       .catch(onError);    
   }
