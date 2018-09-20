@@ -86,7 +86,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     assert_match /already been used/, log.join(' ')
   end
 
-  test "should run remote mda successfully when valid" do
+  test "should run optimization as default" do
     Dir.mktmpdir do |dir|
       @ogen._generate_code dir
       pid = spawn("#{WhatsOpt::OpenmdaoGenerator::PYTHON} #{File.join(dir, 'run_server.py')}", [:out]=> '/dev/null')
@@ -98,6 +98,30 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     end
   end
 
+  test "should run mda once" do
+    Dir.mktmpdir do |dir|
+      @ogen._generate_code dir
+      pid = spawn("#{WhatsOpt::OpenmdaoGenerator::PYTHON} #{File.join(dir, 'run_server.py')}", [:out]=> '/dev/null')
+      @ogen_remote = WhatsOpt::OpenmdaoGenerator.new(@mda, 'localhost', driver_name='runonce')
+      ok, log = @ogen_remote.run
+      assert(ok, log)
+      Process.kill("TERM", pid)
+      Process.waitpid pid
+    end
+  end
+
+  test "should run doe" do
+    Dir.mktmpdir do |dir|
+      @ogen._generate_code dir
+      pid = spawn("#{WhatsOpt::OpenmdaoGenerator::PYTHON} #{File.join(dir, 'run_server.py')}", [:out]=> '/dev/null')
+      @ogen_remote = WhatsOpt::OpenmdaoGenerator.new(@mda, 'localhost', driver_name='smt_doe_lhs')
+      ok, log = @ogen_remote.run
+      assert(ok, log)
+      Process.kill("TERM", pid)
+      Process.waitpid pid
+    end
+  end
+    
   test "should run remote mda and return false when failed" do
     @ogen_remote = WhatsOpt::OpenmdaoGenerator.new(@mda, 'localhost')
     ok, log = @ogen_remote.run

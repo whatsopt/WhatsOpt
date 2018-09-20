@@ -106,12 +106,12 @@ module WhatsOpt
       _generate('run_analysis.py', 'run_analysis.py.erb', gendir)
       if @driver_name
         @driver = OpenmdaoDriverFactory.new(@driver_name, @driver_options).create_driver
-        if @driver.doe?
-          @sqlite_filename = sqlite_filename || "#{@mda.basename}_doe.sqlite"
-          _generate('run_doe.py', 'run_doe.py.erb', gendir)
-        else
+        if @driver.optimization?
           @sqlite_filename = sqlite_filename || "#{@mda.basename}_optimization.sqlite"
           _generate('run_optimization.py', 'run_optimization.py.erb', gendir)
+        else
+          @sqlite_filename = sqlite_filename || "#{@mda.basename}_doe.sqlite"
+          _generate('run_doe.py', 'run_doe.py.erb', gendir)
         end
       else
         @driver = OpenmdaoDriverFactory.new(DEFAULT_DOE_DRIVER).create_driver

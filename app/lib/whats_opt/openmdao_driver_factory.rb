@@ -14,25 +14,13 @@ module WhatsOpt
         @options[k] = @options[k].capitalize if ["true", "false"].include?(@options[k]) 
       end
     end
-  
-    def doe?
-      !optimization?
-    end
 
     def algo_option
       @algo.upcase
     end    
     
-    def pyoptsparse?
-      @lib =~ /pyoptsparse/
-    end
-    
-    def scipy?
-      @lib =~ /scipy/
-    end
-    
-    def simplega?
-      @lib =~ /simplega/
+    def optimization?
+      false
     end
   end
   
@@ -70,17 +58,30 @@ module WhatsOpt
     def optimization?
       true
     end
+    
+    def pyoptsparse?
+      @lib =~ /pyoptsparse/
+    end
+    
+    def scipy?
+      @lib =~ /scipy/
+    end
+    
+    def simplega?
+      @lib =~ /simplega/
+    end
   end
 
   class OpenmdaoDoeDriver < OpenmdaoDriver 
-    def optimization?
-      false
-    end
+  end
+  
+  class OpenmdaoRunOnceDriver < OpenmdaoDriver 
   end
     
   class OpenmdaoDriverFactory
     
     DEFAULT_OPTIONS = {
+      runonce: {},
       smt_doe_lhs: {nbpts: 50},
       scipy_optimizer_cobyla: {}, 
       scipy_optimizer_bfgs: {}, 
@@ -105,8 +106,10 @@ module WhatsOpt
     def create_driver
       if @algoname =~ /doe/
         OpenmdaoDoeDriver.new(@algoname, @dict[@algoname])
-      else
+      elsif @algoname =~ /optimizer/
         OpenmdaoOptimizerDriver.new(@algoname, @dict[@algoname])
+      else 
+        OpenmdaoRunOnceDriver.new(@algoname, @dict[@algoname])
       end
     end
     
