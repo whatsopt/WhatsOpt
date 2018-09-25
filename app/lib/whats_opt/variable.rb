@@ -32,8 +32,10 @@ module WhatsOpt
                   $1.to_i * $2.to_i
                 when /^\((\d+), (\d+), (\d+)\)$/
                   $1.to_i * $2.to_i * $3.to_i
+                when /^\((\d+), (\d+), (\d+), (\d+)\)$/
+                  $1.to_i * $2.to_i * $3.to_i * $4.to_i
                 else
-                  raise BadShapeAttributeError.new("should be either 1, (n,), (n, m) or (n, m, p) but found #{self.shape}")
+                  raise BadShapeAttributeError.new("should be either 1, (n,), (n, m), (n, m, p) or (n, m, p, q) but found #{self.shape}")
                 end
     end
 
@@ -47,8 +49,10 @@ module WhatsOpt
                   2
                 when /^\((\d+), (\d+), (\d+)\)$/
                   3
+                when /^\((\d+), (\d+), (\d+), (\d+)\)$/
+                  4
                 else
-                  raise BadShapeAttributeError.new("should be either 1, (n,), (n, m) or (n, m, p) but found #{self.shape}")
+                  raise BadShapeAttributeError.new("should be either 1, (n,), (n, m), (n, m, p) or (n, m, p, q) but found #{self.shape}")
                 end
     end
     

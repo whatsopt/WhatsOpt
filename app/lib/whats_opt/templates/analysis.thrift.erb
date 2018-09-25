@@ -8,6 +8,8 @@ typedef list<Vector> Matrix
 typedef list<IVector> IMatrix
 typedef list<Matrix> Cube
 typedef list<IMatrix> ICube
+typedef list<Cube> HyperCube
+typedef list<ICube> IHyperCube
 
 <% @mda.disciplines.nodes.each do |disc| -%>
 struct <%= disc.camelname %>Input {

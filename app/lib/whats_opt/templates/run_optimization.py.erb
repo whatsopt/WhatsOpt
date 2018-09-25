@@ -6,10 +6,11 @@ import numpy as np
 # import matplotlib
 # matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-from openmdao.api import Problem, SqliteRecorder, CaseReader, ScipyOptimizeDriver, pyOptSparseDriver, SimpleGADriver
 <% if @remote -%>
+from openmdao.api import Problem, SqliteRecorder, CaseReader, ScipyOptimizeDriver, pyOptSparseDriver, SimpleGADriver
 from <%= @server_module %>.<%= @mda.py_modulename %>_proxy import <%= @mda.py_classname %>Proxy as <%= @mda.py_classname %> 
 <% else -%>
+from openmdao.api import Problem, SqliteRecorder, CaseReader, ScipyOptimizeDriver #, pyOptSparseDriver, SimpleGADriver
 from <%= @mda.py_modulename %> import <%= @mda.py_classname %> 
 <% end %>
 <%= ERB.new(File.read(File.join(@template_dir, 'options_partial.py.erb')), nil, nil, eoutvar='_sub01').result(binding) %>

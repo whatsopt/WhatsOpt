@@ -160,12 +160,12 @@ class WhatsOpt(object):
         name = problem.model.__class__.__name__
         data = _get_viewer_data(problem)
         tree = data['tree']
-        #print(tree)
+        # print(tree)
         connections = data['connections_list']
-        #print(connections)
+        # print(connections)
         self.discnames = [NULL_DRIVER_NAME]
         self.discnames.extend(self._collect_discnames_and_vars(problem.model, tree))
-        #print(self.discnames)
+        # print(self.discnames)
         self._initialize_disciplines_attrs(problem, connections)
     
         #print("MDA= ", name)
@@ -315,35 +315,35 @@ class WhatsOpt(object):
         disciplines = []
         if 'children' in tree:
             for i, child in enumerate(tree['children']):
-                # do not represent IndepVarComp
-                if not isinstance(system._subsystems_myproc[i], IndepVarComp):
-                    # retain only components, not intermediates (subsystem or group)
-                    if child['type'] == 'subsystem' and child['subsystem_type'] == 'group':
-                        prefix = group_prefix+child['name']+'.'
-                        disciplines.extend(self._collect_discnames_and_vars(system._subsystems_myproc[i], child, prefix))
-                    else:
+                # retain only components, not intermediates (subsystem or group)
+                if child['type'] == 'subsystem' and child['subsystem_type'] == 'group':
+                    prefix = group_prefix+child['name']+'.'
+                    disciplines.extend(self._collect_discnames_and_vars(system._subsystems_myproc[i], child, prefix))
+                else:
+                    # do not represent IndepVarComp
+                    if not isinstance(system._subsystems_myproc[i], IndepVarComp):
                         disciplines.append(group_prefix+child['name'])
-                        for typ in ['input', 'output']:
-                            for ind, abs_name in enumerate(system._var_abs_names[typ]):
+                    for typ in ['input', 'output']:
+                        for ind, abs_name in enumerate(system._var_abs_names[typ]):
+                            io_mode = 'out'
+                            if typ == 'input': 
+                                io_mode = 'in' 
+                            elif typ == 'output': 
                                 io_mode = 'out'
-                                if typ == 'input': 
-                                    io_mode = 'in' 
-                                elif typ == 'output': 
-                                    io_mode = 'out'
-                                else:
-                                    raise Exception('Unhandled variable type ' + typ)
-                                meta = system._var_abs2meta[abs_name]
-                                vtype = 'Float'
-                                if re.match('int', type(meta['value']).__name__):
-                                    vtype = 'Integer' 
-                                disc, var, fname = WhatsOpt._extract_disc_var(abs_name)
-                                self.vars[abs_name] = {'fullname': fname,
-                                                       'name': system._var_abs2prom[typ][abs_name],
-                                                       'io_mode': io_mode,
-                                                       'type': vtype,
-                                                       'shape': str(meta['shape']),
-                                                       'units': meta['units'],
-                                                       'desc': meta['desc']}
+                            else:
+                                raise Exception('Unhandled variable type ' + typ)
+                            meta = system._var_abs2meta[abs_name]
+                            vtype = 'Float'
+                            if re.match('int', type(meta['value']).__name__):
+                                vtype = 'Integer' 
+                            disc, var, fname = WhatsOpt._extract_disc_var(abs_name)
+                            self.vars[abs_name] = {'fullname': fname,
+                                                   'name': system._var_abs2prom[typ][abs_name],
+                                                   'io_mode': io_mode,
+                                                   'type': vtype,
+                                                   'shape': str(meta['shape']),
+                                                   'units': meta['units'],
+                                                   'desc': meta['desc']}
         disciplines = [WhatsOpt._format_name(name) for name in disciplines]
         return disciplines
 
@@ -364,6 +364,7 @@ class WhatsOpt(object):
             
     def _create_varattr_from_connection(self, fullname, io_mode):
         disc, var, fname = WhatsOpt._extract_disc_var(fullname)
+        
         varattr = {'name':var, 'fullname': fname, 'io_mode': io_mode,
                    'type':self.vars[fullname]['type'], 'shape':self.vars[fullname]['shape'], 
                    'units':self.vars[fullname]['units'], 'desc':self.vars[fullname]['desc']}
