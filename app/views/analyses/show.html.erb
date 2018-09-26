@@ -12,7 +12,7 @@
   <% end %>  
 <% end %>
 <% if policy(@mda).destroy? %>      
-  <%= button_to operation_url(@mda), method: :delete, data: { title: 'Are you sure?', 
+  <%= button_to mda_url(@mda), method: :delete, data: { title: 'Are you sure?', 
                                                               confirm: "Remove #{@mda.name} analysis?",
                                                               commit: 'Yes',
                                                               cancel: 'No, cancel' }, 
