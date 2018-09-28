@@ -11,6 +11,7 @@
 /db/*.sqlite3
 /db/*.sqlite3-journal
 /python/demos/**/*.sqlite
+**/*.sqlite
 
 # Ignore all logfiles and tempfiles.
 /log/*
@@ -30,11 +31,14 @@
 python/whatsopt.egg-info/
 python/wop.egg-info/
 python/dist
+python/build
 
 # Uploaded files
 /upload/public/packs
 /node_modules
 /upload
+
+# Project files
 /rtest
 /wds
 /wpack

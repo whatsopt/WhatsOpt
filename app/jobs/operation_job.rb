@@ -35,7 +35,7 @@ class OperationJob < ActiveJob::Base
         Rails.logger.info "JOB STATUS = FAILED"
         job.update(status: :FAILED)
       end
-      Rails.logger.info job.log
+      # Rails.logger.info job.log
     end
   end
   

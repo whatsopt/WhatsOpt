@@ -12,6 +12,8 @@ typedef list<Vector> Matrix
 typedef list<IVector> IMatrix
 typedef list<Matrix> Cube
 typedef list<IMatrix> ICube
+typedef list<Cube> HyperCube
+typedef list<ICube> IHyperCube
 
 struct Disc1Input {
     1: Float y2      

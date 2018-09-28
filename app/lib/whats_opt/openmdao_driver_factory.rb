@@ -22,6 +22,20 @@ module WhatsOpt
     def optimization?
       false
     end
+    
+    def doe?
+      false
+    end
+
+  end
+
+  class OpenmdaoRunOnceDriver < OpenmdaoDriver 
+  end
+    
+  class OpenmdaoDoeDriver < OpenmdaoDriver 
+    def doe?
+      true
+    end
   end
   
   class OpenmdaoOptimizerDriver < OpenmdaoDriver 
@@ -58,6 +72,10 @@ module WhatsOpt
     def optimization?
       true
     end
+        
+    def doe?
+      false
+    end
     
     def pyoptsparse?
       @lib =~ /pyoptsparse/
@@ -70,12 +88,6 @@ module WhatsOpt
     def simplega?
       @lib =~ /simplega/
     end
-  end
-
-  class OpenmdaoDoeDriver < OpenmdaoDriver 
-  end
-  
-  class OpenmdaoRunOnceDriver < OpenmdaoDriver 
   end
     
   class OpenmdaoDriverFactory
@@ -125,6 +137,7 @@ module WhatsOpt
         if k =~ /^(\w+)_(\w+)$/  
           algo, optname = $1.to_sym, $2.to_sym
           if algo != @algoname
+            #p "Option #{k} is not a valid for algorithm #{@algoname}"
             raise BadOptionError.new("Option #{k} is not a valid for algorithm #{@algoname}") 
           end
           @dict[@algoname][optname] = v 
@@ -132,6 +145,7 @@ module WhatsOpt
           raise BadOptionError.new("Option #{k} is not valid: Option name should match /^(\w+)_(\w+)$/")
         end
       end
+    
       DEFAULT_OPTIONS[@algoname].each do |optname, defaultval|
         @dict[@algoname][optname] ||= defaultval
       end

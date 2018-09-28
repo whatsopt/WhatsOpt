@@ -131,6 +131,7 @@ class Runner extends React.Component {
                   log: log};
     
     this.handleRun = this.handleRun.bind(this); 
+    this.handleAbort = this.handleAbort.bind(this); 
     this.handleChange = this.handleChange.bind(this); 
     this.handleOperationUpdate = this.handleOperationUpdate.bind(this);
   }
@@ -152,6 +153,9 @@ class Runner extends React.Component {
     ids.forEach(id => opeAttrs.options_attributes.push({id: id, _destroy: '1'}));
     //console.log("OPT ATTRS = "+JSON.stringify(opeAttrs));
 
+    let newState = update(this.state, {status: {$set: "STARTED"}});
+    this.setState(newState);  
+    
     this.api.updateOperation(this.props.ope.id, opeAttrs, 
         (response) => { this.api.pollOperation(this.props.ope.id,
                         (respData) => {   
@@ -165,6 +169,12 @@ class Runner extends React.Component {
         (error) => { console.log(error); });
   }
 
+  handleAbort() {
+    this.api.killOperationJob(this.props.ope.id);
+    let newState = update(this.state, {status: {$set: "ABORTED"}});
+    this.setState(newState);
+  }
+  
   handleOperationUpdate(ope) {
     let formData = { name: ope.name, host: ope.host, driver: ope.driver, }
     let formOptions = this._toFormOptions(ope.options);
@@ -226,14 +236,15 @@ class Runner extends React.Component {
 
     let btnStatusClass = this.state.status === "DONE"?"btn btn-success":"btn btn-danger";
     let btnIcon = this.state.status === "DONE"?<i className="fa fa-check"/>:<i className="fa fa-exclamation-triangle" />;
-    if (this.state.status === "RUNNING") {
+    if (this.state.status === "RUNNING" || this.state.status === "STARTED") {
       btnStatusClass = "btn btn-info";
       btnIcon = <i className="fa fa-cog fa-spin"/>;
     }
     if (this.state.status === "PENDING") {
       btnStatusClass = "btn btn-info";
       btnIcon = <i className="fa fa-question"/>;
-    }    
+    }
+    let active = (this.state.status === "RUNNING" || this.state.status === "STARTED");
 
     let showEnabled=false;
     if (this.state.status === "DONE" && this.state.driver!=="runonce") {
@@ -278,7 +289,8 @@ class Runner extends React.Component {
         <Form schema={FORM} formData={this.state.formData} 
               onSubmit={this.handleRun} onChange={this.handleChange} widgets={widgets}>      
           <div className="form-group">
-            <button type="submit" className="btn btn-primary">Run</button>
+            <button type="submit" className="btn btn-primary" disabled={active}>Run</button>
+            <button type="button" className="ml-2 btn" disabled={!active} onClick={this.handleAbort}>Abort</button>
           </div>
         </Form>
       </div>

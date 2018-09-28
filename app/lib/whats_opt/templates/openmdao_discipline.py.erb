@@ -9,9 +9,9 @@ class <%= @discipline.py_classname %>(<%= @discipline.py_classname %>Base):
     <% @discipline.output_variables.numeric.each do |var_out| %>
         outputs['<%= var_out.py_varname %>'] = <%= var_out.default_py_value %> <% end %>  
         
-# Inputs of compute()
+# Reminder: inputs of compute()
 #   <% @discipline.input_variables.numeric.each do |var_in| %>
-#       inputs['<%= var_in.py_varname %>'] = <%= var_in.default_py_value -%>
+#       inputs['<%= var_in.py_varname %>'] is an array of shape: <%= var_in.shape -%> and type: <%= var_in.type -%>
     <% end %>  
 	
 # To declare partial derivatives computation ...

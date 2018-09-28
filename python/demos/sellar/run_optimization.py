@@ -10,7 +10,7 @@ import numpy as np
 # import matplotlib
 # matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-from openmdao.api import Problem, SqliteRecorder, CaseReader, ScipyOptimizeDriver, pyOptSparseDriver, SimpleGADriver
+from openmdao.api import Problem, SqliteRecorder, CaseReader, ScipyOptimizeDriver #, pyOptSparseDriver, SimpleGADriver
 from sellar import Sellar 
 
 from optparse import OptionParser
@@ -22,10 +22,15 @@ parser.add_option("-b", "--batch",
 
 pb = Problem(Sellar())
 
-#pb.driver = pyOptSparseDriver()
 pb.driver = ScipyOptimizeDriver()
-pb.driver.options['optimizer'] = 'BFGS'
-#pb.driver.options['debug_print'] = ['desvars','ln_cons','nl_cons','objs', 'totals']
+pb.driver.options['optimizer'] = 'SLSQP'
+
+pb.driver.options['tol'] = 1.0e-06
+
+pb.driver.options['maxiter'] = 100
+
+pb.driver.options['disp'] = True
+pb.driver.options['debug_print'] = ['desvars','ln_cons','nl_cons','objs', 'totals']
 
 case_recorder_filename = 'sellar_optimization.sqlite'
 print(case_recorder_filename)        

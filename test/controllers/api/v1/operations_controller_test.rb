@@ -60,7 +60,7 @@ class Api::V1::OperationsControllerTest < ActionDispatch::IntegrationTest
     assert_equal ['x1', 'y2'], resp['cases'].map{|c| c['varname']}.sort 
     assert_equal [0, 0], resp['cases'].map{|c| c['coord_index']}.sort
     assert_equal [1, 2, 3, 4, 5, 6], resp['cases'].map{|c| c['values']}.flatten.sort
-    assert_equal({'status'=> 'DONE', 'log'=> 'Data uploaded'}, resp['job'])
+    assert_equal({'status'=> 'DONE', 'log'=> 'Data uploaded\n'}, resp['job'])
   end
 
   test "should update an operation with LHS options" do
@@ -94,4 +94,5 @@ class Api::V1::OperationsControllerTest < ActionDispatch::IntegrationTest
                   {"id" => @ope.options[1].id, "name" => 'slsqp_disp', "value" => 'false'}, 
                   {"id" => @ope.options[2].id, "name" => 'slsqp_maxiter', "value" => '10'}], resp['options']
   end
+  
 end

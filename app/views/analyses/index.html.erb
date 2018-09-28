@@ -38,7 +38,7 @@
 	        <% end %>
 	        
 	        <% if policy(mda).operate? %>      
-              <%= link_to new_mda_operation_url(mda), 
+              <%= link_to mda_operations_url(mda), method: :post, 
                 class: "d-inline btn btn-light btn-inverse btn-sm", title: "Operate" do %>
                 <i class="fa fa-rocket"></i> 
               <% end %>    

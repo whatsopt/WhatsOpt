@@ -5,7 +5,7 @@ Rails.application.routes.draw do
   
   resources :variables
   resources :analyses, shallow: true, as: :mdas do
-    resources :operations
+    resources :operations, except: [:new]
     get 'exports/new'
   end
   resources :notebooks
@@ -17,7 +17,9 @@ Rails.application.routes.draw do
       resources :analyses, shallow: true, as: :mdas, only: [:index, :show, :create, :update] do
         resources :disciplines, only: [:show, :create, :update, :destroy], :shallow => true 
         resources :connections, only: [:create, :update, :destroy]
-        resources :operations, only: [:show, :create, :update, :destroy]  
+        resources :operations, only: [:show, :create, :update, :destroy] do
+          resource :job, only: [:create, :update]
+        end
         post 'openmdao_checking', to: 'openmdao_checking#create' 
         get 'exports/new'
       end

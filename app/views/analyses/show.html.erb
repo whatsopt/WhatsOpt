@@ -6,7 +6,7 @@
   <% end %>
 <% end %>
 <% if policy(@mda).operate? %>      
-  <%= button_to new_mda_operation_url(@mda), method: :get, class:"btn ml-2" do |b|%>
+  <%= button_to mda_operations_url(@mda), method: :post, class:"btn ml-2" do |b|%>
     <span class="fa fa-rocket"></span>
       Operate
   <% end %>  

@@ -10,7 +10,24 @@ class OperationsController < ApplicationController
   end
   
   # GET /analyses/:mda_id/operations/new
-  def new
+#  def new
+#    @mda = Analysis.find(params[:mda_id])
+#    @ope = Operation.in_progress(@mda).take 
+#    unless @ope
+#      @ope = @mda.operations.create(name: 'Unnamed', host: 'localhost')
+#      @ope.create_job(status: 'PENDING', pid: -1, log: "")
+#    end
+#    authorize @ope
+#    redirect_to edit_operation_url(@ope)
+#  end
+  
+  # GET /operations/1/edit
+  def edit
+    @server=`hostname`+((Rails.env=='development') ? ':3000':'')
+  end
+  
+  # POST /analyses/:mda_id/operations
+  def create
     @mda = Analysis.find(params[:mda_id])
     @ope = Operation.in_progress(@mda).take 
     unless @ope
@@ -20,28 +37,22 @@ class OperationsController < ApplicationController
     authorize @ope
     redirect_to edit_operation_url(@ope)
   end
-  
-  # GET /operations/1/edit
-  def edit
-    @server=`hostname`+((Rails.env=='development') ? ':3000':'')
-  end
-  
-  # POST /analyses/:mda_id/operations
-  def create
-    if params[:cancel_button]
-      redirect_to mda_url(params[:mda_id]), notice: "Operation creation cancelled."
-    else 
-      @mda = Analysis.find(params[:mda_id])
-      @ope = @mda.operations.build(ope_params)
-      authorize @ope
-      if @ope.save
-        redirect_to edit_operation_url(@ope)
-      else
-        flash[:error] = "Notebook import failed: invalid input data."
-        render :action => 'new'
-      end
-    end 
-  end
+
+#  def create
+#    if params[:cancel_button]
+#      redirect_to mda_url(params[:mda_id]), notice: "Operation creation cancelled."
+#    else 
+#      @mda = Analysis.find(params[:mda_id])
+#      @ope = @mda.operations.build(ope_params)
+#      authorize @ope
+#      if @ope.save
+#        redirect_to edit_operation_url(@ope)
+#      else
+#        flash[:error] = "Notebook import failed: invalid input data."
+#        render :action => 'new'
+#      end
+#    end 
+#  end
   
   # PATCH/PUT /operations/1
   def update

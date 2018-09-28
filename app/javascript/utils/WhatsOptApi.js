@@ -114,6 +114,13 @@ class WhatsOptApi {
       .catch((error) => console.log(error));
   }
   
+  killOperationJob(operationId) {
+    let path = `/api/v1/operations/${operationId}/job`;
+    axios.patch(this.url(path))
+      .then((resp) => console.log(resp))
+      .catch((error) => console.log(error));
+  }
+  
   pollOperation(operationId, check, callback, onError) {
     let path = `/api/v1/operations/${operationId}`;
     this._pollStatus(() => axios.get(this.url(path)), check, callback, 300000, 2000)

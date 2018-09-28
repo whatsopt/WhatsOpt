@@ -44,9 +44,9 @@ class Operation < ApplicationRecord
 
   def set_upload_job_done
     if self.job
-      self.job.update(status: 'DONE', pid: -1, log: self.job.log << 'Data uploaded')
+      self.job.update(status: 'DONE', pid: -1, log: self.job.log << 'Data uploaded\n')
     else
-      self.create_job(status: 'DONE', pid: -1, log: 'Data uploaded')
+      self.create_job(status: 'DONE', pid: -1, log: 'Data uploaded\n')
     end
   end
   
