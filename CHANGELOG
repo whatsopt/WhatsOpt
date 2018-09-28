@@ -1,9 +1,15 @@
 <h1>CHANGELOG</h1>
 
+<h3>0.11.0 (28/09/2018)</h3>
+<ul>
+  <li>Interruption (abort) of an operation run on the server.</li>
+  <li>Add scipy and pyOptSparse optimizers: COBYLA, BFGS, SLSQP, CONMIN, PSQP, NSGA2</li>
+</ul>
+
 <h3>0.10.3 (19/09/2018)</h3>
 <ul>
   <li>Integrate pyOptSparse driver</li>
-  <li>add SNOPT optimizer</li>
+  <li>Add SNOPT optimizer</li>
 </ul>
 
 <h3>0.10.2 (06/09/2018)</h3>
