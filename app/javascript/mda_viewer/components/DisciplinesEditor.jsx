@@ -160,13 +160,14 @@ class DisciplinesEditor extends React.Component {
                 onDisciplineUpdate={this.props.onDisciplineUpdate}
                 onDisciplineDelete={this.props.onDisciplineDelete} />);
     });
-    if (disciplines.length === 0) {
+    let nbNodes = disciplines.length;
+    if (nbNodes === 0) {
       disciplines = 'None'  
     }
     return (
         <div className='container-fluid'>
           <div className="editor-section">
-            <label>Nodes <span className="badge badge-info">{disciplines.length}</span></label>
+            <label>Nodes <span className="badge badge-info">{nbNodes}</span></label>
             <DragDropContext onDragStart={this.onDragStart}
                              onDragUpdate={this.onDragUpdate}
                              onDragEnd={this.onDragEnd}>
