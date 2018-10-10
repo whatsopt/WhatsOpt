@@ -247,8 +247,18 @@ class WhatsOpt(object):
                                       json={'operation': operation_params})
         else:
             url =  self._endpoint(('/api/v1/analyses/%s/operations') % mda_id)
+            if name=='LHS':
+                driver='smt_doe_lhs'
+            elif name=='Morris':
+                driver='salib_doe_morris'
+            elif name=='SLSQP':
+                driver='scipy_optimizer_slsqp'
+            else:
+                # FIXME: only LHS, Morris or SLSQP is recognized
+                print("Data uploaded as doe cases with unknown driver".format(name))
+                driver='unknown'
             operation_params = {'name': name,
-                                'driver': name.lower(),
+                                'driver': driver,
                                 'host': gethostname(),
                                 'cases': cases}
             resp = self.session.post(url, headers=self.headers, 
