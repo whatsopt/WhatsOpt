@@ -167,7 +167,7 @@ class DisciplinesEditor extends React.Component {
     return (
         <div className='container-fluid'>
           <div className="editor-section">
-            <label>Nodes <span className="badge badge-info">{nbNodes}</span></label>
+            <label>Disciplines <span className="badge badge-info">{nbNodes}</span></label>
             <DragDropContext onDragStart={this.onDragStart}
                              onDragUpdate={this.onDragUpdate}
                              onDragEnd={this.onDragEnd}>
