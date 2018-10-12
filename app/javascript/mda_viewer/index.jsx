@@ -11,7 +11,7 @@ import ConnectionsEditor from 'mda_viewer/components/ConnectionsEditor';
 import VariablesEditor from 'mda_viewer/components/VariablesEditor';
 import AnalysisDatabase from '../utils/AnalysisDatabase';
 
-let VAR_REGEXP = /^[a-zA-Z][a-zA-Z0-9]*$/;
+let VAR_REGEXP = /^[a-zA-Z][_a-zA-Z0-9]*$/;
 
 class MdaViewer extends React.Component {
   constructor(props) {
