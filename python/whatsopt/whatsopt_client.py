@@ -141,6 +141,7 @@ class WhatsOpt(object):
             '__cached__': None,
         }
         Problem._post_setup_func = func(options)
+        sys.argv=[progname] # suppose progname do not need options
         exec(code, globals_dict)
 
     def push_mda_cmd(self, options):
@@ -347,13 +348,17 @@ class WhatsOpt(object):
                             if re.match('int', type(meta['value']).__name__):
                                 vtype = 'Integer' 
                             disc, var, fname = WhatsOpt._extract_disc_var(abs_name)
+                            shape = str(meta['shape'])
+                            if shape=='(1,)':
+                                shape='1'
                             self.vars[abs_name] = {'fullname': fname,
                                                    'name': system._var_abs2prom[typ][abs_name],
                                                    'io_mode': io_mode,
                                                    'type': vtype,
-                                                   'shape': str(meta['shape']),
+                                                   'shape': shape,
                                                    'units': meta['units'],
-                                                   'desc': meta['desc']}
+                                                   'desc': meta['desc'],
+                                                   'value': meta['value']}
         disciplines = [WhatsOpt._format_name(name) for name in disciplines]
         return disciplines
 
@@ -369,8 +374,10 @@ class WhatsOpt(object):
         for conn in connections:
             self._create_varattr_from_connection(conn['src'], 'out')
             self._create_varattr_from_connection(conn['tgt'], 'in')
-
         self._create_varattr_for_global_outputs(connections)
+        for disc in self.discnames:
+            for vattr in self.varattrs[disc]:
+                del vattr['fullname']
             
     def _create_varattr_from_connection(self, fullname, io_mode):
         disc, var, fname = WhatsOpt._extract_disc_var(fullname)
@@ -381,9 +388,26 @@ class WhatsOpt(object):
         if disc in self.discnames: 
             if varattr not in self.varattrs[disc]: 
                 self.varattrs[disc].append(varattr)
-        elif varattr not in self.varattrs[NULL_DRIVER_NAME]:
+        elif varattr['fullname'] not in [vattr['fullname'] for vattr in self.varattrs[NULL_DRIVER_NAME]]:
             self.varattrs[NULL_DRIVER_NAME].append(varattr)
-            
+            if io_mode=='out':  # set init value for design variables and parameters (outputs of driver)
+                v = self.vars[fullname]
+                varattr['parameter_attributes'] = {'init': self._simple_value(v)}
+        
+    @staticmethod
+    def _simple_value(var):
+        if var['shape']=='1' or var['shape']=='(1,)':
+            ret = float(var['value'])
+            if type=='Integer':
+                ret = int(ret)
+        else:
+            if type=='Integer':
+                var['value'] = var['value'].astype(int)
+            else:
+                var['value'] = var['value'].astype(float)
+            ret = var['value'].tolist()
+        return str(ret)
+        
     def _create_varattr_for_global_outputs(self, connections):
         for fullname, varattr in iteritems(self.vars): 
             if varattr['io_mode'] == 'out':
@@ -399,13 +423,17 @@ class WhatsOpt(object):
                     #print("Create global output connection ", varattr)
                     self._create_connection_for(fullname, varattr)
                     
-    def _create_connection_for(self, fullname, varattr):
-        disc, var, _ = WhatsOpt._extract_disc_var(fullname)
+    def _create_connection_for(self, fullname, var):
+        disc, _, _ = WhatsOpt._extract_disc_var(fullname)
+        vattr = {'name': var['name'], 'fullname': var['fullname'], 'io_mode': var['io_mode'],
+                 'type':var['type'], 'shape':var['shape'], 
+                 'units':var['units'], 'desc':var['desc']}
+
         if disc in self.discnames:
             fullnames = [v['fullname'] for v in self.varattrs[disc]]
             if fullname not in fullnames:
-                self.varattrs[disc].append(varattr)
-                varattr_in=copy.deepcopy(varattr)
+                self.varattrs[disc].append(vattr)
+                varattr_in=copy.deepcopy(vattr)
                 varattr_in['io_mode']='in'
                 self.varattrs[NULL_DRIVER_NAME].append(varattr_in)
 
