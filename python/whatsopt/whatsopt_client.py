@@ -46,6 +46,7 @@ class WhatsOpt(object):
         self.discattrs = []
         self.vars = {}
         self.varattrs = {}
+        self.vardescs = {}
         
         # login by default
         if login:
@@ -344,6 +345,7 @@ class WhatsOpt(object):
                             else:
                                 raise Exception('Unhandled variable type ' + typ)
                             meta = system._var_abs2meta[abs_name]
+
                             vtype = 'Float'
                             if re.match('int', type(meta['value']).__name__):
                                 vtype = 'Integer' 
@@ -351,14 +353,22 @@ class WhatsOpt(object):
                             shape = str(meta['shape'])
                             if shape=='(1,)':
                                 shape='1'
+                            name = system._var_abs2prom[typ][abs_name]
                             self.vars[abs_name] = {'fullname': fname,
-                                                   'name': system._var_abs2prom[typ][abs_name],
+                                                   'name': name,
                                                    'io_mode': io_mode,
                                                    'type': vtype,
                                                    'shape': shape,
                                                    'units': meta['units'],
-                                                   'desc': meta['desc'],
+                                                   #'desc': meta['desc'],
                                                    'value': meta['value']}
+
+                            desc = self.vardescs.setdefault(name, '')
+                            if desc=='':
+                                self.vardescs[name] = meta['desc'] 
+                            elif desc!=meta['desc'] and meta['desc']!='':
+                                print('Find another description for {}: "{}", keep "{}"'.format(name, meta['desc'], self.vardescs[name]))
+                                    
         disciplines = [WhatsOpt._format_name(name) for name in disciplines]
         return disciplines
 
@@ -377,14 +387,15 @@ class WhatsOpt(object):
         self._create_varattr_for_global_outputs(connections)
         for disc in self.discnames:
             for vattr in self.varattrs[disc]:
-                del vattr['fullname']
+                vattr['desc'] = self.vardescs[vattr['name']]
+                del vattr['fullname'] # indeed for WhatsOpt var name is a primary key
             
     def _create_varattr_from_connection(self, fullname, io_mode):
         disc, var, fname = WhatsOpt._extract_disc_var(fullname)
         
         varattr = {'name':var, 'fullname': fname, 'io_mode': io_mode,
                    'type':self.vars[fullname]['type'], 'shape':self.vars[fullname]['shape'], 
-                   'units':self.vars[fullname]['units'], 'desc':self.vars[fullname]['desc']}
+                   'units':self.vars[fullname]['units']}
         if disc in self.discnames: 
             if varattr not in self.varattrs[disc]: 
                 self.varattrs[disc].append(varattr)
@@ -427,7 +438,7 @@ class WhatsOpt(object):
         disc, _, _ = WhatsOpt._extract_disc_var(fullname)
         vattr = {'name': var['name'], 'fullname': var['fullname'], 'io_mode': var['io_mode'],
                  'type':var['type'], 'shape':var['shape'], 
-                 'units':var['units'], 'desc':var['desc']}
+                 'units':var['units']}
 
         if disc in self.discnames:
             fullnames = [v['fullname'] for v in self.varattrs[disc]]
