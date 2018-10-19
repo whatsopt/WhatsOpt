@@ -9,6 +9,7 @@
   <!-- Disable ActionCable <%= action_cable_meta_tag %> -->
   <%= csrf_meta_tags %>
   <meta name="relative-url-root" content="<%= Rails.application.config.action_controller.relative_url_root%>" />
+  <%= favicon_link_tag asset_path('favicon.png'), :rel => 'icon', :type =>  'image/png' %>
 </head>
 <body>
 	<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top" role="navigation">
