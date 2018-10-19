@@ -16,7 +16,7 @@ class Disc1Base(ExplicitComponent):
 		
         self.add_input('y2', val=1.0, desc='')
         self.add_input('x', val=1.0, desc='')
-        self.add_input('z', val=np.ones((2,)), desc='')
+        self.add_input('z', val=np.ones((2,)), desc='global variable')
 		
         self.add_output('y1', val=1.0, desc='')
 	
