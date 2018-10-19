@@ -11,8 +11,9 @@
 
 	<thead>
 		<tr>
-		  <th class="col-md-3">Name</th>
-		  <th class="col-md-1">Owner</th>
+		  <th class="col-md-2">Name</th>
+      <th class="col-md-1">Owner</th>
+      <th class="col-md-1">Locked</th>
 		  <th class="col-md-2">Created</th>
 		  <th class="col-md-3">Operations</th>
 		  <th class="col-md-2">Action(s)</th>
@@ -24,6 +25,11 @@
 	    <tr>
 	      <td><%= link_to_analysis_if_authorized(mda, current_user) %></td>
           <td><%= mda.owner %></td>
+          <td>
+            <% unless mda.public %>
+              <i class="fa fa-lock"></i>
+            <% end %>    
+          </td>
           <td><%= time_ago_in_words(mda.created_at) %> ago</td>
           <td>
             <%= link_to_operations_if_authorized(mda, current_user) %>
