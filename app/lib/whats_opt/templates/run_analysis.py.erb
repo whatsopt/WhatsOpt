@@ -11,6 +11,6 @@ pb = Problem(<%= @mda.py_classname %>())
 pb.setup()  
 
 pb.run_model()   
-pb.model.list_inputs(print_arrays=True)
-pb.model.list_outputs(print_arrays=True)
+pb.model.list_inputs(print_arrays=False)
+pb.model.list_outputs(print_arrays=False)
 
