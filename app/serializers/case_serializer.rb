@@ -4,7 +4,11 @@ class CaseSerializer < ActiveModel::Serializer
   
   def varname
     var = object.send(:variable)
-    var.name
+    if var
+      var.name
+    else
+      "unknown_#{object.variable_id}"
+    end
   end
 
 end
