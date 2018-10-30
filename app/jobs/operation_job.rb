@@ -1,3 +1,6 @@
+require 'socket'
+require 'whats_opt/sqlite_case_reader'
+
 class OperationJob < ActiveJob::Base
   
   WOP_CMD = APP_CONFIG['wop_cmd'] || wop
@@ -41,24 +44,27 @@ class OperationJob < ActiveJob::Base
   
   def _upload(user, ope, sqlite_filename)
     Rails.logger.info "About to load #{sqlite_filename}"
-    if (File.exists?(sqlite_filename))
-      Rails.logger.info "Upload data #{sqlite_filename}"
-      cmd = [WOP_ENV, WOP_CMD, "--credentials", user.api_key, "upload", sqlite_filename, "--operation-id", ope.id.to_s]
-      Rails.logger.info cmd.join(" ")
-      pid = Process.spawn(*cmd) 
-      Rails.logger.info "Data #{sqlite_filename} uploaded via wop upload (PID=#{pid})"
-      # 10s delay to avoid deadlock. cleanup cannot be synchrone related to GIL
-      CleanupJob.set(wait: 5.seconds).perform_later(ope, pid, sqlite_filename)
-      #_cleanup(ope, pid, sqlite_filename)
-    else 
-      Rails.logger.warn "#{sqlite_filename} DOES NOT EXIST"
-    end
+    reader = WhatsOpt::SqliteCaseReader.new(sqlite_filename)
+    driver = case reader.driver_name
+             when 'LHS'
+               'smt_doe_lhs' 
+             when 'SLSQP' 
+               'scipy_optimizer_slsqp'
+             when 'Morris'
+               'salib_doe_morris'
+             else
+               Rails.logger.info "Unknown driver #{reader.driver_name}: Data loaded as doe cases with unknown driver"
+               'unknown'
+             end
+    operation_params = {name: reader.driver_name,
+                        driver: driver,
+                        host: Socket.gethostname,
+                        cases: reader.cases_attributes}
+    ope.update_operation(operation_params)
+    ope.save!
+    ope.set_upload_job_done
+    Rails.logger.info "Cleanup #{sqlite_filename}"
+    File.delete(sqlite_filename)
   end
-#  
-#  def _cleanup(ope, pid, sqlite_filename)
-#    _, status = Process.wait2 pid
-#    Rails.logger.info "Job #{pid} done (exitstatus = ${status})"
-#    Rails.logger.info "Cleanup #{sqlite_filename}"
-#    File.delete(sqlite_filename)
-#  end
+
 end

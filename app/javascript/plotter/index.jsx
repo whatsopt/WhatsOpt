@@ -126,7 +126,7 @@ class Plotter extends React.Component {
     if (isOptim) {
         let objname = this.db.getObjective().variable.name;
         let extremization = this.db.getObjective().isMin?"minimization":"maximization";
-        details = `Variable '${objname}' ${extremization} in ${nbPts} evaluations`;
+        details = `Variable '${objname}' ${extremization}`;
     }
     let title = `${this.props.ope.name} on ${this.props.mda.name} - ${details}`;
     let child = (<PlotPanel db={this.db} optim={isOptim} cases={selCases}
@@ -138,7 +138,7 @@ class Plotter extends React.Component {
 
     return (
       <div>
-        <h1>Plots for {this.props.mda.name} {this.props.ope.driver} {this.props.ope.category} </h1>
+        <h1>{this.props.ope.name} on {this.props.mda.name} with {this.props.ope.driver}</h1>
 
         <ul className="nav nav-tabs" id="myTab" role="tablist">
           <li className="nav-item">
