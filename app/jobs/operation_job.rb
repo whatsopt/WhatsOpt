@@ -45,21 +45,7 @@ class OperationJob < ActiveJob::Base
   def _upload(user, ope, sqlite_filename)
     Rails.logger.info "About to load #{sqlite_filename}"
     reader = WhatsOpt::SqliteCaseReader.new(sqlite_filename)
-    driver = case reader.driver_name
-             when 'LHS'
-               'smt_doe_lhs' 
-             when 'SLSQP' 
-               'scipy_optimizer_slsqp'
-             when 'Morris'
-               'salib_doe_morris'
-             else
-               Rails.logger.info "Unknown driver #{reader.driver_name}: Data loaded as doe cases with unknown driver"
-               'unknown'
-             end
-    operation_params = {name: reader.driver_name,
-                        driver: driver,
-                        host: Socket.gethostname,
-                        cases: reader.cases_attributes}
+    operation_params = {cases: reader.cases_attributes}
     ope.update_operation(operation_params)
     ope.save!
     ope.set_upload_job_done
