@@ -1,5 +1,12 @@
 <h1>CHANGELOG</h1>
 
+<h3>0.12.0 (30/11/2018)</h3>
+<ul>
+  <li>Retrieve initial values when using wop push</li>
+  <li>Fix result display error when a variable is removed</li> 
+  <li>Implement native result load in ruby</li>
+</ul>
+
 <h3>0.11.0 (28/09/2018)</h3>
 <ul>
   <li>Interruption (abort) of an operation run on the server.</li>
