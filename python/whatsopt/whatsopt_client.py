@@ -47,6 +47,7 @@ class WhatsOpt(object):
         self.vars = {}
         self.varattrs = {}
         self.vardescs = {}
+        self.driver_regexp = None
         
         # login by default
         if login:
@@ -239,6 +240,7 @@ class WhatsOpt(object):
         m = re.match(r"\w+:(\w+)|.*", driver_first_coord)
         if m:
             name = m.group(1)
+        self.driver_regexp = re.compile("\w+:"+name)
         cases = self._format_upload_cases(reader)
         
         resp = None
@@ -469,11 +471,12 @@ class WhatsOpt(object):
         inputs = {}
         outputs = {}
         for i, case_id in enumerate(cases):
-            case = reader.system_cases.get_case(case_id)
-            if case.inputs is not None:
-                self._insert_data(case.inputs, inputs)
-            if case.outputs is not None:
-                self._insert_data(case.outputs, outputs)
+            if self.driver_regexp.match(case_id):
+                case = reader.system_cases.get_case(case_id)
+                if case.inputs is not None:
+                    self._insert_data(case.inputs, inputs)
+                if case.outputs is not None:
+                    self._insert_data(case.outputs, outputs)
         cases = inputs.copy()
         cases.update(outputs)
         inputs_count = self._check_count(inputs)
