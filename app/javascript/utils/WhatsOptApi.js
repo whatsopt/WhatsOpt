@@ -121,8 +121,8 @@ class WhatsOptApi {
       .catch((error) => console.log(error));
   }
   
-  pollOperation(operationId, check, callback, onError) {
-    let path = `/api/v1/operations/${operationId}`;
+  pollJob(operationId, check, callback, onError) {
+    let path = `/api/v1/operations/${operationId}/job`;
     this._pollStatus(() => axios.get(this.url(path)), check, callback, 300000, 2000)
       .then(callback)
       .catch(onError);    
@@ -136,11 +136,11 @@ class WhatsOptApi {
       ajax.then( function(response){
         // If the condition is met, we're done!
         if (check(response.data)) {
-          resolve(response);
+          resolve(response.data);
         }
         // If the condition isn't met but the timeout hasn't elapsed, go again
         else if (Number(new Date()) < endTime) {
-          callback(response);
+          callback(response.data);
           setTimeout(checkCondition, interval, resolve, reject);
         }
         // Didn't match and too much time, reject!

@@ -1,5 +1,9 @@
 class Api::V1::JobsController < Api::ApiController
-  before_action :set_job, only: [:create, :update]
+  before_action :set_job
+    
+  def show
+    json_response @job
+  end
     
   def create
     OperationJob.perform_later(current_user, @operation)

@@ -134,6 +134,7 @@ class Runner extends React.Component {
     this.handleAbort = this.handleAbort.bind(this); 
     this.handleChange = this.handleChange.bind(this); 
     this.handleOperationUpdate = this.handleOperationUpdate.bind(this);
+    this.handleJobUpdate = this.handleJobUpdate.bind(this);
   }
   
   handleRun(data) {
@@ -151,22 +152,25 @@ class Runner extends React.Component {
       }
     }
     ids.forEach(id => opeAttrs.options_attributes.push({id: id, _destroy: '1'}));
-    //console.log("OPT ATTRS = "+JSON.stringify(opeAttrs));
 
     let newState = update(this.state, {status: {$set: "STARTED"}});
     this.setState(newState);  
     
     this.api.updateOperation(this.props.ope.id, opeAttrs, 
-        (response) => { this.api.pollOperation(this.props.ope.id,
-                        (respData) => {   
-                          return (respData.job && (respData.job.status === 'DONE'|| respData.job.status === 'FAILED'))
-                        },
-                        (response) => { //console.log(response.data); 
-                          this.handleOperationUpdate(response.data);
-                        },
-                        (error) => { console.log(error); });
-        },
-        (error) => { console.log(error); });
+            (response) => { this.api.pollJob(this.props.ope.id,
+                            (job) => {  
+                              //console.log("CHECK");
+                              //console.log(job); 
+                              return job.status === 'DONE'|| job.status === 'FAILED'
+                            },
+                            (job) => { 
+                              //console.log("CALLBACK");
+                              //console.log(job); 
+                              this.handleJobUpdate(job);
+                            },
+                            (error) => { console.log(error); });
+            },
+            (error) => { console.log(error); });
   }
 
   handleAbort() {
@@ -186,6 +190,12 @@ class Runner extends React.Component {
                                        status: {$set: ope.job.status}, 
                                        log: {$set: ope.job.log},
     });
+    this.setState(newState);  
+  }
+  
+  handleJobUpdate(job) {
+    let newState = update(this.state, {status: {$set: job.status}, 
+                                       log: {$set: job.log}});
     this.setState(newState);  
   }
   
