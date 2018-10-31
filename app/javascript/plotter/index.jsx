@@ -90,7 +90,7 @@ class Plotter extends React.Component {
       if (obj) {
         sel.push(...this.inputVarCases.slice(0, 5), obj, ...cstrs.slice(0, 4));
       } else {
-        sel.push(...this.inputVarCases.slice(0, 5), ...this.outputVarCases(0, 5));
+        sel.push(...this.inputVarCases.slice(0, 5), ...this.outputVarCases.slice(0, 5));
       }
     }
     return sel;
