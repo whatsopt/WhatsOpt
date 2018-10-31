@@ -267,24 +267,7 @@ class Runner extends React.Component {
       </form>
 
       <h1>Operation on {this.props.mda.name}</h1>
-
-      <div className="editor-section">   
-        <div className="btn-toolbar" role="toolbar">
-          <div className="btn-group mr-2" role="group">
-            <button className={btnStatusClass + " btn-primary"} style={{width: "120px"}} type="button" data-toggle="collapse"
-                    data-target="#collapseListing" aria-expanded="false">
-              {btnIcon}<span className="ml-1">{this.state.status}</span>
-            </button>
-          </div>
-        </div>
-        <div className="collapse" id="collapseListing">
-          <div className="card card-block">
-            <div className="listing">
-              {lines}
-            </div>
-          </div>
-        </div>
-      </div>
+      <h2>Specification</h2>
       <div className="editor-section col-3">
         <Form schema={FORM} formData={this.state.formData} 
               onSubmit={this.handleRun} onChange={this.handleChange} widgets={widgets}>      
@@ -293,6 +276,26 @@ class Runner extends React.Component {
             <button type="button" className="ml-2 btn" disabled={!active} onClick={this.handleAbort}>Abort</button>
           </div>
         </Form>
+      </div>
+            
+      <h2>Status</h2>
+
+      <div className="editor-section">   
+      <div className="btn-toolbar" role="toolbar">
+        <div className="btn-group mr-2" role="group">
+          <button className={btnStatusClass + " btn-primary"} style={{width: "120px"}} type="button" data-toggle="collapse"
+                  data-target="#collapseListing" aria-expanded="false">
+            {btnIcon}<span className="ml-1">{this.state.status}</span>
+          </button>
+        </div>
+      </div>
+      <div className="collapse" id="collapseListing">
+        <div className="card card-block">
+          <div className="listing">
+            {lines}
+          </div>
+        </div>
+      </div>
       </div>
       </div>
     );
