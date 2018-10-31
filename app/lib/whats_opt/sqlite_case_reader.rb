@@ -33,10 +33,10 @@ module WhatsOpt
       db.execute( "select iteration_coordinate, inputs, outputs from system_iterations" ) do |row|
         if row[0] =~ /#{@driver_name}/
           cases = {}
-          JSON.parse(row[1]).each do |absname, values|
+          JSON.parse(row[1], {allow_nan: true}).each do |absname, values|
             cases[absname.split('.')[-1]] = values
           end
-          JSON.parse(row[2]).each do |absname, values|
+          JSON.parse(row[2], {allow_nan: true}).each do |absname, values|
             cases[absname.split('.')[-1]] = values
           end
           _insert_values(cases)
