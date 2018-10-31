@@ -49,8 +49,9 @@ class OperationJob < ActiveJob::Base
     ope.update_operation(operation_params)
     ope.save!
     ope.set_upload_job_done
-    Rails.logger.info "Cleanup #{sqlite_filename}"
-    File.delete(sqlite_filename)
+    #Rails.logger.info "Cleanup #{sqlite_filename}"
+    Rails.logger.info "Cleanup DISABLED"
+    #File.delete(sqlite_filename)
   end
 
 end
