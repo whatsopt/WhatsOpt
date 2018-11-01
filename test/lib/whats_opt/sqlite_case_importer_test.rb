@@ -1,7 +1,7 @@
 require 'test_helper'
-require 'whats_opt/sqlite_case_reader'
+require 'whats_opt/sqlite_case_importer'
 
-class SqliteCaseReaderTest < ActiveSupport::TestCase
+class SqliteCaseImporterTest < ActiveSupport::TestCase
 
   def setup
     @filename = @doe = sample_file("sellar_doe.sqlite").path
@@ -9,18 +9,18 @@ class SqliteCaseReaderTest < ActiveSupport::TestCase
   end
     
   test "should detect valid sqlite db" do
-    @cr = WhatsOpt::SqliteCaseReader.new(@filename) 
+    @cr = WhatsOpt::SqliteCaseImporter.new(@filename) 
     assert @cr.is_valid_sqlite_db(@filename)
   end
   
   test "read driver cases from doe sqlite db" do
-    @cr = WhatsOpt::SqliteCaseReader.new(@doe) 
+    @cr = WhatsOpt::SqliteCaseImporter.new(@doe) 
     assert_equal "LHS", @cr.driver_name
     assert_equal 50, @cr.num_cases
   end
 
   test "read driver cases from optim sqlite db" do
-    @cr = WhatsOpt::SqliteCaseReader.new(@optim) 
+    @cr = WhatsOpt::SqliteCaseImporter.new(@optim) 
     assert_equal "SLSQP", @cr.driver_name
     assert_equal 6, @cr.num_cases
     expected_cases = {

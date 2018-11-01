@@ -1,5 +1,5 @@
 require 'socket'
-require 'whats_opt/sqlite_case_reader'
+require 'whats_opt/sqlite_case_importer'
 
 class OperationJob < ActiveJob::Base
   
@@ -44,8 +44,8 @@ class OperationJob < ActiveJob::Base
   
   def _upload(user, ope, sqlite_filename)
     Rails.logger.info "About to load #{sqlite_filename}"
-    reader = WhatsOpt::SqliteCaseReader.new(sqlite_filename)
-    operation_params = {cases: reader.cases_attributes}
+    importer = WhatsOpt::SqliteCaseImporter.new(sqlite_filename)
+    operation_params = {cases: importer.cases_attributes}
     ope.update_operation(operation_params)
     ope.save!
     ope.set_upload_job_done

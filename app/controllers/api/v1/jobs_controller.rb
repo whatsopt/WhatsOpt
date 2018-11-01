@@ -23,7 +23,7 @@ class Api::V1::JobsController < Api::ApiController
   private
     def set_job
       @operation = Operation.find(params[:operation_id])
-      @job = @operation.job || ope.create_job(status: 'PENDING', pid: -1, log: "")
+      @job = @operation.job || @operation.create_job(status: 'PENDING', pid: -1, log: "")
       authorize @operation.analysis
     end
   

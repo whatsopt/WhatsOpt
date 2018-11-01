@@ -4,12 +4,17 @@ MAINTAINER remi.lafage@onera.fr
 #ENV http_proxy=http://proxy.onecert.fr:80
 #ENV https_proxy=http://proxy.onecert.fr:80
 
-RUN apt-get update \
-  && apt-get upgrade -y --force-yes \
-  && apt-get install -y python3-pip python3-dev \
-  && cd /usr/local/bin \
-  && ln -s /usr/bin/python3 python \
-  && pip3 install --upgrade pip
+RUN apt-get update
+RUN apt-get install -y software-properties-common vim
+RUN add-apt-repository ppa:jonathonf/python-3.6
+RUN apt-get update
+
+RUN apt-get install -y build-essential python3.6 python3.6-dev python3-pip python3.6-venv
+RUN apt-get install -y git
+
+# update pip
+RUN python3.6 -m pip install pip --upgrade
+RUN python3.6 -m pip install wheel
 
 # adapted from drecom/ubuntu-base drecom/ubuntu-ruby
 RUN apt-get update \
@@ -80,28 +85,30 @@ RUN pip install jupyter \
     && pip install thrift==0.11.0 \
 	&& pip install Click \
 	&& pip install tabulate \
-	&& pip install openmdao==2.4
+	&& pip install openmdao==2.4 \
+	&& pip install salib \
+	&& pip install thrift==0.11.0
 
 # OpenVSP
-#RUN apt-get install -y git cmake libxml2-dev \
-#			g++ libcpptest-dev libeigen3-dev \
-#			libcminpack-dev swig \
-#  && apt-get update \
-#  && mkdir OpenVSP \
-#  && cd OpenVSP \
-#  && mkdir repo \
-#  && git clone https://github.com/OpenVSP/OpenVSP.git repo \
-#  && mkdir build \
-#  && cd build \
-#  && echo $PWD \
-#  && cmake -DCMAKE_BUILD_TYPE=Release \
-#	-DVSP_USE_SYSTEM_CPPTEST=false \
-#	-DVSP_USE_SYSTEM_LIBXML2=true \
-#	-DVSP_USE_SYSTEM_EIGEN=false \
-#	-DVSP_USE_SYSTEM_CMINPACK=true \
-#	-DCMAKE_INSTALL_PREFIX=/usr/local/bin \
-#	-DVSP_NO_GRAPHICS=1 ../repo/SuperProject \
-#  && make 
+RUN apt-get install -y git cmake libxml2-dev \
+			g++ libcpptest-dev libeigen3-dev \
+			libcminpack-dev swig \
+  && apt-get update \
+  && mkdir OpenVSP \
+  && cd OpenVSP \
+  && mkdir repo \
+  && git clone https://github.com/OpenVSP/OpenVSP.git repo \
+  && mkdir build \
+  && cd build \
+  && echo $PWD \
+  && cmake -DCMAKE_BUILD_TYPE=Release \
+	-DVSP_USE_SYSTEM_CPPTEST=false \
+	-DVSP_USE_SYSTEM_LIBXML2=true \
+	-DVSP_USE_SYSTEM_EIGEN=false \
+	-DVSP_USE_SYSTEM_CMINPACK=true \
+	-DCMAKE_INSTALL_PREFIX=/usr/local/bin \
+	-DVSP_NO_GRAPHICS=1 ../repo/SuperProject \
+  && make 
 
 # Thrift
 ENV THRIFT_VERSION 0.11.0

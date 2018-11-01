@@ -31,12 +31,7 @@ module WhatsOpt
         _generate_code dir, only_base: only_base, sqlite_filename: sqlite_filename
         stringio = Zip::OutputStream.write_buffer do |zio|  
           @genfiles.each do |filename|
-            if user_agent=~/wop/
-              entry = Pathname.new(filename).relative_path_from(zip_rootpath)
-            else # wop < 0.4.2 User-Agent is not set at all
-              # TODO: to be removed when wop < 0.4.2 obsolete
-              entry = filename.split('/')[2..-1].join('/')
-            end
+            entry = Pathname.new(filename).relative_path_from(zip_rootpath)
             zio.put_next_entry(entry)
             File.open(filename) do |f|
               zio.write f.read

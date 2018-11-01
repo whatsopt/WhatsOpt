@@ -1,7 +1,7 @@
 require 'json'
 
 module WhatsOpt  
-  class SqliteCaseReader
+  class SqliteCaseImporter
   
     attr_reader :driver_name, :num_cases, :cases, :cases_attributes
     
