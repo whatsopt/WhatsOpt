@@ -1,7 +1,7 @@
 require 'whats_opt/cmdows_generator'
 require 'whats_opt/openmdao_generator'
 
-class ExportsController < ApplicationController
+class AnalysisExportsController < ApplicationController
 
   def new
     mda_id = params[:mda_id]

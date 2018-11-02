@@ -135,11 +135,16 @@ class Plotter extends React.Component {
       child = (<VariablePanel db={this.db} optim={isOptim} cases={cases} selCases={selCases}
                 active={!this.state.plotActive} onSelectionChange={this.handleSelectionChange}/>);
     }
-
+    
+    let exportUrl = `/operations/${this.props.ope.id}/operation_exports/new`;
     return (
       <div>
         <h1>{this.props.ope.name} on {this.props.mda.name} with {this.props.ope.driver}</h1>
 
+        <div className="btn-group mr-2  float-right" role="group">
+           <a className="btn btn-primary" href={exportUrl}>Csv Export</a>
+        </div>
+        
         <ul className="nav nav-tabs" id="myTab" role="tablist">
           <li className="nav-item">
             <a className="nav-link active" id="plots-tab" href="#plots"

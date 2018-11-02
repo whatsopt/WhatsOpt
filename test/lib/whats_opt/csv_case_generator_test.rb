@@ -8,16 +8,23 @@ class CsvCaseGeneratorTest < ActiveSupport::TestCase
   end
   
   test "should generate csv file from given operation cases" do
+    @csvgen = WhatsOpt::CsvCaseGenerator.new
+    content, filename = @csvgen.generate @ope.cases    
+    assert_equal "x1;obj\n1;4\n2;5\n3;6\n", content
+    assert_equal "cases.csv", filename
+  end
+  
+  test "should generate csv zipped file from given operation cases" do
     zippath = Tempfile.new('cases.zip')
     File.open(zippath, 'w') do |f|
-      @csvgen = WhatsOpt::CsvCaseGenerator.new
+      @csvgen = WhatsOpt::CsvCaseGenerator.new(zip: true)
       content, _ = @csvgen.generate @ope.cases
       f.write content
     end
     
     Zip::File.open(zippath) do |zip|
       zip.each do |entry|
-        assert_equal "x1,obj\n1,4\n2,5\n3,6\n", entry.get_input_stream.read
+        assert_equal "x1;obj\n1;4\n2;5\n3;6\n", entry.get_input_stream.read
       end
     end
   end
