@@ -74,7 +74,7 @@ class AnalysesControllerTest < ActionDispatch::IntegrationTest
         analysis: { attachment_attributes: {data: fixture_file_upload('excel_glider.xlsx') }} }
     end
     assert_redirected_to mda_url(Analysis.last)
-    get mda_exports_new_url(Analysis.last, format: "cmdows")
+    get mda_analysis_exports_new_url(Analysis.last, format: "cmdows")
   end     
      
   test "should show analysis" do

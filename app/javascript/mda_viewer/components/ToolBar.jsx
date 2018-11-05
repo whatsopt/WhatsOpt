@@ -59,7 +59,7 @@ class ToolBar extends React.Component {
       btnStatusClass = "btn btn-info";
       btnIcon = <i className="fa fa-cog fa-spin" />;
     }
-    let base = "/analyses/"+this.props.mdaId+"/exports/new";
+    let base = "/analyses/"+this.props.mdaId+"/analysis_exports/new";
     let hrefOm = this.api.url(base+".openmdao");
     let hrefCd = this.api.url(base+".cmdows");
     return (
@@ -68,13 +68,13 @@ class ToolBar extends React.Component {
           <div className="btn-group mr-2" role="group">
             <button className={btnStatusClass} type="button" data-toggle="collapse"
                     data-target="#collapseListing" aria-expanded="false">{btnIcon}</button>
-            <a className="btn btn-primary" href={hrefOm}>OpenMDAO Export</a>
+            <a className="btn btn-primary" href={hrefOm}>Export OpenMDAO</a>
           </div>
           <div className="btn-group mr-2" role="group">
-            <a className="btn btn-primary" href={hrefCd}>Cmdows Export</a>
+            <a className="btn btn-primary" href={hrefCd}>Export Cmdows</a>
           </div>
           <div className="btn-group mr-2" role="group">
-            <a className="btn btn-primary" href="#" onClick={this.saveAsPng}>Image Export</a>
+            <a className="btn btn-primary" href="#" onClick={this.saveAsPng}>Export Image</a>
           </div>
         </div>
         <div className="collapse" id="collapseListing">

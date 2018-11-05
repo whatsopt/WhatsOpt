@@ -7,12 +7,12 @@ class ExportsControllerTest < ActionDispatch::IntegrationTest
   end
   
   test "should get new openmdao zip archive given an mda_id" do
-    get mda_exports_new_url(mda_id: @mda.id, format: :openmdao)
+    get mda_analysis_exports_new_url(mda_id: @mda.id, format: :openmdao)
     assert_response :success
   end
 
   test "should get cmdows file given an mda_id" do
-    get mda_exports_new_url(mda_id: @mda.id, format: :cmdows)
+    get mda_analysis_exports_new_url(mda_id: @mda.id, format: :cmdows)
     assert_response :success
   end
     
