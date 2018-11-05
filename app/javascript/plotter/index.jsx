@@ -142,7 +142,7 @@ class Plotter extends React.Component {
         <h1>{this.props.ope.name} on {this.props.mda.name} with {this.props.ope.driver}</h1>
 
         <div className="btn-group mr-2  float-right" role="group">
-           <a className="btn btn-primary" href={exportUrl}>Csv Export</a>
+           <a className="btn btn-primary" href={exportUrl}>Export Csv</a>
         </div>
         
         <ul className="nav nav-tabs" id="myTab" role="tablist">

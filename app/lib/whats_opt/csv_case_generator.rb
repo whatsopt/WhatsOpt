@@ -14,10 +14,11 @@ module WhatsOpt
       return "", "#{basename}.zip" if cases.empty?
             
       headers = cases.map do |c| 
+        varname = c.variable&.name || "unknown_#{c.variable_id}"
         if c.coord_index > -1 
-          "#{c.variable.name}[#{c.coord_index}]"
+          "#{varname}[#{c.coord_index}]"
         else
-          c.variable.name
+          varname
         end
       end
       
