@@ -63,6 +63,7 @@ VariablePanel.propTypes = {
 class Plotter extends React.Component {
   constructor(props) {
     super(props);
+    this.api = this.props.api;
     this.db = new AnalysisDatabase(this.props.mda);
     this.cases = this.props.ope.cases.sort(caseUtils.compare);
 
@@ -136,7 +137,7 @@ class Plotter extends React.Component {
                 active={!this.state.plotActive} onSelectionChange={this.handleSelectionChange}/>);
     }
     
-    let exportUrl = `/operations/${this.props.ope.id}/operation_exports/new`;
+    let exportUrl = this.api.url(`/operations/${this.props.ope.id}/operation_exports/new`);
     return (
       <div>
         <h1>{this.props.ope.name} on {this.props.mda.name} with {this.props.ope.driver}</h1>
@@ -166,6 +167,7 @@ class Plotter extends React.Component {
 }
 
 Plotter.propTypes = {
+  api: PropTypes.object.isRequired,
   mda: PropTypes.shape({
     name: PropTypes.string,
   }),
