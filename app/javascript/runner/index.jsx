@@ -53,7 +53,8 @@ const FORM = {
                          "pyoptsparse_optimizer_slsqp", 
                          "pyoptsparse_optimizer_psqp", 
                          "pyoptsparse_optimizer_nsga2", 
-                         "pyoptsparse_optimizer_snopt"],
+                         "pyoptsparse_optimizer_snopt"
+                         ],
                 "enumNames": ["RunOnce", "SMT - LHS", "Scipy - COBYLA", "Scipy - BFGS", "Scipy - SLSQP",
                               "pyOptSparse - CONMIN", 
                               // "pyOptSparse - FSQP", 
