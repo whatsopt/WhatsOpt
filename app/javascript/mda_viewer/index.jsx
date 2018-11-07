@@ -45,6 +45,7 @@ class MdaViewer extends React.Component {
     this.handleConnectionDelete = this.handleConnectionDelete.bind(this);
     this.handleConnectionDelete = this.handleConnectionDelete.bind(this);
     this.handleConnectionChange = this.handleConnectionChange.bind(this);
+    this.handleErrorClose = this.handleErrorClose.bind(this);
   }
 
   handleFilterChange(filter) {
@@ -236,9 +237,15 @@ class MdaViewer extends React.Component {
       });
   }
 
+  handleErrorClose(index) {
+    console.log("INDEX", index);
+    let newState = update(this.state, {errors: {$splice: [[index, 1]]}});
+    this.setState(newState);
+  }
+  
   render() {
     let errors = this.state.errors.map((message, i) => {
-      return ( <Error key={i} msg={message} /> );
+      return ( <Error key={i} msg={message} onClose={() => this.handleErrorClose(i)}/> );
     });
     let db = new AnalysisDatabase(this.state.mda);
 
