@@ -32,7 +32,7 @@ const OPTTYPES = {
 const OPTDEFAULTS = {
   smt_doe_lhs_nbpts: 50,
   scipy_optimizer_slsqp_tol: 1e-6,
-  scipy_optimizer_slsqp_maxiter: 1000,
+  scipy_optimizer_slsqp_maxiter: 100,
   scipy_optimizer_slsqp_disp: true,
   pyoptsparse_optimizer_snopt_tol: 1e-6,
   pyoptsparse_optimizer_snopt_maxiter: 1000,
@@ -42,7 +42,7 @@ const FORM = {
   "type": "object",
   "properties": {
     "name": {"type": "string", "title": "Operation name"},
-    "host": {"type": "string", "title": "Analysis Server"},
+    "host": {"type": "string", "title": "Analysis server"},
     "driver" : {"type": "string", "title": "Driver", 
                 "enum": ["runonce", "smt_doe_lhs", 
                          "scipy_optimizer_cobyla", 
@@ -113,7 +113,7 @@ class Runner extends React.Component {
     super(props);
     this.api = this.props.api;
     
-    let status = (this.props.ope.job && this.props.ope.job.status) || 'DONE';;
+    let status = (this.props.ope.job && this.props.ope.job.status) || 'PENDING';
     let log = (this.props.ope.job && this.props.ope.job.log) || '';
     
     let formData = { 
@@ -124,7 +124,9 @@ class Runner extends React.Component {
     let formOptions = this._toFormOptions(this.props.ope.options);
     let optionsIds = this.props.ope.options.map(opt => opt.id);
     Object.assign(formData, formOptions);
-    
+    this.opeData = {};
+    Object.assign(this.opeData, formData);
+    this.opeStatus = status;
     this.state = {formData: formData, 
                   optionsIds: optionsIds,
                   cases: this.props.ope.cases,
@@ -134,7 +136,6 @@ class Runner extends React.Component {
     this.handleRun = this.handleRun.bind(this); 
     this.handleAbort = this.handleAbort.bind(this); 
     this.handleChange = this.handleChange.bind(this); 
-    this.handleOperationUpdate = this.handleOperationUpdate.bind(this);
     this.handleJobUpdate = this.handleJobUpdate.bind(this);
   }
   
@@ -167,6 +168,9 @@ class Runner extends React.Component {
                             (job) => { 
                               //console.log("CALLBACK");
                               //console.log(job); 
+                              this.opeData = {};
+                              Object.assign(this.opeData, data.formData)
+                              this.opeStatus = job.status;
                               this.handleJobUpdate(job);
                             },
                             (error) => { console.log(error); });
@@ -180,20 +184,6 @@ class Runner extends React.Component {
     this.setState(newState);
   }
   
-  handleOperationUpdate(ope) {
-    let formData = { name: ope.name, host: ope.host, driver: ope.driver, }
-    let formOptions = this._toFormOptions(ope.options);
-    Object.assign(formData, formOptions);
-    let optionsIds = ope.options.map(opt => opt.id);
-    let newState = update(this.state, {formData: {$set: formData},
-                                       optionsIds: {$set: optionsIds},
-                                       cases: {$set: ope.cases},
-                                       status: {$set: ope.job.status}, 
-                                       log: {$set: ope.job.log},
-    });
-    this.setState(newState);  
-  }
-  
   handleJobUpdate(job) {
     let newState = update(this.state, {status: {$set: job.status}, 
                                        log: {$set: job.log}});
@@ -201,10 +191,27 @@ class Runner extends React.Component {
   }
   
   handleChange(data) {
-    console.log("FORMDATA= "+JSON.stringify(data.formData));
-    console.log("FILTERDATA= "+JSON.stringify(this._filterFormOptions(data.formData)));
-    let newState = update(this.state, {formData: {$set: data.formData}});
-    this.setState(newState);
+//    console.log("FORMDATA= "+JSON.stringify(data.formData));
+//    console.log("OPEDATA= "+JSON.stringify(this.opeData));
+//    console.log("FILTERDATA= "+JSON.stringify(this._filterFormOptions(data.formData)));
+    if (this._isChanged(data.formData)) {
+      let newState = update(this.state, {formData: {$set: data.formData}, 
+                                         status: {$set: "PENDING"}});
+      this.setState(newState);
+    } else {
+      let newState = update(this.state, {formData: {$set: data.formData}, 
+                                         status: {$set: this.opeStatus}});
+      this.setState(newState);  
+    }
+  }
+  
+  _isChanged(data) { 
+    for (let p in data) {
+      if (data[p] !== this.opeData[p]) {
+        return true;
+      }
+    } 
+    return false;
   }
   
   _filterFormOptions = (options) => {

@@ -1,0 +1,69 @@
+<div class="btn-toolbar float-right">
+<!-- <%= link_to 'New MDA', new_mda_path, class: "btn btn-primary" %> -->
+<%= link_to 'New', new_mda_path, class: "btn btn-primary  mr-2" %>
+<%= link_to 'Import', new_mda_path(import: true), class: "btn btn-primary" %>
+</div>
+
+<h1>Multi Disciplinary Analyses</h1>
+
+<p>
+<table class="table table-striped">
+
+	<thead>
+		<tr>
+		  <th class="col-md-2">Name</th>
+      <th class="col-md-1">Owner</th>
+      <th class="col-md-1">Locked</th>
+		  <th class="col-md-2">Created</th>
+		  <th class="col-md-3">Operations</th>
+		  <th class="col-md-2">Action(s)</th>
+		</tr>
+	</thead>
+  
+	<tbody>
+	  <% @mdas.each do |mda| %>
+	    <tr>
+	      <td><%= link_to_analysis_if_authorized(mda, current_user) %></td>
+          <td><%= mda.owner %></td>
+          <td>
+            <% unless mda.public %>
+              <i class="fa fa-lock"></i>
+            <% end %>    
+          </td>
+          <td><%= time_ago_in_words(mda.created_at) %> ago</td>
+          <td>
+            <%= link_to_operations_if_authorized(mda, current_user) %>
+          </td>
+	      <td>
+	        <% if policy(mda).update? %>
+	          <%= link_to edit_mda_path(mda), 
+	            class: "d-inline btn btn-light btn-inverse btn-sm", title: "Edit" do %>
+	            <i class="fa fa-pencil"></i> 
+	          <% end %>    
+	          <span class="ml-2"/>
+	        <% end %>
+	        
+	        <% if policy(mda).operate? %>      
+              <%= link_to mda_operations_url(mda), method: :post, 
+                class: "d-inline btn btn-light btn-inverse btn-sm", title: "Operate" do %>
+                <i class="fa fa-rocket"></i> 
+              <% end %>    
+              <span class="ml-2"/>
+            <% end %>
+	        
+	        <% if policy(mda).destroy? %>
+	          <%= link_to mda_path(mda), method: :delete, data: { title: 'Are you sure?', 
+	                                                              confirm: "Remove #{mda.name} analysis?",
+	                                                              commit: 'Yes',
+	                                                              cancel: 'No, cancel' }, 
+	              class: "d-inline btn btn-light btn-inverse btn-sm text-danger", title:"Delete" do %>
+                <i class="fa fa-close"></i> 
+              <% end %>    
+	      	<% end %>
+	      </td>
+	    </tr>
+	  <% end %>
+  </tbody>
+</table>
+</p>
+

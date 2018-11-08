@@ -1,2 +1,2 @@
 # WhatsOpt
-Web application to manage optimization processes
+Web application to manage optimization processes.

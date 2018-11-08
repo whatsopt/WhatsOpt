@@ -1,8 +1,8 @@
 <div class="btn-toolbar float-right">
 <% if policy(@ope).edit? %>
-  <%= button_to edit_operation_url(@ope), method: :get, class: "btn", title:"Edit" do %>
-    <span class="fa fa-pencil"></span>
-      Edit
+  <%= button_to edit_operation_url(@ope), method: :get, class: "btn ml-2", title:"Re-run" do %>
+    <span class="fa fa-rocket"></span>
+    Re-run
   <% end %> 
 <% end %>
 <% if policy(@ope).destroy? %>
