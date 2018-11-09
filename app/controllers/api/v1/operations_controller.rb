@@ -19,11 +19,6 @@ class Api::V1::OperationsController < Api::ApiController
   def update
     @operation.update_operation(ope_params)
     @operation.save!
-    if ope_params[:cases]
-      @operation.set_upload_job_done
-    else # should generate cases i.e. run the operation
-      OperationJob.perform_later(current_user, @operation)
-    end
     head :no_content
   end
   
@@ -37,7 +32,7 @@ class Api::V1::OperationsController < Api::ApiController
     # Use callbacks to share common setup or constraints between actions.
     def set_operation
       @operation = Operation.find(params[:id])
-      authorize @operation.analysis
+      authorize @operation
     end
   
     def ope_params

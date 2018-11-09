@@ -238,7 +238,6 @@ class MdaViewer extends React.Component {
   }
 
   handleErrorClose(index) {
-    console.log("INDEX", index);
     let newState = update(this.state, {errors: {$splice: [[index, 1]]}});
     this.setState(newState);
   }

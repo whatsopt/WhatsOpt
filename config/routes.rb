@@ -5,10 +5,10 @@ Rails.application.routes.draw do
   
   resources :variables
   resources :analyses, shallow: true, as: :mdas do
-    resources :operations, except: [:new] do
-      get 'operation_exports/new'
+    resources :operations do
+      get 'exports/new', to: 'operation_exports#new'
     end
-    get 'analysis_exports/new'
+    get 'exports/new', to: 'analysis_exports#new'
   end
   resources :notebooks
   resources :geometry_models

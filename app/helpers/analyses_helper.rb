@@ -10,7 +10,15 @@ module AnalysesHelper
       analysis.name
     end
   end
-  
+
+  def link_to_operation_if_authorized(ope, user)
+    if policy(ope.analysis).show?
+      link_to ope.name, operation_path(ope), id: ope.id
+    else
+      ope.name
+    end
+  end
+    
   def link_to_operations_if_authorized(analysis, user)
     res = ""
     Operation.done(analysis).each do |ope|

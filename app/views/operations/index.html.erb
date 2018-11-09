@@ -1,10 +1,14 @@
 <div class="btn-toolbar float-right">
-<!-- <%= link_to 'New MDA', new_mda_path, class: "btn btn-primary" %> -->
-<%= link_to 'New', new_mda_path, class: "btn btn-primary  mr-2" %>
-<%= link_to 'Import', new_mda_path(import: true), class: "btn btn-primary" %>
+  <%= button_to 'New', mda_operations_path(@mda), title: "Operate #{@mda.name}", method: 'post', class: "btn btn-primary" %>
+  <%= button_to mdas_url, method: :get, class:"btn ml-2" do |b|%>
+    <span class="fa fa-times-circle"></span>
+      Close
+  <% end %>   
 </div>
+  
+<h1>Operations on <%=@mda.name%></h1>
 
-<h1>Multi Disciplinary Analyses</h1>
+<div id='errorPlaceHolder'></div>
 
 <p>
 <table class="table table-striped">
@@ -12,53 +16,30 @@
 	<thead>
 		<tr>
 		  <th class="col-md-2">Name</th>
-      <th class="col-md-1">Owner</th>
-      <th class="col-md-1">Locked</th>
-		  <th class="col-md-2">Created</th>
-		  <th class="col-md-3">Operations</th>
 		  <th class="col-md-2">Action(s)</th>
 		</tr>
 	</thead>
   
 	<tbody>
-	  <% @mdas.each do |mda| %>
+	  <% @operations.each do |ope| %>
 	    <tr>
-	      <td><%= link_to_analysis_if_authorized(mda, current_user) %></td>
-          <td><%= mda.owner %></td>
-          <td>
-            <% unless mda.public %>
-              <i class="fa fa-lock"></i>
-            <% end %>    
-          </td>
-          <td><%= time_ago_in_words(mda.created_at) %> ago</td>
-          <td>
-            <%= link_to_operations_if_authorized(mda, current_user) %>
-          </td>
+	      <td><%= link_to_operation_if_authorized(ope, current_user) %></td>
 	      <td>
-	        <% if policy(mda).update? %>
-	          <%= link_to edit_mda_path(mda), 
-	            class: "d-inline btn btn-light btn-inverse btn-sm", title: "Edit" do %>
-	            <i class="fa fa-pencil"></i> 
+          <% if policy(ope).update? %>
+            <a href='#' name="edit-name" class="d-inline btn btn-light btn-inverse btn-sm" title="Edit name" data-api-key="<%=current_user.api_key%>" data-ope-id="<%= ope.id %>" data-ope-name="<%= ope.name %>" data-toggle="modal" data-target="#editModal">
+              <i class="fa fa-pencil"></i> 
+            </a> 
+	          <%= link_to edit_operation_path(ope), 
+	            class: "d-inline btn btn-light btn-inverse btn-sm ml-2", title: "Re-run" do %>
+	            <i class="fa fa-rocket"></i> 
 	          <% end %>    
-	          <span class="ml-2"/>
-	        <% end %>
-	        
-	        <% if policy(mda).operate? %>      
-              <%= link_to mda_operations_url(mda), method: :post, 
-                class: "d-inline btn btn-light btn-inverse btn-sm", title: "Operate" do %>
-                <i class="fa fa-rocket"></i> 
-              <% end %>    
-              <span class="ml-2"/>
-            <% end %>
-	        
-	        <% if policy(mda).destroy? %>
-	          <%= link_to mda_path(mda), method: :delete, data: { title: 'Are you sure?', 
-	                                                              confirm: "Remove #{mda.name} analysis?",
-	                                                              commit: 'Yes',
-	                                                              cancel: 'No, cancel' }, 
-	              class: "d-inline btn btn-light btn-inverse btn-sm text-danger", title:"Delete" do %>
+	          <%= link_to operation_path(ope), method: :delete, data: { title: 'Are you sure?', 
+	                                                                    confirm: "Remove #{ope.name} operation?",
+	                                                                    commit: 'Yes',
+	                                                                    cancel: 'No, cancel' }, 
+	              class: "d-inline btn btn-light btn-inverse btn-sm text-danger ml-2", title:"Delete" do %>
                 <i class="fa fa-close"></i> 
-              <% end %>    
+            <% end %>    
 	      	<% end %>
 	      </td>
 	    </tr>
@@ -67,3 +48,74 @@
 </table>
 </p>
 
+<!-- Modal -->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editModalLabel">Edit Name</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+            <label for="operation[name]" class="col-form-label">Operation Name</label>
+            <input type="text" class="form-control" id="operation_name" name="operation[name]">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" data-save="true">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% content_for :document_ready do %>
+<script>
+  var relativeUrlRoot = document.getElementsByName('relative-url-root')[0].getAttribute('content');
+  var opeEdit = opeEdit || {}
+  var $modal = $('#editModal');
+
+  $modal.on('show.bs.modal', function(e) {
+    opeEdit.invoker = $(e.relatedTarget);
+    opeEdit.id = opeEdit.invoker.data('ope-id');
+    opeEdit.name = opeEdit.invoker.data('ope-name');
+    opeEdit.apiKey = opeEdit.invoker.data('api-key');
+    $("input[name='operation[name]']").val(opeEdit.name);
+  });
+
+  $modal.on('shown.bs.modal', function() {
+    $("input[name='operation[name]']").focus();
+  });
+
+  $('button[data-save="true"]').on('click', 
+    function() {
+      var newName = $("input[name='operation[name]']").val();
+      $.ajax({
+        type: "PATCH",
+        xhrFields: { withCredentials: true },
+        headers: {'Authorization': 'Token '+opeEdit.apiKey},
+        url: relativeUrlRoot+'/api/v1/operations/'+opeEdit.id,
+        data: {operation: {name: newName}},
+        success: function() {
+          $("a[id="+opeEdit.id+"]").text(newName);
+          opeEdit.invoker.data('ope-name', newName);
+          $modal.modal('hide');
+        }, 
+        error: function(xhr, status, error) {
+          console.log(xhr.responseJSON.message);
+          $('#errorPlaceHolder').html(
+            '<div class="alert alert-warning" role="alert"><a href="#" data-dismiss="alert" class="close">×</a>'
+            +  xhr.responseJSON.message
+            +'</div>'
+          );
+          $modal.modal('hide');
+        }, 
+      });
+    });
+</script>
+<% end %>

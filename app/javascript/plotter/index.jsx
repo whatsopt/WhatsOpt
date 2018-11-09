@@ -137,7 +137,7 @@ class Plotter extends React.Component {
                 active={!this.state.plotActive} onSelectionChange={this.handleSelectionChange}/>);
     }
     
-    let exportUrl = this.api.url(`/operations/${this.props.ope.id}/operation_exports/new`);
+    let exportUrl = this.api.url(`/operations/${this.props.ope.id}/exports/new`);
     return (
       <div>
         <h1>{this.props.ope.name} on {this.props.mda.name} with {this.props.ope.driver}</h1>

@@ -47,7 +47,7 @@ class Api::V1::OperationsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test "should update an operation" do
+  test "should update an operation with cases" do
     patch api_v1_operation_url(@ope), 
       params: {operation: {name: 'update_doe', driver: 'slsqp', cases: [{varname: 'x1', coord_index: 0, values: [4, 5, 6]},
                                                                         {varname: 'y2', coord_index: 0, values: [1, 2, 3]}]}},
@@ -60,7 +60,8 @@ class Api::V1::OperationsControllerTest < ActionDispatch::IntegrationTest
     assert_equal ['x1', 'y2'], resp['cases'].map{|c| c['varname']}.sort 
     assert_equal [0, 0], resp['cases'].map{|c| c['coord_index']}.sort
     assert_equal [1, 2, 3, 4, 5, 6], resp['cases'].map{|c| c['values']}.flatten.sort
-    assert_equal({'status'=> 'DONE', 'log'=> 'Data uploaded\n'}, resp['job'])
+    assert_equal 'DONE', resp['job']['status']
+    assert_equal 'this is a test job\\nData uploaded\\n', resp['job']['log']
   end
 
   test "should update an operation with LHS options" do

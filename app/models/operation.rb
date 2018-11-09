@@ -18,6 +18,8 @@ class Operation < ApplicationRecord
 	has_many :cases, :dependent => :destroy
 	has_one :job, :dependent => :destroy
 	
+  validates :name, presence: true, allow_blank: false
+
   scope :in_progress, ->(analysis) { Operation.where(analysis: analysis).left_outer_joins(:cases).where(cases: {operation_id: nil}) }
   scope :done, ->(analysis) { Operation.where(analysis: analysis).left_outer_joins(:cases).where.not(cases: {operation_id: nil}).uniq }
 	
@@ -39,14 +41,17 @@ class Operation < ApplicationRecord
       end
 	  end
 	  self.update(ope_attrs.except(:cases))
-    self._update_cases(ope_attrs[:cases]) if ope_attrs[:cases]
+    if ope_attrs[:cases]
+      self._update_cases(ope_attrs[:cases])
+      self._set_upload_job_done
+    end
   end
 
-  def set_upload_job_done
+  def _set_upload_job_done
     if self.job
-      self.job.update(status: 'DONE', pid: -1, log: self.job.log << 'Data uploaded\n')
+      self.job.update(status: 'DONE', pid: -1, log: self.job.log + 'Data uploaded\\n')
     else
-      self.create_job(status: 'DONE', pid: -1, log: 'Data uploaded\n')
+      self.create_job(status: 'DONE', pid: -1, log: 'Data uploaded\\n')
     end
   end
   
