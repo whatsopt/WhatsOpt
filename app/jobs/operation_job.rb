@@ -10,7 +10,7 @@ class OperationJob < ActiveJob::Base
     ogen = WhatsOpt::OpenmdaoGenerator.new(ope.analysis, ope.host, ope.driver, ope.option_hash)
     Rails.logger.info "JOB STATUS = RUNNING"
     job = ope.job || ope.create_job(status: 'PENDING', pid: -1, log: "")
-    job.update(status: :RUNNING, log: "")
+    job.update(status: :RUNNING, started_at: Time.now, ended_at: nil, log: "")
 
     sqlite_filename = File.join(Dir.tmpdir, "#{SecureRandom.urlsafe_base64}.sqlite")
     Rails.logger.info sqlite_filename
@@ -36,7 +36,7 @@ class OperationJob < ActiveJob::Base
         end 
       else
         Rails.logger.info "JOB STATUS = FAILED"
-        job.update(status: :FAILED)
+        job.update(status: :FAILED, ended_at: Time.now)
       end
       # Rails.logger.info job.log
     end
@@ -48,7 +48,7 @@ class OperationJob < ActiveJob::Base
     operation_params = {cases: importer.cases_attributes}
     ope.update_operation(operation_params)
     ope.save!
-    ope.set_upload_job_done
+    #ope.set_upload_job_done
     #Rails.logger.info "Cleanup #{sqlite_filename}"
     Rails.logger.info "Cleanup DISABLED"
     #File.delete(sqlite_filename)

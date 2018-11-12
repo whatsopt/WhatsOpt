@@ -109,8 +109,9 @@ class WhatsOptApi {
   
   updateOperation(operationId, ope_attrs, callback, onError) {
     let path = `/api/v1/operations/${operationId}`;
+    let jobpath = `${path}/job`;
     axios.patch(this.url(path), {operation: ope_attrs})
-      .then(callback)
+      .then(() => axios.post(this.url(jobpath)).then(callback).catch((error) => console.log(error)))
       .catch((error) => console.log(error));
   }
   
