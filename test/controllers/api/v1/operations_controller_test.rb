@@ -61,7 +61,7 @@ class Api::V1::OperationsControllerTest < ActionDispatch::IntegrationTest
     assert_equal [0, 0], resp['cases'].map{|c| c['coord_index']}.sort
     assert_equal [1, 2, 3, 4, 5, 6], resp['cases'].map{|c| c['values']}.flatten.sort
     assert_equal 'DONE', resp['job']['status']
-    assert_equal 'this is a test job\\nData uploaded\\n', resp['job']['log']
+    assert_equal "this is a test job\nData uploaded\n", resp['job']['log']
   end
 
   test "should update an operation with LHS options" do

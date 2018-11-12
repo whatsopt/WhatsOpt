@@ -17,7 +17,7 @@ class OperationJob < ActiveJob::Base
     
     Dir.mktmpdir("sqlite") do |dir|
       status = ogen.monitor(ope.category, sqlite_filename) do |stdin, stdouterr, wait_thr|
-        job.update(status: :RUNNING, pid: wait_thr.pid)
+        job.update(status: :RUNNING, sqlite_filename: sqlite_filename, pid: wait_thr.pid)
         stdin.close
         lines = []
         while line = stdouterr.gets
@@ -25,33 +25,9 @@ class OperationJob < ActiveJob::Base
         end
         wait_thr.value
       end
-      if status.success?
-        if ope.driver == "runonce"
-          Rails.logger.info "JOB STATUS = DONE"          
-          job.update(status: :DONE)
-          ope.update(cases: [])
-        else
-          # upload
-          _upload(user, ope, sqlite_filename)
-        end 
-      else
-        Rails.logger.info "JOB STATUS = FAILED"
-        job.update(status: :FAILED, ended_at: Time.now)
-      end
+      ope.update_on_termination
       # Rails.logger.info job.log
     end
-  end
-  
-  def _upload(user, ope, sqlite_filename)
-    Rails.logger.info "About to load #{sqlite_filename}"
-    importer = WhatsOpt::SqliteCaseImporter.new(sqlite_filename)
-    operation_params = {cases: importer.cases_attributes}
-    ope.update_operation(operation_params)
-    ope.save!
-    #ope.set_upload_job_done
-    #Rails.logger.info "Cleanup #{sqlite_filename}"
-    Rails.logger.info "Cleanup DISABLED"
-    #File.delete(sqlite_filename)
   end
 
 end

@@ -16,7 +16,7 @@ class Api::V1::JobsController < Api::ApiController
       rescue Exception => e
         Rails.logger.info e
       end
-      @job.update(pid: -1, status: "FAILED", log: @job.log + 'Process Aborted\\n')
+      @job.update(pid: -1, status: "FAILED", log: @job.log + "Process Aborted\n")
     end
   end
     

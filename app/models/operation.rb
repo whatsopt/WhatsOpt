@@ -47,11 +47,40 @@ class Operation < ApplicationRecord
     end
   end
 
+  def update_on_termination(status)
+    if status.success?
+      if ope.driver == "runonce"
+        Rails.logger.info "JOB STATUS = DONE"          
+        ope.job.update(status: :DONE, ended_at: Time.now)
+        ope.update(cases: [])
+      else
+        # upload
+        _upload(ope)
+      end 
+    else
+      Rails.logger.info "JOB STATUS = FAILED"
+      job.update(status: :FAILED, ended_at: Time.now)
+    end
+  end
+  
+  def _upload(ope)
+    Rails.logger.info "About to load #{sqlite_filename}"
+    sqlite_filename = ope.job.sqlite_filename
+    importer = WhatsOpt::SqliteCaseImporter.new(sqlite_filename)
+    operation_params = {cases: importer.cases_attributes}
+    ope.update_operation(operation_params)
+    ope.save!
+    #ope.set_upload_job_done
+    #Rails.logger.info "Cleanup #{sqlite_filename}"
+    Rails.logger.info "Cleanup DISABLED"
+    #File.delete(sqlite_filename)
+  end
+    
   def _set_upload_job_done
     if self.job
-      self.job.update(status: 'DONE', pid: -1, log: self.job.log + 'Data uploaded\\n')
-    else
-      self.create_job(status: 'DONE', pid: -1, log: 'Data uploaded\\n')
+      self.job.update(status: 'DONE', pid: -1, log: self.job.log + "Data uploaded\n", ended_at: Time.now)
+    else # wop upload
+      self.create_job(status: 'DONE', pid: -1, log: "Data uploaded\n", started_at: Time.now, ended_at: Time.now)
     end
   end
   
