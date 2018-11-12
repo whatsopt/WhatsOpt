@@ -83,15 +83,26 @@ class Operation < ApplicationRecord
     job.update(status: :RUNNING, sqlite_filename: sqlite_filename, started_at: Time.now, ended_at: nil, log: "")
 
     Dir.mktmpdir("sqlite") do |dir|
+      lines = []
       status = ogen.monitor(self.category, sqlite_filename) do |stdin, stdouterr, wait_thr|
         Rails.logger.info "JOB STATUS = RUNNING"
         job.update(status: :RUNNING, pid: wait_thr.pid)
         stdin.close
-        lines = []
+        count=0
         while line = stdouterr.gets
-          job.update_column(:log, job.log << line)
+          lines << line
+          if count<10
+            count+= 1
+          else
+            job.update_column(:log, job.log << lines.join)
+            count = 0
+            lines = []
+          end
         end
         wait_thr.value
+      end
+      unless lines.empty?
+        job.update_column(:log, job.log << lines.join)
       end
       self._update_on_termination(status)
     end

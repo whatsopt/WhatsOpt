@@ -100,7 +100,7 @@ class WhatsOptApi {
       .catch((error) => console.log(error));
   }
 
-  getOperation(operationId) {
+  getOperation(operationId, callback) {
     let path = `/api/v1/operations/${operationId}`;
     axios.get(this.url(path))
       .then(callback)
@@ -122,7 +122,7 @@ class WhatsOptApi {
       .catch((error) => console.log(error));
   }
   
-  pollJob(operationId, check, callback, onError) {
+  pollOperationJob(operationId, check, callback, onError) {
     let path = `/api/v1/operations/${operationId}/job`;
     this._pollStatus(() => axios.get(this.url(path)), check, callback, 300000, 2000)
       .then(callback)

@@ -122,13 +122,11 @@ class Runner extends React.Component {
             driver: this.props.ope.driver || "runonce",
           }
     let formOptions = this._toFormOptions(this.props.ope.options);
-    let optionsIds = this.props.ope.options.map(opt => opt.id);
     Object.assign(formData, formOptions);
     this.opeData = {};
     Object.assign(this.opeData, formData);
     this.opeStatus = status;
     this.state = {formData: formData, 
-                  optionsIds: optionsIds,
                   cases: this.props.ope.cases,
                   status: status,
                   log: log};
@@ -143,39 +141,45 @@ class Runner extends React.Component {
     let form = this._filterFormOptions(data.formData);
     //console.log("FORM DATA = "+JSON.stringify(form));
     let opeAttrs = { name: form.name, host: form.host, driver: form.driver, options_attributes: []};
-    let ids = this.state.optionsIds.slice(); 
-    for (let opt in form) {
-      if (opt !== "name" && opt !== "host" && opt !== "driver") {
-        let optionAttrs = { name: opt, value: data.formData[opt] };
-        if (ids.length) {
-          optionAttrs.id = ids.shift();  
-        }        
-        opeAttrs.options_attributes.push(optionAttrs);  
-      }
-    }
-    ids.forEach(id => opeAttrs.options_attributes.push({id: id, _destroy: '1'}));
-
-    let newState = update(this.state, {status: {$set: "STARTED"}});
-    this.setState(newState);  
     
-    this.api.updateOperation(this.props.ope.id, opeAttrs, 
-            (response) => { this.api.pollJob(this.props.ope.id,
-                            (job) => {  
-                              //console.log("CHECK");
-                              //console.log(job); 
-                              return job.status === 'DONE'|| job.status === 'FAILED'
-                            },
-                            (job) => { 
-                              //console.log("CALLBACK");
-                              //console.log(job); 
-                              this.opeData = {};
-                              Object.assign(this.opeData, data.formData)
-                              this.opeStatus = job.status;
-                              this.handleJobUpdate(job);
-                            },
-                            (error) => { console.log(error); });
-            },
-            (error) => { console.log(error); });
+    this.api.getOperation(this.props.ope.id, 
+      (response) => {
+        //console.log(response);
+        let ids = response.data.options.map(opt => opt.id);
+        for (let opt in form) {
+          if (opt !== "name" && opt !== "host" && opt !== "driver") {
+            let optionAttrs = { name: opt, value: data.formData[opt] };
+            if (ids.length) {
+              optionAttrs.id = ids.shift();  
+            }        
+            opeAttrs.options_attributes.push(optionAttrs);  
+          }
+        }    
+        ids.forEach(id => opeAttrs.options_attributes.push({id: id, _destroy: '1'}));
+        
+        let newState = update(this.state, {status: {$set: "STARTED"}});
+        this.setState(newState);  
+        
+        this.api.updateOperation(this.props.ope.id, opeAttrs, 
+                (response) => { this.api.pollOperationJob(this.props.ope.id,
+                                (job) => {  
+                                  //console.log("CHECK");
+                                  //console.log(job); 
+                                  return job.status === 'DONE'|| job.status === 'FAILED'
+                                },
+                                (job) => { 
+                                  //console.log("CALLBACK");
+                                  //console.log(job); 
+                                  this.opeData = {};
+                                  Object.assign(this.opeData, data.formData)
+                                  this.opeStatus = job.status;
+                                  this.handleJobUpdate(job);
+                                },
+                                (error) => { console.log(error); });
+                },
+                (error) => { console.log(error); });
+      },
+      (error) => { console.log(error); });
   }
 
   handleAbort() {
