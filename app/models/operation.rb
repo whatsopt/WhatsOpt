@@ -1,4 +1,6 @@
+require 'socket'
 require 'whats_opt/openmdao_generator'
+require 'whats_opt/sqlite_case_importer'
 
 class Operation < ApplicationRecord
 	
@@ -34,6 +36,32 @@ class Operation < ApplicationRecord
 	  operation
 	end
 
+  def to_plotter_json
+    adapter = ActiveModelSerializers::SerializableResource.new(self)
+    adapter.to_json
+  end
+   
+  def category
+    case driver
+    when "runonce"
+      'analysis'
+    when /optimizer/
+      'optimization'
+    when /morris/
+      'screening'
+    else
+      'doe'
+    end 
+   end
+   
+  def nb_of_points
+    cases[0]&.nb_of_points || 0
+  end
+   
+  def option_hash
+    options.map{|h| [h['name'].to_sym, h['value']]}.to_h
+  end
+	
 	def update_operation(ope_attrs)
 	  if (ope_attrs[:options_attributes])
       ope_attrs[:options_attributes].each do |opt|
@@ -47,15 +75,37 @@ class Operation < ApplicationRecord
     end
   end
 
-  def update_on_termination(status)
+  def perform
+    ogen = WhatsOpt::OpenmdaoGenerator.new(self.analysis, self.host, self.driver, self.option_hash)
+    sqlite_filename = File.join(Dir.tmpdir, "#{SecureRandom.urlsafe_base64}.sqlite")
+    Rails.logger.info sqlite_filename
+    job = self.job || self.create_job(status: 'PENDING', pid: -1, log: "")
+    job.update(status: :RUNNING, sqlite_filename: sqlite_filename, started_at: Time.now, ended_at: nil, log: "")
+
+    Dir.mktmpdir("sqlite") do |dir|
+      status = ogen.monitor(self.category, sqlite_filename) do |stdin, stdouterr, wait_thr|
+        Rails.logger.info "JOB STATUS = RUNNING"
+        job.update(status: :RUNNING, pid: wait_thr.pid)
+        stdin.close
+        lines = []
+        while line = stdouterr.gets
+          job.update_column(:log, job.log << line)
+        end
+        wait_thr.value
+      end
+      self._update_on_termination(status)
+    end
+  end
+  
+  def _update_on_termination(status)
     if status.success?
-      if ope.driver == "runonce"
+      if self.driver == "runonce"
         Rails.logger.info "JOB STATUS = DONE"          
-        ope.job.update(status: :DONE, ended_at: Time.now)
-        ope.update(cases: [])
+        self.job.update(status: :DONE, ended_at: Time.now)
+        self.update(cases: [])
       else
         # upload
-        _upload(ope)
+        self._upload
       end 
     else
       Rails.logger.info "JOB STATUS = FAILED"
@@ -63,14 +113,14 @@ class Operation < ApplicationRecord
     end
   end
   
-  def _upload(ope)
+  def _upload
+    sqlite_filename = self.job.sqlite_filename
     Rails.logger.info "About to load #{sqlite_filename}"
-    sqlite_filename = ope.job.sqlite_filename
     importer = WhatsOpt::SqliteCaseImporter.new(sqlite_filename)
     operation_params = {cases: importer.cases_attributes}
-    ope.update_operation(operation_params)
-    ope.save!
-    #ope.set_upload_job_done
+    self.update_operation(operation_params)
+    self.save!
+    #self.set_upload_job_done
     #Rails.logger.info "Cleanup #{sqlite_filename}"
     Rails.logger.info "Cleanup DISABLED"
     #File.delete(sqlite_filename)
@@ -83,36 +133,6 @@ class Operation < ApplicationRecord
       self.create_job(status: 'DONE', pid: -1, log: "Data uploaded\n", started_at: Time.now, ended_at: Time.now)
     end
   end
-  
-	def to_plotter_json
-    adapter = ActiveModelSerializers::SerializableResource.new(self)
-    adapter.to_json
-	end
-	
-	def category
-    case driver
-    when "runonce"
-      'analysis'
-    when /optimizer/
-      'optimization'
-    when /morris/
-      'screening'
-    else
-      'doe'
-	  end 
-	end
-	
-	def nb_of_points
-	  if cases.empty?
-	    0
-	  else
-	    cases[0].nb_of_points
-	  end
-	end
-	
-	def option_hash
-    options.map{|h| [h['name'].to_sym, h['value']]}.to_h
-	end
 	
   def _build_cases(case_attrs)
     var = {}

@@ -6,7 +6,7 @@ class Api::V1::JobsController < Api::ApiController
   end
     
   def create
-    OperationJob.perform_later(current_user, @operation)
+    OperationJob.perform_later(@operation)
   end
   
   def update

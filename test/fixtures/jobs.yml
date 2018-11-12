@@ -1,4 +1,4 @@
 doejob:
   operation: doe
   pid: 666
-  log: 'this is a test job\n'
+  log: "this is a test job\n"
