@@ -129,12 +129,17 @@ class Runner extends React.Component {
     this.state = {formData: formData, 
                   cases: this.props.ope.cases,
                   status: status,
-                  log: log};
+                  log: log,
+                  startInMs: this.props.ope.job && this.props.ope.job && this.props.ope.job.start_in_ms,
+                  endInMs: this.props.ope.job && this.props.ope.job && this.props.ope.job.end_in_ms,
+                  };
     
     this.handleRun = this.handleRun.bind(this); 
     this.handleAbort = this.handleAbort.bind(this); 
     this.handleChange = this.handleChange.bind(this); 
     this.handleJobUpdate = this.handleJobUpdate.bind(this);
+    
+    if (status === "RUNNING") { this._pollOperationJob(formData); }
   }
   
   handleRun(data) {
@@ -161,27 +166,12 @@ class Runner extends React.Component {
         this.setState(newState);  
         
         this.api.updateOperation(this.props.ope.id, opeAttrs, 
-                (response) => { this.api.pollOperationJob(this.props.ope.id,
-                                (job) => {  
-                                  //console.log("CHECK");
-                                  //console.log(job); 
-                                  return job.status === 'DONE'|| job.status === 'FAILED'
-                                },
-                                (job) => { 
-                                  //console.log("CALLBACK");
-                                  //console.log(job); 
-                                  this.opeData = {};
-                                  Object.assign(this.opeData, data.formData)
-                                  this.opeStatus = job.status;
-                                  this.handleJobUpdate(job);
-                                },
-                                (error) => { console.log(error); });
-                },
-                (error) => { console.log(error); });
+                                 (response) => { this._pollOperationJob(data.formData)},
+                                 (error) => { console.log(error); });
       },
       (error) => { console.log(error); });
   }
-
+  
   handleAbort() {
     this.api.killOperationJob(this.props.ope.id);
     let newState = update(this.state, {status: {$set: "ABORTED"}});
@@ -190,7 +180,10 @@ class Runner extends React.Component {
   
   handleJobUpdate(job) {
     let newState = update(this.state, {status: {$set: job.status}, 
-                                       log: {$set: job.log}});
+                                       log: {$set: job.log},
+                                       startInMs: {$set: job.start_in_ms},
+                                       endInMs: {$set: job.end_in_ms || Date.now()},
+    });
     this.setState(newState);  
   }
   
@@ -207,6 +200,25 @@ class Runner extends React.Component {
                                          status: {$set: this.opeStatus}});
       this.setState(newState);  
     }
+  }
+    
+  _pollOperationJob(formData) {
+    this.api.pollOperationJob(this.props.ope.id,
+      (job) => {  
+        //console.log("CHECK");
+        //console.log(job); 
+        return job.status === 'DONE'|| job.status === 'FAILED'
+      },
+      (job) => { 
+        //console.log("CALLBACK");
+        console.log(job); 
+        this.opeData = {};
+        Object.assign(this.opeData, formData)
+        this.opeStatus = job.status;
+        this.handleJobUpdate(job);
+      },
+      (error) => { console.log(error); 
+    });  
   }
   
   _isChanged(data) { 
@@ -280,6 +292,17 @@ class Runner extends React.Component {
       urlOnClose = `/operations/${this.props.ope.id}`;  
     }
     
+    let startTime = "?";
+    if (this.state.startInMs) {
+      startTime = (new Date(this.state.startInMs)).toLocaleString("en-GB");  
+    }
+    
+    let elapsed = "?";
+    if (this.state.startInMs && this.state.endInMs) {
+      elapsed = Math.ceil((this.state.endInMs - this.state.startInMs)/1000); 
+    }    
+    console.log("START: "+this.state.startInMs+"    END: "+this.state.endInMs);
+    
     return (   
       <div>
       <form className="button_to" method="get" action={this.api.url(urlOnClose)}>
@@ -303,21 +326,25 @@ class Runner extends React.Component {
       <h2>Status</h2>
 
       <div className="editor-section">   
-      <div className="btn-toolbar" role="toolbar">
-        <div className="btn-group mr-2" role="group">
+        <div className="btn-group ml-2" role="group">
           <button className={btnStatusClass + " btn-primary"} style={{width: "120px"}} type="button" data-toggle="collapse"
                   data-target="#collapseListing" aria-expanded="false">
             {btnIcon}<span className="ml-1">{this.state.status}</span>
           </button>
         </div>
-      </div>
-      <div className="collapse" id="collapseListing">
-        <div className="card card-block">
-          <div className="listing">
-            {lines}
+        <div className="btn-group ml-2" role="group">
+          <strong>Started on</strong>: {startTime}
+        </div>
+        <div className="btn-group ml-2" role="group">
+          <strong>{(this.state.status==="RUNNING")?"Elapsed":"Ended after"}</strong>: {elapsed}s
+        </div>        
+        <div className="collapse" id="collapseListing">
+          <div className="card card-block">
+             <div className="listing">
+                {lines}
+             </div>
           </div>
         </div>
-      </div>
       </div>
       </div>
     );

@@ -7,10 +7,6 @@ class OperationSerializer < ActiveModel::Serializer
   class OptionSerializer < ActiveModel::Serializer
     attributes :id, :name, :value
   end
-  
-  class JobSerializer < ActiveModel::Serializer
-    attributes :status, :log
-  end
     
   def category
     cat = object.send(:category)

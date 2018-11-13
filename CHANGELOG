@@ -2,6 +2,7 @@
 
 <h3>0.12.0 (30/11/2018)</h3>
 <ul>
+  <li>Improve operation management: list view, renaming, timing
   <li>Retrieve initial values when using wop push</li>
   <li>Fix result display error when a variable is removed</li> 
   <li>Implement native result load in ruby</li>
