@@ -16,9 +16,10 @@
 	<thead>
 		<tr>
       <th class="col-md-3">Name</th>
-      <th class="col-md-3">Created</th>
-      <th class="col-md-3">Duration</th>
-		  <th class="col-md-3">Action(s)</th>
+      <th class="col-md-3">Driver</th>
+      <th class="col-md-2">Created</th>
+      <th class="col-md-2">Duration</th>
+		  <th class="col-md-2">Action(s)</th>
 		</tr>
 	</thead>
   
@@ -26,6 +27,7 @@
 	  <% @operations.each do |ope| %>
 	    <tr>
 	      <td><%= link_to_operation_if_authorized(ope, current_user) %></td>
+        <td><%= ope.driver.humanize(capitalize: false) %></td>
 	      <td><%= (ope.job && ope.job.started_at) ? time_ago_in_words(ope.job.started_at):"?"%> ago</td>
 	      <td><%= (ope.job && ope.job.started_at && ope.job.ended_at) ? distance_of_time_in_words(ope.job.started_at, ope.job.ended_at, include_seconds: true):"?"%></td>
 	      <td>
@@ -35,7 +37,7 @@
             </a> 
 	          <%= link_to edit_operation_path(ope), 
 	            class: "d-inline btn btn-light btn-inverse btn-sm ml-2", title: "Re-run" do %>
-	            <i class="fa fa-rocket"></i> 
+	            <i class="fa fa-undo"></i> 
 	          <% end %>    
 	          <%= link_to operation_path(ope), method: :delete, data: { title: 'Are you sure?', 
 	                                                                    confirm: "Remove #{ope.name} operation?",
