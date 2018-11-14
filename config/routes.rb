@@ -26,6 +26,7 @@ Rails.application.routes.draw do
         get 'exports/new'
       end
       resources :users, only: [:index, :update]  
+      resources :user_roles, only: [:index, :update]  
       resource :versioning, only: [:show]  
     end
   end

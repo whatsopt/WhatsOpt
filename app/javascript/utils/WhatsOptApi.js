@@ -21,22 +21,29 @@ class WhatsOptApi {
   };
 
   getMemberCandidates(mdaId, callback) {
-    let path = `/api/v1/users?query[analysis_id]=${mdaId}&query[select]=member_candidates`;
+    let path = `/api/v1/user_roles?query[analysis_id]=${mdaId}&query[select]=member_candidates`;
     axios.get(this.url(path))
       .then(callback)
       .catch((error) => console.log(error));
   }
   
   addMember(userId, mdaId, callback) {
-    let path = `/api/v1/users/${userId}`;
+    let path = `/api/v1/user_roles/${userId}`;
     axios.put(this.url(path), {user: {analysis_id: mdaId, role: 'member'}})
       .then(callback)
       .catch((error) => console.log(error));
   }
   
   removeMember(userId, mdaId, callback) {
+    let path = `/api/v1/user_roles/${userId}`;
+    axios.put(this.url(path), {user: {analysis_id: mdaId, role: 'none'}})
+      .then(callback)
+      .catch((error) => console.log(error));
+  }
+  
+  updateUserSettings(userId, settings, callback) {
     let path = `/api/v1/users/${userId}`;
-    axios.put(this.url(path), {user: {analysis_id: mdaId}})
+    axios.put(this.url(path), {user: {settings: settings}})
       .then(callback)
       .catch((error) => console.log(error));
   }

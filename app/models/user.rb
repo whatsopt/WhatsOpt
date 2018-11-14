@@ -4,9 +4,11 @@ class User < ActiveRecord::Base
   devise :database_authenticatable, :ldap_authenticatable, :trackable, :validatable, :timeoutable
   #devise :ldap_authenticatable, :trackable, :validatable, :timeoutable
 
-  after_initialize :set_default_role, :if => :new_record?
+  after_initialize :initialize_defaults, :if => :new_record?
   before_create :generate_api_key
 
+  store :settings, accessors: [ :analyses_query ], coder: JSON
+  
   # work around rolify with_role method bug: see https://github.com/RolifyCommunity/rolify/issues/362
   scope :with_role_for_instance, ->(role_name, instance) do
     resource_name = instance.class.name
@@ -35,8 +37,9 @@ class User < ActiveRecord::Base
     end while self.class.exists?(api_key: api_key)
   end
   
-  def set_default_role
+  def initialize_defaults
     self.add_role(:user)
+    self.analyses_query = "all"
   end
 
 end

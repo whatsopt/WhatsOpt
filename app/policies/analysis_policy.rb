@@ -5,7 +5,11 @@ class AnalysisPolicy < ApplicationPolicy
         scope.all
       else
         scope.select do |record|
-          record.public or user.has_role?(:owner, record) or user.has_role?(:member, record) 
+          if user.analyses_query == "mine"
+            user.has_role?(:owner, record)
+          else 
+            record.public or user.has_role?(:owner, record) or user.has_role?(:member, record) 
+          end  
         end
       end
     end

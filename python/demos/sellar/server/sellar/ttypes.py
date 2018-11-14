@@ -161,14 +161,14 @@ class Disc1Output(object):
 class Disc2Input(object):
     """
     Attributes:
-     - y1
      - z
+     - y1
     """
 
 
-    def __init__(self, y1=None, z=None,):
-        self.y1 = y1
+    def __init__(self, z=None, y1=None,):
         self.z = z
+        self.y1 = y1
 
     def read(self, iprot):
         if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
@@ -180,11 +180,6 @@ class Disc2Input(object):
             if ftype == TType.STOP:
                 break
             if fid == 1:
-                if ftype == TType.DOUBLE:
-                    self.y1 = iprot.readDouble()
-                else:
-                    iprot.skip(ftype)
-            elif fid == 2:
                 if ftype == TType.LIST:
                     self.z = []
                     (_etype10, _size7) = iprot.readListBegin()
@@ -192,6 +187,11 @@ class Disc2Input(object):
                         _elem12 = iprot.readDouble()
                         self.z.append(_elem12)
                     iprot.readListEnd()
+                else:
+                    iprot.skip(ftype)
+            elif fid == 2:
+                if ftype == TType.DOUBLE:
+                    self.y1 = iprot.readDouble()
                 else:
                     iprot.skip(ftype)
             else:
@@ -204,16 +204,16 @@ class Disc2Input(object):
             oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
             return
         oprot.writeStructBegin('Disc2Input')
-        if self.y1 is not None:
-            oprot.writeFieldBegin('y1', TType.DOUBLE, 1)
-            oprot.writeDouble(self.y1)
-            oprot.writeFieldEnd()
         if self.z is not None:
-            oprot.writeFieldBegin('z', TType.LIST, 2)
+            oprot.writeFieldBegin('z', TType.LIST, 1)
             oprot.writeListBegin(TType.DOUBLE, len(self.z))
             for iter13 in self.z:
                 oprot.writeDouble(iter13)
             oprot.writeListEnd()
+            oprot.writeFieldEnd()
+        if self.y1 is not None:
+            oprot.writeFieldBegin('y1', TType.DOUBLE, 2)
+            oprot.writeDouble(self.y1)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
@@ -292,17 +292,17 @@ class Disc2Output(object):
 class FunctionsInput(object):
     """
     Attributes:
-     - x
-     - y1
      - y2
+     - y1
+     - x
      - z
     """
 
 
-    def __init__(self, x=None, y1=None, y2=None, z=None,):
-        self.x = x
-        self.y1 = y1
+    def __init__(self, y2=None, y1=None, x=None, z=None,):
         self.y2 = y2
+        self.y1 = y1
+        self.x = x
         self.z = z
 
     def read(self, iprot):
@@ -316,7 +316,7 @@ class FunctionsInput(object):
                 break
             if fid == 1:
                 if ftype == TType.DOUBLE:
-                    self.x = iprot.readDouble()
+                    self.y2 = iprot.readDouble()
                 else:
                     iprot.skip(ftype)
             elif fid == 2:
@@ -326,7 +326,7 @@ class FunctionsInput(object):
                     iprot.skip(ftype)
             elif fid == 3:
                 if ftype == TType.DOUBLE:
-                    self.y2 = iprot.readDouble()
+                    self.x = iprot.readDouble()
                 else:
                     iprot.skip(ftype)
             elif fid == 4:
@@ -349,17 +349,17 @@ class FunctionsInput(object):
             oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
             return
         oprot.writeStructBegin('FunctionsInput')
-        if self.x is not None:
-            oprot.writeFieldBegin('x', TType.DOUBLE, 1)
-            oprot.writeDouble(self.x)
+        if self.y2 is not None:
+            oprot.writeFieldBegin('y2', TType.DOUBLE, 1)
+            oprot.writeDouble(self.y2)
             oprot.writeFieldEnd()
         if self.y1 is not None:
             oprot.writeFieldBegin('y1', TType.DOUBLE, 2)
             oprot.writeDouble(self.y1)
             oprot.writeFieldEnd()
-        if self.y2 is not None:
-            oprot.writeFieldBegin('y2', TType.DOUBLE, 3)
-            oprot.writeDouble(self.y2)
+        if self.x is not None:
+            oprot.writeFieldBegin('x', TType.DOUBLE, 3)
+            oprot.writeDouble(self.x)
             oprot.writeFieldEnd()
         if self.z is not None:
             oprot.writeFieldBegin('z', TType.LIST, 4)
@@ -390,15 +390,15 @@ class FunctionsOutput(object):
     """
     Attributes:
      - obj
-     - g2
      - g1
+     - g2
     """
 
 
-    def __init__(self, obj=None, g2=None, g1=None,):
+    def __init__(self, obj=None, g1=None, g2=None,):
         self.obj = obj
-        self.g2 = g2
         self.g1 = g1
+        self.g2 = g2
 
     def read(self, iprot):
         if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
@@ -416,12 +416,12 @@ class FunctionsOutput(object):
                     iprot.skip(ftype)
             elif fid == 2:
                 if ftype == TType.DOUBLE:
-                    self.g2 = iprot.readDouble()
+                    self.g1 = iprot.readDouble()
                 else:
                     iprot.skip(ftype)
             elif fid == 3:
                 if ftype == TType.DOUBLE:
-                    self.g1 = iprot.readDouble()
+                    self.g2 = iprot.readDouble()
                 else:
                     iprot.skip(ftype)
             else:
@@ -438,13 +438,13 @@ class FunctionsOutput(object):
             oprot.writeFieldBegin('obj', TType.DOUBLE, 1)
             oprot.writeDouble(self.obj)
             oprot.writeFieldEnd()
-        if self.g2 is not None:
-            oprot.writeFieldBegin('g2', TType.DOUBLE, 2)
-            oprot.writeDouble(self.g2)
-            oprot.writeFieldEnd()
         if self.g1 is not None:
-            oprot.writeFieldBegin('g1', TType.DOUBLE, 3)
+            oprot.writeFieldBegin('g1', TType.DOUBLE, 2)
             oprot.writeDouble(self.g1)
+            oprot.writeFieldEnd()
+        if self.g2 is not None:
+            oprot.writeFieldBegin('g2', TType.DOUBLE, 3)
+            oprot.writeDouble(self.g2)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
@@ -477,8 +477,8 @@ Disc1Output.thrift_spec = (
 all_structs.append(Disc2Input)
 Disc2Input.thrift_spec = (
     None,  # 0
-    (1, TType.DOUBLE, 'y1', None, None, ),  # 1
-    (2, TType.LIST, 'z', (TType.DOUBLE, None, False), None, ),  # 2
+    (1, TType.LIST, 'z', (TType.DOUBLE, None, False), None, ),  # 1
+    (2, TType.DOUBLE, 'y1', None, None, ),  # 2
 )
 all_structs.append(Disc2Output)
 Disc2Output.thrift_spec = (
@@ -488,17 +488,17 @@ Disc2Output.thrift_spec = (
 all_structs.append(FunctionsInput)
 FunctionsInput.thrift_spec = (
     None,  # 0
-    (1, TType.DOUBLE, 'x', None, None, ),  # 1
+    (1, TType.DOUBLE, 'y2', None, None, ),  # 1
     (2, TType.DOUBLE, 'y1', None, None, ),  # 2
-    (3, TType.DOUBLE, 'y2', None, None, ),  # 3
+    (3, TType.DOUBLE, 'x', None, None, ),  # 3
     (4, TType.LIST, 'z', (TType.DOUBLE, None, False), None, ),  # 4
 )
 all_structs.append(FunctionsOutput)
 FunctionsOutput.thrift_spec = (
     None,  # 0
     (1, TType.DOUBLE, 'obj', None, None, ),  # 1
-    (2, TType.DOUBLE, 'g2', None, None, ),  # 2
-    (3, TType.DOUBLE, 'g1', None, None, ),  # 3
+    (2, TType.DOUBLE, 'g1', None, None, ),  # 2
+    (3, TType.DOUBLE, 'g2', None, None, ),  # 3
 )
 fix_spec(all_structs)
 del all_structs

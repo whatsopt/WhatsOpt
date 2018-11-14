@@ -5,8 +5,8 @@ class Api::ApiController < ActionController::Base
   # Authorization
   include Pundit 
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
-  #after_action :verify_authorized, except: [:index] 
-  #after_action :verify_policy_scoped, only: [:index]
+  after_action :verify_authorized, except: [:index] 
+  after_action :verify_policy_scoped, only: [:index]
      
   respond_to :json
   
@@ -25,4 +25,15 @@ class Api::ApiController < ActionController::Base
       @current_user = User.where(api_key: token).first
     end
   end
+  
+  private
+ 
+    def user_not_authenticated
+      json_response({ message: "Unauthenticated" }, :unauthorized)
+    end
+  
+    def user_not_authorized
+      json_response({ message: "Unauthorized" }, :unauthorized)
+    end
+    
 end

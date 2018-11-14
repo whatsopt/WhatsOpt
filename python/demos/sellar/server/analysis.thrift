@@ -25,24 +25,24 @@ struct Disc1Output {
     1: Float y1     
 }
 struct Disc2Input {
-    1: Float y1      
-    2: Vector z      
+    1: Vector z      
+    2: Float y1      
 }
 
 struct Disc2Output {
     1: Float y2     
 }
 struct FunctionsInput {
-    1: Float x      
+    1: Float y2      
     2: Float y1      
-    3: Float y2      
+    3: Float x      
     4: Vector z      
 }
 
 struct FunctionsOutput {
     1: Float obj     
-    2: Float g2     
-    3: Float g1     
+    2: Float g1     
+    3: Float g2     
 }
 
 service Sellar {
