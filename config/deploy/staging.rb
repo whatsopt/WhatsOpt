@@ -2,7 +2,7 @@ set :stage, :staging
 
 set :deploy_to, "/var/www/html/rails/whatsopt"
 
-set :rvm_ruby_version, "ruby-2.3.3@whatsopt-staging"
+set :rvm_ruby_version, "ruby-2.5.3@whatsopt-staging"
 set :server_name, "rdri206h"
 server 'rdri206h', user: 'rlafage', roles: %w{app web db}, primary: true
 
