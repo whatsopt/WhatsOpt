@@ -1,7 +1,7 @@
 class OperationPolicy < ApplicationPolicy
-
+  
   def create?
-    @user.admin? or @user.has_role?(:owner, @record.analysis)
+    @user.admin? or @record.analysis.public or @user.has_role?(:owner, @record.analysis) or @user.has_role?(:member, @record.analysis)
   end
    
   def update?
