@@ -39,6 +39,22 @@ class AnalysisTest < ActiveSupport::TestCase
     assert_includes edges, {from: geo, to: d, name: "obj"}
   end
   
+  test "should be able to build2 connections from user" do
+    mda = analyses(:cicav)
+    geo = disciplines(:geometry).id.to_s
+    aero = disciplines(:aerodynamics).id.to_s
+    d = disciplines(:driver_cicav).id.to_s
+    edges = mda.build_edges2
+    edges = edges.map{|e| {from: e[:from], to: e[:to], name: e[:name]}}
+    assert_equal 6, edges.count
+    assert_includes edges, {from: geo, to: aero, name: "yg"}
+    assert_includes edges, {from: aero, to: geo, name: "ya"}
+    assert_includes edges, {from: d, to: geo, name: "x1,z"}
+    assert_includes edges, {from: d, to: aero, name: "z"}
+    assert_includes edges, {from: aero, to: d, name: "y2"}
+    assert_includes edges, {from: geo, to: d, name: "obj"}
+  end
+  
   test "should not contain reflexive connection" do
     mda = analyses(:cicav)
     edges = mda.build_edges

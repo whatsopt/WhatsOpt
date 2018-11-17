@@ -36,7 +36,7 @@ ActiveRecord::Schema.define(version: 51) do
   create_table "cases", force: :cascade do |t|
     t.integer "operation_id"
     t.integer "variable_id"
-    t.integer "coord_index", default: -1
+    t.integer "coord_index", default: 0
     t.text "values"
   end
 
@@ -69,8 +69,6 @@ ActiveRecord::Schema.define(version: 51) do
     t.text "log", default: ""
     t.integer "pid", default: -1
     t.integer "operation_id"
-    t.datetime "started_at"
-    t.datetime "ended_at"
     t.string "sqlite_filename"
   end
 
@@ -151,6 +149,7 @@ ActiveRecord::Schema.define(version: 51) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "active", default: true
+    t.index ["discipline_id"], name: "index_variables_on_discipline_id"
   end
 
 end

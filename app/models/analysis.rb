@@ -13,7 +13,7 @@ class Analysis < ApplicationRecord
   accepts_nested_attributes_for :attachment, allow_destroy: true
   validates_associated :attachment
   
-  has_many :disciplines, -> { order(position: :asc) }, :dependent => :destroy 
+  has_many :disciplines, -> { includes(:variables).order(position: :asc) }, :dependent => :destroy 
   has_many :operations, :dependent => :destroy 
     
   accepts_nested_attributes_for :disciplines, 
@@ -127,6 +127,39 @@ class Analysis < ApplicationRecord
     edges
   end
 
+  def build_edges2(active: true)
+    edges = []
+    _edges = {}
+    disc_ids = self.disciplines.map(&:id)
+    disc_ids.each do |id|
+      other_ids = disc_ids
+      _edges.update(Hash[other_ids.collect { |item| [[id, item], []] } ])
+    end
+    p _edges
+    disc_ids.each do |from_id|
+      if active
+        conns = Connection.where(variables: {discipline_id: from_id}).order('variables.name').active
+      else
+        conns = Connection.where(variables: {discipline_id: from_id}).order('variables.name').inactive
+      end
+      conns.each do |conn|
+        p [from_id, conn.to.discipline.id]
+        p conn.to, conn.from
+        _edges[[from_id, conn.to.discipline.id]] << conn
+      end    
+    end
+    _edges.each do |k, conns|
+      unless conns.empty?
+        names = conns.map{ |c| c.from.name }.join(",")
+        ids = conns.map(&:id)
+        roles = conns.map {|c| c[:role]}
+        edges << {from: k[0].to_s, to: k[1].to_s, name: names, conn_ids: ids, active: active, roles: roles}
+      end
+    end
+    p edges
+    edges
+  end
+  
   def build_var_infos
     res = disciplines.map {|d|
       inputs = ActiveModelSerializers::SerializableResource.new(d.input_variables, 

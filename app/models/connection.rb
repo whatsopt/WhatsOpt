@@ -1,7 +1,7 @@
 class Connection < ApplicationRecord  
   
-  belongs_to :from, class_name: 'Variable'
-  belongs_to :to, class_name: 'Variable'
+  belongs_to :from, -> { includes(:discipline) }, class_name: 'Variable'
+  belongs_to :to, -> { includes(:discipline) }, class_name: 'Variable'
   
   validates :from, presence: true
   validates :to, presence: true
