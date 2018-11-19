@@ -104,38 +104,37 @@ class Analysis < ApplicationRecord
     }
   end
 
-  def build_edges(active: true)
-    edges = []
-    self.disciplines.each do |d_from|
-      from_id = d_from.id.to_s 
-      self.disciplines.each do |d_to|
-        next if d_from == d_to
-        to_id = d_to.id.to_s  
-        if active
-          conns = Connection.between(d_from.id, d_to.id).active
-        else
-          conns = Connection.between(d_from.id, d_to.id).inactive
-        end
-        names = conns.map{ |c| c.from.name }.join(",")
-        ids = conns.map(&:id)
-        roles = conns.map {|c| c[:role]}
-        unless conns.empty?
-          edges << { from: from_id, to: to_id, name: names, conn_ids: ids, active: active, roles: roles }
-        end
-      end
-    end
-    edges
-  end
+# TODO: To be deleted if more efficient implementation below is ok
+#  def build_edges1(active: true)
+#    edges = []
+#    self.disciplines.each do |d_from|
+#      from_id = d_from.id.to_s 
+#      self.disciplines.each do |d_to|
+#        next if d_from == d_to
+#        to_id = d_to.id.to_s  
+#        if active
+#          conns = Connection.between(d_from.id, d_to.id).active
+#        else
+#          conns = Connection.between(d_from.id, d_to.id).inactive
+#        end
+#        names = conns.map{ |c| c.from.name }.join(",")
+#        ids = conns.map(&:id)
+#        roles = conns.map {|c| c[:role]}
+#        unless conns.empty?
+#          edges << { from: from_id, to: to_id, name: names, conn_ids: ids, active: active, roles: roles }
+#        end
+#      end
+#    end
+#    edges
+#  end
 
-  def build_edges2(active: true)
+  def build_edges(active: true)
     edges = []
     _edges = {}
     disc_ids = self.disciplines.map(&:id)
     disc_ids.each do |id|
-      other_ids = disc_ids
-      _edges.update(Hash[other_ids.collect { |item| [[id, item], []] } ])
+      _edges.update(Hash[disc_ids.collect { |item| [[id, item], []] } ])
     end
-    p _edges
     disc_ids.each do |from_id|
       if active
         conns = Connection.where(variables: {discipline_id: from_id}).order('variables.name').active
@@ -143,8 +142,6 @@ class Analysis < ApplicationRecord
         conns = Connection.where(variables: {discipline_id: from_id}).order('variables.name').inactive
       end
       conns.each do |conn|
-        p [from_id, conn.to.discipline.id]
-        p conn.to, conn.from
         _edges[[from_id, conn.to.discipline.id]] << conn
       end    
     end
@@ -156,7 +153,6 @@ class Analysis < ApplicationRecord
         edges << {from: k[0].to_s, to: k[1].to_s, name: names, conn_ids: ids, active: active, roles: roles}
       end
     end
-    p edges
     edges
   end
   

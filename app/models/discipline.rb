@@ -8,7 +8,8 @@ class Discipline < ApplicationRecord
   
   self.inheritance_column = :disable_inheritance
     
-  has_many :variables, -> { includes(:parameter) }, :dependent => :destroy
+  #has_many :variables, -> { includes(:parameter) }, :dependent => :destroy
+  has_many :variables, :dependent => :destroy
   
   belongs_to :analysis
   acts_as_list scope: :analysis, top_of_list: 0
