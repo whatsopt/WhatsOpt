@@ -66,6 +66,7 @@
     "webpacker-cli": "^0.6.1"
   },
   "scripts": {
-    "lint": "yarn run eslint --ext .js --ext .jsx app/javascript"
+    "lint": "yarn run eslint --ext .js --ext .jsx app/javascript",
+    "lintfix": "yarn run eslint --fix --ext .js --ext .jsx app/javascript"
   }
 }

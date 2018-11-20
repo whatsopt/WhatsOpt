@@ -2,8 +2,8 @@ class AnalysisDatabase {
   constructor(mda) {
     this.mda = mda;
     this.driver = this.mda.nodes[0];
-    let varList = [];
-    for (let d in mda.vars) {
+    const varList = [];
+    for (const d in mda.vars) {
       varList.push(...mda.vars[d]['out']);
     }
     this.inputVariables = mda.vars[this.driver.id]['out'].sort();
@@ -18,10 +18,10 @@ class AnalysisDatabase {
   }
   isDesignVarCases(c) {
     return this.connections.find((conn) => {
-      return conn.role === 'design_var' && conn.name === c.varname
-    }); 
+      return conn.role === 'design_var' && conn.name === c.varname;
+    });
   }
-  
+
   isOutputVarCases(c) {
     return this.outputVariables.find((v) => v.name === c.varname);
   }
@@ -64,7 +64,7 @@ class AnalysisDatabase {
     }
     if (conn) {
       this.objective = {variable: this.outputVariables.find((v) => v.name === conn.name),
-                         isMin: isMin};
+        isMin: isMin};
     }
     return this.objective;
   }
@@ -73,8 +73,8 @@ class AnalysisDatabase {
     if (this.constraints) {
       return this.constraints;
     }
-    let connCstrs = this.connections.filter((c) => c.role === "ineq_constraint" || c.role === "eq_constraint");
-    let cstrNames = connCstrs.map((c) => c.name);
+    const connCstrs = this.connections.filter((c) => c.role === "ineq_constraint" || c.role === "eq_constraint");
+    const cstrNames = connCstrs.map((c) => c.name);
     this.constraints = this.outputVariables.filter((v) => cstrNames.includes(v.name));
     return this.constraints;
   }
@@ -84,8 +84,8 @@ class AnalysisDatabase {
     let nodeSelected = filter && filter.fr && (filter.fr === filter.to);
 
     if (filter && filter.fr && filter.to) {
-      let nodeFrom = this._findNode(filter.fr);
-      let nodeTo = this._findNode(filter.to);
+      const nodeFrom = this._findNode(filter.fr);
+      const nodeTo = this._findNode(filter.to);
       if (nodeSelected) { // node selected
         nodeSelected = nodeFrom;
         edges = edges.filter((edge) => {
@@ -98,13 +98,13 @@ class AnalysisDatabase {
       }
     }
 
-    let hconns = {};
+    const hconns = {};
     edges.forEach((edge) => {
-      let vars = edge.name.split(",");
-      let fromName = this._findNode(edge.from).name;
-      let toName = this._findNode(edge.to).name;
+      const vars = edge.name.split(",");
+      const fromName = this._findNode(edge.from).name;
+      const toName = this._findNode(edge.to).name;
       vars.forEach((v, i) => {
-        let id = edge.from + '_' + v;
+        const id = edge.from + '_' + v;
         if (hconns[id]) {
           hconns[id].to.push(edge.to);
           hconns[id].toName.push(toName);
@@ -122,17 +122,17 @@ class AnalysisDatabase {
         }
       }, this);
     }, this);
-    let conns = [];
-    for (let id in hconns) {
+    const conns = [];
+    for (const id in hconns) {
       conns.push(hconns[id]);
     }
     conns.sort((a, b) => this._connectionCompare(nodeSelected, a, b));
 
-    let connections = conns.map((conn) => {
-      let infos = this._findInfos(conn);
-      let val = {id: conn.connId, from: conn.frName, to: conn.toName.join(', '), name: infos.vName, desc: infos.desc,
-                  type: infos.type, shape: infos.shape, units: infos.units, init: infos.init, lower: infos.lower,
-                  upper: infos.upper, active: infos.active, role: conn.role, fromId: conn.fr, toIds: conn.to};
+    const connections = conns.map((conn) => {
+      const infos = this._findInfos(conn);
+      const val = {id: conn.connId, from: conn.frName, to: conn.toName.join(', '), name: infos.vName, desc: infos.desc,
+        type: infos.type, shape: infos.shape, units: infos.units, init: infos.init, lower: infos.lower,
+        upper: infos.upper, active: infos.active, role: conn.role, fromId: conn.fr, toIds: conn.to};
       return val;
     });
 
@@ -141,7 +141,7 @@ class AnalysisDatabase {
 
   _findNode(id) {
     for (var i=0; i < this.mda.nodes.length; i++) {
-      let node = this.mda.nodes[i];
+      const node = this.mda.nodes[i];
       if (node.id === id) {
         return (i==0)?{id: id, name: "Driver"}:{id: node.id, name: node.name};
       }
@@ -150,34 +150,34 @@ class AnalysisDatabase {
   };
 
   _findInfos(conn) {
-    let vfr = this._findVariable(conn.fr, conn.varname, "out");
-    let desc = vfr.desc;
-    let vartype = vfr.type;
-    let shape = vfr.shape;
-    let varname = vfr.name;
-    let units = vfr.units;
+    const vfr = this._findVariable(conn.fr, conn.varname, "out");
+    const desc = vfr.desc;
+    const vartype = vfr.type;
+    const shape = vfr.shape;
+    const varname = vfr.name;
+    const units = vfr.units;
     let init = "";
     let lower = "";
     let upper = "";
-    let active = vfr.active;
+    const active = vfr.active;
 
     if (vfr.parameter) {
       init = vfr.parameter.init;
       lower = vfr.parameter.lower;
       upper = vfr.parameter.upper;
     }
-    let infos = {id: conn.connId, idfrName: conn.frName, frUnits: vfr.units,
-                  vName: varname, desc: desc,
-                  toName: conn.toName.join(', '),
-                  type: vartype, shape: shape, init: init, lower: lower, upper: upper,
-                  units: units, active: active};
+    const infos = {id: conn.connId, idfrName: conn.frName, frUnits: vfr.units,
+      vName: varname, desc: desc,
+      toName: conn.toName.join(', '),
+      type: vartype, shape: shape, init: init, lower: lower, upper: upper,
+      units: units, active: active};
     return infos;
   }
 
   _findVariable(disc, vname, ioMode) {
-    let vars = this.mda.vars;
+    const vars = this.mda.vars;
     let vinfo = {units: '', desc: '', type: '', shape: '', init: '', lower: '', upper: '', active: true};
-    let vinfos = vars[disc][ioMode].filter((v) => {
+    const vinfos = vars[disc][ioMode].filter((v) => {
       return v.name === vname;
     });
     if (vinfos.length === 1) {

@@ -5,18 +5,18 @@ import * as caseUtils from '../../utils/cases.js';
 
 class ParallelCoordinates extends React.Component {
   render() {
-    let dimensions = this._dimensionFromCases(this.props.cases.i);
+    const dimensions = this._dimensionFromCases(this.props.cases.i);
     dimensions.push(...this._dimensionFromCases(this.props.cases.o));
     dimensions.push(...this._dimensionFromCases(this.props.cases.c));
 
-    let trace = {
+    const trace = {
       type: 'parcoords',
       dimensions: dimensions,
     };
-    let obj = this.props.cases.o.find((c) => this.props.db.isObjective(c));
+    const obj = this.props.cases.o.find((c) => this.props.db.isObjective(c));
     if (obj) {
-      let mini = Math.min(...obj.values);
-      let maxi = Math.max(...obj.values);
+      const mini = Math.min(...obj.values);
+      const maxi = Math.max(...obj.values);
       trace.line = {
         color: obj.values,
         colorscale: 'Blues',
@@ -29,32 +29,32 @@ class ParallelCoordinates extends React.Component {
       }
     }
 
-    let data = [trace];
-    let title = this.props.title;
+    const data = [trace];
+    const title = this.props.title;
 
     return (
       <div>
-          <Plot
-            data={data}
-            layout={{width: 1200, height: 500, title: title}}
-          />
+        <Plot
+          data={data}
+          layout={{width: 1200, height: 500, title: title}}
+        />
       </div>
     );
   }
 
   _dimensionFromCases(cases) {
-    let isMin = this.props.db.getObjective() && this.props.db.getObjective().isMin;
-    let dimensions = cases.map((c) => {
-      let label = caseUtils.label(c);
-      let minim = Math.min(...c.values);
-      let maxim = Math.max(...c.values);
-      let mini = Math.floor(minim);
-      let maxi = Math.ceil(maxim);
-      let dim = {label: label,
-                  values: c.values,
-                  range: [mini, maxi]};
-      let obj = isMin?minim:maxim;
-      let crange = [obj - 0.05*(maxi - mini), obj + 0.05*(maxi - mini)];
+    const isMin = this.props.db.getObjective() && this.props.db.getObjective().isMin;
+    const dimensions = cases.map((c) => {
+      const label = caseUtils.label(c);
+      const minim = Math.min(...c.values);
+      const maxim = Math.max(...c.values);
+      const mini = Math.floor(minim);
+      const maxi = Math.ceil(maxim);
+      const dim = {label: label,
+        values: c.values,
+        range: [mini, maxi]};
+      const obj = isMin?minim:maxim;
+      const crange = [obj - 0.05*(maxi - mini), obj + 0.05*(maxi - mini)];
       if (this.props.db.isObjective(c)) {
         dim['constraintrange'] = crange;
       }

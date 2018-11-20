@@ -5,20 +5,20 @@ import * as caseUtils from '../../utils/cases.js';
 
 class IterationRadarPlot extends React.Component {
   render() {
-    let variables = this.props.cases.i;
+    const variables = this.props.cases.i;
     if (variables.length === 0) {
       throw Error('Input variables is empty');
     }
-    let data = [];
+    const data = [];
     for (let i=0; i<variables[0].values.length; i++) {
-      let trace = {
+      const trace = {
         type: 'scatterpolar',
         name: `Evaluation ${i+1}`,
         fill: 'none',
       };
 
-      let theta = [];
-      let r = [];
+      const theta = [];
+      const r = [];
       for (let j=0; j<variables.length; j++) {
         theta.push(caseUtils.label(variables[j]));
         r.push(variables[j].values[i]);
@@ -29,8 +29,8 @@ class IterationRadarPlot extends React.Component {
       trace.r = r;
       data.push(trace);
     }
-    let title = this.props.title;
-    let layout = {width: 600, height: 500, title: title};
+    const title = this.props.title;
+    const layout = {width: 600, height: 500, title: title};
 
     return (<Plot data={data} layout={layout} />);
   }

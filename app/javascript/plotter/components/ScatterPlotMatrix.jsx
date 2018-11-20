@@ -5,26 +5,26 @@ import * as caseUtils from '../../utils/cases.js';
 
 class ScatterPlotMatrix extends React.Component {
   render() {
-    let inputs = this.props.cases.i.concat(this.props.cases.c);
-    let outputs = this.props.cases.c.concat(this.props.cases.o);
+    const inputs = this.props.cases.i.concat(this.props.cases.c);
+    const outputs = this.props.cases.c.concat(this.props.cases.o);
 
-    let data = [];
-    let layout = {};
-    let nOut = outputs.length;
-    let nDes = inputs.length;
-    let pdh = 1./nDes;
-    let pdv = 1./nOut;
+    const data = [];
+    const layout = {};
+    const nOut = outputs.length;
+    const nDes = inputs.length;
+    const pdh = 1./nDes;
+    const pdv = 1./nOut;
 
     for (let i=0; i<nOut; i++) {
       for (let j=0; j<nDes; j++) {
-        let xlabel = caseUtils.label(inputs[j]);
-        let ylabel = caseUtils.label(outputs[i]);
+        const xlabel = caseUtils.label(inputs[j]);
+        const ylabel = caseUtils.label(outputs[i]);
 
-        let trace = {x: inputs[j].values, y: outputs[i].values,
-                      type: 'scatter', mode: 'markers'};
-        let n = nDes*i+j+1;
-        let xname = 'x'+n;
-        let yname = 'y'+n;
+        const trace = {x: inputs[j].values, y: outputs[i].values,
+          type: 'scatter', mode: 'markers'};
+        const n = nDes*i+j+1;
+        const xname = 'x'+n;
+        const yname = 'y'+n;
         trace.xaxis = xname;
         trace.yaxis = yname;
         trace.name = ylabel + " vs " + xlabel;

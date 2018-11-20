@@ -8,12 +8,12 @@ class IterationLinePlot extends React.Component {
     let variables = this.props.cases.i.concat(this.props.cases.c);
     variables = variables.concat(this.props.cases.o);
 
-    let data = [];
+    const data = [];
 
     for (let i=0; i<variables.length; i++) {
-      let ylabel = caseUtils.label(variables[i]);
+      const ylabel = caseUtils.label(variables[i]);
 
-      let trace = {
+      const trace = {
         x: Array.from({length: variables[i].values.length}, (v, k) => k+1),
         y: variables[i].values,
         type: 'scatter',
@@ -23,8 +23,8 @@ class IterationLinePlot extends React.Component {
       data.push(trace);
     }
 
-    let title = this.props.title;
-    let layout = {width: 600, height: 500, title: title};
+    const title = this.props.title;
+    const layout = {width: 600, height: 500, title: title};
 
     return (<Plot data={data} layout={layout} />);
   }

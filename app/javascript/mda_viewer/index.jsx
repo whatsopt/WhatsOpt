@@ -11,14 +11,14 @@ import ConnectionsEditor from 'mda_viewer/components/ConnectionsEditor';
 import VariablesEditor from 'mda_viewer/components/VariablesEditor';
 import AnalysisDatabase from '../utils/AnalysisDatabase';
 
-let VAR_REGEXP = /^[a-zA-Z][_a-zA-Z0-9]*$/;
+const VAR_REGEXP = /^[a-zA-Z][_a-zA-Z0-9]*$/;
 
 class MdaViewer extends React.Component {
   constructor(props) {
     super(props);
     this.api = this.props.api;
-    let isEditing = props.isEditing;
-    let filter = {fr: undefined, to: undefined};
+    const isEditing = props.isEditing;
+    const filter = {fr: undefined, to: undefined};
     this.state = {
       filter: filter,
       isEditing: isEditing,
@@ -49,7 +49,7 @@ class MdaViewer extends React.Component {
   }
 
   handleFilterChange(filter) {
-    let newState = update(this.state, {filter: {$set: filter}});
+    const newState = update(this.state, {filter: {$set: filter}});
     this.setState(newState);
     this.xdsmViewer.setSelection(filter);
   }
@@ -59,7 +59,7 @@ class MdaViewer extends React.Component {
   _validateConnectionNames(namesStr) {
     let names = namesStr.split(',');
     names = names.map((name) => {return name.trim();});
-    let errors = [];
+    const errors = [];
     names.forEach((name) => {
       if (!name.match(VAR_REGEXP)) {
         if (name !== '') {
@@ -73,9 +73,9 @@ class MdaViewer extends React.Component {
 
   handleConnectionNameChange(event) {
     event.preventDefault();
-    let errors = this._validateConnectionNames(event.target.value);
-    let newState = update(this.state, {newConnectionName: {$set: event.target.value},
-                                        errors: {$set: errors}});
+    const errors = this._validateConnectionNames(event.target.value);
+    const newState = update(this.state, {newConnectionName: {$set: event.target.value},
+      errors: {$set: errors}});
     this.setState(newState);
   }
 
@@ -89,16 +89,16 @@ class MdaViewer extends React.Component {
     names = names.map((name) => {return name.trim();});
     names = names.filter((name) => name !== '');
 
-    let data = {from: this.state.filter.fr, to: this.state.filter.to, names: names};
+    const data = {from: this.state.filter.fr, to: this.state.filter.to, names: names};
     this.api.createConnection(this.props.mda.id, data,
         (response) => {
-            let newState = update(this.state, {newConnectionName: {$set: ''}});
-            this.setState(newState);
-            this.renderXdsm();
-          },
+          const newState = update(this.state, {newConnectionName: {$set: ''}});
+          this.setState(newState);
+          this.renderXdsm();
+        },
         (error) => {
-          let message = error.response.data.message || "Error: Creation failed";
-          let newState = update(this.state, {errors: {$set: [message]}});
+          const message = error.response.data.message || "Error: Creation failed";
+          const newState = update(this.state, {errors: {$set: [message]}});
           this.setState(newState);
         });
   };
@@ -118,11 +118,11 @@ class MdaViewer extends React.Component {
     delete connAttrs['lower'];
     delete connAttrs['upper'];
     if (Object.keys(connAttrs).length !== 0) {
-        this.api.updateConnection(
+      this.api.updateConnection(
           connId, connAttrs, (response) => {this.renderXdsm();},
           (error) => {
-            let message = error.response.data.message || "Error: Update failed";
-            let newState = update(this.state, {errors: {$set: [message]}});
+            const message = error.response.data.message || "Error: Update failed";
+            const newState = update(this.state, {errors: {$set: [message]}});
             this.setState(newState);
           });
     }
@@ -137,16 +137,16 @@ class MdaViewer extends React.Component {
   handleDisciplineCreate(event) {
     event.preventDefault();
     this.api.createDiscipline(this.props.mda.id, {name: this.state.newDisciplineName, type: 'analysis'},
-      (response) => {
-        let newState = update(this.state, {newDisciplineName: {$set: ''}});
-        this.setState(newState);
-        this.renderXdsm();
-      });
+        (response) => {
+          const newState = update(this.state, {newDisciplineName: {$set: ''}});
+          this.setState(newState);
+          this.renderXdsm();
+        });
   }
 
   handleDisciplineNameChange(event) {
     event.preventDefault();
-    let newState = update(this.state, {newDisciplineName: {$set: event.target.value}});
+    const newState = update(this.state, {newDisciplineName: {$set: event.target.value}});
     this.setState(newState);
   }
 
@@ -166,160 +166,160 @@ class MdaViewer extends React.Component {
   // *** Analysis ************************************************************
   handleAnalysisNameChange(event) {
     event.preventDefault();
-    let newState = update(this.state, {newAnalysisName: {$set: event.target.value},
-                                       errors: {$set: []}});
+    const newState = update(this.state, {newAnalysisName: {$set: event.target.value},
+      errors: {$set: []}});
     this.setState(newState);
     return false;
   }
-  
+
   handleAnalysisPublicChange(event) {
     this.api.updateAnalysis(this.props.mda.id, {public: !this.state.mda.public},
-      (response) => {
-        let newState = update(this.state, {mda: {public: {$set: !this.state.mda.public}}});
-        this.setState(newState);
-      },
-      (error) => { console.log(error); }
-      );
+        (response) => {
+          const newState = update(this.state, {mda: {public: {$set: !this.state.mda.public}}});
+          this.setState(newState);
+        },
+        (error) => {console.log(error);}
+    );
     return false;
   }
 
   handleAnalysisMemberSearch(query, callback) {
     this.api.getMemberCandidates(this.props.mda.id,
-      (response) => { callback(response.data); }
+        (response) => {callback(response.data);}
     );
   }
   handleAnalysisMemberCreate(selected) {
-    if (selected.length) { 
-      this.api.addMember(selected[0].id, this.props.mda.id, 
-        (response) => {
-          let newState = update(this.state, {analysisMembers: {$push: selected}});
-          this.setState(newState);
-        } 
+    if (selected.length) {
+      this.api.addMember(selected[0].id, this.props.mda.id,
+          (response) => {
+            const newState = update(this.state, {analysisMembers: {$push: selected}});
+            this.setState(newState);
+          }
       );
     }
   }
   handleAnalysisMemberDelete(user) {
     this.api.removeMember(user.id, this.props.mda.id, (response) => {
-      let idx = this.state.analysisMembers.indexOf(user);
-      let newState = update(this.state, {analysisMembers: {$splice: [[idx, 1]]}});
+      const idx = this.state.analysisMembers.indexOf(user);
+      const newState = update(this.state, {analysisMembers: {$splice: [[idx, 1]]}});
       this.setState(newState);
     });
   }
 
   handleAnalysisUpdate(event) {
     event.preventDefault();
-    this.api.updateAnalysis(this.props.mda.id, { name: this.state.newAnalysisName },
-      (response) => {
-        this.api.getAnalysis(this.props.mda.id, false,
-          (response) => {
-            let newState = update(this.state, {mda: {name: {$set: this.state.newAnalysisName}}});
-            this.setState(newState);
-          });
-      },
-      (error) => {
-          let message = error.response.data.message || "Error: Update failed";
-          let newState = update(this.state, {errors: {$set: [message]}});
+    this.api.updateAnalysis(this.props.mda.id, {name: this.state.newAnalysisName},
+        (response) => {
+          this.api.getAnalysis(this.props.mda.id, false,
+              (response) => {
+                const newState = update(this.state, {mda: {name: {$set: this.state.newAnalysisName}}});
+                this.setState(newState);
+              });
+        },
+        (error) => {
+          const message = error.response.data.message || "Error: Update failed";
+          const newState = update(this.state, {errors: {$set: [message]}});
           this.setState(newState);
-      });
+        });
   }
 
   renderXdsm() {
     this.api.getAnalysis(this.props.mda.id, true,
-      (response) => {
-        let newState = update(this.state,
-          {mda: {nodes: {$set: response.data.nodes},
-                 edges: {$set: response.data.edges},
-                 inactive_edges: {$set: response.data.inactive_edges},
-                 vars: {$set: response.data.vars}}});
-        this.setState(newState);
-        let mda = {nodes: response.data.nodes, edges: response.data.edges};
-        this.xdsmViewer.update(mda);
-      });
+        (response) => {
+          const newState = update(this.state,
+              {mda: {nodes: {$set: response.data.nodes},
+                edges: {$set: response.data.edges},
+                inactive_edges: {$set: response.data.inactive_edges},
+                vars: {$set: response.data.vars}}});
+          this.setState(newState);
+          const mda = {nodes: response.data.nodes, edges: response.data.edges};
+          this.xdsmViewer.update(mda);
+        });
   }
 
   handleErrorClose(index) {
-    let newState = update(this.state, {errors: {$splice: [[index, 1]]}});
+    const newState = update(this.state, {errors: {$splice: [[index, 1]]}});
     this.setState(newState);
   }
-  
+
   render() {
-    let errors = this.state.errors.map((message, i) => {
+    const errors = this.state.errors.map((message, i) => {
       return ( <Error key={i} msg={message} onClose={() => this.handleErrorClose(i)}/> );
     });
-    let db = new AnalysisDatabase(this.state.mda);
+    const db = new AnalysisDatabase(this.state.mda);
 
     if (this.state.isEditing) {
       return (
-      <div>
-        <form className="button_to" method="get" action={this.api.url(`/analyses/${this.props.mda.id}`)}>
-          <button className="btn float-right" type="submit">
-            <i className="fa fa-times-circle" /> Close
-          </button>
-        </form>
-        <h1>Edit {this.state.mda.name}</h1>
-        <div className="mda-section">
-          <XdsmViewer ref={(xdsmViewer) => this.xdsmViewer = xdsmViewer} mda={this.state.mda}
-                      filter={this.state.filter} onFilterChange={this.handleFilterChange}/>
-        </div>
-        <ul className="nav nav-tabs" id="myTab" role="tablist">
-          <li className="nav-item">
-            <a className="nav-link " id="analysis-tab" data-toggle="tab" href="#analysis"
-               role="tab" aria-controls="analysis" aria-selected="false">Analysis</a>
-          </li>
-          <li className="nav-item">
-            <a className="nav-link" id="disciplines-tab" data-toggle="tab" href="#disciplines"
-               role="tab" aria-controls="disciplines" aria-selected="false">Disciplines</a>
-          </li>
-          <li className="nav-item">
-            <a className="nav-link" id="connections-tab" data-toggle="tab" href="#connections"
-               role="tab" aria-controls="connections" aria-selected="false">Connections</a>
-          </li>
-          <li className="nav-item">
-            <a className="nav-link active" id="variables-tab" data-toggle="tab" href="#variables"
-               role="tab" aria-controls="variables" aria-selected="true">Variables</a>
-          </li>
-        </ul>
-        <div className="tab-content" id="myTabContent">
-          {errors}
-          <div className="tab-pane fade" id="analysis" role="tabpanel" aria-labelledby="analysis-tab">
-            <AnalysisEditor newAnalysisName={this.state.newAnalysisName}
-                            analysisPublic={this.state.mda.public}
-                            analysisMembers={this.state.analysisMembers}
-                            onAnalysisUpdate={this.handleAnalysisUpdate}
-                            onAnalysisNameChange={this.handleAnalysisNameChange}
-                            onAnalysisPublicChange={this.handleAnalysisPublicChange}
-                            onAnalysisMemberSearch={this.handleAnalysisMemberSearch}
-                            onAnalysisMemberCreate={this.handleAnalysisMemberCreate}
-                            onAnalysisMemberDelete={this.handleAnalysisMemberDelete}
-            />
+        <div>
+          <form className="button_to" method="get" action={this.api.url(`/analyses/${this.props.mda.id}`)}>
+            <button className="btn float-right" type="submit">
+              <i className="fa fa-times-circle" /> Close
+            </button>
+          </form>
+          <h1>Edit {this.state.mda.name}</h1>
+          <div className="mda-section">
+            <XdsmViewer ref={(xdsmViewer) => this.xdsmViewer = xdsmViewer} mda={this.state.mda}
+              filter={this.state.filter} onFilterChange={this.handleFilterChange}/>
           </div>
-          <div className="tab-pane fade" id="disciplines" role="tabpanel" aria-labelledby="disciplines-tab">
-            <DisciplinesEditor name={this.state.newDisciplineName}
-                               nodes={db.nodes}
-                               onDisciplineNameChange={this.handleDisciplineNameChange}
-                               onDisciplineCreate={this.handleDisciplineCreate}
-                               onDisciplineDelete={this.handleDisciplineDelete}
-                               onDisciplineUpdate={this.handleDisciplineUpdate}
-             />
+          <ul className="nav nav-tabs" id="myTab" role="tablist">
+            <li className="nav-item">
+              <a className="nav-link " id="analysis-tab" data-toggle="tab" href="#analysis"
+                role="tab" aria-controls="analysis" aria-selected="false">Analysis</a>
+            </li>
+            <li className="nav-item">
+              <a className="nav-link" id="disciplines-tab" data-toggle="tab" href="#disciplines"
+                role="tab" aria-controls="disciplines" aria-selected="false">Disciplines</a>
+            </li>
+            <li className="nav-item">
+              <a className="nav-link" id="connections-tab" data-toggle="tab" href="#connections"
+                role="tab" aria-controls="connections" aria-selected="false">Connections</a>
+            </li>
+            <li className="nav-item">
+              <a className="nav-link active" id="variables-tab" data-toggle="tab" href="#variables"
+                role="tab" aria-controls="variables" aria-selected="true">Variables</a>
+            </li>
+          </ul>
+          <div className="tab-content" id="myTabContent">
+            {errors}
+            <div className="tab-pane fade" id="analysis" role="tabpanel" aria-labelledby="analysis-tab">
+              <AnalysisEditor newAnalysisName={this.state.newAnalysisName}
+                analysisPublic={this.state.mda.public}
+                analysisMembers={this.state.analysisMembers}
+                onAnalysisUpdate={this.handleAnalysisUpdate}
+                onAnalysisNameChange={this.handleAnalysisNameChange}
+                onAnalysisPublicChange={this.handleAnalysisPublicChange}
+                onAnalysisMemberSearch={this.handleAnalysisMemberSearch}
+                onAnalysisMemberCreate={this.handleAnalysisMemberCreate}
+                onAnalysisMemberDelete={this.handleAnalysisMemberDelete}
+              />
+            </div>
+            <div className="tab-pane fade" id="disciplines" role="tabpanel" aria-labelledby="disciplines-tab">
+              <DisciplinesEditor name={this.state.newDisciplineName}
+                nodes={db.nodes}
+                onDisciplineNameChange={this.handleDisciplineNameChange}
+                onDisciplineCreate={this.handleDisciplineCreate}
+                onDisciplineDelete={this.handleDisciplineDelete}
+                onDisciplineUpdate={this.handleDisciplineUpdate}
+              />
+            </div>
+            <div className="tab-pane fade" id="connections" role="tabpanel" aria-labelledby="connections-tab">
+              <ConnectionsEditor db={db}
+                filter={this.state.filter} onFilterChange={this.handleFilterChange}
+                newConnectionName={this.state.newConnectionName}
+                connectionErrors={this.state.errors}
+                onConnectionNameChange={this.handleConnectionNameChange}
+                onConnectionCreate={this.handleConnectionCreate}
+                onConnectionDelete={this.handleConnectionDelete}
+              />
+            </div>
+            <div className="tab-pane fade show active" id="variables" role="tabpanel" aria-labelledby="variables-tab">
+              <VariablesEditor db={db} filter={this.state.filter}
+                onFilterChange={this.handleFilterChange}
+                onConnectionChange={this.handleConnectionChange}
+                isEditing={this.state.isEditing} />
+            </div>
           </div>
-          <div className="tab-pane fade" id="connections" role="tabpanel" aria-labelledby="connections-tab">
-            <ConnectionsEditor db={db}
-                               filter={this.state.filter} onFilterChange={this.handleFilterChange}
-                               newConnectionName={this.state.newConnectionName}
-                               connectionErrors={this.state.errors}
-                               onConnectionNameChange={this.handleConnectionNameChange}
-                               onConnectionCreate={this.handleConnectionCreate}
-                               onConnectionDelete={this.handleConnectionDelete}
-            />
-          </div>
-          <div className="tab-pane fade show active" id="variables" role="tabpanel" aria-labelledby="variables-tab">
-            <VariablesEditor db={db} filter={this.state.filter}
-                             onFilterChange={this.handleFilterChange}
-                             onConnectionChange={this.handleConnectionChange}
-                             isEditing={this.state.isEditing} />
-          </div>
-        </div>
-      </div>);
+        </div>);
     };
     return (
       <div>
@@ -327,14 +327,14 @@ class MdaViewer extends React.Component {
           <ToolBar mdaId={this.props.mda.id} api={this.api}/>
         </div>
         <div className="mda-section">
-            <XdsmViewer ref={(xdsmViewer) => this.xdsmViewer = xdsmViewer} mda={this.state.mda}
-                        filter={this.state.filter} onFilterChange={this.handleFilterChange}/>
+          <XdsmViewer ref={(xdsmViewer) => this.xdsmViewer = xdsmViewer} mda={this.state.mda}
+            filter={this.state.filter} onFilterChange={this.handleFilterChange}/>
         </div>
         <div className="mda-section">
           <VariablesEditor db={db}
-                           filter={this.state.filter} onFilterChange={this.handleFilterChange}
-                           onConnectionChange={this.handleConnectionChange}
-                           isEditing={this.state.isEditing} />
+            filter={this.state.filter} onFilterChange={this.handleFilterChange}
+            onConnectionChange={this.handleConnectionChange}
+            isEditing={this.state.isEditing} />
         </div>
       </div>
     );
@@ -343,6 +343,8 @@ class MdaViewer extends React.Component {
 
 MdaViewer.propTypes = {
   isEditing: PropTypes.bool.isRequired,
+  api: PropTypes.object.isRequired,
+  members: PropTypes.array,
   mda: PropTypes.shape({
     name: PropTypes.string,
     public: PropTypes.bool,

@@ -13,12 +13,12 @@ class DisciplineSelector extends React.Component {
   }
 
   render() {
-    let disciplines = this.props.nodes.map((node) => {
-      let name = node.id===this.props.nodes[0].id?this.props.ulabel:node.name;
+    const disciplines = this.props.nodes.map((node) => {
+      const name = node.id===this.props.nodes[0].id?this.props.ulabel:node.name;
       return (<option key={node.id} value={node.id}>{name}</option>);
     });
 
-    let selected = this.props.selected || this.props.nodes[0].id;
+    const selected = this.props.selected || this.props.nodes[0].id;
 
     return (
       <div className="input-group">
@@ -26,7 +26,7 @@ class DisciplineSelector extends React.Component {
           <label className="input-group-text">{this.props.label}</label>
         </div>
         <select id={this.props.label} className="custom-select" value={selected}
-                onChange={this.handleSelectChange}>
+          onChange={this.handleSelectChange}>
           {disciplines}
         </select>
       </div>
@@ -44,16 +44,16 @@ DisciplineSelector.propTypes = {
 
 class ConnectionList extends React.Component {
   render() {
-    let varnames = this.props.names.split(',');
-    let vars = varnames.map((varname, i) => {
-      let id = this.props.conn_ids[i];
-      let btn = this.props.active?"btn":"btn text-inactive";
+    const varnames = this.props.names.split(',');
+    const vars = varnames.map((varname, i) => {
+      const id = this.props.conn_ids[i];
+      const btn = this.props.active?"btn":"btn text-inactive";
       return (<div key={varname} className="btn-group m-1" role="group">
-                <button className={btn}>{varname}</button>
-                <button className="btn text-danger" onClick={(e) => this.props.onConnectionDelete(id)}>
-                  <i className="fa fa-close" />
-                </button>
-              </div>);
+        <button className={btn}>{varname}</button>
+        <button className="btn text-danger" onClick={(e) => this.props.onConnectionDelete(id)}>
+          <i className="fa fa-close" />
+        </button>
+      </div>);
     });
 
     return (<span className="mb-3">{vars}</span> );
@@ -76,10 +76,10 @@ class VariableList extends React.Component {
   }
 
   render() {
-    let sorted = this.props.vars.sort(this.compare);
-    let vars = sorted.map((v, i) => {
-      let badgeKind = "badge " + ((v.ioMode==="in")?"badge-primary":"badge-secondary");
-      let klass = v.active?"btn m-1":"btn m-1 text-inactive";
+    const sorted = this.props.vars.sort(this.compare);
+    const vars = sorted.map((v, i) => {
+      const badgeKind = "badge " + ((v.ioMode==="in")?"badge-primary":"badge-secondary");
+      const klass = v.active?"btn m-1":"btn m-1 text-inactive";
       return <button key={v.name} className={klass}>{v.name} <span className={badgeKind}>{v.ioMode}</span></button>;
     });
 
@@ -103,8 +103,8 @@ class ConnectionsViewer extends React.Component {
       let edges = this.props.edges.filter((edge) => {
         return (edge.from === this.props.filter.fr) || (edge.to === this.props.filter.to);
       }, this);
-      let uniqEdges = [];
-      let uniqNames = [];
+      const uniqEdges = [];
+      const uniqNames = [];
       edges.forEach((edge, i) => {
         edge.name.split(',').forEach((name, j) => {
           if (!uniqNames.includes(name)) {
@@ -120,23 +120,23 @@ class ConnectionsViewer extends React.Component {
       // Edge selected => Display connection
       title = 'Connections';
 
-      let edges = this.props.edges.filter((edge) => {
+      const edges = this.props.edges.filter((edge) => {
         return (edge.from === this.props.filter.fr) && (edge.to === this.props.filter.to);
       }, this);
       connections = edges.map((edge, i) => {
         count += edge.name.split(',').length;
         return ( <ConnectionList key={i} names={edge.name} active={edge.active}
-                 conn_ids={edge.conn_ids} onConnectionDelete={this.props.onConnectionDelete}/> );
+          conn_ids={edge.conn_ids} onConnectionDelete={this.props.onConnectionDelete}/> );
       });
     }
 
     return (<div>
-              <label>{title}  <span className="badge badge-info">{count}</span></label>
-              <div>
-                {connections}
-              </div>
-            </div>
-            );
+      <label>{title}  <span className="badge badge-info">{count}</span></label>
+      <div>
+        {connections}
+      </div>
+    </div>
+    );
   }
 }
 
@@ -151,25 +151,25 @@ ConnectionsViewer.propTypes = {
 
 class ConnectionsForm extends React.Component {
   render() {
-    let isErroneous = (this.props.connectionErrors.length > 0);
+    const isErroneous = (this.props.connectionErrors.length > 0);
     let inputClass = "form-control ml-1";
     if (this.props.newConnectionName.length>0) {
       inputClass += isErroneous?" is-invalid":" is-valid";
     }
     return (
-        <form className="form" onSubmit={this.props.onConnectionCreate} noValidate>
-          <div className="form-group">
-            <label htmlFor="name" className="sr-only">Name</label>
-            <input type="text" value={this.props.newConnectionName}
-                   placeholder='Enter name or comma separated names...'
-                   className={inputClass} id="name" onChange={this.props.onConnectionNameChange}
-            />
-          </div>
-          <div className="form-group">
-            <button type="submit" className="btn btn-primary" disabled={isErroneous}>Add</button>
-          </div>
-        </form>
-      );
+      <form className="form" onSubmit={this.props.onConnectionCreate} noValidate>
+        <div className="form-group">
+          <label htmlFor="name" className="sr-only">Name</label>
+          <input type="text" value={this.props.newConnectionName}
+            placeholder='Enter name or comma separated names...'
+            className={inputClass} id="name" onChange={this.props.onConnectionNameChange}
+          />
+        </div>
+        <div className="form-group">
+          <button type="submit" className="btn btn-primary" disabled={isErroneous}>Add</button>
+        </div>
+      </form>
+    );
   }
 }
 
@@ -200,39 +200,39 @@ class ConnectionsEditor extends React.Component {
   render() {
     let form;
     if (this.props.filter.fr !== this.props.filter.to) {
-        form = (<div className="row editor-section">
-                <div className="col-12">
-                 <ConnectionsForm newConnectionName={this.props.newConnectionName}
-                                onConnectionCreate={this.props.onConnectionCreate}
-                                onConnectionNameChange={this.props.onConnectionNameChange}
-                                connectionErrors={this.props.connectionErrors}
-                                filter={this.props.filter}
-                                edges={this.props.db.edges}/>
-                </div>
-                </div>);
+      form = (<div className="row editor-section">
+        <div className="col-12">
+          <ConnectionsForm newConnectionName={this.props.newConnectionName}
+            onConnectionCreate={this.props.onConnectionCreate}
+            onConnectionNameChange={this.props.onConnectionNameChange}
+            connectionErrors={this.props.connectionErrors}
+            filter={this.props.filter}
+            edges={this.props.db.edges}/>
+        </div>
+      </div>);
     }
 
     return (
-        <div className="container-fluid">
-          <div className="row editor-section">
-            <div className="col-2">
-              <DisciplineSelector label="From" ulabel="Driver" nodes={this.props.db.nodes}
-                                  selected={this.props.filter.fr}
-                                  onSelection={this.handleFromDisciplineSelected}/>
-            </div>
-            <div className="col-2">
-              <DisciplineSelector label="To" ulabel="Driver" nodes={this.props.db.nodes}
-                                  selected={this.props.filter.to}
-                                  onSelection={this.handleToDisciplineSelected}/>
-            </div>
+      <div className="container-fluid">
+        <div className="row editor-section">
+          <div className="col-2">
+            <DisciplineSelector label="From" ulabel="Driver" nodes={this.props.db.nodes}
+              selected={this.props.filter.fr}
+              onSelection={this.handleFromDisciplineSelected}/>
           </div>
-          <div className="row editor-section">
-            <div className="col-12">
-                <ConnectionsViewer filter={this.props.filter} edges={this.props.db.edges}
-                                   onConnectionDelete={this.props.onConnectionDelete}/>
-            </div>
+          <div className="col-2">
+            <DisciplineSelector label="To" ulabel="Driver" nodes={this.props.db.nodes}
+              selected={this.props.filter.to}
+              onSelection={this.handleToDisciplineSelected}/>
           </div>
-          {form}
+        </div>
+        <div className="row editor-section">
+          <div className="col-12">
+            <ConnectionsViewer filter={this.props.filter} edges={this.props.db.edges}
+              onConnectionDelete={this.props.onConnectionDelete}/>
+          </div>
+        </div>
+        {form}
       </div>
     );
   }

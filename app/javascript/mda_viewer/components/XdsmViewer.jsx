@@ -7,19 +7,19 @@ import Selectable from 'XDSMjs/src/selectable';
 
 class XdsmViewer extends React.Component {
   componentDidMount() {
-    let config = {
-        labelizer: {
-          ellipsis: 5,
-          subSupScript: false,
-          showLinkNbOnly: true,
-        },
-        layout: {
-          origin: {x: 50, y: 20},
-          cellsize: {w: 150, h: 50},
-          padding: 10,
-        },
-        titleTooltip: true,
-      };
+    const config = {
+      labelizer: {
+        ellipsis: 5,
+        subSupScript: false,
+        showLinkNbOnly: true,
+      },
+      layout: {
+        origin: {x: 50, y: 20},
+        cellsize: {w: 150, h: 50},
+        padding: 10,
+      },
+      titleTooltip: true,
+    };
     this.graph = new Graph(this.props.mda, "", "noDefaultDriver");
     this.graph.nodes[0].name = 'Driver';
     this.graph.nodes[0].type = 'driver';

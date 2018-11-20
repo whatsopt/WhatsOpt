@@ -21,13 +21,13 @@ class ToolBar extends React.Component {
   constructor(props) {
     super(props);
     this.api = props.api;
-    
+
     this.state = {
       loading: true,
       statusOk: false,
       log: [],
     };
-    
+
     this.saveAsPng = this.saveAsPng.bind(this);
   }
 
@@ -42,15 +42,15 @@ class ToolBar extends React.Component {
   }
 
   saveAsPng() {
-    let elt = d3.select('svg').node();
-    let bbox = elt.getBBox();
-    saveSvgAsPng.saveSvgAsPng(elt, "xdsm.png", {backgroundColor: 'white', 
-                                                width: bbox.width-100,
-                                                height: bbox.height-20 });  
+    const elt = d3.select('svg').node();
+    const bbox = elt.getBBox();
+    saveSvgAsPng.saveSvgAsPng(elt, "xdsm.png", {backgroundColor: 'white',
+      width: bbox.width-100,
+      height: bbox.height-20});
   }
-  
+
   render() {
-    let lines = this.state.log.map((l, i) => {
+    const lines = this.state.log.map((l, i) => {
       return ( <OpenMDAOLogLine key={i} line={l}/> );
     });
     let btnStatusClass = this.state.statusOk?"btn btn-success":"btn btn-warning";
@@ -59,15 +59,15 @@ class ToolBar extends React.Component {
       btnStatusClass = "btn btn-info";
       btnIcon = <i className="fa fa-cog fa-spin" />;
     }
-    let base = "/analyses/"+this.props.mdaId+"/exports/new";
-    let hrefOm = this.api.url(base+".openmdao");
-    let hrefCd = this.api.url(base+".cmdows");
+    const base = "/analyses/"+this.props.mdaId+"/exports/new";
+    const hrefOm = this.api.url(base+".openmdao");
+    const hrefCd = this.api.url(base+".cmdows");
     return (
       <div>
         <div className="btn-toolbar" role="toolbar">
           <div className="btn-group mr-2" role="group">
             <button className={btnStatusClass} type="button" data-toggle="collapse"
-                    data-target="#collapseListing" aria-expanded="false">{btnIcon}</button>
+              data-target="#collapseListing" aria-expanded="false">{btnIcon}</button>
             <a className="btn btn-primary" href={hrefOm}>Export OpenMDAO</a>
           </div>
           <div className="btn-group mr-2" role="group">
@@ -90,6 +90,7 @@ class ToolBar extends React.Component {
 }
 
 ToolBar.propTypes= {
+  api: PropTypes.object.isRequired,
   mdaId: PropTypes.number.isRequired,
 };
 
