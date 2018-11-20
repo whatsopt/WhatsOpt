@@ -1,10 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import d3 from 'd3';
 
-let Graph = require('XDSMjs/src/graph');
-let Xdsm = require('XDSMjs/src/xdsm');
-let Selectable = require('XDSMjs/src/selectable');
+import Graph from 'XDSMjs/src/graph';
+import Xdsm from 'XDSMjs/src/xdsm';
+import Selectable from 'XDSMjs/src/selectable';
 
 class XdsmViewer extends React.Component {
   componentDidMount() {
