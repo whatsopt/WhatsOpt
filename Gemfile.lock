@@ -332,6 +332,7 @@ DEPENDENCIES
   capistrano-rails
   capistrano-rvm
   capybara
+  concurrent-ruby
   data-confirm-modal
   devise
   devise_ldap_authenticatable
