@@ -48,12 +48,13 @@ RUN apt-get update \
 &&  rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/*
 
 # node.js LTS install
-RUN curl --silent --location https://deb.nodesource.com/setup_6.x | bash - \
+RUN curl --silent --location https://deb.nodesource.com/setup_10.x | bash - \
     && apt-get install -y nodejs \
     && npm -g up
 
 # yarn install
 RUN curl -o- -L https://yarnpkg.com/install.sh | bash
+ENV PATH /root/.yarn/bin:$PATH
 
 # Ruby
 RUN git clone git://github.com/rbenv/rbenv.git /usr/local/rbenv \
@@ -85,30 +86,29 @@ RUN pip install jupyter \
     && pip install thrift==0.11.0 \
 	&& pip install Click \
 	&& pip install tabulate \
-	&& pip install openmdao==2.4 \
-	&& pip install salib \
-	&& pip install thrift==0.11.0
-
+	&& pip install openmdao==2.5 \
+	&& pip install salib 
+	
 # OpenVSP
-RUN apt-get install -y git cmake libxml2-dev \
-			g++ libcpptest-dev libeigen3-dev \
-			libcminpack-dev swig \
-  && apt-get update \
-  && mkdir OpenVSP \
-  && cd OpenVSP \
-  && mkdir repo \
-  && git clone https://github.com/OpenVSP/OpenVSP.git repo \
-  && mkdir build \
-  && cd build \
-  && echo $PWD \
-  && cmake -DCMAKE_BUILD_TYPE=Release \
-	-DVSP_USE_SYSTEM_CPPTEST=false \
-	-DVSP_USE_SYSTEM_LIBXML2=true \
-	-DVSP_USE_SYSTEM_EIGEN=false \
-	-DVSP_USE_SYSTEM_CMINPACK=true \
-	-DCMAKE_INSTALL_PREFIX=/usr/local/bin \
-	-DVSP_NO_GRAPHICS=1 ../repo/SuperProject \
-  && make 
+#RUN apt-get install -y git cmake libxml2-dev \
+#			g++ libcpptest-dev libeigen3-dev \
+#			libcminpack-dev swig \
+#  && apt-get update \
+#  && mkdir OpenVSP \
+#  && cd OpenVSP \
+#  && mkdir repo \
+#  && git clone https://github.com/OpenVSP/OpenVSP.git repo \
+#  && mkdir build \
+#  && cd build \
+#  && echo $PWD \
+#  && cmake -DCMAKE_BUILD_TYPE=Release \
+#	-DVSP_USE_SYSTEM_CPPTEST=false \
+#	-DVSP_USE_SYSTEM_LIBXML2=true \
+#	-DVSP_USE_SYSTEM_EIGEN=false \
+#	-DVSP_USE_SYSTEM_CMINPACK=true \
+#	-DCMAKE_INSTALL_PREFIX=/usr/local/bin \
+#	-DVSP_NO_GRAPHICS=1 ../repo/SuperProject \
+#  && make 
 
 # Thrift
 ENV THRIFT_VERSION 0.11.0
