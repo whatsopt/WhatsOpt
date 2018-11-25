@@ -256,7 +256,7 @@ class MdaViewer extends React.Component {
               <i className="fa fa-times-circle" /> Close
             </button>
           </form>
-          <h1>Edit {this.state.mda.name}</h1>
+          <h1>Edit {this.state.mda.name}</h1> 
           <div className="mda-section">
             <XdsmViewer ref={(xdsmViewer) => this.xdsmViewer = xdsmViewer} mda={this.state.mda}
               filter={this.state.filter} onFilterChange={this.handleFilterChange}/>
@@ -324,7 +324,7 @@ class MdaViewer extends React.Component {
     return (
       <div>
         <div className="mda-section">
-          <ToolBar mdaId={this.props.mda.id} api={this.api}/>
+          <ToolBar mdaId={this.props.mda.id} api={this.api} db={db}/>
         </div>
         <div className="mda-section">
           <XdsmViewer ref={(xdsmViewer) => this.xdsmViewer = xdsmViewer} mda={this.state.mda}

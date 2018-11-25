@@ -24,7 +24,7 @@ ActiveRecord::Schema.define(version: 51) do
     t.integer "container_id"
     t.string "data_file_name"
     t.string "data_content_type"
-    t.integer "data_file_size"
+    t.bigint "data_file_size"
     t.datetime "data_updated_at"
     t.string "description"
     t.string "category"
@@ -36,7 +36,7 @@ ActiveRecord::Schema.define(version: 51) do
   create_table "cases", force: :cascade do |t|
     t.integer "operation_id"
     t.integer "variable_id"
-    t.integer "coord_index", default: 0
+    t.integer "coord_index", default: -1
     t.text "values"
   end
 
@@ -66,9 +66,11 @@ ActiveRecord::Schema.define(version: 51) do
 
   create_table "jobs", force: :cascade do |t|
     t.string "status"
-    t.text "log", default: ""
+    t.text "log"
     t.integer "pid", default: -1
     t.integer "operation_id"
+    t.datetime "started_at"
+    t.datetime "ended_at"
     t.string "sqlite_filename"
   end
 

@@ -29,6 +29,7 @@ class ToolBar extends React.Component {
     };
 
     this.saveAsPng = this.saveAsPng.bind(this);
+    this.exportCsv = this.exportCsv.bind(this);
   }
 
   componentDidMount() {
@@ -49,6 +50,39 @@ class ToolBar extends React.Component {
       height: bbox.height-20});
   }
 
+  exportCsv() {
+    let connections = this.props.db.computeConnections();
+    this._exportCsvVariables(connections);
+  }
+  
+  _convertVariablesToCsv(connections) {
+    let headers=['Active', 'From', 'To', 'Name', 'Description', 'Role', 
+                 'Type', 'Shape', 'Units', 'Init', 'Lower', 'Upper'];
+    let rows = [];
+    connections.forEach((conn) => {
+      let row = [];
+      row.push(conn.active, conn.from, conn.to, conn.name, conn.desc, conn.role, conn.type, conn.shape);
+      row.push(conn.init, conn.lower, conn.upper);
+      rows.push(row.join(';'));
+    })
+    let csv = headers.join(';')+'\n'+rows.join('\n')+'\n';
+    return csv;
+  }
+
+  _exportCsvVariables(connections) {  
+    let csv = this._convertVariablesToCsv(connections);
+    let filename = 'analysis.csv';
+    let data = 'data:application/csv;charset=utf-8,' + encodeURIComponent(csv);
+
+    let link = document.createElement('a');
+    link.setAttribute('href', data);
+    link.setAttribute('download', filename);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+  
   render() {
     const lines = this.state.log.map((l, i) => {
       return ( <OpenMDAOLogLine key={i} line={l}/> );
@@ -72,6 +106,9 @@ class ToolBar extends React.Component {
           </div>
           <div className="btn-group mr-2" role="group">
             <a className="btn btn-primary" href={hrefCd}>Export Cmdows</a>
+          </div>
+          <div className="btn-group mr-2" role="group">
+            <a className="btn btn-primary" href="#" onClick={this.exportCsv}>Export Csv</a>
           </div>
           <div className="btn-group mr-2" role="group">
             <a className="btn btn-primary" href="#" onClick={this.saveAsPng}>Export Image</a>
