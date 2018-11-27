@@ -62,7 +62,7 @@ class ToolBar extends React.Component {
     connections.forEach((conn) => {
       let row = [];
       row.push(conn.active, conn.from, conn.to, conn.name, conn.desc, conn.role, conn.type, conn.shape);
-      row.push(conn.init, conn.lower, conn.upper);
+      row.push(conn.units, conn.init, conn.lower, conn.upper);
       rows.push(row.join(';'));
     })
     let csv = headers.join(';')+'\n'+rows.join('\n')+'\n';
