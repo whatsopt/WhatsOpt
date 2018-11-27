@@ -7,6 +7,9 @@
   <li>Fix result display error when a variable is removed</li> 
   <li>Implement native result load in ruby</li>
   <li>Update ruby 2.5.3, ror 5.2.1 and dependencies</li>
+  <li>Export variables of a given analysis as a csv file</li>
+  <li>Export data results of an operation as a csv file</li>
+  <li>Enable filtering user own analysis</li>
 </ul>
 
 <h3>0.11.0 (28/09/2018)</h3>
