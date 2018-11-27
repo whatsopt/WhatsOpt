@@ -8,7 +8,7 @@ class InitializeConnectionRole < ActiveRecord::Migration[5.1]
         elsif conn.to.discipline.is_driver?
           role = WhatsOpt::Variable::RESPONSE_ROLE
         else
-          role = WhatsOpt::Variable::PLAIN_ROLE
+          role = WhatsOpt::Variable::STATE_VAR_ROLE
         end
         conn.update_column(:role, role)
       end  

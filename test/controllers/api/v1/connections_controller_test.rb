@@ -18,7 +18,7 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
          as: :json, headers: @auth_headers 
     assert_response :success
     conn = Connection.last
-    assert_equal conn.role, WhatsOpt::Variable::PLAIN_ROLE
+    assert_equal conn.role, WhatsOpt::Variable::STATE_VAR_ROLE
   end
 
   test "should fail to create connection if var name already exists" do

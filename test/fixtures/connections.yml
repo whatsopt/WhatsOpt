@@ -16,12 +16,12 @@ objgeo_driver:
 geo_aero:
   from_id: <%= ActiveRecord::FixtureSet.identify(:varyg_geo_out) %>
   to_id: <%= ActiveRecord::FixtureSet.identify(:varyg_aero_in) %>
-  role: "plain"
+  role: "state_var"
   
 aero_geo:
   from_id: <%= ActiveRecord::FixtureSet.identify(:varya_aero_out) %>
   to_id: <%= ActiveRecord::FixtureSet.identify(:varya_geo_in) %>
-  role: "plain"
+  role: "state_var"
   
 driver_x1_geo:
   from_id: <%= ActiveRecord::FixtureSet.identify(:varx1_out) %>

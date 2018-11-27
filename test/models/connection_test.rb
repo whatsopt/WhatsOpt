@@ -19,8 +19,8 @@ class ConnectionTest < ActiveSupport::TestCase
   test "should have a role" do
     conns = Connection.joins(from: :discipline).where(disciplines: {analysis_id: @mda.id})
     assert_equal ["design_var", "min_objective", 
-                  "parameter", "parameter", 
-                  "plain", "plain", "response"], conns.map(&:role).sort
+                  "parameter", "parameter", "response", 
+                  "state_var", "state_var"], conns.map(&:role).sort
   end
   
   test "should update init parameter without changing other attrs" do

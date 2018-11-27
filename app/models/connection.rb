@@ -20,7 +20,7 @@ class Connection < ApplicationRecord
     varouts.each do |vout|
       vins = varins.where(name: vout.name)
       vins.each do |vin|
-        role = WhatsOpt::Variable::PLAIN_ROLE
+        role = WhatsOpt::Variable::STATE_VAR_ROLE
         if vout.discipline.is_driver?
           role = WhatsOpt::Variable::PARAMETER_ROLE
         end
@@ -82,7 +82,7 @@ class Connection < ApplicationRecord
   
     def _ensure_role_presence
       if self.role.blank?
-        self.role = WhatsOpt::Variable::PLAIN_ROLE
+        self.role = WhatsOpt::Variable::STATE_VAR_ROLE
         if from&.discipline&.is_driver?
           self.role = WhatsOpt::Variable::DESIGN_VAR_ROLE
         end

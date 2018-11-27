@@ -183,13 +183,13 @@ class VariablesEditor extends React.Component {
       {id: 'max_objective', text: 'Max Objective'},
       {id: 'ineq_constraint', text: 'Neg Constraint'},
       {id: 'eq_constraint', text: 'Eq Constraint'},
-      {id: 'plain', text: 'State Variable'}];
+      {id: 'state_var', text: 'State Variable'}];
     if (conn.role == "parameter" || conn.role == "design_var") {
       options.splice(2, 6);
       //      if (conn.type === "String") {
       //        options.splice(options.length-1, 1);
       //      }
-    } else if (conn.role !== "plain") {
+    } else if (conn.role !== "state_var") {
       options.splice(options.length-1, 1);
       options.splice(0, 2);
     }
