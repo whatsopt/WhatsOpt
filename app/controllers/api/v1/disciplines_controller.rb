@@ -30,7 +30,7 @@ class Api::V1::DisciplinesController < Api::ApiController
     # Use callbacks to share common setup or constraints between actions.
     def set_discipline
       @discipline = Discipline.find(params[:id])
-      authorize @discipline.analysis
+      authorize @discipline
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.

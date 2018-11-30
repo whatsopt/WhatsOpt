@@ -74,18 +74,35 @@ end
 gem 'jquery-rails'
 gem 'jquery-ui-rails'
 
+# Authentication/Authorization
 gem 'devise' 
 gem 'devise_ldap_authenticatable' 
 gem 'rolify'
 gem 'pundit'
-gem 'paperclip'
-gem 'rubyXL'
+
+# support CORS 
 gem 'rack-cors'
+
+# Attachments
+gem 'paperclip'
+
+# Import Excel
+gem 'rubyXL'
+
+# Analysis as a tree
+gem 'ancestry'
+
+# Disciplines as a list
 gem 'acts_as_list'
+
+# JSON serializers
 gem 'active_model_serializers', '~> 0.10.7'
+
+# Background jobs
 gem 'sucker_punch'
 
-gem 'popper'
+# UI
+gem 'popper' # bootstrap dependency
 gem 'bootstrap', '~> 4.0.0'
 gem 'font-awesome-rails'
 gem 'data-confirm-modal'

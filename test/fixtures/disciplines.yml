@@ -34,4 +34,34 @@ dummy:
   analysis: dummy
   position: 0
 
+outermda_driver:
+  name: __DRIVER__
+  type: null_driver
+  analysis: outermda
+  position: 0
+
+outermda_innermda_discipline:
+  name: InnerMdaDiscipline
+  type: analysis
+  analysis: outermda
+  position: 1
+
+outermda_vacant_discipline:
+  name: VacantDiscipline
+  type: analysis
+  analysis: outermda
+  position: 2
+  
+innermda_driver:
+  name: __DRIVER__
+  type: null_driver
+  analysis: innermda
+  position: 0
+
+innermda_discipline:
+  name: PLainDiscipline
+  type: analysis
+  analysis: innermda
+  position: 1
+
  

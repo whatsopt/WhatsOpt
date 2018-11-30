@@ -5,6 +5,14 @@ owner_cicav_mda_role:
   name: :owner
   resource: cicav (Analysis)
   
+owner_outermda_role:
+  name: :owner
+  resource: outermda (Analysis)
+  
+owner_innermda_role:
+  name: :owner
+  resource: innermda (Analysis)
+  
 owner_fast_mda_role:
   name: :owner
   resource: fast (Analysis)

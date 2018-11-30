@@ -8,12 +8,15 @@ class Analysis < ApplicationRecord
   include WhatsOpt::OpenmdaoModule
 
   resourcify
-    
+  
+  has_ancestry
+  
   has_one :attachment, :as => :container, :dependent => :destroy
   accepts_nested_attributes_for :attachment, allow_destroy: true
   validates_associated :attachment
   
   has_many :disciplines, -> { includes(:variables).order(position: :asc) }, :dependent => :destroy 
+  belongs_to :analysis_discipline
   has_many :operations, :dependent => :destroy 
     
   accepts_nested_attributes_for :disciplines, 

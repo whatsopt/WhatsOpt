@@ -6,3 +6,11 @@ fast:
   
 dummy:
   name: DUMMY
+
+outermda:
+  name: OUTER
+  
+innermda:
+  name: INNER
+  analysis_discipline: innermda_discipline
+  ancestry: <%= ActiveRecord::FixtureSet.identify(:outermda) %>

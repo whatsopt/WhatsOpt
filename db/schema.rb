@@ -10,13 +10,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 51) do
+ActiveRecord::Schema.define(version: 54) do
 
   create_table "analyses", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "public", default: true
+    t.string "ancestry"
+    t.integer "analysis_discipline_id"
+    t.index ["analysis_discipline_id"], name: "index_analyses_on_analysis_discipline_id"
+    t.index ["ancestry"], name: "index_analyses_on_ancestry"
+  end
+
+  create_table "analysis_disciplines", force: :cascade do |t|
+    t.integer "discipline_id"
+    t.index ["discipline_id"], name: "index_analysis_disciplines_on_discipline_id"
   end
 
   create_table "attachments", force: :cascade do |t|
@@ -24,7 +33,7 @@ ActiveRecord::Schema.define(version: 51) do
     t.integer "container_id"
     t.string "data_file_name"
     t.string "data_content_type"
-    t.bigint "data_file_size"
+    t.integer "data_file_size"
     t.datetime "data_updated_at"
     t.string "description"
     t.string "category"
@@ -66,7 +75,7 @@ ActiveRecord::Schema.define(version: 51) do
 
   create_table "jobs", force: :cascade do |t|
     t.string "status"
-    t.text "log"
+    t.text "log", default: ""
     t.integer "pid", default: -1
     t.integer "operation_id"
     t.datetime "started_at"
@@ -151,7 +160,6 @@ ActiveRecord::Schema.define(version: 51) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "active", default: true
-    t.index ["discipline_id"], name: "index_variables_on_discipline_id"
   end
 
 end

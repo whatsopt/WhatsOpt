@@ -2,6 +2,14 @@ users_roles1:
   user: admin 
   role: admin_role
 
+users_roles2:
+  user: user1 
+  role: owner_outermda_role
+
+users_roles3:
+  user: user1 
+  role: owner_innermda_role
+
 users_roles5:
   user: user1 
   role: owner_cicav_mda_role

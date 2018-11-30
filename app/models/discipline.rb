@@ -10,6 +10,8 @@ class Discipline < ApplicationRecord
     
   #has_many :variables, -> { includes(:parameter) }, :dependent => :destroy
   has_many :variables, :dependent => :destroy
+  has_one :analysis_discipline, :dependent => :destroy
+  has_one :sub_analysis, :through => :analysis_discipline
   
   belongs_to :analysis
   acts_as_list scope: :analysis, top_of_list: 0
