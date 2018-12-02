@@ -6,7 +6,7 @@ class InitializeKindOfExistingDisciplines < ActiveRecord::Migration[5.1]
       if d.name == WhatsOpt::Discipline::NULL_DRIVER_NAME
         d.kind = WhatsOpt::Discipline::NULL_DRIVER
       else 
-        d.kind = WhatsOpt::Discipline::ANALYSIS
+        d.kind = WhatsOpt::Discipline::DISCIPLINE
       end
       d.save
     end 

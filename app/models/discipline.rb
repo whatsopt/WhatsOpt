@@ -11,7 +11,7 @@ class Discipline < ApplicationRecord
   #has_many :variables, -> { includes(:parameter) }, :dependent => :destroy
   has_many :variables, :dependent => :destroy
   has_one :analysis_discipline, :dependent => :destroy
-  has_one :sub_analysis, :through => :analysis_discipline
+  has_one :sub_analysis, through: :analysis_discipline, source: :analysis
   
   belongs_to :analysis
   acts_as_list scope: :analysis, top_of_list: 0
@@ -27,33 +27,37 @@ class Discipline < ApplicationRecord
   after_initialize :set_defaults, unless: :persisted?  
     
   def input_variables
-    self.variables.inputs
+    variables.inputs
   end
 
   def output_variables
-    self.variables.outputs
+    variables.outputs
   end
 
   def is_driver?
-    self.type == WhatsOpt::Discipline::NULL_DRIVER
+    type == WhatsOpt::Discipline::NULL_DRIVER
   end
   
   def update_discipline(params)
     Discipline.transaction do 
       if params[:position]
-        self.insert_at(params[:position])
+        insert_at(params[:position])
         params = params.except(:role) 
       end
-      self.update(params)
+      update(params)
+      if (sub_analysis && type != WhatsOpt::Discipline::ANALYSIS)
+        analysis_discipline.analysis.update(parent_id: nil)
+        analysis_discipline.destroy 
+      end
     end
   end
   
-  private
-  
+  private 
+
   def set_defaults
-    self.type = WhatsOpt::Discipline::ANALYSIS if self.type.blank?
-    if self.name == WhatsOpt::Discipline::NULL_DRIVER_NAME
-      self.type = WhatsOpt::Discipline::NULL_DRIVER
+    type = WhatsOpt::Discipline::DISCIPLINE if self.type.blank?
+    if name == WhatsOpt::Discipline::NULL_DRIVER_NAME
+      type = WhatsOpt::Discipline::NULL_DRIVER
     end
   end
   

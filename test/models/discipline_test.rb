@@ -12,7 +12,7 @@ class DisciplineTest < ActiveSupport::TestCase
   
   test "should have a default kind" do
     disc = Discipline.create({ name: 'TEST'})
-    assert_equal WhatsOpt::Discipline::ANALYSIS, disc.type    
+    assert_equal WhatsOpt::Discipline::DISCIPLINE, disc.type    
   end
   
   def test_as_json

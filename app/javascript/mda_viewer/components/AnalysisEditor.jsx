@@ -39,7 +39,7 @@ class AnalysisEditor extends React.Component {
               </label>
               <UserSelector
                 onMemberSearch={this.props.onAnalysisMemberSearch}
-                onMemberSelected={this.props.onAnalysisMemberCreate}
+                onMemberSelected={this.props.onAnalysisMemberSelected}
               />
             </span>
           </div>
@@ -83,7 +83,7 @@ AnalysisEditor.propTypes = {
   onAnalysisNameChange: PropTypes.func.isRequired,
   onAnalysisPublicChange: PropTypes.func.isRequired,
   onAnalysisMemberSearch: PropTypes.func.isRequired,
-  onAnalysisMemberCreate: PropTypes.func.isRequired,
+  onAnalysisMemberSelected: PropTypes.func.isRequired,
   onAnalysisMemberDelete: PropTypes.func.isRequired,
 };
 

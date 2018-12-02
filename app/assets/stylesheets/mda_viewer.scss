@@ -1,11 +1,9 @@
+/* Excel-like list of variables */
 table.connections td {
 	padding: 2px;
 }
 
-svg text {
-	font-size: small;
-}
-
+/* Operation logs */
 .listing {
 	padding: 10px;
 	color: silver;
@@ -19,6 +17,7 @@ svg text {
 	padding: 0px;
 }
 
+/* Analysis editor */
 div.mda-section {
 	margin-top: 0px;
 }
@@ -36,11 +35,18 @@ label.editor-header {
   color: lightgray;
 }
 
+/* Discipline Editor */
 div.editor-discipline {
 	margin-top:5px;
 }
 
+/* XDSM tooltip */
 .tooltip-inner {
   max-width: 300px; /* set this to your maximum fitting width */
   width: inherit;   /* will take up least amount of space */ 
+}
+
+/* XDSM sub-analysis link */
+a.analysis-link {
+  font-style: italic;
 }

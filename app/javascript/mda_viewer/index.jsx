@@ -40,6 +40,8 @@ class MdaViewer extends React.Component {
     this.handleDisciplineCreate = this.handleDisciplineCreate.bind(this);
     this.handleDisciplineUpdate = this.handleDisciplineUpdate.bind(this);
     this.handleDisciplineDelete = this.handleDisciplineDelete.bind(this);
+    this.handleSubAnalysisSearch = this.handleSubAnalysisSearch.bind(this);
+    this.handleSubAnalysisCreate = this.handleSubAnalysisCreate.bind(this);
     this.handleConnectionNameChange = this.handleConnectionNameChange.bind(this);
     this.handleConnectionCreate = this.handleConnectionCreate.bind(this);
     this.handleConnectionDelete = this.handleConnectionDelete.bind(this);
@@ -163,6 +165,27 @@ class MdaViewer extends React.Component {
     });
   }
 
+  handleSubAnalysisSearch(query, callback) {
+    this.api.getSubAnalysisCandidates(
+        (response) => {
+          let options = response.data
+            .filter((analysis) => (analysis.id !== this.props.mda.id))
+            .map((analysis) => {return {id: analysis.id, label: `#${analysis.id} ${analysis.name}`}})
+          callback(options);
+        }
+    );
+  }
+  handleSubAnalysisCreate(node, selected) {
+    if (selected.length) {
+      this.api.createSubAnalysisDiscipline(node.id, selected[0].id,
+          (response) => {
+            console.log(response.data);
+            this.renderXdsm();
+          }
+      );
+    }
+  }  
+  
   // *** Analysis ************************************************************
   handleAnalysisNameChange(event) {
     event.preventDefault();
@@ -185,9 +208,12 @@ class MdaViewer extends React.Component {
 
   handleAnalysisMemberSearch(query, callback) {
     this.api.getMemberCandidates(this.props.mda.id,
-        (response) => {callback(response.data);}
+        (response) => {
+          callback(response.data);
+        }
     );
   }
+  
   handleAnalysisMemberCreate(selected) {
     if (selected.length) {
       this.api.addMember(selected[0].id, this.props.mda.id,
@@ -224,6 +250,7 @@ class MdaViewer extends React.Component {
   }
 
   renderXdsm() {
+    console.log("renderXdsm");
     this.api.getAnalysis(this.props.mda.id, true,
         (response) => {
           const newState = update(this.state,
@@ -266,17 +293,17 @@ class MdaViewer extends React.Component {
               <a className="nav-link " id="analysis-tab" data-toggle="tab" href="#analysis"
                 role="tab" aria-controls="analysis" aria-selected="false">Analysis</a>
             </li>
-            <li className="nav-item">
+            <li className="nav-item active">
               <a className="nav-link" id="disciplines-tab" data-toggle="tab" href="#disciplines"
-                role="tab" aria-controls="disciplines" aria-selected="false">Disciplines</a>
+                role="tab" aria-controls="disciplines" aria-selected="true">Disciplines</a>
             </li>
             <li className="nav-item">
               <a className="nav-link" id="connections-tab" data-toggle="tab" href="#connections"
                 role="tab" aria-controls="connections" aria-selected="false">Connections</a>
             </li>
             <li className="nav-item">
-              <a className="nav-link active" id="variables-tab" data-toggle="tab" href="#variables"
-                role="tab" aria-controls="variables" aria-selected="true">Variables</a>
+              <a className="nav-link" id="variables-tab" data-toggle="tab" href="#variables"
+                role="tab" aria-controls="variables" aria-selected="false">Variables</a>
             </li>
           </ul>
           <div className="tab-content" id="myTabContent">
@@ -289,14 +316,16 @@ class MdaViewer extends React.Component {
                 onAnalysisNameChange={this.handleAnalysisNameChange}
                 onAnalysisPublicChange={this.handleAnalysisPublicChange}
                 onAnalysisMemberSearch={this.handleAnalysisMemberSearch}
-                onAnalysisMemberCreate={this.handleAnalysisMemberCreate}
+                onAnalysisMemberSelected={this.handleAnalysisMemberCreate}
                 onAnalysisMemberDelete={this.handleAnalysisMemberDelete}
               />
             </div>
-            <div className="tab-pane fade" id="disciplines" role="tabpanel" aria-labelledby="disciplines-tab">
+            <div className="tab-pane fade show active" id="disciplines" role="tabpanel" aria-labelledby="disciplines-tab">
               <DisciplinesEditor name={this.state.newDisciplineName}
                 nodes={db.nodes}
                 onDisciplineNameChange={this.handleDisciplineNameChange}
+                onSubAnalysisSearch={this.handleSubAnalysisSearch}
+                onSubAnalysisSelected={this.handleSubAnalysisCreate}
                 onDisciplineCreate={this.handleDisciplineCreate}
                 onDisciplineDelete={this.handleDisciplineDelete}
                 onDisciplineUpdate={this.handleDisciplineUpdate}
@@ -312,7 +341,7 @@ class MdaViewer extends React.Component {
                 onConnectionDelete={this.handleConnectionDelete}
               />
             </div>
-            <div className="tab-pane fade show active" id="variables" role="tabpanel" aria-labelledby="variables-tab">
+            <div className="tab-pane fade" id="variables" role="tabpanel" aria-labelledby="variables-tab">
               <VariablesEditor db={db} filter={this.state.filter}
                 onFilterChange={this.handleFilterChange}
                 onConnectionChange={this.handleConnectionChange}

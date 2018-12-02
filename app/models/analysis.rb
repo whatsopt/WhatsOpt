@@ -16,7 +16,7 @@ class Analysis < ApplicationRecord
   validates_associated :attachment
   
   has_many :disciplines, -> { includes(:variables).order(position: :asc) }, :dependent => :destroy 
-  belongs_to :analysis_discipline
+  has_one :analysis_discipline, :dependent => :destroy
   has_many :operations, :dependent => :destroy 
     
   accepts_nested_attributes_for :disciplines, 
@@ -102,9 +102,12 @@ class Analysis < ApplicationRecord
   end
   
   def build_nodes
-    return self.disciplines.by_position.map {|d| 
-      { id: "#{d.id}", type: d.type , name: d.name } 
-    }
+    return self.disciplines.by_position.map do |d| 
+      node = { id: "#{d.id}", type: d.type, name: d.name }
+      node.merge!(link: {id: self.parent.id, name: self.parent.name}) if (d.is_driver? && self.parent)
+      node.merge!(link: {id: d.sub_analysis.id, name: d.sub_analysis.name}) if d.sub_analysis
+      node 
+    end
   end
 
 # TODO: To be deleted if more efficient implementation below is ok

@@ -2,11 +2,18 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import update from 'immutability-helper';
 import {DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
+import AnalysisSelector from './AnalysisSelector';
+
+// mapping with XDSMjs type values
+const DISCIPLINE='analysis';
+const FUNCTION='function';
+const ANALYSIS='mda'
 
 class Discipline extends React.Component {
+  
   constructor(props) {
     super(props);
-    this.state = {discName: '', discType: 'analysis', isEditing: false};
+    this.state = {discName: '', discType: DISCIPLINE, isEditing: false};
 
     this.handleDiscNameChange = this.handleDiscNameChange.bind(this);
     this.handleEdit = this.handleEdit.bind(this);
@@ -14,6 +21,7 @@ class Discipline extends React.Component {
     this.handleUpdate = this.handleUpdate.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
     this.handleSelectChange = this.handleSelectChange.bind(this);
+    this.handleSubAnalysisSelected = this.handleSubAnalysisSelected.bind(this);
   }
 
   handleDiscNameChange(event) {
@@ -28,16 +36,18 @@ class Discipline extends React.Component {
     this.setState(newState);
   }
 
-  handleCancelEdit(event) {
-    const newState = update(this.state, {isEditing: {$set: false}});
-    this.setState(newState);
+  handleCancelEdit() {
+    this.setState({isEditing: false});
   }
 
   handleUpdate(event) {
     event.preventDefault();
-    this.handleCancelEdit(event);
+    this.handleCancelEdit();
     const discattrs = {name: this.state.discName, type: this.state.discType};
     this.props.onDisciplineUpdate(this.props.node, discattrs);
+    if (this.state.selected) {
+      this.props.onSubAnalysisSelected(this.props.node, this.state.selected);
+    }
   }
 
   handleDelete(event) {
@@ -53,28 +63,54 @@ class Discipline extends React.Component {
   }
 
   handleSelectChange(event) {
-    const newState = update(this.state, {discType: {$set: event.target.value}});
-    this.setState(newState);
+    let discType = event.target.value;
+    if (discType !== ANALYSIS && this.state.selected) {  // unset analysis if needed
+      this.setState({discType, selected: []});
+    } else {
+      this.setState({discType});
+    }
   }
 
+  handleSubAnalysisSelected(selected) {
+    console.log("Select "+JSON.stringify(selected));
+    this.setState({selected});
+    //this.props.onSubAnalysisSelected(this.props.node, selected);
+  }
+  
   render() {
     if (this.state.isEditing) {
+      let subAnalysis = null;
+      let selected = [];
+      let link = this.props.node.link;
+      if (link) {
+        selected = [{id: link.id, label: `#${link.id} ${link.name}`}];
+      }
+      if (this.state.discType === ANALYSIS) {
+        subAnalysis = 
+          <AnalysisSelector
+            selected={selected}
+            onAnalysisSearch={this.props.onSubAnalysisSearch}
+            onAnalysisSelected={this.handleSubAnalysisSelected}
+          />
+      }
       return (
         <Draggable draggableId={this.props.node.id} index={this.props.index}>
           {(provided, snapshot) => (
             <li ref={provided.innerRef} {...provided.dragHandleProps} {...provided.draggableProps}
               className="list-group-item editor-discipline" >
               <form className="form-inline" onSubmit={this.handleUpdate}>
-                <div className="form-group mr-3">
+                <div className="form-group">
                   <input className="form-control" id="name" type="text" defaultValue={this.state.discName}
                     placeholder='Enter Name...' onChange={this.handleDiscNameChange}/>
-                  <select className="form-control ml-1" id="type" value={this.state.discType}
+                  <select className="form-control ml-2" id="type" value={this.state.discType}
                     onChange={this.handleSelectChange}>
-                    <option value="analysis">Analysis</option>
-                    <option value="function">Function</option>
+                    <option value={DISCIPLINE}>Discipline</option>
+                    <option value={FUNCTION}>Function</option>
+                    <option value={ANALYSIS}>Sub-Analysis</option>
                   </select>
                 </div>
-                <button type="submit" className="btn btn-primary">Update</button>
+                {subAnalysis}
+                <button type="submit" className="btn btn-primary ml-3">Update</button>
                 <button type="button" onClick={this.handleCancelEdit} className="btn ml-1">Cancel</button>
               </form>
             </li>)}
@@ -104,8 +140,11 @@ class Discipline extends React.Component {
 Discipline.propTypes = {
   node: PropTypes.object.isRequired,
   index: PropTypes.number.isRequired,
+  subAnalysisOption: PropTypes.number,
   onDisciplineUpdate: PropTypes.func.isRequired,
   onDisciplineDelete: PropTypes.func.isRequired,
+  onSubAnalysisSearch: PropTypes.func.isRequired,
+  onSubAnalysisSelected: PropTypes.func.isRequired,
 };
 
 const reorder = (list, startIndex, endIndex) => {
@@ -158,7 +197,9 @@ class DisciplinesEditor extends React.Component {
     let disciplines = this.state.nodes.map((node, i) => {
       return (<Discipline key={node.id} pos={i+1} index={i} node={node}
         onDisciplineUpdate={this.props.onDisciplineUpdate}
-        onDisciplineDelete={this.props.onDisciplineDelete} />);
+        onDisciplineDelete={this.props.onDisciplineDelete} 
+        onSubAnalysisSearch={this.props.onSubAnalysisSearch} 
+        onSubAnalysisSelected={this.props.onSubAnalysisSelected} />);
     });
     const nbNodes = disciplines.length;
     if (nbNodes === 0) {
@@ -203,6 +244,8 @@ DisciplinesEditor.propTypes = {
   onDisciplineDelete: PropTypes.func.isRequired,
   onDisciplineCreate: PropTypes.func.isRequired,
   onDisciplineNameChange: PropTypes.func.isRequired,
+  onSubAnalysisSearch: PropTypes.func.isRequired,
+  onSubAnalysisSelected: PropTypes.func.isRequired,
 };
 
 export default DisciplinesEditor;

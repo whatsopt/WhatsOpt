@@ -3,7 +3,8 @@
 
   <thead>
     <tr>
-      <th class="col-md-2">Name</th>
+      <th style='width=10 px;'>#</th>
+      <th class="col-md-3">Name</th>
       <th class="col-md-1">Owner</th>
       <th class="col-md-1">Locked</th>
       <th class="col-md-2">Created</th>
@@ -15,23 +16,24 @@
   <tbody>
     <% @mdas.each do |mda| %>
       <tr>
+        <td>#<%= mda.id %></td>
         <td><%= link_to_analysis_if_authorized(mda, current_user) %></td>
-          <td><%= mda.owner %></td>
-          <td>
-            <% unless mda.public %>
-              <i class="fa fa-lock"></i>
-            <% end %>    
-          </td>
-          <td><%= time_ago_in_words(mda.created_at)%> ago</td>
-          <td>
-            <%= link_to_operations_if_authorized(mda, current_user) %>
-            <% unless Operation.done(mda).empty? %>
-              <%= link_to mda_operations_path(mda), 
-                class: "d-inline btn btn-light btn-inverse btn-sm", title: "List Operations" do %>
-                <i class="fa fa-ellipsis-v"></i> 
-              <% end %>
+        <td><%= mda.owner %></td>
+        <td>
+          <% unless mda.public %>
+            <i class="fa fa-lock"></i>
+          <% end %>    
+        </td>
+        <td><%= time_ago_in_words(mda.created_at)%> ago</td>
+        <td>
+          <%= link_to_operations_if_authorized(mda, current_user) %>
+          <% unless Operation.done(mda).empty? %>
+            <%= link_to mda_operations_path(mda), 
+              class: "d-inline btn btn-light btn-inverse btn-sm", title: "List Operations" do %>
+              <i class="fa fa-ellipsis-v"></i> 
             <% end %>
-          </td>
+          <% end %>
+        </td>
         <td>
           <% if policy(mda).update? %>
             <%= link_to edit_mda_path(mda), 

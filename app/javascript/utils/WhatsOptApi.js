@@ -85,6 +85,20 @@ class WhatsOptApi {
         .catch((error) => console.log(error));
   }
 
+  getSubAnalysisCandidates(callback) {
+    const path = `/api/v1/analyses`;
+    axios.get(this.url(path))
+        .then(callback)
+        .catch((error) => console.log(error));
+  }
+  
+  createSubAnalysisDiscipline(discId, subMdaId, callback) {
+    const path = `/api/v1/disciplines/${discId}/analysis_discipline`;
+    axios.post(this.url(path), {analysis_discipline: {analysis_id: subMdaId}})
+        .then(callback)
+        .catch((error) => console.log(error));    
+  }
+  
   createConnection(mdaId, connectionAttributes, callback, onError) {
     const path = `/api/v1/analyses/${mdaId}/connections`;
     axios.post(this.url(path), {connection: connectionAttributes})

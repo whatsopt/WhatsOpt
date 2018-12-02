@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 54) do
+ActiveRecord::Schema.define(version: 53) do
 
   create_table "analyses", force: :cascade do |t|
     t.string "name"
@@ -18,13 +18,13 @@ ActiveRecord::Schema.define(version: 54) do
     t.datetime "updated_at", null: false
     t.boolean "public", default: true
     t.string "ancestry"
-    t.integer "analysis_discipline_id"
-    t.index ["analysis_discipline_id"], name: "index_analyses_on_analysis_discipline_id"
     t.index ["ancestry"], name: "index_analyses_on_ancestry"
   end
 
   create_table "analysis_disciplines", force: :cascade do |t|
     t.integer "discipline_id"
+    t.integer "analysis_id"
+    t.index ["analysis_id"], name: "index_analysis_disciplines_on_analysis_id"
     t.index ["discipline_id"], name: "index_analysis_disciplines_on_discipline_id"
   end
 
@@ -45,7 +45,7 @@ ActiveRecord::Schema.define(version: 54) do
   create_table "cases", force: :cascade do |t|
     t.integer "operation_id"
     t.integer "variable_id"
-    t.integer "coord_index", default: -1
+    t.integer "coord_index", default: 0
     t.text "values"
   end
 
@@ -75,7 +75,7 @@ ActiveRecord::Schema.define(version: 54) do
 
   create_table "jobs", force: :cascade do |t|
     t.string "status"
-    t.text "log", default: ""
+    t.text "log"
     t.integer "pid", default: -1
     t.integer "operation_id"
     t.datetime "started_at"
@@ -160,6 +160,7 @@ ActiveRecord::Schema.define(version: 54) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "active", default: true
+    t.index ["discipline_id"], name: "index_variables_on_discipline_id"
   end
 
 end

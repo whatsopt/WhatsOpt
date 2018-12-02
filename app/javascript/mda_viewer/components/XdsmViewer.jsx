@@ -24,7 +24,7 @@ class XdsmViewer extends React.Component {
     this.graph.nodes[0].name = 'Driver';
     this.graph.nodes[0].type = 'driver';
     this.xdsm = new Xdsm(this.graph, 'root', config);
-    this.xdsm.draw();
+    this._draw();
     this.selectable = new Selectable(this.xdsm, this._onSelectionChange.bind(this));
     this.setSelection(this.props.filter);
     this._setTooltips();
@@ -47,7 +47,7 @@ class XdsmViewer extends React.Component {
 
   addDiscipline(discattrs) {
     this.xdsm.graph.addNode(discattrs);
-    this.xdsm.draw();
+    this.xdsm._draw();
     this.selectable.enable();
   }
 
@@ -60,7 +60,7 @@ class XdsmViewer extends React.Component {
 
   removeDiscipline(index) {
     this.xdsm.graph.removeNode(index);
-    this.xdsm.draw();
+    this.xdsm._draw();
   }
 
   addConnection(connattrs) {
@@ -79,6 +79,11 @@ class XdsmViewer extends React.Component {
     this.selectable.setFilter(filter);
   }
 
+  _draw() {
+    this.xdsm.draw();
+    this._setLinks();
+  }
+  
   _onSelectionChange(filter) {
     this.props.onFilterChange(filter);
   }
@@ -87,6 +92,8 @@ class XdsmViewer extends React.Component {
     $(".ellipsized").tooltip('dispose');
     // remove and redraw xdsm
     this.xdsm.refresh();
+    // links
+    this._setLinks();
     // reattach selection
     this.selectable.enable();
     // select current
@@ -99,6 +106,17 @@ class XdsmViewer extends React.Component {
     // bootstrap tooltip for connections
     $(".ellipsized").attr("data-toggle", "tooltip");
     $(() => {$('.ellipsized').tooltip({placement: 'right'});});
+  }
+  
+  _setLinks() {
+    this.props.mda.nodes.forEach((node) => {
+      if (node.link) {
+        let $label = $('.id'+node.id+' tspan');
+        console.log($label);
+        let label = $label.text();
+        $label.html(`<a class='analysis-link' href="/analyses/${node.link.id}">${label}</a>`);
+      }
+    });
   }
 }
 

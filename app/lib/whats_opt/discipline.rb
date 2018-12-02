@@ -4,11 +4,13 @@ module WhatsOpt
     
     NULL_DRIVER_NAME = '__DRIVER__'
     
+    # WhatsOpt / XDSMjs type mapping
     NULL_DRIVER = 'null_driver'
-    ANALYSIS = 'analysis'
+    DISCIPLINE = 'analysis'
     FUNCTION = 'function'
+    ANALYSIS = 'mda'
     
-    TYPES = [NULL_DRIVER, ANALYSIS, FUNCTION]
+    TYPES = [NULL_DRIVER, DISCIPLINE, FUNCTION, ANALYSIS]
     
   end
   
