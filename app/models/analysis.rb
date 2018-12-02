@@ -17,6 +17,8 @@ class Analysis < ApplicationRecord
   
   has_many :disciplines, -> { includes(:variables).order(position: :asc) }, :dependent => :destroy 
   has_one :analysis_discipline, :dependent => :destroy
+  has_one :super_discipline, through: :analysis_discipline, source: :discipline
+
   has_many :operations, :dependent => :destroy 
     
   accepts_nested_attributes_for :disciplines, 
@@ -26,9 +28,7 @@ class Analysis < ApplicationRecord
     _create_from_attachment if attachment_exists
   end
     
-  after_save do
-    Connection.create_connections(self) if Connection.of_analysis(self).empty?
-  end
+  after_save :refresh_connections
   after_save :_ensure_driver_presence
   
   validate :check_mda_import_error, on: :create, if: :attachment_exists
@@ -110,30 +110,6 @@ class Analysis < ApplicationRecord
     end
   end
 
-# TODO: To be deleted if more efficient implementation below is ok
-#  def build_edges1(active: true)
-#    edges = []
-#    self.disciplines.each do |d_from|
-#      from_id = d_from.id.to_s 
-#      self.disciplines.each do |d_to|
-#        next if d_from == d_to
-#        to_id = d_to.id.to_s  
-#        if active
-#          conns = Connection.between(d_from.id, d_to.id).active
-#        else
-#          conns = Connection.between(d_from.id, d_to.id).inactive
-#        end
-#        names = conns.map{ |c| c.from.name }.join(",")
-#        ids = conns.map(&:id)
-#        roles = conns.map {|c| c[:role]}
-#        unless conns.empty?
-#          edges << { from: from_id, to: to_id, name: names, conn_ids: ids, active: active, roles: roles }
-#        end
-#      end
-#    end
-#    edges
-#  end
-
   def build_edges(active: true)
     edges = []
     _edges = {}
@@ -178,6 +154,26 @@ class Analysis < ApplicationRecord
   def owner
     owners = User.with_role_for_instance(:owner, self)
     owners.take&.login
+  end
+  
+    
+  def refresh_connections()
+    varouts = Variable.outputs.joins(discipline: :analysis).where(analyses: {id: self.id})
+    varins = Variable.inputs.joins(discipline: :analysis).where(analyses: {id: self.id})
+    
+    varouts.each do |vout|
+      vins = varins.where(name: vout.name)
+      vins.each do |vin|
+        role = WhatsOpt::Variable::STATE_VAR_ROLE
+        if vout.discipline.is_driver?
+          role = WhatsOpt::Variable::PARAMETER_ROLE
+        end
+        if vin.discipline.is_driver?
+          role = WhatsOpt::Variable::RESPONSE_ROLE
+        end
+        Connection.where(from_id: vout.id, to_id: vin.id).first_or_create!(role: role)  
+      end
+    end
   end
   
   private

@@ -16,6 +16,8 @@ class Api::V1::AnalysisDisciplinesController < Api::ApiController
     @mda_discipline = AnalysisDiscipline.build_analysis_discipline(@disc, @innermda)
     authorize @mda_discipline
     @mda_discipline.save!
+    @outermda.save!
+    @outermda.refresh_connections
     json_response @mda_discipline, :created
   end
   

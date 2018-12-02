@@ -7,6 +7,7 @@ end
 
 class Variable < ApplicationRecord
 
+  include WhatsOpt::Variable
   include WhatsOpt::OpenmdaoVariable
   include WhatsOpt::ThriftVariable
 
@@ -65,6 +66,12 @@ class Variable < ApplicationRecord
     else
       self.parameter.upper
     end
+  end
+  
+  def copy
+    newvar = dup
+    newvar.parameter = parameter.dup if parameter
+    newvar 
   end
   
   private

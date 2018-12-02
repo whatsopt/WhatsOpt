@@ -8,6 +8,8 @@ class AnalysisDiscipline < ApplicationRecord
     mda_discipline = disc.build_analysis_discipline
     innermda.analysis_discipline = mda_discipline
     innermda.parent_id = disc.analysis.id
+    disc.build_variables_from_sub_analysis
+    disc.analysis.driver.build_variables_from_sub_analysis(innermda)
     mda_discipline
   end
   

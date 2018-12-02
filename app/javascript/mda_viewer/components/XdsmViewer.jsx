@@ -111,16 +111,19 @@ class XdsmViewer extends React.Component {
   _setLinks() {
     this.props.mda.nodes.forEach((node) => {
       if (node.link) {
+        let edit = this.props.isEditing?"/edit":"";
+        let link = `/analyses/${node.link.id}${edit}`; 
         let $label = $('.id'+node.id+' tspan');
         console.log($label);
         let label = $label.text();
-        $label.html(`<a class='analysis-link' href="/analyses/${node.link.id}">${label}</a>`);
+        $label.html(`<a class='analysis-link' href="${link}">${label}</a>`);
       }
     });
   }
 }
 
 XdsmViewer.propTypes = {
+  isEditing: PropTypes.bool.isRequired,
   mda: PropTypes.object.isRequired,
   filter: PropTypes.object.isRequired,
   onFilterChange: PropTypes.func.isRequired,

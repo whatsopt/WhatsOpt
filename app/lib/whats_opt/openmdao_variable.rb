@@ -4,8 +4,6 @@ module WhatsOpt
   
   module OpenmdaoVariable
     
-    include Variable
-    
     def py_varname
       name = self.name.tr('./()', '_')
     end

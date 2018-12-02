@@ -9,7 +9,7 @@ class Discipline < ApplicationRecord
   self.inheritance_column = :disable_inheritance
     
   #has_many :variables, -> { includes(:parameter) }, :dependent => :destroy
-  has_many :variables, :dependent => :destroy
+  has_many :variables, :dependent => :destroy, autosave: true
   has_one :analysis_discipline, :dependent => :destroy
   has_one :sub_analysis, through: :analysis_discipline, source: :analysis
   
@@ -27,7 +27,7 @@ class Discipline < ApplicationRecord
   after_initialize :set_defaults, unless: :persisted?  
     
   def input_variables
-    variables.inputs
+    variables.inputs 
   end
 
   def output_variables
@@ -38,16 +38,32 @@ class Discipline < ApplicationRecord
     type == WhatsOpt::Discipline::NULL_DRIVER
   end
   
-  def update_discipline(params)
-    Discipline.transaction do 
-      if params[:position]
-        insert_at(params[:position])
-        params = params.except(:role) 
+  def update_discipline(params) 
+    if params[:position]
+      insert_at(params[:position])
+      params = params.except(:role) 
+    end
+    update(params)
+    if (sub_analysis && type != WhatsOpt::Discipline::ANALYSIS)
+      analysis_discipline.analysis.update(parent_id: nil)
+      analysis_discipline.destroy 
+    end
+  end
+  
+  def build_variables_from_sub_analysis(sub_analysis)
+    sub_analysis ||= self.sub_analysis
+    if sub_analysis
+      sub_analysis.driver.output_variables.each do |outvar|
+        if self.variables.where(name: outvar.name).empty?
+          newvar = self.variables.build(outvar.attributes.except('id', 'discipline_id', 'created_at', 'updated_at'))
+          newvar.io_mode = WhatsOpt::Variable::IN if !self.is_driver?
+        end
       end
-      update(params)
-      if (sub_analysis && type != WhatsOpt::Discipline::ANALYSIS)
-        analysis_discipline.analysis.update(parent_id: nil)
-        analysis_discipline.destroy 
+      sub_analysis.driver.input_variables.each do |invar|
+        if self.variables.where(name: invar.name).empty? 
+          newvar = self.variables.build(invar.attributes.except('id', 'discipline_id', 'created_at', 'updated_at'))
+          newvar.io_mode = WhatsOpt::Variable::OUT if ! self.is_driver?
+        end
       end
     end
   end

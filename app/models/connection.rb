@@ -27,7 +27,7 @@ class Connection < ApplicationRecord
         if vin.discipline.is_driver?
           role = WhatsOpt::Variable::RESPONSE_ROLE
         end
-        Connection.create!(from_id: vout.id, to_id: vin.id, role: role)
+        Connection.where(from_id: vout.id, to_id: vin.id).first_or_create!(role: role)  
       end
     end
   end

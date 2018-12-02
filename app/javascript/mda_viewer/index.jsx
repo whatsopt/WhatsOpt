@@ -285,8 +285,11 @@ class MdaViewer extends React.Component {
           </form>
           <h1>Edit {this.state.mda.name}</h1> 
           <div className="mda-section">
-            <XdsmViewer ref={(xdsmViewer) => this.xdsmViewer = xdsmViewer} mda={this.state.mda}
-              filter={this.state.filter} onFilterChange={this.handleFilterChange}/>
+            <XdsmViewer ref={(xdsmViewer) => this.xdsmViewer = xdsmViewer} 
+              isEditing={this.state.isEditing}
+              mda={this.state.mda}
+              filter={this.state.filter} 
+              onFilterChange={this.handleFilterChange}/>
           </div>
           <ul className="nav nav-tabs" id="myTab" role="tablist">
             <li className="nav-item">
@@ -356,8 +359,11 @@ class MdaViewer extends React.Component {
           <ToolBar mdaId={this.props.mda.id} api={this.api} db={db}/>
         </div>
         <div className="mda-section">
-          <XdsmViewer ref={(xdsmViewer) => this.xdsmViewer = xdsmViewer} mda={this.state.mda}
-            filter={this.state.filter} onFilterChange={this.handleFilterChange}/>
+          <XdsmViewer ref={(xdsmViewer) => this.xdsmViewer = xdsmViewer} 
+            isEditing={this.state.isEditing}
+            mda={this.state.mda}
+            filter={this.state.filter} 
+            onFilterChange={this.handleFilterChange}/>
         </div>
         <div className="mda-section">
           <VariablesEditor db={db}
