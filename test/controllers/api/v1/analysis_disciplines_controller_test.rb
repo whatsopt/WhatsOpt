@@ -47,5 +47,4 @@ class Api::V1::AnalysisDisciplinesControllerTest < ActionDispatch::IntegrationTe
     end
   end
 
-    
 end

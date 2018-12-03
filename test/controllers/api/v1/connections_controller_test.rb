@@ -18,15 +18,16 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
          as: :json, headers: @auth_headers 
     assert_response :success
     conn = Connection.last
-    assert_equal conn.role, WhatsOpt::Variable::STATE_VAR_ROLE
+    assert_equal WhatsOpt::Variable::STATE_VAR_ROLE, conn.role
   end
 
-  test "should fail to create connection if var name already exists" do
-    post api_v1_mda_connections_url({mda_id: @mda.id, 
-                                     connection: {from: @from.id, to: @to.id, names: [@varyg.name]}}), 
-         as: :json, headers: @auth_headers 
-    assert_match /Variable (\w+) already consumed/, JSON.parse(response.body)["message"]
-    assert_response :unprocessable_entity 
+  test "should create no new variable if connection already exists" do
+    assert_difference('Connection.count', 0) do
+      post api_v1_mda_connections_url({mda_id: @mda.id, 
+                                       connection: {from: @from.id, to: @to.id, names: [@varyg.name]}}), 
+           as: :json, headers: @auth_headers 
+      assert_response :success
+    end
   end
   
   test "should create connection from same discipline to other ones" do
