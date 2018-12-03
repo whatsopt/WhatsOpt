@@ -6,12 +6,6 @@ class ConnectionTest < ActiveSupport::TestCase
     @mda = analyses(:cicav)
   end
   
-  test "should create connections from an mda" do
-    assert_difference('Connection.count', 7) do
-      Connection.create_connections(@mda)
-    end
-  end 
-  
   test "should get edges" do
     refute_empty @mda.build_edges
   end

@@ -11,26 +11,7 @@ class Connection < ApplicationRecord
   scope :of_analysis, -> (analysis_id) { joins(from: :discipline).where(disciplines: {analysis_id: analysis_id}) }
   scope :with_role, -> (role) { where(role: role)}
     
-  before_validation :_ensure_role_presence  
-    
-  def self.create_connections(mda)
-    varouts = Variable.outputs.joins(discipline: :analysis).where(analyses: {id: mda.id})
-    varins = Variable.inputs.joins(discipline: :analysis).where(analyses: {id: mda.id})
-    
-    varouts.each do |vout|
-      vins = varins.where(name: vout.name)
-      vins.each do |vin|
-        role = WhatsOpt::Variable::STATE_VAR_ROLE
-        if vout.discipline.is_driver?
-          role = WhatsOpt::Variable::PARAMETER_ROLE
-        end
-        if vin.discipline.is_driver?
-          role = WhatsOpt::Variable::RESPONSE_ROLE
-        end
-        Connection.where(from_id: vout.id, to_id: vin.id).first_or_create!(role: role)  
-      end
-    end
-  end
+  before_validation :_ensure_role_presence
     
   def self.between(disc_from_id, disc_to_id)
     Connection.joins(:from).where(variables: {discipline_id: disc_from_id}) #.where.not(variables: {type: :String})

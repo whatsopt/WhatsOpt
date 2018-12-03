@@ -12,5 +12,5 @@ outermda:
   
 innermda:
   name: INNER
-  analysis_discipline: innermda_discipline
   ancestry: <%= ActiveRecord::FixtureSet.identify(:outermda) %>
+  

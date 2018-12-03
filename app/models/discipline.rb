@@ -9,7 +9,7 @@ class Discipline < ApplicationRecord
   self.inheritance_column = :disable_inheritance
     
   #has_many :variables, -> { includes(:parameter) }, :dependent => :destroy
-  has_many :variables, :dependent => :destroy, autosave: true
+  has_many :variables, :dependent => :destroy
   has_one :analysis_discipline, :dependent => :destroy
   has_one :sub_analysis, through: :analysis_discipline, source: :analysis
   
@@ -50,19 +50,20 @@ class Discipline < ApplicationRecord
     end
   end
   
-  def build_variables_from_sub_analysis(sub_analysis)
-    sub_analysis ||= self.sub_analysis
+  def create_variables_from_sub_analysis(sub_analysis = self.analysis_discipline&.analysis)
     if sub_analysis
       sub_analysis.driver.output_variables.each do |outvar|
         if self.variables.where(name: outvar.name).empty?
           newvar = self.variables.build(outvar.attributes.except('id', 'discipline_id', 'created_at', 'updated_at'))
-          newvar.io_mode = WhatsOpt::Variable::IN if !self.is_driver?
+          newvar.io_mode = WhatsOpt::Variable::IN unless self.is_driver?
+          newvar.save!
         end
       end
       sub_analysis.driver.input_variables.each do |invar|
         if self.variables.where(name: invar.name).empty? 
           newvar = self.variables.build(invar.attributes.except('id', 'discipline_id', 'created_at', 'updated_at'))
-          newvar.io_mode = WhatsOpt::Variable::OUT if ! self.is_driver?
+          newvar.io_mode = WhatsOpt::Variable::OUT unless self.is_driver?
+          newvar.save!
         end
       end
     end
@@ -71,9 +72,9 @@ class Discipline < ApplicationRecord
   private 
 
   def set_defaults
-    type = WhatsOpt::Discipline::DISCIPLINE if self.type.blank?
+    self.type = WhatsOpt::Discipline::DISCIPLINE if self.type.blank?
     if name == WhatsOpt::Discipline::NULL_DRIVER_NAME
-      type = WhatsOpt::Discipline::NULL_DRIVER
+      self.type = WhatsOpt::Discipline::NULL_DRIVER
     end
   end
   

@@ -45,7 +45,7 @@ ActiveRecord::Schema.define(version: 53) do
   create_table "cases", force: :cascade do |t|
     t.integer "operation_id"
     t.integer "variable_id"
-    t.integer "coord_index", default: 0
+    t.integer "coord_index", default: -1
     t.text "values"
   end
 
@@ -75,7 +75,7 @@ ActiveRecord::Schema.define(version: 53) do
 
   create_table "jobs", force: :cascade do |t|
     t.string "status"
-    t.text "log"
+    t.text "log", default: ""
     t.integer "pid", default: -1
     t.integer "operation_id"
     t.datetime "started_at"
@@ -160,7 +160,6 @@ ActiveRecord::Schema.define(version: 53) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "active", default: true
-    t.index ["discipline_id"], name: "index_variables_on_discipline_id"
   end
 
 end

@@ -15,7 +15,7 @@ class Analysis < ApplicationRecord
   accepts_nested_attributes_for :attachment, allow_destroy: true
   validates_associated :attachment
   
-  has_many :disciplines, -> { includes(:variables).order(position: :asc) }, :dependent => :destroy 
+  has_many :disciplines, -> { includes(:variables).order(position: :asc) }, :dependent => :destroy
   has_one :analysis_discipline, :dependent => :destroy
   has_one :super_discipline, through: :analysis_discipline, source: :discipline
 
@@ -33,8 +33,6 @@ class Analysis < ApplicationRecord
   
   validate :check_mda_import_error, on: :create, if: :attachment_exists
   validates :name, presence: true, allow_blank: false
-
-  #scope private, -> { where(public: false) }
   
   def driver
     self.disciplines.driver&.take
@@ -157,10 +155,9 @@ class Analysis < ApplicationRecord
   end
   
     
-  def refresh_connections()
+  def refresh_connections
     varouts = Variable.outputs.joins(discipline: :analysis).where(analyses: {id: self.id})
     varins = Variable.inputs.joins(discipline: :analysis).where(analyses: {id: self.id})
-    
     varouts.each do |vout|
       vins = varins.where(name: vout.name)
       vins.each do |vin|

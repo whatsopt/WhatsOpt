@@ -18,6 +18,22 @@ class AnalysisTest < ActiveSupport::TestCase
     assert_equal 1, mda.response_variables.count
   end
 
+  test "should create new connections if needed" do
+    mda = analyses(:cicav)
+    mda.disciplines.first.variables.create(name: 'newvar', io_mode: 'out')
+    mda.disciplines.second.variables.create(name: 'newvar', io_mode: 'in')
+    assert_difference('Connection.count') do
+      mda.refresh_connections
+    end
+  end 
+
+  test "should not create new connection if everything is already connected" do
+    mda = analyses(:cicav)
+    assert_difference('Connection.count', 0) do
+      mda.refresh_connections
+    end
+  end
+    
   test "should be able to build nodes" do
     mda = analyses(:cicav)
     assert_equal %w[__DRIVER__ Geometry Aerodynamics], mda.build_nodes.map {|n| n[:name]} 

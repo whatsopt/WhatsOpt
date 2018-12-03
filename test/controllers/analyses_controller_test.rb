@@ -37,7 +37,7 @@ class AnalysesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     #assert_redirected_to root_path
   end  
-
+  
   test "should authorized access if public attr is set" do
     post mdas_url, params: {analysis: { name: 'test2', public: true } }
     sign_out users(:user1)
