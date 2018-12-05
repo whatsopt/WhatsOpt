@@ -21,6 +21,17 @@ class OpenmdaoDriverFactoryTest < ActiveSupport::TestCase
     assert_equal({tol: "1.0e-06", maxiter: "100", disp: "True"}, @driver.options)    
   end
 
+  test "should create segomoe driver" do
+    @driver = WhatsOpt::OpenmdaoDriverFactory.new(:oneramdao_optimizer_segomoe, 
+      {oneramdao_optimizer_segomoe_niter: "100", 
+       oneramdao_optimizer_segomoe_ncluster: "1", 
+       oneramdao_optimizer_segomoe_optimizer: "cobyla", 
+       oneramdao_optimizer_segomoe_doedim: "10"}).create_driver
+    assert_equal("oneramdao_optimizer", @driver.lib)
+    assert_equal("segomoe", @driver.algo)
+    assert_equal({}, @driver.options)    
+  end
+  
   test "should reject bad-formed option hash" do
     assert_raises WhatsOpt::OpenmdaoDriverFactory::BadOptionError do
       WhatsOpt::OpenmdaoDriverFactory.new(:scipy_optimizer_slsqp, {scipy_optimizer_slsqp_tol: 1e-3, smt_doe_lhs_nbpts: 5})

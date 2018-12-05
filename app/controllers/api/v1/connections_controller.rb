@@ -14,7 +14,6 @@ class Api::V1::ConnectionsController < Api::ApiController
     @names = connection_create_params[:names]
     @from_disc = @mda.disciplines.find(connection_create_params[:from])
     @to_disc = @mda.disciplines.find(connection_create_params[:to])
-    p @to_disc
     begin
       Connection.transaction do
         @names.each do |name|

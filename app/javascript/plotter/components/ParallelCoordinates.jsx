@@ -54,8 +54,9 @@ class ParallelCoordinates extends React.Component {
         values: c.values,
         range: [mini, maxi]};
       const obj = isMin?minim:maxim;
-      const crange = [obj - 0.05*(maxi - mini), obj + 0.05*(maxi - mini)];
+      const crange = isMin?[obj, obj + 0.05*(maxi - mini)]:[obj - 0.05*(maxi - mini), obj];
       if (this.props.db.isObjective(c)) {
+        console.log(crange);
         dim['constraintrange'] = crange;
       }
       return dim;

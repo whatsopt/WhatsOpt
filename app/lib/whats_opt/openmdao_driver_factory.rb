@@ -11,7 +11,11 @@ module WhatsOpt
         
       options.each do |k, v| 
         @options[k] = v.to_s
-        @options[k] = @options[k].capitalize if ["true", "false"].include?(@options[k]) 
+        if ["true", "false"].include?(@options[k])
+          @options[k] = @options[k].capitalize  # Python boolean 
+        elsif @options[k] =~ /\b[a-zA-Z]/ # wrap string
+          @options[k] = "'#{@options[k]}'"
+        end
       end
     end
 
@@ -52,6 +56,8 @@ module WhatsOpt
                     pyoptsparse_optimizer_nsga2: {}, 
                     pyoptsparse_optimizer_snopt: {tol: "Major feasibility tolerance", 
                                                   maxiter: "Major iterations limit"},
+                    oneramdao_optimizer_segomoe: {niter: "n_iter", ncluster: "n_clusters", 
+                                                  optimizer: "optimizer", doedim: "size_doe"}
                    }
     
     # optimizer specific settings
@@ -88,6 +94,10 @@ module WhatsOpt
     def simplega?
       @lib =~ /simplega/
     end
+    
+    def oneramdao?
+      @lib =~ /oneramdao/
+    end
   end
     
   class OpenmdaoDriverFactory
@@ -104,6 +114,7 @@ module WhatsOpt
       pyoptsparse_optimizer_psqp: {}, 
       pyoptsparse_optimizer_nsga2: {}, 
       pyoptsparse_optimizer_snopt: {tol: 1e-6, maxiter: 100},
+      oneramdao_optimizer_segomoe: {niter: 100, ncluster: 1, optimizer: "cobyla", doedim: 10}
     }
     ALGO_NAMES = DEFAULT_OPTIONS.keys.sort
     

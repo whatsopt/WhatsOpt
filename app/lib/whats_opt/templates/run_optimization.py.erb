@@ -7,27 +7,26 @@ import numpy as np
 # matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 <% if @remote -%>
-from openmdao.api import Problem, SqliteRecorder, CaseReader, ScipyOptimizeDriver, pyOptSparseDriver, SimpleGADriver
+from openmdao.api import Problem, SqliteRecorder, CaseReader, ScipyOptimizeDriver, pyOptSparseDriver
 from <%= @server_module %>.<%= @mda.py_modulename %>_proxy import <%= @mda.py_classname %>Proxy as <%= @mda.py_classname %> 
 <% else -%>
-from openmdao.api import Problem, SqliteRecorder, CaseReader, ScipyOptimizeDriver #, pyOptSparseDriver, SimpleGADriver
+from openmdao.api import Problem, SqliteRecorder, CaseReader, ScipyOptimizeDriver #, pyOptSparseDriver
 from <%= @mda.py_modulename %> import <%= @mda.py_classname %> 
 <% end %>
+from whatsopt.oneramdao_driver import OneramdaoOptimizerDriver
+
 <%= ERB.new(File.read(File.join(@template_dir, 'options_partial.py.erb')), nil, nil, eoutvar='_sub01').result(binding) %>
 pb = Problem(<%= @mda.py_classname %>())
 
 <% if @driver.pyoptsparse? -%>
 pb.driver = pyOptSparseDriver()
-pb.driver.options['optimizer'] = '<%= @driver.algo_option %>'
-<% elsif @driver.simplega? -%>
-prob.driver = SimpleGADriver()
-<% elsif @driver.scipy? -%>
-pb.driver = ScipyOptimizeDriver()
-pb.driver.options['optimizer'] = '<%= @driver.algo_option %>'
+<% elsif @driver.oneramdao? -%>
+pb.driver = OneramdaoOptimizerDriver()
 <% else -%>
 pb.driver = ScipyOptimizeDriver()
-pb.driver.options['optimizer'] = '<%= @driver.algo_option %>'
 <% end -%>
+pb.driver.options['optimizer'] = '<%= @driver.algo_option %>'
+
 <% @driver.options.each do |k, v|%>
 pb.driver.options['<%= k %>'] = <%= v %>
 <% end -%>
@@ -43,10 +42,11 @@ pb.driver.add_recorder(recorder)
 pb.model.add_recorder(recorder)
 pb.model.nonlinear_solver.add_recorder(recorder)
 
+<% unless @driver.oneramdao? -%>
 # Derivatives are compute via finite-difference method
 # to be commnented out if partial derivatives are declared
 pb.model.approx_totals(method='fd', step=1e-6, form='central')
-
+<% end -%>
 <%- @mda.design_variables.each do |dv| %>
 pb.model.add_design_var('<%= dv.name %>', lower=<%= dv.lower_py_value %>, upper=<%= dv.upper_py_value %>)<% end %>
 <% @mda.min_objective_variables.each do |voi| %>

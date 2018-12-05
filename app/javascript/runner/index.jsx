@@ -32,10 +32,10 @@ const OPTTYPES = {
   scipy_optimizer_slsqp_maxiter: "integer",
   pyoptsparse_optimizer_snopt_tol: "number",
   pyoptsparse_optimizer_snopt_maxiter: "integer",
-  onera_optimizer_segomoe_ncluster: "integer",
-  onera_optimizer_segomoe_niter: "integer",
-  onera_optimizer_segomoe_optimizer: "string",
-  onera_optimizer_segomoe_doedim: "integer",
+  oneramdao_optimizer_segomoe_ncluster: "integer",
+  oneramdao_optimizer_segomoe_niter: "integer",
+  oneramdao_optimizer_segomoe_optimizer: "string",
+  oneramdao_optimizer_segomoe_doedim: "integer",
 };
 const OPTDEFAULTS = {
   smt_doe_lhs_nbpts: 50,
@@ -44,10 +44,10 @@ const OPTDEFAULTS = {
   scipy_optimizer_slsqp_disp: true,
   pyoptsparse_optimizer_snopt_tol: 1e-6,
   pyoptsparse_optimizer_snopt_maxiter: 1000,
-  onera_optimizer_segomoe_niter: 100,
-  onera_optimizer_segomoe_ncluster: 1,
-  onera_optimizer_segomoe_optimizer: "cobyla",
-  onera_optimizer_segomoe_doedim: "10",
+  oneramdao_optimizer_segomoe_niter: 100,
+  oneramdao_optimizer_segomoe_ncluster: 1,
+  oneramdao_optimizer_segomoe_optimizer: "cobyla",
+  oneramdao_optimizer_segomoe_doedim: "10",
 };
 
 const FORM = {
@@ -66,7 +66,7 @@ const FORM = {
         "pyoptsparse_optimizer_psqp",
         "pyoptsparse_optimizer_nsga2",
         "pyoptsparse_optimizer_snopt",
-        "onera_optimizer_segomoe",
+        "oneramdao_optimizer_segomoe",
       ],
       "enumNames": ["RunOnce", "SMT - LHS", "Scipy - COBYLA", "Scipy - BFGS", "Scipy - SLSQP",
         "pyOptSparse - CONMIN",
@@ -117,21 +117,21 @@ const FORM = {
               "default": OPTDEFAULTS.pyoptsparse_optimizer_snopt_maxiter}},
         },
         {
-          "properties": {"driver": {"enum": ["onera_optimizer_segomoe"]},
-            "onera_optimizer_segomoe_niter": {"title": "Number of iterations to run",
-              "type": OPTTYPES.onera_optimizer_segomoe_niter,
-              "default": OPTDEFAULTS.onera_optimizer_segomoe_niter},
-            "onera_optimizer_segomoe_ncluster": {"title": "Number of clusters used for objective and constraints surrogate mixture models (0: automatic)",
-              "type": OPTTYPES.onera_optimizer_segomoe_ncluster,
-              "default": OPTDEFAULTS.onera_optimizer_segomoe_ncluster},
-            "onera_optimizer_segomoe_optimizer": {"title": "Internal optimizer used for enrichment step",
-              "type": OPTTYPES.onera_optimizer_segomoe_optimizer,
-              "default": OPTDEFAULTS.onera_optimizer_segomoe_optimizer,
+          "properties": {"driver": {"enum": ["oneramdao_optimizer_segomoe"]},
+            "oneramdao_optimizer_segomoe_niter": {"title": "Number of iterations to run",
+              "type": OPTTYPES.oneramdao_optimizer_segomoe_niter,
+              "default": OPTDEFAULTS.oneramdao_optimizer_segomoe_niter},
+            "oneramdao_optimizer_segomoe_ncluster": {"title": "Number of clusters used for objective and constraints surrogate mixture models (0: automatic)",
+              "type": OPTTYPES.oneramdao_optimizer_segomoe_ncluster,
+              "default": OPTDEFAULTS.oneramdao_optimizer_segomoe_ncluster},
+            "oneramdao_optimizer_segomoe_optimizer": {"title": "Internal optimizer used for enrichment step",
+              "type": OPTTYPES.oneramdao_optimizer_segomoe_optimizer,
+              "default": OPTDEFAULTS.oneramdao_optimizer_segomoe_optimizer,
               "enum": ["cobyla", "slsqp"],
               "enumNames": ["COBYLA", "SLSQP"],
-            "onera_optimizer_segomoe_doedim": {"title": "Initial doe dimension (typically 3 x sum(design_vars dims))",
-                  "type": OPTTYPES.onera_optimizer_segomoe_doedim,
-                  "default": OPTDEFAULTS.onera_optimizer_segomoe_doedim},
+            "oneramdao_optimizer_segomoe_doedim": {"title": "Initial doe dimension (typically 3 x sum(design_vars dims))",
+                  "type": OPTTYPES.oneramdao_optimizer_segomoe_doedim,
+                  "default": OPTDEFAULTS.oneramdao_optimizer_segomoe_doedim},
             },
           },
         },
@@ -205,6 +205,7 @@ class Runner extends React.Component {
   }
 
   handleAbort() {
+    console.log("ABORT");
     this.api.killOperationJob(this.props.ope.id);
     const newState = update(this.state, {status: {$set: "ABORTED"}});
     this.setState(newState);
@@ -242,7 +243,7 @@ class Runner extends React.Component {
           return job.status === 'DONE'|| job.status === 'FAILED';
         },
         (job) => {
-        // console.log("CALLBACK");
+          console.log("CALLBACK");
           console.log(job);
           this.opeData = {};
           Object.assign(this.opeData, formData);

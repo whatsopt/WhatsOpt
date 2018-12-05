@@ -25,8 +25,7 @@ class Discipline extends React.Component {
   }
 
   handleDiscNameChange(event) {
-    const newState = update(this.state, {discName: {$set: event.target.value}});
-    this.setState(newState);
+    this.setState({discName: event.target.value});
   }
 
   handleEdit(event) {
@@ -73,7 +72,12 @@ class Discipline extends React.Component {
 
   handleSubAnalysisSelected(selected) {
     console.log("Select "+JSON.stringify(selected));
-    this.setState({selected});
+    let name = selected.match(/#\d+ (.*)/);
+    if (name) {
+      this.setState({selected, discName: name});
+    } else {
+      this.setState({selected});
+    }
     //this.props.onSubAnalysisSelected(this.props.node, selected);
   }
   

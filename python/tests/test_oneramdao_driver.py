@@ -4,7 +4,7 @@ import numpy as np
 from math import cos, sin, pi
 from openmdao.api import IndepVarComp, Problem, Group, SqliteRecorder, CaseReader, ExplicitComponent
 from openmdao.test_suite.components.sellar_feature import SellarDis1, SellarDis2, SellarMDA
-from whatsopt.segomoe_driver import SegoMoeDriver
+from whatsopt.oneramdao_driver import OneramdaoOptimizerDriver
 
 class Branin(ExplicitComponent):
     
@@ -68,7 +68,7 @@ class AckleyMDA(Group):
         self.add_subsystem('Ackley', Ackley(), promotes=['*'])
 
 
-class TestSegoMoeDriver(unittest.TestCase):
+class TestSegoMoe(unittest.TestCase):
 
     def setUp(self):
         pass
@@ -103,7 +103,7 @@ class TestSegoMoeDriver(unittest.TestCase):
         pb.model.add_design_var('x2', lower=0, upper=15)
         pb.model.add_objective('obj')
         pb.model.add_constraint('con', upper=0)
-        pb.driver = SegoMoeDriver()
+        pb.driver = OneramdaoOptimizerDriver(optimizer='SEGOMOE')
         
         # default model
         n_var=2
@@ -114,7 +114,7 @@ class TestSegoMoeDriver(unittest.TestCase):
                    'thetaL': [0.1] * n_var,
                    'thetaU': [10.0] * n_var,
                    'normalize': True}
-        pb.driver.options['model_type']= {'obj': mod_obj, 'con': mod_obj}
+        pb.driver.opt_settings['model_type']= {'obj': mod_obj, 'con': mod_obj}
         
         self.case_recorder_filename = 'test_segomoe_driver_branin.sqlite'
         recorder = SqliteRecorder(self.case_recorder_filename)
@@ -123,7 +123,7 @@ class TestSegoMoeDriver(unittest.TestCase):
         self.pb.run_driver()
         assert os.path.exists(self.case_recorder_filename)
         reader = CaseReader(self.case_recorder_filename)
-        for case_id in reader.list_cases():
+        for case_id in reader.system.list_cases():
             case = reader.get_case(case_id)
             print(case.outputs['obj'])
 
@@ -132,7 +132,7 @@ class TestSegoMoeDriver(unittest.TestCase):
         self.pb = pb = Problem(AckleyMDA())
         pb.model.add_design_var('x', lower=-32.768, upper=32.768)
         pb.model.add_objective('obj')
-        pb.driver = SegoMoeDriver()
+        pb.driver = OneramdaoOptimizerDriver(optimizer='SEGOMOE')
         
         # default model
         n_var=2

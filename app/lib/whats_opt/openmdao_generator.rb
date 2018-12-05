@@ -55,7 +55,6 @@ module WhatsOpt
     def monitor(method="analysis", sqlite_filename=nil, &block)
       ok, lines = false, []
       Dir.mktmpdir("run_#{@mda.basename}_#{method}") do |dir|
-        dir = '/tmp'
         _generate_code dir, sqlite_filename: sqlite_filename
         _monitor_mda(dir, method, &block)   
       end

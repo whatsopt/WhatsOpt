@@ -21,7 +21,7 @@ def to_list(l, size):
     else:
         return l
 
-class SegoMoeDriver(Driver):
+class OneramdaoOptimizerDriver(Driver):
     """
     Driver for OpenMDAO framework
     """
@@ -30,7 +30,7 @@ class SegoMoeDriver(Driver):
         """
         Initialize the driver with the following option.
         """
-        super(SegoMoeDriver, self).__init__(**kwargs)
+        super(OneramdaoOptimizerDriver, self).__init__(**kwargs)
 
         # What we support
         self.supports['inequality_constraints'] = True
@@ -45,22 +45,17 @@ class SegoMoeDriver(Driver):
         self.supports['simultaneous_derivatives'] = False
         self.supports['total_jac_sparsity'] = False
         self.supports['gradients'] = False
-
+        
+        self.opt_settings = {}
 
     def _declare_options(self):
-        # Set the options from segomoe defs. Let sego check for option validity
-        for opt, opt_dict in iteritems(get_sego_options()):
-            self.options.declare(opt, opt_dict['default'], desc=opt_dict['desc'])
-
-        # Add n_iter option
-        self.options.declare('n_iter', 100, desc='Number of iterations to run')
-
+        self.options.declare('optimizer', default='SEGOMOE', values=['SEGOMOE'],
+                             desc='Name of optimizers to use')
+        
     def _setup_driver(self, problem):
-        super(SegoMoeDriver, self)._setup_driver(problem)
+        super(OneramdaoOptimizerDriver, self)._setup_driver(problem)
         
         self.comm = None
-        
-
 
     def run(self, path_hs='', eq_tol={}, ieq_tol={}):
         """
@@ -104,19 +99,49 @@ class SegoMoeDriver(Driver):
         
         # Format constraints to suit segomoe implementation
         self._initialize_cons()
-
-        # Evaluation is necessarily grouped
-        self.options['grouped_eval'] = True
-
+        
         # Format option dictionary to suit SEGO implementation
-        optim_settings = {key: self.options[key] for key in get_sego_options().keys()}
+        if 'n_iter' not in self.opt_settings:
+            self.opt_settings.update({'n_iter': 100}) # not part of segomoe options per se but an option of run_optim
+        optim_settings = {}
+        for opt, opt_dict in iteritems(get_sego_options()):
+            optim_settings[opt] = opt_dict['default']
+        optim_settings.update(self.opt_settings)
+        del optim_settings['n_iter']  
+        
+        # In OpenMDAO context, obj and constraints are always evaluated together
+        optim_settings['grouped_eval']=True
+
+        # default model
+        mod_obj = {'corr': 'squared_exponential',
+                   'regr': 'constant',
+                   'normalize': True}
+        
+        dim=0
+        for name, meta in iteritems(self._designvars):
+            dim += meta['size']
+        print("Designvars dimension: ", dim)
+        if dim > 10:
+            n_components = 3
+            mod_obj['n_components'] = n_components
+            mod_obj['type'] = 'KrigKPLS' if dim > 20 else 'KrigKPLSK'
+        else:
+            n_components = dim
+            mod_obj['type'] = 'Krig'
+        mod_obj['theta0'] = [1.0] * n_components
+        mod_obj['thetaL'] = [0.1] * n_components
+        mod_obj['thetaU'] = [10.0] * n_components
+
+        optim_settings['model_type']= {'obj': mod_obj, 'con': mod_obj}
 
         # Instanciate a SEGO optimizer
         sego = Sego(self._objfunc, self._sego_vars, const=self._sego_cons, \
                     optim_settings=optim_settings, path_hs=path_hs, comm=self.comm)
 
         # Run the optim
-        exit_flag, x_best, obj_best, dt_opt = sego.run_optim(n_iter=self.options['n_iter'])
+        print(self.opt_settings['n_iter'])
+
+        exit_flag, x_best, obj_best, dt_opt = sego.run_optim(n_iter=self.opt_settings['n_iter'])
 
         # Set optimal parameters
         i = 0
