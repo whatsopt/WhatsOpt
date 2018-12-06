@@ -114,7 +114,7 @@ module WhatsOpt
       pyoptsparse_optimizer_psqp: {}, 
       pyoptsparse_optimizer_nsga2: {}, 
       pyoptsparse_optimizer_snopt: {tol: 1e-6, maxiter: 100},
-      oneramdao_optimizer_segomoe: {niter: 100, ncluster: 1, optimizer: "cobyla", doedim: 10}
+      oneramdao_optimizer_segomoe: {niter: 100, ncluster: 1, optimizer: "slsqp"}
     }
     ALGO_NAMES = DEFAULT_OPTIONS.keys.sort
     

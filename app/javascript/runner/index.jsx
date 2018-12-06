@@ -35,7 +35,6 @@ const OPTTYPES = {
   oneramdao_optimizer_segomoe_ncluster: "integer",
   oneramdao_optimizer_segomoe_niter: "integer",
   oneramdao_optimizer_segomoe_optimizer: "string",
-  oneramdao_optimizer_segomoe_doedim: "integer",
 };
 const OPTDEFAULTS = {
   smt_doe_lhs_nbpts: 50,
@@ -46,8 +45,7 @@ const OPTDEFAULTS = {
   pyoptsparse_optimizer_snopt_maxiter: 1000,
   oneramdao_optimizer_segomoe_niter: 100,
   oneramdao_optimizer_segomoe_ncluster: 1,
-  oneramdao_optimizer_segomoe_optimizer: "cobyla",
-  oneramdao_optimizer_segomoe_doedim: "10",
+  oneramdao_optimizer_segomoe_optimizer: "slsqp",
 };
 
 const FORM = {
@@ -128,10 +126,7 @@ const FORM = {
               "type": OPTTYPES.oneramdao_optimizer_segomoe_optimizer,
               "default": OPTDEFAULTS.oneramdao_optimizer_segomoe_optimizer,
               "enum": ["cobyla", "slsqp"],
-              "enumNames": ["COBYLA", "SLSQP"],
-            "oneramdao_optimizer_segomoe_doedim": {"title": "Initial doe dimension (typically 3 x sum(design_vars dims))",
-                  "type": OPTTYPES.oneramdao_optimizer_segomoe_doedim,
-                  "default": OPTDEFAULTS.oneramdao_optimizer_segomoe_doedim},
+              "enumNames": ["COBYLA", "SLSQP"]
             },
           },
         },

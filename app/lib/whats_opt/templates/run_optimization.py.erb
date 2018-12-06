@@ -33,7 +33,8 @@ pb.driver.options['<%= k %>'] = <%= v %>
 <% @driver.opt_settings.each do |k, v|%>
 pb.driver.opt_settings['<%= k %>'] = <%= v %>
 <% end -%>
-pb.driver.options['debug_print'] = ['desvars','ln_cons','nl_cons','objs', 'totals']
+#pb.driver.options['debug_print'] = ['desvars','ln_cons','nl_cons','objs', 'totals']
+pb.driver.options['debug_print'] = []
 
 case_recorder_filename = '<%= @sqlite_filename %>'
 print(case_recorder_filename)        

@@ -87,7 +87,7 @@ class OneramdaoOptimizerDriver(Driver):
         self._n_mapped_con = 0
         
         # Initial Run
-        with RecordingDebugging(self.option['optimizer'], self.iter_count, self) as rec:
+        with RecordingDebugging(self.options['optimizer'], self.iter_count, self) as rec:
             # Initial Run
             model._solve_nonlinear()
             rec.abs = 0.0
@@ -139,8 +139,6 @@ class OneramdaoOptimizerDriver(Driver):
                     optim_settings=optim_settings, path_hs=path_hs, comm=self.comm)
 
         # Run the optim
-        print(self.opt_settings['n_iter'])
-
         exit_flag, x_best, obj_best, dt_opt = sego.run_optim(n_iter=self.opt_settings['n_iter'])
 
         # Set optimal parameters
