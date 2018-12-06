@@ -87,7 +87,7 @@ class OneramdaoOptimizerDriver(Driver):
         self._n_mapped_con = 0
         
         # Initial Run
-        with RecordingDebugging(optimizer, self.iter_count, self) as rec:
+        with RecordingDebugging(self.option['optimizer'], self.iter_count, self) as rec:
             # Initial Run
             model._solve_nonlinear()
             rec.abs = 0.0
