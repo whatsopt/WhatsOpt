@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 53) do
+ActiveRecord::Schema.define(version: 54) do
 
   create_table "analyses", force: :cascade do |t|
     t.string "name"
@@ -81,6 +81,7 @@ ActiveRecord::Schema.define(version: 53) do
     t.datetime "started_at"
     t.datetime "ended_at"
     t.string "sqlite_filename"
+    t.integer "log_count", default: 0
   end
 
   create_table "notebooks", force: :cascade do |t|

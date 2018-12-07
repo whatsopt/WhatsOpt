@@ -2,6 +2,7 @@ require 'socket'
 require 'whats_opt/openmdao_generator'
 require 'whats_opt/sqlite_case_importer'
 
+
 class Operation < ApplicationRecord
 	
   CAT_RUNONCE = :analysis
@@ -12,6 +13,9 @@ class Operation < ApplicationRecord
   
   TERMINATION_STATUSES = %w(DONE, FAILED, KILLED)
   STATUSES = %w(PENDING, RUNNING)+TERMINATION_STATUSES
+    
+  BATCH_COUNT=10  # nb of log lines processed together
+  LOGDIR=File.join(Rails.root, 'upload/logs')
     
   belongs_to :analysis
   has_many :options, :dependent => :destroy
@@ -78,9 +82,11 @@ class Operation < ApplicationRecord
   def perform
     ogen = WhatsOpt::OpenmdaoGenerator.new(self.analysis, self.host, self.driver, self.option_hash)
     sqlite_filename = File.join(Dir.tmpdir, "#{SecureRandom.urlsafe_base64}.sqlite")
+    tmplog_filename = File.join(Dir.tmpdir, "#{SecureRandom.urlsafe_base64}.log")
+    FileUtils.touch(tmplog_filename)  # ensure logfile existence
     Rails.logger.info sqlite_filename
     job = self.job || self.create_job(status: 'PENDING', pid: -1, log: "")
-    job.update(status: :RUNNING, sqlite_filename: sqlite_filename, started_at: Time.now, ended_at: nil, log: "")
+    job.update(status: :RUNNING, sqlite_filename: sqlite_filename, started_at: Time.now, ended_at: nil, log: "", log_count:0)
 
     Dir.mktmpdir("sqlite") do |dir|
       lines = []
@@ -88,24 +94,32 @@ class Operation < ApplicationRecord
         Rails.logger.info "JOB STATUS = RUNNING"
         job.update(status: :RUNNING, pid: wait_thr.pid)
         stdin.close
-        count=0
+        dump_count=0 
         while line = stdouterr.gets
           lines << line
-          if count<10
-            count+= 1
-          else
-            job.update_column(:log, job.log << lines.join)
-            count = 0
+          if lines.count%BATCH_COUNT==0
+            if dump_count<10*BATCH_COUNT
+              job.update_column(:log, job.log << lines.join)
+              dump_count += BATCH_COUNT
+            else
+              File.open(tmplog_filename, 'a') { |f| f << job.log }                
+              job.update_columns(log: lines.join, log_count: job.log_count+11*BATCH_COUNT)
+              dump_count = 0
+            end  
             lines = []
           end
         end
+        job.update_columns(log: (job.log << lines.join), log_count: job.log_count+dump_count+lines.count)
         wait_thr.value
       end
-      unless lines.empty?
-        job.update_column(:log, job.log << lines.join)
-      end
+      File.open(tmplog_filename, 'a') { |f| f << job.log }
+      Rails.logger.info "Log line count = #{job.log_count}"
       self._update_on_termination(status)
     end
+    logfile = File.join(LOGDIR, "ope_#{self.id}.log")
+    FileUtils.copy(tmplog_filename, logfile)
+    last_lines = `tail -n 200 #{logfile}` 
+    job.update_columns(log: last_lines, log_count: [0, job.log_count-200].max)
   end
   
   def _update_on_termination(status)

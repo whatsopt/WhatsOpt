@@ -142,6 +142,7 @@ class Runner extends React.Component {
 
     const status = (this.props.ope.job && this.props.ope.job.status) || 'PENDING';
     const log = (this.props.ope.job && this.props.ope.job.log) || '';
+    const log_count = (this.props.ope.job && this.props.ope.job.log_count) || 0;
 
     const formData = {
       host: this.props.ope.host,
@@ -157,6 +158,7 @@ class Runner extends React.Component {
       cases: this.props.ope.cases,
       status: status,
       log: log,
+      log_count: log_count,
       startInMs: this.props.ope.job && this.props.ope.job && this.props.ope.job.start_in_ms,
       endInMs: this.props.ope.job && this.props.ope.job && this.props.ope.job.end_in_ms,
     };
@@ -209,6 +211,7 @@ class Runner extends React.Component {
   handleJobUpdate(job) {
     const newState = update(this.state, {status: {$set: job.status},
       log: {$set: job.log},
+      log_count: {$set: job.log_count},
       startInMs: {$set: job.start_in_ms},
       endInMs: {$set: job.end_in_ms || Date.now()},
     });
@@ -238,7 +241,6 @@ class Runner extends React.Component {
           return job.status === 'DONE'|| job.status === 'FAILED';
         },
         (job) => {
-          console.log("CALLBACK");
           console.log(job);
           this.opeData = {};
           Object.assign(this.opeData, formData);
@@ -293,7 +295,9 @@ class Runner extends React.Component {
 
   render() {
     const lines = this.state.log.split('\n').map((l, i) => {
-      return ( <LogLine key={i} line={l}/> );
+      let count = this.state.log_count+i;
+      let line = `#${count}  ${l}`
+      return ( <LogLine key={count} line={line}/> );
     });
 
     let btnStatusClass = this.state.status === "DONE"?"btn btn-success":"btn btn-danger";
