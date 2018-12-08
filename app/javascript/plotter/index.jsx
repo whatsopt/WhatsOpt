@@ -5,6 +5,7 @@ import ParallelCoordinates from 'plotter/components/ParallelCoordinates';
 import ScatterPlotMatrix from 'plotter/components/ScatterPlotMatrix';
 import IterationLinePlot from 'plotter/components/IterationLinePlot';
 import IterationRadarPlot from 'plotter/components/IterationRadarPlot';
+import ScatterSurfacePlot from 'plotter/components/ScatterSurfacePlot';
 import VariableSelector from 'plotter/components/VariableSelector';
 import AnalysisDatabase from '../utils/AnalysisDatabase';
 import * as caseUtils from '../utils/cases.js';
@@ -21,10 +22,19 @@ class PlotPanel extends React.Component {
           cases={this.props.cases} title={this.props.title}/>
       </div>);
     }
+    let plotparall = (<ParallelCoordinates db={this.props.db} optim={this.props.optim}
+                       cases={this.props.cases} title={this.props.title} width={1200} />)
+    let input_cases=[].concat(this.props.cases.i).concat(this.props.cases.c);
+    if (input_cases.length==2 && this.props.cases.o.length==1) {
+      plotparall = (<span>
+        <ScatterSurfacePlot casesx={input_cases[0]} casesy={input_cases[1]} casesz={this.props.cases.o[0]}/>  
+        <ParallelCoordinates db={this.props.db} optim={this.props.optim}
+          cases={this.props.cases} title={this.props.title} width={600} />
+      </span>);
+    }
     const klass = "tab-pane fade"+this.props.active?" show active":"";
     return (<div className={klass} id="plots" role="tabpanel" aria-labelledby="plots-tab">
-      <ParallelCoordinates db={this.props.db} optim={this.props.optim}
-        cases={this.props.cases} title={this.props.title}/>
+      {plotparall}
       {plotoptim}
     </div>);
   }

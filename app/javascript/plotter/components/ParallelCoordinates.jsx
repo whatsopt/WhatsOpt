@@ -36,7 +36,7 @@ class ParallelCoordinates extends React.Component {
       <div>
         <Plot
           data={data}
-          layout={{width: 1200, height: 500, title: title}}
+          layout={{width: this.props.width, height: 500, title: title}}
         />
       </div>
     );
@@ -56,7 +56,6 @@ class ParallelCoordinates extends React.Component {
       const obj = isMin?minim:maxim;
       const crange = isMin?[obj, obj + 0.05*(maxi - mini)]:[obj - 0.05*(maxi - mini), obj];
       if (this.props.db.isObjective(c)) {
-        console.log(crange);
         dim['constraintrange'] = crange;
       }
       return dim;
@@ -73,6 +72,7 @@ ParallelCoordinates.propTypes = {
     c: PropTypes.array.isRequired,
   }),
   title: PropTypes.string,
+  width: PropTypes.number,
 };
 
 export default ParallelCoordinates;

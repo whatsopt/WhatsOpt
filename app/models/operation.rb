@@ -49,7 +49,7 @@ class Operation < ApplicationRecord
     case driver
     when "runonce"
       'analysis'
-    when /optimizer/
+    when /optimizer/, /slsqp/
       'optimization'
     when /morris/
       'screening'
