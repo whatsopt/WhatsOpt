@@ -2,6 +2,13 @@
 
 <h3>0.12.0 (30/11/2018)</h3>
 <ul>
+  <li>Display 3D scatter plots when 2 inputs and one output are selected</li>
+  <li>OneraMDAO SEGOMOE optimizer integration</li>
+  <li>Improve operation logs management</li>
+</ul>
+
+<h3>0.12.0 (30/11/2018)</h3>
+<ul>
   <li>Improve operation management: list view, renaming, timing
   <li>Retrieve initial values when using wop push</li>
   <li>Fix result display error when a variable is removed</li> 

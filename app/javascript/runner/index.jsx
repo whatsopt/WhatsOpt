@@ -141,7 +141,7 @@ class Runner extends React.Component {
     this.api = this.props.api;
 
     const status = (this.props.ope.job && this.props.ope.job.status) || 'PENDING';
-    const log = (this.props.ope.job && this.props.ope.job.log) || [];
+    const log = (this.props.ope.job && this.props.ope.job.log) || "";
     console.log("LOG "+log)
     const log_count = (this.props.ope.job && this.props.ope.job.log_count) || 0;
 
@@ -242,7 +242,7 @@ class Runner extends React.Component {
           return job.status === 'DONE'|| job.status === 'FAILED';
         },
         (job) => {
-          console.log(job);
+          //console.log(job);
           this.opeData = {};
           Object.assign(this.opeData, formData);
           this.opeStatus = job.status;
@@ -295,7 +295,7 @@ class Runner extends React.Component {
   }
 
   render() {
-    console.log(this.state.log);
+    //console.log(this.state.log);
     const lines = this.state.log.split('\n').map((l, i) => {
       let count = Math.max(this.state.log_count-100, 0)+i;
       let line = `#${count}  ${l}`
@@ -331,7 +331,7 @@ class Runner extends React.Component {
     if (this.state.startInMs && this.state.endInMs) {
       elapsed = Math.ceil((this.state.endInMs - this.state.startInMs)/1000);
     }
-    console.log("START: "+this.state.startInMs+"    END: "+this.state.endInMs);
+    //console.log("START: "+this.state.startInMs+"    END: "+this.state.endInMs);
 
     return (
       <div>
