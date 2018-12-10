@@ -16,7 +16,7 @@ from thrift.transport import TTransport
 all_structs = []
 
 
-class BraninFunctionInput(object):
+class ModBraninFunctionInput(object):
     """
     Attributes:
      - x1
@@ -56,7 +56,7 @@ class BraninFunctionInput(object):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
             oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
             return
-        oprot.writeStructBegin('BraninFunctionInput')
+        oprot.writeStructBegin('ModBraninFunctionInput')
         if self.x1 is not None:
             oprot.writeFieldBegin('x1', TType.DOUBLE, 1)
             oprot.writeDouble(self.x1)
@@ -83,7 +83,7 @@ class BraninFunctionInput(object):
         return not (self == other)
 
 
-class BraninFunctionOutput(object):
+class ModBraninFunctionOutput(object):
     """
     Attributes:
      - f
@@ -123,7 +123,7 @@ class BraninFunctionOutput(object):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
             oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
             return
-        oprot.writeStructBegin('BraninFunctionOutput')
+        oprot.writeStructBegin('ModBraninFunctionOutput')
         if self.f is not None:
             oprot.writeFieldBegin('f', TType.DOUBLE, 1)
             oprot.writeDouble(self.f)
@@ -148,14 +148,14 @@ class BraninFunctionOutput(object):
 
     def __ne__(self, other):
         return not (self == other)
-all_structs.append(BraninFunctionInput)
-BraninFunctionInput.thrift_spec = (
+all_structs.append(ModBraninFunctionInput)
+ModBraninFunctionInput.thrift_spec = (
     None,  # 0
     (1, TType.DOUBLE, 'x1', None, None, ),  # 1
     (2, TType.DOUBLE, 'x2', None, None, ),  # 2
 )
-all_structs.append(BraninFunctionOutput)
-BraninFunctionOutput.thrift_spec = (
+all_structs.append(ModBraninFunctionOutput)
+ModBraninFunctionOutput.thrift_spec = (
     None,  # 0
     (1, TType.DOUBLE, 'f', None, None, ),  # 1
     (2, TType.DOUBLE, 'g', None, None, ),  # 2

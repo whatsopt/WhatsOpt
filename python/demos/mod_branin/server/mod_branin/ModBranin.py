@@ -19,7 +19,7 @@ all_structs = []
 
 
 class Iface(object):
-    def compute_branin_function(self, input):
+    def compute_mod_branin_function(self, input):
         """
         Parameters:
          - input
@@ -40,23 +40,23 @@ class Client(Iface):
             self._oprot = oprot
         self._seqid = 0
 
-    def compute_branin_function(self, input):
+    def compute_mod_branin_function(self, input):
         """
         Parameters:
          - input
         """
-        self.send_compute_branin_function(input)
-        return self.recv_compute_branin_function()
+        self.send_compute_mod_branin_function(input)
+        return self.recv_compute_mod_branin_function()
 
-    def send_compute_branin_function(self, input):
-        self._oprot.writeMessageBegin('compute_branin_function', TMessageType.CALL, self._seqid)
-        args = compute_branin_function_args()
+    def send_compute_mod_branin_function(self, input):
+        self._oprot.writeMessageBegin('compute_mod_branin_function', TMessageType.CALL, self._seqid)
+        args = compute_mod_branin_function_args()
         args.input = input
         args.write(self._oprot)
         self._oprot.writeMessageEnd()
         self._oprot.trans.flush()
 
-    def recv_compute_branin_function(self):
+    def recv_compute_mod_branin_function(self):
         iprot = self._iprot
         (fname, mtype, rseqid) = iprot.readMessageBegin()
         if mtype == TMessageType.EXCEPTION:
@@ -64,12 +64,12 @@ class Client(Iface):
             x.read(iprot)
             iprot.readMessageEnd()
             raise x
-        result = compute_branin_function_result()
+        result = compute_mod_branin_function_result()
         result.read(iprot)
         iprot.readMessageEnd()
         if result.success is not None:
             return result.success
-        raise TApplicationException(TApplicationException.MISSING_RESULT, "compute_branin_function failed: unknown result")
+        raise TApplicationException(TApplicationException.MISSING_RESULT, "compute_mod_branin_function failed: unknown result")
 
     def ping(self):
         self.send_ping()
@@ -110,7 +110,7 @@ class Processor(Iface, TProcessor):
     def __init__(self, handler):
         self._handler = handler
         self._processMap = {}
-        self._processMap["compute_branin_function"] = Processor.process_compute_branin_function
+        self._processMap["compute_mod_branin_function"] = Processor.process_compute_mod_branin_function
         self._processMap["ping"] = Processor.process_ping
         self._processMap["shutdown"] = Processor.process_shutdown
 
@@ -129,13 +129,13 @@ class Processor(Iface, TProcessor):
             self._processMap[name](self, seqid, iprot, oprot)
         return True
 
-    def process_compute_branin_function(self, seqid, iprot, oprot):
-        args = compute_branin_function_args()
+    def process_compute_mod_branin_function(self, seqid, iprot, oprot):
+        args = compute_mod_branin_function_args()
         args.read(iprot)
         iprot.readMessageEnd()
-        result = compute_branin_function_result()
+        result = compute_mod_branin_function_result()
         try:
-            result.success = self._handler.compute_branin_function(args.input)
+            result.success = self._handler.compute_mod_branin_function(args.input)
             msg_type = TMessageType.REPLY
         except TTransport.TTransportException:
             raise
@@ -147,7 +147,7 @@ class Processor(Iface, TProcessor):
             logging.exception('Unexpected exception in handler')
             msg_type = TMessageType.EXCEPTION
             result = TApplicationException(TApplicationException.INTERNAL_ERROR, 'Internal error')
-        oprot.writeMessageBegin("compute_branin_function", msg_type, seqid)
+        oprot.writeMessageBegin("compute_mod_branin_function", msg_type, seqid)
         result.write(oprot)
         oprot.writeMessageEnd()
         oprot.trans.flush()
@@ -189,7 +189,7 @@ class Processor(Iface, TProcessor):
 # HELPER FUNCTIONS AND STRUCTURES
 
 
-class compute_branin_function_args(object):
+class compute_mod_branin_function_args(object):
     """
     Attributes:
      - input
@@ -210,7 +210,7 @@ class compute_branin_function_args(object):
                 break
             if fid == 1:
                 if ftype == TType.STRUCT:
-                    self.input = BraninFunctionInput()
+                    self.input = ModBraninFunctionInput()
                     self.input.read(iprot)
                 else:
                     iprot.skip(ftype)
@@ -223,7 +223,7 @@ class compute_branin_function_args(object):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
             oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
             return
-        oprot.writeStructBegin('compute_branin_function_args')
+        oprot.writeStructBegin('compute_mod_branin_function_args')
         if self.input is not None:
             oprot.writeFieldBegin('input', TType.STRUCT, 1)
             self.input.write(oprot)
@@ -244,14 +244,14 @@ class compute_branin_function_args(object):
 
     def __ne__(self, other):
         return not (self == other)
-all_structs.append(compute_branin_function_args)
-compute_branin_function_args.thrift_spec = (
+all_structs.append(compute_mod_branin_function_args)
+compute_mod_branin_function_args.thrift_spec = (
     None,  # 0
-    (1, TType.STRUCT, 'input', [BraninFunctionInput, None], None, ),  # 1
+    (1, TType.STRUCT, 'input', [ModBraninFunctionInput, None], None, ),  # 1
 )
 
 
-class compute_branin_function_result(object):
+class compute_mod_branin_function_result(object):
     """
     Attributes:
      - success
@@ -272,7 +272,7 @@ class compute_branin_function_result(object):
                 break
             if fid == 0:
                 if ftype == TType.STRUCT:
-                    self.success = BraninFunctionOutput()
+                    self.success = ModBraninFunctionOutput()
                     self.success.read(iprot)
                 else:
                     iprot.skip(ftype)
@@ -285,7 +285,7 @@ class compute_branin_function_result(object):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
             oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
             return
-        oprot.writeStructBegin('compute_branin_function_result')
+        oprot.writeStructBegin('compute_mod_branin_function_result')
         if self.success is not None:
             oprot.writeFieldBegin('success', TType.STRUCT, 0)
             self.success.write(oprot)
@@ -306,9 +306,9 @@ class compute_branin_function_result(object):
 
     def __ne__(self, other):
         return not (self == other)
-all_structs.append(compute_branin_function_result)
-compute_branin_function_result.thrift_spec = (
-    (0, TType.STRUCT, 'success', [BraninFunctionOutput, None], None, ),  # 0
+all_structs.append(compute_mod_branin_function_result)
+compute_mod_branin_function_result.thrift_spec = (
+    (0, TType.STRUCT, 'success', [ModBraninFunctionOutput, None], None, ),  # 0
 )
 
 

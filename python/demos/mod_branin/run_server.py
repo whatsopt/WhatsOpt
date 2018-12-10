@@ -9,17 +9,17 @@ from thrift.transport import TTransport
 from thrift.protocol import TBinaryProtocol
 from thrift.server import TServer
 
-from server.branin import Branin as BraninService
-from server.branin_conversions import *
-from branin import Branin as Factory
+from server.mod_branin import ModBranin as ModBraninService
+from server.mod_branin_conversions import *
+from mod_branin import ModBranin as Factory
 
-class BraninHandler:
+class ModBraninHandler:
     server = None
 
     def __init__(self):
         factory = Factory()
         
-        self.branin_function = factory.create_branin_function()
+        self.mod_branin_function = factory.create_mod_branin_function()
         
 
     # Admin interface
@@ -27,27 +27,27 @@ class BraninHandler:
         print("Ping!")
 
     def shutdown(self):
-        print("Shutting down Branin server...")
+        print("Shutting down ModBranin server...")
         exit(0)
 
-    # Branin interface
+    # ModBranin interface
     
-    def compute_branin_function(self, ins):
+    def compute_mod_branin_function(self, ins):
         outputs = {}
-        inputs = to_openmdao_branin_function_inputs(ins)
-        self.branin_function.compute(inputs, outputs)
-        return to_thrift_branin_function_output(outputs)
+        inputs = to_openmdao_mod_branin_function_inputs(ins)
+        self.mod_branin_function.compute(inputs, outputs)
+        return to_thrift_mod_branin_function_output(outputs)
     
 
 
-handler = BraninHandler()
-processor = BraninService.Processor(handler)
+handler = ModBraninHandler()
+processor = ModBraninService.Processor(handler)
 transport = TSocket.TServerSocket('0.0.0.0', port=31400)
 tfactory = TTransport.TBufferedTransportFactory()
 pfactory = TBinaryProtocol.TBinaryProtocolFactory()
 
 server = handler.server = TServer.TSimpleServer(processor, transport, tfactory, pfactory)
 
-print("Starting Branin analysis server...")
+print("Starting ModBranin analysis server...")
 server.serve()
 print("done!")

@@ -16,15 +16,15 @@ else:
 from thrift.transport import TTransport, TSocket, TSSLSocket, THttpClient
 from thrift.protocol.TBinaryProtocol import TBinaryProtocol
 
-from branin import Branin
-from branin.ttypes import *
+from mod_branin import ModBranin
+from mod_branin.ttypes import *
 
 if len(sys.argv) <= 1 or sys.argv[1] == '--help':
     print('')
     print('Usage: ' + sys.argv[0] + ' [-h host[:port]] [-u url] [-f[ramed]] [-s[sl]] [-novalidate] [-ca_certs certs] [-keyfile keyfile] [-certfile certfile] function [arg1 [arg2...]]')
     print('')
     print('Functions:')
-    print('  BraninFunctionOutput compute_branin_function(BraninFunctionInput input)')
+    print('  ModBraninFunctionOutput compute_mod_branin_function(ModBraninFunctionInput input)')
     print('  void ping()')
     print('  void shutdown()')
     print('')
@@ -103,14 +103,14 @@ else:
     else:
         transport = TTransport.TBufferedTransport(socket)
 protocol = TBinaryProtocol(transport)
-client = Branin.Client(protocol)
+client = ModBranin.Client(protocol)
 transport.open()
 
-if cmd == 'compute_branin_function':
+if cmd == 'compute_mod_branin_function':
     if len(args) != 1:
-        print('compute_branin_function requires 1 args')
+        print('compute_mod_branin_function requires 1 args')
         sys.exit(1)
-    pp.pprint(client.compute_branin_function(eval(args[0]),))
+    pp.pprint(client.compute_mod_branin_function(eval(args[0]),))
 
 elif cmd == 'ping':
     if len(args) != 0:
