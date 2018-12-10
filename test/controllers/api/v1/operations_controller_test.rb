@@ -8,7 +8,7 @@ class Api::V1::OperationsControllerTest < ActionDispatch::IntegrationTest
     @ope = operations(:doe)
   end
   
-  test "should create an operation" do
+  test "should create an operation with cases (upload)" do
     assert_difference('Operation.count', 1) do
       post api_v1_mda_operations_url(@mda), 
         params: {operation: {name: 'new_doe', cases: [{varname: 'x1', coord_index: 0, values: [10, 20, 30]}, 
@@ -26,7 +26,7 @@ class Api::V1::OperationsControllerTest < ActionDispatch::IntegrationTest
     assert_equal ['obj', 'x1'], resp['cases'].map{|c| c['varname']}.sort 
     assert_equal [0, 0], resp['cases'].map{|c| c['coord_index']}.sort
     assert_equal [10, 20, 30, 40, 50, 60], resp['cases'].map{|c| c['values']}.flatten.sort
-    assert_equal({'status'=> 'DONE', 'log'=> '', 'start_in_ms'=>0.0, 'end_in_ms'=>0.0}, resp['job'])
+    assert_equal({'status'=> 'DONE', 'log'=> "", 'log_count' => 0, 'start_in_ms'=>0.0, 'end_in_ms'=>0.0}, resp['job'])
   end
 
   test "should create an operation with LHS options" do

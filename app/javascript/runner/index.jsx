@@ -141,7 +141,8 @@ class Runner extends React.Component {
     this.api = this.props.api;
 
     const status = (this.props.ope.job && this.props.ope.job.status) || 'PENDING';
-    const log = (this.props.ope.job && this.props.ope.job.log) || '';
+    const log = (this.props.ope.job && this.props.ope.job.log) || [];
+    console.log("LOG "+log)
     const log_count = (this.props.ope.job && this.props.ope.job.log_count) || 0;
 
     const formData = {
@@ -294,8 +295,9 @@ class Runner extends React.Component {
   }
 
   render() {
+    console.log(this.state.log);
     const lines = this.state.log.split('\n').map((l, i) => {
-      let count = this.state.log_count+i;
+      let count = Math.max(this.state.log_count-100, 0)+i;
       let line = `#${count}  ${l}`
       return ( <LogLine key={count} line={line}/> );
     });
@@ -386,15 +388,15 @@ Runner.propTypes = {
     name: PropTypes.string.isRequired,
   }),
   ope: PropTypes.shape({
-    id: PropTypes.number,
+    id: PropTypes.number.isRequired,
     name: PropTypes.string,
     host: PropTypes.string,
     driver: PropTypes.string,
     options: PropTypes.array,
     cases: PropTypes.array,
     job: PropTypes.shape({
-      status: PropTypes.string,
-      log: PropTypes.string,
+      status: PropTypes.string.isRequired,
+      log: PropTypes.array,
       start_in_ms: PropTypes.number,
       end_in_ms: PropTypes.number,
     }),

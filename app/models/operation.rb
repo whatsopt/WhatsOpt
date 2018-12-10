@@ -11,9 +11,6 @@ class Operation < ApplicationRecord
   CAT_DOE = :doe 
   CATEGORIES = [CAT_RUNONCE, CAT_OPTIMISATION, CAT_DOE, CAT_SCREENING]
   
-  TERMINATION_STATUSES = %w(DONE, FAILED, KILLED)
-  STATUSES = %w(PENDING, RUNNING)+TERMINATION_STATUSES
-    
   BATCH_COUNT=10  # nb of log lines processed together
   LOGDIR=File.join(Rails.root, 'upload/logs')
     
@@ -33,9 +30,9 @@ class Operation < ApplicationRecord
 	  operation = mda.operations.build(ope_attrs.except(:cases))
 	  operation._build_cases(ope_attrs[:cases]) if ope_attrs[:cases]
     if ope_attrs[:cases]
-      operation.build_job(status: 'DONE', pid: -1, log: "")
+      operation.build_job(status: 'DONE')
     else
-      operation.build_job(status: 'PENDING', pid: -1, log: "")
+      operation.build_job(status: 'PENDING')
     end
 	  operation
 	end
@@ -85,41 +82,50 @@ class Operation < ApplicationRecord
     tmplog_filename = File.join(Dir.tmpdir, "#{SecureRandom.urlsafe_base64}.log")
     FileUtils.touch(tmplog_filename)  # ensure logfile existence
     Rails.logger.info sqlite_filename
-    job = self.job || self.create_job(status: 'PENDING', pid: -1, log: "")
-    job.update(status: :RUNNING, sqlite_filename: sqlite_filename, started_at: Time.now, ended_at: nil, log: "", log_count:0)
-
+    job = self.job || self.create_job
+    job.update(status: 'RUNNING', sqlite_filename: sqlite_filename, 
+               started_at: Time.now, ended_at: nil, log: "", log_count: 0)
+               
     Dir.mktmpdir("sqlite") do |dir|
-      lines = []
+      lines = ""
+      count=0
       status = ogen.monitor(self.category, sqlite_filename) do |stdin, stdouterr, wait_thr|
         Rails.logger.info "JOB STATUS = RUNNING"
         job.update(status: :RUNNING, pid: wait_thr.pid)
         stdin.close
-        dump_count=0 
+        dump_count=0
         while line = stdouterr.gets
           lines << line
-          if lines.count%BATCH_COUNT==0
+          count+=1
+          if count%BATCH_COUNT==0
+            puts "COUNT = #{count}"
+            puts "DUMP COUNT = #{dump_count}"
+            puts "LOG COUNT = #{job.log_count}"
             if dump_count<10*BATCH_COUNT
-              job.update_column(:log, job.log << lines.join)
               dump_count += BATCH_COUNT
             else
-              File.open(tmplog_filename, 'a') { |f| f << job.log }                
-              job.update_columns(log: lines.join, log_count: job.log_count+11*BATCH_COUNT)
+              File.open(tmplog_filename, 'a') { |f| f << job.log } 
               dump_count = 0
-            end  
-            lines = []
+            end
+            if count > 10*BATCH_COUNT  
+              log_shift = job.log
+              (1..10).each { |i| log_shift = log_shift[log_shift.index("\n")+1..-1]}              
+              job.update_columns(log: log_shift << lines, log_count: count)
+            else
+              job.update_columns(log: job.log << lines, log_count: count)
+            end
+            lines = ""
           end
         end
-        job.update_columns(log: (job.log << lines.join), log_count: job.log_count+dump_count+lines.count)
         wait_thr.value
       end
+      job.update_columns(log: job.log << lines, log_count: count)
       File.open(tmplog_filename, 'a') { |f| f << job.log }
       Rails.logger.info "Log line count = #{job.log_count}"
       self._update_on_termination(status)
     end
     logfile = File.join(LOGDIR, "ope_#{self.id}.log")
     FileUtils.copy(tmplog_filename, logfile)
-    last_lines = `tail -n 200 #{logfile}` 
-    job.update_columns(log: last_lines, log_count: [0, job.log_count-200].max)
   end
   
   def _update_on_termination(status)
@@ -153,9 +159,9 @@ class Operation < ApplicationRecord
     
   def _set_upload_job_done
     if self.job
-      self.job.update(status: 'DONE', pid: -1, log: self.job.log + "Data uploaded\n", ended_at: Time.now)
+      self.job.update(status: 'DONE', pid: -1, log: self.job.log << "Data uploaded\n", log_count: job.log_count+1, ended_at: Time.now)
     else # wop upload
-      self.create_job(status: 'DONE', pid: -1, log: "Data uploaded\n", started_at: Time.now, ended_at: Time.now)
+      self.create_job(status: 'DONE', pid: -1, log: "Data uploaded\n", log_count: 1, started_at: Time.now, ended_at: Time.now)
     end
   end
 	
