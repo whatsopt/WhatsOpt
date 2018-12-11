@@ -5,8 +5,8 @@ class Api::V1::DisciplineControllerTest < ActionDispatch::IntegrationTest
     user1 = users(:user1)
     @auth_headers = {"Authorization" => "Token " + TEST_API_KEY}
     @mda = analyses(:cicav)
-    @disc = @mda.disciplines.nodes.first
-    @disc2 = @mda.disciplines.nodes.last
+    @disc = disciplines(:geometry)
+    @disc2 = disciplines(:aerodynamics)
   end
   
   test "should get given discipline" do

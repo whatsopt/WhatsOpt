@@ -14,6 +14,9 @@ class Connection < ApplicationRecord
   before_validation :_ensure_role_presence
   before_destroy :delete_related_variables!
     
+  class SubAnalysisVariableNotFoundError < StandardError
+  end
+  
   def self.between(disc_from_id, disc_to_id)
     Connection.joins(:from).where(variables: {discipline_id: disc_from_id}) #.where.not(variables: {type: :String})
               .order('variables.name')
@@ -22,6 +25,32 @@ class Connection < ApplicationRecord
 
   def active?
     from.active
+  end
+  
+  def self.create_connection!(mda, from_disc, to_disc, names)
+    Connection.transaction do
+      names.each do |name|
+        if from_disc.is_sub_analysis?
+          var = from_disc.sub_analysis.driver.input_variables.where(name: name).take
+          unless var
+            raise SubAnalysisVariableNotFoundError.new("Variable #{name} should be created as an input of Driver in sub-analysis first")
+          end
+        end
+        if to_disc.is_sub_analysis?
+          var = to_disc.sub_analysis.driver.output_variables.where(name: name).take
+          unless var
+            raise SubAnalysisVariableNotFoundError.new("Variable #{name} should be created as an output of Driver in sub-analysis first")
+          end
+        end        
+        vout = Variable.of_analysis(mda)
+                 .where(name: name, io_mode: WhatsOpt::Variable::OUT)
+                 .first_or_create!(shape: 1, type: "Float", desc: "", units: "", active: true)  
+        vout.update(discipline_id: from_disc.id)
+        vin = Variable.where(discipline_id: to_disc.id, name: name, io_mode: WhatsOpt::Variable::IN)
+                 .first_or_create!(shape: 1, type: "Float", desc: "", units: "", active: true)
+        Connection.where(from_id: vout.id, to_id: vin.id).first_or_create!
+      end
+    end
   end
   
   def delete_related_variables!  
@@ -58,6 +87,9 @@ class Connection < ApplicationRecord
   end
   
   private
+    def _check_sub_analysis(varname, disc, io)
+      
+    end 
   
     def _ensure_role_presence
       if self.role.blank?

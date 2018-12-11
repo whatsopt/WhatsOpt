@@ -4,42 +4,67 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
   setup do
     user1 = users(:user1)
     @auth_headers = {"Authorization" => "Token " + TEST_API_KEY}
+      
     @mda = analyses(:cicav)
-    @from = disciplines(:geometry)
-    @to = disciplines(:aerodynamics)
+    @geometry = disciplines(:geometry)
+    @aerodynamics = disciplines(:aerodynamics)
+    @propulsion = disciplines(:propulsion)
     @varyg = variables(:varyg_geo_out)
     @conn = connections(:geo_yg_aero)
     @varzout = variables(:varz_design_out)
+    
+    @outermda = analyses(:outermda)
+    @outermdadisc = disciplines(:outermda_discipline)
+    @innermda = analyses(:innermda)
+    @innermdadisc = disciplines(:outermda_innermda_discipline)
+    @vacantdisc = disciplines(:outermda_vacant_discipline)
   end
   
-  test "should create a new connection" do
-    post api_v1_mda_connections_url({mda_id: @mda.id, 
-                                     connection: {from: @from.id, to: @to.id, names: ["newvar"]}}), 
-         as: :json, headers: @auth_headers 
-    assert_response :success
+  test "should create a new connection and related variables" do
+    assert_difference('Variable.count', 2) do
+      assert_difference('Connection.count', 1) do
+      post api_v1_mda_connections_url({mda_id: @mda.id, 
+                                       connection: {from: @geometry.id, to: @aerodynamics.id, names: ["newvar"]}}), 
+           as: :json, headers: @auth_headers 
+      assert_response :success
+      end
+    end
     conn = Connection.last
     assert_equal WhatsOpt::Variable::STATE_VAR_ROLE, conn.role
   end
 
-  test "should create no new variable if connection already exists" do
-    assert_difference('Connection.count', 0) do
-      post api_v1_mda_connections_url({mda_id: @mda.id, 
-                                       connection: {from: @from.id, to: @to.id, names: [@varyg.name]}}), 
-           as: :json, headers: @auth_headers 
-      assert_response :success
+  test "should create no new connection if connection already exists" do
+    assert_difference('Variable.count', 0) do
+      assert_difference('Connection.count', 0) do
+        post api_v1_mda_connections_url({mda_id: @mda.id, 
+                                         connection: {from: @geometry.id, to: @aerodynamics.id, names: [@varyg.name]}}), 
+             as: :json, headers: @auth_headers 
+        assert_response :success
+      end
+    end
+  end
+  
+  test "should create no new variable out if variable already exists" do
+    assert_difference('Variable.count', 1) do
+      assert_difference('Connection.count', 1) do
+        post api_v1_mda_connections_url({mda_id: @mda.id, 
+                                         connection: {from: @geometry.id, to: @propulsion.id, names: [@varyg.name]}}), 
+             as: :json, headers: @auth_headers 
+        assert_response :success
+      end
     end
   end
   
   test "should create connection from same discipline to other ones" do
     post api_v1_mda_connections_url({mda_id: @mda.id, 
-                                     connection: {from: @from.id, to: @mda.driver.id, names: [@varyg.name]}}), 
+                                     connection: {from: @geometry.id, to: @mda.driver.id, names: [@varyg.name]}}), 
          as: :json, headers: @auth_headers 
     assert_response :success
   end
   
   test "should raise error on bad request" do
     post api_v1_mda_connections_url({mda_id: @mda.id, 
-                                     connection: {from: @from.id, to: @to.id, names: ['']}}), 
+                                     connection: {from: @geometry.id, to: @aerodynamics.id, names: ['']}}), 
          as: :json, headers: @auth_headers 
     assert_match /can't be blank/, JSON.parse(response.body)["message"]
     assert_response :unprocessable_entity 
@@ -86,4 +111,38 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
     refute @conn.from.active
   end  
 
+  test "should move a connection to an existing sub-discipline variable" do
+    assert_difference('Variable.count', 0) do
+      assert_difference('Connection.count', 0) do
+        driver_out_count = @outermda.driver.output_variables.count
+        disc_out_count = @outermdadisc.output_variables.count
+        post api_v1_mda_connections_url({mda_id: @outermda.id, 
+                                         connection: {from: @outermdadisc.id, to: @innermdadisc.id, names: ["x"]}}), 
+             as: :json, headers: @auth_headers 
+        assert_response :success
+        assert_equal -1, @outermda.driver.output_variables.reload.count-driver_out_count
+        assert_equal 1, @outermdadisc.output_variables.reload.count-disc_out_count 
+      end
+    end
+  end
+  
+  test "should prevent connection creation to/from a non-existing sub-discipline variable" do
+    assert_difference('Variable.count', 0) do
+      assert_difference('Connection.count', 0) do
+        post api_v1_mda_connections_url({mda_id: @outermda.id, 
+                                         connection: {from: @outermdadisc.id, to: @innermdadisc.id, names: ["unknown"]}}), 
+             as: :json, headers: @auth_headers 
+        assert_response :unprocessable_entity
+        post api_v1_mda_connections_url({mda_id: @outermda.id, 
+                                         connection: {from: @innermdadisc.id, to: @outermdadisc.id, names: ["unknown"]}}), 
+             as: :json, headers: @auth_headers 
+        assert_response :unprocessable_entity
+      end
+    end
+  end
+
+  test "should re-connect to driver when removing a connection to a sub-discipline" do
+    
+  end
+  
 end

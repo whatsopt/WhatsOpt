@@ -33,11 +33,15 @@ class Discipline < ApplicationRecord
   def output_variables
     variables.outputs
   end
-
+  
   def is_driver?
     type == WhatsOpt::Discipline::NULL_DRIVER
   end
   
+  def is_sub_analysis?
+    !!sub_analysis
+  end
+    
   def update_discipline(params) 
     if params[:position]
       insert_at(params[:position])

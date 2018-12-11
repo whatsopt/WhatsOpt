@@ -31,7 +31,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
       dirpath = Pathname.new(dir)
       basenames = @ogen.genfiles.map{|f| Pathname.new(f).relative_path_from(dirpath).to_s }.sort
       expected = (["aerodynamics.py", "aerodynamics_base.py", "cicav.py", 
-                  "cicav_base.py", "geometry.py", "geometry_base.py", 
+                  "cicav_base.py", "geometry.py", "geometry_base.py", "propulsion.py", "propulsion_base.py",
                   "run_analysis.py", "run_doe.py", "run_optimization.py", 
                   "run_screening.py"] + ['run_server.py', 
                     'server/__init__.py', 'server/analysis.thrift', 'server/cicav/__init__.py', 

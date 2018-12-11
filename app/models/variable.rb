@@ -38,6 +38,7 @@ class Variable < ApplicationRecord
   scope :outputs, -> { where(io_mode: OUT) }
     
   scope :of_analysis, -> (analysis_id) { Variable.joins(discipline: :analysis).where(analyses: {id: analysis_id}) }
+  scope :of_discipline, -> (discipline_id) { Variable.joins(discipline: {id: discipline_id}) }
   scope :with_role, -> (role) { joins(:outgoing_connections).where(connections: {role: role}).uniq }
     
   after_initialize :set_defaults, unless: :persisted?

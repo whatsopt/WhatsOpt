@@ -32,3 +32,23 @@ aero_y2_driver:
   from_id: <%= ActiveRecord::FixtureSet.identify(:vary2_aero_out) %>
   to_id: <%= ActiveRecord::FixtureSet.identify(:vary2_in) %>
   role: "response"
+
+outer_driver_x_innermda_disc:
+  from_id: <%= ActiveRecord::FixtureSet.identify(:varx_outermda_driver_out) %>
+  to_id: <%= ActiveRecord::FixtureSet.identify(:varx_outermda_innermda_disc_in) %>
+  role: "design_var"
+
+disc_innermda_y_outer_driver:
+  from_id: <%= ActiveRecord::FixtureSet.identify(:vary_outermda_innermda_disc_out) %>
+  to_id: <%= ActiveRecord::FixtureSet.identify(:vary_outermda_driver_in) %>
+  role: "response"
+
+driver_x_innermda_disc:
+  from_id: <%= ActiveRecord::FixtureSet.identify(:varx_innermda_driver_out) %>
+  to_id: <%= ActiveRecord::FixtureSet.identify(:varx_innermda_disc_in) %>
+  role: "design_var"
+  
+disc_innermda_y_driver:
+  from_id: <%= ActiveRecord::FixtureSet.identify(:vary_innermda_disc_out) %>
+  to_id: <%= ActiveRecord::FixtureSet.identify(:vary_innermda_driver_in) %>
+  role: "response"

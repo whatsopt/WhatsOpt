@@ -16,6 +16,12 @@ aerodynamics:
   analysis: cicav
   position: 2
 
+propulsion:
+  name: Propulsion
+  type: analysis
+  analysis: cicav
+  position: 3
+
 driver_fast:
   name: __DRIVER__
   type: null_driver
@@ -40,17 +46,23 @@ outermda_driver:
   analysis: outermda
   position: 0
 
+outermda_discipline:
+  name: Disc
+  type: analysis
+  analysis: outermda
+  position: 1
+
 outermda_innermda_discipline:
   name: InnerMdaDiscipline
   type: analysis
   analysis: outermda
-  position: 1
+  position: 2
 
 outermda_vacant_discipline:
   name: VacantDiscipline
   type: analysis
   analysis: outermda
-  position: 2
+  position: 3
   
 innermda_driver:
   name: __DRIVER__
@@ -59,7 +71,7 @@ innermda_driver:
   position: 0
 
 innermda_discipline:
-  name: PLainDiscipline
+  name: PlainDiscipline
   type: analysis
   analysis: innermda
   position: 1

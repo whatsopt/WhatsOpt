@@ -166,4 +166,66 @@ var_string:
   shape: 1  
   active: true
 
+varx_innermda_driver_out:
+  name: x
+  discipline: innermda_driver
+  io_mode: out
+  type: Float
+  shape: 1  
+  active: true
 
+vary_innermda_driver_in:
+  name: y
+  discipline: innermda_driver
+  io_mode: in
+  type: Float
+  shape: 1  
+  active: true
+  
+varx_innermda_disc_in:
+  name: x
+  discipline: innermda_discipline
+  io_mode: in
+  type: Float
+  shape: 1  
+  active: true
+
+vary_innermda_disc_out:
+  name: y
+  discipline: innermda_discipline
+  io_mode: out
+  type: Float
+  shape: 1  
+  active: true
+  
+varx_outermda_driver_out:
+  name: x
+  discipline: outermda_driver
+  io_mode: out
+  type: Float
+  shape: 1  
+  active: true
+
+vary_outermda_driver_in:
+  name: y
+  discipline: outermda_driver
+  io_mode: in
+  type: Float
+  shape: 1  
+  active: true
+  
+varx_outermda_innermda_disc_in:
+  name: x
+  discipline: outermda_innermda_discipline
+  io_mode: in
+  type: Float
+  shape: 1  
+  active: true
+
+vary_outermda_innermda_disc_out:
+  name: y
+  discipline: outermda_innermda_discipline
+  io_mode: out
+  type: Float
+  shape: 1  
+  active: true

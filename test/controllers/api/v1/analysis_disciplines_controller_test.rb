@@ -23,7 +23,7 @@ class Api::V1::AnalysisDisciplinesControllerTest < ActionDispatch::IntegrationTe
   end
   
   test "should create an analysis discipline from a given discipline and an analysis" do
-    assert_equal [], @outermda.driver.output_variables.map(&:name).sort 
+    assert_equal ["x"], @outermda.driver.output_variables.map(&:name).sort 
     assert_equal [], @vacantdisc.output_variables.map(&:name).sort 
     assert_difference('AnalysisDiscipline.count') do
       post api_v1_discipline_mda_url(@vacantdisc), params: { analysis_discipline: {analysis_id: @cicav.id }}, 
