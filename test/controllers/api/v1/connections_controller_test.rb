@@ -8,7 +8,7 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
     @from = disciplines(:geometry)
     @to = disciplines(:aerodynamics)
     @varyg = variables(:varyg_geo_out)
-    @conn = connections(:geo_aero)
+    @conn = connections(:geo_yg_aero)
     @varzout = variables(:varz_design_out)
   end
   

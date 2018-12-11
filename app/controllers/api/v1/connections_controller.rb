@@ -45,7 +45,7 @@ class Api::V1::ConnectionsController < Api::ApiController
   def destroy
     @connection = Connection.find(params[:id])
     authorize @connection.from.discipline.analysis
-    @connection.destroy_variables!
+    @connection.destroy!
     head :no_content
   end
 

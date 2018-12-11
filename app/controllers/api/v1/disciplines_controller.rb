@@ -22,7 +22,7 @@ class Api::V1::DisciplinesController < Api::ApiController
 
   # DELETE /api/v1/disciplines/1
   def destroy
-    @discipline.destroy
+    @discipline.destroy!
     head :no_content
   end
 

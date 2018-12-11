@@ -12,6 +12,7 @@ class Connection < ApplicationRecord
   scope :with_role, -> (role) { where(role: role)}
     
   before_validation :_ensure_role_presence
+  before_destroy :delete_related_variables!
     
   def self.between(disc_from_id, disc_to_id)
     Connection.joins(:from).where(variables: {discipline_id: disc_from_id}) #.where.not(variables: {type: :String})
@@ -23,15 +24,12 @@ class Connection < ApplicationRecord
     from.active
   end
   
-  def destroy_variables!  
-    Connection.transaction do
-      conns_count = Connection.where(from_id: from_id).count
-      if conns_count == 1
-        Variable.find(from_id).destroy!
-      end
-      Variable.find(to_id).destroy!
-      destroy!
+  def delete_related_variables!  
+    conns_count = Connection.where(from_id: from_id).count
+    if conns_count == 1
+      Variable.find(from_id).delete
     end
+    Variable.find(to_id).delete
   end
     
   def update_variables!(params)

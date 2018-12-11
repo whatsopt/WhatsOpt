@@ -1,6 +1,6 @@
 <h1>CHANGELOG</h1>
 
-<h3>0.12.0 (30/11/2018)</h3>
+<h3>0.13.0 (21/12/2019)</h3>
 <ul>
   <li>Display 3D scatter plots when 2 inputs and one output are selected</li>
   <li>OneraMDAO SEGOMOE optimizer integration</li>

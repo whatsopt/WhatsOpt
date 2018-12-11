@@ -62,4 +62,12 @@ class VariableTest < ActiveSupport::TestCase
     assert var.incoming_connection
   end
   
+  test "should delete and deleted connected variables" do
+    varout = variables(:varyg_geo_out)
+    varin = variables(:varyg_aero_in)
+    assert_difference('Variable.count', -2) do
+      varin.destroy!
+    end
+    refute Variable.find_by_name(varin.name)
+  end
 end
