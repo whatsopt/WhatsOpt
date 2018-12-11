@@ -72,9 +72,9 @@ class Discipline extends React.Component {
 
   handleSubAnalysisSelected(selected) {
     console.log("Select "+JSON.stringify(selected));
-    let name = selected.match(/#\d+ (.*)/);
+    let name = selected[0].label.match(/#\d+ (.*)/);
     if (name) {
-      this.setState({selected, discName: name});
+      this.setState({selected, discName: name[1]});
     } else {
       this.setState({selected});
     }
