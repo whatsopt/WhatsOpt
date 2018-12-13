@@ -154,7 +154,6 @@ class Analysis < ApplicationRecord
     owners.take&.login
   end
   
-    
   def refresh_connections
     varouts = Variable.outputs.joins(discipline: :analysis).where(analyses: {id: self.id})
     varins = Variable.inputs.joins(discipline: :analysis).where(analyses: {id: self.id})
@@ -170,6 +169,37 @@ class Analysis < ApplicationRecord
         end
         Connection.where(from_id: vout.id, to_id: vin.id).first_or_create!(role: role)  
       end
+    end
+  end
+  
+  def create_connections!(from_disc, to_disc, names, sub_analysis_check=true)
+    Analysis.transaction do
+      names.each do |name|
+        conn = Connection.create_connection!(from_disc, to_disc, name, sub_analysis_check)
+        if self.should_update_analysis_ancestors?(conn)
+          inner_driver_variable = self.driver.variables.where(name: name).take
+          self.parent.add_upstream_connection!(inner_driver_variable, self.super_discipline)
+        end
+      end
+    end 
+  end
+  
+  def should_update_analysis_ancestors?(conn)
+    self.has_parent? and conn.driverish?
+  end
+    
+  def add_upstream_connection!(inner_driver_var, discipline)
+    varname = inner_driver_var.name
+    var_from = Variable.of_analysis(self).where(name: varname, io_mode: WhatsOpt::Variable::OUT).take
+    
+    if var_from
+      existing_conn = Connection.where(from: var_from.id)
+      raise "Not yet implemented"
+    else
+      from_disc = self.driver
+      to_disc = discipline
+      from_disc, to_disc = to_disc, from_disc if inner_driver_var.is_in?
+      self.create_connections!(from_disc, to_disc, [varname], sub_analysis_check=false) 
     end
   end
   

@@ -116,9 +116,10 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
       assert_difference('Connection.count', 0) do
         driver_out_count = @outermda.driver.output_variables.count
         disc_out_count = @outermdadisc.output_variables.count
-        post api_v1_mda_connections_url({mda_id: @outermda.id, 
-                                         connection: {from: @outermdadisc.id, to: @innermdadisc.id, names: ["x"]}}), 
-             as: :json, headers: @auth_headers 
+        var_to_move = variables(:varx2_outermda_driver_out)
+        post api_v1_mda_connections_url(
+          {mda_id: @outermda.id, connection: {from: @outermdadisc.id, 
+            to: @innermdadisc.id, names: [var_to_move.name]}}), as: :json, headers: @auth_headers
         assert_response :success
         assert_equal -1, @outermda.driver.output_variables.reload.count-driver_out_count
         assert_equal 1, @outermdadisc.output_variables.reload.count-disc_out_count 
@@ -126,9 +127,9 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
     end
   end
   
-  test "should prevent connection creation to/from a non-existing sub-discipline variable" do
-    assert_difference('Variable.count', 0) do
-      assert_difference('Connection.count', 0) do
+  test "should prevent connection creation to or from a non-existing sub-discipline variable" do
+#    assert_difference('Variable.count', 0) do
+#      assert_difference('Connection.count', 0) do
         post api_v1_mda_connections_url({mda_id: @outermda.id, 
                                          connection: {from: @outermdadisc.id, to: @innermdadisc.id, names: ["unknown"]}}), 
              as: :json, headers: @auth_headers 
@@ -137,12 +138,75 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
                                          connection: {from: @innermdadisc.id, to: @outermdadisc.id, names: ["unknown"]}}), 
              as: :json, headers: @auth_headers 
         assert_response :unprocessable_entity
+#      end
+#    end
+  end
+
+  test "should remove a connection to a sub-discipline" do
+    assert_difference('Variable.count', -1) do
+      assert_difference('Connection.count', -1) do
+        conn = connections(:innermda_disc_y2_outermda_disc)
+        delete api_v1_connection_url(conn), as: :json, headers: @auth_headers
+        assert_response :success
       end
     end
   end
-
+  
   test "should re-connect to driver when removing a connection to a sub-discipline" do
-    
+    assert_difference('Variable.count', 0) do
+      assert_difference('Connection.count', 0) do
+        conn = connections(:outermda_disc_y1_innermda_disc)
+        delete api_v1_connection_url(conn), as: :json, headers: @auth_headers
+        assert_response :success
+      end
+    end
   end
+    
+  test "should prevent from removing a connection between driver and sub-discipline" do
+    assert_difference('Variable.count', 0) do
+      assert_difference('Connection.count', 0) do
+        conn = connections(:innermda_disc_y_outermda_driver)
+        delete api_v1_connection_url(conn), as: :json, headers: @auth_headers
+        assert_response :unprocessable_entity
+        assert_equal "Connection y has to be suppressed in InnerMdaDiscipline sub-analysis first", 
+                     JSON.parse(response.body)['message']
+        conn = connections(:outermda_driver_x2_innermda_disc)
+        delete api_v1_connection_url(conn), as: :json, headers: @auth_headers
+        assert_response :unprocessable_entity
+        assert_equal "Connection x2 has to be suppressed in InnerMdaDiscipline sub-analysis first", 
+                     JSON.parse(response.body)['message']
+      end
+    end
+  end
+  
+  test "should create new connection in analysis ancestors when creating new driver connection in sub-discipline1" do
+    assert_difference('Variable.count', 4) do
+      assert_difference('Connection.count', 2) do
+        driver_out_count = @outermda.driver.output_variables.count
+        disc_in_count = @innermdadisc.input_variables.count
+        post api_v1_mda_connections_url({mda_id: @innermda.id, 
+                                         connection: {from: @innermda.driver.id, to: @innermda.disciplines.last.id, names: ["newvar"]}}), 
+             as: :json, headers: @auth_headers 
+        assert_response :success
+        assert_equal +1, @outermda.driver.output_variables.reload.count-driver_out_count
+        assert_equal +1, @innermdadisc.input_variables.reload.count-disc_in_count 
+      end 
+    end
+  end
+  
+#  test "should reconnect in analysis ancestors when creating new driver connection in sub-discipline" do
+#    assert_difference('Variable.count', 4) do
+#      assert_difference('Connection.count', 2) do
+#        driver_out_count = @outermda.driver.output_variables.count
+#        disc_out_count = @innermdadisc.output_variables.count
+#        post api_v1_mda_connections_url({mda_id: @innermda.id, 
+#                                         connection: {from: @innermda.driver.id, to: @innermda.disciplines.last.id, names: ["newvar"]}}), 
+#             as: :json, headers: @auth_headers 
+#        assert_response :success
+#        assert_equal +1, @outermda.driver.output_variables.reload.count-driver_out_count
+#        assert_equal +1, @innermdadisc.output_variables.reload.count-disc_out_count 
+#      end 
+#    end
+#  end
   
 end

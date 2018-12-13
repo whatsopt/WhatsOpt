@@ -9,9 +9,8 @@ class Api::V1::ConnectionsController < Api::ApiController
     from_disc = mda.disciplines.find(connection_create_params[:from])
     to_disc = mda.disciplines.find(connection_create_params[:to])
     begin
-      Connection.create_connection!(mda, from_disc, to_disc, names)
-      resp = { from: from_disc.id.to_s, to: to_disc.id.to_s, names: names }
-      json_response resp, :created
+      conns = mda.create_connections!(from_disc, to_disc, names)
+      json_response conns, :created
     rescue Connection::SubAnalysisVariableNotFoundError => e
       json_response({ message: e }, :unprocessable_entity)
     end
@@ -29,8 +28,12 @@ class Api::V1::ConnectionsController < Api::ApiController
   def destroy
     connection = Connection.find(params[:id])
     authorize connection.from.discipline.analysis
-    connection.destroy!
-    head :no_content
+    begin
+      connection.destroy_connection!
+      head :no_content
+    rescue Connection::CannotRemoveConnectionError => e
+      json_response({ message: e }, :unprocessable_entity)
+    end
   end
 
   private    

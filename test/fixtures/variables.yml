@@ -101,7 +101,8 @@ varz_aero_in:
   type: Float
   shape: 1
   active: true
-  
+
+# DUPLICATED VARS ##################################################  
 varx_fastdisc_in:
   name: z1
   discipline: fast_discipline
@@ -118,7 +119,8 @@ varx_fastdisc_doublon_in:
   shape: 1
   active: true
     
-var_scalar_float:
+# ISOLATED VARS ##################################################
+var_scalar_float: &vardummy
   name: y0
   discipline: dummy
   io_mode: in
@@ -127,105 +129,166 @@ var_scalar_float:
   active: true
     
 var_array_float:
+  <<: *vardummy
   name: y1
-  discipline: dummy
-  io_mode: in
-  type: Float
   shape: (3,)  
-  active: true
   
 var_nparray_float:
+  <<: *vardummy
   name: y2
-  discipline: dummy
-  io_mode: in
-  type: Float
   shape: (3, 5)  
-  active: true
   
 var_scalar_int:
+  <<: *vardummy
   name: y3
-  discipline: dummy
-  io_mode: in
   type: Integer
-  shape: 1  
-  active: true
     
 var_scalar_int:
+  <<: *vardummy
   name: y4
-  discipline: dummy
-  io_mode: in
   type: Integer
-  shape: 1  
-  active: true
   
 var_string:
+  <<: *vardummy
   name: y5
-  discipline: dummy
-  io_mode: in
   type: String
-  shape: 1  
-  active: true
 
-varx_innermda_driver_out:
-  name: x
+
+# INNER DRIVER ##################################################
+varz_innermda_driver_out: &varinnermdadriver
+  name: z
   discipline: innermda_driver
   io_mode: out
   type: Float
   shape: 1  
   active: true
+
+vary1_innermda_driver_out:
+  <<: *varinnermdadriver
+  name: y1
+
+varx2_innermda_driver_out:
+  <<: *varinnermdadriver
+  name: x2
+
+vary2_innermda_driver_in:
+  <<: *varinnermdadriver
+  name: y2
+  io_mode: in
 
 vary_innermda_driver_in:
+  <<: *varinnermdadriver
   name: y
-  discipline: innermda_driver
+  io_mode: in
+
+# INNER DISCIPLINE ##################################################
+varz_innermda_disc_in: &varinnermdadisc
+  name: z
+  discipline: innermda_disc
   io_mode: in
   type: Float
   shape: 1  
   active: true
-  
-varx_innermda_disc_in:
-  name: x
-  discipline: innermda_discipline
-  io_mode: in
-  type: Float
-  shape: 1  
-  active: true
+
+vary1_innermda_disc_in:
+  <<: *varinnermdadisc
+  name: y1
+
+varx2_innermda_disc_in:
+  <<: *varinnermdadisc
+  name: x2
+
+vary2_innermda_disc_out:
+  <<: *varinnermdadisc
+  name: y2
+  io_mode: out
 
 vary_innermda_disc_out:
+  <<: *varinnermdadisc
   name: y
-  discipline: innermda_discipline
+  io_mode: out
+
+
+# OUTER DRIVER ##################################################
+varz_outermda_driver_out: &vardriverout
+  name: z
+  discipline: outermda_driver
   io_mode: out
   type: Float
   shape: 1  
   active: true
   
-varx_outermda_driver_out:
-  name: x
-  discipline: outermda_driver
+varx1_outermda_driver_out:
+  <<: *vardriverout
+  name: x1
+
+varx2_outermda_driver_out:
+  <<: *vardriverout
+  name: x2
+
+vary1_outermda_driver_in:
+  <<: *vardriverout
+  name: y1
+  io_mode: in
+
+vary2_outermda_driver_in:
+  <<: *vardriverout
+  name: y2
+  io_mode: in
+  
+vary_outermda_driver_in:
+  <<: *vardriverout
+  name: y
+  io_mode: in
+
+# OUTER DISCIPLINE ##################################################
+vary1_outermda_disc_out: &vardiscout
+  name: y1
+  discipline: outermda_discipline
   io_mode: out
   type: Float
   shape: 1  
   active: true
 
-vary_outermda_driver_in:
-  name: y
-  discipline: outermda_driver
+varz_outermda_disc_in:
+  <<: *vardiscout
+  name: z
   io_mode: in
-  type: Float
-  shape: 1  
-  active: true
-  
-varx_outermda_innermda_disc_in:
-  name: x
+
+varx1_outermda_disc_in:
+  <<: *vardiscout
+  name: x1
+  io_mode: in
+
+vary2_outermda_disc_in:
+  <<: *vardiscout
+  name: y2
+  io_mode: in
+
+# OUTER INNERMDA DISCIPLINE ##################################################
+varz_outermda_innermda_disc_in: &varouter_innermdadriver
+  name: z
   discipline: outermda_innermda_discipline
   io_mode: in
   type: Float
   shape: 1  
   active: true
+
+vary1_outermda_innermda_disc_in:
+  <<: *varouter_innermdadriver
+  name: y1
+
+varx2_outermda_innermda_disc_in:
+  <<: *varouter_innermdadriver
+  name: x2
+
+vary2_outermda_innermda_disc_out:
+  <<: *varouter_innermdadriver
+  name: y2
+  io_mode: out
 
 vary_outermda_innermda_disc_out:
+  <<: *varouter_innermdadriver
   name: y
-  discipline: outermda_innermda_discipline
   io_mode: out
-  type: Float
-  shape: 1  
-  active: true
+

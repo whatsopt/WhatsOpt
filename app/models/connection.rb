@@ -17,48 +17,48 @@ class Connection < ApplicationRecord
   class SubAnalysisVariableNotFoundError < StandardError
   end
   
+  class CannotRemoveConnectionError < StandardError
+  end
+    
   def self.between(disc_from_id, disc_to_id)
     Connection.joins(:from).where(variables: {discipline_id: disc_from_id}) #.where.not(variables: {type: :String})
               .order('variables.name')
               .joins(:to).where(tos_connections: {discipline_id: disc_to_id})
   end 
-
+  
   def active?
     from.active
   end
   
-  def self.create_connection!(mda, from_disc, to_disc, names)
+  def driverish?
+    from.discipline.is_driver? or to.discipline.is_driver?
+  end
+  
+  def self.create_connection!(from_disc, to_disc, name, sub_analysis_check=true)
     Connection.transaction do
-      names.each do |name|
-        if from_disc.is_sub_analysis?
-          var = from_disc.sub_analysis.driver.input_variables.where(name: name).take
-          unless var
-            raise SubAnalysisVariableNotFoundError.new("Variable #{name} should be created as an input of Driver in sub-analysis first")
-          end
-        end
-        if to_disc.is_sub_analysis?
-          var = to_disc.sub_analysis.driver.output_variables.where(name: name).take
-          unless var
-            raise SubAnalysisVariableNotFoundError.new("Variable #{name} should be created as an output of Driver in sub-analysis first")
-          end
-        end        
-        vout = Variable.of_analysis(mda)
-                 .where(name: name, io_mode: WhatsOpt::Variable::OUT)
-                 .first_or_create!(shape: 1, type: "Float", desc: "", units: "", active: true)  
-        vout.update(discipline_id: from_disc.id)
-        vin = Variable.where(discipline_id: to_disc.id, name: name, io_mode: WhatsOpt::Variable::IN)
-                 .first_or_create!(shape: 1, type: "Float", desc: "", units: "", active: true)
-        Connection.where(from_id: vout.id, to_id: vin.id).first_or_create!
+      if sub_analysis_check
+        self._check_sub_analysis(name, from_disc, WhatsOpt::Variable::IN)  
+        self._check_sub_analysis(name, to_disc, WhatsOpt::Variable::OUT)
       end
+      vout = Variable.of_analysis(from_disc.analysis)
+               .where(name: name, io_mode: WhatsOpt::Variable::OUT)
+               .first_or_create!(shape: 1, type: "Float", desc: "", units: "", active: true)  
+      vout.update(discipline_id: from_disc.id)
+      vin = Variable.where(discipline_id: to_disc.id, name: name, io_mode: WhatsOpt::Variable::IN)
+               .first_or_create!(shape: 1, type: "Float", desc: "", units: "", active: true)
+      conn = Connection.where(from_id: vout.id, to_id: vin.id).first_or_create!
+      conn
     end
   end
   
   def delete_related_variables!  
-    conns_count = Connection.where(from_id: from_id).count
-    if conns_count == 1
-      Variable.find(from_id).delete
+    Connection.transaction do
+      conns_count = Connection.where(from_id: from_id).count
+      if conns_count == 1
+        Variable.find(from_id).delete
+      end
+      Variable.find(to_id).delete
     end
-    Variable.find(to_id).delete
   end
     
   def update_variables!(params)
@@ -85,10 +85,44 @@ class Connection < ApplicationRecord
       end      
     end
   end
+
+  def destroy_connection!
+    Connection.transaction do
+      if self.from.discipline.is_sub_analysis?
+        if self.from.outgoing_connections.count == 1
+          if self.to.discipline.is_driver?
+            raise CannotRemoveConnectionError.new("Connection #{self.from.name} has to be suppressed"+
+              " in #{self.from.discipline.name} sub-analysis first")
+          else
+            self.from.update(discipline_id: self.from.discipline.analysis.driver.id)
+          end
+        else
+          self.destroy!
+        end
+      elsif self.to.discipline.is_sub_analysis?
+        if self.from.discipline.is_driver?
+          raise CannotRemoveConnectionError.new("Connection #{self.from.name} has to be suppressed"+
+            " in #{self.to.discipline.name} sub-analysis first")
+        else
+          self.to.update(discipline_id: self.to.discipline.analysis.driver.id)
+        end
+      else
+        self.destroy!
+      end
+    end
+  end
   
   private
-    def _check_sub_analysis(varname, disc, io)
-      
+    
+    def self._check_sub_analysis(varname, disc, driver_io_mode)
+      if disc.is_sub_analysis?
+        var = disc.sub_analysis.driver.variables.where(name: varname, io_mode: driver_io_mode).take
+        unless var
+          raise SubAnalysisVariableNotFoundError.new(
+                  "Variable #{varname} should be created as an #{driver_io_mode}" +
+                  " variable of Driver in sub-analysis first")
+        end
+      end     
     end 
   
     def _ensure_role_presence

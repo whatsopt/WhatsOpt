@@ -56,6 +56,22 @@ module WhatsOpt
                 end
     end
     
+    def reflected_io_mode
+      self.is_in? ? OUT : IN
+    end
+    
+    def is_out?
+      self.io_mode.to_sym==OUT
+    end
+
+    def is_in?
+      self.io_mode.to_sym!=OUT
+    end
+        
+    def reflect!(other)
+      self.update(type: other.type, shape: other.shape, desc: other.desc, units: other.units, active: other.active)
+      self
+    end
 end
 
 end

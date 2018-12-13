@@ -33,22 +33,100 @@ aero_y2_driver:
   to_id: <%= ActiveRecord::FixtureSet.identify(:vary2_in) %>
   role: "response"
 
-outer_driver_x_innermda_disc:
-  from_id: <%= ActiveRecord::FixtureSet.identify(:varx_outermda_driver_out) %>
-  to_id: <%= ActiveRecord::FixtureSet.identify(:varx_outermda_innermda_disc_in) %>
+
+# INNER #########################################################################
+# Z
+innermda_driver_z_disc:
+  from_id: <%= ActiveRecord::FixtureSet.identify(:varz_innermda_driver_out) %>
+  to_id: <%= ActiveRecord::FixtureSet.identify(:varz_innermda_disc_in) %>
+  role: "design_var"
+  
+# X2
+innermda_driver_x2_disc:
+  from_id: <%= ActiveRecord::FixtureSet.identify(:varx2_innermda_driver_out) %>
+  to_id: <%= ActiveRecord::FixtureSet.identify(:varx2_innermda_disc_in) %>
+  role: "design_var"
+  
+# Y1
+innermda_driver_y1_disc:
+  from_id: <%= ActiveRecord::FixtureSet.identify(:vary1_innermda_driver_out) %>
+  to_id: <%= ActiveRecord::FixtureSet.identify(:vary1_innermda_disc_in) %>
   role: "design_var"
 
-disc_innermda_y_outer_driver:
+# Y2
+innermda_disc_y2_driver:
+  from_id: <%= ActiveRecord::FixtureSet.identify(:vary2_innermda_disc_out) %>
+  to_id: <%= ActiveRecord::FixtureSet.identify(:vary2_innermda_driver_in) %>
+  role: "response"
+
+# Y
+innermda_disc_y_driver:
+  from_id: <%= ActiveRecord::FixtureSet.identify(:vary_innermda_disc_out) %>
+  to_id: <%= ActiveRecord::FixtureSet.identify(:vary_innermda_driver_in) %>
+  role: "response"
+
+
+# OUTER #########################################################################
+# Z
+outermda_driver_z_innermda_disc:
+  from_id: <%= ActiveRecord::FixtureSet.identify(:varz_outermda_driver_out) %>
+  to_id: <%= ActiveRecord::FixtureSet.identify(:varz_outermda_innermda_disc_in) %>
+  role: "design_var"
+outermda_driver_z_innermda_disc:
+  from_id: <%= ActiveRecord::FixtureSet.identify(:varz_outermda_driver_out) %>
+  to_id: <%= ActiveRecord::FixtureSet.identify(:varz_outermda_disc_in) %>
+  role: "design_var"
+
+# X1
+outermda_driver_x1_outermda_disc:
+  from_id: <%= ActiveRecord::FixtureSet.identify(:varx1_outermda_driver_out) %>
+  to_id: <%= ActiveRecord::FixtureSet.identify(:varx1_outermda_disc_in) %>
+  role: "design_var"
+  
+# X2
+outermda_driver_x2_innermda_disc:
+  from_id: <%= ActiveRecord::FixtureSet.identify(:varx2_outermda_driver_out) %>
+  to_id: <%= ActiveRecord::FixtureSet.identify(:varx2_outermda_innermda_disc_in) %>
+  role: "design_var"
+  
+# Y1
+outermda_disc_y1_innermda_disc:
+  from_id: <%= ActiveRecord::FixtureSet.identify(:vary1_outermda_disc_out) %>
+  to_id: <%= ActiveRecord::FixtureSet.identify(:vary1_outermda_innermda_disc_in) %>
+  role: "state_var"
+disc_innermda_y1_driver:
+  from_id: <%= ActiveRecord::FixtureSet.identify(:vary1_innermda_disc_out) %>
+  to_id: <%= ActiveRecord::FixtureSet.identify(:vary1_innermda_driver_in) %>
+  role: "response"
+
+# Y2
+innermda_disc_y2_outermda_disc:
+  from_id: <%= ActiveRecord::FixtureSet.identify(:vary2_outermda_innermda_disc_out) %>
+  to_id: <%= ActiveRecord::FixtureSet.identify(:vary2_outermda_disc_in) %>
+  role: "state_var"
+innermda_disc_y2_outermda_driver:
+  from_id: <%= ActiveRecord::FixtureSet.identify(:vary2_outermda_innermda_disc_out) %>
+  to_id: <%= ActiveRecord::FixtureSet.identify(:vary2_outermda_driver_in) %>
+  role: "response"
+
+# Y
+innermda_disc_y_outermda_driver:
   from_id: <%= ActiveRecord::FixtureSet.identify(:vary_outermda_innermda_disc_out) %>
   to_id: <%= ActiveRecord::FixtureSet.identify(:vary_outermda_driver_in) %>
   role: "response"
+
+
+driver_z_outermda_disc:
+  from_id: <%= ActiveRecord::FixtureSet.identify(:varz_innermda_driver_out) %>
+  to_id: <%= ActiveRecord::FixtureSet.identify(:varz_innermda_disc_in) %>
+  role: "design_var"
 
 driver_x_innermda_disc:
   from_id: <%= ActiveRecord::FixtureSet.identify(:varx_innermda_driver_out) %>
   to_id: <%= ActiveRecord::FixtureSet.identify(:varx_innermda_disc_in) %>
   role: "design_var"
   
-disc_innermda_y_driver:
+innermda_disc_y_driver:
   from_id: <%= ActiveRecord::FixtureSet.identify(:vary_innermda_disc_out) %>
   to_id: <%= ActiveRecord::FixtureSet.identify(:vary_innermda_driver_in) %>
   role: "response"
