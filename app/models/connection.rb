@@ -70,28 +70,27 @@ class Connection < ApplicationRecord
     end
   end
     
-  def update_variables!(params)
+  def update_connections!(params)
     Connection.transaction do
       if (params[:role])
         # update role of all connections from the source variable
-        Connection.where(from_id: from_id).map do |c| 
+        Connection.where(from_id: self.from_id).map do |c| 
           c.update!(role: params[:role])
         end
         params = params.except(:role)
       end
+      
       # update from variable
-      var_from = Variable.find(from_id)
-      if var_from.parameter && params[:parameter_attributes]
-        params[:parameter_attributes][:id] = var_from.parameter.id
+      if self.from.parameter && params[:parameter_attributes]
+        params[:parameter_attributes][:id] = self.from.parameter.id
       end
-      var_from.update!(params)
+      self.from.update!(params)
 
       # update to related variables
-      params = params.except(:parameter_attributes)
-      var_to = Variable.find(to_id)      
-      Connection.where(from_id: var_from.id).each do |conn|
+      params = params.except(:parameter_attributes) 
+      Connection.where(from_id: self.from.id).each do |conn|
         conn.to.update!(params)
-      end      
+      end 
     end
   end
 

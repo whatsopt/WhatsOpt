@@ -19,15 +19,15 @@ class Api::V1::ConnectionsController < Api::ApiController
   # PUT /api/v1/connections/1
   def update
     connection = Connection.find(params[:id])
-    authorize connection.from.discipline.analysis
-    connection.update_variables!(connection_update_params)      
+    authorize connection.analysis
+    connection.analysis.update_connections!(connection, connection_update_params)      
     head :no_content    
   end
   
   # DELETE /api/v1/connections/1
   def destroy
     connection = Connection.find(params[:id])
-    authorize connection.from.discipline.analysis
+    authorize connection.analysis
     begin
       connection.analysis.destroy_connection!(connection)
       head :no_content

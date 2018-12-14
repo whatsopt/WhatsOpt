@@ -187,6 +187,28 @@ class Analysis < ApplicationRecord
     end 
   end
   
+  def update_connections!(conn, params, sub_analysis_check=true)
+    # propagate upward
+    if should_update_analysis_ancestor?(conn)
+      up_conn = Connection.of_analysis(self.parent)
+                       .joins(:from)
+                       .where(variables: {name: conn.from.name, io_mode: WhatsOpt::Variable::OUT}).take
+      self.parent.update_connections!(up_conn, params, sub_analysis_check=false) unless conn.nil?
+    end
+    
+    # propagate downward
+    conn.from.outgoing_connections.each do |conn|
+      if conn.to.discipline.is_sub_analysis?
+        sub_analysis = conn.to.discipline.sub_analysis
+        conn = sub_analysis.driver.variables
+                           .where(name: conn.from.name, io_mode: WhatsOpt::Variable::OUT).take
+        sub_analysis.update_connections!(conn, params) unless conn.nil?
+      end
+    end
+
+    conn.update_connections!(params)
+  end
+  
   def destroy_connection!(conn, sub_analysis_check=true)
     Analysis.transaction do
       varname = conn.from.name

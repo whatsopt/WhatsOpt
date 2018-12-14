@@ -90,25 +90,7 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
   end
   
   test "should update a connection" do
-    attrs = [:name, :type, :shape, :units, :desc, :active]
-    values = ['test', 'Integer', '(1, 2)', 'm', 'test description', false]
-    update_attrs = attrs.zip(values).to_h
-    update_attrs[:parameter_attributes] = {init: "[[1,2]]", lower: "0", upper:"10"}
-    refute @conn.from.parameter
-    put api_v1_connection_url(@conn, {connection: update_attrs}), as: :json, headers: @auth_headers
-    assert_response :success
-    @conn.reload
-    attrs.each_with_index do |attr, i|
-      assert_equal values[i], @conn.from.send(attr)
-      assert_equal values[i], @conn.to.send(attr)
-    end
-    assert @conn.from.parameter
-    assert_equal "[[1,2]]", @conn.from.parameter.init
-    assert_equal "0", @conn.from.parameter.lower
-    assert_equal "10", @conn.from.parameter.upper
-    refute @conn.to.parameter
-    refute @conn.to.active
-    refute @conn.from.active
+    _assert_connection_update(@conn)
   end  
 
   test "should move a connection to an existing sub-discipline variable" do
@@ -194,9 +176,9 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
     end
   end
   
-  test "totoshould reconnect in analysis ancestor when creating new driver connection in sub-analysis with existing variable" do
-#    assert_difference('Variable.count', 3) do
-#      assert_difference('Connection.count', 2) do
+  test "should reconnect in analysis ancestor when creating new driver connection in sub-analysis with existing variable" do
+    assert_difference('Variable.count', 3) do
+      assert_difference('Connection.count', 2) do
         driver_out_count = @outermda.driver.output_variables.count
         disc_in_count = @innermdadisc.input_variables.count
         post api_v1_mda_connections_url({mda_id: @innermda.id, 
@@ -205,8 +187,8 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
         assert_response :success
         assert_equal 0, @outermda.driver.output_variables.reload.count-driver_out_count
         assert_equal +1, @innermdadisc.input_variables.reload.count-disc_in_count 
-#      end 
-#    end
+      end 
+    end
   end
   
   test "should remove related y1 connections in ancestor when removing driverish connection in sub-analysis1" do
@@ -229,4 +211,34 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test "should propagate connection update upward to ancestor" do
+    conn = connections(:innermda_disc_y_innermda_driver)
+    self._assert_connection_update(conn)
+  end
+  
+  test "should propagate connection update downward to sub-analysis" do
+    conn = connections(:innermda_disc_y_outermda_driver)
+    self._assert_connection_update(conn)
+  end
+  
+  def _assert_connection_update(conn)
+    attrs = [:name, :type, :shape, :units, :desc, :active]
+    values = ['test', 'Integer', '(1, 2)', 'm', 'test description', false]
+    update_attrs = attrs.zip(values).to_h
+    update_attrs[:parameter_attributes] = {init: "[[1,2]]", lower: "0", upper:"10"}
+    put api_v1_connection_url(conn, {connection: update_attrs}), as: :json, headers: @auth_headers        
+    assert_response :success
+    conn.reload
+    attrs.each_with_index do |attr, i|
+      assert_equal values[i], conn.from.send(attr)
+      assert_equal values[i], conn.to.send(attr)
+    end
+    assert conn.from.parameter
+    assert_equal "[[1,2]]", conn.from.parameter.init
+    assert_equal "0", conn.from.parameter.lower
+    assert_equal "10", conn.from.parameter.upper
+    refute conn.to.parameter
+    refute conn.to.active
+    refute conn.from.active
+  end
 end

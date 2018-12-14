@@ -21,10 +21,10 @@ class ConnectionTest < ActiveSupport::TestCase
     conn = Connection.of_analysis(@mda).with_role(WhatsOpt::Variable::DESIGN_VAR_ROLE).take
     assert_equal "3.14", conn.from.parameter.init
     assert_equal "1", conn.from.parameter.lower
-    conn.update_variables!({parameter_attributes: {init: "2"}})
+    conn.update_connections!({parameter_attributes: {init: "2"}})
     conn.reload
     assert_equal "2", conn.from.parameter.init
-    conn.update_variables!({parameter_attributes: {init: ""}})
+    conn.update_connections!({parameter_attributes: {init: ""}})
     conn.reload
     assert_equal "1", conn.from.parameter.lower
   end
@@ -32,9 +32,9 @@ class ConnectionTest < ActiveSupport::TestCase
   test "should delete parameter when init, lower and upper are blank" do
     conn = Connection.of_analysis(@mda).with_role(WhatsOpt::Variable::DESIGN_VAR_ROLE).take
     assert_equal "3.14", conn.from.parameter.init
-    conn.update_variables!({parameter_attributes: {lower: "", upper: ""}})
+    conn.update_connections!({parameter_attributes: {lower: "", upper: ""}})
     assert conn.from.parameter
-    conn.update_variables!({parameter_attributes: {init: ""}})
+    conn.update_connections!({parameter_attributes: {init: ""}})
     conn.from.reload
     assert_nil conn.from.parameter
   end 
