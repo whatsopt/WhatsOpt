@@ -29,8 +29,10 @@ class Api::V1::ConnectionsController < Api::ApiController
     connection = Connection.find(params[:id])
     authorize connection.from.discipline.analysis
     begin
-      connection.destroy_connection!
+      connection.analysis.destroy_connection!(connection)
       head :no_content
+    rescue Analysis::AncestorUpdateError => e
+      json_response({ message: e }, :unprocessable_entity)
     rescue Connection::CannotRemoveConnectionError => e
       json_response({ message: e }, :unprocessable_entity)
     end

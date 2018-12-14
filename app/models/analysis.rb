@@ -11,6 +11,9 @@ class Analysis < ApplicationRecord
   
   has_ancestry
   
+  class AncestorUpdateError < StandardError
+  end 
+  
   has_one :attachment, :as => :container, :dependent => :destroy
   accepts_nested_attributes_for :attachment, allow_destroy: true
   validates_associated :attachment
@@ -176,7 +179,7 @@ class Analysis < ApplicationRecord
     Analysis.transaction do
       names.each do |name|
         conn = Connection.create_connection!(from_disc, to_disc, name, sub_analysis_check)
-        if self.should_update_analysis_ancestors?(conn)
+        if self.should_update_analysis_ancestor?(conn)
           inner_driver_variable = self.driver.variables.where(name: name).take
           self.parent.add_upstream_connection!(inner_driver_variable, self.super_discipline)
         end
@@ -184,22 +187,49 @@ class Analysis < ApplicationRecord
     end 
   end
   
-  def should_update_analysis_ancestors?(conn)
+  def destroy_connection!(conn, sub_analysis_check=true)
+    Analysis.transaction do
+      varname = conn.from.name
+      conn.destroy_connection!(sub_analysis_check)
+      if should_update_analysis_ancestor?(conn)
+        self.parent.remove_upstream_connection!(varname, self.super_discipline)
+      end
+    end
+  end
+  
+  def should_update_analysis_ancestor?(conn)
     self.has_parent? and conn.driverish?
   end
     
   def add_upstream_connection!(inner_driver_var, discipline)
     varname = inner_driver_var.name
-    var_from = Variable.of_analysis(self).where(name: varname, io_mode: WhatsOpt::Variable::OUT).take
-    
+    var_from = Variable.of_analysis(self).where(name: varname, io_mode: WhatsOpt::Variable::OUT).take    
     if var_from
-      existing_conn = Connection.where(from: var_from.id)
-      raise "Not yet implemented"
+      if var_from.discipline.id == discipline.id and inner_driver_var.reflected_io==WhatsOpt::Variable::OUT
+        #ok var already produced by sub-analysis
+      else
+        if var_from.discipline.id != discipline.id # var consumed by sub-analysis
+          from_disc = var_from.discipline
+          to_disc = discipline
+          self.create_connections!(from_disc, to_disc, [varname], sub_analysis_check=false) 
+        else 
+          raise AncestorUpdateError.new("Variable #{varname} already used in parent analysis #{self.name}: Cannot create connection.") 
+        end
+      end
     else
       from_disc = self.driver
       to_disc = discipline
       from_disc, to_disc = to_disc, from_disc if inner_driver_var.is_in?
       self.create_connections!(from_disc, to_disc, [varname], sub_analysis_check=false) 
+    end
+  end
+  
+  def remove_upstream_connection!(varname, discipline)
+    var = Variable.of_analysis(self).where(name: varname, discipline_id: discipline.id).take    
+    if var.is_in?
+      self.destroy_connection!(var.incoming_connection, sub_analysis_check=false)
+    else
+      var.outgoing_connections.map{|conn| self.destroy_connection!(conn, sub_analysis_check=false)}
     end
   end
   

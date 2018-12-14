@@ -184,7 +184,7 @@ vary_innermda_driver_in:
 # INNER DISCIPLINE ##################################################
 varz_innermda_disc_in: &varinnermdadisc
   name: z
-  discipline: innermda_disc
+  discipline: innermda_discipline
   io_mode: in
   type: Float
   shape: 1  

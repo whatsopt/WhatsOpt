@@ -33,6 +33,15 @@ class Connection < ApplicationRecord
   def driverish?
     from.discipline.is_driver? or to.discipline.is_driver?
   end
+
+  def driver
+    return from.discipline if from.discipline.is_driver?
+    return to.discipline if to.discipline.is_driver?
+  end
+    
+  def analysis
+    from.try(:discipline).try(:analysis)
+  end
   
   def self.create_connection!(from_disc, to_disc, name, sub_analysis_check=true)
     Connection.transaction do
@@ -86,25 +95,25 @@ class Connection < ApplicationRecord
     end
   end
 
-  def destroy_connection!
+  def destroy_connection!(sub_analysis_check=true)
     Connection.transaction do
-      if self.from.discipline.is_sub_analysis?
+      if sub_analysis_check && self.from.discipline.is_sub_analysis?
         if self.from.outgoing_connections.count == 1
           if self.to.discipline.is_driver?
             raise CannotRemoveConnectionError.new("Connection #{self.from.name} has to be suppressed"+
               " in #{self.from.discipline.name} sub-analysis first")
-          else
+          else # ok variable provided by outer driver now not sub-analysis
             self.from.update(discipline_id: self.from.discipline.analysis.driver.id)
           end
         else
           self.destroy!
         end
-      elsif self.to.discipline.is_sub_analysis?
+      elsif sub_analysis_check && self.to.discipline.is_sub_analysis?
         if self.from.discipline.is_driver?
           raise CannotRemoveConnectionError.new("Connection #{self.from.name} has to be suppressed"+
             " in #{self.to.discipline.name} sub-analysis first")
         else
-          self.to.update(discipline_id: self.to.discipline.analysis.driver.id)
+          self.from.update(discipline_id: self.from.discipline.analysis.driver.id)
         end
       else
         self.destroy!
