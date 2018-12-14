@@ -296,7 +296,7 @@ class MdaViewer extends React.Component {
               <a className="nav-link " id="analysis-tab" data-toggle="tab" href="#analysis"
                 role="tab" aria-controls="analysis" aria-selected="false">Analysis</a>
             </li>
-            <li className="nav-item active">
+            <li className="nav-item">
               <a className="nav-link" id="disciplines-tab" data-toggle="tab" href="#disciplines"
                 role="tab" aria-controls="disciplines" aria-selected="true">Disciplines</a>
             </li>
@@ -305,7 +305,7 @@ class MdaViewer extends React.Component {
                 role="tab" aria-controls="connections" aria-selected="false">Connections</a>
             </li>
             <li className="nav-item">
-              <a className="nav-link" id="variables-tab" data-toggle="tab" href="#variables"
+              <a className="nav-link active" id="variables-tab" data-toggle="tab" href="#variables"
                 role="tab" aria-controls="variables" aria-selected="false">Variables</a>
             </li>
           </ul>
@@ -323,7 +323,7 @@ class MdaViewer extends React.Component {
                 onAnalysisMemberDelete={this.handleAnalysisMemberDelete}
               />
             </div>
-            <div className="tab-pane fade show active" id="disciplines" role="tabpanel" aria-labelledby="disciplines-tab">
+            <div className="tab-pane fade" id="disciplines" role="tabpanel" aria-labelledby="disciplines-tab">
               <DisciplinesEditor name={this.state.newDisciplineName}
                 nodes={db.nodes}
                 onDisciplineNameChange={this.handleDisciplineNameChange}
@@ -344,7 +344,7 @@ class MdaViewer extends React.Component {
                 onConnectionDelete={this.handleConnectionDelete}
               />
             </div>
-            <div className="tab-pane fade" id="variables" role="tabpanel" aria-labelledby="variables-tab">
+            <div className="tab-pane fade show active" id="variables" role="tabpanel" aria-labelledby="variables-tab">
               <VariablesEditor db={db} filter={this.state.filter}
                 onFilterChange={this.handleFilterChange}
                 onConnectionChange={this.handleConnectionChange}
