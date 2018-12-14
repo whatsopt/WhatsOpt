@@ -90,7 +90,7 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
   end
   
   test "should update a connection" do
-    _assert_connection_update(@conn)
+    _assert_connection_update(@conn, @conn)
   end  
 
   test "should move a connection to an existing sub-discipline variable" do
@@ -211,34 +211,50 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test "should propagate connection update upward to ancestor" do
+  test "should propagate y connection update upward to ancestor" do
     conn = connections(:innermda_disc_y_innermda_driver)
-    self._assert_connection_update(conn)
+    conn_to_test = connections(:innermda_disc_y_outermda_driver)
+    self._assert_connection_update(conn, conn_to_test)
   end
   
-  test "should propagate connection update downward to sub-analysis" do
+  test "should propagate y connection update downward to sub-analysis" do
     conn = connections(:innermda_disc_y_outermda_driver)
-    self._assert_connection_update(conn)
+    conn_to_test = connections(:innermda_disc_y_innermda_driver)
+    self._assert_connection_update(conn, conn_to_test)
+  end
+
+  test "should propagate y1 connection update upward to ancestor" do
+    conn = connections(:innermda_driver_y1_innermda_disc)
+    conn_to_test = connections(:outermda_disc_y1_innermda_disc)
+    self._assert_connection_update(conn, conn_to_test)
   end
   
-  def _assert_connection_update(conn)
+  test "should propagate y1 connection update downward to sub-analysis" do
+    conn = connections(:outermda_disc_y1_innermda_disc)
+    conn_to_test = connections(:innermda_driver_y1_innermda_disc)
+    self._assert_connection_update(conn, conn_to_test)
+  end
+    
+  def _assert_connection_update(conn, conn_to_test)
     attrs = [:name, :type, :shape, :units, :desc, :active]
     values = ['test', 'Integer', '(1, 2)', 'm', 'test description', false]
     update_attrs = attrs.zip(values).to_h
     update_attrs[:parameter_attributes] = {init: "[[1,2]]", lower: "0", upper:"10"}
     put api_v1_connection_url(conn, {connection: update_attrs}), as: :json, headers: @auth_headers        
     assert_response :success
-    conn.reload
+    conn_to_test.reload
+    conn_to_test.from.reload
+    conn_to_test.to.reload
     attrs.each_with_index do |attr, i|
-      assert_equal values[i], conn.from.send(attr)
-      assert_equal values[i], conn.to.send(attr)
+      assert_equal values[i], conn_to_test.from.send(attr)
+      assert_equal values[i], conn_to_test.to.send(attr)
     end
-    assert conn.from.parameter
-    assert_equal "[[1,2]]", conn.from.parameter.init
-    assert_equal "0", conn.from.parameter.lower
-    assert_equal "10", conn.from.parameter.upper
-    refute conn.to.parameter
-    refute conn.to.active
-    refute conn.from.active
+    assert conn_to_test.from.parameter
+    assert_equal "[[1,2]]", conn_to_test.from.parameter.init
+    assert_equal "0", conn_to_test.from.parameter.lower
+    assert_equal "10", conn_to_test.from.parameter.upper
+    refute conn_to_test.to.parameter
+    refute conn_to_test.to.active
+    refute conn_to_test.from.active
   end
 end

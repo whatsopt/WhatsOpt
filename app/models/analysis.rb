@@ -187,22 +187,31 @@ class Analysis < ApplicationRecord
     end 
   end
   
-  def update_connections!(conn, params, sub_analysis_check=true)
+  def update_connections!(conn, params, down_check=true, up_check=true)
     # propagate upward
-    if should_update_analysis_ancestor?(conn)
+    if up_check && should_update_analysis_ancestor?(conn)
       up_conn = Connection.of_analysis(self.parent)
                        .joins(:from)
                        .where(variables: {name: conn.from.name, io_mode: WhatsOpt::Variable::OUT}).take
-      self.parent.update_connections!(up_conn, params, sub_analysis_check=false) unless conn.nil?
+      self.parent.update_connections!(up_conn, params, down_check=false, up_check) unless conn.nil?
     end
     
     # propagate downward
-    conn.from.outgoing_connections.each do |conn|
+    # check connection from
+    if conn.from.discipline.is_sub_analysis?
+      sub_analysis = conn.from.discipline.sub_analysis
+      inner_driver_var = sub_analysis.driver.variables.where(name: conn.from.name).take
+      down_conn = Connection.of_analysis(sub_analysis).where('from_id = ? or to_id = ?', inner_driver_var.id, inner_driver_var.id).take
+      sub_analysis.update_connections!(down_conn, params, down_check, up_check=false)
+    end 
+    # check connection tos
+    conn.from.outgoing_connections.each do |conn|        
       if conn.to.discipline.is_sub_analysis?
         sub_analysis = conn.to.discipline.sub_analysis
-        conn = sub_analysis.driver.variables
+        inner_driver_var = sub_analysis.driver.variables
                            .where(name: conn.from.name, io_mode: WhatsOpt::Variable::OUT).take
-        sub_analysis.update_connections!(conn, params) unless conn.nil?
+        down_conn = Connection.of_analysis(sub_analysis).where('from_id = ? or to_id = ?', inner_driver_var.id, inner_driver_var.id).take
+        sub_analysis.update_connections!(down_conn, params, down_check, up_check=false)
       end
     end
 
