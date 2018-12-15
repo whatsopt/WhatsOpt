@@ -38,6 +38,10 @@ class Api::V1::AnalysisDisciplinesControllerTest < ActionDispatch::IntegrationTe
     assert_equal expected_out_varnames, @vacantdisc.input_variables.map(&:name).sort 
     # check connections are created
     assert_equal 2, Connection.between(@outermda.driver.id, @vacantdisc.id).count
+    @innermda.reload
+    @outermda.reload
+    assert @innermda.has_parent?
+    assert_equal @outermda.id, @innermda.parent.id
   end
 
   test "should delete an mda discipline" do

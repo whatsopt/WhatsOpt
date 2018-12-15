@@ -105,8 +105,8 @@ class Analysis < ApplicationRecord
   def build_nodes
     return self.disciplines.by_position.map do |d| 
       node = { id: "#{d.id}", type: d.type, name: d.name }
-      node.merge!(link: {id: self.parent.id, name: self.parent.name}) if (d.is_driver? && self.parent)
-      node.merge!(link: {id: d.sub_analysis.id, name: d.sub_analysis.name}) if d.sub_analysis
+      node.merge!(link: {id: self.parent.id, name: self.parent.name}) if (d.is_driver? && self.has_parent?)
+      node.merge!(link: {id: d.sub_analysis.id, name: d.sub_analysis.name}) if d.is_sub_analysis?
       node 
     end
   end
@@ -119,11 +119,7 @@ class Analysis < ApplicationRecord
       _edges.update(Hash[disc_ids.collect { |item| [[id, item], []] } ])
     end
     disc_ids.each do |from_id|
-      if active
-        conns = Connection.where(variables: {discipline_id: from_id}).order('variables.name').active
-      else
-        conns = Connection.where(variables: {discipline_id: from_id}).order('variables.name').inactive
-      end
+      conns = Connection.joins(:from).where(variables: {discipline_id: from_id, active: active}).order('variables.name')
       conns.each do |conn|
         _edges[[from_id, conn.to.discipline.id]] << conn
       end    
