@@ -161,4 +161,23 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     end
   end
   
+  test "should generate nested group for nested mda" do
+    mda = analyses(:outermda)
+    ogen = WhatsOpt::OpenmdaoGenerator.new(mda)
+    Dir.mktmpdir do |dir|
+      ogen._generate_code dir
+      dirpath = Pathname.new(dir)
+      basenames = ogen.genfiles.map{|f| Pathname.new(f).relative_path_from(dirpath).to_s }.sort
+      expected = (["disc.py", "disc_base.py", "inner/inner.py", "inner/inner_base.py", "inner/plain_discipline.py", 
+        "inner/plain_discipline_base.py", "inner/run_analysis.py", "inner/run_doe.py", "inner/run_optimization.py", 
+        "inner/run_screening.py", "inner/run_server.py", "inner/server/__init__.py", "inner/server/analysis.thrift", 
+        "inner/server/inner/Inner-remote", "inner/server/inner/Inner.py", "inner/server/inner/__init__.py", 
+        "inner/server/inner/constants.py", "inner/server/inner/ttypes.py", "inner/server/inner_conversions.py", 
+        "inner/server/inner_proxy.py", "outer.py", "outer_base.py", "run_analysis.py", "run_doe.py", "run_optimization.py", 
+        "run_screening.py", "run_server.py", "server/__init__.py", "server/analysis.thrift","server/outer/Outer-remote", 
+        "server/outer/Outer.py", "server/outer/__init__.py", "server/outer/constants.py", "server/outer/ttypes.py", 
+        "server/outer_conversions.py", "server/outer_proxy.py", "vacant_discipline.py", "vacant_discipline_base.py"]).sort
+      assert_equal expected, basenames
+    end    
+  end
 end

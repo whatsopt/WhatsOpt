@@ -96,7 +96,7 @@ class Connection < ApplicationRecord
 
   def destroy_connection!(sub_analysis_check=true)
     Connection.transaction do
-      if sub_analysis_check && self.from.discipline.is_sub_analysis?
+      if sub_analysis_check && self.from.discipline.has_sub_analysis?
         if self.from.outgoing_connections.count == 1
           if self.to.discipline.is_driver?
             raise CannotRemoveConnectionError.new("Connection #{self.from.name} has to be suppressed"+
@@ -107,7 +107,7 @@ class Connection < ApplicationRecord
         else
           self.destroy!
         end
-      elsif sub_analysis_check && self.to.discipline.is_sub_analysis?
+      elsif sub_analysis_check && self.to.discipline.has_sub_analysis?
         if self.from.discipline.is_driver?
           raise CannotRemoveConnectionError.new("Connection #{self.from.name} has to be suppressed"+
             " in #{self.to.discipline.name} sub-analysis first")
@@ -123,7 +123,7 @@ class Connection < ApplicationRecord
   private
     
     def self._check_sub_analysis(varname, disc, driver_io_mode)
-      if disc.is_sub_analysis?
+      if disc.has_sub_analysis?
         var = disc.sub_analysis.driver.variables.where(name: varname, io_mode: driver_io_mode).take
         unless var
           raise SubAnalysisVariableNotFoundError.new(

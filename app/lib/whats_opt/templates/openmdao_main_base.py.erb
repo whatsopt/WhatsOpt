@@ -6,20 +6,22 @@ from openmdao.api import Problem, Group
 from openmdao.api import IndepVarComp
 from openmdao.api import NonlinearBlockGS, ScipyKrylov
 <% @mda.disciplines.nodes.each do |d| %>
-from <%= d.py_modulename %> import <%= d.py_classname %><% end %>
+from <%= d.py_full_modulename %> import <%= d.py_classname %><% end %>
 
 class <%= @mda.py_classname %>Base(Group):
     """ An OpenMDAO base component to encapsulate <%= @mda.py_classname %> MDA """
     
     def setup(self): 
     
-    <% if @mda.parameter_variables.size > 0 %>
+    <% if @mda.is_root_analysis? && @mda.parameter_variables.size > 0 %>
         indeps = self.add_subsystem('indeps', IndepVarComp(), promotes=['*'])
-		<% @mda.parameter_variables.each do |dv| %>
-        indeps.add_output('<%= dv.name %>', <%= dv.init_py_value %>)<% end %>		    
- 		<% end %>
- 		<% @mda.disciplines.nodes.each do |d| %>
-        self.add_subsystem('<%= d.py_classname %>', self.create_<%= d.basename %>(), promotes=[<%= d.variables.map(&:py_varname).map{|v| "'#{v}'"}.join(', ') %>])<% end %>         
+		<% @mda.parameter_variables.each do |dv| -%>
+        indeps.add_output('<%= dv.name %>', <%= dv.init_py_value %>)
+        <% end -%>
+ 	<% end -%>
+ 	<% @mda.disciplines.nodes.each do |d| %>
+        self.add_subsystem('<%= d.py_classname %>', self.create_<%= d.basename %>(), promotes=[<%= d.variables.map(&:py_varname).map{|v| "'#{v}'"}.join(', ') %>])
+    <% end -%>         
 
         self.nonlinear_solver = NonlinearBlockGS() 
         self.linear_solver = ScipyKrylov()

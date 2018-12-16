@@ -41,6 +41,14 @@ class Analysis < ApplicationRecord
     self.disciplines.driver&.take
   end
 
+  def is_sub_analysis?
+    self.has_parent?
+  end
+
+  def is_root_analysis?
+    !self.has_parent?
+  end
+
   def variables
     @variables ||= Variable.of_analysis(id).active
   end
@@ -106,7 +114,7 @@ class Analysis < ApplicationRecord
     return self.disciplines.by_position.map do |d| 
       node = { id: "#{d.id}", type: d.type, name: d.name }
       node.merge!(link: {id: self.parent.id, name: self.parent.name}) if (d.is_driver? && self.has_parent?)
-      node.merge!(link: {id: d.sub_analysis.id, name: d.sub_analysis.name}) if d.is_sub_analysis?
+      node.merge!(link: {id: d.sub_analysis.id, name: d.sub_analysis.name}) if d.has_sub_analysis?
       node 
     end
   end
@@ -194,7 +202,7 @@ class Analysis < ApplicationRecord
     
     # propagate downward
     # check connection from
-    if conn.from.discipline.is_sub_analysis?
+    if conn.from.discipline.has_sub_analysis?
       sub_analysis = conn.from.discipline.sub_analysis
       inner_driver_var = sub_analysis.driver.variables.where(name: conn.from.name).take
       down_conn = Connection.of_analysis(sub_analysis).where('from_id = ? or to_id = ?', inner_driver_var.id, inner_driver_var.id).take
@@ -202,7 +210,7 @@ class Analysis < ApplicationRecord
     end 
     # check connection tos
     conn.from.outgoing_connections.each do |conn|        
-      if conn.to.discipline.is_sub_analysis?
+      if conn.to.discipline.has_sub_analysis?
         sub_analysis = conn.to.discipline.sub_analysis
         inner_driver_var = sub_analysis.driver.variables
                            .where(name: conn.from.name, io_mode: WhatsOpt::Variable::OUT).take

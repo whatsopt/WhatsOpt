@@ -13,6 +13,7 @@ module WhatsOpt
     def initialize(mda, server_host=nil, driver_name=nil, driver_options={})
       super(mda, server_host)
       @prefix = "openmdao"
+      @server_host = server_host
       @remote = !server_host.nil?
       @sgen = WhatsOpt::ServerGenerator.new(mda, server_host)
       @sqlite_filename = 'cases.sqlite'
@@ -82,12 +83,16 @@ module WhatsOpt
     
     def _generate_code(gendir, only_base: false, sqlite_filename: nil)
       @mda.disciplines.nodes.each do |disc|
-        _generate_discipline(disc, gendir, only_base)
+        if disc.has_sub_analysis?
+          _generate_sub_analysis(disc, gendir, only_base, sqlite_filename)
+        else
+          _generate_discipline(disc, gendir, only_base)
+        end
       end 
       _generate_main(gendir, only_base)
       _generate_run_scripts(gendir, sqlite_filename)
       @sgen._generate_code(gendir)
-     @genfiles += @sgen.genfiles
+      @genfiles += @sgen.genfiles
     end
      
     def _generate_discipline(discipline, gendir, only_base=false)
@@ -96,6 +101,15 @@ module WhatsOpt
       _generate(discipline.py_basefilename, 'openmdao_discipline_base.py.erb', gendir)
     end
     
+    def _generate_sub_analysis(super_discipline, gendir, only_base=true, sqlite_filename=nil)
+      mda = super_discipline.sub_analysis
+      sub_ogen = OpenmdaoGenerator.new(mda, @server_host, @driver_name, @driver_options)
+      gendir = File.join(gendir, mda.name.downcase)
+      Dir.mkdir(gendir) unless Dir.exists?(gendir)
+      sub_ogen._generate_code(gendir, only_base: only_base, sqlite_filename: sqlite_filename)
+      @genfiles += sub_ogen.genfiles
+    end
+
     def _generate_main(gendir, only_base)
       _generate(@mda.py_filename, 'openmdao_main.py.erb', gendir) unless only_base
       _generate(@mda.py_basefilename, 'openmdao_main_base.py.erb', gendir)

@@ -38,10 +38,18 @@ class Discipline < ApplicationRecord
     type == WhatsOpt::Discipline::NULL_DRIVER
   end
   
-  def is_sub_analysis?
+  def has_sub_analysis?
     !!sub_analysis
   end
-    
+
+  def path
+    unless self.has_sub_analysis?
+      self.analysis.path
+    else
+      self.sub_analysis.path
+    end
+  end
+
   def update_discipline(params) 
     if params[:position]
       insert_at(params[:position])

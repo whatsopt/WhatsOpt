@@ -15,6 +15,13 @@ module WhatsOpt
     def py_modulename
       basename
     end
+
+    def py_full_modulename
+      namespace = self.path.map{|a| a.basename}
+      namespace.shift
+      namespace << basename
+      namespace.join('.')
+    end
     
     def py_classname
       camelname
@@ -29,3 +36,4 @@ module WhatsOpt
     end   
   end
 end
+
