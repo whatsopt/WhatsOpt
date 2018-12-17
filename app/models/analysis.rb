@@ -50,15 +50,15 @@ class Analysis < ApplicationRecord
   end
 
   def variables
-    @variables ||= Variable.of_analysis(id).active
+    @variables = Variable.of_analysis(id).active
   end
     
   def parameter_variables
-    @params ||= variables.with_role(WhatsOpt::Variable::PARAMETER_ROLE) + design_variables
+    @params = variables.with_role(WhatsOpt::Variable::PARAMETER_ROLE) + design_variables
   end
  
   def design_variables
-    @desvars ||= variables.with_role(WhatsOpt::Variable::DESIGN_VAR_ROLE)
+    @desvars = variables.with_role(WhatsOpt::Variable::DESIGN_VAR_ROLE)
   end
  
   def min_objective_variables
@@ -70,15 +70,15 @@ class Analysis < ApplicationRecord
   end
 
   def eq_constraint_variables
-    @eqs ||= variables.with_role(WhatsOpt::Variable::EQ_CONSTRAINT_ROLE)  
+    @eqs = variables.with_role(WhatsOpt::Variable::EQ_CONSTRAINT_ROLE)  
   end
 
   def ineq_constraint_variables
-    @ineqs ||= variables.with_role(WhatsOpt::Variable::INEQ_CONSTRAINT_ROLE)  
+    @ineqs = variables.with_role(WhatsOpt::Variable::INEQ_CONSTRAINT_ROLE)  
   end
   
   def response_variables
-    @resps ||= variables.with_role(WhatsOpt::Variable::RESPONSE_ROLE) + 
+    @resps = variables.with_role(WhatsOpt::Variable::RESPONSE_ROLE) + 
       min_objective_variables + max_objective_variables + eq_constraint_variables + ineq_constraint_variables
   end
   
@@ -173,6 +173,10 @@ class Analysis < ApplicationRecord
         end
         if vin.discipline.is_driver?
           role = WhatsOpt::Variable::RESPONSE_ROLE
+        end
+        existing_conn_proto = Connection.where(from_id: vout.id).take
+        if existing_conn_proto
+          role = existing_conn_proto.role
         end
         Connection.where(from_id: vout.id, to_id: vin.id).first_or_create!(role: role)  
       end

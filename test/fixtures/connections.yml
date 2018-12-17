@@ -72,7 +72,7 @@ outermda_driver_z_innermda_disc:
   from_id: <%= ActiveRecord::FixtureSet.identify(:varz_outermda_driver_out) %>
   to_id: <%= ActiveRecord::FixtureSet.identify(:varz_outermda_innermda_disc_in) %>
   role: "design_var"
-outermda_driver_z_innermda_disc:
+outermda_driver_z_outermda_disc:
   from_id: <%= ActiveRecord::FixtureSet.identify(:varz_outermda_driver_out) %>
   to_id: <%= ActiveRecord::FixtureSet.identify(:varz_outermda_disc_in) %>
   role: "design_var"

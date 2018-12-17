@@ -62,7 +62,8 @@ class Discipline < ApplicationRecord
     end
   end
   
-  def create_variables_from_sub_analysis(sub_analysis = self.analysis_discipline&.analysis)
+  def create_variables_from_sub_analysis(sub_analysis=nil)
+    sub_analysis ||= self.analysis_discipline&.analysis  
     if sub_analysis
       sub_analysis.driver.output_variables.each do |outvar|
         if self.variables.where(name: outvar.name).empty?
