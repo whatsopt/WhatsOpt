@@ -119,6 +119,7 @@ class XdsmViewer extends React.Component {
         $label.html(`<a class='analysis-link' href="${link}">${label}</a>`);
       }
     });
+    $('.analysis-link').on('click', (e) => e.stopPropagation());
   }
 }
 
