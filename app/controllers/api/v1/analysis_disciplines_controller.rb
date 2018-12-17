@@ -18,10 +18,6 @@ class Api::V1::AnalysisDisciplinesController < Api::ApiController
     
     # finally save analysis discipline
     @mda_discipline.save!
-    @outermda.reload
-    @innermda.reload
-    p "ASSERT HAS_PARENT? #{@innermda.has_parent?}"
-    p "SHOW ANCESTOR #{@innermda.ancestors}"
 
     json_response @mda_discipline, :created
   end

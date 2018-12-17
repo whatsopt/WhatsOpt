@@ -124,4 +124,10 @@ class AnalysesControllerTest < ActionDispatch::IntegrationTest
     end
   end
   
+  test "should not destroy sub-analysis when destroying parent" do
+    @outermda = analyses(:outermda)
+    assert_difference('Analysis.count', -1) do
+      delete mda_url(@outermda)
+    end
+  end
 end

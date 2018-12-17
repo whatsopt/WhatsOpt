@@ -9,7 +9,7 @@ class Analysis < ApplicationRecord
 
   resourcify
   
-  has_ancestry
+  has_ancestry orphan_strategy: :rootify
   
   class AncestorUpdateError < StandardError
   end 
