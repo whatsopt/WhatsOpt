@@ -38,7 +38,7 @@ class Analysis < ApplicationRecord
   validates :name, presence: true, allow_blank: false
   
   def driver
-    self.disciplines.driver&.take
+    self.disciplines.driver
   end
 
   def is_sub_analysis?
@@ -98,6 +98,14 @@ class Analysis < ApplicationRecord
     parameter_variables.inject(0){|s, v| s+v.dim}
   end
       
+  def plain_disciplines
+    disciplines.nodes.select{|d| d.is_plain? } 
+  end
+
+  def all_plain_disciplines
+    self.children.inject(self.plain_disciplines){|ary, elt| ary + elt.plain_disciplines} 
+  end
+
   def to_mda_viewer_json
     { 
       id: self.id,

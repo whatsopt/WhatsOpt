@@ -20,7 +20,7 @@ class Discipline < ApplicationRecord
 
   validates :name, presence: true, allow_blank: false
   
-  scope :driver, -> { where( type: WhatsOpt::Discipline::NULL_DRIVER ) }
+  scope :driver, -> { where( type: WhatsOpt::Discipline::NULL_DRIVER ).take }
   scope :nodes, -> { where.not( type: WhatsOpt::Discipline::NULL_DRIVER ) }
   scope :by_position, -> { order(position: :asc) }
 
@@ -40,6 +40,10 @@ class Discipline < ApplicationRecord
   
   def has_sub_analysis?
     !!sub_analysis
+  end
+
+  def is_plain?
+    !has_sub_analysis?
   end
 
   def path

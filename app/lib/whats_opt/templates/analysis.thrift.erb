@@ -11,7 +11,7 @@ typedef list<IMatrix> ICube
 typedef list<Cube> HyperCube
 typedef list<ICube> IHyperCube
 
-<% @mda.disciplines.nodes.each do |disc| -%>
+<% @mda.all_plain_disciplines.each do |disc| -%>
 struct <%= disc.camelname %>Input {
 <% disc.input_variables.active.numeric.each_with_index do |var, i| -%>
     <%= "#{i+1}: #{var.thrift_type} #{var.name}" %>      
@@ -26,7 +26,7 @@ struct <%= disc.camelname %>Output {
 <% end -%>
 
 service <%= @mda.camelname %> {
-<% @mda.disciplines.nodes.each do |disc| -%>
+<% @mda.all_plain_disciplines.each do |disc| -%>
     <%= disc.camelname %>Output compute_<%= disc.basename %>(1:<%= disc.camelname %>Input input)
 <% end -%>
 
