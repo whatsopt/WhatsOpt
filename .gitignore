@@ -22,6 +22,9 @@
 # Emacs
 **/*~
 
+# VSCode
+.vscode/*
+
 # Eclipse pydev
 .project
 .pydevproject
