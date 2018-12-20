@@ -64,4 +64,49 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     assert_equal @mda.disciplines.count, resp['nodes'].size
   end
 
+  test "toto should create nested analysis" do
+    assert_difference('Discipline.count', 4) do
+      assert_difference('Analysis.count', 2) do
+      mda_attrs = 
+        {"name": "Outer", "disciplines_attributes": [
+          {"name": "__DRIVER__", "variables_attributes": [
+            {"name": "x", "io_mode": "out", "type": "Float", "shape": "1", "units": "", "desc": "",
+                  "parameter_attributes": {"init": "2.0"}}, 
+            {"name": "y", "io_mode": "in", "type": "Float", "shape": "1", "units": ""}]}, 
+          {"name": "InnerDiscipline", "sub_analysis_attributes":  
+            {"name": "Inner", "disciplines_attributes": [
+              {"name": "__DRIVER__", "variables_attributes": [
+                  {"name": "x", "io_mode": "out", "type": "Float", "shape": "1", "units": "",  "desc": "",
+                      "parameter_attributes": {"init": "2.0"}}, 
+                  {"name": "y", "io_mode": "in", "type": "Float", "shape": "1", "units": "",  "desc": ""}]},
+              {"name": "Disc", "variables_attributes": [
+                {"name": "x", "io_mode": "in", "type": "Float", "shape": "1", "units": "",  "desc": "",
+                  "parameter_attributes": {"init": "2.0"}},
+                {"name": "y", "io_mode": "out", "type": "Float", "shape": "1", "units": "",  "desc": ""}
+              ]}
+            ]}
+          }
+        ]}
+      post api_v1_mdas_url, params: {analysis: mda_attrs}, as: :json, headers: @auth_headers
+      assert_response :success
+      end
+    end
+    inner = Analysis.last
+    outer = Analysis.second_to_last
+    assert_equal "Outer", outer.name
+    assert_equal "Inner", inner.name
+    assert_equal 2, Connection.of_analysis(outer).count
+    assert_equal 2, Connection.of_analysis(inner).count
+    assert_equal outer.id, inner.parent.id
+  end
+    
+  test "should create sellar optim analysis" do
+    sellar_optim = JSON.load(sample_file("sellar_optim.json"))
+    mda_params = {analysis: JSON.load(sample_file("sellar_optim.json"))}
+    post api_v1_mdas_url, params: mda_params, as: :json, headers: @auth_headers
+    inner = Analysis.find_by_name('Sellar')
+    outer = Analysis.find_by_name('SellarOptim')
+    assert_equal outer.id, inner.parent.id
+  end
+
 end

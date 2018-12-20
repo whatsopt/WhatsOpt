@@ -17,6 +17,7 @@ class Discipline < ApplicationRecord
   acts_as_list scope: :analysis, top_of_list: 0
   
   accepts_nested_attributes_for :variables, reject_if: proc { |attr| attr['name'].blank? }, allow_destroy: true
+  accepts_nested_attributes_for :sub_analysis, reject_if: proc { |attr| attr['name'].blank? }, allow_destroy: true
 
   validates :name, presence: true, allow_blank: false
   
@@ -86,6 +87,13 @@ class Discipline < ApplicationRecord
     end
   end
   
+  def build_sub_analysis(mda_params)
+    self.name = mda_params['name']
+    new_sub_analysis = Analysis.new(mda_params)
+    AnalysisDiscipline.build_analysis_discipline(self, new_sub_analysis)
+    new_sub_analysis
+  end
+
   private 
 
   def set_defaults

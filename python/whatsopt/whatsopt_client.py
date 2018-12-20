@@ -25,6 +25,8 @@ STAG_URL = "http://rdri206h.onecert.fr/whatsopt"
 TEST_URL = "http://endymion:3000"
 DEV_URL  = "http://192.168.99.100:3000"
 
+DEBUG = False
+
 class WhatsOptImportMdaError(Exception):
     pass
 
@@ -39,15 +41,6 @@ class WhatsOpt(object):
         # config session object
         self.session = requests.Session()  
         self.session.trust_env = False 
-        
-        # MDA informations
-        self.mda_attrs = {'name': '', 'discipline_attributes':''}
-        self.discnames = []
-        self.discattrs = []
-        self.vars = {}
-        self.varattrs = {}
-        self.vardescs = {}
-        self.driver_regexp = None
         
         # login by default
         if login:
@@ -162,28 +155,24 @@ class WhatsOpt(object):
     def push_mda(self, problem, options):
         name = problem.model.__class__.__name__
         data = _get_viewer_data(problem)
-        tree = data['tree']
-        # print(tree)
-        connections = data['connections_list']
-        # print(connections)
-        self.discnames = [NULL_DRIVER_NAME]
-        self.discnames.extend(self._collect_discnames_and_vars(problem.model, tree))
-        # print(self.discnames)
-        self._initialize_disciplines_attrs(problem, connections)
-    
-        #print("MDA= ", name)
-        if name == 'Group':
-            name = 'MDA'
-        self.mda_attrs = {'name': name,
-                          'disciplines_attributes': self.discattrs}    
-        #print([d for d in self.discattrs if d['name'] == 'sap.Struc'])    
-        #print(self.vars)
-        mda_params = {'analysis': self.mda_attrs}
+        #print(name, data)
+        self.tree = data['tree']
+        #print("TREE("+name+")=", self.tree)
+        self.connections = data['connections_list']
+        #print("CONNECTIONS("+name+")=", self.connections)
+
+        # MDA informations
+        self.vars = {}
+        self.vardescs = {}
+        self.discmap = {}
+        self._collect_var_infos(problem.model, self.tree)
+        mda_attrs = self._get_mda_attributes(problem.model, self.tree)
         if options['--dry-run']:
-            print(mda_params)
+            print(json.dumps(mda_attrs, indent=2))
+            # print(self.discmap)
         else:
             url =  self._endpoint('/api/v1/analyses')
-            resp = self.session.post(url, headers=self.headers, json=mda_params)
+            resp = self.session.post(url, headers=self.headers, json={'analysis': mda_attrs})
             resp.raise_for_status()
             print("Analysis %s pushed" % name)
 
@@ -240,8 +229,8 @@ class WhatsOpt(object):
         m = re.match(r"\w+:(\w+)|.*", driver_first_coord)
         if m:
             name = m.group(1)
-        self.driver_regexp = re.compile("\w+:"+name)
-        cases = self._format_upload_cases(reader)
+        driver_regexp = re.compile(r"\w+:"+name)
+        cases = self._format_upload_cases(driver_regexp, reader)
         
         resp = None
         if operation_id:
@@ -259,7 +248,7 @@ class WhatsOpt(object):
                 driver='scipy_optimizer_slsqp'
             else:
                 # FIXME: only LHS, Morris or SLSQP is recognized
-                print("Data uploaded as doe cases with unknown driver".format(name))
+                print("Data uploaded as doe cases with unknown driver {}".format(name))
                 driver='unknown'
             operation_params = {'name': name,
                                 'driver': driver,
@@ -283,7 +272,7 @@ class WhatsOpt(object):
         
     def serve(self):
         from subprocess import call
-        retcode = call(['python', 'run_server.py'])
+        call(['python', 'run_server.py'])
         
     def get_analysis_id(self):
         files = self._find_analysis_base_files()
@@ -291,8 +280,8 @@ class WhatsOpt(object):
         for f in files:
             ident = self._extract_mda_id(f) 
             if id and id != ident:
-                raise Exception ('Warning: several analysis identifier detected. \
-                                  Find %s got %s. Check header comments of %s files .' % (id, ident, str(files)))  
+                raise Exception('Warning: several analysis identifier detected. \
+                                Find %s got %s. Check header comments of %s files .' % (id, ident, str(files)))  
             id = ident    
         return id 
         
@@ -322,91 +311,183 @@ class WhatsOpt(object):
             return match.group(1)
         else:
             return 'mda'
-        
+
     # see _get_tree_dict at
     # https://github.com/OpenMDAO/OpenMDAO/blob/master/openmdao/devtools/problem_viewer/problem_viewer.py
-    def _collect_discnames_and_vars(self, system, tree, group_prefix=''):
-        disciplines = []
-        if 'children' in tree:
-            for i, child in enumerate(tree['children']):
-                # retain only components, not intermediates (subsystem or group)
-                if child['type'] == 'subsystem' and child['subsystem_type'] == 'group':
-                    prefix = group_prefix+child['name']+'.'
-                    disciplines.extend(self._collect_discnames_and_vars(system._subsystems_myproc[i], child, prefix))
-                else:
-                    # do not represent IndepVarComp
-                    if not isinstance(system._subsystems_myproc[i], IndepVarComp):
-                        disciplines.append(group_prefix+child['name'])
-                    for typ in ['input', 'output']:
-                        for ind, abs_name in enumerate(system._var_abs_names[typ]):
+    def _collect_var_infos(self, system, tree, group_prefix=''):
+        if 'children' not in tree:
+            return
+
+        for i, child in enumerate(tree['children']):
+            # retain only components, not intermediates (subsystem or group)
+            if child['type'] == 'subsystem' and child['subsystem_type'] == 'group':
+                self.discmap[group_prefix+child['name']] = child['name']
+                prefix = group_prefix+child['name']+'.'
+                self._collect_var_infos(system._subsystems_myproc[i], child, prefix)
+            else:
+                # do not represent IndepVarComp
+                if not isinstance(system._subsystems_myproc[i], IndepVarComp):
+                    self.discmap[group_prefix+child['name']] = child['name']
+
+                for typ in ['input', 'output']:
+                    for abs_name in system._var_abs_names[typ]:
+                        io_mode = 'out'
+                        if typ == 'input': 
+                            io_mode = 'in' 
+                        elif typ == 'output': 
                             io_mode = 'out'
-                            if typ == 'input': 
-                                io_mode = 'in' 
-                            elif typ == 'output': 
-                                io_mode = 'out'
-                            else:
-                                raise Exception('Unhandled variable type ' + typ)
-                            meta = system._var_abs2meta[abs_name]
+                        else:   
+                            raise Exception('Unhandled variable type ' + typ)
+                        meta = system._var_abs2meta[abs_name]
 
-                            vtype = 'Float'
-                            if re.match('int', type(meta['value']).__name__):
-                                vtype = 'Integer' 
-                            disc, var, fname = WhatsOpt._extract_disc_var(abs_name)
-                            shape = str(meta['shape'])
-                            if shape=='(1,)':
-                                shape='1'
-                            name = system._var_abs2prom[typ][abs_name]
-                            self.vars[abs_name] = {'fullname': fname,
-                                                   'name': name,
-                                                   'io_mode': io_mode,
-                                                   'type': vtype,
-                                                   'shape': shape,
-                                                   'units': meta['units'],
-                                                   #'desc': meta['desc'],
-                                                   'value': meta['value']}
+                        vtype = 'Float'
+                        if re.match('int', type(meta['value']).__name__):
+                            vtype = 'Integer' 
+                        shape = str(meta['shape'])
+                        if shape=='(1,)':
+                            shape='1'
+                        name = system._var_abs2prom[typ][abs_name]
+                        self.vars[abs_name] = {'fullname': abs_name,
+                                                'name': name,
+                                                'io_mode': io_mode,
+                                                'type': vtype,
+                                                'shape': shape,
+                                                'units': meta['units'],
+                                                #'desc': meta['desc'],
+                                                'value': meta['value']}
 
-                            desc = self.vardescs.setdefault(name, '')
-                            if desc=='':
-                                self.vardescs[name] = meta['desc'] 
-                            elif desc!=meta['desc'] and meta['desc']!='':
-                                print('Find another description for {}: "{}", keep "{}"'.format(name, meta['desc'], self.vardescs[name]))
-                                    
-        disciplines = [WhatsOpt._format_name(name) for name in disciplines]
-        return disciplines
+                        desc = self.vardescs.setdefault(name, '')
+                        if desc=='':
+                            self.vardescs[name] = meta['desc'] 
+                        elif desc!=meta['desc'] and meta['desc']!='':
+                            print('Find another description for {}: "{}", keep "{}"'.format(name, meta['desc'], self.vardescs[name]))
+    
+    def _get_mda_attributes(self, group, tree, group_prefix=''):
+        driver_attrs = {'name': NULL_DRIVER_NAME, 'variables_attributes': []}
+        mda_attrs = {'name': group.__class__.__name__, 'disciplines_attributes': [driver_attrs]}
+        if 'children' not in tree:
+            return
 
-    def _initialize_disciplines_attrs(self, problem, connections):
-        self._initialize_variables_attrs(connections)
-        self.discattrs = []
-        for dname in self.discnames:
-            discattr = {'name': dname, 'variables_attributes': self.varattrs[dname]}
-            self.discattrs.append(discattr)
+        for i, child in enumerate(tree['children']):
+            if child['type'] == 'subsystem' and child['subsystem_type'] == 'group':
+                prefix = group_prefix+child['name']+'.'
+                sub_analysis_attrs = self._get_sub_analysis_attributes(group._subsystems_myproc[i], child, prefix)
+                mda_attrs['disciplines_attributes'].append(sub_analysis_attrs)
+            else:
+                if not isinstance(group._subsystems_myproc[i], IndepVarComp):
+                    mda = group_prefix[:-1]
+                    discname = group_prefix+child['name']
+                    discattrs = self._get_discipline_attributes(driver_attrs, mda, discname)
 
-    def _initialize_variables_attrs(self, connections):
-        self.varattrs = {dname: [] for dname in self.discnames}
-        for conn in connections:
-            self._create_varattr_from_connection(conn['src'], 'out')
-            self._create_varattr_from_connection(conn['tgt'], 'in')
-        self._create_varattr_for_global_outputs(connections)
-        for disc in self.discnames:
-            for vattr in self.varattrs[disc]:
-                vattr['desc'] = self.vardescs[vattr['name']]
-                del vattr['fullname'] # indeed for WhatsOpt var name is a primary key
+                    self._set_varattrs_from_outputs(group._var_abs2prom['output'], 'out',
+                                                    discattrs['variables_attributes'])
+                    # add varattrs for global outputs
+                    # for absname, varname in iteritems(group._var_abs2prom['output']):
+                    #     if varname not in [varattr['name'] for varattr in discattrs['variables_attributes']]:
+                    #         var = self.vars[absname] 
+                    #         vattr = {'name': var['name'], 'io_mode': 'out', 'desc': self.vardescs[varname],
+                    #                 'type':var['type'], 'shape':var['shape'], 'units':var['units']}
+                    #         discattrs['variables_attributes'].append(vattr)
+
+                    mda_attrs['disciplines_attributes'].append(discattrs)
+
+        # remove fullname in driver varattrs
+        for vattr in driver_attrs['variables_attributes']:
+            vattr['desc'] = self.vardescs[vattr['name']]
+            del vattr['fullname'] # indeed for WhatsOpt var name is a primary key
+
+        self._set_varattrs_from_outputs(group._var_abs2prom['output'], 'in', 
+                                        driver_attrs['variables_attributes'])
+        # add varattrs for global outputs
+        # for absname, varname in iteritems(group._var_abs2prom['output']):
+        #     if varname not in [varattr['name'] for varattr in driver_attrs['variables_attributes']]:
+        #         var = self.vars[absname] 
+        #         vattr = {'name': varname, 'io_mode': 'in', 'desc': self.vardescs[varname],
+        #                 'type':var['type'], 'shape':var['shape'], 'units':var['units']}
+        #         driver_attrs['variables_attributes'].append(vattr)
+
+        return mda_attrs
+
+    def _get_sub_analysis_attributes(self, group, child, prefix):
+        submda_attrs = self._get_mda_attributes(group, child, prefix)
+        superdisc_attrs = {'name': child['name'], 'sub_analysis_attributes': submda_attrs}
+        return superdisc_attrs
+
+    def _get_discipline_attributes(self, driver_attrs, mda, dname):
+        varattrs = self._get_variables_attrs(driver_attrs['variables_attributes'], mda, dname)
+        discattrs = {'name': self.discmap[dname], 'variables_attributes': varattrs}
+        return discattrs
+
+    def _get_variables_attrs(self, driver_varattrs, mda, dname):
+        varattrs = []
+        for conn in self.connections:
+            self._get_varattr_from_connection(varattrs, driver_varattrs, mda, dname, conn)
+        for vattr in varattrs:
+            vattr['desc'] = self.vardescs[vattr['name']]
+            del vattr['fullname'] # indeed for WhatsOpt var name is a primary key
+        return varattrs
             
-    def _create_varattr_from_connection(self, fullname, io_mode):
-        disc, var, fname = WhatsOpt._extract_disc_var(fullname)
-        
-        varattr = {'name':var, 'fullname': fname, 'io_mode': io_mode,
-                   'type':self.vars[fullname]['type'], 'shape':self.vars[fullname]['shape'], 
-                   'units':self.vars[fullname]['units']}
-        if disc in self.discnames: 
-            if varattr not in self.varattrs[disc]: 
-                self.varattrs[disc].append(varattr)
-        elif varattr['fullname'] not in [vattr['fullname'] for vattr in self.varattrs[NULL_DRIVER_NAME]]:
-            self.varattrs[NULL_DRIVER_NAME].append(varattr)
-            if io_mode=='out':  # set init value for design variables and parameters (outputs of driver)
-                v = self.vars[fullname]
-                varattr['parameter_attributes'] = {'init': self._simple_value(v)}
-        
+    def _get_varattr_from_connection(self, varattrs, driver_varattrs, mda, dname, connection):
+        fnamesrc = connection['src']
+        mdasrc, discsrc, varsrc = WhatsOpt._extract_disc_var(fnamesrc)
+        fnametgt = connection['tgt']
+        mdatgt, disctgt, vartgt = WhatsOpt._extract_disc_var(fnametgt)
+        if DEBUG:
+            print('++++', mda, dname)
+            print('#########', mdasrc, discsrc, mdatgt, disctgt)
+            
+        varstoadd = []
+        if mda == mdasrc:
+            if discsrc == dname:
+                varattrsrc = {'name':varsrc, 'fullname': fnamesrc, 'io_mode': 'out',
+                              'type':self.vars[fnamesrc]['type'], 'shape':self.vars[fnamesrc]['shape'], 
+                              'units':self.vars[fnamesrc]['units']}
+                varstoadd.append((discsrc, varattrsrc, "source"))
+        if ((mda == '' and mdasrc == '') or mda not in discsrc) and mda == mdatgt:
+            discsrc = NULL_DRIVER_NAME
+            varattrsrc = {'name':varsrc, 'fullname': fnamesrc, 'io_mode': 'out',
+                            'type':self.vars[fnametgt]['type'], 'shape':self.vars[fnametgt]['shape'], 
+                            'units':self.vars[fnametgt]['units']}
+            varstoadd.append((discsrc, varattrsrc, "source"))
+
+        if mda == mdatgt:
+            if disctgt == dname:
+                varattrtgt = {'name':vartgt, 'fullname': fnametgt, 'io_mode': 'in',
+                              'type':self.vars[fnametgt]['type'], 'shape':self.vars[fnametgt]['shape'], 
+                              'units':self.vars[fnametgt]['units']}
+                varstoadd.append((disctgt, varattrtgt, "target"))
+        if ((mda == ''and mdatgt == '') or mda not in disctgt) and mda == mdasrc:
+            disctgt = NULL_DRIVER_NAME
+            varattrtgt = {'name':vartgt, 'fullname': fnametgt, 'io_mode': 'in',
+                          'type':self.vars[fnamesrc]['type'], 'shape':self.vars[fnamesrc]['shape'], 
+                          'units':self.vars[fnamesrc]['units']}
+            varstoadd.append((disctgt, varattrtgt, "target"))
+
+        for disc, varattr, orig in varstoadd:
+            if DEBUG:
+                print("**************", connection)
+            if disc==dname:
+                if (varattr not in varattrs):
+                    if DEBUG:
+                        print(">>>>>>>>>>>>> from", orig ," ADD to ", mda, dname, ": ", varattr['name'], varattr['io_mode']) 
+                    varattrs.append(varattr)
+            else:
+                if varattr['name'] not in [vattr['name'] for vattr in driver_varattrs]:
+                    if DEBUG:
+                        print(">>>>>>>>>>>>> from", orig ," ADD to ", mda, "__DRIVER__ :", varattr['name'], varattr['io_mode']) 
+                    driver_varattrs.append(varattr)
+                    if varattr['io_mode']=='out':  # set init value for design variables and parameters (outputs of driver)
+                        v = self.vars[fnamesrc]
+                        varattr['parameter_attributes'] = {'init': self._simple_value(v)}
+
+    def _set_varattrs_from_outputs(self, outputs, io_mode, varattrs):
+        for absname, varname in iteritems(outputs):
+            if varname not in [varattr['name'] for varattr in varattrs]:
+                var = self.vars[absname] 
+                vattr = {'name': varname, 'io_mode': io_mode, 'desc': self.vardescs[varname],
+                        'type':var['type'], 'shape':var['shape'], 'units':var['units']}
+                varattrs.append(vattr)
+
     @staticmethod
     def _simple_value(var):
         if var['shape']=='1' or var['shape']=='(1,)':
@@ -421,57 +502,22 @@ class WhatsOpt(object):
             ret = var['value'].tolist()
         return str(ret)
         
-    def _create_varattr_for_global_outputs(self, connections):
-        for fullname, varattr in iteritems(self.vars): 
-            if varattr['io_mode'] == 'out':
-                found = False
-                for conn in connections:
-                    disctgt, vartgt, fname_tgt = WhatsOpt._extract_disc_var(conn['tgt'])
-                    discsrc, varsrc, fname_src = WhatsOpt._extract_disc_var(conn['src'])
-                    if fname_tgt == varattr['fullname'] or \
-                       fname_src == varattr['fullname']:
-                        found = True
-                        break
-                if not found:
-                    #print("Create global output connection ", varattr)
-                    self._create_connection_for(fullname, varattr)
-                    
-    def _create_connection_for(self, fullname, var):
-        disc, _, _ = WhatsOpt._extract_disc_var(fullname)
-        vattr = {'name': var['name'], 'fullname': var['fullname'], 'io_mode': var['io_mode'],
-                 'type':var['type'], 'shape':var['shape'], 
-                 'units':var['units']}
-
-        if disc in self.discnames:
-            fullnames = [v['fullname'] for v in self.varattrs[disc]]
-            if fullname not in fullnames:
-                self.varattrs[disc].append(vattr)
-                varattr_in=copy.deepcopy(vattr)
-                varattr_in['io_mode']='in'
-                self.varattrs[NULL_DRIVER_NAME].append(varattr_in)
-
-    
-    @staticmethod
-    def _format_name(name):
-        return name.replace('.', '_')
-    
     @staticmethod
     def _extract_disc_var(fullname):
         name_elts = fullname.split('.')
         if len(name_elts) > 1:
-            disc, var = '.'.join(name_elts[:-1]), name_elts[-1] 
+            mda, disc, var = '.'.join(name_elts[:-2]), '.'.join(name_elts[:-1]), name_elts[-1] 
         else:
             raise Exception('Connection qualified name should contain' + 
-                            'at least one dot, but got %s' % fullname)
-        disc = WhatsOpt._format_name(disc)
-        return disc, var, disc+"."+var
+                            ' at least one dot, but got %s' % fullname)
+        return mda, disc, var
 
-    def _format_upload_cases(self, reader):
+    def _format_upload_cases(self, driver_regexp, reader):
         cases = reader.system_cases.list_cases()
         inputs = {}
         outputs = {}
-        for i, case_id in enumerate(cases):
-            if self.driver_regexp.match(case_id):
+        for case_id in cases:
+            if driver_regexp.match(case_id):
                 case = reader.system_cases.get_case(case_id)
                 if case.inputs is not None:
                     self._insert_data(case.inputs, inputs)
@@ -514,7 +560,3 @@ class WhatsOpt(object):
                 else:
                     result[(name, i, values.size)] = [float(values[i])]
             done[name]=True
-
-
-
-

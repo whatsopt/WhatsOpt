@@ -1,0 +1,250 @@
+{
+  "name": "SellarOptim",
+  "disciplines_attributes": [
+    {
+      "name": "__DRIVER__",
+      "variables_attributes": [
+        {
+          "name": "x",
+          "io_mode": "out",
+          "type": "Float",
+          "shape": "1",
+          "units": null,
+          "parameter_attributes": {
+            "init": "2.0"
+          },
+          "desc": ""
+        },
+        {
+          "name": "z",
+          "io_mode": "out",
+          "type": "Float",
+          "shape": "(2,)",
+          "units": null,
+          "parameter_attributes": {
+            "init": "[5.0, 2.0]"
+          },
+          "desc": ""
+        },
+        {
+          "name": "y1",
+          "io_mode": "in",
+          "desc": "",
+          "type": "Float",
+          "shape": "1",
+          "units": null
+        },
+        {
+          "name": "y2",
+          "io_mode": "in",
+          "desc": "",
+          "type": "Float",
+          "shape": "1",
+          "units": null
+        },
+        {
+          "name": "f",
+          "io_mode": "in",
+          "desc": "",
+          "type": "Float",
+          "shape": "1",
+          "units": null
+        },
+        {
+          "name": "g1",
+          "io_mode": "in",
+          "desc": "",
+          "type": "Float",
+          "shape": "1",
+          "units": null
+        },
+        {
+          "name": "g2",
+          "io_mode": "in",
+          "desc": "",
+          "type": "Float",
+          "shape": "1",
+          "units": null
+        }
+      ]
+    },
+    {
+      "name": "Sellar",
+      "sub_analysis_attributes": {
+        "name": "Sellar",
+        "disciplines_attributes": [
+          {
+            "name": "__DRIVER__",
+            "variables_attributes": [
+              {
+                "name": "y1",
+                "io_mode": "in",
+                "type": "Float",
+                "shape": "1",
+                "units": null,
+                "desc": ""
+              },
+              {
+                "name": "y2",
+                "io_mode": "in",
+                "type": "Float",
+                "shape": "1",
+                "units": null,
+                "desc": ""
+              },
+              {
+                "name": "x",
+                "io_mode": "out",
+                "type": "Float",
+                "shape": "1",
+                "units": null,
+                "parameter_attributes": {
+                  "init": "2.0"
+                },
+                "desc": ""
+              },
+              {
+                "name": "z",
+                "io_mode": "out",
+                "type": "Float",
+                "shape": "(2,)",
+                "units": null,
+                "parameter_attributes": {
+                  "init": "[5.0, 2.0]"
+                },
+                "desc": ""
+              }
+            ]
+          },
+          {
+            "name": "Disc1",
+            "variables_attributes": [
+              {
+                "name": "y1",
+                "io_mode": "out",
+                "type": "Float",
+                "shape": "1",
+                "units": null,
+                "desc": ""
+              },
+              {
+                "name": "x",
+                "io_mode": "in",
+                "type": "Float",
+                "shape": "1",
+                "units": null,
+                "desc": ""
+              },
+              {
+                "name": "y2",
+                "io_mode": "in",
+                "type": "Float",
+                "shape": "1",
+                "units": null,
+                "desc": ""
+              },
+              {
+                "name": "z",
+                "io_mode": "in",
+                "type": "Float",
+                "shape": "(2,)",
+                "units": null,
+                "desc": ""
+              }
+            ]
+          },
+          {
+            "name": "Disc2",
+            "variables_attributes": [
+              {
+                "name": "y2",
+                "io_mode": "out",
+                "type": "Float",
+                "shape": "1",
+                "units": null,
+                "desc": ""
+              },
+              {
+                "name": "y1",
+                "io_mode": "in",
+                "type": "Float",
+                "shape": "1",
+                "units": null,
+                "desc": ""
+              },
+              {
+                "name": "z",
+                "io_mode": "in",
+                "type": "Float",
+                "shape": "(2,)",
+                "units": null,
+                "desc": ""
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "Functions",
+      "variables_attributes": [
+        {
+          "name": "x",
+          "io_mode": "in",
+          "type": "Float",
+          "shape": "1",
+          "units": null,
+          "desc": ""
+        },
+        {
+          "name": "y1",
+          "io_mode": "in",
+          "type": "Float",
+          "shape": "1",
+          "units": null,
+          "desc": ""
+        },
+        {
+          "name": "y2",
+          "io_mode": "in",
+          "type": "Float",
+          "shape": "1",
+          "units": null,
+          "desc": ""
+        },
+        {
+          "name": "z",
+          "io_mode": "in",
+          "type": "Float",
+          "shape": "(2,)",
+          "units": null,
+          "desc": ""
+        },
+        {
+          "name": "f",
+          "io_mode": "out",
+          "desc": "",
+          "type": "Float",
+          "shape": "1",
+          "units": null
+        },
+        {
+          "name": "g1",
+          "io_mode": "out",
+          "desc": "",
+          "type": "Float",
+          "shape": "1",
+          "units": null
+        },
+        {
+          "name": "g2",
+          "io_mode": "out",
+          "desc": "",
+          "type": "Float",
+          "shape": "1",
+          "units": null
+        }
+      ]
+    }
+  ]
+}

@@ -28,15 +28,16 @@ class Analysis < ApplicationRecord
     reject_if: proc { |attr| attr['name'].blank? }, allow_destroy: true
       
   before_validation(on: :create) do
-    _create_from_attachment if attachment_exists
+    _create_from_attachment if attachment_exists?
   end
     
   after_save :refresh_connections
+  after_save :_ensure_ancestry
   after_save :_ensure_driver_presence
   
-  validate :check_mda_import_error, on: :create, if: :attachment_exists
+  validate :_check_mda_import_error, on: :create, if: :attachment_exists?
   validates :name, presence: true, allow_blank: false
-  
+
   def driver
     self.disciplines.driver
   end
@@ -104,6 +105,10 @@ class Analysis < ApplicationRecord
 
   def all_plain_disciplines
     self.children.inject(self.plain_disciplines){|ary, elt| ary + elt.plain_disciplines} 
+  end
+  
+  def attachment_exists?
+    self.attachment && self.attachment.exists?
   end
 
   def to_mda_viewer_json
@@ -281,12 +286,8 @@ class Analysis < ApplicationRecord
   end
   
   private
-  
-    def attachment_exists
-      self.attachment && self.attachment.exists?
-    end
     
-    def check_mda_import_error
+    def _check_mda_import_error
       begin
         if self.attachment.mda_excel?
           importer = WhatsOpt::ExcelMdaImporter.new(self.attachment.path)
@@ -335,5 +336,10 @@ class Analysis < ApplicationRecord
       end
     end
     
+    def _ensure_ancestry
+      disciplines.nodes
+        .select{|d| d.has_sub_analysis? && d.sub_analysis.parent!=self}
+        .each{|d| d.sub_analysis.update(parent_id: self.id) unless new_record? }
+    end
 end
 
