@@ -116,6 +116,7 @@ class Analysis < ApplicationRecord
       id: self.id,
       name: self.name,
       public: self.public,
+      path: self.path.map{|a| {id: a.id, name: a.name}},
       nodes: build_nodes,
       edges: build_edges,
       inactive_edges: build_edges(active: false),

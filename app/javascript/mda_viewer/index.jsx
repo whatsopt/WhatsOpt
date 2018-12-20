@@ -6,6 +6,7 @@ import XdsmViewer from 'mda_viewer/components/XdsmViewer';
 import ToolBar from 'mda_viewer/components/ToolBar';
 import Error from 'mda_viewer/components/Error';
 import AnalysisEditor from 'mda_viewer/components/AnalysisEditor';
+import AnalysisBreadCrumbs from 'mda_viewer/components/AnalysisBreadCrumbs';
 import DisciplinesEditor from 'mda_viewer/components/DisciplinesEditor';
 import ConnectionsEditor from 'mda_viewer/components/ConnectionsEditor';
 import VariablesEditor from 'mda_viewer/components/VariablesEditor';
@@ -250,7 +251,6 @@ class MdaViewer extends React.Component {
   }
 
   renderXdsm() {
-    console.log("renderXdsm");
     this.api.getAnalysis(this.props.mda.id, true,
         (response) => {
           const newState = update(this.state,
@@ -275,6 +275,11 @@ class MdaViewer extends React.Component {
     });
     const db = new AnalysisDatabase(this.state.mda);
 
+    let breadcrumbs;
+    if (this.props.mda.path.length > 0) {
+      breadcrumbs = <AnalysisBreadCrumbs path={this.props.mda.path} />
+    }
+
     if (this.state.isEditing) {
       return (
         <div>
@@ -284,6 +289,7 @@ class MdaViewer extends React.Component {
             </button>
           </form>
           <h1>Edit {this.state.mda.name}</h1> 
+          {breadcrumbs}
           <div className="mda-section">
             <XdsmViewer ref={(xdsmViewer) => this.xdsmViewer = xdsmViewer} 
               isEditing={this.state.isEditing}
@@ -358,6 +364,7 @@ class MdaViewer extends React.Component {
         <div className="mda-section">
           <ToolBar mdaId={this.props.mda.id} api={this.api} db={db}/>
         </div>
+        {breadcrumbs}
         <div className="mda-section">
           <XdsmViewer ref={(xdsmViewer) => this.xdsmViewer = xdsmViewer} 
             isEditing={this.state.isEditing}
