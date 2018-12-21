@@ -276,7 +276,7 @@ class MdaViewer extends React.Component {
     const db = new AnalysisDatabase(this.state.mda);
 
     let breadcrumbs;
-    if (this.props.mda.path.length > 0) {
+    if (this.props.mda.path.length > 1) {
       breadcrumbs = <AnalysisBreadCrumbs path={this.props.mda.path} />
     }
 
