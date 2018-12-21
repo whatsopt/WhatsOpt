@@ -49,7 +49,7 @@ class Discipline < ApplicationRecord
 
   def path
     unless self.has_sub_analysis?
-      self.analysis.path
+      self.analysis.path + [self]
     else
       self.sub_analysis.path
     end

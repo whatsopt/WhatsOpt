@@ -4,6 +4,8 @@ module WhatsOpt
   module OpenmdaoModule
     using WhatsOpt
 
+    cattr_accessor :root_modulename
+
     def basename
       "#{self.name.snakize}"
     end
@@ -18,8 +20,9 @@ module WhatsOpt
 
     def py_full_modulename
       namespace = self.path.map{|a| a.basename}
-      namespace.shift
-      namespace << basename
+      @@root_modulename ||= basename
+      idx = namespace.index(root_modulename)
+      namespace.shift(idx+1) if idx
       namespace.join('.')
     end
     
