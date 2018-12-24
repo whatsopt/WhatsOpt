@@ -42,6 +42,10 @@ class Analysis < ApplicationRecord
     self.disciplines.driver
   end
 
+  def namespace 
+    self.ancestors
+  end
+
   def is_sub_analysis?
     self.has_parent?
   end

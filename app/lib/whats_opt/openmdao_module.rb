@@ -19,10 +19,11 @@ module WhatsOpt
     end
 
     def py_full_modulename
-      namespace = self.path.map{|a| a.basename}
-      @@root_modulename ||= basename
-      idx = namespace.index(root_modulename)
+      namespace = self.namespace.map{|a| a.basename}
+      namespace.shift
+      idx = namespace.index(@@root_modulename)
       namespace.shift(idx+1) if idx
+      namespace << basename
       namespace.join('.')
     end
     

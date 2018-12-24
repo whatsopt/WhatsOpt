@@ -66,7 +66,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     assert File.exists?(zippath)
     Zip::File.open(zippath) do |zip|
       zip.each do |entry|
-        assert_match /_base\.py|run_\w+\.py|server/, entry.name
+        assert_match /__init__.py|_base\.py|run_\w+\.py|server/, entry.name
       end
     end
   end 

@@ -7,16 +7,16 @@ end
 class FakeOpenmdaoModule < Struct.new(:name)
   include WhatsOpt::OpenmdaoModule
 
-  def path
-    [FakeNamespace.new("module1"), FakeNamespace.new("module2"), FakeNamespace.new("disc")]
+  def namespace
+    [FakeNamespace.new("module1"), FakeNamespace.new("module2")]
   end
 end
 
 class FakeAnalysis < Struct.new(:name)
   include WhatsOpt::OpenmdaoModule
 
-  def path
-    [FakeNamespace.new("module1"), FakeNamespace.new("module2"), FakeNamespace.new("analysis")]
+  def namespace
+    [FakeNamespace.new("module1"), FakeNamespace.new("module2")]
   end
 end
 
@@ -50,9 +50,7 @@ class OpenmdaoMappingTest < ActiveSupport::TestCase
     WhatsOpt::OpenmdaoModule.root_modulename = "module1"
     assert_equal "module2.analysis", @module.py_full_modulename
     WhatsOpt::OpenmdaoModule.root_modulename = "module2"
-    assert_equal "analysis", @module.py_full_modulename
-    WhatsOpt::OpenmdaoModule.root_modulename = "analysis"
-    assert_equal "", @module.py_full_modulename    
+    assert_equal "analysis", @module.py_full_modulename  
   end
 
 
