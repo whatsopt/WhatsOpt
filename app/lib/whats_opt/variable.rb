@@ -24,32 +24,32 @@ module WhatsOpt
 
     def dim
       @dim ||=  case self.shape
-                when /^1$/
+                when /\A1\z/
                   1
-                when /^\((\d+),\)$/ 
+                when /\A\((\d+)L?,\)\z/ 
                   $1.to_i
-                when /^\((\d+), (\d+)\)$/
+                when /\A\((\d+)L?, (\d+)L?\)\z/
                   $1.to_i * $2.to_i
-                when /^\((\d+), (\d+), (\d+)\)$/
+                when /\A\((\d+)L?, (\d+)L?, (\d+)L?\)\z/
                   $1.to_i * $2.to_i * $3.to_i
-                when /^\((\d+), (\d+), (\d+), (\d+)\)$/
+                when /\A\((\d+)L?, (\d+)L?, (\d+)L?, (\d+)L?\)\z/
                   $1.to_i * $2.to_i * $3.to_i * $4.to_i
                 else
-                  raise BadShapeAttributeError.new("should be either 1, (n,), (n, m), (n, m, p) or (n, m, p, q) but found #{self.shape}")
+                  raise BadShapeAttributeError.new("should be either 1, (n,), (n, m), (n, m, p) or (n, m, p, q) but found #{self.shape} for variable #{self.name}")
                 end
     end
 
     def ndim
       @ndim ||=  case self.shape
-                when /^1$/
+                when /\A1\z/
                   0
-                when /^\((\d+),\)$/ 
+                when /\A\((\d+)L?,\)\z/ 
                   1
-                when /^\((\d+), (\d+)\)$/
+                when /\A\((\d+)L?, (\d+)L?\)\z/
                   2
-                when /^\((\d+), (\d+), (\d+)\)$/
+                when /\A\((\d+)L?, (\d+)L?, (\d+)L?\)\z/
                   3
-                when /^\((\d+), (\d+), (\d+), (\d+)\)$/
+                when /\A\((\d+)L?, (\d+)L?, (\d+)L?, (\d+)L?\)\z/
                   4
                 else
                   raise BadShapeAttributeError.new("should be either 1, (n,), (n, m), (n, m, p) or (n, m, p, q) but found #{self.shape}")

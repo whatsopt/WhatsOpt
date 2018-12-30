@@ -11,7 +11,7 @@ class Variable < ApplicationRecord
   include WhatsOpt::OpenmdaoVariable
   include WhatsOpt::ThriftVariable
 
-  DEFAULT_SHAPE = '1' # either '1', '(n,), (n, m) or (n, m, p)'
+  DEFAULT_SHAPE = '1' # either '1', '(n,), (n, m), (n, m, p) or (n, m, p, q)'
   DEFAULT_TYPE = FLOAT_T
   DEFAULT_IOMODE = IN
     
@@ -26,7 +26,7 @@ class Variable < ApplicationRecord
                                                                      attr['lower'].nil? and
                                                                      attr['upper'].nil?  }, allow_destroy: true
 
-  validates :name, format: { with: /\A[a-zA-Z][_a-zA-Z0-9]*\z/, message: "is not a valid variable name" }
+  validates :name, format: { with: /\A[a-zA-Z][\-:_a-zA-Z0-9]*\z/, message: "%{value} is not a valid variable name" }
   validates :name, :io_mode, :type, :shape, presence: true, allow_blank: false
   validates :name, uniqueness: { scope: [:discipline, :io_mode], message: "should be unique per discipline and io mode." }
   validates :name, uniqueness: { scope: [:discipline], message: "should be unique per discipline." }

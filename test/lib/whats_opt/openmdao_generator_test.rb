@@ -1,8 +1,14 @@
 require 'test_helper'
 require 'whats_opt/openmdao_generator'
 require 'tmpdir'
+require 'mkmf' # for find_executable
+MakeMakefile::Logging.instance_variable_set(:@log, File.open(File::NULL, 'w'))
 
 class OpenmdaoGeneratorTest < ActiveSupport::TestCase
+
+  def thrift?
+    found ||= find_executable("thrift")
+  end
 
   def setup
     @mda = analyses(:cicav)
@@ -10,6 +16,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
   end
  
   test "should generate openmdao component for a given discipline in mda" do
+    skip "Apache Thrift not installed" unless thrift?
     Dir.mktmpdir do |dir|
       disc = @mda.disciplines[0]
       filepath = @ogen._generate_discipline disc, dir
@@ -19,6 +26,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
   end
   
   test "should generate openmdao process for an mda" do
+    skip "Apache Thrift not installed" unless thrift?
     Dir.mktmpdir do |dir|
       @ogen._generate_code dir
       assert File.exists?(@ogen.genfiles.first)
@@ -26,6 +34,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
   end
   
   test "should maintain a list of generated filepaths" do
+    skip "Apache Thrift not installed" unless thrift?
     Dir.mktmpdir do |dir|
       @ogen._generate_code dir
       dirpath = Pathname.new(dir)
@@ -44,6 +53,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
   end 
   
   test "should generate openmdao mda zip file" do
+    skip "Apache Thrift not installed" unless thrift?
     zippath = Tempfile.new('test_mda_file.zip')
     File.open(zippath, 'w') do |f|
       content, _ = @ogen.generate
@@ -58,6 +68,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
   end 
 
   test "should generate openmdao mda zip base files" do
+    skip "Apache Thrift not installed" unless thrift?
     zippath = Tempfile.new('test_mda_file.zip')
     File.open(zippath, 'w') do |f|
       content, _ = @ogen.generate(only_base: true)
@@ -72,12 +83,14 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
   end 
 
   test "should run openmdao check and return true when valid" do
+    skip "Apache Thrift not installed" unless thrift?
     ok, log = @ogen.check_mda_setup
     assert ok  # ok even if discipline without connections
     #assert_empty log
   end
 
   test "should run openmdao check and return false when invalid" do
+    skip "Apache Thrift not installed" unless thrift?
     mda = analyses(:fast)
     ogen2 = WhatsOpt::OpenmdaoGenerator.new(mda)
     ok, log = ogen2.check_mda_setup
@@ -87,6 +100,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
   end
 
   test "should run optimization as default" do
+    skip "Apache Thrift not installed" unless thrift?
     Dir.mktmpdir do |dir|
       @ogen._generate_code dir
       pid = spawn("#{WhatsOpt::OpenmdaoGenerator::PYTHON} #{File.join(dir, 'run_server.py')}", [:out]=> '/dev/null')
@@ -99,6 +113,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
   end
 
   test "should run mda once" do
+    skip "Apache Thrift not installed" unless thrift?
     Dir.mktmpdir do |dir|
       @ogen._generate_code dir
       pid = spawn("#{WhatsOpt::OpenmdaoGenerator::PYTHON} #{File.join(dir, 'run_server.py')}", [:out]=> '/dev/null')
@@ -111,6 +126,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
   end
 
   test "should run doe" do
+    skip "Apache Thrift not installed" unless thrift?
     Dir.mktmpdir do |dir|
       @ogen._generate_code dir
       pid = spawn("#{WhatsOpt::OpenmdaoGenerator::PYTHON} #{File.join(dir, 'run_server.py')}", [:out]=> '/dev/null')
@@ -123,6 +139,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
   end
     
   test "should run remote mda and return false when failed" do
+    skip "Apache Thrift not installed" unless thrift?
     @ogen_remote = WhatsOpt::OpenmdaoGenerator.new(@mda, 'localhost')
     ok, log = @ogen_remote.run
     refute ok 
@@ -130,6 +147,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
   end  
   
   test "should monitor remote mda" do
+    skip "Apache Thrift not installed" unless thrift?
     @ogen_remote = WhatsOpt::OpenmdaoGenerator.new(@mda, 'localhost')
     lines = []
     status = @ogen_remote.monitor do |stdin, stdouterr, wait_thr|
@@ -144,6 +162,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
   end  
   
   test "should use init value for independant variables" do
+    skip "Apache Thrift not installed" unless thrift?
     var = variables(:varx1_out)
     zippath = Tempfile.new('test_mda_file.zip')
     File.open(zippath, 'w') do |f|
@@ -162,6 +181,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
   end
   
   test "should generate nested group for nested mda" do
+    skip "Apache Thrift not installed" unless thrift?
     mda = analyses(:outermda)
     ogen = WhatsOpt::OpenmdaoGenerator.new(mda)
     Dir.mktmpdir do |dir|

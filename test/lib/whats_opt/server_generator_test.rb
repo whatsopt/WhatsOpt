@@ -2,8 +2,13 @@ require 'test_helper'
 require 'whats_opt/server_generator'
 require 'tmpdir'
 require 'pathname'
+require 'mkmf'
 
 class ServerGeneratorTest < ActiveSupport::TestCase
+
+  def thrift?
+    found ||= find_executable("thrift")
+  end
 
   def setup
     @mda = analyses(:cicav)
@@ -11,6 +16,7 @@ class ServerGeneratorTest < ActiveSupport::TestCase
   end
 
   test "should generate server code for an analysis" do
+    skip "Apache Thrift not installed" unless thrift?
     Dir.mktmpdir do |dir|
       filepath = @sgen._generate_code dir
       assert File.exists?(filepath)
@@ -18,6 +24,7 @@ class ServerGeneratorTest < ActiveSupport::TestCase
   end
   
   test "should use thrift command to generate thrift code" do
+    skip "Apache Thrift not installed" unless thrift?
     Dir.mktmpdir do |dir|
       ok, log = @sgen._generate_with_thrift(dir)
       assert ok
@@ -25,6 +32,7 @@ class ServerGeneratorTest < ActiveSupport::TestCase
   end
   
   test "should maintain a list of generated filepaths" do
+    skip "Apache Thrift not installed" unless thrift?
     Dir.mktmpdir do |dir|
       @sgen._generate_code dir
       rootdir = Pathname.new(dir)
@@ -39,6 +47,7 @@ class ServerGeneratorTest < ActiveSupport::TestCase
   end 
   
   test "should generate server as zip content" do
+    skip "Apache Thrift not installed" unless thrift?
     zippath = File.new('/tmp/test_mda_file.zip', 'w')
     File.open(zippath, 'w') do |f|
       content, _ = @sgen.generate

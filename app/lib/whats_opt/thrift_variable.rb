@@ -9,11 +9,17 @@ module WhatsOpt
     class ThriftUnrecognizedTypeError < StandardError
     end
     
+    def thrift_name
+      self.name
+        .gsub('-', '__HYPHEN__')
+        .gsub(':', '__COLON__')
+    end
+
     def thrift_type
       case self.ndim
       when 0
         (self.type == INTEGER_T)?"Integer":"Float"
-      when 1
+      when 1 
         (self.type == INTEGER_T)?"IVector":"Vector"
       when 2
         (self.type == INTEGER_T)?"IMatrix":"Matrix"
