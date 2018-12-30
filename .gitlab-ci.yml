@@ -1,4 +1,4 @@
-image: "ruby:2.3"
+image: "ruby:2.5"
 
 before_script:
   - git submodule sync --recursive
@@ -9,11 +9,12 @@ before_script:
   - ./miniconda.sh -b -p $HOME/miniconda
   - export PATH=$HOME/miniconda/bin:$PATH
   - conda update --yes conda
-  - conda create --yes -n condaenv python=2.7
+  - conda create --yes -n condaenv python=3.6
   - conda install --yes -n condaenv pip
   - source activate condaenv
-  - conda install -c conda-forge --yes scikit-learn scipy python=2.7 pip jupyter
-  - pip install openmdao==2.2.0
+  - conda install -c conda-forge --yes scikit-learn scipy python=3.6 pip jupyter
+  - pip install thrift==0.11.0
+  - pip install openmdao==2.4.0
   - curl -sL https://deb.nodesource.com/setup_6.x | bash -
   - apt-get install -y nodejs
   - node --version
@@ -22,7 +23,7 @@ before_script:
   - yarn --version
   - ruby -v
   - which ruby
-  - gem install bundler --no-ri --no-rdoc 
+  - gem install bundler --no-rdoc 
   - bundle install --jobs $(nproc)  "${FLAGS[@]}"
   - yarn
 
