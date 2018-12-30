@@ -6,14 +6,14 @@ from .<%= @mda.py_modulename %>.ttypes import *
 # <%= disc.py_classname %> 
 def to_openmdao_<%= disc.basename%>_inputs(ins, inputs={}):
     <% disc.input_variables.active.numeric.each do |var| %>
-    inputs['<%= var.name %>'] = np.array(ins.<%= var.name %>)<% end %>
+    inputs['<%= var.name %>'] = np.array(ins.<%= var.thrift_name %>)<% end %>
     return inputs
 
 def to_thrift_<%= disc.basename%>_input(inputs):
     ins = <%= disc.camelname%>Input()
     <% disc.input_variables.active.numeric.each do |var| %>
     <% if var.ndim > 0 %>
-    ins.<%= var.name %> = inputs['<%= var.name %>'].tolist()
+    ins.<%= var.name %> = inputs['<%= var.thrift_name %>'].tolist()
     <% else %>
     ins.<%= var.name %> = <%= var.type=="Integer"?"int":"float"%>(inputs['<%= var.name %>'])
     <% end %><% end %>

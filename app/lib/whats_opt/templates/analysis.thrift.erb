@@ -14,13 +14,13 @@ typedef list<ICube> IHyperCube
 <% @mda.all_plain_disciplines.each do |disc| -%>
 struct <%= disc.camelname %>Input {
 <% disc.input_variables.active.numeric.each_with_index do |var, i| -%>
-    <%= "#{i+1}: #{var.thrift_type} #{var.name}" %>      
+    <%= "#{i+1}: #{var.thrift_type} #{var.thrift_name}" %>      
 <% end -%>
 }
 
 struct <%= disc.camelname %>Output {
 <% disc.output_variables.active.numeric.each_with_index do |var, i| -%>
-    <%= "#{i+1}: #{var.thrift_type} #{var.name}" %>     
+    <%= "#{i+1}: #{var.thrift_type} #{var.thrift_name}" %>     
 <% end -%>
 }
 <% end -%>

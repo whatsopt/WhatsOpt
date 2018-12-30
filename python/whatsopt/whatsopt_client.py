@@ -328,6 +328,8 @@ class WhatsOpt(object):
                 # do not represent IndepVarComp
                 if not isinstance(system._subsystems_myproc[i], IndepVarComp):
                     self.discmap[group_prefix+child['name']] = child['name']
+                else:
+                    self.discmap[group_prefix+child['name']] = '__DRIVER__'
 
                 for typ in ['input', 'output']:
                     for abs_name in system._var_abs_names[typ]:
@@ -379,32 +381,32 @@ class WhatsOpt(object):
                     discname = group_prefix+child['name']
                     discattrs = self._get_discipline_attributes(driver_attrs, mda, discname)
 
-                    self._set_varattrs_from_outputs(group._var_abs2prom['output'], 'out',
+                    self._set_varattrs_from_outputs(group._subsystems_myproc[i]._var_abs2prom['output'], 'out',
                                                     discattrs['variables_attributes'])
-                    # add varattrs for global outputs
-                    # for absname, varname in iteritems(group._var_abs2prom['output']):
-                    #     if varname not in [varattr['name'] for varattr in discattrs['variables_attributes']]:
-                    #         var = self.vars[absname] 
-                    #         vattr = {'name': var['name'], 'io_mode': 'out', 'desc': self.vardescs[varname],
-                    #                 'type':var['type'], 'shape':var['shape'], 'units':var['units']}
-                    #         discattrs['variables_attributes'].append(vattr)
 
                     mda_attrs['disciplines_attributes'].append(discattrs)
+                else:
+                    self._set_varattrs_from_outputs(group._subsystems_myproc[i]._var_abs2prom['output'], 
+                                                    'out', driver_attrs['variables_attributes'])
+
+        self._set_varattrs_from_outputs(group._var_abs2prom['output'], 'in', 
+                                        driver_attrs['variables_attributes'])
 
         # remove fullname in driver varattrs
         for vattr in driver_attrs['variables_attributes']:
             vattr['desc'] = self.vardescs[vattr['name']]
-            del vattr['fullname'] # indeed for WhatsOpt var name is a primary key
+            if vattr['io_mode']=='out':  # set init value for design variables and parameters (outputs of driver)
+                v = self.vars[vattr['fullname']]
+                vattr['parameter_attributes'] = {'init': self._simple_value(v)}
+            if 'fullname' in vattr:
+                del vattr['fullname'] # indeed for WhatsOpt var name is a primary key
 
-        self._set_varattrs_from_outputs(group._var_abs2prom['output'], 'in', 
-                                        driver_attrs['variables_attributes'])
-        # add varattrs for global outputs
-        # for absname, varname in iteritems(group._var_abs2prom['output']):
-        #     if varname not in [varattr['name'] for varattr in driver_attrs['variables_attributes']]:
-        #         var = self.vars[absname] 
-        #         vattr = {'name': varname, 'io_mode': 'in', 'desc': self.vardescs[varname],
-        #                 'type':var['type'], 'shape':var['shape'], 'units':var['units']}
-        #         driver_attrs['variables_attributes'].append(vattr)
+        for discattr in mda_attrs['disciplines_attributes']:
+            if 'variables_attributes' in discattr:
+                for vattr in discattr['variables_attributes']:
+                    if 'fullname' in vattr:
+                        del vattr['fullname'] # indeed for WhatsOpt var name is a primary key
+
 
         return mda_attrs
 
@@ -424,7 +426,8 @@ class WhatsOpt(object):
             self._get_varattr_from_connection(varattrs, driver_varattrs, mda, dname, conn)
         for vattr in varattrs:
             vattr['desc'] = self.vardescs[vattr['name']]
-            del vattr['fullname'] # indeed for WhatsOpt var name is a primary key
+            if 'fullname' in vattr:
+                del vattr['fullname'] # indeed for WhatsOpt var name is a primary key
         return varattrs
             
     def _get_varattr_from_connection(self, varattrs, driver_varattrs, mda, dname, connection):
@@ -433,35 +436,33 @@ class WhatsOpt(object):
         fnametgt = connection['tgt']
         mdatgt, disctgt, vartgt = WhatsOpt._extract_disc_var(fnametgt)
         if DEBUG:
-            print('++++', mda, dname)
-            print('#########', mdasrc, discsrc, mdatgt, disctgt)
+            print('++++ MDA=%s DISC=%s' % (mda, dname))
+            print('######### SRC=%s DISCSRC=%s TGT=%s DISCTGT=%s' % (mdasrc, discsrc, mdatgt, disctgt))
             
         varstoadd = []
-        if mda == mdasrc:
-            if discsrc == dname:
-                varattrsrc = {'name':varsrc, 'fullname': fnamesrc, 'io_mode': 'out',
-                              'type':self.vars[fnamesrc]['type'], 'shape':self.vars[fnamesrc]['shape'], 
-                              'units':self.vars[fnamesrc]['units']}
-                varstoadd.append((discsrc, varattrsrc, "source"))
-        if ((mda == '' and mdasrc == '') or mda not in discsrc) and mda == mdatgt:
-            discsrc = NULL_DRIVER_NAME
+        if mda == mdasrc and discsrc == dname:
             varattrsrc = {'name':varsrc, 'fullname': fnamesrc, 'io_mode': 'out',
-                            'type':self.vars[fnametgt]['type'], 'shape':self.vars[fnametgt]['shape'], 
-                            'units':self.vars[fnametgt]['units']}
+                            'type':self.vars[fnamesrc]['type'], 'shape':self.vars[fnamesrc]['shape'], 
+                            'units':self.vars[fnamesrc]['units']}
             varstoadd.append((discsrc, varattrsrc, "source"))
-
-        if mda == mdatgt:
-            if disctgt == dname:
-                varattrtgt = {'name':vartgt, 'fullname': fnametgt, 'io_mode': 'in',
+            if (mda != '' and mda not in mdatgt):
+                discsrc = NULL_DRIVER_NAME
+                varattrsrc = {'name':varsrc, 'fullname': fnamesrc, 'io_mode': 'in',
                               'type':self.vars[fnametgt]['type'], 'shape':self.vars[fnametgt]['shape'], 
                               'units':self.vars[fnametgt]['units']}
-                varstoadd.append((disctgt, varattrtgt, "target"))
-        if ((mda == ''and mdatgt == '') or mda not in disctgt) and mda == mdasrc:
-            disctgt = NULL_DRIVER_NAME
+                varstoadd.append((discsrc, varattrsrc, "source"))
+
+        if mda == mdatgt and disctgt == dname:
             varattrtgt = {'name':vartgt, 'fullname': fnametgt, 'io_mode': 'in',
-                          'type':self.vars[fnamesrc]['type'], 'shape':self.vars[fnamesrc]['shape'], 
-                          'units':self.vars[fnamesrc]['units']}
+                          'type':self.vars[fnametgt]['type'], 'shape':self.vars[fnametgt]['shape'], 
+                          'units':self.vars[fnametgt]['units']}
             varstoadd.append((disctgt, varattrtgt, "target"))
+            if (mda != '' and mda not in mdasrc):
+                disctgt = NULL_DRIVER_NAME
+                varattrtgt = {'name':vartgt, 'fullname': fnametgt, 'io_mode': 'out',
+                              'type':self.vars[fnamesrc]['type'], 'shape':self.vars[fnamesrc]['shape'], 
+                              'units':self.vars[fnamesrc]['units']}
+                varstoadd.append((disctgt, varattrtgt, "target"))
 
         for disc, varattr, orig in varstoadd:
             if DEBUG:
@@ -476,15 +477,12 @@ class WhatsOpt(object):
                     if DEBUG:
                         print(">>>>>>>>>>>>> from", orig ," ADD to ", mda, "__DRIVER__ :", varattr['name'], varattr['io_mode']) 
                     driver_varattrs.append(varattr)
-                    if varattr['io_mode']=='out':  # set init value for design variables and parameters (outputs of driver)
-                        v = self.vars[fnamesrc]
-                        varattr['parameter_attributes'] = {'init': self._simple_value(v)}
 
     def _set_varattrs_from_outputs(self, outputs, io_mode, varattrs):
         for absname, varname in iteritems(outputs):
             if varname not in [varattr['name'] for varattr in varattrs]:
                 var = self.vars[absname] 
-                vattr = {'name': varname, 'io_mode': io_mode, 'desc': self.vardescs[varname],
+                vattr = {'name': varname, 'fullname': absname, 'io_mode': io_mode, 'desc': self.vardescs[varname],
                         'type':var['type'], 'shape':var['shape'], 'units':var['units']}
                 varattrs.append(vattr)
 
