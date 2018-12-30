@@ -23,7 +23,7 @@ before_script:
   - yarn --version
   - ruby -v
   - which ruby
-  - gem install bundler --no-rdoc 
+  - gem install bundler 
   - bundle install --jobs $(nproc)  "${FLAGS[@]}"
   - yarn
 
