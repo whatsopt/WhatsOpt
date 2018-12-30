@@ -47,7 +47,7 @@ class Discipline < ApplicationRecord
     !has_sub_analysis?
   end
 
-  def path
+  def namespace
     unless self.has_sub_analysis?
       self.analysis.path
     else

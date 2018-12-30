@@ -19,11 +19,14 @@ module WhatsOpt
       @sqlite_filename = 'cases.sqlite'
       @driver_name = driver_name.to_sym if driver_name
       @driver_options = driver_options
+      @root_modulepath = nil
     end
                     
-    def check_mda_setup
+    def check_mda_setup(root_modulename: nil)
       ok, lines = false, []
+      WhatsOpt::OpenmdaoModule.root_modulename = root_modulename
       Dir.mktmpdir("check_#{@mda.basename}_") do |dir|
+        dir='/tmp'
         begin
           _generate_code dir
         rescue ServerGenerator::ThriftError => e
@@ -112,7 +115,8 @@ module WhatsOpt
 
     def _generate_main(gendir, only_base)
       _generate(@mda.py_filename, 'openmdao_main.py.erb', gendir) unless only_base
-      _generate(@mda.py_basefilename, 'openmdao_main_base.py.erb', gendir)
+      _generate(@mda.py_basefilename, 'openmdao_main_base.py.erb', gendir)      
+      _generate('__init__.py', '__init__.py.erb', gendir)
     end    
        
     def _generate_run_scripts(gendir, sqlite_filename=nil)

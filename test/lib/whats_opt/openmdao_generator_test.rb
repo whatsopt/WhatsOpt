@@ -39,7 +39,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
       @ogen._generate_code dir
       dirpath = Pathname.new(dir)
       basenames = @ogen.genfiles.map{|f| Pathname.new(f).relative_path_from(dirpath).to_s }.sort
-      expected = (["aerodynamics.py", "aerodynamics_base.py", "cicav.py", 
+      expected = (["__init__.py", "aerodynamics.py", "aerodynamics_base.py", "cicav.py", 
                   "cicav_base.py", "geometry.py", "geometry_base.py", "propulsion.py", "propulsion_base.py",
                   "run_analysis.py", "run_doe.py", "run_optimization.py", 
                   "run_screening.py"] + ['run_server.py', 
@@ -77,7 +77,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     assert File.exists?(zippath)
     Zip::File.open(zippath) do |zip|
       zip.each do |entry|
-        assert_match /_base\.py|run_\w+\.py|server/, entry.name
+        assert_match /__init__.py|_base\.py|run_\w+\.py|server/, entry.name
       end
     end
   end 
@@ -188,7 +188,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
       ogen._generate_code dir
       dirpath = Pathname.new(dir)
       basenames = ogen.genfiles.map{|f| Pathname.new(f).relative_path_from(dirpath).to_s }.sort
-      expected = (["disc.py", "disc_base.py", "inner/inner.py", "inner/inner_base.py", "inner/plain_discipline.py", 
+      expected = (["__init__.py", "disc.py", "disc_base.py", "inner/__init__.py", "inner/inner.py", "inner/inner_base.py", "inner/plain_discipline.py", 
         "inner/plain_discipline_base.py", "inner/run_analysis.py", "inner/run_doe.py", "inner/run_optimization.py", 
         "inner/run_screening.py", "inner/run_server.py", "inner/server/__init__.py", "inner/server/analysis.thrift", 
         "inner/server/inner/Inner-remote", "inner/server/inner/Inner.py", "inner/server/inner/__init__.py", 

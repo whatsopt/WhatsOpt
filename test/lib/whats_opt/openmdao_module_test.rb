@@ -1,24 +1,57 @@
 require 'test_helper'
 
+class FakeNamespace < Struct.new(:name)
+  include WhatsOpt::OpenmdaoModule
+end
+
 class FakeOpenmdaoModule < Struct.new(:name)
   include WhatsOpt::OpenmdaoModule
+
+  def namespace
+    [FakeNamespace.new("module1"), FakeNamespace.new("module2")]
+  end
+end
+
+class FakeAnalysis < Struct.new(:name)
+  include WhatsOpt::OpenmdaoModule
+
+  def namespace
+    [FakeNamespace.new("module1"), FakeNamespace.new("module2")]
+  end
 end
 
 class OpenmdaoMappingTest < ActiveSupport::TestCase
   
-  def test_should_have_a_valid_py_classname_even_with_space_in_name
+  test "should have a valid py classname even with space in name" do
     @module = FakeOpenmdaoModule.new('PRF CICAV')
     assert_equal 'PrfCicav', @module.py_classname
   end
   
-  def test_should_have_a_valid_py_modulename
+  test "should have a valid py modulename" do
     @module = FakeOpenmdaoModule.new('PRF CICAV')
     assert_equal 'prf_cicav', @module.py_modulename
   end
 
-  def test_should_have_a_camelname
+  test "should have a camelname" do
     @module = FakeOpenmdaoModule.new('PRF CICAV')
     assert_equal 'PrfCicav', @module.camelname
   end
   
+  test "should modify modulename regarding root_modulename for disc" do
+    @module = FakeOpenmdaoModule.new('Disc')
+    WhatsOpt::OpenmdaoModule.root_modulename = "module1"
+    assert_equal "module2.disc", @module.py_full_modulename
+    WhatsOpt::OpenmdaoModule.root_modulename = "module2"
+    assert_equal "disc", @module.py_full_modulename    
+  end
+
+  test "should modify modulename regarding root_modulename for analysis" do
+    @module = FakeAnalysis.new('Analysis')
+    WhatsOpt::OpenmdaoModule.root_modulename = "module1"
+    assert_equal "module2.analysis", @module.py_full_modulename
+    WhatsOpt::OpenmdaoModule.root_modulename = "module2"
+    assert_equal "analysis", @module.py_full_modulename  
+  end
+
+
 end
