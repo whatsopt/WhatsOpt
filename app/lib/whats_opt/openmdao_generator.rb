@@ -22,9 +22,9 @@ module WhatsOpt
       @root_modulepath = nil
     end
                     
-    def check_mda_setup(root_modulename: nil)
+    def check_mda_setup
       ok, lines = false, []
-      WhatsOpt::OpenmdaoModule.root_modulename = root_modulename
+      @mda.set_as_root_module
       Dir.mktmpdir("check_#{@mda.basename}_") do |dir|
         dir='/tmp'
         begin
@@ -37,6 +37,7 @@ module WhatsOpt
           lines = log.lines.map(&:chomp)
         end     
       end
+      @mda.unset_root_module
       return ok, lines
     end
              
@@ -107,7 +108,7 @@ module WhatsOpt
     def _generate_sub_analysis(super_discipline, gendir, only_base=true, sqlite_filename=nil)
       mda = super_discipline.sub_analysis
       sub_ogen = OpenmdaoGenerator.new(mda, @server_host, @driver_name, @driver_options)
-      gendir = File.join(gendir, mda.name.downcase)
+      gendir = File.join(gendir, mda.basename)
       Dir.mkdir(gendir) unless Dir.exists?(gendir)
       sub_ogen._generate_code(gendir, only_base: only_base, sqlite_filename: sqlite_filename)
       @genfiles += sub_ogen.genfiles

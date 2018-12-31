@@ -12,22 +12,22 @@ typedef list<Cube> HyperCube
 typedef list<ICube> IHyperCube
 
 <% @mda.all_plain_disciplines.each do |disc| -%>
-struct <%= disc.camelname %>Input {
+struct <%= disc.camel_modulename %>Input {
 <% disc.input_variables.active.numeric.each_with_index do |var, i| -%>
     <%= "#{i+1}: #{var.thrift_type} #{var.thrift_name}" %>      
 <% end -%>
 }
 
-struct <%= disc.camelname %>Output {
+struct <%= disc.camel_modulename %>Output {
 <% disc.output_variables.active.numeric.each_with_index do |var, i| -%>
     <%= "#{i+1}: #{var.thrift_type} #{var.thrift_name}" %>     
 <% end -%>
 }
 <% end -%>
 
-service <%= @mda.camelname %> {
+service <%= @mda.camel_modulename %> {
 <% @mda.all_plain_disciplines.each do |disc| -%>
-    <%= disc.camelname %>Output compute_<%= disc.basename %>(1:<%= disc.camelname %>Input input)
+    <%= disc.camel_modulename %>Output compute_<%= disc.snake_modulename %>(1:<%= disc.camel_modulename %>Input input)
 <% end -%>
 
     void ping()

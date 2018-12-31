@@ -42,10 +42,6 @@ class Analysis < ApplicationRecord
     self.disciplines.driver
   end
 
-  def namespace 
-    self.ancestors
-  end
-
   def is_sub_analysis?
     self.has_parent?
   end
@@ -108,7 +104,7 @@ class Analysis < ApplicationRecord
   end
 
   def all_plain_disciplines
-    self.children.inject(self.plain_disciplines){|ary, elt| ary + elt.plain_disciplines} 
+    self.children.inject(self.plain_disciplines){|ary, elt| ary + elt.all_plain_disciplines} 
   end
   
   def attachment_exists?

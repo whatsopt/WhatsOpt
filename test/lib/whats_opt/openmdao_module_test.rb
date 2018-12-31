@@ -1,57 +1,54 @@
 require 'test_helper'
 
-class FakeNamespace < Struct.new(:name)
+class FakeOpenmdaoModule < Struct.new(:name)  
   include WhatsOpt::OpenmdaoModule
-end
-
-class FakeOpenmdaoModule < Struct.new(:name)
-  include WhatsOpt::OpenmdaoModule
-
-  def namespace
-    [FakeNamespace.new("module1"), FakeNamespace.new("module2")]
-  end
-end
-
-class FakeAnalysis < Struct.new(:name)
-  include WhatsOpt::OpenmdaoModule
-
-  def namespace
-    [FakeNamespace.new("module1"), FakeNamespace.new("module2")]
-  end
 end
 
 class OpenmdaoMappingTest < ActiveSupport::TestCase
   
-  test "should have a valid py classname even with space in name" do
+  setup do
     @module = FakeOpenmdaoModule.new('PRF CICAV')
+  end
+
+  test "should have a valid py classname even with space in name" do
     assert_equal 'PrfCicav', @module.py_classname
   end
   
   test "should have a valid py modulename" do
-    @module = FakeOpenmdaoModule.new('PRF CICAV')
     assert_equal 'prf_cicav', @module.py_modulename
   end
 
   test "should have a camelname" do
-    @module = FakeOpenmdaoModule.new('PRF CICAV')
     assert_equal 'PrfCicav', @module.camelname
   end
   
-  test "should modify modulename regarding root_modulename for disc" do
-    @module = FakeOpenmdaoModule.new('Disc')
-    WhatsOpt::OpenmdaoModule.root_modulename = "module1"
-    assert_equal "module2.disc", @module.py_full_modulename
-    WhatsOpt::OpenmdaoModule.root_modulename = "module2"
-    assert_equal "disc", @module.py_full_modulename    
+  test "should modify modulename regarding root_modulename" do
+    @outer = analyses(:outermda)
+    assert_equal "outer", @outer.py_full_modulename
+    @outer_disc = disciplines(:outermda_discipline)
+    assert_equal "disc", @outer_disc.py_full_modulename    
+    @inner = analyses(:innermda)
+    assert_equal "inner.inner", @inner.py_full_modulename
+    @inner_disc = disciplines(:innermda_discipline)
+    assert_equal "inner.plain_discipline", @inner_disc.py_full_modulename    
+    @outer.set_as_root_module 
+    assert_equal "outer", @outer.py_full_modulename
+    assert_equal "inner.inner", @inner.py_full_modulename
+    assert_equal "inner.plain_discipline", @inner_disc.py_full_modulename    
+    @inner.set_as_root_module 
+    assert_equal "outer", @outer.py_full_modulename
+    assert_equal "inner", @inner.py_full_modulename
+    assert_equal "plain_discipline", @inner_disc.py_full_modulename    
   end
 
-  test "should modify modulename regarding root_modulename for analysis" do
-    @module = FakeAnalysis.new('Analysis')
-    WhatsOpt::OpenmdaoModule.root_modulename = "module1"
-    assert_equal "module2.analysis", @module.py_full_modulename
-    WhatsOpt::OpenmdaoModule.root_modulename = "module2"
-    assert_equal "analysis", @module.py_full_modulename  
+  test "should have a snake module name" do
+    @inner_disc = disciplines(:innermda_discipline)
+    assert_equal "inner_plain_discipline", @inner_disc.snake_modulename
   end
 
+  test "should have a camel module name" do
+    @inner_disc = disciplines(:innermda_discipline)
+    assert_equal "InnerPlainDiscipline", @inner_disc.camel_modulename
+  end
 
 end

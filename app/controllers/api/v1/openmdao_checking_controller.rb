@@ -7,7 +7,7 @@ class Api::V1::OpenmdaoCheckingController < Api::ApiController
     mda = Analysis.find(params[:mda_id])
     authorize mda
     ogen = WhatsOpt::OpenmdaoGenerator.new(mda)
-    status, lines = ogen.check_mda_setup(root_modulename: mda.py_modulename) 
+    status, lines = ogen.check_mda_setup 
     render json: {statusOk: status, log: lines}
   end
   

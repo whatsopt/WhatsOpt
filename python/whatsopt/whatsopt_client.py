@@ -345,9 +345,7 @@ class WhatsOpt(object):
                         vtype = 'Float'
                         if re.match('int', type(meta['value']).__name__):
                             vtype = 'Integer' 
-                        shape = str(meta['shape'])
-                        if shape=='(1,)':
-                            shape='1'
+                        shape = WhatsOpt._format_shape(str(meta['shape']))
                         name = system._var_abs2prom[typ][abs_name]
                         self.vars[abs_name] = {'fullname': abs_name,
                                                 'name': name,
@@ -363,7 +361,14 @@ class WhatsOpt(object):
                             self.vardescs[name] = meta['desc'] 
                         elif desc!=meta['desc'] and meta['desc']!='':
                             print('Find another description for {}: "{}", keep "{}"'.format(name, meta['desc'], self.vardescs[name]))
-    
+
+    @staticmethod
+    def _format_shape(shape):
+        shape = shape.replace("L", "")  # with py27 we can get (1L,)
+        if shape=='(1,)':
+            shape='1'
+        return shape
+
     def _get_mda_attributes(self, group, tree, group_prefix=''):
         driver_attrs = {'name': NULL_DRIVER_NAME, 'variables_attributes': []}
         mda_attrs = {'name': group.__class__.__name__, 'disciplines_attributes': [driver_attrs]}
@@ -410,14 +415,19 @@ class WhatsOpt(object):
 
         return mda_attrs
 
+    @staticmethod
+    def _to_camelcase(name):
+        return re.sub(r'(?:^|_)(\w)', lambda x: x.group(1).upper(), name)
+
     def _get_sub_analysis_attributes(self, group, child, prefix):
         submda_attrs = self._get_mda_attributes(group, child, prefix)
+        submda_attrs['name'] = WhatsOpt._to_camelcase(child['name'])
         superdisc_attrs = {'name': child['name'], 'sub_analysis_attributes': submda_attrs}
         return superdisc_attrs
 
     def _get_discipline_attributes(self, driver_attrs, mda, dname):
         varattrs = self._get_variables_attrs(driver_attrs['variables_attributes'], mda, dname)
-        discattrs = {'name': self.discmap[dname], 'variables_attributes': varattrs}
+        discattrs = {'name': WhatsOpt._to_camelcase(self.discmap[dname]), 'variables_attributes': varattrs}
         return discattrs
 
     def _get_variables_attrs(self, driver_varattrs, mda, dname):
