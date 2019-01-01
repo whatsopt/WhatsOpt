@@ -8,7 +8,7 @@ class AnalysisDiscipline < ApplicationRecord
     disc.type = :mda 
     disc.name = innermda.name
     mda_discipline = disc.build_analysis_discipline
-    mda_discipline.analysis = innermda
+    mda_discipline.analysis = innermda 
     innermda.parent = disc.analysis
     mda_discipline
   end

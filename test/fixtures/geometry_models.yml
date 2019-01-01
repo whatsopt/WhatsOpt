@@ -1,7 +1,5 @@
-# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
-
-one:
+gm_one:
   title: MyGeoModel
 
-two:
+gm_two:
   title: MyString

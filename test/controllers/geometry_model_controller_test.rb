@@ -22,7 +22,7 @@ class GeometryModelControllerTest < ActionDispatch::IntegrationTest
     assert_difference('GeometryModel.count') do
       post geometry_models_url, params: { geometry_model: {title: "Test", attachment_attributes: { data: @gm }} }
     end
-    assert GeometryModel.last.owner, users(:user1)  
+    assert_equal GeometryModel.last.owner, users(:user1)  
   end
   
   test "should not destroy geometry model, if not owner" do

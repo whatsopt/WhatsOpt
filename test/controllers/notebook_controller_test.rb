@@ -17,7 +17,7 @@ class NotebookControllerTest < ActionDispatch::IntegrationTest
     assert_difference('Notebook.count') do
       post notebooks_url, params: { notebook: {title: "Test", attachment_attributes: { data: @nb }} }
     end
-    assert Notebook.last.owner, users(:user1)  
+    assert_equal Notebook.last.owner, users(:user1)  
   end
   
   test "should not destroy notebook, if not owner" do

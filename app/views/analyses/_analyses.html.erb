@@ -18,7 +18,7 @@
       <tr>
         <td>#<%= mda.id %></td>
         <td><%= link_to_analysis_if_authorized(mda, current_user) %></td>
-        <td><%= mda.owner %></td>
+        <td><%= mda.owner.login %></td>
         <td>
           <% unless mda.public %>
             <i class="fa fa-lock"></i>

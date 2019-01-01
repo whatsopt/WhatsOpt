@@ -6,6 +6,7 @@ require 'whats_opt/openmdao_module'
 class Analysis < ApplicationRecord
 
   include WhatsOpt::OpenmdaoModule
+  include Ownable
 
   resourcify
   
@@ -168,11 +169,6 @@ class Analysis < ApplicationRecord
     }
     tree = res.inject({}) {|result, h| result.update(h)}
     tree
-  end
-  
-  def owner
-    owners = User.with_role_for_instance(:owner, self)
-    owners.take&.login
   end
   
   def refresh_connections

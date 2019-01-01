@@ -8,6 +8,7 @@ class OpenmdaoMappingTest < ActiveSupport::TestCase
   
   setup do
     @module = FakeOpenmdaoModule.new('PRF CICAV')
+    @module.unset_root_module
   end
 
   test "should have a valid py classname even with space in name" do

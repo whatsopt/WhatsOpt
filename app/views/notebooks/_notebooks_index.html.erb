@@ -14,7 +14,7 @@
   <% notebooks.each do |notebook| %>
     <tr>
       <td><%= link_to notebook.title, notebook_path(notebook) %></td>
-      <td><%= notebook.owner %></td>
+      <td><%= notebook.owner.login %></td>
       <td><%= time_ago_in_words(notebook.created_at) %> ago</td>
       <td><%= time_ago_in_words(notebook.updated_at) %> ago</td>
       <td>

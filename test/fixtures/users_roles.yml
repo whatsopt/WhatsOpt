@@ -25,4 +25,15 @@ users_roles7:
 users_roles8:
   user: user3 
   role: member_cicav_mda_role
-  
+
+users_roles9:
+  user: user1
+  role: owner_notebook_one
+
+users_roles10:
+  user: user1
+  role: owner_gm_one
+
+users_roles11:
+  user: user2
+  role: owner_gm_two

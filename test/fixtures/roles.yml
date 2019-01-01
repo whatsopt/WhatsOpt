@@ -24,3 +24,15 @@ owner_dummy_mda_role:
 member_cicav_mda_role:
   name: :member
   resource: cicav (Analysis)
+
+owner_notebook_one:
+  name: :owner
+  resource: notebook_one (Notebook)
+
+owner_gm_one:
+  name: :owner
+  resource: gm_one (GeometryModel)
+
+owner_gm_two:
+  name: :owner
+  resource: gm_two (GeometryModel)

@@ -2,7 +2,7 @@ require 'test_helper'
 
 class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
   setup do
-    user1 = users(:user1)
+    @user1 = users(:user1)
     @auth_headers = {"Authorization" => "Token " + TEST_API_KEY}
     @mda = analyses(:cicav)
     @mda2 = analyses(:fast)
@@ -64,7 +64,7 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     assert_equal @mda.disciplines.count, resp['nodes'].size
   end
 
-  test "toto should create nested analysis" do
+  test "should create nested analysis" do
     assert_difference('Discipline.count', 4) do
       assert_difference('Analysis.count', 2) do
       mda_attrs = 
@@ -102,6 +102,8 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     assert_equal 2, Connection.of_analysis(outer).count
     assert_equal 2, Connection.of_analysis(inner).count
     assert_equal outer.id, inner.parent.id
+    assert_equal @user1, outer.owner
+    assert_equal @user1, inner.owner
   end
     
   test "should create sellar optim analysis" do
@@ -111,6 +113,8 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     inner = Analysis.find_by_name('Sellar')
     outer = Analysis.find_by_name('SellarOptim')
     assert_equal outer.id, inner.parent.id
+    assert_equal @user1, outer.owner
+    assert_equal @user1, inner.owner
   end
 
 end
