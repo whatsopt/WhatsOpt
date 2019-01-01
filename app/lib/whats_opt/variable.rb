@@ -26,13 +26,13 @@ module WhatsOpt
       @dim ||=  case self.shape
                 when /\A1\z/
                   1
-                when /\A\((\d+)L?,\)\z/ 
+                when /\A\((\d+),\)\z/ 
                   $1.to_i
-                when /\A\((\d+)L?, (\d+)L?\)\z/
+                when /\A\((\d+), (\d+)\)\z/
                   $1.to_i * $2.to_i
-                when /\A\((\d+)L?, (\d+)L?, (\d+)L?\)\z/
+                when /\A\((\d+), (\d+), (\d+)\)\z/
                   $1.to_i * $2.to_i * $3.to_i
-                when /\A\((\d+)L?, (\d+)L?, (\d+)L?, (\d+)L?\)\z/
+                when /\A\((\d+), (\d+), (\d+), (\d+)\)\z/
                   $1.to_i * $2.to_i * $3.to_i * $4.to_i
                 else
                   raise BadShapeAttributeError.new("should be either 1, (n,), (n, m), (n, m, p) or (n, m, p, q) but found #{self.shape} for variable #{self.name}")
@@ -43,13 +43,13 @@ module WhatsOpt
       @ndim ||=  case self.shape
                 when /\A1\z/
                   0
-                when /\A\((\d+)L?,\)\z/ 
+                when /\A\((\d+),\)\z/ 
                   1
-                when /\A\((\d+)L?, (\d+)L?\)\z/
+                when /\A\((\d+), (\d+)\)\z/
                   2
-                when /\A\((\d+)L?, (\d+)L?, (\d+)L?\)\z/
+                when /\A\((\d+), (\d+), (\d+)\)\z/
                   3
-                when /\A\((\d+)L?, (\d+)L?, (\d+)L?, (\d+)L?\)\z/
+                when /\A\((\d+), (\d+), (\d+), (\d+)\)\z/
                   4
                 else
                   raise BadShapeAttributeError.new("should be either 1, (n,), (n, m), (n, m, p) or (n, m, p, q) but found #{self.shape}")
