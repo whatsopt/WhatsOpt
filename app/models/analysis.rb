@@ -20,14 +20,15 @@ class Analysis < ApplicationRecord
   validates_associated :attachment
   
   has_many :disciplines, -> { includes(:variables).order(position: :asc) }, :dependent => :destroy
+  accepts_nested_attributes_for :disciplines, 
+    reject_if: proc { |attr| attr['name'].blank? }, allow_destroy: true
+
   has_one :analysis_discipline, :dependent => :destroy
   has_one :super_discipline, through: :analysis_discipline, source: :discipline
 
   has_many :operations, :dependent => :destroy 
-    
-  accepts_nested_attributes_for :disciplines, 
-    reject_if: proc { |attr| attr['name'].blank? }, allow_destroy: true
-      
+
+
   before_validation(on: :create) do
     _create_from_attachment if attachment_exists?
   end
@@ -193,6 +194,15 @@ class Analysis < ApplicationRecord
     end
   end
   
+  def update!(mda_params)
+    super
+    if mda_params.key? :public
+      self.descendants.each do |inner|
+        inner.update_column(:public, mda_params[:public])
+      end
+    end
+  end
+
   def create_connections!(from_disc, to_disc, names, sub_analysis_check=true)
     Analysis.transaction do
       names.each do |name|

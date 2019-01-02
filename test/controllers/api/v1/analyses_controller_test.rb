@@ -117,4 +117,15 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     assert_equal @user1, inner.owner
   end
 
+  test "should update descendants attributes" do
+    @outer = analyses(:outermda)
+    public = true
+    patch api_v1_mda_url(@outer), params: {analysis: {public: public}}, as: :json, headers: @auth_headers
+    @inner = analyses(:innermda)
+    assert_equal public, @inner.public
+    public = false
+    patch api_v1_mda_url(@outer), params: {analysis: {public: public}}, as: :json, headers: @auth_headers
+    assert_equal public, @inner.reload.public
+  end
+    
 end

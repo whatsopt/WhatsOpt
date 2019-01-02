@@ -22,7 +22,7 @@ class Api::V1::AnalysesController < Api::ApiController
     @mda = Analysis.new(mda_params)
     authorize @mda
     @mda.save!
-    set_ownership!(@mda)
+    @mda.set_owner(current_user)
     json_response @mda, :created
   end
 
@@ -32,13 +32,7 @@ class Api::V1::AnalysesController < Api::ApiController
     head :no_content
   end
   
-  private
-
-    def set_ownership!(mda)
-      current_user.add_role(:owner, mda)
-      @mda.descendants.each {|mda| current_user.add_role(:owner, mda)}
-      current_user.save!
-    end
+  protected
 
     def set_mda
       @mda = Analysis.find(params[:id])

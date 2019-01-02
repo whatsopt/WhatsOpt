@@ -9,10 +9,8 @@ class Api::V1::UserRolesController < Api::ApiController
         json_response policy_scope(User).with_any_role({ :name => :member, :resource => mda })
       when "member_candidates"
         allUsers = policy_scope(User).all 
-        authorizedUsers = User.with_role(:admin)
-        authorizedUsers += User.with_role_for_instance(:owner, mda)
-        authorizedUsers += User.with_role_for_instance(:member, mda)
-        users = allUsers - authorizedUsers
+        members = mda.members
+        users = allUsers - members
         json_response users 
       else
         json_response({ message: 'Bad query: should select "members" or "member_candidates' }, :unprocessable_entity)
@@ -29,9 +27,9 @@ class Api::V1::UserRolesController < Api::ApiController
     authorize mda
     if params[:user][:role]
       if params[:user][:role] == "member"
-        user.add_role :member, mda
+        mda.add_member user
       else
-        user.remove_role :member, mda
+        mda.remove_member user
       end
     end
     head :no_content
