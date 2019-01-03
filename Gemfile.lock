@@ -102,7 +102,7 @@ GEM
       ffi (~> 1.0, >= 1.0.11)
     climate_control (0.2.0)
     coderay (1.1.2)
-    concurrent-ruby (1.1.3)
+    concurrent-ruby (1.1.4)
     crass (1.0.4)
     data-confirm-modal (1.6.2)
       railties (>= 3.0)
@@ -123,8 +123,6 @@ GEM
     ffi (1.9.25-java)
     ffi (1.9.25-x64-mingw32)
     ffi (1.9.25-x86-mingw32)
-    font-awesome-rails (4.7.0.4)
-      railties (>= 3.2, < 6.0)
     formatador (0.2.5)
     globalid (0.4.1)
       activesupport (>= 4.2.0)
@@ -258,11 +256,10 @@ GEM
       method_source
       rake (>= 0.8.7)
       thor (>= 0.19.0, < 2.0)
-    rake (12.3.1)
+    rake (12.3.2)
     rb-fsevent (0.10.3)
     rb-inotify (0.10.0)
       ffi (~> 1.0)
-    redis (4.0.3)
     regexp_parser (1.3.0)
     responders (2.4.0)
       actionpack (>= 4.2.0, < 5.3)
@@ -339,7 +336,7 @@ GEM
       thread_safe (~> 0.1)
     tzinfo-data (1.2018.9)
       tzinfo (>= 1.0.0)
-    uglifier (4.1.19)
+    uglifier (4.1.20)
       execjs (>= 0.3.0, < 3)
     warden (1.2.7)
       rack (>= 1.0)
@@ -382,7 +379,6 @@ DEPENDENCIES
   data-confirm-modal
   devise
   devise_ldap_authenticatable
-  font-awesome-rails
   guard
   guard-minitest
   highline
@@ -398,7 +394,6 @@ DEPENDENCIES
   rack-cors
   rails (~> 5.2.0)
   rails-assets-tether (>= 1.1.0)!
-  redis
   rolify
   rubyXL
   sass-rails (~> 5.0)
