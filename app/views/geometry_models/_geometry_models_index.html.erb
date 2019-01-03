@@ -19,7 +19,7 @@
         <% if policy(geomodel).update? %>
         	<%= link_to edit_geometry_model_path(geomodel), 
         	  class: "d-inline btn btn-light btn-inverse btn-sm", title: "Edit" do %>
-	          <i class="fa fa-pencil"></i> 
+	          <i class="fa fa-edit"></i> 
 	        <% end %>    
 	        <span class="ml-1"/>
 	      <% end %>
@@ -30,7 +30,7 @@
                                                          commit: 'Yes',
                                                          cancel: 'No, cancel' }, 
                   class: "d-inline btn btn-light btn-inverse btn-sm text-danger", title:"Delete" do %>
-            <i class="fa fa-close"></i> 
+            <i class="fa fa-times"></i> 
           <% end %>        
         <% end %>
       </td>

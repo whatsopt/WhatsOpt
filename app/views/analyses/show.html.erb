@@ -1,7 +1,7 @@
 <div class="btn-toolbar float-right">  
 <% if policy(@mda).edit? %>
   <%= button_to edit_mda_url(@mda), method: :get, class:"btn" do |b|%>
-    <span class="fa fa-pencil"></span>
+    <span class="fa fa-edit"></span>
       Edit
   <% end %>
 <% end %>
@@ -17,12 +17,12 @@
                                                               commit: 'Yes',
                                                               cancel: 'No, cancel' }, 
                   class: "btn ml-2", title:"Delete" do %>
-    <span class="fa fa-close"></span>
+    <span class="fa fa-times"></span>
       Delete
   <% end %> 
 <% end %>  
   <%= button_to mdas_url, method: :get, class:"btn ml-2" do |b|%>
-    <span class="fa fa-times-circle"></span>
+    <span class="fa fa-window-close"></span>
       Close
   <% end %>      
 </div>
@@ -32,7 +32,7 @@
 
 <% if @mda.attachment %>
 <p>
-  <small>created from <%= link_to @mda.attachment.data_file_name, attachment_path(@mda.attachment) %> by <%= @mda.owner %></small>
+  <small>created from <%= link_to @mda.attachment.data_file_name, attachment_path(@mda.attachment) %> by <%= @mda.owner.login %></small>
 </p>
 <% end %>
 

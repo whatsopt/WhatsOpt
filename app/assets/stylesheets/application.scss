@@ -11,7 +11,9 @@
  * file per style scope.
  */
 @import "bootstrap";
-@import "font-awesome";
+$fa-font-path: "fontawesome-free/webfonts"; 
+@import "fontawesome-free/scss/fontawesome";
+@import "fontawesome-free/scss/solid";
 @import "xdsmjs";
 @import "react-table";
 @import "mda_viewer";
