@@ -59,7 +59,7 @@ end
 
 group :staging, :production do
   gem 'concurrent-ruby'
-  gem 'mysql2', '~>0.4.10'
+  gem 'mysql2', '~>0.5'
   #gem 'redis'
 end
 
