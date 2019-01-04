@@ -19,9 +19,9 @@ staging:
   openvsp_cmd: /tmp_user/rdri206h/rlafage/OpenVSP-3.13.3-Linux/vspscript
   
 production:
-  python_cmd:  /dtis-app/miniconda3/bin/python
-  jupyter_cmd: /dtis-app/miniconda3/bin/jupyter
-  wop_cmd: /d/rlafage/opt/miniconda3/bin/wop
+  python_cmd:  /dtis-app/whatsopt-deps/miniconda3/bin/python
+  jupyter_cmd: /dtis-app/whatsopt-deps/miniconda3/bin/jupyter
+  wop_cmd: /dtis-app/whatsopt-deps/miniconda3/wop
   wop_env: {LC_ALL: fr_FR.UTF-8, LANG: fr_FR.UTF-8}
-  openvsp_cmd: /dtis-app/OpenVSP-3.13.3/vspscript
+  openvsp_cmd: /dtis-app/whatsopt-deps/OpenVSP-3.13.3/vspscript
 
