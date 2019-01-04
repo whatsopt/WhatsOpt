@@ -10,7 +10,7 @@ class MemberList extends React.Component {
       return (<span key={mbrs[i].id} className="btn-group m-1" role="group">
         <button className="btn">{login}</button>
         <button className="btn text-danger" onClick={(e) => this.props.onAnalysisMemberDelete(mbrs[i])}>
-          <i className="fa fa-close" />
+          <i className="fa fa-times" />
         </button>
       </span>);
     });

@@ -130,10 +130,10 @@ class Discipline extends React.Component {
               <span className="align-bottom">{this.props.node.name}</span>
               <button className="d-inline btn btn-light btn-inverse btn-sm float-right text-danger"
                 onClick={this.handleDelete}>
-                <i className="fa fa-close"/>
+                <i className="fa fa-times"/>
               </button>
               <button className="d-inline btn btn-light btn-sm ml-2" onClick={this.handleEdit}>
-                <i className="fa fa-pencil"/>
+                <i className="fa fa-edit"/>
               </button>
             </li>)}
         </Draggable>

@@ -51,7 +51,7 @@ class ConnectionList extends React.Component {
       return (<div key={varname} className="btn-group m-1" role="group">
         <button className={btn}>{varname}</button>
         <button className="btn text-danger" onClick={(e) => this.props.onConnectionDelete(id)}>
-          <i className="fa fa-close" />
+          <i className="fa fa-times" />
         </button>
       </div>);
     });
