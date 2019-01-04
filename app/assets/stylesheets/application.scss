@@ -11,26 +11,11 @@
  * file per style scope.
  */
 @import "bootstrap";
-$fa-font-path: "fontawesome-free/webfonts"; 
-@import "fontawesome-free/scss/fontawesome";
-@import "fontawesome-free/scss/solid";
+@import "font_awesome5_webfont";
 @import "xdsmjs";
 @import "react-table";
 @import "mda_viewer";
 @import "x3dom";
-
-@font-face {
-  font-family: 'FontAwesome';
-  src: font-url('#{$fa-font-path}/fontawesome-webfont.eot?v=#{$fa-version}');
-  src: font-url('#{$fa-font-path}/fontawesome-webfont.eot?#iefix&v=#{$fa-version}') format('embedded-opentype'),
-    font-url('#{$fa-font-path}/fontawesome-webfont.woff2?v=#{$fa-version}') format('woff2'),
-    font-url('#{$fa-font-path}/fontawesome-webfont.woff?v=#{$fa-version}') format('woff'),
-    font-url('#{$fa-font-path}/fontawesome-webfont.ttf?v=#{$fa-version}') format('truetype'),
-    font-url('#{$fa-font-path}/fontawesome-webfont.svg?v=#{$fa-version}#fontawesomeregular') format('svg');
-//  src: font-url('#{$fa-font-path}/FontAwesome.otf') format('opentype'); // used when developing fonts
-  font-weight: normal;
-  font-style: normal;
-}
 
 html {
 	height:100%;

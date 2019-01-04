@@ -104,7 +104,7 @@ gem 'sucker_punch'
 # UI
 gem 'popper' # bootstrap dependency
 gem 'bootstrap', '~> 4.0'
-#gem 'font-awesome-rails'
+gem 'font_awesome5_rails'
 gem 'data-confirm-modal'
 
 
