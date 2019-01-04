@@ -20,17 +20,16 @@
       <td>
         <% if policy(notebook).update? %>
         	<%= link_to edit_notebook_path(notebook), 
-        	  class: "d-inline btn btn-light btn-inverse btn-sm", title: "Edit" do %>
+        	  class: "btn btn-sm", title: "Edit" do %>
 	          <i class="fa fa-edit"></i> 
 	        <% end %>  
-	        <span class="ml-1"/>
 	      <% end %>
         <% if policy(notebook).destroy? %>
           <%= link_to notebook, method: :delete, data: { title: 'Are you sure?', 
                                                          confirm: "Remove notebook ##{notebook.id}?",
                                                          commit: 'Yes',
                                                          cancel: 'No, cancel' }, 
-                  class: "d-inline btn btn-light btn-inverse btn-sm text-danger", title:"Delete" do %>
+                  class: "btn btn-sm text-danger", title:"Delete" do %>
             <i class="fa fa-times"></i> 
           <% end %>
         <% end %>

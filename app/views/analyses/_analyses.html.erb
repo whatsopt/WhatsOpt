@@ -29,7 +29,7 @@
           <%= link_to_operations_if_authorized(mda, current_user) %>
           <% unless Operation.done(mda).empty? %>
             <%= link_to mda_operations_path(mda), 
-              class: "d-inline btn btn-light btn-inverse btn-sm", title: "List Operations" do %>
+              class: "btn btn-sm", title: "List Operations" do %>
               <i class="fa fa-ellipsis-v"></i> 
             <% end %>
           <% end %>
@@ -37,14 +37,14 @@
         <td>
           <% if policy(mda).update? %>
             <%= link_to edit_mda_path(mda), 
-              class: "d-inline btn btn-light btn-inverse btn-sm", title: "Edit" do %>
+              class: "btn btn-sm", title: "Edit" do %>
               <i class="fa fa-edit"></i> 
             <% end %>    
           <% end %>
           
           <% if policy(mda).operate? %>      
               <%= link_to mda_operations_url(mda), method: :post, 
-                class: "d-inline btn btn-light btn-inverse btn-sm ml-2", title: "Operate" do %>
+                class: "btn btn-sm", title: "Operate" do %>
                 <i class="fa fa-rocket"></i> 
               <% end %>    
           <% end %>
@@ -54,7 +54,7 @@
                                                                 confirm: "Remove #{mda.name} analysis?",
                                                                 commit: 'Yes',
                                                                 cancel: 'No, cancel' }, 
-                class: "d-inline btn btn-light btn-inverse btn-sm text-danger ml-2", title:"Delete" do %>
+                class: "btn btn-sm text-danger", title:"Delete" do %>
                 <i class="fa fa-times"></i> 
               <% end %>    
           <% end %>

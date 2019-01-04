@@ -348,7 +348,7 @@ class Runner extends React.Component {
             onSubmit={this.handleRun} onChange={this.handleChange} widgets={widgets}>
             <div className="form-group">
               <button type="submit" className="btn btn-primary" disabled={active}>Run</button>
-              <button type="button" className="ml-2 btn" disabled={!active} onClick={this.handleAbort}>Abort</button>
+              <button type="button" className="ml-1 btn btn-secondary" disabled={!active} onClick={this.handleAbort}>Abort</button>
             </div>
           </Form>
         </div>
