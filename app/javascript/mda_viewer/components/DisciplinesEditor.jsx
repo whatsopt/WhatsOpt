@@ -116,7 +116,7 @@ class Discipline extends React.Component {
                 </div>
                 {subAnalysis}
                 <button type="submit" className="btn btn-primary ml-3">Update</button>
-                <button type="button" onClick={this.handleCancelEdit} className="btn ml-1">Cancel</button>
+                <button type="button" onClick={this.handleCancelEdit} className="btn btn-secondary ml-1">Cancel</button>
               </form>
             </li>)}
         </Draggable>
