@@ -28,7 +28,6 @@ class Analysis < ApplicationRecord
 
   has_many :operations, :dependent => :destroy 
 
-
   before_validation(on: :create) do
     _create_from_attachment if attachment_exists?
   end

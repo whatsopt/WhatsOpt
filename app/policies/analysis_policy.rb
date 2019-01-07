@@ -2,9 +2,9 @@ class AnalysisPolicy < ApplicationPolicy
   class Scope < Scope
     def resolve
       if user.admin?
-        scope.all
+        scope.roots
       else
-        scope.select do |record|
+        scope.roots.select do |record|
           if user.analyses_query == "mine"
             user.has_role?(:owner, record)
           else 
