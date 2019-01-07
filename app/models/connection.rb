@@ -64,9 +64,9 @@ class Connection < ApplicationRecord
     Connection.transaction do
       conns_count = Connection.where(from_id: from_id).count
       if conns_count == 1
-        Variable.find(from_id).delete
+        Variable.find_by_id(from_id)&.delete
       end
-      Variable.find(to_id).delete
+      Variable.find_by_id(to_id)&.delete
     end
   end
     
