@@ -4,18 +4,6 @@ MAINTAINER remi.lafage@onera.fr
 #ENV http_proxy=http://proxy.onecert.fr:80
 #ENV https_proxy=http://proxy.onecert.fr:80
 
-RUN apt-get update
-RUN apt-get install -y software-properties-common vim
-RUN add-apt-repository ppa:jonathonf/python-3.6
-RUN apt-get update
-
-RUN apt-get install -y build-essential python3.6 python3.6-dev python3-pip python3.6-venv
-RUN apt-get install -y git
-
-# update pip
-RUN python3.6 -m pip install pip --upgrade
-RUN python3.6 -m pip install wheel
-
 # adapted from drecom/ubuntu-base drecom/ubuntu-ruby
 RUN apt-get update \
 &&  apt-get upgrade -y --force-yes \
@@ -39,11 +27,11 @@ RUN apt-get update \
     redis-tools \
     xvfb \
     tzdata \
-	libyaml-dev \
-	libsqlite3-dev \
-	sqlite3 \
-	libxml2-dev \
-	libcurl4-openssl-dev \
+	  libyaml-dev \
+	  libsqlite3-dev \
+	  sqlite3 \
+	  libxml2-dev \
+	  libcurl4-openssl-dev \
 &&  apt-get clean \
 &&  rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/*
 
@@ -80,14 +68,37 @@ RUN eval "$(rbenv init -)"; rbenv install 2.3.3 \
 &&  eval "$(rbenv init -)"; gem update --system \
 && eval "$(rbenv init -)"; gem install bundler --force
 
+# Python
+ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
+ENV PATH /opt/conda/bin:$PATH
+
+RUN apt-get update --fix-missing && \
+    apt-get install -y wget bzip2 ca-certificates curl git && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-4.5.12-Linux-x86_64.sh -O ~/miniconda.sh && \
+    /bin/bash ~/miniconda.sh -b -p /opt/conda && \
+    rm ~/miniconda.sh && \
+    /opt/conda/bin/conda clean -tipsy && \
+    ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
+    echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
+    echo "conda activate base" >> ~/.bashrc
+
+RUN conda update conda
+RUN conda install --yes numpy scipy cython 
+
+RUN pip install --upgrade pip;
+
 # pip install
 RUN pip install jupyter \
-    && pip install matplotlib \
-    && pip install thrift==0.11.0 \
+  && pip install matplotlib \
+  && pip install thrift==0.11.0 \
 	&& pip install Click \
 	&& pip install tabulate \
 	&& pip install openmdao==2.5 \
-	&& pip install salib 
+	&& pip install salib \
+	&& pip install git+https://github.com/SMTOrg/smt 
 	
 # OpenVSP
 #RUN apt-get install -y git cmake libxml2-dev \
