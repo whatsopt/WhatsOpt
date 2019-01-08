@@ -20,7 +20,7 @@ WHATSOPT_DIRNAME = os.path.join(os.path.expanduser('~'), '.whatsopt')
 API_KEY_FILENAME = os.path.join(WHATSOPT_DIRNAME, 'api_key')
 NULL_DRIVER_NAME = '__DRIVER__'  # check WhatsOpt Discipline model
 
-PROD_URL = "http://selene.onecert.fr/whatsopt"
+PROD_URL = "https://selene.onecert.fr/whatsopt"
 STAG_URL = "http://rdri206h.onecert.fr/whatsopt"
 TEST_URL = "http://endymion:3000"
 DEV_URL  = "http://192.168.99.100:3000"
