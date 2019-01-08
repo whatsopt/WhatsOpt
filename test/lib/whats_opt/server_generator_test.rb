@@ -50,7 +50,7 @@ class ServerGeneratorTest < ActiveSupport::TestCase
     skip "Apache Thrift not installed" unless thrift?
     zippath = File.new('/tmp/test_mda_file.zip', 'w')
     File.open(zippath, 'w') do |f|
-      content, _ = @sgen.generate
+      content, _ = @sgen.generate with_server:true
       f.write content
     end
     assert File.exists?(zippath)
