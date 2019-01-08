@@ -28,7 +28,7 @@ module WhatsOpt
       Dir.mktmpdir("check_#{@mda.basename}_") do |dir|
         dir='/tmp'
         begin
-          _generate_code dir
+          _generate_code(dir, with_server: false)
         rescue ServerGenerator::ThriftError => e
           ok = false
           lines = e.to_s.lines.map(&:chomp)
@@ -45,7 +45,7 @@ module WhatsOpt
       ok, lines = false, []
       Dir.mktmpdir("run_#{@mda.basename}_#{method}") do |dir|
         begin
-          _generate_code dir, sqlite_filename: sqlite_filename
+          _generate_code(dir, sqlite_filename: sqlite_filename)
         rescue ServerGenerator::ThriftError => e
           ok = false
           lines = e.to_s.lines.map(&:chomp)
@@ -85,7 +85,8 @@ module WhatsOpt
       Open3.popen2e(PYTHON, script, '--batch', &block)
     end
     
-    def _generate_code(gendir, only_base: false, sqlite_filename: nil)
+    def _generate_code(gendir, only_base: false, sqlite_filename: nil, 
+                       with_server: true, with_scripts: true)
       @mda.disciplines.nodes.each do |disc|
         if disc.has_sub_analysis?
           _generate_sub_analysis(disc, gendir, only_base, sqlite_filename)
@@ -94,9 +95,12 @@ module WhatsOpt
         end
       end 
       _generate_main(gendir, only_base)
-      _generate_run_scripts(gendir, sqlite_filename)
-      @sgen._generate_code(gendir)
-      @genfiles += @sgen.genfiles
+      _generate_run_scripts(gendir, sqlite_filename) if with_scripts
+      if with_server
+        @sgen._generate_code(gendir)
+        @genfiles += @sgen.genfiles
+      end
+      @genfiles
     end
      
     def _generate_discipline(discipline, gendir, only_base=false)
@@ -110,7 +114,8 @@ module WhatsOpt
       sub_ogen = OpenmdaoGenerator.new(mda, @server_host, @driver_name, @driver_options)
       gendir = File.join(gendir, mda.basename)
       Dir.mkdir(gendir) unless Dir.exists?(gendir)
-      sub_ogen._generate_code(gendir, only_base: only_base, sqlite_filename: sqlite_filename)
+      sub_ogen._generate_code(gendir, only_base: only_base, sqlite_filename: sqlite_filename, 
+                              with_server: false, with_scripts: false)
       @genfiles += sub_ogen.genfiles
     end
 

@@ -33,23 +33,35 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     end
   end
   
-  test "should maintain a list of generated filepaths" do
-    skip "Apache Thrift not installed" unless thrift?
+  def _assert_file_generation(expected, with_server: true, with_scripts: true)
     Dir.mktmpdir do |dir|
-      @ogen._generate_code dir
+      @ogen._generate_code(dir, with_server: with_server, with_scripts: with_scripts)
       dirpath = Pathname.new(dir)
       basenames = @ogen.genfiles.map{|f| Pathname.new(f).relative_path_from(dirpath).to_s }.sort
-      expected = (["__init__.py", "aerodynamics.py", "aerodynamics_base.py", "cicav.py", 
-                  "cicav_base.py", "geometry.py", "geometry_base.py", "propulsion.py", "propulsion_base.py",
-                  "run_analysis.py", "run_doe.py", "run_optimization.py", 
-                  "run_screening.py"] + ['run_server.py', 
-                    'server/__init__.py', 'server/analysis.thrift', 'server/cicav/__init__.py', 
-                    'server/cicav/Cicav-remote', 'server/cicav/Cicav.py', 
-                    'server/cicav/constants.py', 'server/cicav_conversions.py', 
-                    'server/cicav_proxy.py', 'server/cicav/ttypes.py']).sort
-                    
+      expected = (expected).sort       
       assert_equal expected, basenames
     end
+  end
+
+  test "should maintain a list of generated filepaths without server" do
+    skip "Apache Thrift not installed" unless thrift?
+    expected = ["__init__.py", "aerodynamics.py", "aerodynamics_base.py", "cicav.py", 
+                "cicav_base.py", "geometry.py", "geometry_base.py", "propulsion.py", "propulsion_base.py",
+                "run_analysis.py", "run_doe.py", "run_optimization.py", 
+                "run_screening.py"]
+    _assert_file_generation expected, with_server: false
+  end 
+  test "should maintain a list of generated filepaths with server" do
+    skip "Apache Thrift not installed" unless thrift?
+    expected = ["__init__.py", "aerodynamics.py", "aerodynamics_base.py", "cicav.py", 
+                "cicav_base.py", "geometry.py", "geometry_base.py", "propulsion.py", "propulsion_base.py",
+                "run_analysis.py", "run_doe.py", "run_optimization.py", 
+                "run_screening.py"] + ['run_server.py', 
+                  'server/__init__.py', 'server/analysis.thrift', 'server/cicav/__init__.py', 
+                  'server/cicav/Cicav-remote', 'server/cicav/Cicav.py', 
+                  'server/cicav/constants.py', 'server/cicav_conversions.py', 
+                  'server/cicav_proxy.py', 'server/cicav/ttypes.py']
+    _assert_file_generation expected
   end 
   
   test "should generate openmdao mda zip file" do
@@ -95,8 +107,8 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     ogen2 = WhatsOpt::OpenmdaoGenerator.new(mda)
     ok, log = ogen2.check_mda_setup
     refute ok  # check raises a runtime error
-    #assert_match /Error: Variable name .* already exists/, log.join(' ')
-    assert_match /already been used/, log.join(' ')
+    assert_match /Error: Variable name .* already exists/, log.join(' ')
+    #assert_match /already been used/, log.join(' ')  # thrift error
   end
 
   test "should run optimization as default" do
@@ -189,11 +201,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
       dirpath = Pathname.new(dir)
       basenames = ogen.genfiles.map{|f| Pathname.new(f).relative_path_from(dirpath).to_s }.sort
       expected = (["__init__.py", "disc.py", "disc_base.py", "inner/__init__.py", "inner/inner.py", "inner/inner_base.py", "inner/plain_discipline.py", 
-        "inner/plain_discipline_base.py", "inner/run_analysis.py", "inner/run_doe.py", "inner/run_optimization.py", 
-        "inner/run_screening.py", "inner/run_server.py", "inner/server/__init__.py", "inner/server/analysis.thrift", 
-        "inner/server/inner/Inner-remote", "inner/server/inner/Inner.py", "inner/server/inner/__init__.py", 
-        "inner/server/inner/constants.py", "inner/server/inner/ttypes.py", "inner/server/inner_conversions.py", 
-        "inner/server/inner_proxy.py", "outer.py", "outer_base.py", "run_analysis.py", "run_doe.py", "run_optimization.py", 
+        "inner/plain_discipline_base.py", "outer.py", "outer_base.py", "run_analysis.py", "run_doe.py", "run_optimization.py", 
         "run_screening.py", "run_server.py", "server/__init__.py", "server/analysis.thrift","server/outer/Outer-remote", 
         "server/outer/Outer.py", "server/outer/__init__.py", "server/outer/constants.py", "server/outer/ttypes.py", 
         "server/outer_conversions.py", "server/outer_proxy.py", "vacant_discipline.py", "vacant_discipline_base.py"]).sort
