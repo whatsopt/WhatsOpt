@@ -28,7 +28,7 @@ module WhatsOpt
       Dir.mktmpdir("check_#{@mda.basename}_") do |dir|
         dir='/tmp'
         begin
-          _generate_code(dir, with_server: false)
+          _generate_code(dir, with_server: false, with_ops: false)
         rescue ServerGenerator::ThriftError => e
           ok = false
           lines = e.to_s.lines.map(&:chomp)
@@ -86,7 +86,7 @@ module WhatsOpt
     end
     
     def _generate_code(gendir, only_base: false, sqlite_filename: nil, 
-                       with_server: true, with_scripts: true)
+                       with_server: true, with_ops: true, with_run_analysis: true)
       @mda.disciplines.nodes.each do |disc|
         if disc.has_sub_analysis?
           _generate_sub_analysis(disc, gendir, only_base, sqlite_filename)
@@ -95,7 +95,8 @@ module WhatsOpt
         end
       end 
       _generate_main(gendir, only_base)
-      _generate_run_scripts(gendir, sqlite_filename) if with_scripts
+      _generate_run_scripts(gendir, sqlite_filename, 
+                            with_ops: with_ops, with_run_analysis: with_run_analysis)
       if with_server
         @sgen._generate_code(gendir)
         @genfiles += @sgen.genfiles
@@ -115,7 +116,7 @@ module WhatsOpt
       gendir = File.join(gendir, mda.basename)
       Dir.mkdir(gendir) unless Dir.exists?(gendir)
       sub_ogen._generate_code(gendir, only_base: only_base, sqlite_filename: sqlite_filename, 
-                              with_server: false, with_scripts: false)
+                              with_server: false, with_ops: false, with_run_analysis: false)
       @genfiles += sub_ogen.genfiles
     end
 
@@ -125,8 +126,8 @@ module WhatsOpt
       _generate('__init__.py', '__init__.py.erb', gendir)
     end    
        
-    def _generate_run_scripts(gendir, sqlite_filename=nil)
-      if @driver_name # coming from GUI runing remote driver
+    def _generate_run_scripts(gendir, sqlite_filename=ni, with_ops: true, with_run_analysis: true)
+      if @driver_name # coming from GUI running remote driver
         @driver = OpenmdaoDriverFactory.new(@driver_name, @driver_options).create_driver
         if @driver.optimization?
           @sqlite_filename = sqlite_filename || "#{@mda.basename}_optimization.sqlite"
@@ -134,20 +135,21 @@ module WhatsOpt
         elsif @driver.doe?
           @sqlite_filename = sqlite_filename || "#{@mda.basename}_doe.sqlite"
           _generate('run_doe.py', 'run_doe.py.erb', gendir)
-        else
-          _generate('run_analysis.py', 'run_analysis.py.erb', gendir)
         end
-      else # default generate all scripts with default drivers
-        _generate('run_analysis.py', 'run_analysis.py.erb', gendir)
+      elsif with_ops
         @driver = OpenmdaoDriverFactory.new(DEFAULT_DOE_DRIVER).create_driver
         @sqlite_filename = sqlite_filename || "#{@mda.basename}_doe.sqlite"
         _generate('run_doe.py', 'run_doe.py.erb', gendir)
         @driver = OpenmdaoDriverFactory.new(DEFAULT_OPTIMIZATION_DRIVER).create_driver
         @sqlite_filename = sqlite_filename || "#{@mda.basename}_optimization.sqlite"
-        _generate('run_optimization.py', 'run_optimization.py.erb', gendir)        
+        _generate('run_optimization.py', 'run_optimization.py.erb', gendir)   
       end
-      @sqlite_filename = sqlite_filename || "#{@mda.basename}_screening.sqlite"
-      _generate('run_screening.py', 'run_screening.py.erb', gendir)
+      if with_ops
+        @sqlite_filename = sqlite_filename || "#{@mda.basename}_screening.sqlite"
+        _generate('run_screening.py', 'run_screening.py.erb', gendir)
+      end
+      _generate('run_analysis.py', 'run_analysis.py.erb', gendir) if with_run_analysis
     end    
+
   end
 end

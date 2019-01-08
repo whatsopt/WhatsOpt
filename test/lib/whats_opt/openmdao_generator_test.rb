@@ -33,9 +33,10 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     end
   end
   
-  def _assert_file_generation(expected, with_server: true, with_scripts: true)
+  def _assert_file_generation(expected, with_server: true, with_ops: true, with_run_analysis: true)
     Dir.mktmpdir do |dir|
-      @ogen._generate_code(dir, with_server: with_server, with_scripts: with_scripts)
+      @ogen._generate_code(dir, with_server: with_server, with_ops: with_ops, 
+                           with_run_analysis: with_run_analysis)
       dirpath = Pathname.new(dir)
       basenames = @ogen.genfiles.map{|f| Pathname.new(f).relative_path_from(dirpath).to_s }.sort
       expected = (expected).sort       
@@ -43,8 +44,18 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     end
   end
 
+  test "should maintain a list of generated filepaths without server without ops without run_analysis" do
+    expected = ["__init__.py", "aerodynamics.py", "aerodynamics_base.py", "cicav.py", 
+                "cicav_base.py", "geometry.py", "geometry_base.py", "propulsion.py", "propulsion_base.py"]
+    _assert_file_generation expected, with_server: false, with_ops: false, with_run_analysis: false
+  end 
+  test "should maintain a list of generated filepaths without server and without ops" do
+    expected = ["__init__.py", "aerodynamics.py", "aerodynamics_base.py", "cicav.py", 
+                "cicav_base.py", "geometry.py", "geometry_base.py", "propulsion.py", "propulsion_base.py",
+                "run_analysis.py"]
+    _assert_file_generation expected, with_server: false, with_ops: false
+  end 
   test "should maintain a list of generated filepaths without server" do
-    skip "Apache Thrift not installed" unless thrift?
     expected = ["__init__.py", "aerodynamics.py", "aerodynamics_base.py", "cicav.py", 
                 "cicav_base.py", "geometry.py", "geometry_base.py", "propulsion.py", "propulsion_base.py",
                 "run_analysis.py", "run_doe.py", "run_optimization.py", 
