@@ -8,7 +8,7 @@ class AnalysisBreadCrumbs extends React.Component {
 
   render() {
     let crumbs = this.props.path.map((anc, i) => {
-      let href = `/analyses/${anc.id}`
+      let href = this.props.api.url(`/analyses/${anc.id}`);
       let klass = "breadcrumb-item";
       let name = <a href={href}>{anc.name}</a>;
       if (this.props.path.length-1===i) {
@@ -29,6 +29,7 @@ class AnalysisBreadCrumbs extends React.Component {
 }
 
 AnalysisBreadCrumbs.propTypes = {
+  api: PropTypes.object.isRequired,
   path: PropTypes.arrayOf({
     name: PropTypes.string,
     id: PropTypes.number,

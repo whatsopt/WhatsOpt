@@ -277,7 +277,7 @@ class MdaViewer extends React.Component {
 
     let breadcrumbs;
     if (this.props.mda.path.length > 1) {
-      breadcrumbs = <AnalysisBreadCrumbs path={this.props.mda.path} />
+      breadcrumbs = <AnalysisBreadCrumbs api={this.api} path={this.props.mda.path} />
     }
 
     let xdsmViewer = (<XdsmViewer ref={(xdsmViewer) => this.xdsmViewer = xdsmViewer} 
