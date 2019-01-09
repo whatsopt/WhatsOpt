@@ -115,7 +115,7 @@ class XdsmViewer extends React.Component {
         let link = `/analyses/${node.link.id}${edit}`; 
         let $label = $('.id'+node.id+' tspan');
         let label = $label.text();
-        $label.html(`<a class='analysis-link' href="${link}">${label}</a>`);
+        $label.html(`<a class='analysis-link' href="${this.props.api.url(link)}">${label}</a>`);
       }
     });
     $('.analysis-link').on('click', (e) => e.stopPropagation());
@@ -123,6 +123,7 @@ class XdsmViewer extends React.Component {
 }
 
 XdsmViewer.propTypes = {
+  api: PropTypes.object.isRequired,
   isEditing: PropTypes.bool.isRequired,
   mda: PropTypes.object.isRequired,
   filter: PropTypes.object.isRequired,

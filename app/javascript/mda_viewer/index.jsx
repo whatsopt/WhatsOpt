@@ -280,6 +280,18 @@ class MdaViewer extends React.Component {
       breadcrumbs = <AnalysisBreadCrumbs path={this.props.mda.path} />
     }
 
+    let xdsmViewer = (<XdsmViewer ref={(xdsmViewer) => this.xdsmViewer = xdsmViewer} 
+                                  api={this.api} 
+                                  isEditing={this.state.isEditing}
+                                  mda={this.state.mda}
+                                  filter={this.state.filter} 
+                                  onFilterChange={this.handleFilterChange}/>);
+
+    let varEditor = (<VariablesEditor db={db} filter={this.state.filter}
+                                      onFilterChange={this.handleFilterChange}
+                                      onConnectionChange={this.handleConnectionChange}
+                                      isEditing={this.state.isEditing} />);
+
     if (this.state.isEditing) {
       return (
         <div>
@@ -291,11 +303,7 @@ class MdaViewer extends React.Component {
           <h1>Edit {this.state.mda.name}</h1> 
           {breadcrumbs}
           <div className="mda-section">
-            <XdsmViewer ref={(xdsmViewer) => this.xdsmViewer = xdsmViewer} 
-              isEditing={this.state.isEditing}
-              mda={this.state.mda}
-              filter={this.state.filter} 
-              onFilterChange={this.handleFilterChange}/>
+            {xdsmViewer}
           </div>
           <ul className="nav nav-tabs" id="myTab" role="tablist">
             <li className="nav-item">
@@ -351,10 +359,7 @@ class MdaViewer extends React.Component {
               />
             </div>
             <div className="tab-pane fade show active" id="variables" role="tabpanel" aria-labelledby="variables-tab">
-              <VariablesEditor db={db} filter={this.state.filter}
-                onFilterChange={this.handleFilterChange}
-                onConnectionChange={this.handleConnectionChange}
-                isEditing={this.state.isEditing} />
+              {varEditor}
             </div>
           </div>
         </div>);
@@ -366,17 +371,10 @@ class MdaViewer extends React.Component {
         </div>
         {breadcrumbs}
         <div className="mda-section">
-          <XdsmViewer ref={(xdsmViewer) => this.xdsmViewer = xdsmViewer} 
-            isEditing={this.state.isEditing}
-            mda={this.state.mda}
-            filter={this.state.filter} 
-            onFilterChange={this.handleFilterChange}/>
+          {xdsmViewer}
         </div>
         <div className="mda-section">
-          <VariablesEditor db={db}
-            filter={this.state.filter} onFilterChange={this.handleFilterChange}
-            onConnectionChange={this.handleConnectionChange}
-            isEditing={this.state.isEditing} />
+          {varEditor}
         </div>
       </div>
     );

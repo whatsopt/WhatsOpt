@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+const API_URL = `/api/v1`;
+
 class WhatsOptApi {
   constructor(csrfToken, apiKey, relativeUrlRoot) {
     axios.defaults.headers.common['X-CSRF-Token'] = csrfToken;
@@ -9,142 +11,146 @@ class WhatsOptApi {
   }
 
   url(path) {
-    return this.relativeUrlRoot + path;
+    return `${this.relativeUrlRoot}${path}`;
+  };
+
+  apiUrl(path) {
+    return `${API_URL}${this.url(path)}`;
   };
 
   openmdaoChecking(mdaId, callback) {
-    const path = `/api/v1/analyses/${mdaId}/openmdao_checking`;
-    axios.post(this.url(path))
+    const path = `/analyses/${mdaId}/openmdao_checking`;
+    axios.post(this.apiUrl(path))
         .then(callback)
         .catch((error) => console.log(error));
   };
 
   getMemberCandidates(mdaId, callback) {
-    const path = `/api/v1/user_roles?query[analysis_id]=${mdaId}&query[select]=member_candidates`;
-    axios.get(this.url(path))
+    const path = `/user_roles?query[analysis_id]=${mdaId}&query[select]=member_candidates`;
+    axios.get(this.apiUrl(path))
         .then(callback)
         .catch((error) => console.log(error));
   }
 
   addMember(userId, mdaId, callback) {
-    const path = `/api/v1/user_roles/${userId}`;
-    axios.put(this.url(path), {user: {analysis_id: mdaId, role: 'member'}})
+    const path = `/user_roles/${userId}`;
+    axios.put(this.apiUrl(path), {user: {analysis_id: mdaId, role: 'member'}})
         .then(callback)
         .catch((error) => console.log(error));
   }
 
   removeMember(userId, mdaId, callback) {
-    const path = `/api/v1/user_roles/${userId}`;
-    axios.put(this.url(path), {user: {analysis_id: mdaId, role: 'none'}})
+    const path = `/user_roles/${userId}`;
+    axios.put(this.apiUrl(path), {user: {analysis_id: mdaId, role: 'none'}})
         .then(callback)
         .catch((error) => console.log(error));
   }
 
   updateUserSettings(userId, settings, callback) {
-    const path = `/api/v1/users/${userId}`;
-    axios.put(this.url(path), {user: {settings: settings}})
+    const path = `/users/${userId}`;
+    axios.put(this.apiUrl(path), {user: {settings: settings}})
         .then(callback)
         .catch((error) => console.log(error));
   }
 
   getAnalysis(mdaId, xdsmFormat, callback) {
-    let path = `/api/v1/analyses/${mdaId}`;
+    let path = `/analyses/${mdaId}`;
     if (xdsmFormat) {
       path += '.xdsm';
     }
-    axios.get(this.url(path))
+    axios.get(this.apiUrl(path))
         .then(callback)
         .catch((error) => console.log(error));
   };
 
   updateAnalysis(mdaId, mdaAttrs, callback, onError) {
-    const path = `/api/v1/analyses/${mdaId}`;
-    axios.put(this.url(path), {analysis: mdaAttrs})
+    const path = `/analyses/${mdaId}`;
+    axios.put(this.apiUrl(path), {analysis: mdaAttrs})
         .then(callback)
         .catch(onError);
   }
 
   createDiscipline(mdaId, disciplineAttributes, callback) {
-    const path = `/api/v1/analyses/${mdaId}/disciplines`;
-    axios.post(this.url(path), {discipline: disciplineAttributes})
+    const path = `/analyses/${mdaId}/disciplines`;
+    axios.post(this.apiUrl(path), {discipline: disciplineAttributes})
         .then(callback)
         .catch((error) => console.log(error));
   }
 
   updateDiscipline(discId, disciplineAttributes, callback) {
-    const path = `/api/v1/disciplines/${discId}`;
-    axios.put(this.url(path), {discipline: disciplineAttributes})
+    const path = `/disciplines/${discId}`;
+    axios.put(this.apiUrl(path), {discipline: disciplineAttributes})
         .then(callback)
         .catch((error) => console.log(error));
   }
 
   deleteDiscipline(discId, callback) {
-    const path = `/api/v1/disciplines/${discId}`;
-    axios.delete(this.url(path))
+    const path = `/disciplines/${discId}`;
+    axios.delete(this.apiUrl(path))
         .then(callback)
         .catch((error) => console.log(error));
   }
 
   getSubAnalysisCandidates(callback) {
-    const path = `/api/v1/analyses`;
-    axios.get(this.url(path))
+    const path = `/analyses`;
+    axios.get(this.apiUrl(path))
         .then(callback)
         .catch((error) => console.log(error));
   }
   
   createSubAnalysisDiscipline(discId, subMdaId, callback) {
-    const path = `/api/v1/disciplines/${discId}/analysis_discipline`;
-    axios.post(this.url(path), {analysis_discipline: {analysis_id: subMdaId}})
+    const path = `/disciplines/${discId}/analysis_discipline`;
+    axios.post(this.apiUrl(path), {analysis_discipline: {analysis_id: subMdaId}})
         .then(callback)
         .catch((error) => console.log(error));    
   }
   
   createConnection(mdaId, connectionAttributes, callback, onError) {
-    const path = `/api/v1/analyses/${mdaId}/connections`;
-    axios.post(this.url(path), {connection: connectionAttributes})
+    const path = `/analyses/${mdaId}/connections`;
+    axios.post(this.apiUrl(path), {connection: connectionAttributes})
         .then(callback)
         .catch(onError);
   }
 
   updateConnection(connectionId, connectionAttributes, callback, onError) {
-    const path = `/api/v1/connections/${connectionId}`;
-    axios.put(this.url(path), {connection: connectionAttributes})
+    const path = `/connections/${connectionId}`;
+    axios.put(this.apiUrl(path), {connection: connectionAttributes})
         .then(callback)
         .catch(onError);
   }
 
   deleteConnection(connectionId, callback) {
-    const path = `/api/v1/connections/${connectionId}`;
-    axios.delete(this.url(path))
+    const path = `/connections/${connectionId}`;
+    axios.delete(this.apiUrl(path))
         .then(callback)
         .catch((error) => console.log(error));
   }
 
   getOperation(operationId, callback) {
-    const path = `/api/v1/operations/${operationId}`;
-    axios.get(this.url(path))
+    const path = `/operations/${operationId}`;
+    axios.get(this.apiUrl(path))
         .then(callback)
         .catch((error) => console.log(error));
   }
 
   updateOperation(operationId, opeAttrs, callback, onError) {
-    const path = `/api/v1/operations/${operationId}`;
+    const path = `/operations/${operationId}`;
     const jobpath = `${path}/job`;
-    axios.patch(this.url(path), {operation: opeAttrs})
-        .then(() => axios.post(this.url(jobpath)).then(callback).catch((error) => console.log(error)))
+    axios.patch(this.apiUrl(path), {operation: opeAttrs})
+        .then(() => axios.post(this.apiUrl(jobpath)).then(callback).catch((error) => console.log(error)))
         .catch((error) => console.log(error));
   }
 
   killOperationJob(operationId) {
-    const path = `/api/v1/operations/${operationId}/job`;
-    axios.patch(this.url(path))
+    const path = `/operations/${operationId}/job`;
+    axios.patch(this.apiUrl(path))
         .then((resp) => console.log(resp))
         .catch((error) => console.log(error));
   }
 
   pollOperationJob(operationId, check, callback, onError) {
-    const path = `/api/v1/operations/${operationId}/job`;
-    this._pollStatus(() => axios.get(this.url(path)), check, callback, 300000, 2000)
+    const path = `/operations/${operationId}/job`;
+    this._pollStatus(() => axios.get(this.apiUrl(path)), check, callback, 300000, 2000)
         .then(callback)
         .catch(onError);
   }
