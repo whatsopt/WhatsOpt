@@ -15,7 +15,7 @@ class WhatsOptApi {
   };
 
   apiUrl(path) {
-    return `${API_URL}${this.url(path)}`;
+    return `${this.relativeUrlRoot}${API_URL}${path}`;
   };
 
   openmdaoChecking(mdaId, callback) {
