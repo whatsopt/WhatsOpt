@@ -26,7 +26,7 @@ module WhatsOpt
       ok, lines = false, []
       @mda.set_as_root_module
       Dir.mktmpdir("check_#{@mda.basename}_") do |dir|
-        dir='/tmp'
+        #dir='/tmp' # for debug
         begin
           _generate_code(dir, with_server: false, with_ops: false)
         rescue ServerGenerator::ThriftError => e
