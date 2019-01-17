@@ -99,17 +99,33 @@ class Analysis < ApplicationRecord
   def input_dim
     parameter_variables.inject(0){|s, v| s+v.dim}
   end
-      
+    
   def plain_disciplines
     disciplines.nodes.select{|d| d.is_plain? } 
+  end
+
+  def sub_analyses
+    self.children
   end
 
   def all_plain_disciplines
     self.children.inject(self.plain_disciplines){|ary, elt| ary + elt.all_plain_disciplines} 
   end
   
+  def all_sub_analyses
+    self.descendants
+  end
+
+  def all_disciplines
+    self.children.inject(self.disciplines.nodes){|ary, elt| ary + elt.all_disciplines}
+  end
+
   def attachment_exists?
     self.attachment && self.attachment.exists?
+  end
+
+  def root_analysis
+    self.root
   end
 
   def to_mda_viewer_json

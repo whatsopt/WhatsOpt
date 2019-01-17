@@ -7,15 +7,15 @@ from thrift.server import TServer
 
 from <%= @server_module %>.<%= @mda.py_modulename %> import <%= @mda.py_classname %> as <%= @mda.camelname %>Service
 from <%= @server_module %>.<%= @mda.py_modulename %>_conversions import *
-from <%= @mda.py_modulename %> import <%= @mda.py_classname %> as Factory
+from <%= @mda.py_modulename %> import <%= @mda.py_classname %>Factory as Factory
 
 class <%= @mda.camelname %>Handler:
     server = None
 
     def __init__(self):
         factory = Factory()
-        <% @mda.disciplines.nodes.each do |disc| %>
-        self.<%= disc.basename %> = factory.create_<%= disc.basename %>()
+        <% @mda.all_plain_disciplines.each do |disc| %>
+        self.<%= disc.snake_modulename %> = factory.create_<%= disc.snake_modulename %>()
         <% end %>
 
     # Admin interface
@@ -27,12 +27,12 @@ class <%= @mda.camelname %>Handler:
         exit(0)
 
     # <%= @mda.camelname %> interface
-    <% @mda.disciplines.nodes.each do |disc| %>
-    def compute_<%= disc.basename %>(self, ins):
+    <% @mda.all_plain_disciplines.each do |disc| %>
+    def compute_<%= disc.snake_modulename %>(self, ins):
         outputs = {}
-        inputs = to_openmdao_<%= disc.basename %>_inputs(ins)
-        self.<%= disc.basename %>.compute(inputs, outputs)
-        return to_thrift_<%= disc.basename %>_output(outputs)
+        inputs = to_openmdao_<%= disc.snake_modulename %>_inputs(ins)
+        self.<%= disc.snake_modulename %>.compute(inputs, outputs)
+        return to_thrift_<%= disc.snake_modulename %>_output(outputs)
     <% end %>
 
 

@@ -5,25 +5,64 @@ import numpy as np
 from openmdao.api import Problem, Group
 from openmdao.api import IndepVarComp
 from openmdao.api import NonlinearBlockGS, ScipyKrylov
-<% @mda.disciplines.nodes.each do |d| %>
+<% @mda.sub_analyses.each do |a| %>
+from <%= a.py_full_modulename %> import <%= a.py_classname %><% end %>
+<% @mda.all_plain_disciplines.each do |d| %>
 from <%= d.py_full_modulename %> import <%= d.py_classname %><% end %>
+<% if @remote -%>
+<% @mda.sub_analyses.each do |disc| %>
+from server.sub_analysis_proxy import <%= disc.py_classname %>Proxy
+<% end %>
+<% @mda.plain_disciplines.each do |disc| %>
+from server.discipline_proxy import <%= disc.py_classname %>Proxy
+<% end %>
+<% end -%>
 
 class <%= @mda.py_classname %>Base(Group):
     """ An OpenMDAO base component to encapsulate <%= @mda.py_classname %> MDA """
-    
+<% if @remote %>
+    def __init__(self, thrift_client=None, **kwargs):
+        super(<%= @mda.py_classname %>Base, self). __init__(**kwargs)
+        self._thrift_client = thrift_client
+<% end -%>
+
     def setup(self): 
 <% if @mda.is_root_analysis? && @mda.parameter_variables.size > 0 -%>
         indeps = self.add_subsystem('indeps', IndepVarComp(), promotes=['*'])
 <% @mda.parameter_variables.each do |dv| %>
         indeps.add_output('<%= dv.name %>', <%= dv.init_py_value %>)<% end -%>
 <% end -%>
-<% @mda.disciplines.nodes.each do |d| %>
+<% @mda.sub_analyses.each do |d| %>
+        self.add_subsystem('<%= d.py_classname %>', self.create_<%= d.basename %>(), promotes=[<%= d.variables.map(&:py_varname).map{|v| "'#{v}'"}.join(', ') %>])<% end -%>
+<% @mda.plain_disciplines.each do |d| %>
         self.add_subsystem('<%= d.py_classname %>', self.create_<%= d.basename %>(), promotes=[<%= d.variables.map(&:py_varname).map{|v| "'#{v}'"}.join(', ') %>])<% end -%>
 
         self.nonlinear_solver = NonlinearBlockGS() 
         self.linear_solver = ScipyKrylov()
 
-<% @mda.disciplines.nodes.each do |d| -%>
+<% @mda.sub_analyses.each do |a| %>
+    def create_<%= a.basename %>(self):
+<% if @remote %>
+        return <%= a.py_classname %>Proxy(self._thrift_client)
+<% else -%>
+    	return <%= a.py_classname %>()
+<% end %>
+<% end %>
+<% @mda.plain_disciplines.each do |d| -%>
     def create_<%= d.basename %>(self):
+    <% if @remote %>
+        return <%= d.py_classname %>Proxy(self._thrift_client)
+    <% else %>
     	return <%= d.py_classname %>()
+    <% end -%>
+
+<% end %>
+
+# Used by Thrift server to serve disciplines
+class <%= @mda.py_classname %>FactoryBase(object):
+<% @mda.all_plain_disciplines.each do |d| -%>
+    @staticmethod
+    def create_<%= d.snake_modulename %>():
+    	return <%= d.py_classname %>()
+            
 <% end %>

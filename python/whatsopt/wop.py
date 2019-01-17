@@ -52,19 +52,21 @@ def push(ctx, dry_run, name, py_filename):
 @cli.command()
 @click.option('--dry-run', is_flag=True, default=False, help='print analysis pull infos without actually pulling')
 @click.option('--force', is_flag=True, default=False, help='overwrite existing files')
+@click.option('--server', is_flag=True, default=False, help='generate Thrift server as well')
 @click.argument('analysis_id')
 @click.pass_context
-def pull(ctx, dry_run, force, analysis_id):
+def pull(ctx, dry_run, force, server, analysis_id):
 	""" Pull analysis given its identifier """	
-	options = {'--dry-run': dry_run, '--force': force}
+	options = {'--dry-run': dry_run, '--force': force, '--server': server}
 	WhatsOpt(api_key=ctx.obj['api_key']).pull_mda(analysis_id, options)
 	
 @cli.command()
 @click.option('--analysis-id', help='specify the analysis to update from (otherwise guessed from current files)')
+@click.option('--server', is_flag=True, default=False, help='update Thrift server as well')
 @click.pass_context
-def update(ctx, analysis_id):
+def update(ctx, analysis_id, server):
 	""" Update analysis connections """
-	WhatsOpt(api_key=ctx.obj['api_key']).update_mda(analysis_id)
+	WhatsOpt(api_key=ctx.obj['api_key']).update_mda(analysis_id, server)
 	
 @cli.command()
 @click.argument('sqlite_filename')

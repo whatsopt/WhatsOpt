@@ -71,7 +71,8 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
                   'server/__init__.py', 'server/analysis.thrift', 'server/cicav/__init__.py', 
                   'server/cicav/Cicav-remote', 'server/cicav/Cicav.py', 
                   'server/cicav/constants.py', 'server/cicav_conversions.py', 
-                  'server/cicav_proxy.py', 'server/cicav/ttypes.py']
+                  'server/cicav_proxy.py', 'server/cicav/ttypes.py', 
+                  'server/discipline_proxy.py', 'server/sub_analysis_proxy.py']
     _assert_file_generation expected
   end 
   
@@ -213,9 +214,10 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
       basenames = ogen.genfiles.map{|f| Pathname.new(f).relative_path_from(dirpath).to_s }.sort
       expected = (["__init__.py", "disc.py", "disc_base.py", "inner/__init__.py", "inner/inner.py", "inner/inner_base.py", "inner/plain_discipline.py", 
         "inner/plain_discipline_base.py", "outer.py", "outer_base.py", "run_analysis.py", "run_doe.py", "run_optimization.py", 
-        "run_screening.py", "run_server.py", "server/__init__.py", "server/analysis.thrift","server/outer/Outer-remote", 
+        "run_screening.py", "run_server.py", "server/__init__.py", "server/analysis.thrift", "server/discipline_proxy.py", "server/outer/Outer-remote", 
         "server/outer/Outer.py", "server/outer/__init__.py", "server/outer/constants.py", "server/outer/ttypes.py", 
-        "server/outer_conversions.py", "server/outer_proxy.py", "vacant_discipline.py", "vacant_discipline_base.py"]).sort
+        "server/outer_conversions.py", "server/outer_proxy.py", "vacant_discipline.py", "vacant_discipline_base.py", 
+        "server/sub_analysis_proxy.py"]).sort
       assert_equal expected, basenames
     end    
   end

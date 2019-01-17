@@ -178,7 +178,8 @@ class WhatsOpt(object):
 
     def pull_mda(self, mda_id, options):
         base = '_base' if options.get('--base') else '' 
-        url =  self._endpoint(('/api/v1/analyses/%s/exports/new.openmdao'+base) % mda_id)
+        param = '?with_server=true' if options.get('--server') else '' 
+        url =  self._endpoint(('/api/v1/analyses/%s/exports/new.openmdao'+base+param) % mda_id)
         resp = self.session.get(url, headers=self.headers, stream=True)
         resp.raise_for_status()
         name = None
@@ -216,9 +217,9 @@ class WhatsOpt(object):
                 move(file_from, dir_to)
             print('Analysis %s pulled' % mda_id)
     
-    def update_mda(self, analysis_id=None):
+    def update_mda(self, analysis_id=None, server=False):
         id = analysis_id or self.get_analysis_id()
-        self.pull_mda(id, {'--base': True, '--force': True})
+        self.pull_mda(id, {'--base': True, '--force': True, '--server': server})
         
     def upload(self, sqlite_filename, analysis_id=None, operation_id=None, cleanup=False):
         from socket import gethostname

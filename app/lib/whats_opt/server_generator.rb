@@ -25,6 +25,8 @@ module WhatsOpt
         raise ThriftError.new(log) if !ok
         _generate("#{@mda.basename}_conversions.py", 'analysis_conversions.py.erb', server_dir)
         _generate("#{@mda.basename}_proxy.py", 'analysis_proxy.py.erb', server_dir)
+        _generate("discipline_proxy.py", 'discipline_proxy.py.erb', server_dir)
+        _generate("sub_analysis_proxy.py", 'sub_analysis_proxy.py.erb', server_dir)
         _generate("run_server.py", 'run_server.py.erb', gendir)
       end
     end    

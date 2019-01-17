@@ -41,7 +41,8 @@ class ServerGeneratorTest < ActiveSupport::TestCase
                   'server/__init__.py', 'server/analysis.thrift', 'server/cicav/__init__.py', 
                   'server/cicav/Cicav-remote', 'server/cicav/Cicav.py', 
                   'server/cicav/constants.py', 'server/cicav_conversions.py', 
-                  'server/cicav_proxy.py', 'server/cicav/ttypes.py']
+                  'server/cicav_proxy.py', 'server/cicav/ttypes.py',
+                  'server/discipline_proxy.py', 'server/sub_analysis_proxy.py']
       assert_equal expected.sort, filenames
     end
   end 
@@ -59,7 +60,8 @@ class ServerGeneratorTest < ActiveSupport::TestCase
                   'server/__init__.py', 'server/analysis.thrift', 'server/cicav/__init__.py', 
                   'server/cicav/Cicav-remote', 'server/cicav/Cicav.py', 
                   'server/cicav/constants.py', 'server/cicav_conversions.py',  
-                  'server/cicav_proxy.py', 'server/cicav/ttypes.py']      
+                  'server/cicav_proxy.py', 'server/cicav/ttypes.py',
+                  'server/discipline_proxy.py', 'server/sub_analysis_proxy.py']      
       assert_equal expected.sort, zip.map{|entry| entry.name}.sort
     end
   end 
