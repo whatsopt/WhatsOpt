@@ -165,7 +165,8 @@ class WhatsOpt(object):
         self.vars = {}
         self.vardescs = {}
         self.discmap = {}
-        self._collect_var_infos(problem.model, self.tree)
+        self._collect_disc_infos(problem.model, self.tree)
+        self._collect_var_infos(problem.model)
         mda_attrs = self._get_mda_attributes(problem.model, self.tree)
         if options['--dry-run']:
             print(json.dumps(mda_attrs, indent=2))
@@ -313,9 +314,9 @@ class WhatsOpt(object):
         else:
             return 'mda'
 
-    # see _get_tree_dict at
-    # https://github.com/OpenMDAO/OpenMDAO/blob/master/openmdao/devtools/problem_viewer/problem_viewer.py
-    def _collect_var_infos(self, system, tree, group_prefix=''):
+    # # see _get_tree_dict at
+    # # https://github.com/OpenMDAO/OpenMDAO/blob/master/openmdao/devtools/problem_viewer/problem_viewer.py
+    def _collect_disc_infos(self, system, tree, group_prefix=''):
         if 'children' not in tree:
             return
 
@@ -324,7 +325,7 @@ class WhatsOpt(object):
             if child['type'] == 'subsystem' and child['subsystem_type'] == 'group':
                 self.discmap[group_prefix+child['name']] = child['name']
                 prefix = group_prefix+child['name']+'.'
-                self._collect_var_infos(system._subsystems_myproc[i], child, prefix)
+                self._collect_disc_infos(system._subsystems_myproc[i], child, prefix)
             else:
                 # do not represent IndepVarComp
                 if not isinstance(system._subsystems_myproc[i], IndepVarComp):
@@ -332,36 +333,51 @@ class WhatsOpt(object):
                 else:
                     self.discmap[group_prefix+child['name']] = '__DRIVER__'
 
-                for typ in ['input', 'output']:
-                    for abs_name in system._var_abs_names[typ]:
-                        io_mode = 'out'
-                        if typ == 'input': 
-                            io_mode = 'in' 
-                        elif typ == 'output': 
-                            io_mode = 'out'
-                        else:   
-                            raise Exception('Unhandled variable type ' + typ)
-                        meta = system._var_abs2meta[abs_name]
 
-                        vtype = 'Float'
-                        if re.match('int', type(meta['value']).__name__):
-                            vtype = 'Integer' 
-                        shape = WhatsOpt._format_shape(str(meta['shape']))
-                        name = system._var_abs2prom[typ][abs_name]
-                        self.vars[abs_name] = {'fullname': abs_name,
-                                                'name': name,
-                                                'io_mode': io_mode,
-                                                'type': vtype,
-                                                'shape': shape,
-                                                'units': meta['units'],
-                                                #'desc': meta['desc'],
-                                                'value': meta['value']}
+    # see _get_tree_dict at
+    # https://github.com/OpenMDAO/OpenMDAO/blob/master/openmdao/devtools/problem_viewer/problem_viewer.py
+    def _collect_var_infos(self, system):
+        for typ in ['input', 'output']:
+            for abs_name in system._var_abs_names[typ]:
+                io_mode = 'out'
+                if typ == 'input': 
+                    io_mode = 'in' 
+                elif typ == 'output': 
+                    io_mode = 'out'
+                else:   
+                    raise Exception('Unhandled variable type ' + typ)
+                meta = system._var_abs2meta[abs_name]
 
-                        desc = self.vardescs.setdefault(name, '')
-                        if desc=='':
-                            self.vardescs[name] = meta['desc'] 
-                        elif desc!=meta['desc'] and meta['desc']!='':
-                            print('Find another description for {}: "{}", keep "{}"'.format(name, meta['desc'], self.vardescs[name]))
+                vtype = 'Float'
+                if re.match('int', type(meta['value']).__name__):
+                    vtype = 'Integer' 
+                shape = WhatsOpt._format_shape(str(meta['shape']))
+                name = system._var_abs2prom[typ][abs_name]
+                self.vars[abs_name] = {'fullname': abs_name,
+                                        'name': name,
+                                        'io_mode': io_mode,
+                                        'type': vtype,
+                                        'shape': shape,
+                                        'units': meta['units'],
+                                        #'desc': meta['desc'],
+                                        'value': meta['value']}
+
+                # retrieve initial conditions
+                var = self.vars[abs_name]
+                if abs_name in system._outputs._views:
+                    var['value'] = system._outputs[abs_name]
+                elif abs_name in system._inputs._views:
+                    var['value'] = system._inputs[abs_name]
+                elif abs_name in system._discrete_outputs:
+                    var['value'] = system._discrete_outputs[abs_name]
+                elif abs_name in system._discrete_inputs:
+                    var['value'] = system._discrete_inputs[abs_name]
+
+                desc = self.vardescs.setdefault(name, '')
+                if desc=='':
+                    self.vardescs[name] = meta['desc'] 
+                elif desc!=meta['desc'] and meta['desc']!='':
+                    print('Find another description for {}: "{}", keep "{}"'.format(name, meta['desc'], self.vardescs[name]))
 
     @staticmethod
     def _format_shape(shape):
