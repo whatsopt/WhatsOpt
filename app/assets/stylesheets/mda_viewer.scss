@@ -57,3 +57,10 @@ a.analysis-link {
 	padding: 10px 15px 2px 15px !important;
 	font-size: 12px;
 }
+
+/* React table cell: give clickable widthxheight when the cell is empty*/
+span.react-table-cell {
+	display: block;
+	width: 100%;
+	min-height: 24px;
+}
