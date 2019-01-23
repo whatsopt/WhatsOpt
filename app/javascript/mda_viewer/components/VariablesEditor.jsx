@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import ReactTable from 'react-table';
-import {RIEInput, RIESelect} from '@attently/riek';
+import {RIEInput, RIESelect} from 'riek';
 
 class VariablesEditor extends React.Component {
   constructor(props) {
@@ -136,7 +136,6 @@ class VariablesEditor extends React.Component {
       } else {
         return ( <RIEInput
           className="react-table-cell"
-          defaultValue=""
           value={this.connections[cellInfo.index][cellInfo.column.id]}
           change={(attr) => this.props.onConnectionChange(this.connections[cellInfo.index].id, attr)}
           propName={cellInfo.column.id}
