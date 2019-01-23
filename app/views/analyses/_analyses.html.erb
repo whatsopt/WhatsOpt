@@ -6,7 +6,7 @@
       <th style='width=10 px;'>#</th>
       <th class="col-md-3">Name</th>
       <th class="col-md-1">Owner</th>
-      <th class="col-md-1">Locked</th>
+      <th class="col-md-1">Private</th>
       <th class="col-md-2">Created</th>
       <th class="col-md-3">Operations</th>
       <th class="col-md-2">Action(s)</th>
@@ -18,7 +18,7 @@
       <tr>
         <td>#<%= mda.id %></td>
         <td><%= link_to_analysis_if_authorized(mda, current_user) %></td>
-        <td><%= mda.owner.login %></td>
+        <td><%= mda&.owner&.login %></td>
         <td>
           <% unless mda.public %>
             <i class="fa fa-lock"></i>

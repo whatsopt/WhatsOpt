@@ -1,8 +1,14 @@
 <h1>CHANGELOG</h1>
 
+<h3>0.13.0 (23/01/2019)</h3>
+<ul>
+  <li>Implement Remote execution of nested analyses</li>
+  <li>Improve wop push (0.7.1): retrieve initial conditions values set by the user on problem object</li>
+</ul>
+
 <h3>0.12.2 (07/01/2019)</h3>
 <ul>
-  <li>Management of nested analyses
+  <li>Management of nested analyses</li>
   <li>Display 3D scatter plots when 2 inputs and one output are selected</li>
   <li>OneraMDAO SEGOMOE optimizer integration</li>
   <li>Improve operation logs management</li>
