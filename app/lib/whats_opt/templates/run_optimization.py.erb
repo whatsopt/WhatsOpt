@@ -8,12 +8,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 <% if @remote -%>
 from openmdao.api import Problem, SqliteRecorder, CaseReader, ScipyOptimizeDriver, pyOptSparseDriver
+from whatsopt.oneramdao_driver import OneramdaoOptimizerDriver
 from <%= @server_module %>.<%= @mda.py_modulename %>_proxy import <%= @mda.py_classname %>Proxy as <%= @mda.py_classname %> 
 <% else -%>
 from openmdao.api import Problem, SqliteRecorder, CaseReader, ScipyOptimizeDriver #, pyOptSparseDriver
 from <%= @mda.py_modulename %> import <%= @mda.py_classname %> 
 <% end %>
-from whatsopt.oneramdao_driver import OneramdaoOptimizerDriver
 
 <%= ERB.new(File.read(File.join(@template_dir, 'options_partial.py.erb')), nil, nil, eoutvar='_sub01').result(binding) %>
 pb = Problem(<%= @mda.py_classname %>())
