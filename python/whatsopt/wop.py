@@ -17,10 +17,11 @@ def url():
 	print(WhatsOpt(login=False).url)
 
 @cli.command()
-def login():
+@click.pass_context
+def login(ctx):
 	""" Authenticate and store api key """
-	WhatsOpt().login(echo=True)
-	
+	WhatsOpt(**ctx.obj).login(echo=True)
+
 @cli.command()
 def logout():
 	""" Remove api key """
@@ -30,7 +31,7 @@ def logout():
 @click.pass_context
 def list(ctx):
 	""" List analyses """
-	WhatsOpt(api_key=ctx.obj['api_key']).list_analyses()
+	WhatsOpt(**ctx.obj).list_analyses()
 	
 @cli.command()
 @click.option('--dry-run', is_flag=True, default=False, help='generate analysis push data without actually pushing')
@@ -39,7 +40,7 @@ def list(ctx):
 @click.pass_context
 def push(ctx, dry_run, name, py_filename):
 	""" Push analysis from within given PY_FILENAME """
-	wop = WhatsOpt(api_key=ctx.obj['api_key'])
+	wop = WhatsOpt(**ctx.obj)
 	options = {'--dry-run': dry_run, '--name': name}
 	wop.execute(py_filename, wop.push_mda_cmd, options)
 	# if not exited successfully in execute
@@ -58,7 +59,7 @@ def push(ctx, dry_run, name, py_filename):
 def pull(ctx, dry_run, force, server, analysis_id):
 	""" Pull analysis given its identifier """	
 	options = {'--dry-run': dry_run, '--force': force, '--server': server}
-	WhatsOpt(api_key=ctx.obj['api_key']).pull_mda(analysis_id, options)
+	WhatsOpt(**ctx.obj).pull_mda(analysis_id, options)
 	
 @cli.command()
 @click.option('--analysis-id', help='specify the analysis to update from (otherwise guessed from current files)')
@@ -66,7 +67,7 @@ def pull(ctx, dry_run, force, server, analysis_id):
 @click.pass_context
 def update(ctx, analysis_id, server):
 	""" Update analysis connections """
-	WhatsOpt(api_key=ctx.obj['api_key']).update_mda(analysis_id, server)
+	WhatsOpt(**ctx.obj).update_mda(analysis_id, server)
 	
 @cli.command()
 @click.argument('sqlite_filename')
@@ -76,13 +77,13 @@ def update(ctx, analysis_id, server):
 @click.pass_context
 def upload(ctx, sqlite_filename, analysis_id, operation_id, cleanup):
 	""" Upload data stored in given SQLITE_FILENAME """
-	WhatsOpt(api_key=ctx.obj['api_key']).upload(sqlite_filename, analysis_id, operation_id, cleanup)
+	WhatsOpt(**ctx.obj).upload(sqlite_filename, analysis_id, operation_id, cleanup)
 
 @cli.command()
 @click.pass_context
 def version(ctx):
 	""" Show versions of WhatsOpt app and recommended wop command line """
-	WhatsOpt(api_key=ctx.obj['api_key']).check_versions()
+	WhatsOpt(**ctx.obj).check_versions()
 	
 @cli.command()
 def serve():

@@ -18,6 +18,7 @@ from whatsopt import __version__
 
 WHATSOPT_DIRNAME = os.path.join(os.path.expanduser('~'), '.whatsopt')
 API_KEY_FILENAME = os.path.join(WHATSOPT_DIRNAME, 'api_key')
+URL_FILENAME = os.path.join(WHATSOPT_DIRNAME, 'url')
 NULL_DRIVER_NAME = '__DRIVER__'  # check WhatsOpt Discipline model
 
 PROD_URL = "https://selene.onecert.fr/whatsopt"
@@ -35,6 +36,9 @@ class WhatsOpt(object):
     def __init__(self, url=None, api_key=None, login=True):
         if url:
             self._url = url
+        elif os.path.exists(URL_FILENAME):
+            with open(URL_FILENAME, 'r') as f:
+                self._url = f.read()
         else:
             self._url = self.default_url
         
@@ -45,6 +49,12 @@ class WhatsOpt(object):
         # login by default
         if login:
             self.login(api_key)
+
+        # save url
+        if not os.path.exists(WHATSOPT_DIRNAME):
+            os.makedirs(WHATSOPT_DIRNAME)
+        with open(URL_FILENAME, 'w') as f:
+            f.write(self._url)       
 
     @property
     def url(self):
@@ -106,6 +116,8 @@ class WhatsOpt(object):
     def logout(self, echo=True):
         if os.path.exists(API_KEY_FILENAME):
             os.remove(API_KEY_FILENAME)
+        if os.path.exists(URL_FILENAME):
+            os.remove(URL_FILENAME)
         if echo:
             print("Sucessfully logged out from WhatsOpt (%s)" % self.url)
 
