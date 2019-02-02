@@ -32,7 +32,7 @@ class WhatsOptImportMdaError(Exception):
     pass
 
 class WhatsOpt(object):
-    
+
     def __init__(self, url=None, api_key=None, login=True):
         if url:
             self._url = url
@@ -168,6 +168,7 @@ class WhatsOpt(object):
         name = problem.model.__class__.__name__
         data = _get_viewer_data(problem)
         #print(name, data)
+        self.keep_shape = options['--keep-shape']
         self.tree = data['tree']
         #print("TREE("+name+")=", self.tree)
         self.connections = data['connections_list']
@@ -180,6 +181,7 @@ class WhatsOpt(object):
         self._collect_disc_infos(problem.model, self.tree)
         self._collect_var_infos(problem.model)
         mda_attrs = self._get_mda_attributes(problem.model, self.tree)
+
         if options['--dry-run']:
             print(json.dumps(mda_attrs, indent=2))
             # print(self.discmap)
@@ -363,7 +365,9 @@ class WhatsOpt(object):
                 vtype = 'Float'
                 if re.match('int', type(meta['value']).__name__):
                     vtype = 'Integer' 
-                shape = WhatsOpt._format_shape(str(meta['shape']))
+                shape = str(meta['shape']) 
+                if not self.keep_shape:
+                    shape = WhatsOpt._format_shape(shape)
                 name = system._var_abs2prom[typ][abs_name]
                 self.vars[abs_name] = {'fullname': abs_name,
                                         'name': name,

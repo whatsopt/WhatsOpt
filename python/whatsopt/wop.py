@@ -35,13 +35,14 @@ def list(ctx):
 	
 @cli.command()
 @click.option('--dry-run', is_flag=True, default=False, help='generate analysis push data without actually pushing')
+@click.option('--keep-shape', is_flag=True, default=False, help='keep (1,) shape for scalar variables')
 @click.option('--name', help='find analysis with given name')
 @click.argument('py_filename')
 @click.pass_context
-def push(ctx, dry_run, name, py_filename):
+def push(ctx, dry_run, keep_shape, name, py_filename):
 	""" Push analysis from within given PY_FILENAME """
 	wop = WhatsOpt(**ctx.obj)
-	options = {'--dry-run': dry_run, '--name': name}
+	options = {'--dry-run': dry_run, '--keep-shape': keep_shape, '--name': name}
 	wop.execute(py_filename, wop.push_mda_cmd, options)
 	# if not exited successfully in execute
 	if name:
