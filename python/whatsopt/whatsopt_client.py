@@ -240,7 +240,11 @@ class WhatsOpt(object):
         from socket import gethostname
         mda_id = self.get_analysis_id() if not analysis_id else analysis_id
         reader = CaseReader(sqlite_filename)
-        driver_first_coord = reader.driver_cases.get_iteration_coordinate(0)
+        cases = reader.list_cases('driver')
+        if len(cases)==0:
+            raise Exception("No case found in {}".format(sqlite_filename))
+
+        driver_first_coord = cases[0]
         name = os.path.splitext(sqlite_filename)[0]
         m = re.match(r"\w+:(\w+)|.*", driver_first_coord)
         if m:
@@ -554,12 +558,12 @@ class WhatsOpt(object):
         return mda, disc, var
 
     def _format_upload_cases(self, driver_regexp, reader):
-        cases = reader.system_cases.list_cases()
+        cases = reader.list_cases('root')
         inputs = {}
         outputs = {}
-        for case_id in cases:
+        for i, case_id in enumerate(cases):
             if driver_regexp.match(case_id):
-                case = reader.system_cases.get_case(case_id)
+                case = reader.get_case(case_id)
                 if case.inputs is not None:
                     self._insert_data(case.inputs, inputs)
                 if case.outputs is not None:
