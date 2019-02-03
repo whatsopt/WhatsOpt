@@ -168,7 +168,7 @@ class WhatsOpt(object):
         name = problem.model.__class__.__name__
         data = _get_viewer_data(problem)
         #print(name, data)
-        self.keep_shape = options['--keep-shape']
+        self.scalar_format = options['--scalar-format']
         self.tree = data['tree']
         #print("TREE("+name+")=", self.tree)
         self.connections = data['connections_list']
@@ -366,7 +366,7 @@ class WhatsOpt(object):
                 if re.match('int', type(meta['value']).__name__):
                     vtype = 'Integer' 
                 shape = str(meta['shape']) 
-                if not self.keep_shape:
+                if self.scalar_format:
                     shape = WhatsOpt._format_shape(shape)
                 name = system._var_abs2prom[typ][abs_name]
                 self.vars[abs_name] = {'fullname': abs_name,
