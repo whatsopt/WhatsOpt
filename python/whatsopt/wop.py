@@ -55,6 +55,8 @@ def push(ctx, dry_run, scalar_format, name, py_filename):
 @click.option('--dry-run', is_flag=True, default=False, help='print analysis pull infos without actually pulling')
 @click.option('--force', is_flag=True, default=False, help='overwrite existing files')
 @click.option('--server', is_flag=True, default=False, help='generate Thrift server as well')
+@click.option('--run-ops', is_flag=True, default=False, help='update operation run scripts')
+@click.option('--test-units', is_flag=True, default=False, help='update discipline test scripts')
 @click.argument('analysis_id')
 @click.pass_context
 def pull(ctx, dry_run, force, server, analysis_id):
@@ -65,10 +67,13 @@ def pull(ctx, dry_run, force, server, analysis_id):
 @cli.command()
 @click.option('--analysis-id', help='specify the analysis to update from (otherwise guessed from current files)')
 @click.option('--server', is_flag=True, default=False, help='update Thrift server as well')
+@click.option('--run-ops', is_flag=True, default=False, help='update operation run scripts')
+@click.option('--test-units', is_flag=True, default=False, help='update discipline test scripts')
 @click.pass_context
-def update(ctx, analysis_id, server):
+def update(ctx, analysis_id, server, run_ops, test_units):
 	""" Update analysis connections """
-	WhatsOpt(**ctx.obj).update_mda(analysis_id, server)
+	options = {'--server': server, '--run-ops': run_ops, '--test_units': test_units}
+	WhatsOpt(**ctx.obj).update_mda(analysis_id, options)
 	
 @cli.command()
 @click.argument('sqlite_filename')

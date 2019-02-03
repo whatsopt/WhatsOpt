@@ -16,7 +16,7 @@ module WhatsOpt
     end
 
     # FIXME: not happy with this interface as server generate always server and no nops
-    def _generate_code(gendir, only_base: false, with_server: true, with_ops: false, sqlite_filename: nil)
+    def _generate_code(gendir, only_base: false, with_run: false, with_server: true, with_runops: false, sqlite_filename: nil)
       if with_server
         server_dir = File.join(gendir, @server_module)
         Dir.mkdir(server_dir) unless File.exists?(server_dir)

@@ -7,6 +7,9 @@ class Api::V1::ExportsController < Api::ApiController
     mda_id = params[:mda_id]
     format = params[:format]
     with_server = !!params[:with_server]
+    with_runops = !!params[:with_runit]    
+    with_runops = !!params[:with_runops]    
+    with_unittests = !!params[:with_unittests]
 
     user_agent = request.headers['User-Agent'] 
     mda = Analysis.find(mda_id)
@@ -14,7 +17,7 @@ class Api::V1::ExportsController < Api::ApiController
     if format == "openmdao" || format == "openmdao_base"
       ogen = WhatsOpt::OpenmdaoGenerator.new(mda)
       content, filename = ogen.generate(only_base: (format == "openmdao_base"), user_agent: user_agent,
-                                        with_server: with_server)
+                                        with_server: with_server, with_runops: with_runops)
       send_data content, filename: filename
     elsif format == "cmdows"
       cmdowsgen = WhatsOpt::CmdowsGenerator.new(mda)
