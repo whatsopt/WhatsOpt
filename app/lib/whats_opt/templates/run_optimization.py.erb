@@ -39,9 +39,9 @@ pb.driver.options['debug_print'] = []
 case_recorder_filename = '<%= @sqlite_filename %>'
 print(case_recorder_filename)        
 recorder = SqliteRecorder(case_recorder_filename)
+# pb.add_recorder(recorder)
 pb.driver.add_recorder(recorder)
 pb.model.add_recorder(recorder)
-pb.model.nonlinear_solver.add_recorder(recorder)
 
 <% unless @driver.oneramdao? -%>
 # Derivatives are compute via finite-difference method
@@ -63,21 +63,11 @@ pb.run_driver()
 
 if options.batch:
     exit(0)  
-reader = CaseReader(case_recorder_filename)
-cases = reader.system_cases.list_cases()
-n = len(cases)
-data = {'inputs': {}, 'outputs': {} }
-<% @mda.design_variables.each do |dv| %>
-data['inputs']['<%= dv.name %>'] = np.zeros((n,)+<%= dv.shape=="1"?"(1,)":dv.shape %>)<% end %>
-<% @mda.response_variables.each do |r| %>
-data['outputs']['<%= r.name %>'] = np.zeros((n,)+<%= r.shape=="1"?"(1,)":r.shape %>)<% end %>
 
-for i, case_id in enumerate(cases):
-    case = reader.system_cases.get_case(case_id)
-<% @mda.design_variables.each do |dv| -%>
-    data['inputs']['<%= dv.name %>'][i,:] = case.inputs['<%= dv.name %>']
-<% end -%>
-<% @mda.response_variables.each do |r| -%>
-    data['outputs']['<%= r.name %>'][i,:] = case.outputs['<%= r.name %>']
-<% end -%>
-      
+# reader = CaseReader(case_recorder_filename)
+# cases = reader.list_cases('problem')
+# print(cases)
+
+# for i in range(len(cases)):
+#    obj = cases[i].get_objectives()
+#    print(obj)      

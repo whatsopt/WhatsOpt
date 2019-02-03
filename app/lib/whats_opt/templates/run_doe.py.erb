@@ -37,7 +37,7 @@ pb.run_driver()
 if options.batch:
     exit(0)
 reader = CaseReader(case_recorder_filename)
-cases = reader.system_cases.list_cases()
+cases = reader.list_cases('root')
 n = len(cases)
 data = {'inputs': {}, 'outputs': {} }
 <% @mda.design_variables.each do |dv| %>
@@ -45,8 +45,8 @@ data['inputs']['<%= dv.name %>'] = np.zeros((n,)+<%= dv.shape=="1"?"(1,)":dv.sha
 <% @mda.response_variables.each do |r| %>
 data['outputs']['<%= r.name %>'] = np.zeros((n,)+<%= r.shape=="1"?"(1,)":r.shape %>)<% end %>
 
-for i, case_id in enumerate(cases):
-    case = reader.system_cases.get_case(case_id)
+for i in range(len(cases)):
+    case = reader.get_case(cases[i])
 <% @mda.design_variables.each do |dv| -%>
     data['inputs']['<%= dv.name %>'][i,:] = case.inputs['<%= dv.name %>']
 <% end -%>
