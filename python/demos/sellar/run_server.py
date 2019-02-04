@@ -11,7 +11,7 @@ from thrift.server import TServer
 
 from server.sellar import Sellar as SellarService
 from server.sellar_conversions import *
-from sellar import Sellar as Factory
+from sellar import SellarFactory as Factory
 
 class SellarHandler:
     server = None

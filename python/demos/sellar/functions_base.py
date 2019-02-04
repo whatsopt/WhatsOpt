@@ -19,7 +19,7 @@ class FunctionsBase(ExplicitComponent):
         self.add_input('x', val=1.0, desc='disc1 local variable')
         self.add_input('z', val=np.ones((2,)), desc='global variable')
 		
-        self.add_output('obj', val=1.0, desc='objective')
+        self.add_output('f', val=1.0, desc='objective')
         self.add_output('g1', val=1.0, desc='constraint')
         self.add_output('g2', val=1.0, desc='constraint')
 	
