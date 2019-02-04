@@ -191,7 +191,8 @@ class WhatsOpt(object):
             resp.raise_for_status()
             print("Analysis %s pushed" % name)
 
-    def pull_mda(self, mda_id, options):
+    def pull_mda(self, mda_id, options={}, msg=None):
+        if not msg: msg = 'Analysis %s pulled' % mda_id
         base = '_base' if options.get('--base') else '' 
         param = ''
         if options.get('--server'):
@@ -218,12 +219,14 @@ class WhatsOpt(object):
             file_from = os.path.join(tempdir, f)
             file_to = f
             if os.path.exists(file_to):
-                if options.get('--force'):
+                if f=="run_analysis.py":
+                    continue
+                elif options.get('--force'):
                     print("Update %s" % file_to)
                     if not options.get('--dry-run'):
                         os.remove(file_to)
                 else:
-                    print("File %s in the way, move it or pull in another directory or use --force to overwrite" % file_to)
+                    print("File %s in the way" % file_to)
                     exit(-1)
             else:
                 print("Pull %s" % file_to) 
@@ -236,14 +239,16 @@ class WhatsOpt(object):
                 elif not os.path.exists(dir_to):
                     os.makedirs(dir_to)
                 #print("Move {} to {}".format(file_from, dir_to))
+                if os.path.exists(file_to) and f=="run_analysis.py":
+                    continue
                 move(file_from, dir_to)
-            print('Analysis %s pulled' % mda_id)
+            print(msg)
     
     def update_mda(self, analysis_id=None, options={}):
         id = analysis_id or self.get_analysis_id()
         opts = {**options}
         opts.update({'--base': True, '--force': True})
-        self.pull_mda(id, opts)
+        self.pull_mda(id, opts, 'Analysis %s updated' % id)
         
     def upload(self, sqlite_filename, analysis_id=None, operation_id=None, cleanup=False):
         from socket import gethostname

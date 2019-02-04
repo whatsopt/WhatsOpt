@@ -59,7 +59,7 @@ def push(ctx, dry_run, scalar_format, name, py_filename):
 @click.option('--test-units', is_flag=True, default=False, help='update discipline test scripts')
 @click.argument('analysis_id')
 @click.pass_context
-def pull(ctx, dry_run, force, server, analysis_id):
+def pull(ctx, dry_run, force, server, run_ops, test_units, analysis_id):
 	""" Pull analysis given its identifier """	
 	options = {'--dry-run': dry_run, '--force': force, '--server': server}
 	WhatsOpt(**ctx.obj).pull_mda(analysis_id, options)
@@ -72,7 +72,7 @@ def pull(ctx, dry_run, force, server, analysis_id):
 @click.pass_context
 def update(ctx, analysis_id, server, run_ops, test_units):
 	""" Update analysis connections """
-	options = {'--server': server, '--run-ops': run_ops, '--test_units': test_units}
+	options = {'--server': server, '--run-ops': run_ops, '--test-units': test_units}
 	WhatsOpt(**ctx.obj).update_mda(analysis_id, options)
 	
 @cli.command()
