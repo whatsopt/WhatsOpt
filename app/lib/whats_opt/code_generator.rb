@@ -20,7 +20,8 @@ module WhatsOpt
       @server_port = 31400      
     end
         
-    def generate(only_base: false, with_run: true, with_server: false, with_runops: true, user_agent: nil, sqlite_filename: nil)
+    # options: only_base: false, with_run: true, with_server: false, with_runops: true, user_agent: nil, sqlite_filename: nil
+    def generate(options={})
       zip_filename = nil
       stringio = nil
       @genfiles = []
@@ -28,8 +29,7 @@ module WhatsOpt
         #dir='/tmp/test'
         zip_rootpath = Pathname.new(dir)
         zip_filename = File.basename(dir)+".zip"
-        _generate_code(dir, only_base: only_base, sqlite_filename: sqlite_filename,
-                       with_run: true, with_server: with_server, with_runops: with_runops)
+        _generate_code(dir, options)
         stringio = Zip::OutputStream.write_buffer do |zio|  
           @genfiles.each do |filename|
             entry = Pathname.new(filename).relative_path_from(zip_rootpath)

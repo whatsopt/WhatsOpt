@@ -15,20 +15,17 @@ module WhatsOpt
       @comment_delimiters={begin: '/*', end: '*/'}
     end
 
-    # FIXME: not happy with this interface as server generate always server and no nops
-    def _generate_code(gendir, only_base: false, with_run: false, with_server: true, with_runops: false, sqlite_filename: nil)
-      if with_server
-        server_dir = File.join(gendir, @server_module)
-        Dir.mkdir(server_dir) unless File.exists?(server_dir)
-        ok, log = _generate_with_thrift(server_dir)
-        @comment_delimiters={begin: '"""', end: '"""'}
-        raise ThriftError.new(log) if !ok
-        _generate("#{@mda.basename}_conversions.py", 'analysis_conversions.py.erb', server_dir)
-        _generate("#{@mda.basename}_proxy.py", 'analysis_proxy.py.erb', server_dir)
-        _generate("discipline_proxy.py", 'discipline_proxy.py.erb', server_dir)
-        _generate("sub_analysis_proxy.py", 'sub_analysis_proxy.py.erb', server_dir)
-        _generate("run_server.py", 'run_server.py.erb', gendir)
-      end
+    def _generate_code(gendir, options={})
+      server_dir = File.join(gendir, @server_module)
+      Dir.mkdir(server_dir) unless File.exists?(server_dir)
+      ok, log = _generate_with_thrift(server_dir)
+      @comment_delimiters={begin: '"""', end: '"""'}
+      raise ThriftError.new(log) if !ok
+      _generate("#{@mda.basename}_conversions.py", 'analysis_conversions.py.erb', server_dir)
+      _generate("#{@mda.basename}_proxy.py", 'analysis_proxy.py.erb', server_dir)
+      _generate("discipline_proxy.py", 'discipline_proxy.py.erb', server_dir)
+      _generate("sub_analysis_proxy.py", 'sub_analysis_proxy.py.erb', server_dir)
+      _generate("run_server.py", 'run_server.py.erb', gendir)
     end    
     
     def _generate_with_thrift(gendir)
