@@ -44,10 +44,14 @@ class Variable < ApplicationRecord
   after_initialize :set_defaults, unless: :persisted?
   before_save :mark_parameter_for_removal
   
-  # TODO: create parameter.rb as for variable.rb
   def init_py_value
     if self.parameter&.init.blank?
-      default_py_value
+      if self.is_in? # retrieve init value from connected uniq 'out' variable
+        val = self.incoming_connection&.from&.init_py_value
+        val ? val : default_py_value  # in case not connected
+      else
+        default_py_value
+      end
     else
       self.parameter.init
     end

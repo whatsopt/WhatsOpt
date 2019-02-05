@@ -33,9 +33,9 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     end
   end
   
-  def _assert_file_generation(expected, with_server: true, with_runops: true, with_run: true)
+  def _assert_file_generation(expected, with_server: true, with_runops: true, with_run: true, with_unittests: false)
     Dir.mktmpdir do |dir|
-      @ogen._generate_code(dir, with_server: with_server, with_runops: with_runops, with_run: with_run)
+      @ogen._generate_code(dir, with_server: with_server, with_runops: with_runops, with_run: with_run, with_unittests: with_unittests)
       dirpath = Pathname.new(dir)
       basenames = @ogen.genfiles.map{|f| Pathname.new(f).relative_path_from(dirpath).to_s }.sort
       expected = (expected).sort       
@@ -53,6 +53,12 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
                 "cicav_base.py", "geometry.py", "geometry_base.py", "propulsion.py", "propulsion_base.py",
                 "run_analysis.py"]
     _assert_file_generation expected, with_server: false, with_runops: false
+  end 
+  test "should maintain a list of generated filepaths with unittests" do
+    expected = ["__init__.py", "aerodynamics.py", "aerodynamics_base.py", "cicav.py", 
+                "cicav_base.py", "geometry.py", "geometry_base.py", "propulsion.py", "propulsion_base.py",
+                "run_analysis.py"]+["test_aerodynamics.py", "test_geometry.py", "test_propulsion.py"]
+    _assert_file_generation expected, with_server: false, with_runops: false, with_unittests: true
   end 
   test "should maintain a list of generated filepaths without server" do
     expected = ["__init__.py", "aerodynamics.py", "aerodynamics_base.py", "cicav.py", 

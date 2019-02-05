@@ -89,12 +89,13 @@ module WhatsOpt
     
     # only_base: false, sqlite_filename: nil, with_run: true, with_server: true, with_runops: true
     def _generate_code(gendir, options={})
-      opts = {only_base: false, with_server: true, with_run: true}.merge(options)
+      opts = {only_base: false, with_server: true, with_run: true, with_unittests: false}.merge(options)
       @mda.disciplines.nodes.each do |disc|
         if disc.has_sub_analysis?
           _generate_sub_analysis(disc, gendir, opts)
         else
           _generate_discipline(disc, gendir, opts)
+          _generate_test_scripts(disc, gendir) if opts[:with_unittests]
         end
       end 
       _generate_main(gendir, opts)
@@ -157,6 +158,11 @@ module WhatsOpt
       end
       _generate('run_analysis.py', 'run_analysis.py.erb', gendir) if options[:with_run]
     end    
+
+    def _generate_test_scripts(discipline, gendir)
+      @discipline=discipline  # @discipline used in template
+      _generate("test_#{discipline.py_filename}", 'test_discipline.py.erb', gendir)
+    end
 
   end
 end
