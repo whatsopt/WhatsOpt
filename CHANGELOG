@@ -1,5 +1,18 @@
 <h1>CHANGELOG</h1>
 
+<h3>0.13.1 (04/02/2019)</h3>
+<ul>
+  <li>Operation run scripts and operation running require OpenDMAO 2.5+</li>
+  <li>wop update (0.8.0):</li> 
+    <ul>
+      <li>By default update only analysis code (i.e. *_base.py)</li>
+      <li>run_analysis is generated once initially (have to be removed)</li>
+      <li>Operation run script generated when --run-ops is set</li>
+      <li>Thrift server only generated when --server is set</li>
+    </ul>
+  </li>
+</ul>
+
 <h3>0.13.0 (23/01/2019)</h3>
 <ul>
   <li>Implement Remote execution of nested analyses</li>
