@@ -7,7 +7,6 @@ class Api::V1::ExportsController < Api::ApiController
     mda_id = params[:mda_id]
     format = params[:format]
     with_server = !!params[:with_server]
-    with_runops = !!params[:with_runit]    
     with_runops = !!params[:with_runops]    
     with_unittests = !!params[:with_unittests]
 

@@ -34,6 +34,7 @@ pb.model.add_constraint('<%= voi.name %>', equals=0.)<% end %>
 pb.setup()  
 pb.run_driver()        
 
+<% if @mda.variables.size < 20 %>
 if options.batch:
     exit(0)
 reader = CaseReader(case_recorder_filename)
@@ -80,3 +81,4 @@ plt.xlabel('<%= dv.dim==1?"#{dv.name}":"#{dv.name} #{ki}" %>')
 
 <% end -%>
 plt.show()
+<% end -%>
