@@ -32,7 +32,7 @@ pb.model.nonlinear_solver.add_recorder(recorder)
 pb.model.add_design_var('x', lower=0, upper=10)
 pb.model.add_design_var('z', lower=0, upper=10)
 
-pb.model.add_objective('obj')
+pb.model.add_objective('f')
 
 
 pb.model.add_constraint('g1', upper=0.)
@@ -44,32 +44,32 @@ pb.run_driver()
 if options.batch:
     exit(0)
 reader = CaseReader(case_recorder_filename)
-cases = reader.system_cases.list_cases()
+cases = reader.list_cases('root')
 n = len(cases)
 data = {'inputs': {}, 'outputs': {} }
 
 data['inputs']['x'] = np.zeros((n,)+(1,))
 data['inputs']['z'] = np.zeros((n,)+(2,))
 
-data['outputs']['obj'] = np.zeros((n,)+(1,))
+data['outputs']['f'] = np.zeros((n,)+(1,))
 data['outputs']['g1'] = np.zeros((n,)+(1,))
 data['outputs']['g2'] = np.zeros((n,)+(1,))
 
-for i, case_id in enumerate(cases):
-    case = reader.system_cases.get_case(case_id)
+for i in range(len(cases)):
+    case = reader.get_case(cases[i])
     data['inputs']['x'][i,:] = case.inputs['x']
     data['inputs']['z'][i,:] = case.inputs['z']
-    data['outputs']['obj'][i,:] = case.outputs['obj']
+    data['outputs']['f'][i,:] = case.outputs['f']
     data['outputs']['g1'][i,:] = case.outputs['g1']
     data['outputs']['g2'][i,:] = case.outputs['g2']
       
 
-output = data['outputs']['obj'].reshape(-1)
+output = data['outputs']['f'].reshape(-1)
 
 input = data['inputs']['x'].reshape(-1)
 plt.subplot(3, 3, 1)
 plt.plot(input[0::1], output[0::1], '.')
-plt.ylabel('obj')
+plt.ylabel('f')
 plt.xlabel('x')
 
 input = data['inputs']['z'].reshape(-1)

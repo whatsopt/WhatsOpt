@@ -389,14 +389,14 @@ class FunctionsInput(object):
 class FunctionsOutput(object):
     """
     Attributes:
-     - obj
+     - f
      - g1
      - g2
     """
 
 
-    def __init__(self, obj=None, g1=None, g2=None,):
-        self.obj = obj
+    def __init__(self, f=None, g1=None, g2=None,):
+        self.f = f
         self.g1 = g1
         self.g2 = g2
 
@@ -411,7 +411,7 @@ class FunctionsOutput(object):
                 break
             if fid == 1:
                 if ftype == TType.DOUBLE:
-                    self.obj = iprot.readDouble()
+                    self.f = iprot.readDouble()
                 else:
                     iprot.skip(ftype)
             elif fid == 2:
@@ -434,9 +434,9 @@ class FunctionsOutput(object):
             oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
             return
         oprot.writeStructBegin('FunctionsOutput')
-        if self.obj is not None:
-            oprot.writeFieldBegin('obj', TType.DOUBLE, 1)
-            oprot.writeDouble(self.obj)
+        if self.f is not None:
+            oprot.writeFieldBegin('f', TType.DOUBLE, 1)
+            oprot.writeDouble(self.f)
             oprot.writeFieldEnd()
         if self.g1 is not None:
             oprot.writeFieldBegin('g1', TType.DOUBLE, 2)
@@ -496,7 +496,7 @@ FunctionsInput.thrift_spec = (
 all_structs.append(FunctionsOutput)
 FunctionsOutput.thrift_spec = (
     None,  # 0
-    (1, TType.DOUBLE, 'obj', None, None, ),  # 1
+    (1, TType.DOUBLE, 'f', None, None, ),  # 1
     (2, TType.DOUBLE, 'g1', None, None, ),  # 2
     (3, TType.DOUBLE, 'g2', None, None, ),  # 3
 )

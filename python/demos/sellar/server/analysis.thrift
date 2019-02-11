@@ -40,7 +40,7 @@ struct FunctionsInput {
 }
 
 struct FunctionsOutput {
-    1: Float obj     
+    1: Float f     
     2: Float g1     
     3: Float g2     
 }

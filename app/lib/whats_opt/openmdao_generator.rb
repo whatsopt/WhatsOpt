@@ -26,7 +26,7 @@ module WhatsOpt
       ok, lines = false, []
       @mda.set_as_root_module
       Dir.mktmpdir("check_#{@mda.basename}_") do |dir|
-        #dir='/tmp' # for debug
+        dir='/tmp' # for debug
         begin
           _generate_code(dir, with_server: false, with_runops: false)
         rescue ServerGenerator::ThriftError => e
@@ -87,71 +87,82 @@ module WhatsOpt
       Open3.popen2e(PYTHON, script, '--batch', &block)
     end
     
-    def _generate_code(gendir, only_base: false, sqlite_filename: nil, 
-                       with_run: true, with_server: true, with_runops: true)
+    # only_base: false, sqlite_filename: nil, with_run: true, with_server: true, with_runops: true
+    def _generate_code(gendir, options={})
+      opts = {only_base: false, with_server: true, with_run: true, with_unittests: false}.merge(options)
       @mda.disciplines.nodes.each do |disc|
         if disc.has_sub_analysis?
-          _generate_sub_analysis(disc, gendir, only_base, sqlite_filename)
+          _generate_sub_analysis(disc, gendir, opts)
         else
-          _generate_discipline(disc, gendir, only_base)
+          _generate_discipline(disc, gendir, opts)
+          _generate_test_scripts(disc, gendir) if opts[:with_unittests]
         end
       end 
-      _generate_main(gendir, only_base)
-      _generate_run_scripts(gendir, sqlite_filename, 
-                            with_runops: with_runops, with_run: with_run)
-      if with_server
+      _generate_main(gendir, opts)
+      _generate_run_scripts(gendir, opts)
+      if opts[:with_server]
         @sgen._generate_code(gendir)
         @genfiles += @sgen.genfiles
       end
       @genfiles
     end
      
-    def _generate_discipline(discipline, gendir, only_base=false)
+    def _generate_discipline(discipline, gendir, options={})
       @discipline=discipline  # @discipline used in template
-      _generate(discipline.py_filename, 'openmdao_discipline.py.erb', gendir) unless only_base
+      _generate(discipline.py_filename, 'openmdao_discipline.py.erb', gendir) unless options[:only_base]
       _generate(discipline.py_basefilename, 'openmdao_discipline_base.py.erb', gendir)
     end
     
-    def _generate_sub_analysis(super_discipline, gendir, only_base=true, sqlite_filename=nil)
+    # options: only_base=true, sqlite_filename=nil
+    def _generate_sub_analysis(super_discipline, gendir, options={})
       mda = super_discipline.sub_analysis
       sub_ogen = OpenmdaoGenerator.new(mda, @server_host, @driver_name, @driver_options)
       gendir = File.join(gendir, mda.basename)
       Dir.mkdir(gendir) unless Dir.exists?(gendir)
-      sub_ogen._generate_code(gendir, only_base: only_base, sqlite_filename: sqlite_filename, 
-                              with_run: false, with_server: false, with_runops: false)
+
+      # generate only nalaysis code: no script , no server
+      opts = options.merge({with_run: false, with_server: false, with_runops: false})
+      sub_ogen._generate_code(gendir, opts)
       @genfiles += sub_ogen.genfiles
     end
 
-    def _generate_main(gendir, only_base)
-      _generate(@mda.py_filename, 'openmdao_main.py.erb', gendir) unless only_base
+    # options: only_base
+    def _generate_main(gendir, options={})
+      _generate(@mda.py_filename, 'openmdao_main.py.erb', gendir) unless options[:only_base]
       _generate(@mda.py_basefilename, 'openmdao_main_base.py.erb', gendir)      
       _generate('__init__.py', '__init__.py.erb', gendir)
     end    
        
-    def _generate_run_scripts(gendir, sqlite_filename=nil, with_runops: true, with_run: true)
+    # options: sqlite_filename: nil, with_runops: true, with_run: true
+    def _generate_run_scripts(gendir, options={})
       if @driver_name # coming from GUI running remote driver
         @driver = OpenmdaoDriverFactory.new(@driver_name, @driver_options).create_driver
         if @driver.optimization?
-          @sqlite_filename = sqlite_filename || "#{@mda.basename}_optimization.sqlite"
+          @sqlite_filename = options[:sqlite_filename] || "#{@mda.basename}_optimization.sqlite"
           _generate('run_optimization.py', 'run_optimization.py.erb', gendir)
         elsif @driver.doe?
-          @sqlite_filename = sqlite_filename || "#{@mda.basename}_doe.sqlite"
+          @sqlite_filename = options[:sqlite_filename] || "#{@mda.basename}_doe.sqlite"
           _generate('run_doe.py', 'run_doe.py.erb', gendir)
         end
-      elsif with_runops
+      elsif options[:with_runops]
         @driver = OpenmdaoDriverFactory.new(DEFAULT_DOE_DRIVER).create_driver
-        @sqlite_filename = sqlite_filename || "#{@mda.basename}_doe.sqlite"
+        @sqlite_filename = options[:sqlite_filename] || "#{@mda.basename}_doe.sqlite"
         _generate('run_doe.py', 'run_doe.py.erb', gendir)
         @driver = OpenmdaoDriverFactory.new(DEFAULT_OPTIMIZATION_DRIVER).create_driver
-        @sqlite_filename = sqlite_filename || "#{@mda.basename}_optimization.sqlite"
+        @sqlite_filename = options[:sqlite_filename] || "#{@mda.basename}_optimization.sqlite"
         _generate('run_optimization.py', 'run_optimization.py.erb', gendir)   
       end
-      if with_runops
-        @sqlite_filename = sqlite_filename || "#{@mda.basename}_screening.sqlite"
+      if options[:with_runops]
+        @sqlite_filename = options[:sqlite_filename] || "#{@mda.basename}_screening.sqlite"
         _generate('run_screening.py', 'run_screening.py.erb', gendir)
       end
-      _generate('run_analysis.py', 'run_analysis.py.erb', gendir) if with_run
+      _generate('run_analysis.py', 'run_analysis.py.erb', gendir) if options[:with_run]
     end    
+
+    def _generate_test_scripts(discipline, gendir)
+      @discipline=discipline  # @discipline used in template
+      _generate("test_#{discipline.py_filename}", 'test_discipline.py.erb', gendir)
+    end
 
   end
 end

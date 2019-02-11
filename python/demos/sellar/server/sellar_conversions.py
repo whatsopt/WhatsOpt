@@ -100,7 +100,7 @@ def to_thrift_functions_input(inputs):
 
 def to_openmdao_functions_outputs(output, outputs={}):
     
-    outputs['obj'] = np.array(output.obj)
+    outputs['f'] = np.array(output.f)
     outputs['g1'] = np.array(output.g1)
     outputs['g2'] = np.array(output.g2)
     return outputs
@@ -109,7 +109,7 @@ def to_thrift_functions_output(outputs):
     output = FunctionsOutput()
     
     
-    output.obj = float(outputs['obj'])
+    output.f = float(outputs['f'])
     
     
     output.g1 = float(outputs['g1'])

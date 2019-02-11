@@ -16,7 +16,7 @@ class Api::V1::ExportsController < Api::ApiController
     if format == "openmdao" || format == "openmdao_base"
       ogen = WhatsOpt::OpenmdaoGenerator.new(mda)
       content, filename = ogen.generate(only_base: (format == "openmdao_base"), user_agent: user_agent,
-                                        with_server: with_server, with_runops: with_runops)
+                                        with_server: with_server, with_runops: with_runops, with_unittests: with_unittests)
       send_data content, filename: filename
     elsif format == "cmdows"
       cmdowsgen = WhatsOpt::CmdowsGenerator.new(mda)

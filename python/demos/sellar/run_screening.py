@@ -33,7 +33,7 @@ pb.model.nonlinear_solver.add_recorder(recorder)
 
 pb.model.add_design_var('x', lower=0, upper=10)
 pb.model.add_design_var('z', lower=0, upper=10)
-pb.model.add_objective('obj')
+pb.model.add_objective('f')
 pb.model.add_constraint('g1', upper=0.)
 pb.model.add_constraint('g2', upper=0.)
 pb.setup()  
@@ -42,31 +42,31 @@ pb.run_driver()
 if options.batch:
     exit(0)
 reader = CaseReader(case_recorder_filename)
-cases = reader.system_cases.list_cases()
+cases = reader.list_cases('root')
 n = len(cases)
 data = {'inputs': {}, 'outputs': {} }
 data['inputs']['x'] = np.zeros((n,)+(1,))
 data['inputs']['z'] = np.zeros((n,)+(2,))
-data['outputs']['obj'] = np.zeros((n,)+(1,))
+data['outputs']['f'] = np.zeros((n,)+(1,))
 data['outputs']['g1'] = np.zeros((n,)+(1,))
 data['outputs']['g2'] = np.zeros((n,)+(1,))
 
-for i, case_id in enumerate(cases):
-    case = reader.system_cases.get_case(case_id)
+for i in range(len(cases)):
+    case = reader.get_case(cases[i])
     data['inputs']['x'][i,:] = case.inputs['x']
     data['inputs']['z'][i,:] = case.inputs['z']
-    data['outputs']['obj'][i,:] = case.outputs['obj']
+    data['outputs']['f'][i,:] = case.outputs['f']
     data['outputs']['g1'][i,:] = case.outputs['g1']
     data['outputs']['g2'][i,:] = case.outputs['g2']
 
 salib_pb = pb.driver.get_salib_problem()
 inputs = pb.driver.get_cases()
 
-print('*** Output: obj')
-output = data['outputs']['obj'].reshape((-1,))
+print('*** Output: f')
+output = data['outputs']['f'].reshape((-1,))
 Si = ma.analyze(salib_pb, inputs, output, print_to_console=True)
 fig, (ax1, ax2) = plt.subplots(1,2)
-fig.suptitle('obj '+'sensitivity')
+fig.suptitle('f '+'sensitivity')
 mp.horizontal_bar_plot(ax1, Si, {})
 mp.covariance_plot(ax2, Si, {})
 
