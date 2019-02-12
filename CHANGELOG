@@ -1,5 +1,10 @@
 <h1>CHANGELOG</h1>
 
+<h3>0.13.2 (12/02/2019)</h3>
+<ul>
+  <li>wop update (0.8.1): fix performance issue, fix --server option</li>
+</ul>
+
 <h3>0.13.1 (04/02/2019)</h3>
 <ul>
   <li>Operation run scripts and operation running require OpenDMAO 2.5+</li>
