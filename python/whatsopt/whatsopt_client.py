@@ -219,9 +219,10 @@ class WhatsOpt(object):
             file_from = os.path.join(tempdir, f)
             file_to = f
             if os.path.exists(file_to):
-                if f=="run_analysis.py":
-                    continue
-                elif options.get('--force'):
+                # if re.match(r"run_analysis.py", f):
+                #     continue
+                # elif options.get('--force'):
+                if options.get('--force'):
                     print("Update %s" % file_to)
                     if not options.get('--dry-run'):
                         os.remove(file_to)
@@ -238,15 +239,15 @@ class WhatsOpt(object):
                     dir_to = '.'
                 elif not os.path.exists(dir_to):
                     os.makedirs(dir_to)
-                #print("Move {} to {}".format(file_from, dir_to))
-                if os.path.exists(file_to) and f=="run_analysis.py":
-                    continue
+                # print("Move {} to {}".format(file_from, dir_to))
+                # if os.path.exists(dir_to) and re.match(r"run_analysis.py", f):
+                #     continue
                 move(file_from, dir_to)
             print(msg)
     
     def update_mda(self, analysis_id=None, options={}):
         id = analysis_id or self.get_analysis_id()
-        opts = {**options}
+        opts = copy.copy(options)
         opts.update({'--base': True, '--force': True})
         self.pull_mda(id, opts, 'Analysis %s updated' % id)
         
@@ -314,8 +315,8 @@ class WhatsOpt(object):
         for f in files:
             ident = self._extract_mda_id(f) 
             if id and id != ident:
-                raise Exception('Warning: several analysis identifier detected. \
-                                Find %s got %s. Check header comments of %s files .' % (id, ident, str(files)))  
+                raise Exception('Warning: several analysis identifier detected. \n'
+                                'Find %s got %s. Check header comments in %s files .' % (id, ident, str(files)))  
             id = ident    
         return id 
         
@@ -384,8 +385,7 @@ class WhatsOpt(object):
                 if re.match('int', type(meta['value']).__name__):
                     vtype = 'Integer' 
                 shape = str(meta['shape']) 
-                if self.scalar_format:
-                    shape = WhatsOpt._format_shape(shape)
+                shape = WhatsOpt._format_shape(shape)
                 name = system._var_abs2prom[typ][abs_name]
                 self.vars[abs_name] = {'fullname': abs_name,
                                         'name': name,
@@ -416,7 +416,7 @@ class WhatsOpt(object):
     @staticmethod
     def _format_shape(shape):
         shape = shape.replace("L", "")  # with py27 we can get (1L,)
-        if shape=='(1,)':
+        if self.scalar_format and shape=='(1,)':
             shape='1'
         return shape
 
