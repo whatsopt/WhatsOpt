@@ -87,4 +87,7 @@ Rails.application.configure do
   # set the relative root, because we're deploying to /whatsopt
   config.action_controller.relative_url_root  = "/whatsopt"
   
+  # enforce use master.key
+  config.require_master_key = true
+  
 end
