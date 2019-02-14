@@ -173,7 +173,6 @@ class VariablesEditor extends React.Component {
     //    if (driver !== conn.fromId) {
     //      options.splice(2, 1); // suppress String, String only as parameter
     //    }
-    console.log(options);
     return options;
   }
 
