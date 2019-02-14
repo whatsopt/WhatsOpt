@@ -1,23 +1,19 @@
 namespace :whatsopt do
   namespace :delivery do
-  
-    def version(v)
-      if (v == 'HEAD')
-        puts "Deploying WhatsOpt latest..."
-      else
-        puts "Deploying WhatsOpt #{v}..."
-      end 
-    end
-  
-    DLVDIR="~/DELIVERY"
-    EXPORT="#{DLVDIR}/export"
+
+    DLVDIR= "~/DELIVERY"
+    EXPORT= "#{DLVDIR}/export"
   
     desc 'Pack of TEIS web application delivery'
     task :pack, [:version] do |t, args|
-      tag = version(args[:version])
-      basename   = "whatsopt-#{major}.#{minor}.#{patch}"
+      tag = args[:version]
+      if (tag == 'HEAD')
+        puts "Packing WhatsOpt latest..."
+      else
+        puts "Packing WhatsOpt #{tag}..."
+      end
+      basename   = "whatsopt-#{tag}"
       repository = "ssh://designlab@endymion/d/designlab/gitrepos/WhatsOpt.git"
-      tagpath = "#{repository}/tags/#{tag}"
       sh "rm -rf #{EXPORT}"
       sh "rm -f #{DLVDIR}/#{basename}.tar.gz"
       sh "git clone #{repository} #{EXPORT}/#{tag} --branch #{tag}"
@@ -27,8 +23,8 @@ namespace :whatsopt do
   
     desc 'Unpack of TEIS web application delivery'
     task :unpack, [:version] do |t, args|
-      (major, minor, patch, tag) = version(args[:version])
-      basename = "whatsopt-#{major}.#{minor}.#{patch}"
+      tag = args[:version]
+      basename = "whatsopt-#{tag}"
       sh "rm -rf #{DLVDIR}/#{basename}"
       sh "tar xvfz #{DLVDIR}/#{basename}.tar.gz"
     end

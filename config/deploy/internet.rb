@@ -1,6 +1,6 @@
 set :stage, :internet
 
-set :version, "0.13.2"
+set :version, "master"
 set :appname, "whatsopt-#{fetch(:version)}"
 set :dlvdir, "~/DELIVERY"
 set :repository, "/home/rlafage/DELIVERY/#{fetch(:appname)}"
