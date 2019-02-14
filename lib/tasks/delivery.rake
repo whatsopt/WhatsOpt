@@ -26,7 +26,7 @@ namespace :whatsopt do
       sh "rm -rf #{EXPORT}"
       sh "rm -f #{DLVDIR}/#{basename}.tar.gz"
       sh "git clone #{repository} #{EXPORT}/#{tag} --branch #{tag}"
-      sh "git archive --prefix=#{basename}/ -o #{DLVDIR}/#{basename}.tar.gz #{tag}"
+      sh "git archive -o #{DLVDIR}/#{basename}.tar.gz #{tag}"
       sh "rm -rf #{EXPORT}"
     end
   

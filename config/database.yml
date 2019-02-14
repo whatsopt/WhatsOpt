@@ -35,3 +35,6 @@ production:
   username: rlafage
   password: rlafage123
   pool: 5
+
+internet:
+  <<: *production

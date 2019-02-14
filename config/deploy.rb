@@ -9,7 +9,6 @@ set :repo_url, 'ssh://designlab@endymion/d/designlab/gitrepos/WhatsOpt.git'
 set :branch, :master
 set :keep_releases, 5
 
-
 set :log_level, :info
 
 # set :linked_files, %w{config/database.yml config/secrets.yml}
@@ -21,7 +20,6 @@ set :ssh_options, known_hosts: Net::SSH::KnownHosts
 
 SSHKit.config.command_map[:rake]  = "bundle exec rake" 
 SSHKit.config.command_map[:rails] = "bundle exec rails"
-
 
 before "deploy:assets:precompile", "deploy:yarn_install"
 
