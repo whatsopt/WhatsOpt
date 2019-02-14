@@ -122,7 +122,6 @@ class VariablesEditor extends React.Component {
     if (this.props.isEditing && this.connections[cellInfo.index].active) {
       if (selectOptions) {
         const id = this.connections[cellInfo.index][cellInfo.column.id];
-        console.log(cellInfo, selectOptions, test);
         const selected = selectOptions.filter((choice) => choice.id === id);
         return ( <RIESelect
           value={{id: id, text: selected.length>0?selected[0].text:"undefined"}}
