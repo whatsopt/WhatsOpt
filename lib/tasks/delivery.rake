@@ -2,15 +2,10 @@ namespace :whatsopt do
   namespace :delivery do
   
     def version(v)
-      if (v =~ /(\d+).(\d+).(\d+)/)
-        major=$1
-        minor=$2
-        patch=$3
-        tag = "#{$1}.#{$2}.#{$3}"
-        return major, minor, patch, tag
+      if (v == 'HEAD')
+        puts "Deploying WhatsOpt latest..."
       else
-        puts "Bad version number '#{v}'. Abort"
-        exit -1
+        puts "Deploying WhatsOpt #{v}..."
       end 
     end
   
@@ -19,7 +14,7 @@ namespace :whatsopt do
   
     desc 'Pack of TEIS web application delivery'
     task :pack, [:version] do |t, args|
-      (major, minor, patch, tag) = version(args[:version])
+      tag = version(args[:version])
       basename   = "whatsopt-#{major}.#{minor}.#{patch}"
       repository = "ssh://designlab@endymion/d/designlab/gitrepos/WhatsOpt.git"
       tagpath = "#{repository}/tags/#{tag}"
