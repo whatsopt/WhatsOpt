@@ -25,3 +25,6 @@ production:
   thrift_cmd:  /dtis-app/whatsopt-deps/thrift-0.11.0/bin/thrift
   wop_cmd:     /dtis-app/whatsopt-deps/miniconda3/wop
   wop_env:     {LC_ALL: fr_FR.UTF-8, LANG: fr_FR.UTF-8}
+
+internet:
+  <<: *production
