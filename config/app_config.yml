@@ -27,4 +27,9 @@ production:
   wop_env:     {LC_ALL: fr_FR.UTF-8, LANG: fr_FR.UTF-8}
 
 internet:
-  <<: *production
+  python_cmd:  /dtis-app/whatsopt-deps/miniconda3/bin/python
+  jupyter_cmd: /dtis-app/whatsopt-deps/miniconda3/bin/jupyter
+  openvsp_cmd: /dtis-app/whatsopt-deps/OpenVSP-3.13.3/vspscript
+  thrift_cmd:  /dtis-app/whatsopt-deps/thrift-0.11.0/bin/thrift
+  wop_cmd:     /dtis-app/whatsopt-deps/miniconda3/wop
+  wop_env:     {LC_ALL: fr_FR.UTF-8, LANG: fr_FR.UTF-8}

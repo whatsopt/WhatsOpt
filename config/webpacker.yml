@@ -74,4 +74,3 @@ production:
 
 internet:
   <<: *production
-
