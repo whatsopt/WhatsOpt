@@ -129,10 +129,10 @@ class Discipline extends React.Component {
               className="list-group-item editor-discipline col-md-4">
               <span className="align-bottom">{this.props.node.name}</span>
               <button className="d-inline btn btn-light btn-inverse btn-sm float-right text-danger"
-                onClick={this.handleDelete}>
+                title="Delete" onClick={this.handleDelete}>
                 <i className="fa fa-times"/>
               </button>
-              <button className="d-inline btn btn-light btn-sm ml-2" onClick={this.handleEdit}>
+              <button className="d-inline btn btn-light btn-sm ml-2" title="Edit" onClick={this.handleEdit}>
                 <i className="fa fa-edit"/>
               </button>
             </li>)}
