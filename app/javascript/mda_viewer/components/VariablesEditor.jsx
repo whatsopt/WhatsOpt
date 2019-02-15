@@ -40,7 +40,7 @@ class VariablesEditor extends React.Component {
         Header: (cellInfo) => this.renderHeader(cellInfo, 'Name'),
         accessor: "name",
         minWidth: 200,
-        Cell: this.renderEditable,
+        Cell: (cellInfo) => this.renderEditable(cellInfo),
       },
       {
         Header: (cellInfo) => this.renderHeader(cellInfo, 'Role'),
@@ -58,27 +58,27 @@ class VariablesEditor extends React.Component {
       {
         Header: (cellInfo) => this.renderHeader(cellInfo, 'Shape'),
         accessor: "shape",
-        Cell: this.renderEditable,
+        Cell: (cellInfo) => this.renderEditable(cellInfo),
       },
       {
         Header: (cellInfo) => this.renderHeader(cellInfo, 'Units'),
         accessor: "units",
-        Cell: this.renderEditable,
+        Cell: (cellInfo) => this.renderEditable(cellInfo),
       },
       {
         Header: (cellInfo) => this.renderHeader(cellInfo, 'Init'),
         accessor: "init",
-        Cell: this.renderEditable,
+        Cell: (cellInfo) => this.renderEditable(cellInfo),
       },
       {
         Header: (cellInfo) => this.renderHeader(cellInfo, 'Lower'),
         accessor: "lower",
-        Cell: this.renderEditable,
+        Cell: (cellInfo) => this.renderEditable(cellInfo),
       },
       {
         Header: (cellInfo) => this.renderHeader(cellInfo, 'Upper'),
         accessor: "upper",
-        Cell: this.renderEditable,
+        Cell: (cellInfo) => this.renderEditable(cellInfo),
       },
     ];
     if (this.props.isEditing) {
@@ -91,7 +91,7 @@ class VariablesEditor extends React.Component {
       columns.splice(5, 0, {
         Header: (cellInfo) => this.renderHeader(cellInfo, 'Description'),
         accessor: "desc",
-        Cell: this.renderEditable,
+        Cell: (cellInfo) => this.renderEditable(cellInfo),
       });
     }
     return (
@@ -118,7 +118,7 @@ class VariablesEditor extends React.Component {
           {active: !isChecked})}/>);
   }
 
-  renderEditable(cellInfo, selectOptions) {
+  renderEditable(cellInfo, selectOptions, test) {
     if (this.props.isEditing && this.connections[cellInfo.index].active) {
       if (selectOptions) {
         const id = this.connections[cellInfo.index][cellInfo.column.id];
