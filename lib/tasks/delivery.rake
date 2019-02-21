@@ -17,8 +17,9 @@ namespace :whatsopt do
       sh "rm -rf #{EXPORT}"
       sh "rm -f #{DLVDIR}/#{basename}.tar.gz"
       sh "git clone --recursive #{repository} #{EXPORT}/#{tag} --branch #{tag}"
-
-      sh "git archive -o #{DLVDIR}/#{basename}.tar.gz #{tag}"
+      #sh "git archive -o #{DLVDIR}/#{basename}.tar.gz #{tag}"
+      # Use git-archive-all : https://pypi.org/project/git-archive-all/
+      sh "cd #{EXPORT}/#{tag}; git-archive-all --prefix='' #{DLVDIR}/#{basename}.tar.gz"
       sh "rm -rf #{EXPORT}"
     end
   
