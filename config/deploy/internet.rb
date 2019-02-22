@@ -8,7 +8,7 @@ set :repository, "/home/rlafage/DELIVERY/#{fetch(:appname)}"
 set :deploy_to, "/dtis-app/whatsopt"
 
 set :rvm_custom_path, '/dtis-app/rvm'
-set :rvm_ruby_version, "ruby-2.5.3@whatsopt-production"
+set :rvm_ruby_version, "ruby-2.5.3@whatsopt"
 
 set :server_name, "ether"
 server 'ether', user: 'rlafage', roles: %w{app web db}, primary: true

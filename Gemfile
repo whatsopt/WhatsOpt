@@ -44,7 +44,8 @@ end
 
 group :development do
   # Use Capistrano for deployment
-  gem 'capistrano-rails'
+  gem "capistrano", "~> 3.10", require: false
+  gem "capistrano-rails", "~> 1.4", require: false
   gem 'capistrano-rvm'
   gem 'capistrano-passenger'
   gem 'capistrano-git-with-submodules', '~> 2.0'

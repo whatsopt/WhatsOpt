@@ -371,9 +371,10 @@ DEPENDENCIES
   ancestry
   bootstrap (~> 4.0)
   byebug
+  capistrano (~> 3.10)
   capistrano-git-with-submodules (~> 2.0)
   capistrano-passenger
-  capistrano-rails
+  capistrano-rails (~> 1.4)
   capistrano-rvm
   capybara
   concurrent-ruby
