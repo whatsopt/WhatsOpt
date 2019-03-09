@@ -54,6 +54,10 @@ class Analysis < ApplicationRecord
   def variables
     @variables = Variable.of_analysis(id).active
   end
+
+  def uniq_variables
+    @uniq_variables = Variable.of_analysis(id).active.outputs
+  end
     
   def parameter_variables
     @params = variables.with_role(WhatsOpt::Variable::PARAMETER_ROLE) + design_variables

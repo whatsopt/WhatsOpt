@@ -42,7 +42,7 @@ pb.model.add_constraint('<%= voi.name %>', equals=0.)
 pb.setup()  
 pb.run_driver()        
 
-<% if @mda.variables.size < 20 %>
+<% if @mda.uniq_variables.size < 20 %>
 if options.batch:
     exit(0)
 reader = CaseReader(case_recorder_filename)
