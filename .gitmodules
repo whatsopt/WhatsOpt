@@ -6,4 +6,4 @@
 	url = https://github.com/OneraHub/SSBJ-OpenMDAO.git
 [submodule "wop"]
 	path = wop
-	url = git@github.com:OneraHub/WhatsOpt-CLI.git
+	url = https://github.com/OneraHub/WhatsOpt-CLI.git
