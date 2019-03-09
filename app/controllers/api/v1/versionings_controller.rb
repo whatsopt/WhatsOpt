@@ -21,7 +21,7 @@ class Api::V1::VersioningsController < Api::ApiController
     end
     
     def wop_version
-      filepath = File.join(Rails.root, 'python', 'whatsopt', '__init__.py') 
+      filepath = File.join(Rails.root, 'wop', 'whatsopt', '__init__.py') 
       File.open(filepath).each do |line|
         line.chomp!
         if line =~ /^__version__='(.*)'$/
