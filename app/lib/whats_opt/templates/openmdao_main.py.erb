@@ -1,11 +1,18 @@
-from openmdao.api import Problem
-from <%= @mda.py_full_modulename %>_base import <%= @mda.py_classname %>Base, <%= @mda.py_classname %>FactoryBase
-from openmdao.api import view_model
 from optparse import OptionParser
+from openmdao.api import Problem
+from openmdao.api import NonlinearBlockGS, ScipyKrylov
+from openmdao.api import view_model
+from openmdao_extensions.reckless_nonlinear_block_gs import RecklessNonlinearBlockGS
+from <%= @mda.py_full_modulename %>_base import <%= @mda.py_classname %>Base, <%= @mda.py_classname %>FactoryBase
 
 class <%= @mda.py_classname %>(<%= @mda.py_classname %>Base):
     """ An OpenMDAO component to encapsulate <%= @mda.py_classname %> analysis """
-    pass
+    def setup(self):
+        super(<%= @mda.py_classname %>, self).setup()
+        
+        self.nonlinear_solver = RecklessNonlinearBlockGS() 
+        self.linear_solver = ScipyKrylov()
+
 
 class <%= @mda.py_classname %>Factory(<%= @mda.py_classname %>FactoryBase):
     """ A factory to create disciplines of <%= @mda.py_classname %> analysis """

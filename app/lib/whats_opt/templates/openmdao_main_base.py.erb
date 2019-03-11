@@ -4,7 +4,6 @@
 import numpy as np
 from openmdao.api import Problem, Group
 from openmdao.api import IndepVarComp
-from openmdao.api import NonlinearBlockGS, ScipyKrylov
 <% @mda.sub_analyses.each do |a| %>
 from <%= a.py_full_modulename %> import <%= a.py_classname %><% end %>
 <% @mda.all_plain_disciplines.each do |d| %>
@@ -36,9 +35,6 @@ class <%= @mda.py_classname %>Base(Group):
         self.add_subsystem('<%= d.py_classname %>', self.create_<%= d.basename %>(), promotes=[<%= d.variables.map(&:py_varname).map{|v| "'#{v}'"}.join(', ') %>])<% end -%>
 <% @mda.plain_disciplines.each do |d| %>
         self.add_subsystem('<%= d.py_classname %>', self.create_<%= d.basename %>(), promotes=[<%= d.variables.map(&:py_varname).map{|v| "'#{v}'"}.join(', ') %>])<% end -%>
-
-        self.nonlinear_solver = NonlinearBlockGS() 
-        self.linear_solver = ScipyKrylov()
 
 <% @mda.sub_analyses.each do |a| %>
     def create_<%= a.basename %>(self):
