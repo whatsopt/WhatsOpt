@@ -10415,10 +10415,10 @@ sass-loader@^7.1.0:
     pify "^3.0.0"
     semver "^5.5.0"
 
-save-svg-as-png@^1.4.2:
-  version "1.4.9"
-  resolved "https://registry.yarnpkg.com/save-svg-as-png/-/save-svg-as-png-1.4.9.tgz#0ac8e037de150e202dd80cc63061a2fe3e15199e"
-  integrity sha512-e7kLlXMfudHQKxk49Z4qV6SE1B7or4MEjiTFNwhst3aesly7UOQ+qST5u47YUYpCbeFsF8mr4ZhTMLgXqHMyoA==
+save-svg-as-png@1.4.11:
+  version "1.4.11"
+  resolved "https://registry.yarnpkg.com/save-svg-as-png/-/save-svg-as-png-1.4.11.tgz#b6a8d8c1d616716f0f1eb5fe303ca20badb75eea"
+  integrity sha512-NyMPYqdkyP6xX8pYh9rUJq/RmoZL6dlLrDeu9wmiziE9B3Kc1/c7TNCVZRMZa3snUz8M8K28eOSqzoOMKI79wA==
 
 sax@^1.2.4, sax@~1.2.4:
   version "1.2.4"
