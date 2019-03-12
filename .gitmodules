@@ -1,9 +1,6 @@
 [submodule "app/javascript/XDSMjs"]
 	path = app/javascript/XDSMjs
 	url = https://github.com/OneraHub/XDSMjs.git
-[submodule "python/demos/ssbj/ssbj_openmdao"]
-	path = python/demos/ssbj/ssbj_openmdao
-	url = https://github.com/OneraHub/SSBJ-OpenMDAO.git
 [submodule "wop"]
 	path = wop
 	url = https://github.com/OneraHub/WhatsOpt-CLI.git

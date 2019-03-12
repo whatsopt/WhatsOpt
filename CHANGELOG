@@ -3,6 +3,14 @@
 <h3>0.13.2 (12/02/2019)</h3>
 <ul>
   <li>wop update (0.8.1): fix performance issue, fix --server option</li>
+  <li>Refactoring: split WhatsOpt/python in separate repos: 
+    <ul>
+      <li>openmdao_extensions: custom solvers and drivers</li>
+      <li>WhatsOpt-CLI: WhatsOpt command line interface a.k.a. wop</li>
+      <li>WhatsOpt-Tutorial: WhatsOpt examples and tutorial</li>
+    </ul>
+  </li>
+  <li>wop update (0.9.0): use separate module openmdao_extensions, bug fixes, login URL command</li>
 </ul>
 
 <h3>0.13.1 (04/02/2019)</h3>
