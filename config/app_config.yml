@@ -1,4 +1,5 @@
 defaults: &defaults
+  intranet: true
   python_cmd:  python
   jupyter_cmd: jupyter
   openvsp_cmd: vspscript
@@ -27,6 +28,7 @@ production:
   wop_env:     {LC_ALL: fr_FR.UTF-8, LANG: fr_FR.UTF-8}
 
 internet:
+  intranet: false
   python_cmd:  /dtis-app/whatsopt-deps/miniconda3/bin/python
   jupyter_cmd: /dtis-app/whatsopt-deps/miniconda3/bin/jupyter
   openvsp_cmd: /dtis-app/whatsopt-deps/OpenVSP-3.13.3/vspscript

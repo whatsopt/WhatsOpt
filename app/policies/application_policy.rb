@@ -7,11 +7,18 @@ class ApplicationPolicy
   end
 
   class Scope < Struct.new(:user, :scope)
+    def intranet?
+      APP_CONFIG['intranet']
+    end
     def resolve
       scope.all
     end
   end
   
+  def intranet?
+    APP_CONFIG['intranet']
+  end
+
   def index?
     false
   end

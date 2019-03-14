@@ -13,4 +13,8 @@ module ApplicationHelper
     h
   end
   
+  def intranet?
+    return APP_CONFIG['intranet']
+  end
+
 end

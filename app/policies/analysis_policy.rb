@@ -15,10 +15,6 @@ class AnalysisPolicy < ApplicationPolicy
     end
   end
   
-  def index?
-    
-  end
-  
   def create?
     true
   end
@@ -28,7 +24,7 @@ class AnalysisPolicy < ApplicationPolicy
   end
   
   def operate?
-    update?
+    intranet? && update?
   end
   
   def edit?

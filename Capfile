@@ -12,7 +12,7 @@ require 'capistrano/rails/assets'
 require 'capistrano/rails/migrations'
 require 'capistrano/passenger'
 
-if ENV['INTERNET']
+if ENV['WHATSOPT_INTERNET']
   require_relative "lib/capistrano/whatsopt_plugin"
   install_plugin Capistrano::WhatsOptPlugin
 else
