@@ -6,4 +6,4 @@
 	url = https://github.com/OneraHub/WhatsOpt-CLI.git
 [submodule "tutorial"]
 	path = tutorial
-	url = git@github.com:OneraHub/WhatsOpt-Tutorial
+	url = https://github.com/OneraHub/WhatsOpt-Tutorial
