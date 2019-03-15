@@ -110,3 +110,6 @@ gem 'data-confirm-modal'
 
 # Commandline
 gem 'highline'
+
+# Console
+gem 'web-console'
