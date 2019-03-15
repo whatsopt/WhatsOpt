@@ -2,7 +2,7 @@ class User < ActiveRecord::Base
   rolify strict: true
   
   devise :database_authenticatable 
-  if false
+  if APP_CONFIG['intranet']
     devise :ldap_authenticatable
   end
   devise :trackable, :validatable, :timeoutable
