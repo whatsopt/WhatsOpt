@@ -1,7 +1,11 @@
 class User < ActiveRecord::Base
   rolify strict: true
   
-  devise :database_authenticatable, :ldap_authenticatable, :trackable, :validatable, :timeoutable
+  devise :database_authenticatable 
+  if false
+    devise :ldap_authenticatable
+  end
+  devise :trackable, :validatable, :timeoutable
   #devise :ldap_authenticatable, :trackable, :validatable, :timeoutable
 
   after_initialize :initialize_defaults, :if => :new_record?
