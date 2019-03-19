@@ -16,9 +16,9 @@ class <%= @discipline.py_classname %>(<%= @discipline.py_classname %>Base):
 	
 # To declare partial derivatives computation ...
 # 
-#    def setup()
+#    def setup(self):
 #        super(<%= @discipline.py_classname %>, self).setup()
-#        declare_partials('*', '*')  
+#        self.declare_partials('*', '*')  
 #			
 #    def compute_partials(self, inputs, partials):
 #        """ Jacobian for <%= @discipline.py_classname %> """
