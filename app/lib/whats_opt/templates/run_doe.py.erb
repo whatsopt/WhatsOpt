@@ -20,6 +20,7 @@ recorder = SqliteRecorder(case_recorder_filename)
 pb.driver.add_recorder(recorder)
 pb.model.add_recorder(recorder)
 pb.model.nonlinear_solver.add_recorder(recorder)
+pb.model.nonlinear_solver.options['err_on_maxiter'] = True
 
 <%- @mda.design_variables.each do |dv| %>
 pb.model.add_design_var('<%= dv.name %>', lower=<%= dv.lower_py_value %>, upper=<%= dv.upper_py_value %>)<% end %>
