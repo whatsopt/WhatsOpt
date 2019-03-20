@@ -7,11 +7,14 @@ from <%= @mda.py_full_modulename %>_base import <%= @mda.py_classname %>Base, <%
 
 class <%= @mda.py_classname %>(<%= @mda.py_classname %>Base):
     """ An OpenMDAO component to encapsulate <%= @mda.py_classname %> analysis """
-    def setup(self):
-        super(<%= @mda.py_classname %>, self).setup()
-        
+    def __init__(self, **kwargs):
+        super(<%= @mda.py_classname %>, self).__init__(**kwargs)
+
         self.nonlinear_solver = RecklessNonlinearBlockGS() 
         self.linear_solver = ScipyKrylov()
+
+    def setup(self):
+        super(<%= @mda.py_classname %>, self).setup()
 
 
 class <%= @mda.py_classname %>Factory(<%= @mda.py_classname %>FactoryBase):

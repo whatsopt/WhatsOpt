@@ -43,9 +43,9 @@ recorder = SqliteRecorder(case_recorder_filename)
 pb.driver.add_recorder(recorder)
 pb.model.add_recorder(recorder)
 
-<% unless @driver.oneramdao? -%>
+<% unless @driver.onerasego? -%>
 # Derivatives are compute via finite-difference method
-# to be commnented out if partial derivatives are declared
+# to be commented out if partial derivatives are declared
 pb.model.approx_totals(method='fd', step=1e-6, form='central')
 <% end -%>
 <%- @mda.design_variables.each do |dv| %>
