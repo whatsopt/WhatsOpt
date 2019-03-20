@@ -22,12 +22,12 @@ class OpenmdaoDriverFactoryTest < ActiveSupport::TestCase
   end
 
   test "should create segomoe driver" do
-    @driver = WhatsOpt::OpenmdaoDriverFactory.new(:oneramdao_optimizer_segomoe, 
-      {oneramdao_optimizer_segomoe_niter: "100", 
-       oneramdao_optimizer_segomoe_ncluster: "1", 
-       oneramdao_optimizer_segomoe_optimizer: "cobyla", 
-       oneramdao_optimizer_segomoe_doedim: "10"}).create_driver
-    assert_equal("oneramdao_optimizer", @driver.lib)
+    @driver = WhatsOpt::OpenmdaoDriverFactory.new(:onerasego_optimizer_segomoe, 
+      {onerasego_optimizer_segomoe_maxiter: "100", 
+       onerasego_optimizer_segomoe_ncluster: "1", 
+       onerasego_optimizer_segomoe_optimizer: "cobyla", 
+       onerasego_optimizer_segomoe_doedim: "10"}).create_driver
+    assert_equal("onerasego_optimizer", @driver.lib)
     assert_equal("segomoe", @driver.algo)
     assert_equal({}, @driver.options)    
   end

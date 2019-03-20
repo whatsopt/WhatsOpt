@@ -56,7 +56,7 @@ module WhatsOpt
                     pyoptsparse_optimizer_nsga2: {}, 
                     pyoptsparse_optimizer_snopt: {tol: "Major feasibility tolerance", 
                                                   maxiter: "Major iterations limit"},
-                    oneramdao_optimizer_segomoe: {niter: "n_iter", ncluster: "n_clusters", 
+                    onerasego_optimizer_segomoe: {maxiter: "maxiter", ncluster: "n_clusters", 
                                                   optimizer: "optimizer", doedim: "size_doe"}
                    }
     
@@ -95,8 +95,8 @@ module WhatsOpt
       @lib =~ /simplega/
     end
     
-    def oneramdao?
-      @lib =~ /oneramdao/
+    def onerasego?
+      @lib =~ /onerasego/
     end
   end
     
@@ -114,7 +114,7 @@ module WhatsOpt
       pyoptsparse_optimizer_psqp: {}, 
       pyoptsparse_optimizer_nsga2: {}, 
       pyoptsparse_optimizer_snopt: {tol: 1e-6, maxiter: 100},
-      oneramdao_optimizer_segomoe: {niter: 100, ncluster: 1, optimizer: "slsqp"}
+      onerasego_optimizer_segomoe: {maxiter: 100, ncluster: 1, optimizer: "slsqp"}
     }
     ALGO_NAMES = DEFAULT_OPTIONS.keys.sort
     
