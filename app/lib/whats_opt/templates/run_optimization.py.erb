@@ -19,11 +19,17 @@ from <%= @mda.py_modulename %> import <%= @mda.py_classname %>
 pb = Problem(<%= @mda.py_classname %>())
 
 <% if @driver.pyoptsparse? -%>
-pb.driver = pyOptSparseDriver()
+class NamedPyOptSparseDriverAdapter(pyOptSparseDriver):
+    def _get_name(self):
+        return '<%= "pyoptsparse_optimizer_#{@driver.algo_option.downcase}" %>'
+pb.driver = NamedPyOptSparseDriver()
 <% elsif @driver.onerasego? -%>
 pb.driver = OneraSegoDriver()
 <% else -%>
-pb.driver = ScipyOptimizeDriver()
+class NamedScipyOptimizeDriver(ScipyOptimizeDriver):
+    def _get_name(self):
+        return '<%= "scipy_optimizer_#{@driver.algo_option.downcase}" %>'
+pb.driver = NamedScipyOptimizeDriver()
 <% end -%>
 pb.driver.options['optimizer'] = '<%= @driver.algo_option %>'
 

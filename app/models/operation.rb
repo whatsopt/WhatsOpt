@@ -22,10 +22,19 @@ class Operation < ApplicationRecord
 	has_one :job, :dependent => :destroy
 	
   validates :name, presence: true, allow_blank: false
+  validate :success_flags_consistent_with_cases
 
   scope :in_progress, ->(analysis) { Operation.where(analysis: analysis).left_outer_joins(:cases).where(cases: {operation_id: nil}) }
   scope :done, ->(analysis) { Operation.where(analysis: analysis).left_outer_joins(:cases).where.not(cases: {operation_id: nil}).uniq }
-	
+  
+  serialize :success, Array
+
+  def success_flags_consistent_with_cases
+    if (cases.blank? and !success.blank?) or (!cases.blank? and cases[0].values.size != success.size)
+      errors.add(:success, "size (#{success.size}) can not be different from cases values size (#{cases.blank? ? 0 : cases[0].values.size})")
+    end
+  end
+
 	def self.build_operation(mda, ope_attrs)
 	  operation = mda.operations.build(ope_attrs.except(:cases))
 	  operation._build_cases(ope_attrs[:cases]) if ope_attrs[:cases]
@@ -46,9 +55,9 @@ class Operation < ApplicationRecord
     case driver
     when "runonce"
       'analysis'
-    when /optimizer/, /slsqp/
+    when /optimizer/, /slsqp/, /scipy/, /pyoptsparse/
       'optimization'
-    when /morris/
+    when /morris/, /sobol/
       'screening'
     else
       'doe'
@@ -179,6 +188,7 @@ class Operation < ApplicationRecord
 	
   def _update_cases(case_attrs)
     self.cases.map(&:destroy)
+    self.cases.reload
     _build_cases(case_attrs)
   end
   

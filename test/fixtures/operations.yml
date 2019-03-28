@@ -2,15 +2,18 @@ inprogress:
     name: RunOnce
     driver: runonce
     analysis: cicav
+    success: []
 
 inprogress2:
     name: SLSQP
     driver: scipy_optimizer_slsqp
     analysis: fast
+    success: []
 
 doe:
     name: LHS
     driver: smt_doe_lhs
     analysis: cicav
+    success: [1, 0, 1]
     
     

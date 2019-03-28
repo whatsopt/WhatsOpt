@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Plot from 'react-plotly.js';
 import * as caseUtils from '../../utils/cases.js';
+import {COLORSCALE} from './colorscale.js';
 
 class ScatterPlotMatrix extends React.Component {
   render() {
@@ -28,6 +29,12 @@ class ScatterPlotMatrix extends React.Component {
         trace.xaxis = xname;
         trace.yaxis = yname;
         trace.name = ylabel + " vs " + xlabel;
+        trace.marker = {
+          color: this.props.success,
+          cmin: 0,
+          cmax: 1,
+          colorscale: COLORSCALE, 
+        };
         data.push(trace);
 
         layout['xaxis'+n] = {domain: [(j+0.1)*pdh, (j+0.9)*pdh], anchor: yname};
@@ -55,6 +62,7 @@ ScatterPlotMatrix.propTypes = {
     c: PropTypes.array.isRequired,
   }),
   title: PropTypes.string,
+  success: PropTypes.array.isRequired,
 };
 
 export default ScatterPlotMatrix;

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 55) do
+ActiveRecord::Schema.define(version: 56) do
 
   create_table "analyses", force: :cascade do |t|
     t.string "name"
@@ -33,7 +33,7 @@ ActiveRecord::Schema.define(version: 55) do
     t.integer "container_id"
     t.string "data_file_name"
     t.string "data_content_type"
-    t.bigint "data_file_size"
+    t.integer "data_file_size"
     t.datetime "data_updated_at"
     t.string "description"
     t.string "category"
@@ -75,7 +75,7 @@ ActiveRecord::Schema.define(version: 55) do
 
   create_table "jobs", force: :cascade do |t|
     t.string "status"
-    t.text "log"
+    t.text "log", default: "\"\\\"\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\"\\\"\""
     t.integer "pid", default: -1
     t.integer "operation_id"
     t.datetime "started_at"
@@ -95,6 +95,7 @@ ActiveRecord::Schema.define(version: 55) do
     t.string "name"
     t.string "host", default: ""
     t.string "driver", default: "runonce"
+    t.text "success"
   end
 
   create_table "options", force: :cascade do |t|
@@ -105,9 +106,9 @@ ActiveRecord::Schema.define(version: 55) do
   end
 
   create_table "parameters", force: :cascade do |t|
-    t.text "init"
-    t.text "lower"
-    t.text "upper"
+    t.text "init", default: ""
+    t.text "lower", default: ""
+    t.text "upper", default: ""
     t.integer "variable_id"
   end
 
@@ -161,7 +162,6 @@ ActiveRecord::Schema.define(version: 55) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "active", default: true
-    t.index ["discipline_id"], name: "index_variables_on_discipline_id"
   end
 
 end

@@ -4,12 +4,12 @@ from thrift.transport import TTransport
 from thrift.protocol import TBinaryProtocol
 
 from server.<%= @mda.py_full_modulename %> import <%= @mda.py_classname %>
-from <%= @mda.py_full_modulename %>_base import <%= @mda.py_classname %>Base
+from <%= @mda.py_full_modulename %> import <%= @mda.py_classname %> as <%= @mda.py_classname %>Original
 <% @mda.all_plain_disciplines.each do |disc| %>
 from .discipline_proxy import <%= disc.py_classname %>Proxy
 <% end %>
 
-class <%= @mda.py_classname %>Proxy(<%= @mda.py_classname %>Base):
+class <%= @mda.py_classname %>Proxy(<%= @mda.py_classname %>Original):
     
     def __init__(self):
         super(<%= @mda.py_classname %>Proxy, self).__init__()

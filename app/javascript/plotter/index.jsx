@@ -13,7 +13,7 @@ import * as caseUtils from '../utils/cases.js';
 class PlotPanel extends React.Component {
   render() {
     let plotoptim = (<ScatterPlotMatrix db={this.props.db} optim={this.props.optim}
-      cases={this.props.cases} title={this.props.title}/>);
+      cases={this.props.cases} success={this.props.success} title={this.props.title}/>);
     if (this.props.optim) {
       plotoptim = (<div>
         <IterationLinePlot db={this.props.db} optim={this.props.optim}
@@ -23,13 +23,16 @@ class PlotPanel extends React.Component {
       </div>);
     }
     let plotparall = (<ParallelCoordinates db={this.props.db} optim={this.props.optim}
-                       cases={this.props.cases} title={this.props.title} width={1200} />)
+                       cases={this.props.cases} success={this.props.success} 
+                       title={this.props.title} width={1200} />)
     let input_cases=[].concat(this.props.cases.i).concat(this.props.cases.c);
     if (input_cases.length==2 && this.props.cases.o.length==1) {
       plotparall = (<span>
-        <ScatterSurfacePlot casesx={input_cases[0]} casesy={input_cases[1]} casesz={this.props.cases.o[0]}/>  
+        <ScatterSurfacePlot casesx={input_cases[0]} casesy={input_cases[1]} 
+                            casesz={this.props.cases.o[0]} success={this.props.success}/>  
         <ParallelCoordinates db={this.props.db} optim={this.props.optim}
-          cases={this.props.cases} title={this.props.title} width={600} />
+          cases={this.props.cases} success={this.props.success}  
+          title={this.props.title} width={600} />
       </span>);
     }
     const klass = "tab-pane fade"+this.props.active?" show active":"";
@@ -46,6 +49,7 @@ PlotPanel.propTypes = {
   optim: PropTypes.bool.isRequired,
   cases: PropTypes.object.isRequired,
   title: PropTypes.string.isRequired,
+  success: PropTypes.array.isRequired,
 };
 
 class VariablePanel extends React.Component {
@@ -67,6 +71,7 @@ VariablePanel.propTypes = {
   optim: PropTypes.bool.isRequired,
   cases: PropTypes.object.isRequired,
   selCases: PropTypes.object.isRequired,
+  success: PropTypes.array,
   onSelectionChange: PropTypes.func.isRequired,
 };
 
@@ -141,7 +146,7 @@ class Plotter extends React.Component {
     }
     const title = `${this.props.ope.name} on ${this.props.mda.name} - ${details}`;
     let child = (<PlotPanel db={this.db} optim={isOptim} cases={selCases}
-      title={title} active={this.state.plotActive}/>);
+      title={title} active={this.state.plotActive} success={this.props.ope.success}/>);
     if (!this.state.plotActive) {
       child = (<VariablePanel db={this.db} optim={isOptim} cases={cases} selCases={selCases}
         active={!this.state.plotActive} onSelectionChange={this.handleSelectionChange}/>);
@@ -150,7 +155,7 @@ class Plotter extends React.Component {
     const exportUrl = this.api.url(`/operations/${this.props.ope.id}/exports/new`);
     return (
       <div>
-        <h1>{this.props.ope.name} on {this.props.mda.name} with {this.props.ope.driver}</h1>
+        <h1>{this.props.ope.name} on {this.props.mda.name}</h1>
 
         <div className="btn-group mr-2  float-right" role="group">
           <a className="btn btn-primary" href={exportUrl}>Export Csv</a>
@@ -179,14 +184,15 @@ class Plotter extends React.Component {
 Plotter.propTypes = {
   api: PropTypes.object.isRequired,
   mda: PropTypes.shape({
-    name: PropTypes.string,
+    name: PropTypes.string.isRequired,
   }),
   ope: PropTypes.shape({
-    id: PropTypes.number,
-    name: PropTypes.string,
-    driver: PropTypes.string,
-    category: PropTypes.string,
-    cases: PropTypes.array,
+    id: PropTypes.number.isRequired,
+    name: PropTypes.string.isRequired,
+    driver: PropTypes.string.isRequired,
+    category: PropTypes.string.isRequired,
+    cases: PropTypes.array.isRequired,
+    success: PropTypes.array.isRequired,
   }),
 };
 

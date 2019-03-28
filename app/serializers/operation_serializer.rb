@@ -1,5 +1,5 @@
 class OperationSerializer < ActiveModel::Serializer
-  attributes :id, :name, :driver, :host, :category
+  attributes :id, :name, :driver, :host, :category, :success
   has_many :options
   has_many :cases
   has_one :job  

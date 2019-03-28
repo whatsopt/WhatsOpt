@@ -38,6 +38,7 @@ class Api::V1::OperationsController < Api::ApiController
     def ope_params
       params.require(:operation).permit(:host, :driver, :name, 
                                         cases: [:varname, :coord_index, values: []],
+                                        success: [],
                                         options_attributes: [:id, :name, :value, :_destroy])
     end
     

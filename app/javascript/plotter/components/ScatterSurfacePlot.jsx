@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Plot from 'react-plotly.js';
 import * as caseUtils from '../../utils/cases.js';
+import {COLORSCALE} from './colorscale.js';
 
 class ScatterSurfacePlot extends React.Component {
   render() {
@@ -11,6 +12,12 @@ class ScatterSurfacePlot extends React.Component {
         z: this.props.casesz.values,
         mode: 'markers',
         type: 'scatter3d',
+        marker: {
+          color: this.props.success,
+          cmin: 0,
+          cmax: 1,
+          colorscale: COLORSCALE, 
+        },
     }
     
     const data = [trace];
@@ -42,6 +49,7 @@ ScatterSurfacePlot.propTypes = {
     values: PropTypes.array.isRequired,
   }),
   title: PropTypes.string,
+  success: PropTypes.array.isRequired,
 };
 
 export default ScatterSurfacePlot;

@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Plot from 'react-plotly.js';
 import * as caseUtils from '../../utils/cases.js';
+import {COLORSCALE} from './colorscale.js';
 
 class ParallelCoordinates extends React.Component {
   render() {
@@ -13,21 +14,13 @@ class ParallelCoordinates extends React.Component {
       type: 'parcoords',
       dimensions: dimensions,
     };
-    const obj = this.props.cases.o.find((c) => this.props.db.isObjective(c));
-    if (obj) {
-      const mini = Math.min(...obj.values);
-      const maxi = Math.max(...obj.values);
-      trace.line = {
-        color: obj.values,
-        colorscale: 'Blues',
-        cmin: mini,
-        cmax: maxi,
-        showscale: true,
-      };
-      if (this.props.db.isMaxObjective()) {
-        trace.line.reversescale = true;
-      }
-    }
+
+    trace.line = {
+      color: this.props.success,
+      cmin: 0,
+      cmax: 1,
+      colorscale: COLORSCALE,
+    };
 
     const data = [trace];
     const title = this.props.title;
@@ -73,6 +66,7 @@ ParallelCoordinates.propTypes = {
   }),
   title: PropTypes.string,
   width: PropTypes.number,
+  success: PropTypes.array.isRequired,
 };
 
 export default ParallelCoordinates;

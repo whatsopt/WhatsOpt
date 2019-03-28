@@ -10,9 +10,9 @@ module WhatsOpt
       @content = ""
     end
            
-    def generate(obj)
+    def generate(cases, success)
             
-      headers, values = self._generate(obj)
+      headers, values = self._generate(cases, success)
       
       @content = CSV.generate(col_sep: ';') do |csv|
         csv << headers

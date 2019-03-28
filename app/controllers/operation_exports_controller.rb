@@ -6,7 +6,7 @@ class OperationExportsController < ApplicationController
     @ope = Operation.find(params[:operation_id])
     authorize @ope
     csvgen = WhatsOpt::CsvCaseGenerator.new 
-    content, filename = csvgen.generate @ope.cases
+    content, filename = csvgen.generate @ope.cases, @ope.success
     send_data content, filename: filename
   end  
   

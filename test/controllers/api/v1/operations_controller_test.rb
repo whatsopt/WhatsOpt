@@ -12,7 +12,11 @@ class Api::V1::OperationsControllerTest < ActionDispatch::IntegrationTest
     assert_difference('Operation.count', 1) do
       post api_v1_mda_operations_url(@mda), 
         params: {operation: {name: 'new_doe', cases: [{varname: 'x1', coord_index: 0, values: [10, 20, 30]}, 
-                                              {varname: 'obj', coord_index: 0, values: [40, 50, 60]}]}}, 
+                                                      {varname: 'obj', coord_index: 0, values: [40, 50, 60]}
+                                                      ],
+                             success: [1, 0, 1]
+                              }
+                  }, 
           as: :json, headers: @auth_headers
     end
     assert_response :success
@@ -45,12 +49,15 @@ class Api::V1::OperationsControllerTest < ActionDispatch::IntegrationTest
   test "should get an operation" do
     get api_v1_operation_url(@ope), as: :json, headers: @auth_headers
     assert_response :success
+    resp = JSON.parse(response.body)
+    assert_equal 3, resp['success'].size 
   end
 
   test "should update an operation with cases" do
     patch api_v1_operation_url(@ope), 
-      params: {operation: {name: 'update_doe', driver: 'slsqp', cases: [{varname: 'x1', coord_index: 0, values: [4, 5, 6]},
-                                                                        {varname: 'y2', coord_index: 0, values: [1, 2, 3]}]}},
+      params: {operation: {name: 'update_doe', driver: 'slsqp', cases: [{varname: 'x1', coord_index: 0, values: [4, 5]},
+                                                                        {varname: 'y2', coord_index: 0, values: [1, 2]}
+                                                                       ], success: [1, 1]}},
       as: :json, headers: @auth_headers
     assert_response :success
     get api_v1_operation_url(@ope), as: :json, headers: @auth_headers
@@ -59,7 +66,7 @@ class Api::V1::OperationsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 'slsqp', resp['driver']
     assert_equal ['x1', 'y2'], resp['cases'].map{|c| c['varname']}.sort 
     assert_equal [0, 0], resp['cases'].map{|c| c['coord_index']}.sort
-    assert_equal [1, 2, 3, 4, 5, 6], resp['cases'].map{|c| c['values']}.flatten.sort
+    assert_equal [1, 2, 4, 5], resp['cases'].map{|c| c['values']}.flatten.sort
     assert_equal 'DONE', resp['job']['status']
     assert_equal "this is a test job\nData uploaded\n", resp['job']['log']
   end
@@ -68,6 +75,7 @@ class Api::V1::OperationsControllerTest < ActionDispatch::IntegrationTest
     patch api_v1_operation_url(@ope), 
     params: {operation: {name: 'update_doe', driver: 'lhs', 
                          cases: [],
+                         success: [],
                          options_attributes: [{id: @ope.options.first.id, name: 'lhs_nbpts', value:20}]}},
       as: :json, headers: @auth_headers
     assert_response :success
@@ -84,6 +92,7 @@ class Api::V1::OperationsControllerTest < ActionDispatch::IntegrationTest
     patch api_v1_operation_url(@ope), 
     params: {operation: {name: 'update_optim', driver: 'slsqp', 
                          cases: [],
+                         success: [],
                          options_attributes: new_options }},
       as: :json, headers: @auth_headers
     assert_response :success
