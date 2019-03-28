@@ -1,5 +1,14 @@
 <h1>CHANGELOG</h1>
 
+<h3>0.14.0 (28/03/2019)</h3>
+<ul>
+  <li>Scatterplots, parallel coodinates display DOE dots with different color 
+  regarding MDA convergence success: blue for success, amber for failure</li>
+  <li>openmdao_extensions (0.3.0): implement SMT and SALib drivers as DOEDriver with custom generators</li>
+  <li>wop upload (0.9.3): add --dry-run, upload doe success/failure</li>
+  <li>Preparing internet deployment on ether: authentication, restrict scope to analysis, deployment automaqtion</li>
+</ul>
+
 <h3>0.13.2 (12/02/2019)</h3>
 <ul>
   <li>wop update (0.8.1): fix performance issue, fix --server option</li>
