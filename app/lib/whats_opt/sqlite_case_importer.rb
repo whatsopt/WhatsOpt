@@ -3,7 +3,7 @@ require 'json'
 module WhatsOpt  
   class SqliteCaseImporter
   
-    attr_reader :driver_name, :num_cases, :cases, :cases_attributes
+    attr_reader :driver_name, :num_cases, :cases, :cases_attributes, :success
     
     class BadSqliteFileError < StandardError
     end
@@ -20,12 +20,12 @@ module WhatsOpt
       
       db = SQLite3::Database.new filename
       
-      db.execute( "select iteration_coordinate from driver_iterations limit 1" ) do |row|
-        if row[0] =~ /rank\d+:(\w+)/
+      @success = []
+      db.execute( "select iteration_coordinate, success from driver_iterations" ) do |row|
+        if @driver_name.nil? && row[0] =~ /rank\d+:(\w+)/
           @driver_name = $1
-        else
-          raise BadDriverNameError.new
         end
+        @success << row[1]
       end
       
       @num_cases = 0

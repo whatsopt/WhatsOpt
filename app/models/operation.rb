@@ -157,7 +157,8 @@ class Operation < ApplicationRecord
     sqlite_filename = self.job.sqlite_filename
     Rails.logger.info "About to load #{sqlite_filename}"
     importer = WhatsOpt::SqliteCaseImporter.new(sqlite_filename)
-    operation_params = {cases: importer.cases_attributes}
+    p importer.success
+    operation_params = {cases: importer.cases_attributes, success: importer.success}
     self.update_operation(operation_params)
     self.save!
     #self.set_upload_job_done

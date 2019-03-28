@@ -36,5 +36,6 @@ class SqliteCaseImporterTest < ActiveSupport::TestCase
     assert_equal expected_cases, @cr.cases
     assert_includes @cr.cases_attributes, {varname: 'x', coord_index: -1, values: [2.0, 5.773159728050814e-15, 0.0, 1.69272439048138e-14, 0.0, 2.7785054656531913e-14] }
     assert_includes @cr.cases_attributes, {varname: 'z', coord_index: 1, values: [2.0, 0.8256953050343647, 0.0, 5.361249872104824e-13, 0.0, 0.0]}
+    assert_equal [1, 1, 1, 1, 1, 1], @cr.success
   end
 end
