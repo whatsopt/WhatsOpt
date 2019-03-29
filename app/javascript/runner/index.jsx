@@ -150,7 +150,7 @@ class Runner extends React.Component {
 
     const status = (this.props.ope.job && this.props.ope.job.status) || 'PENDING';
     const log = (this.props.ope.job && this.props.ope.job.log) || "";
-    console.log("LOG "+log)
+    //console.log("LOG "+log)
     const log_count = (this.props.ope.job && this.props.ope.job.log_count) || 0;
 
     const formData = {
