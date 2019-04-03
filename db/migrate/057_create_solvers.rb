@@ -7,7 +7,6 @@ class CreateSolvers < ActiveRecord::Migration[5.2]
       t.integer :maxiter
       t.integer :iprint
       t.boolean :err_on_maxiter
-      t.references :runner, polymorphic: true, index: true
     end
   end
 end

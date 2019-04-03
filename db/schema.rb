@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 56) do
+ActiveRecord::Schema.define(version: 59) do
 
   create_table "analyses", force: :cascade do |t|
     t.string "name"
@@ -90,6 +90,23 @@ ActiveRecord::Schema.define(version: 56) do
     t.string "title"
   end
 
+  create_table "openmdao_analysis_impls", force: :cascade do |t|
+    t.boolean "parallel_group"
+    t.integer "analysis_id"
+    t.integer "nonlinear_solver_id"
+    t.integer "linear_solver_id"
+    t.index ["analysis_id"], name: "index_openmdao_analysis_impls_on_analysis_id"
+    t.index ["linear_solver_id"], name: "index_openmdao_analysis_impls_on_linear_solver_id"
+    t.index ["nonlinear_solver_id"], name: "index_openmdao_analysis_impls_on_nonlinear_solver_id"
+  end
+
+  create_table "openmdao_discipline_impls", force: :cascade do |t|
+    t.boolean "implicit_component"
+    t.boolean "support_partial_derivatives"
+    t.integer "discipline_id"
+    t.index ["discipline_id"], name: "index_openmdao_discipline_impls_on_discipline_id"
+  end
+
   create_table "operations", force: :cascade do |t|
     t.integer "analysis_id"
     t.string "name"
@@ -121,6 +138,15 @@ ActiveRecord::Schema.define(version: 56) do
     t.index ["name", "resource_type", "resource_id"], name: "index_roles_on_name_and_resource_type_and_resource_id"
     t.index ["name"], name: "index_roles_on_name"
     t.index ["resource_type", "resource_id"], name: "index_roles_on_resource_type_and_resource_id"
+  end
+
+  create_table "solvers", force: :cascade do |t|
+    t.string "name"
+    t.float "atol"
+    t.float "rtol"
+    t.integer "maxiter"
+    t.integer "iprint"
+    t.boolean "err_on_maxiter"
   end
 
   create_table "users", force: :cascade do |t|

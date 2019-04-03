@@ -10,6 +10,7 @@ import AnalysisBreadCrumbs from 'mda_viewer/components/AnalysisBreadCrumbs';
 import DisciplinesEditor from 'mda_viewer/components/DisciplinesEditor';
 import ConnectionsEditor from 'mda_viewer/components/ConnectionsEditor';
 import VariablesEditor from 'mda_viewer/components/VariablesEditor';
+import OpenmdaoImplEditor from 'mda_viewer/components/OpenmdaoImplEditor';
 import AnalysisDatabase from '../utils/AnalysisDatabase';
 
 const VAR_REGEXP = /^[a-zA-Z][_a-zA-Z0-9]*$/;
@@ -18,7 +19,7 @@ class MdaViewer extends React.Component {
   constructor(props) {
     super(props);
     this.api = this.props.api;
-    const isEditing = props.isEditing;
+    const isEditing = this.props.isEditing;
     const filter = {fr: undefined, to: undefined};
     this.state = {
       filter: filter,
@@ -49,6 +50,7 @@ class MdaViewer extends React.Component {
     this.handleConnectionDelete = this.handleConnectionDelete.bind(this);
     this.handleConnectionChange = this.handleConnectionChange.bind(this);
     this.handleErrorClose = this.handleErrorClose.bind(this);
+    this.handleOpenmdaoImplUpdate = this.handleOpenmdaoImplUpdate.bind(this);
   }
 
   handleFilterChange(filter) {
@@ -269,6 +271,14 @@ class MdaViewer extends React.Component {
     this.setState(newState);
   }
 
+  // *** OpenmdaoImpl ************************************************************
+
+  handleOpenmdaoImplUpdate(impl_attrs) {
+    this.api.updateOpenmdaoImpl(this.props.mda.id, impl_attrs,
+      (response) => {console.log("impl updated")}
+    )
+  }
+
   render() {
     const errors = this.state.errors.map((message, i) => {
       return ( <Error key={i} msg={message} onClose={() => this.handleErrorClose(i)}/> );
@@ -292,6 +302,8 @@ class MdaViewer extends React.Component {
                                       onConnectionChange={this.handleConnectionChange}
                                       isEditing={this.state.isEditing} />);
 
+    console.log(this.props.mda);
+
     if (this.state.isEditing) {
       return (
         <div>
@@ -312,7 +324,7 @@ class MdaViewer extends React.Component {
             </li>
             <li className="nav-item">
               <a className="nav-link" id="disciplines-tab" data-toggle="tab" href="#disciplines"
-                role="tab" aria-controls="disciplines" aria-selected="true">Disciplines</a>
+                role="tab" aria-controls="disciplines" aria-selected="false">Disciplines</a>
             </li>
             <li className="nav-item">
               <a className="nav-link" id="connections-tab" data-toggle="tab" href="#connections"
@@ -320,7 +332,11 @@ class MdaViewer extends React.Component {
             </li>
             <li className="nav-item">
               <a className="nav-link active" id="variables-tab" data-toggle="tab" href="#variables"
-                role="tab" aria-controls="variables" aria-selected="false">Variables</a>
+                role="tab" aria-controls="variables" aria-selected="true">Variables</a>
+            </li>
+            <li className="nav-item">
+              <a className="nav-link" id="openmdao-impl-tab" data-toggle="tab" href="#openmdao-impl"
+                role="tab" aria-controls="openmdao-impl" aria-selected="false">OpenMDAO</a>
             </li>
           </ul>
           <div className="tab-content" id="myTabContent">
@@ -361,13 +377,18 @@ class MdaViewer extends React.Component {
             <div className="tab-pane fade show active" id="variables" role="tabpanel" aria-labelledby="variables-tab">
               {varEditor}
             </div>
+            <div className="tab-pane fade" id="openmdao-impl" role="tabpanel" aria-labelledby="openmdao-impl-tab">
+              <OpenmdaoImplEditor impl={this.state.mda.impl.openmdao} nodes={db.nodes}
+                onOpenmdaoImplUpdate={this.handleOpenmdaoImplUpdate}
+              />
+            </div>
           </div>
         </div>);
     };
     return (
       <div>
         <div className="mda-section">
-          <ToolBar mdaId={this.props.mda.id} api={this.api} db={db}/>
+          <ToolBar mdaId={this.props.mda.id} api={this.api} nodes={db.nodes}/>
         </div>
         {breadcrumbs}
         <div className="mda-section">

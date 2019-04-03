@@ -28,6 +28,8 @@ class Analysis < ApplicationRecord
 
   has_many :operations, :dependent => :destroy 
 
+  has_one :openmdao_impl, class_name: "OpenmdaoAnalysisImpl"
+
   before_validation(on: :create) do
     _create_from_attachment if attachment_exists?
   end
@@ -35,6 +37,7 @@ class Analysis < ApplicationRecord
   after_save :refresh_connections
   after_save :_ensure_ancestry
   after_save :_ensure_driver_presence
+  after_save :_ensure_openmdao_impl_presence
   
   validate :_check_mda_import_error, on: :create, if: :attachment_exists?
   validates :name, presence: true, allow_blank: false
@@ -141,7 +144,8 @@ class Analysis < ApplicationRecord
       nodes: build_nodes,
       edges: build_edges,
       inactive_edges: build_edges(active: false),
-      vars: build_var_infos
+      vars: build_var_infos,
+      impl: build_openmdao_impl,
     }.to_json
   end
   
@@ -191,6 +195,11 @@ class Analysis < ApplicationRecord
     tree
   end
   
+  def build_openmdao_impl
+    self.openmdao_impl ||= OpenmdaoAnalysisImpl.new
+    return {openmdao: ActiveModelSerializers::SerializableResource.new(self.openmdao_impl).as_json}
+  end
+
   def refresh_connections
     varouts = Variable.outputs.joins(discipline: :analysis).where(analyses: {id: self.id})
     varins = Variable.inputs.joins(discipline: :analysis).where(analyses: {id: self.id})
@@ -366,6 +375,12 @@ class Analysis < ApplicationRecord
       disciplines.nodes
         .select{|d| d.has_sub_analysis? && d.sub_analysis.parent!=self}
         .each{|d| d.sub_analysis.update(parent_id: self.id) unless new_record? }
+    end
+
+    def _ensure_openmdao_impl_presence
+      if self.valid? and self.openmdao_impl.nil?
+        self.openmdao_impl = OpenmdaoAnalysisImpl.new
+      end
     end
 end
 

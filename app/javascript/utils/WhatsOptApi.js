@@ -179,6 +179,13 @@ class WhatsOptApi {
 
     return new Promise(checkCondition);
   }
+
+  updateOpenmdaoImpl(mdaId, impl_attrs, callback) {
+    const path = `/analyses/${mdaId}/openmdao_impl`;
+    axios.patch(this.apiUrl(path), {openmdao_impl: impl_attrs})
+        .then(callback)
+        .catch((error) => console.log(error));
+  }
 };
 
 export default WhatsOptApi;

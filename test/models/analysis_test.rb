@@ -93,5 +93,12 @@ class AnalysisTest < ActiveSupport::TestCase
     @outermda = analyses(:outermda)
     assert_equal ['Disc', 'VacantDiscipline', 'PlainDiscipline'], @outermda.all_plain_disciplines.map(&:name)  
   end
- 
+
+  test "should have default openmdao impl once created" do
+    @mda = Analysis.create!( {name: 'NewMDA'} )
+    impl = @mda.openmdao_impl
+    assert impl
+    assert_equal "NonlinearBlockGS", impl.nonlinear_solver.name
+    assert_equal "ScipyKrylov", impl.linear_solver.name
+  end
 end

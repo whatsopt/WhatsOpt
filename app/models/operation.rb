@@ -39,9 +39,9 @@ class Operation < ApplicationRecord
 	  operation = mda.operations.build(ope_attrs.except(:cases))
 	  operation._build_cases(ope_attrs[:cases]) if ope_attrs[:cases]
     if ope_attrs[:cases]
-      operation.build_job(status: 'DONE')
+      operation.build_job(status: 'DONE', log: "")
     else
-      operation.build_job(status: 'PENDING')
+      operation.build_job(status: 'PENDING', log: "")
     end
 	  operation
 	end

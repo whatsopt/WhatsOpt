@@ -1,0 +1,15 @@
+nlbgs:
+  name: "NonlinearBlockGS"
+  atol: 1e-6
+  rtol: 1e-10
+  maxiter: 7
+  err_on_maxiter: true
+  iprint: 2
+
+scipy_krylov:
+  name: "ScipyKrylov"
+  atol: 1e-8
+  rtol: 1e-7
+  maxiter: 10
+  err_on_maxiter: false
+  iprint: 1

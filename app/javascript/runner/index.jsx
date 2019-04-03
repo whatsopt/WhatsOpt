@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import update from 'immutability-helper';
 // disable actioncable: import actionCable from 'actioncable'
 import Form from "react-jsonschema-form";
-import CheckboxWidget from 'runner/components/CheckboxWidget';
+import CheckboxWidget from '../utils/CheckboxWidget';
 
 const widgets = {
   CheckboxWidget,
@@ -48,7 +48,7 @@ const OPTDEFAULTS = {
   onerasego_optimizer_segomoe_optimizer: "slsqp",
 };
 
-const FORM = {
+const SCHEMA = {
   "type": "object",
   "properties": {
     "name": {"type": "string", "title": "Operation name"},
@@ -79,9 +79,19 @@ const FORM = {
         "pyOptSparse - SNOPT", 
         "Onera - SEGOMOE"],
       "default": "runonce",
-    }},
+    },
+    "showAnalysisSolverOptions": {"type": "boolean", "title": "Show solver options", "default": false},
+  },
   "required": ["name", "host", "driver"],
   "dependencies": {
+    "showAnalysisSolverOptions": {
+      "properties": {
+        "maxiter": {
+          "type": "number",
+          "title": "Maximum number of iterations",
+          "default": "10",
+        },
+      }},
     "driver": {
       "oneOf": [
         {
@@ -163,13 +173,16 @@ class Runner extends React.Component {
     this.opeData = {};
     Object.assign(this.opeData, formData);
     this.opeStatus = status;
-    this.state = {formData: formData,
+    this.state = {
+      schema: SCHEMA,
+      formData: formData,
       cases: this.props.ope.cases,
       status: status,
       log: log,
       log_count: log_count,
       startInMs: this.props.ope.job && this.props.ope.job && this.props.ope.job.start_in_ms,
       endInMs: this.props.ope.job && this.props.ope.job && this.props.ope.job.end_in_ms,
+      showSolverOptions: false,
     };
 
     this.handleRun = this.handleRun.bind(this);
@@ -231,15 +244,20 @@ class Runner extends React.Component {
     //    console.log("FORMDATA= "+JSON.stringify(data.formData));
     //    console.log("OPEDATA= "+JSON.stringify(this.opeData));
     //    console.log("FILTERDATA= "+JSON.stringify(this._filterFormOptions(data.formData)));
-    if (this._isChanged(data.formData)) {
-      const newState = update(this.state, {formData: {$set: data.formData},
+    const {formData} = data
+    let newState;
+    if (this._isChanged(formData)) {
+      newState = update(this.state, 
+        {
+        formData: {$set: formData},
         status: {$set: "PENDING"}});
-      this.setState(newState);
     } else {
-      const newState = update(this.state, {formData: {$set: data.formData},
+      newState = update(this.state,
+        {
+        formData: {$set: formData},
         status: {$set: this.opeStatus}});
-      this.setState(newState);
     }
+    this.setState(newState);
   }
 
   _pollOperationJob(formData) {
@@ -352,7 +370,7 @@ class Runner extends React.Component {
         <h1>Operation on {this.props.mda.name}</h1>
         <h2>Specification</h2>
         <div className="editor-section col-3">
-          <Form schema={FORM} formData={this.state.formData}
+          <Form schema={this.state.schema} formData={this.state.formData}
             onSubmit={this.handleRun} onChange={this.handleChange} widgets={widgets}>
             <div className="form-group">
               <button type="submit" className="btn btn-primary" disabled={active}>Run</button>
@@ -404,7 +422,7 @@ Runner.propTypes = {
     cases: PropTypes.array,
     job: PropTypes.shape({
       status: PropTypes.string.isRequired,
-      log: PropTypes.array,
+      log: PropTypes.string,
       start_in_ms: PropTypes.number,
       end_in_ms: PropTypes.number,
     }),

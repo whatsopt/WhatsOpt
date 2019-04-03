@@ -25,6 +25,7 @@ Rails.application.routes.draw do
         resources :operations, only: [:show, :create, :update, :destroy] do
           resource :job, only: [:show, :create, :update]
         end
+        resource :openmdao_impl, only: [:update]
         post 'openmdao_checking', to: 'openmdao_checking#create' 
         get 'exports/new'
       end
