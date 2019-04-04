@@ -29,6 +29,16 @@ class OpenmdaoAnalysisImpl < ActiveRecord::Base
     end
   end
 
+  def to_code(solver_key, key)
+    obj = self.send(solver_key).send(key)
+    case obj
+    when true, false
+      obj ? "True":"False"
+    else
+      obj.to_s
+    end
+  end
+
   private 
 
   def _ensure_default_impl

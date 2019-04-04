@@ -49,8 +49,8 @@ const OPTDEFAULTS = {
 };
 
 const SCHEMA = {
-  "type": "object",
-  "properties": {
+  type: "object",
+  properties: {
     "name": {"type": "string", "title": "Operation name"},
     "host": {"type": "string", "title": "Analysis server"},
     "driver": {"type": "string", "title": "Driver",
@@ -80,18 +80,10 @@ const SCHEMA = {
         "Onera - SEGOMOE"],
       "default": "runonce",
     },
-    "showAnalysisSolverOptions": {"type": "boolean", "title": "Show solver options", "default": false},
+    "showSolverOptions": {"type": "boolean", "title": "Show solver options", "default": false},
   },
-  "required": ["name", "host", "driver"],
-  "dependencies": {
-    "showAnalysisSolverOptions": {
-      "properties": {
-        "maxiter": {
-          "type": "number",
-          "title": "Maximum number of iterations",
-          "default": "10",
-        },
-      }},
+  required: ["name", "host", "driver"],
+  dependencies: {
     "driver": {
       "oneOf": [
         {
@@ -131,7 +123,7 @@ const SCHEMA = {
             "pyoptsparse_optimizer_snopt_maxiter": {"title": "Major iteration limit",
               "type": OPTTYPES.pyoptsparse_optimizer_snopt_maxiter,
               "default": OPTDEFAULTS.pyoptsparse_optimizer_snopt_maxiter}},
-        },
+        }, 
         {
           "properties": {"driver": {"enum": ["onerasego_optimizer_segomoe"]},
             "onerasego_optimizer_segomoe_maxiter": {"title": "Number max of iterations to run",
@@ -152,6 +144,12 @@ const SCHEMA = {
     },
   },
 };
+
+const UI_SCHEMA = {
+  // "ui:order": [
+  //   "name", "host", "driver", "showSolverOptions",
+  // ]
+}
 
 class Runner extends React.Component {
   constructor(props) {
@@ -244,16 +242,26 @@ class Runner extends React.Component {
     //    console.log("FORMDATA= "+JSON.stringify(data.formData));
     //    console.log("OPEDATA= "+JSON.stringify(this.opeData));
     //    console.log("FILTERDATA= "+JSON.stringify(this._filterFormOptions(data.formData)));
-    const {formData} = data
-    let newState;
+    const {formData} = data;
+    let schema = {...this.state.schema} 
+    if (formData.showSolverOptions) {
+      schema.properties = Object.assign(schema.properties, {
+        maxiter: {type: "integer", title: "Maximum number of iterations", default: 10},
+      })
+    } else {
+      schema.properties = Object.assign({},schema.properties)
+      delete formData.maxiter
+      delete schema.properties.maxiter
+    }
+
     if (this._isChanged(formData)) {
-      newState = update(this.state, 
-        {
+      const newState = update(this.state, {
+        schema: {$set: schema},
         formData: {$set: formData},
         status: {$set: "PENDING"}});
     } else {
-      newState = update(this.state,
-        {
+      const newState = update(this.state, {
+        schema: {$set: schema},
         formData: {$set: formData},
         status: {$set: this.opeStatus}});
     }
@@ -370,7 +378,7 @@ class Runner extends React.Component {
         <h1>Operation on {this.props.mda.name}</h1>
         <h2>Specification</h2>
         <div className="editor-section col-3">
-          <Form schema={this.state.schema} formData={this.state.formData}
+          <Form schema={this.state.schema} formData={this.state.formData} uiSchema={UI_SCHEMA}
             onSubmit={this.handleRun} onChange={this.handleChange} widgets={widgets}>
             <div className="form-group">
               <button type="submit" className="btn btn-primary" disabled={active}>Run</button>

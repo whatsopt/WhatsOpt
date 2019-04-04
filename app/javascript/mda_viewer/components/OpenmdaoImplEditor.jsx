@@ -30,6 +30,20 @@ const SCHEMA = {
       },
       "required": ["name", "atol", "rtol", "maxiter", "iprint"],
     },
+    "linear_solver": {"type": "object", "title": "Linear Solver",
+    "properties": {
+      "name": {
+        "title": "Solver name",
+        "enum": ["ScipyKrylov", "LinearBlockGS", "LinearBlockJac", "LinearRunOnce", "DirectSolver", "PETScKrylov", "LinearUserDefined"]
+      },
+      "atol": {"type": "number", "title": "Absolute error tolerance"},
+      "rtol": {"type": "number", "title": "Relative error tolerance"},
+      "maxiter": {"type": "number", "title": "Maximum number of iterations (maxiter)"},
+      "err_on_maxiter": {"type": "boolean", "title": "Mark as failed if not converged after maxiter iterations"},
+      "iprint": {"type": "integer", "title": "Level of solver traces"}
+    },
+    "required": ["name", "atol", "rtol", "maxiter", "iprint"],
+    },
   },
 }
 

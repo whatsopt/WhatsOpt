@@ -3,7 +3,7 @@ require 'whats_opt/server_generator'
 
 module WhatsOpt
   class OpenmdaoGenerator < CodeGenerator
-    
+
     DEFAULT_DOE_DRIVER = :smt_doe_lhs
     DEFAULT_OPTIMIZATION_DRIVER = :scipy_optimizer_slsqp
     
@@ -20,6 +20,7 @@ module WhatsOpt
       @driver_name = driver_name.to_sym if driver_name
       @driver_options = driver_options
       @root_modulepath = nil
+      @impl = @mda.openmdao_impl || OpenmdaoAnalysisImpl.new
     end
                     
     def check_mda_setup

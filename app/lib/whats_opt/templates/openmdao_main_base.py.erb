@@ -2,26 +2,44 @@
 # analysis_id: <%= @mda.id %>
 
 import numpy as np
-from openmdao.api import Problem, Group
-from openmdao.api import IndepVarComp
-<% @mda.sub_analyses.each do |a| %>
-from <%= a.py_full_modulename %> import <%= a.py_classname %><% end %>
-<% @mda.all_plain_disciplines.each do |d| %>
-from <%= d.py_full_modulename %> import <%= d.py_classname %><% end %>
+from openmdao.api import Problem, Group, ParallelGroup, IndepVarComp
+from openmdao.api import NonlinearBlockGS, ScipyKrylov
+from openmdao.api import view_model
+from openmdao_extensions.reckless_nonlinear_block_gs import RecklessNonlinearBlockGS
+
+<% @mda.sub_analyses.each do |a| -%>
+from <%= a.py_full_modulename %> import <%= a.py_classname %>
+<% end -%>
+<% @mda.all_plain_disciplines.each do |d| -%>
+from <%= d.py_full_modulename %> import <%= d.py_classname %>
+<% end -%>
 <% if @remote -%>
-<% @mda.sub_analyses.each do |disc| %>
+<% @mda.sub_analyses.each do |disc| -%>
 from server.sub_analysis_proxy import <%= disc.py_classname %>Proxy
-<% end %>
+<% end -%>
 <% @mda.plain_disciplines.each do |disc| %>
 from server.discipline_proxy import <%= disc.py_classname %>Proxy
-<% end %>
+<% end -%>
 <% end -%>
 
-class <%= @mda.py_classname %>Base(Group):
+class <%= @mda.py_classname %>Base(<%= @impl.parallel_group ? "ParallelGroup" : "Group" %>):
     """ An OpenMDAO base component to encapsulate <%= @mda.py_classname %> MDA """
-<% if @remote %>
     def __init__(self, thrift_client=None, **kwargs):
         super(<%= @mda.py_classname %>Base, self). __init__(**kwargs)
+
+        self.nonlinear_solver = <%= @impl.nonlinear_solver.name %>() 
+        self.nonlinear_solver.options['atol'] = <%= @impl.nonlinear_solver.atol %>
+        self.nonlinear_solver.options['rtol'] = <%= @impl.nonlinear_solver.rtol %>
+        self.nonlinear_solver.options['maxiter'] = <%= @impl.nonlinear_solver.maxiter %>
+        self.nonlinear_solver.options['err_on_maxiter'] = <%= @impl.to_code(:nonlinear_solver, :err_on_maxiter) %>
+        self.nonlinear_solver.options['iprint'] = <%= @impl.nonlinear_solver.iprint %>
+        self.linear_solver = <%= @impl.linear_solver.name %>()
+        self.linear_solver.options['atol'] = <%= @impl.linear_solver.atol %>
+        self.linear_solver.options['rtol'] = <%= @impl.linear_solver.rtol %>
+        self.linear_solver.options['maxiter'] = <%= @impl.linear_solver.maxiter %>
+        self.linear_solver.options['err_on_maxiter'] = <%= @impl.to_code(:linear_solver, :err_on_maxiter) %>
+        self.linear_solver.options['iprint'] = <%= @impl.linear_solver.iprint %>
+<% if @remote %>
         self._thrift_client = thrift_client
 <% end -%>
 
@@ -46,12 +64,11 @@ class <%= @mda.py_classname %>Base(Group):
 <% end %>
 <% @mda.plain_disciplines.each do |d| -%>
     def create_<%= d.basename %>(self):
-    <% if @remote %>
+<% if @remote -%>
         return <%= d.py_classname %>Proxy(self._thrift_client)
-    <% else %>
+<% else -%>
     	return <%= d.py_classname %>()
-    <% end -%>
-
+<% end -%>
 <% end %>
 
 # Used by Thrift server to serve disciplines

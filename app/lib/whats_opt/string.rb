@@ -11,4 +11,16 @@ module WhatsOpt
     end
   end
   
+  refine TrueClass do
+    def py_boolean
+      "True"
+    end
+  end
+
+  refine FalseClass do
+    def py_boolean
+      "False"
+    end
+  end
+  
 end
