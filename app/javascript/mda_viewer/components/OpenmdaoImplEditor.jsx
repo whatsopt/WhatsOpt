@@ -8,16 +8,19 @@ const WIDGETS = {
   CheckboxWidget,
 };
 
-const SCHEMA = {
+const SCHEMA_DISCIPLINES = {
+  "type": "object",
+
+      "properties": {
+        "parallel_execution": {"type": "boolean", "title": "Parallel Execution"},
+      },
+    }
+
+
+const SCHEMA_NONLINEAR_SOLVER = {
   "type": "object",
   "properties": {
-    "disciplines": {"type": "object", "title": "Disciplines",
-      "properties": {
-        "parallel_group": {"type": "boolean", "title": "Parallel Execution"},
-      },
-    },
-    "nonlinear_solver": {"type": "object", "title": "Nonlinear Solver",
-      "properties": {
+
         "name": {
           "title": "Solver name",
           "enum": ["NonlinearBlockGS", "RecklessNonlinearBlockGS", "NonlinearBlockJac", "NonlinearRunOnce", "NewtonSolver", "BroydenSolver"]
@@ -29,8 +32,11 @@ const SCHEMA = {
         "iprint": {"type": "integer", "title": "Level of solver traces"}
       },
       "required": ["name", "atol", "rtol", "maxiter", "iprint"],
-    },
-    "linear_solver": {"type": "object", "title": "Linear Solver",
+    }
+
+const SCHEMA_LINEAR_SOLVER = {
+  "type": "object",
+
     "properties": {
       "name": {
         "title": "Solver name",
@@ -43,60 +49,70 @@ const SCHEMA = {
       "iprint": {"type": "integer", "title": "Level of solver traces"}
     },
     "required": ["name", "atol", "rtol", "maxiter", "iprint"],
-    },
-  },
-}
+    }
 
 class OpenmdaoImplEditor extends React.Component {
   
   constructor(props) {
     super(props);
-    this.initForm = {
-      disciplines: {
-        parallel_group: this.props.impl.parallel_group,
-      },
-      nonlinear_solver: {...this.props.impl.nonlinear_solver},
-      linear_solver: {...this.props.impl.linear_solver},
-    };
-    this.state = {
-      schema: {...SCHEMA},
-      formData: {...this.initForm},
-    };
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleReset = this.handleReset.bind(this);
   }
 
   handleChange(data) {
-    console.log("Data changed: ",data)
+    //console.log("Data changed: ", data)
   }
 
-  handleSubmit(data) {
-    console.log("Data submitted: ",  data);
-    const formData = data.formData;
-    this.props.onOpenmdaoImplUpdate(
-      {
-        parallel_group: formData.disciplines.parallel_group,
-        nonlinear_solver: formData.nonlinear_solver,
-        linear_solver: formData.linear_solver
-      }
-    );
+  handleSubmit(partName, data) {
+    console.log("Data submitted: ", partName, data.formData)
+    this.props.onOpenmdaoImplUpdate(partName, data.formData);
   }
 
-  handleReset() {
-    this.setState(update(this.state, {formData: {$set: this.initForm}}));
+  handleReset(partName) {
+    this.props.onOpenmdaoImplReset(partName);
   }
+
+  // static getDerivedStateFromProps(nextProps, prevState) {
+  //   return {formData: {
+  //     disciplines: {...nextProps.impl.disciplines},
+  //     nonlinear_solver: {...nextProps.impl.nonlinear_solver},
+  //     linear_solver: {...nextProps.impl.linear_solver},
+  //   }};
+  // }
 
   render() {
     return (
-      <div className="editor-section col-md-4">
-        <Form schema={this.state.schema} formData={this.state.formData} 
-              onChange={this.handleChange} onSubmit={this.handleSubmit} widgets={WIDGETS}>
-          <div className="form-group">
-            <button type="submit" className="btn btn-primary">Save</button>
-            <button type="button" className="ml-1 btn btn-secondary" onClick={this.handleReset}>Reset</button>
+      <div className="editor-section">
+        <div className="row">
+          <div className="col-4">
+            <Form schema={SCHEMA_DISCIPLINES} formData={this.props.impl.disciplines}
+                  onChange={this.handleChange} onSubmit={(data) => this.handleSubmit('disciplines', data)} widgets={WIDGETS} liveValidate={true}>
+              <div className="form-group">
+                <button type="submit" className="btn btn-primary">Save</button>
+                <button type="button" className="ml-1 btn btn-secondary" onClick={() => this.handleReset('disciplines')}>Reset</button>
+              </div>
+            </Form>
           </div>
-        </Form>
+          <div className="col-4">
+            <Form schema={SCHEMA_NONLINEAR_SOLVER} formData={this.props.impl.nonlinear_solver}
+                  onChange={this.handleChange} onSubmit={(data) => this.handleSubmit('nonlinear_solver', data)} widgets={WIDGETS} liveValidate={true}>
+              <div className="form-group">
+                <button type="submit" className="btn btn-primary">Save</button>
+                <button type="button" className="ml-1 btn btn-secondary" onClick={() => this.handleReset('nonlinear_solver')}>Reset</button>
+              </div>
+            </Form>
+          </div>
+          <div className="col-4">
+            <Form schema={SCHEMA_LINEAR_SOLVER} formData={this.props.impl.linear_solver}
+                  onChange={this.handleChange} onSubmit={(data) => this.handleSubmit('linear_solver', data)} widgets={WIDGETS} liveValidate={true}>
+              <div className="form-group">
+                <button type="submit" className="btn btn-primary">Save</button>
+                <button type="button" className="ml-1 btn btn-secondary" onClick={() => this.handleReset('linear_solver')}>Reset</button>
+              </div>
+            </Form>
+          </div>
+        </div>
       </div>
     );
   }
@@ -106,13 +122,11 @@ class OpenmdaoImplEditor extends React.Component {
 OpenmdaoImplEditor.propTypes = {
   nodes: PropTypes.array.isRequired,
   impl: PropTypes.shape({
-    parallel_group: PropTypes.bool.isRequired,
+    disciplines: PropTypes.object.isRequired,
     nonlinear_solver: PropTypes.object.isRequired,
     linear_solver: PropTypes.object.isRequired,
   }),
-  //nodes: PropTypes.array.isRequired,
   onOpenmdaoImplUpdate: PropTypes.func.isRequired,
-  //onDisciplineUpdate: PropTypes.func.isRequired,
 };
 
 export default OpenmdaoImplEditor;

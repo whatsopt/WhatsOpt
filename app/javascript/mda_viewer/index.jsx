@@ -51,6 +51,7 @@ class MdaViewer extends React.Component {
     this.handleConnectionChange = this.handleConnectionChange.bind(this);
     this.handleErrorClose = this.handleErrorClose.bind(this);
     this.handleOpenmdaoImplUpdate = this.handleOpenmdaoImplUpdate.bind(this);
+    this.handleOpenmdaoImplReset = this.handleOpenmdaoImplReset.bind(this);
   }
 
   handleFilterChange(filter) {
@@ -273,10 +274,40 @@ class MdaViewer extends React.Component {
 
   // *** OpenmdaoImpl ************************************************************
 
-  handleOpenmdaoImplUpdate(impl_attrs) {
-    this.api.updateOpenmdaoImpl(this.props.mda.id, impl_attrs,
-      (response) => {console.log("impl updated")}
+  handleOpenmdaoImplUpdate(partName, formAttrs) {
+    let implAttrs = {};
+    if (partName === 'disciplines') {
+      implAttrs.parallel_group = formAttrs.parallel_execution;
+    } else {
+      implAttrs[partName] = formAttrs;
+    }
+    this.api.updateOpenmdaoImpl(this.props.mda.id, implAttrs,
+      (response) => {
+        let setImplAttrs = {};
+        if (partName === 'disciplines') {
+          setImplAttrs = {parallel_group: {$set: formAttrs.parallel_execution}};
+        } else {
+          setImplAttrs[partName] = {$set: formAttrs};
+        }
+        const newState = update(this.state, {mda: {impl: {openmdao: setImplAttrs}}})
+        console.log("set IMPLATTRS", newState.mda.impl.openmdao);
+        this.setState(newState);
+      }
     )
+  }
+
+  handleOpenmdaoImplReset(partName) {
+    let implAttrs = {};
+    let newState = {};
+    if (partName === 'disciplines') {
+      implAttrs['parallel_group'] = {$set: this.state.mda.impl.openmdao.parallel_group};
+      newState = update(this.state, {mda: {impl: {openmdao: implAttrs}}});
+    } else {
+      implAttrs[partName] = {$set: this.state.mda.impl.openmdao[partName]};
+      newState = update(this.state, {mda: {impl: {openmdao: implAttrs}}})
+    }
+    console.log('NEW STATE', newState.mda.impl.openmdao);
+    this.setState(newState);
   }
 
   render() {
@@ -302,9 +333,15 @@ class MdaViewer extends React.Component {
                                       onConnectionChange={this.handleConnectionChange}
                                       isEditing={this.state.isEditing} />);
 
-    console.log(this.props.mda);
-
     if (this.state.isEditing) {
+      let impl = {
+        disciplines: {
+          parallel_execution: this.state.mda.impl.openmdao.parallel_group,
+        },
+        nonlinear_solver: this.state.mda.impl.openmdao.nonlinear_solver,
+        linear_solver: this.state.mda.impl.openmdao.linear_solver,
+      }
+
       return (
         <div>
           <form className="button_to" method="get" action={this.api.url(`/analyses/${this.props.mda.id}`)}>
@@ -378,9 +415,10 @@ class MdaViewer extends React.Component {
               {varEditor}
             </div>
             <div className="tab-pane fade" id="openmdao-impl" role="tabpanel" aria-labelledby="openmdao-impl-tab">
-              <OpenmdaoImplEditor impl={this.state.mda.impl.openmdao} nodes={db.nodes}
+              <OpenmdaoImplEditor impl={impl} nodes={db.nodes}
                 onOpenmdaoImplUpdate={this.handleOpenmdaoImplUpdate}
-              />
+                onOpenmdaoImplReset={this.handleOpenmdaoImplReset}
+                />
             </div>
           </div>
         </div>);
