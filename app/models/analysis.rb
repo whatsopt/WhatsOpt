@@ -23,17 +23,19 @@ class Analysis < ApplicationRecord
   accepts_nested_attributes_for :disciplines, 
     reject_if: proc { |attr| attr['name'].blank? }, allow_destroy: true
 
-  has_one :analysis_discipline, :dependent => :destroy
+  has_one :analysis_discipline, dependent: :destroy
   has_one :super_discipline, through: :analysis_discipline, source: :discipline
 
-  has_many :operations, :dependent => :destroy 
+  has_many :operations, dependent: :destroy 
 
-  has_one :openmdao_impl, class_name: "OpenmdaoAnalysisImpl"
+  has_one :openmdao_impl, class_name: "OpenmdaoAnalysisImpl", dependent: :destroy
 
   before_validation(on: :create) do
     _create_from_attachment if attachment_exists?
   end
     
+  #after_initialize :set_defaults, unless: :persisted?
+
   after_save :refresh_connections
   after_save :_ensure_ancestry
   after_save :_ensure_driver_presence
@@ -381,6 +383,12 @@ class Analysis < ApplicationRecord
       if self.valid? and self.openmdao_impl.nil?
         self.openmdao_impl = OpenmdaoAnalysisImpl.new
       end
+    end
+
+    private 
+
+    def set_defaults
+      self.openmdo_impl = OpenmdaoAnalysisImpl.new
     end
 end
 

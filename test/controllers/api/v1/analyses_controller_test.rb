@@ -130,10 +130,11 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     
   test "should have an openmdao implementation in mda_viewer json" do
     mdajson = JSON.parse(@mda.to_mda_viewer_json)
-    assert_equal({"openmdao" => {"parallel_group" => false, 
-      "nonlinear_solver" => {"name"=>"NonlinearBlockGS", "atol"=>1.0e-06, "rtol"=>1.0e-10, 
-                             "maxiter"=>7, "err_on_maxiter"=>true, "iprint"=>2}, 
-      "linear_solver"=>{"name"=>"ScipyKrylov", "atol"=>1.0e-08, "rtol"=>1.0e-07, 
-                        "maxiter"=>10, "err_on_maxiter"=>false, "iprint"=>1}}}, mdajson['impl']) 
+    assert_equal({"name"=>"NonlinearBlockGS", "atol"=>1.0e-06, "rtol"=>1.0e-10, 
+                  "maxiter"=>7, "err_on_maxiter"=>true, "iprint"=>2}, mdajson['impl']['openmdao']['nonlinear_solver']) 
+    assert_equal({"name"=>"ScipyKrylov", "atol"=>1.0e-08, "rtol"=>1.0e-07, 
+                  "maxiter"=>10, "err_on_maxiter"=>false, "iprint"=>1}, mdajson['impl']['openmdao']['linear_solver'])
+    assert_equal false, mdajson['impl']['openmdao']['components']['parallel_execution']
+    assert 3, mdajson['impl']['openmdao']['components']['nodes'].size
   end
 end

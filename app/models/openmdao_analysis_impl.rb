@@ -13,9 +13,9 @@ class OpenmdaoAnalysisImpl < ActiveRecord::Base
 
   def delete_related_solvers!  
     OpenmdaoAnalysisImpl.transaction do
-      ref_count = OpenmdaoAnalysisImpl.where(solver_id: nonlinear_solver.id).count
+      ref_count = OpenmdaoAnalysisImpl.where(nonlinear_solver_id: nonlinear_solver.id).count
       Solver.find(nonlinear_solver.id)&.delete if ref_count == 1
-      ref_count = OpenmdaoAnalysisImpl.where(solver_id: linear_solver.id).count
+      ref_count = OpenmdaoAnalysisImpl.where(linear_solver_id: linear_solver.id).count
       Solver.find(linear_solver.id)&.delete if ref_count == 1       
     end
   end

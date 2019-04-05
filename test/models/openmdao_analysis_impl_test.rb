@@ -26,4 +26,8 @@ class OpenmdaoAnalysisImplTest < ActiveSupport::TestCase
     assert_equal "NonlinearBlockJac", @oai.nonlinear_solver.name
     assert_equal 1e-06, @oai.nonlinear_solver.atol
   end
+
+  test "should have json with components" do
+    assert ActiveModelSerializers::SerializableResource.new(@oai).as_json[:components]
+  end
 end

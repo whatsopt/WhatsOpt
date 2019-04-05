@@ -102,7 +102,7 @@ ActiveRecord::Schema.define(version: 59) do
 
   create_table "openmdao_discipline_impls", force: :cascade do |t|
     t.boolean "implicit_component"
-    t.boolean "support_partial_derivatives"
+    t.boolean "support_derivatives"
     t.integer "discipline_id"
     t.index ["discipline_id"], name: "index_openmdao_discipline_impls_on_discipline_id"
   end

@@ -2,11 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import update from 'immutability-helper';
 // disable actioncable: import actionCable from 'actioncable'
-import Form from "react-jsonschema-form";
+import Form from "react-jsonschema-form-bs4";
 import CheckboxWidget from '../utils/CheckboxWidget';
 
 const widgets = {
-  CheckboxWidget,
+ // CheckboxWidget,
 //  RadioWidget,
 };
 

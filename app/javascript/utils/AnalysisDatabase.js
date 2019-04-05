@@ -139,10 +139,19 @@ class AnalysisDatabase {
     return connections;
   }
 
+  getNodeName(id) {
+    try {
+      return this._findNode(id).name;
+    } catch(error) {
+      console.error(error);
+      return "unknown_"+id;
+    }
+  }
+
   _findNode(id) {
     for (var i=0; i < this.mda.nodes.length; i++) {
       const node = this.mda.nodes[i];
-      if (node.id === id) {
+      if (node.id == id) { // weak equality to deal with 1522 == "1522" transparently
         return (i==0)?{id: id, name: "Driver"}:{id: node.id, name: node.name};
       }
     };

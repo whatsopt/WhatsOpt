@@ -15,6 +15,8 @@ class Discipline < ApplicationRecord
   
   belongs_to :analysis
   acts_as_list scope: :analysis, top_of_list: 0
+
+  has_one :openmdao_impl, class_name: "OpenmdaoDisciplineImpl", dependent: :destroy
   
   accepts_nested_attributes_for :variables, reject_if: proc { |attr| attr['name'].blank? }, allow_destroy: true
   accepts_nested_attributes_for :sub_analysis, reject_if: proc { |attr| attr['name'].blank? }, allow_destroy: true
@@ -101,6 +103,7 @@ class Discipline < ApplicationRecord
     if name == WhatsOpt::Discipline::NULL_DRIVER_NAME
       self.type = WhatsOpt::Discipline::NULL_DRIVER
     end
+    self.openmdao_impl = OpenmdaoDisciplineImpl.new
   end
   
 end
