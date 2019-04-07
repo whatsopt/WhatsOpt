@@ -4,17 +4,19 @@
 import numpy as np
 from openmdao.api import ExplicitComponent
 
-class <%= @discipline.py_classname %>Base(ExplicitComponent):
+class <%= @discipline.py_classname %>Base(<%= @dimpl.implicit_component ? "ImplicitComponent" : "ExplicitComponent" %>):
     """ An OpenMDAO base component to encapsulate <%= @discipline.py_classname %> discipline """
 
-    <% unless @discipline.variables.empty? %>
+<% unless @discipline.variables.empty? -%>
     def setup(self):
-		<% @discipline.input_variables.numeric.each do |var| %>
-        self.add_input('<%= var.py_varname %>', val=<%= var.init_py_value %>, desc='<%= var.escaped_desc %>')<% end %>
-		<% @discipline.output_variables.numeric.each do |var| %>
-        self.add_output('<%= var.py_varname %>', val=<%= var.init_py_value %>, desc='<%= var.escaped_desc %>')<% end %>
-	<% else %>
-    pass
-	<% end %>
+<% @discipline.input_variables.numeric.each do |var| -%>
+        self.add_input('<%= var.py_varname %>', val=<%= var.init_py_value %>, desc='<%= var.escaped_desc %>')
+<% end -%>
+<% @discipline.output_variables.numeric.each do |var| -%>
+        self.add_output('<%= var.py_varname %>', val=<%= var.init_py_value %>, desc='<%= var.escaped_desc %>')
+<% end -%>
+<% else -%>
+        pass
+<% end -%>
 
         
