@@ -2,29 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import update from 'immutability-helper';
 import Form from "react-jsonschema-form-bs4";
-import CheckboxWidget from '../../utils/CheckboxWidget';
-
-const WIDGETS = {
-  //CheckboxWidget,
-};
-
-const SCHEMA_COMPONENTS = {
-  "type": "object",
-  "properties": {
-    "components": {
-      "title": "Components",
-      "type": "object",
-      "properties": {
-        "parallel_execution": { "type": "boolean", "title": "Parallel Execution" },
-        "nodes": {
-          "type": "array",
-          "title": "Implicits",
-          "items": [],
-        },
-      },
-    },
-  }
-}
 
 const SCHEMA_NONLINEAR_SOLVER = {
   "type": "object",
@@ -40,7 +17,7 @@ const SCHEMA_NONLINEAR_SOLVER = {
         "atol": { "type": "number", "title": "Absolute error tolerance" },
         "rtol": { "type": "number", "title": "Relative error tolerance" },
         "maxiter": { "type": "number", "title": "Maximum number of iterations (maxiter)" },
-        "err_on_maxiter": { "type": "boolean", "title": "Mark as failed if not converged after maxiter iterations" },
+        "err_on_maxiter": { "type": "boolean", "title": "Mark as failed if not converged" },
         "iprint": { "type": "integer", "title": "Level of solver traces" }
       },
       "required": ["name", "atol", "rtol", "maxiter", "iprint"],
@@ -62,7 +39,7 @@ const SCHEMA_LINEAR_SOLVER = {
         "atol": { "type": "number", "title": "Absolute error tolerance" },
         "rtol": { "type": "number", "title": "Relative error tolerance" },
         "maxiter": { "type": "number", "title": "Maximum number of iterations (maxiter)" },
-        "err_on_maxiter": { "type": "boolean", "title": "Mark as failed if not converged after maxiter iterations" },
+        "err_on_maxiter": { "type": "boolean", "title": "Mark as failed if not converged" },
         "iprint": { "type": "integer", "title": "Level of solver traces" }
       },
       "required": ["name", "atol", "rtol", "maxiter", "iprint"],
@@ -71,81 +48,135 @@ const SCHEMA_LINEAR_SOLVER = {
 }
 
 const UI_SCHEMA_COMPONENTS = {
-
+  "components": { "ui:order": ["parallel_group","*"]}
 }
 class OpenmdaoImplEditor extends React.Component {
 
   constructor(props) {
     super(props);
-
-    let nodes = this.props.impl.components.nodes;
-    this.state = {
-      schema: {...SCHEMA_COMPONENTS},
-      formData: {
-        components: {
-          parallel_execution: this.props.impl.components.parallel_execution,
-          nodes: nodes.map((node) => node.implicit_component),
-        },
-      },        
-    };
-    this.state.schema.properties.components.properties.nodes.items = 
-      nodes.map((node) => { return {"title": this.props.db.getNodeName(node.discipline_id), "type": "boolean", "default": false}});
+    
+    this.state = {reset: Date.now()}
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleReset = this.handleReset.bind(this);
   }
 
-  handleChange(data) {
-    //console.log("Data changed: ", data)
+  handleChange(data, partName) {
+    console.log("Data changed: ", data)
+    let openmdaoImpl = this._getOpenmdaoImpl(data.formData)
+    this.props.onOpenmdaoImplChange(openmdaoImpl);
   }
 
-  handleSubmit(data) {
-    console.log("Data submitted: ", data.formData)
-    this.props.onOpenmdaoImplUpdate(data.formData);
+  handleSubmit(data, partName) {
+    console.log("Data submitted: ", data.formData);
+    let openmdaoImpl = this._getOpenmdaoImpl(data.formData)
+    this.props.onOpenmdaoImplUpdate(openmdaoImpl);
+  }
+
+  _getOpenmdaoImpl(formData) {
+    let openmdaoComps = formData.components;
+    let nodes = [];
+    for (let discId in openmdaoComps) {
+      if (!isNaN(parseInt(discId))) {
+        nodes.push({discipline_id: discId, 
+                      implicit_component: openmdaoComps[discId].implicit,
+                      support_derivatives: openmdaoComps[discId].derivatives
+                    });
+      }
+    }
+    let openmdaoImpl = {
+      components: {
+        parallel_group: formData.components.parallel_group,
+        nodes: nodes
+      },
+      nonlinear_solver: {...formData.nonlinear_solver},
+      linear_solver: {...formData.linear_solver},
+    }    
+    return openmdaoImpl;
   }
 
   handleReset() {
+    this.setState({reset: Date.now()});
+    this.props.onOpenmdaoImplReset();
   }
 
-  // static getDerivedStateFromProps(nextProps, prevState) {
-  //   return {formData: {
-  //     disciplines: {...nextProps.impl.disciplines},
-  //     nonlinear_solver: {...nextProps.impl.nonlinear_solver},
-  //     linear_solver: {...nextProps.impl.linear_solver},
-  //   }};
-  // }
-
   render() {
-    console.log("RENDER", this.state.formData);    
+    // console.log("BEFORE", this.props.formData);    
+    let nodes = this.props.impl.components.nodes;
 
+    // Schema and Form data for components
+    // schema
+    let schema = {
+      "type": "object",
+      "properties": {
+        "components": {
+          "title": "Group",
+          "type": "object",
+          "properties": {
+            "parallel_group": { "type": "boolean", "title": "Parallel Execution" },
+          },
+        },
+      }
+    }
+    let compProps = schema.properties.components.properties;
+    nodes.forEach((node) => {
+      let name = this.props.db.getNodeName(node.discipline_id)
+      compProps[node.discipline_id] = {
+        "type": "object",
+        "title": name,
+        "properties": {
+          "implicit": {"type": "boolean", "title": "Implicit component", "default": node.implicit_component},
+          "derivatives": {"type": "boolean", "title": "Support derivatives", "default": node.support_derivatives},  
+        }
+      };  
+    });
+    // formData: components.nodes -> components.disc1, components.disc2
+    let nonlinear_solver = this.props.impl.nonlinear_solver;
+    let linear_solver = this.props.impl.linear_solver;
+    let formData = {
+      components: {
+        parallel_group: this.props.impl.components.parallel_group,
+      },
+      nonlinear_solver: {...nonlinear_solver},
+      linear_solver: {...linear_solver}
+    };
+    nodes.forEach((node) => {
+      formData.components[`${node.discipline_id}`] = {
+        implicit: node.implicit_component,
+        derivatives: node.support_derivatives,
+      };
+    });
+
+    console.log('AFTER', formData.components);
     return (
       <div className="editor-section">
         <div className="row">
-          <div className="col-4">
-            <Form schema={this.state.schema} formData={this.state.formData} uiSchema={UI_SCHEMA_COMPONENTS}
-              onChange={this.handleChange} onSubmit={this.handleSubmit} widgets={WIDGETS} liveValidate={true}>
-              <div className="form-group">
+          <div className="col-md-3">
+            <Form key={this.state.reset} schema={schema} formData={formData} uiSchema={UI_SCHEMA_COMPONENTS}
+              onChange={(data) => this.handleChange(data, 'components')} 
+              onSubmit={(data) => this.handleSubmit(data, 'components')} liveValidate={true}>
+              <div>
                 <button type="submit" className="btn btn-primary">Save</button>
-                <button type="button" className="ml-1 btn btn-secondary" onClick={() => this.handleReset('disciplines')}>Reset</button>
+                <button type="button" className="ml-1 btn btn-secondary" onClick={this.handleReset}>Reset</button>
               </div>
             </Form>
           </div>
-          <div className="col-4">
-            <Form schema={SCHEMA_NONLINEAR_SOLVER} formData={...this.props.impl}
-              onChange={this.handleChange} onSubmit={this.handleSubmit} widgets={WIDGETS} liveValidate={true}>
+          <div className="col-md-3">
+            <Form key={this.state.reset} schema={SCHEMA_NONLINEAR_SOLVER} formData={formData}
+              onChange={(data) => this.handleChange(data, 'nonlinear_solver')} 
+              onSubmit={(data) => this.handleSubmit(data, 'nonlinear_solver')} liveValidate={true}>
               <div className="form-group">
-                <button type="submit" className="btn btn-primary">Save</button>
-                <button type="button" className="ml-1 btn btn-secondary" onClick={() => this.handleReset('nonlinear_solver')}>Reset</button>
+                <button type="submit" className="d-none btn btn-primary">Save</button>
               </div>
             </Form>
           </div>
-          <div className="col-4">
-            <Form schema={SCHEMA_LINEAR_SOLVER} formData={...this.props.impl}
-              onChange={this.handleChange} onSubmit={this.handleSubmit} widgets={WIDGETS} liveValidate={true}>
+          <div className="col-md-3">
+            <Form key={this.state.reset} schema={SCHEMA_LINEAR_SOLVER} formData={formData}
+              onChange={(data) => this.handleChange(data, 'linear_solver')} 
+              onSubmit={(data) => this.handleSubmit(data, 'linear_solver')} liveValidate={true}>
               <div className="form-group">
-                <button type="submit" className="btn btn-primary">Save</button>
-                <button type="button" className="ml-1 btn btn-secondary" onClick={() => this.handleReset('linear_solver')}>Reset</button>
+                <button type="submit" className="d-none btn btn-primary">Save</button>
               </div>
             </Form>
           </div>
@@ -164,6 +195,7 @@ OpenmdaoImplEditor.propTypes = {
     linear_solver: PropTypes.object.isRequired,
   }),
   onOpenmdaoImplUpdate: PropTypes.func.isRequired,
+  onOpenmdaoImplChange: PropTypes.func.isRequired,
   onOpenmdaoImplReset: PropTypes.func.isRequired,
 };
 

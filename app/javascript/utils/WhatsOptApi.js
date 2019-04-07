@@ -180,6 +180,13 @@ class WhatsOptApi {
     return new Promise(checkCondition);
   }
 
+  getOpenmdaoImpl(mdaId, callback) {
+    const path = `/analyses/${mdaId}/openmdao_impl`;
+    axios.get(this.apiUrl(path))
+        .then(callback)
+        .catch((error) => console.log(error));
+  }
+
   updateOpenmdaoImpl(mdaId, impl_attrs, callback) {
     const path = `/analyses/${mdaId}/openmdao_impl`;
     axios.patch(this.apiUrl(path), {openmdao_impl: impl_attrs})

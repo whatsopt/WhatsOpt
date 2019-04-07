@@ -199,7 +199,7 @@ class Analysis < ApplicationRecord
   
   def build_openmdao_impl
     self.openmdao_impl ||= OpenmdaoAnalysisImpl.new
-    return {openmdao: ActiveModelSerializers::SerializableResource.new(self.openmdao_impl).as_json}
+    {openmdao: ActiveModelSerializers::SerializableResource.new(self.openmdao_impl).as_json}
   end
 
   def refresh_connections

@@ -134,7 +134,7 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
                   "maxiter"=>7, "err_on_maxiter"=>true, "iprint"=>2}, mdajson['impl']['openmdao']['nonlinear_solver']) 
     assert_equal({"name"=>"ScipyKrylov", "atol"=>1.0e-08, "rtol"=>1.0e-07, 
                   "maxiter"=>10, "err_on_maxiter"=>false, "iprint"=>1}, mdajson['impl']['openmdao']['linear_solver'])
-    assert_equal false, mdajson['impl']['openmdao']['components']['parallel_execution']
+    assert_equal false, mdajson['impl']['openmdao']['components']['parallel_group']
     assert 3, mdajson['impl']['openmdao']['components']['nodes'].size
   end
 end

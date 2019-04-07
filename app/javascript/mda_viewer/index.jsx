@@ -12,6 +12,7 @@ import ConnectionsEditor from 'mda_viewer/components/ConnectionsEditor';
 import VariablesEditor from 'mda_viewer/components/VariablesEditor';
 import OpenmdaoImplEditor from 'mda_viewer/components/OpenmdaoImplEditor';
 import AnalysisDatabase from '../utils/AnalysisDatabase';
+import { deepIsEqual } from '../utils/compare';
 
 const VAR_REGEXP = /^[a-zA-Z][_a-zA-Z0-9]*$/;
 
@@ -30,6 +31,7 @@ class MdaViewer extends React.Component {
       newDisciplineName: '',
       newConnectionName: '',
       errors: [],
+      implEdited: false,
     };
     this.handleFilterChange = this.handleFilterChange.bind(this);
     this.handleAnalysisNameChange = this.handleAnalysisNameChange.bind(this);
@@ -51,6 +53,7 @@ class MdaViewer extends React.Component {
     this.handleConnectionChange = this.handleConnectionChange.bind(this);
     this.handleErrorClose = this.handleErrorClose.bind(this);
     this.handleOpenmdaoImplUpdate = this.handleOpenmdaoImplUpdate.bind(this);
+    this.handleOpenmdaoImplChange = this.handleOpenmdaoImplChange.bind(this);
     this.handleOpenmdaoImplReset = this.handleOpenmdaoImplReset.bind(this);
   }
 
@@ -273,19 +276,32 @@ class MdaViewer extends React.Component {
   }
 
   // *** OpenmdaoImpl ************************************************************
-
-  handleOpenmdaoImplUpdate(formAttrs) {
-    console.log(formAttrs);
-    this.api.updateOpenmdaoImpl(this.props.mda.id, formAttrs,
+  handleOpenmdaoImplUpdate(openmdaoImpl) {
+    this.api.updateOpenmdaoImpl(this.props.mda.id, openmdaoImpl,
       (response) => {
-        const newState = update(this.state, {mda: {impl: {openmdao: {$set: formAttrs}}}});
+        // FormData: components.disc1, components.disc2 -> components.nodes
+        const newState = update(this.state, {implEdited: {$set: false}, mda: {impl: {openmdao: {$set: openmdaoImpl}}}});
         console.log("set IMPLATTRS", newState.mda.impl.openmdao);
         this.setState(newState);
       }
     )
   }
-
-  handleOpenmdaoImplReset(partName) {
+  handleOpenmdaoImplChange(openmdaoImpl) {
+    console.log("CHANGE", openmdaoImpl);
+    let newState;
+    if (deepIsEqual(this.state.mda.impl.openmdao, openmdaoImpl)) {
+      console.log("UNCHANGED");
+      newState = update(this.state, {implEdited: {$set: false}});
+    } else {
+      console.log("CHANGED");
+      newState = update(this.state, {implEdited: {$set: openmdaoImpl}});
+    }
+    this.setState(newState);
+  }
+  handleOpenmdaoImplReset() {
+    console.log("RESET");
+    const newState = update(this.state, {implEdited: {$set: false}});
+    this.setState(newState);
   }
 
   render() {
@@ -312,8 +328,13 @@ class MdaViewer extends React.Component {
                                       isEditing={this.state.isEditing} />);
 
     if (this.state.isEditing) {
-      let openmdao_impl = this.state.mda.impl.openmdao;
-      console.log(openmdao_impl);
+      let openmdaoImpl = this.state.implEdited || this.state.mda.impl.openmdao;
+      let openmdaoImplMsg;
+      if (this.state.implEdited) {
+        openmdaoImplMsg = (<div className="alert alert-warning" role="alert">
+          Changes are not saved.
+        </div>);
+      }
 
       return (
         <div>
@@ -388,8 +409,10 @@ class MdaViewer extends React.Component {
               {varEditor}
             </div>
             <div className="tab-pane fade" id="openmdao-impl" role="tabpanel" aria-labelledby="openmdao-impl-tab">
-              <OpenmdaoImplEditor impl={openmdao_impl} db={db}
+              {openmdaoImplMsg}
+              <OpenmdaoImplEditor impl={openmdaoImpl} db={db}
                 onOpenmdaoImplUpdate={this.handleOpenmdaoImplUpdate}
+                onOpenmdaoImplChange={this.handleOpenmdaoImplChange}
                 onOpenmdaoImplReset={this.handleOpenmdaoImplReset}
                 />
             </div>

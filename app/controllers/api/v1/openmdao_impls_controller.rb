@@ -1,4 +1,12 @@
 class Api::V1::OpenmdaoImplsController < Api::ApiController 
+
+  def show
+    mda = Analysis.find(params[:mda_id])
+    authorize mda
+    @impl = mda.openmdao_impl ||= OpenmdaoAnalysisImpl.new
+    json_response @impl
+  end
+
   # PUT/PATCH /api/v1/analysis/{mda_id}/openmdao_analysis_impl
   def update
     mda = Analysis.find(params[:mda_id])
@@ -12,7 +20,7 @@ class Api::V1::OpenmdaoImplsController < Api::ApiController
   private
 
   def impl_params
-    params.require(:openmdao_impl).permit(components: [:parallel_execution, nodes: [[:discipline_id, :implicit_component, :support_derivatives]]], 
+    params.require(:openmdao_impl).permit(components: [:parallel_group, nodes: [[:discipline_id, :implicit_component, :support_derivatives]]], 
                                           nonlinear_solver: [:name, :atol, :rtol, :maxiter, :err_on_maxiter, :iprint], 
                                           linear_solver: [:name, :atol, :rtol, :maxiter, :err_on_maxiter, :iprint])
   end 

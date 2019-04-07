@@ -10,7 +10,7 @@ class OpenmdaoAnalysisImplSerializer < ActiveModel::Serializer
       d.openmdao_impl ||= OpenmdaoDisciplineImpl.new
     end
     {
-      parallel_execution: object.send(:parallel_group),
+      parallel_group: object.send(:parallel_group),
       nodes: impls.map{|impl| ActiveModelSerializers::SerializableResource.new(impl).as_json }
     }
   end

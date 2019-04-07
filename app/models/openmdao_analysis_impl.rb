@@ -24,8 +24,13 @@ class OpenmdaoAnalysisImpl < ActiveRecord::Base
     self.parallel_group = impl_attrs[:parallel_group] if impl_attrs.key?(:parallel_group)
     self.nonlinear_solver.update(impl_attrs[:nonlinear_solver]) if impl_attrs.key?(:nonlinear_solver)
     self.linear_solver.update(impl_attrs[:linear_solver]) if impl_attrs.key?(:linear_solver)
-    if impl_attrs[:disciplines]
+    if impl_attrs[:components]
+      parallel = impl_attrs[:components][:parallel_group]
+      self.parallel_group = parallel unless parallel.nil? 
       # update openmdao discipline impls
+      impl_attrs[:components][:nodes].each do |dattr|
+        OpenmdaoDisciplineImpl.where(discipline_id: dattr[:discipline_id]).update(dattr.except(:discipline_id))
+      end
     end
   end
 

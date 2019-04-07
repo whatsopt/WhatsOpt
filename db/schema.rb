@@ -33,7 +33,7 @@ ActiveRecord::Schema.define(version: 59) do
     t.integer "container_id"
     t.string "data_file_name"
     t.string "data_content_type"
-    t.integer "data_file_size"
+    t.bigint "data_file_size"
     t.datetime "data_updated_at"
     t.string "description"
     t.string "category"
@@ -47,6 +47,15 @@ ActiveRecord::Schema.define(version: 59) do
     t.integer "variable_id"
     t.integer "coord_index", default: -1
     t.text "values"
+  end
+
+  create_table "components", force: :cascade do |t|
+    t.integer "discipline_id"
+    t.boolean "has_derivatives", default: false
+    t.boolean "is_implicit", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["discipline_id"], name: "index_components_on_discipline_id"
   end
 
   create_table "connections", force: :cascade do |t|
@@ -75,7 +84,7 @@ ActiveRecord::Schema.define(version: 59) do
 
   create_table "jobs", force: :cascade do |t|
     t.string "status"
-    t.text "log", default: "\"\\\"\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\"\\\"\""
+    t.text "log"
     t.integer "pid", default: -1
     t.integer "operation_id"
     t.datetime "started_at"
@@ -123,9 +132,9 @@ ActiveRecord::Schema.define(version: 59) do
   end
 
   create_table "parameters", force: :cascade do |t|
-    t.text "init", default: ""
-    t.text "lower", default: ""
-    t.text "upper", default: ""
+    t.string "init", default: ""
+    t.string "lower", default: ""
+    t.string "upper", default: ""
     t.integer "variable_id"
   end
 
@@ -188,6 +197,7 @@ ActiveRecord::Schema.define(version: 59) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "active", default: true
+    t.index ["discipline_id"], name: "index_variables_on_discipline_id"
   end
 
 end
