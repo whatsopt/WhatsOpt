@@ -1,15 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import update from 'immutability-helper';
-// disable actioncable: import actionCable from 'actioncable'
 import Form from "react-jsonschema-form-bs4";
-import CheckboxWidget from '../utils/CheckboxWidget';
-
-const widgets = {
- // CheckboxWidget,
-//  RadioWidget,
-};
-
+import { deepIsEqual } from '../utils/compare';
 
 class LogLine extends React.Component {
   constructor(props) {
@@ -80,7 +73,7 @@ const SCHEMA = {
         "Onera - SEGOMOE"],
       "default": "runonce",
     },
-    "showSolverOptions": {"type": "boolean", "title": "Show solver options", "default": false},
+    "setSolverOptions": {"type": "boolean", "title": "Set solvers options", "default": false},
   },
   required: ["name", "host", "driver"],
   dependencies: {
@@ -99,44 +92,72 @@ const SCHEMA = {
         },
         {
           "properties": {"driver": {"enum": ["smt_doe_lhs"]},
-            "smt_doe_lhs_nbpts": {"title": "Number of sampling points",
-              "type": OPTTYPES.smt_doe_lhs_nbpts,
-              "default": OPTDEFAULTS.smt_doe_lhs_nbpts}},
+            "smt_doe_lhs": {
+              "title": "Options for SMT LHS",
+              "type": "object",
+              "properties": {
+                "smt_doe_lhs_nbpts": {
+                  "title": "Number of sampling points",
+                  "type": OPTTYPES.smt_doe_lhs_nbpts,
+                  "default": OPTDEFAULTS.smt_doe_lhs_nbpts
+                },
+              },
+            },
+          },
         },
         {
           "properties": {"driver": {"enum": ["scipy_optimizer_slsqp"]},
-            "scipy_optimizer_slsqp_tol": {"title": "Objective function tolerance for stopping criterion",
-              "type": OPTTYPES.scipy_optimizer_slsqp_tol,
-              "default": OPTDEFAULTS.scipy_optimizer_slsqp_tol},
-            "scipy_optimizer_slsqp_disp": {"title": "Print convergence messages",
-              "type": OPTTYPES.scipy_optimizer_slsqp_disp,
-              "default": OPTDEFAULTS.scipy_optimizer_slsqp_disp},
-            "scipy_optimizer_slsqp_maxiter": {"title": "Maximum of iterations",
-              "type": OPTTYPES.scipy_optimizer_slsqp_maxiter,
-              "default": OPTDEFAULTS.scipy_optimizer_slsqp_maxiter}},
+          "scipy_optimizer_slsqp": {
+            "title": "Options for Scipy optimizer",
+            "type": "object",
+            "properties": {
+              "scipy_optimizer_slsqp_tol": {"title": "Objective function tolerance for stopping criterion",
+                "type": OPTTYPES.scipy_optimizer_slsqp_tol,
+                "default": OPTDEFAULTS.scipy_optimizer_slsqp_tol},
+              "scipy_optimizer_slsqp_disp": {"title": "Print convergence messages",
+                "type": OPTTYPES.scipy_optimizer_slsqp_disp,
+                "default": OPTDEFAULTS.scipy_optimizer_slsqp_disp},
+              "scipy_optimizer_slsqp_maxiter": {"title": "Maximum of iterations",
+                "type": OPTTYPES.scipy_optimizer_slsqp_maxiter,
+                "default": OPTDEFAULTS.scipy_optimizer_slsqp_maxiter}
+              },
+            },
+          },
         },
         {
           "properties": {"driver": {"enum": ["pyoptsparse_optimizer_snopt"]},
-            "pyoptsparse_optimizer_snopt_tol": {"title": "Nonlinear constraint violation tolerance",
-              "type": OPTTYPES.pyoptsparse_optimizer_snopt_tol,
-              "default": OPTDEFAULTS.pyoptsparse_optimizer_snopt_tol},
-            "pyoptsparse_optimizer_snopt_maxiter": {"title": "Major iteration limit",
-              "type": OPTTYPES.pyoptsparse_optimizer_snopt_maxiter,
-              "default": OPTDEFAULTS.pyoptsparse_optimizer_snopt_maxiter}},
+          "pyoptsparse_optimizer_snopt": {
+            "title": "Options for PyOptSparse optimizer",
+            "type": "object",
+            "properties": {
+              "pyoptsparse_optimizer_snopt_tol": {"title": "Nonlinear constraint violation tolerance",
+                "type": OPTTYPES.pyoptsparse_optimizer_snopt_tol,
+                "default": OPTDEFAULTS.pyoptsparse_optimizer_snopt_tol},
+              "pyoptsparse_optimizer_snopt_maxiter": {"title": "Major iteration limit",
+                "type": OPTTYPES.pyoptsparse_optimizer_snopt_maxiter,
+                "default": OPTDEFAULTS.pyoptsparse_optimizer_snopt_maxiter}
+              },
+            },
+          },
         }, 
         {
           "properties": {"driver": {"enum": ["onerasego_optimizer_segomoe"]},
-            "onerasego_optimizer_segomoe_maxiter": {"title": "Number max of iterations to run",
-              "type": OPTTYPES.onerasego_optimizer_segomoe_maxiter,
-              "default": OPTDEFAULTS.onerasego_optimizer_segomoe_maxiter},
-            "onerasego_optimizer_segomoe_ncluster": {"title": "Number of clusters used for objective and constraints surrogate mixture models (0: automatic)",
-              "type": OPTTYPES.onerasego_optimizer_segomoe_ncluster,
-              "default": OPTDEFAULTS.onerasego_optimizer_segomoe_ncluster},
-            "onerasego_optimizer_segomoe_optimizer": {"title": "Internal optimizer used for enrichment step",
-              "type": OPTTYPES.onerasego_optimizer_segomoe_optimizer,
-              "default": OPTDEFAULTS.onerasego_optimizer_segomoe_optimizer,
-              "enum": ["cobyla", "slsqp"],
-              "enumNames": ["COBYLA", "SLSQP"]
+          "onerasego_optimizer_segomoe": {
+            "title": "Options for Onera SEGOMOE optimizer",
+            "type": "object",
+            "properties": {
+              "onerasego_optimizer_segomoe_maxiter": {"title": "Number max of iterations to run",
+                "type": OPTTYPES.onerasego_optimizer_segomoe_maxiter,
+                "default": OPTDEFAULTS.onerasego_optimizer_segomoe_maxiter},
+              "onerasego_optimizer_segomoe_ncluster": {"title": "Number of clusters used for objective and constraints surrogate mixture models (0: automatic)",
+                "type": OPTTYPES.onerasego_optimizer_segomoe_ncluster,
+                "default": OPTDEFAULTS.onerasego_optimizer_segomoe_ncluster},
+              "onerasego_optimizer_segomoe_optimizer": {"title": "Internal optimizer used for enrichment step",
+                "type": OPTTYPES.onerasego_optimizer_segomoe_optimizer,
+                "default": OPTDEFAULTS.onerasego_optimizer_segomoe_optimizer,
+                "enum": ["cobyla", "slsqp"],
+                "enumNames": ["COBYLA", "SLSQP"]},
+              },
             },
           },
         },
@@ -146,9 +167,50 @@ const SCHEMA = {
 };
 
 const UI_SCHEMA = {
-  // "ui:order": [
-  //   "name", "host", "driver", "showSolverOptions",
-  // ]
+}
+
+const SCHEMA_NONLINEAR_SOLVER = {
+  "type": "object",
+  "properties": {
+    "nonlinear_solver": {
+      "title": "Nonlinear solver",
+      "type": "object",
+      "properties": {
+        "name": {
+          "title": "Solver name",
+          "enum": ["NonlinearBlockGS", "RecklessNonlinearBlockGS", "NonlinearBlockJac", "NonlinearRunOnce", "NewtonSolver", "BroydenSolver"]
+        },
+        "atol": { "type": "number", "title": "Absolute error tolerance" },
+        "rtol": { "type": "number", "title": "Relative error tolerance" },
+        "maxiter": { "type": "number", "title": "Maximum number of iterations (maxiter)" },
+        "err_on_maxiter": { "type": "boolean", "title": "Mark as failed if not converged" },
+        "iprint": { "type": "integer", "title": "Level of solver traces" }
+      },
+      "required": ["name", "atol", "rtol", "maxiter", "iprint"],
+    },
+  },
+}
+
+const SCHEMA_LINEAR_SOLVER = {
+  "type": "object",
+  "properties": {
+    "linear_solver": {
+      "title": "Linear solver",
+      "type": "object",
+      "properties": {
+        "name": {
+          "title": "Solver name",
+          "enum": ["ScipyKrylov", "LinearBlockGS", "LinearBlockJac", "LinearRunOnce", "DirectSolver", "PETScKrylov", "LinearUserDefined"]
+        },
+        "atol": { "type": "number", "title": "Absolute error tolerance" },
+        "rtol": { "type": "number", "title": "Relative error tolerance" },
+        "maxiter": { "type": "number", "title": "Maximum number of iterations (maxiter)" },
+        "err_on_maxiter": { "type": "boolean", "title": "Mark as failed if not converged" },
+        "iprint": { "type": "integer", "title": "Level of solver traces" }
+      },
+      "required": ["name", "atol", "rtol", "maxiter", "iprint"],
+    },
+  },
 }
 
 class Runner extends React.Component {
@@ -180,7 +242,7 @@ class Runner extends React.Component {
       log_count: log_count,
       startInMs: this.props.ope.job && this.props.ope.job && this.props.ope.job.start_in_ms,
       endInMs: this.props.ope.job && this.props.ope.job && this.props.ope.job.end_in_ms,
-      showSolverOptions: false,
+      setSolverOptions: false,
     };
 
     this.handleRun = this.handleRun.bind(this);
@@ -200,13 +262,15 @@ class Runner extends React.Component {
         (response) => {
         // console.log(response);
           const ids = response.data.options.map((opt) => opt.id);
-          for (const opt in form) {
-            if (opt !== "name" && opt !== "host" && opt !== "driver") {
-              const optionAttrs = {name: opt, value: data.formData[opt]};
-              if (ids.length) {
-                optionAttrs.id = ids.shift();
+          for (const section in form) {
+            if (section === form.driver) {
+              for (const opt in form[section]) {
+                const optionAttrs = {name: opt, value: data.formData[opt]};
+                if (ids.length) {
+                  optionAttrs.id = ids.shift();
+                }
+                opeAttrs.options_attributes.push(optionAttrs);
               }
-              opeAttrs.options_attributes.push(optionAttrs);
             }
           }
           ids.forEach((id) => opeAttrs.options_attributes.push({id: id, _destroy: '1'}));
@@ -239,31 +303,37 @@ class Runner extends React.Component {
   }
 
   handleChange(data) {
-    //    console.log("FORMDATA= "+JSON.stringify(data.formData));
-    //    console.log("OPEDATA= "+JSON.stringify(this.opeData));
-    //    console.log("FILTERDATA= "+JSON.stringify(this._filterFormOptions(data.formData)));
+    console.log("FORMDATA= "+JSON.stringify(data.formData));
+    console.log("OPEDATA= "+JSON.stringify(this.opeData));
+    console.log("FILTERDATA= "+JSON.stringify(this._filterFormOptions(data.formData)));
     const {formData} = data;
     let schema = {...this.state.schema} 
-    if (formData.showSolverOptions) {
+    if (formData.setSolverOptions) {
       schema.properties = Object.assign(schema.properties, {
-        maxiter: {type: "integer", title: "Maximum number of iterations", default: 10},
+        ...(SCHEMA_NONLINEAR_SOLVER.properties),
+        ...(SCHEMA_LINEAR_SOLVER.properties),
       })
+      // schema.properties.nonlinear_solver.properties = {...(this.props.mda.impl.openmdao.nonlinear_solver)};
+      // schema.properties.nonlinear_solver.properties = {...(this.props.mda.impl.openmdao.nonlinear_solver)};
     } else {
       schema.properties = Object.assign({},schema.properties)
-      delete formData.maxiter
-      delete schema.properties.maxiter
+      delete formData.nonlinear_solver
+      delete schema.properties.nonlinear_solver
+      delete formData.linear_solver
+      delete schema.properties.linear_solver
     }
 
-    if (this._isChanged(formData)) {
-      const newState = update(this.state, {
-        schema: {$set: schema},
-        formData: {$set: formData},
-        status: {$set: "PENDING"}});
-    } else {
-      const newState = update(this.state, {
+    let newState;
+    if (deepIsEqual(formData, this.opeData)) {
+      newState = update(this.state, {
         schema: {$set: schema},
         formData: {$set: formData},
         status: {$set: this.opeStatus}});
+    } else {
+      newState = update(this.state, {
+        schema: {$set: schema},
+        formData: {$set: formData},
+        status: {$set: "PENDING"}});
     }
     this.setState(newState);
   }
@@ -284,15 +354,6 @@ class Runner extends React.Component {
         },
         (error) => {console.log(error);
         });
-  }
-
-  _isChanged(data) {
-    for (const p in data) {
-      if (data[p] !== this.opeData[p]) {
-        return true;
-      }
-    }
-    return false;
   }
 
   _filterFormOptions(options) {
@@ -377,9 +438,9 @@ class Runner extends React.Component {
 
         <h1>Operation on {this.props.mda.name}</h1>
         <h2>Specification</h2>
-        <div className="editor-section col-3">
+        <div className="editor-section col-4">
           <Form schema={this.state.schema} formData={this.state.formData} uiSchema={UI_SCHEMA}
-            onSubmit={this.handleRun} onChange={this.handleChange} widgets={widgets}>
+            onSubmit={this.handleRun} onChange={this.handleChange} >
             <div className="form-group">
               <button type="submit" className="btn btn-primary" disabled={active}>Run</button>
               <button type="button" className="ml-1 btn btn-secondary" disabled={!active} onClick={this.handleAbort}>Abort</button>
@@ -420,6 +481,9 @@ Runner.propTypes = {
   mda: PropTypes.shape({
     id: PropTypes.number.isRequired,
     name: PropTypes.string.isRequired,
+    impl: PropTypes.shape({
+      openmdao: PropTypes.object.isRequired
+    }),
   }),
   ope: PropTypes.shape({
     id: PropTypes.number.isRequired,
