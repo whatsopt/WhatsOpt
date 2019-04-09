@@ -28,8 +28,10 @@ class OpenmdaoAnalysisImpl < ActiveRecord::Base
       parallel = impl_attrs[:components][:parallel_group]
       self.parallel_group = parallel unless parallel.nil? 
       # update openmdao discipline impls
-      impl_attrs[:components][:nodes].each do |dattr|
-        OpenmdaoDisciplineImpl.where(discipline_id: dattr[:discipline_id]).update(dattr.except(:discipline_id))
+      if impl_attrs[:components][:nodes]
+        impl_attrs[:components][:nodes].each do |dattr|
+          OpenmdaoDisciplineImpl.where(discipline_id: dattr[:discipline_id]).update(dattr.except(:discipline_id))
+        end
       end
     end
   end
