@@ -1,5 +1,15 @@
 <h1>CHANGELOG</h1>
 
+<h3>0.14.1 (10/04/2019)</h3>
+<ul>
+  <li>Add OpenMDAO tab for analysis edition: 
+    <ul>
+      <li>allow to set nonlinear and linear solvers options</li>
+      <li>allow to set analysis as a parallel group</li>
+      <li>allow to set disciplines as implicit component and declare partials support.</li>
+    </ul>
+</ul>
+
 <h3>0.14.0 (28/03/2019)</h3>
 <ul>
   <li>Scatterplots, parallel coodinates display DOE dots with different color 

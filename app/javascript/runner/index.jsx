@@ -73,7 +73,7 @@ const SCHEMA = {
         "Onera - SEGOMOE"],
       "default": "runonce",
     },
-    "setSolverOptions": {"type": "boolean", "title": "Set solvers options", "default": false},
+    //"setSolverOptions": {"type": "boolean", "title": "Set solvers options", "default": false},
   },
   required: ["name", "host", "driver"],
   dependencies: {
@@ -220,7 +220,6 @@ class Runner extends React.Component {
 
     const status = (this.props.ope.job && this.props.ope.job.status) || 'PENDING';
     const log = (this.props.ope.job && this.props.ope.job.log) || "";
-    //console.log("LOG "+log)
     const log_count = (this.props.ope.job && this.props.ope.job.log_count) || 0;
 
     const formData = {
@@ -228,7 +227,8 @@ class Runner extends React.Component {
       name: this.props.ope.name,
       driver: this.props.ope.driver || "runonce",
     };
-    const formOptions = this._toFormOptions(this.props.ope.options);
+    console.log(this.props.ope.options);
+    const formOptions = this._toFormOptions(this.props.ope.driver, this.props.ope.options);
     Object.assign(formData, formOptions);
     this.opeData = {};
     Object.assign(this.opeData, formData);
@@ -242,7 +242,7 @@ class Runner extends React.Component {
       log_count: log_count,
       startInMs: this.props.ope.job && this.props.ope.job && this.props.ope.job.start_in_ms,
       endInMs: this.props.ope.job && this.props.ope.job && this.props.ope.job.end_in_ms,
-      setSolverOptions: false,
+      //setSolverOptions: false,
     };
 
     this.handleRun = this.handleRun.bind(this);
@@ -265,7 +265,7 @@ class Runner extends React.Component {
           for (const section in form) {
             if (section === form.driver) {
               for (const opt in form[section]) {
-                const optionAttrs = {name: opt, value: data.formData[opt]};
+                const optionAttrs = {name: opt, value: data.formData[section][opt]};
                 if (ids.length) {
                   optionAttrs.id = ids.shift();
                 }
@@ -277,6 +277,7 @@ class Runner extends React.Component {
 
           const newState = update(this.state, {status: {$set: "STARTED"}});
           this.setState(newState);
+          console.log(opeAttrs);
 
           this.api.updateOperation(this.props.ope.id, opeAttrs,
               (response) => {this._pollOperationJob(data.formData);},
@@ -306,32 +307,33 @@ class Runner extends React.Component {
     console.log("FORMDATA= "+JSON.stringify(data.formData));
     console.log("OPEDATA= "+JSON.stringify(this.opeData));
     console.log("FILTERDATA= "+JSON.stringify(this._filterFormOptions(data.formData)));
-    const {formData} = data;
-    let schema = {...this.state.schema} 
-    if (formData.setSolverOptions) {
-      schema.properties = Object.assign(schema.properties, {
-        ...(SCHEMA_NONLINEAR_SOLVER.properties),
-        ...(SCHEMA_LINEAR_SOLVER.properties),
-      })
-      // schema.properties.nonlinear_solver.properties = {...(this.props.mda.impl.openmdao.nonlinear_solver)};
-      // schema.properties.nonlinear_solver.properties = {...(this.props.mda.impl.openmdao.nonlinear_solver)};
-    } else {
-      schema.properties = Object.assign({},schema.properties)
-      delete formData.nonlinear_solver
-      delete schema.properties.nonlinear_solver
-      delete formData.linear_solver
-      delete schema.properties.linear_solver
-    }
+    const formData = data.formData;
+    // let schema = {...this.state.schema} 
+    // if (formData.setSolverOptions) {
+    //   schema.properties = Object.assign(schema.properties, {
+    //     ...(SCHEMA_NONLINEAR_SOLVER.properties),
+    //     ...(SCHEMA_LINEAR_SOLVER.properties),
+    //   })
+    //   // schema.properties.nonlinear_solver.properties = {...(this.props.mda.impl.openmdao.nonlinear_solver)};
+    //   // schema.properties.nonlinear_solver.properties = {...(this.props.mda.impl.openmdao.nonlinear_solver)};
+    // } else {
+    //   schema.properties = Object.assign({},schema.properties)
+    //   delete formData.nonlinear_solver
+    //   delete schema.properties.nonlinear_solver
+    //   delete formData.linear_solver
+    //   delete schema.properties.linear_solver
+    // }
 
     let newState;
     if (deepIsEqual(formData, this.opeData)) {
+      console.log("NOT CHANGED");
       newState = update(this.state, {
-        schema: {$set: schema},
+        //schema: {$set: schema},
         formData: {$set: formData},
         status: {$set: this.opeStatus}});
     } else {
       newState = update(this.state, {
-        schema: {$set: schema},
+        //schema: {$set: schema},
         formData: {$set: formData},
         status: {$set: "PENDING"}});
     }
@@ -369,8 +371,9 @@ class Runner extends React.Component {
     return filteredOptions;
   }
 
-  _toFormOptions(options) {
-    const formOptions = options.reduce((acc, val) => {
+  _toFormOptions(driver, options) {
+    const formOptions = {};
+    formOptions[driver] = options.reduce((acc, val) => {
       switch (OPTTYPES[val['name']]) {
         case "boolean":
           acc[val['name']] = (val['value']==='true');

@@ -17,7 +17,7 @@ const SCHEMA_NONLINEAR_SOLVER = {
         "atol": { "type": "number", "title": "Absolute error tolerance" },
         "rtol": { "type": "number", "title": "Relative error tolerance" },
         "maxiter": { "type": "number", "title": "Maximum number of iterations (maxiter)" },
-        "err_on_maxiter": { "type": "boolean", "title": "Mark as failed if not converged" },
+        "err_on_maxiter": { "type": "boolean", "title": "Fail if not converged" },
         "iprint": { "type": "integer", "title": "Level of solver traces" }
       },
       "required": ["name", "atol", "rtol", "maxiter", "iprint"],
@@ -39,7 +39,7 @@ const SCHEMA_LINEAR_SOLVER = {
         "atol": { "type": "number", "title": "Absolute error tolerance" },
         "rtol": { "type": "number", "title": "Relative error tolerance" },
         "maxiter": { "type": "number", "title": "Maximum number of iterations (maxiter)" },
-        "err_on_maxiter": { "type": "boolean", "title": "Mark as failed if not converged" },
+        "err_on_maxiter": { "type": "boolean", "title": "Fail if not converged" },
         "iprint": { "type": "integer", "title": "Level of solver traces" }
       },
       "required": ["name", "atol", "rtol", "maxiter", "iprint"],
@@ -114,7 +114,7 @@ class OpenmdaoImplEditor extends React.Component {
           "title": "Group",
           "type": "object",
           "properties": {
-            "parallel_group": { "type": "boolean", "title": "Parallel Execution" },
+            "parallel_group": { "type": "boolean", "title": "Parallel Execution (MPI required)" },
           },
         },
       }

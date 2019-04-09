@@ -2,7 +2,7 @@
 # analysis_id: <%= @mda.id %>
 
 import numpy as np
-from openmdao.api import ExplicitComponent
+from openmdao.api import <%= @dimpl.implicit_component ? "ImplicitComponent" : "ExplicitComponent" %>
 
 class <%= @discipline.py_classname %>Base(<%= @dimpl.implicit_component ? "ImplicitComponent" : "ExplicitComponent" %>):
     """ An OpenMDAO base component to encapsulate <%= @discipline.py_classname %> discipline """
@@ -15,6 +15,7 @@ class <%= @discipline.py_classname %>Base(<%= @dimpl.implicit_component ? "Impli
 <% @discipline.output_variables.numeric.each do |var| -%>
         self.add_output('<%= var.py_varname %>', val=<%= var.init_py_value %>, desc='<%= var.escaped_desc %>')
 <% end -%>
+        self.declare_partials('*', '*')
 <% else -%>
     pass
 <% end -%>
