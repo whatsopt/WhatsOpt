@@ -16,7 +16,7 @@ class <%= @discipline.py_classname %>Base(<%= @dimpl.implicit_component ? "Impli
         self.add_output('<%= var.py_varname %>', val=<%= var.init_py_value %>, desc='<%= var.escaped_desc %>')
 <% end -%>
 <% else -%>
-        pass
+    pass
 <% end -%>
 
         
