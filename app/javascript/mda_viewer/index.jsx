@@ -126,6 +126,19 @@ class MdaViewer extends React.Component {
     delete connAttrs['init'];
     delete connAttrs['lower'];
     delete connAttrs['upper'];
+    if (connAttrs.ref || connAttrs.ref === "") {
+      connAttrs['scaling_attributes'] = {ref: connAttrs.ref};
+    }
+    if (connAttrs.ref0 || connAttrs.ref0 === "") {
+      connAttrs['scaling_attributes'] = {ref0: connAttrs.ref0};
+    }
+    if (connAttrs.res_ref || connAttrs.res_ref === "") {
+      connAttrs['scaling_attributes'] = {res_ref: connAttrs.res_ref};
+    }
+    delete connAttrs['ref'];
+    delete connAttrs['ref0'];
+    delete connAttrs['res_ref'];
+
     if (Object.keys(connAttrs).length !== 0) {
       this.api.updateConnection(
           connId, connAttrs, (response) => {this.renderXdsm();},

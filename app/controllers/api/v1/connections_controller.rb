@@ -64,7 +64,8 @@ class Api::V1::ConnectionsController < Api::ApiController
 
     def connection_update_params
       params.require(:connection).permit(:name, :type, :shape, :units, :desc, :active, :role,
-                                         parameter_attributes: [:_destroy, :init, :lower, :upper])
+                                         parameter_attributes: [:_destroy, :init, :lower, :upper],
+                                         scaling_attributes: [:_destroy, :ref, :ref0, :res_ref])
     end
 
 end

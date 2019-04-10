@@ -46,9 +46,11 @@ class Api::V1::AnalysesController < Api::ApiController
         :disciplines_attributes => 
           [
             :name, 
-            :variables_attributes => [:name, :io_mode, :type, :shape, :units, :desc, 
-                                      :parameter_attributes => [:lower, :upper, :init]
-                                    ],
+            :variables_attributes => [
+              :name, :io_mode, :type, :shape, :units, :desc, 
+              :parameter_attributes => [:lower, :upper, :init],
+              :scaling_attributes => [:ref, :ref0, :res_ref]
+            ],
             :sub_analysis_attributes => {}
           ]
       )

@@ -1,0 +1,4 @@
+varx1_out_scaling:
+  ref: '2.0'
+  ref0: '10.0'
+  res_ref: '1e-2'

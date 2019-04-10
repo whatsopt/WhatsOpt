@@ -131,8 +131,9 @@ class AnalysisDatabase {
     const connections = conns.map((conn) => {
       const infos = this._findInfos(conn);
       const val = {id: conn.connId, from: conn.frName, to: conn.toName.join(', '), name: infos.vName, desc: infos.desc,
-        type: infos.type, shape: infos.shape, units: infos.units, init: infos.init, lower: infos.lower,
-        upper: infos.upper, active: infos.active, role: conn.role, fromId: conn.fr, toIds: conn.to};
+        type: infos.type, shape: infos.shape, units: infos.units, init: infos.init, ref: infos.ref,
+        ref0: infos.ref0, res_ref: infos.res_ref, lower: infos.lower, upper: infos.upper,active: infos.active, 
+        role: conn.role, fromId: conn.fr, toIds: conn.to};
       return val;
     });
 
@@ -168,6 +169,9 @@ class AnalysisDatabase {
     let init = "";
     let lower = "";
     let upper = "";
+    let ref = "";
+    let ref0 = "";
+    let res_ref = "";
     const active = vfr.active;
 
     if (vfr.parameter) {
@@ -175,17 +179,24 @@ class AnalysisDatabase {
       lower = vfr.parameter.lower;
       upper = vfr.parameter.upper;
     }
+    if (vfr.scaling) {
+      ref = vfr.scaling.ref;
+      ref0 = vfr.scaling.ref0;
+      res_ref = vfr.scaling.res_ref;
+    }
     const infos = {id: conn.connId, idfrName: conn.frName, frUnits: vfr.units,
       vName: varname, desc: desc,
       toName: conn.toName.join(', '),
-      type: vartype, shape: shape, init: init, lower: lower, upper: upper,
+      type: vartype, shape: shape, 
+      init: init, lower: lower, upper: upper,
+      ref: ref, ref0: ref0, res_ref: res_ref,
       units: units, active: active};
     return infos;
   }
 
   _findVariable(disc, vname, ioMode) {
     const vars = this.mda.vars;
-    let vinfo = {units: '', desc: '', type: '', shape: '', init: '', lower: '', upper: '', active: true};
+    let vinfo = {units: '', desc: '', type: '', shape: '', init: '', lower: '', upper: '', ref: '', ref0: '', res_ref: '', active: true};
     const vinfos = vars[disc][ioMode].filter((v) => {
       return v.name === vname;
     });

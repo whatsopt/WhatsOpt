@@ -240,6 +240,7 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
     values = ['test', 'Integer', '(1, 2)', 'm', 'test description', false]
     update_attrs = attrs.zip(values).to_h
     update_attrs[:parameter_attributes] = {init: "[[1,2]]", lower: "0", upper:"10"}
+    update_attrs[:scaling_attributes] = {ref: "[[1,2]]", ref0: "100", res_ref:"1e-6"}
     put api_v1_connection_url(conn, {connection: update_attrs}), as: :json, headers: @auth_headers        
     assert_response :success
     conn_to_test.reload
@@ -253,7 +254,12 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "[[1,2]]", conn_to_test.from.parameter.init
     assert_equal "0", conn_to_test.from.parameter.lower
     assert_equal "10", conn_to_test.from.parameter.upper
+    assert conn_to_test.from.parameter
+    assert_equal "[[1,2]]", conn_to_test.from.scaling.ref
+    assert_equal "100", conn_to_test.from.scaling.ref0
+    assert_equal "1e-6", conn_to_test.from.scaling.res_ref
     refute conn_to_test.to.parameter
+    refute conn_to_test.to.scaling
     refute conn_to_test.to.active
     refute conn_to_test.from.active
   end

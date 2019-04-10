@@ -18,6 +18,7 @@ class Variable < ApplicationRecord
   self.inheritance_column = :disable_inheritance
   belongs_to :discipline
   has_one :parameter, :dependent => :destroy
+  has_one :scaling, :dependent => :destroy
   has_one  :incoming_connection, -> { includes :from }, class_name: 'Connection', foreign_key: 'to_id', dependent: :destroy 
   has_many :outgoing_connections, -> { includes :to }, class_name: 'Connection', foreign_key: 'from_id', dependent: :destroy
   has_many :cases  
@@ -25,7 +26,10 @@ class Variable < ApplicationRecord
   accepts_nested_attributes_for :parameter, reject_if: proc { |attr| attr['init'].nil? and
                                                                      attr['lower'].nil? and
                                                                      attr['upper'].nil?  }, allow_destroy: true
-
+  accepts_nested_attributes_for :scaling, reject_if: proc { |attr| attr['ref'].nil? and
+                                                                   attr['ref0'].nil? and
+                                                                   attr['res_ref'].nil?  }, allow_destroy: true 
+ 
   validates :name, format: { with: /\A[a-zA-Z][\-:_a-zA-Z0-9]*\z/, message: "%{value} is not a valid variable name" }
   validates :name, :io_mode, :type, :shape, presence: true, allow_blank: false
   validates :name, uniqueness: { scope: [:discipline, :io_mode], message: "should be unique per discipline and io mode." }
@@ -42,7 +46,7 @@ class Variable < ApplicationRecord
   scope :with_role, -> (role) { joins(:outgoing_connections).where(connections: {role: role}).uniq }
     
   after_initialize :set_defaults, unless: :persisted?
-  before_save :mark_parameter_for_removal
+  before_save :mark_dependents_for_removal
   
   def init_py_value
     if self.parameter&.init.blank?
@@ -97,8 +101,9 @@ class Variable < ApplicationRecord
     end
   end
   
-  def mark_parameter_for_removal
+  def mark_dependents_for_removal
     self.parameter.mark_for_destruction if parameter&.nullified?
+    self.scaling.mark_for_destruction if scaling&.nullified?
   end
   
 end

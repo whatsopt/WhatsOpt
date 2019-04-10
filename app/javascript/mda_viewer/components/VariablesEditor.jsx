@@ -31,12 +31,6 @@ class VariablesEditor extends React.Component {
         Cell: (cellInfo) => this.renderReadonly(cellInfo),
       },
       {
-        Header: (cellInfo) => this.renderHeader(cellInfo, 'To'),
-        accessor: "to",
-        minWidth: 200,
-        Cell: (cellInfo) => this.renderReadonly(cellInfo),
-      },
-      {
         Header: (cellInfo) => this.renderHeader(cellInfo, 'Name'),
         accessor: "name",
         minWidth: 200,
@@ -78,6 +72,21 @@ class VariablesEditor extends React.Component {
       {
         Header: (cellInfo) => this.renderHeader(cellInfo, 'Upper'),
         accessor: "upper",
+        Cell: (cellInfo) => this.renderEditable(cellInfo),
+      },
+      {
+        Header: (cellInfo) => this.renderHeader(cellInfo, 'Ref'),
+        accessor: "ref",
+        Cell: (cellInfo) => this.renderEditable(cellInfo),
+      },
+      {
+        Header: (cellInfo) => this.renderHeader(cellInfo, 'Ref0'),
+        accessor: "ref0",
+        Cell: (cellInfo) => this.renderEditable(cellInfo),
+      },
+      {
+        Header: (cellInfo) => this.renderHeader(cellInfo, 'Res.Ref'),
+        accessor: "res_ref",
         Cell: (cellInfo) => this.renderEditable(cellInfo),
       },
     ];
