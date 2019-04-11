@@ -435,7 +435,7 @@ class MdaViewer extends React.Component {
     return (
       <div>
         <div className="mda-section">
-          <ToolBar mdaId={this.props.mda.id} api={this.api} nodes={db.nodes}/>
+          <ToolBar mdaId={this.props.mda.id} api={this.api} db={db}/>
         </div>
         {breadcrumbs}
         <div className="mda-section">

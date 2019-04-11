@@ -128,6 +128,7 @@ class ToolBar extends React.Component {
 
 ToolBar.propTypes= {
   api: PropTypes.object.isRequired,
+  db: PropTypes.object.isRequired,
   mdaId: PropTypes.number.isRequired,
 };
 
