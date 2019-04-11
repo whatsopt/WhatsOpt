@@ -60,21 +60,22 @@ class Variable < ApplicationRecord
       self.parameter.init
     end
   end
-  
+
   def lower_py_value
-    if self.parameter&.lower.blank?
-      super
-    else
-      self.parameter.lower
-    end    
+    self.parameter&.lower.blank? ? super : self.parameter.lower
+  end
+  def upper_py_value
+    self.parameter&.upper.blank? ? super : self.parameter.upper
   end
   
-  def upper_py_value
-    if self.parameter&.upper.blank?
-      super
-    else
-      self.parameter.upper
-    end
+  def scaling_ref_py_value
+    self.scaling&.ref.blank? ? super : self.scaling.ref
+  end
+  def scaling_ref0_py_value
+    self.scaling&.ref0.blank? ? super : self.scaling.ref0
+  end
+  def scaling_res_ref_py_value
+    self.scaling&.res_ref.blank? ? super : self.scaling.res_ref
   end
   
   def copy

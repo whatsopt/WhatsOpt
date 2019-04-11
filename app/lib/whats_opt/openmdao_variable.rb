@@ -47,7 +47,19 @@ module WhatsOpt
     def upper_py_value
       "sys.float_info.max"
     end
+        
+    def scaling_ref_py_value
+      "1.0"
+    end
+
+    def scaling_ref0_py_value
+      "0.0"
+    end
     
+    def scaling_res_ref_py_value
+      "1.0"
+    end
+
     def escaped_desc
       s = ""
       unless self.desc.blank? 

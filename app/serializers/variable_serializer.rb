@@ -4,12 +4,12 @@ class VariableSerializer < ActiveModel::Serializer
   has_one :parameter  
   has_one :scaling  
   
-  class ParameterSerializer < ActiveModel::Serializer
-    attributes :init, :lower, :upper
-  end
+  # class ParameterSerializer < ActiveModel::Serializer
+  #   attributes :init, :lower, :upper
+  # end
 
-  class ScalingSerializer < ActiveModel::Serializer
-    attributes :ref, :ref0, :res_ref
-  end
+  # class ScalingSerializer < ActiveModel::Serializer
+  #   attributes :ref, :ref0, :res_ref
+  # end
 
 end

@@ -142,9 +142,9 @@ ActiveRecord::Schema.define(version: 60) do
 
   create_table "scalings", force: :cascade do |t|
     t.integer "variable_id"
-    t.string "ref"
-    t.string "ref0"
-    t.string "res_ref"
+    t.string "ref", default: ""
+    t.string "ref0", default: ""
+    t.string "res_ref", default: ""
     t.index ["variable_id"], name: "index_scalings_on_variable_id"
   end
 
