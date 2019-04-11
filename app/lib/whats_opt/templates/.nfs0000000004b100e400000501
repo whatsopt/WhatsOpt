@@ -1,0 +1,28 @@
+# DO NOT EDIT unless you know what you are doing
+# analysis_id: <%= @mda.id %>
+
+import numpy as np
+from openmdao.api import <%= @dimpl.implicit_component ? "ImplicitComponent" : "ExplicitComponent" %>
+
+class <%= @discipline.py_classname %>Base(<%= @dimpl.implicit_component ? "ImplicitComponent" : "ExplicitComponent" %>):
+    """ An OpenMDAO base component to encapsulate <%= @discipline.py_classname %> discipline """
+
+<% unless @discipline.variables.empty? -%>
+    def setup(self):
+<% @discipline.input_variables.numeric.each do |var| -%>
+        self.add_input('<%= var.py_varname %>', val=<%= var.init_py_value %>, desc='<%= var.escaped_desc %>')
+<% end -%>
+<% @discipline.output_variables.numeric.each do |var| -%>
+<% if var.scaling.blank? %>
+        self.add_output('<%= var.py_varname %>', val=<%= var.init_py_value %>, desc='<%= var.escaped_desc %>')
+<% else %>
+        self.add_output('<%= var.py_varname %>', val=<%= var.init_py_value %>, desc='<%= var.escaped_desc %>',
+                        ref=<%= var.scaling_ref_py_value %>, ref0=<%= var.scaling_ref0_py_value %>, res_ref=<%= var.scaling_res_ref_py_value %>)
+<% end -%>
+<% end -%>
+        self.declare_partials('*', '*')
+<% else -%>
+    pass
+<% end -%>
+
+        
