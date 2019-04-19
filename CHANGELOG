@@ -1,8 +1,9 @@
 <h1>CHANGELOG</h1>
 
-<h3>0.14.2 (11/04/2019)</h3>
+<h3>0.15.0 (19/04/2019)</h3>
 <ul>
   <li>Manage scaling values for output variables: ref, ref0, res_ref</li>
+  <li>Version used to prepare AIAA Aviation 2019 WhatsOpt paper</li>
 </ul>
 
 <h3>0.14.1 (09/04/2019)</h3>
