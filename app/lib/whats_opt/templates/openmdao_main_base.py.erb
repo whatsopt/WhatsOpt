@@ -3,7 +3,7 @@
 
 import numpy as np
 from openmdao.api import Problem, Group, ParallelGroup, IndepVarComp
-from openmdao.api import NonlinearBlockGS, ScipyKrylov
+from openmdao.api import  <%= @impl.nonlinear_solver.name %>, <%= @impl.linear_solver.name %>
 from openmdao.api import view_model
 from openmdao_extensions.reckless_nonlinear_block_gs import RecklessNonlinearBlockGS
 
@@ -28,17 +28,21 @@ class <%= @mda.py_classname %>Base(<%= @impl.parallel_group ? "ParallelGroup" : 
         super(<%= @mda.py_classname %>Base, self). __init__(**kwargs)
 
         self.nonlinear_solver = <%= @impl.nonlinear_solver.name %>() 
+<% if @impl.nonlinear_solver.runonce? -%>        
         self.nonlinear_solver.options['atol'] = <%= @impl.nonlinear_solver.atol %>
         self.nonlinear_solver.options['rtol'] = <%= @impl.nonlinear_solver.rtol %>
         self.nonlinear_solver.options['maxiter'] = <%= @impl.nonlinear_solver.maxiter %>
         self.nonlinear_solver.options['err_on_maxiter'] = <%= @impl.to_code(:nonlinear_solver, :err_on_maxiter) %>
         self.nonlinear_solver.options['iprint'] = <%= @impl.nonlinear_solver.iprint %>
+<% end -%>
         self.linear_solver = <%= @impl.linear_solver.name %>()
+<% if @impl.nonlinear_solver.runonce? -%>        
         self.linear_solver.options['atol'] = <%= @impl.linear_solver.atol %>
         self.linear_solver.options['rtol'] = <%= @impl.linear_solver.rtol %>
         self.linear_solver.options['maxiter'] = <%= @impl.linear_solver.maxiter %>
         self.linear_solver.options['err_on_maxiter'] = <%= @impl.to_code(:linear_solver, :err_on_maxiter) %>
         self.linear_solver.options['iprint'] = <%= @impl.linear_solver.iprint %>
+<% end -%>
 <% if @remote %>
         self._thrift_client = thrift_client
 <% end -%>

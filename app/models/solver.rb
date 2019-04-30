@@ -4,6 +4,10 @@ class Solver < ActiveRecord::Base
 
   after_initialize :set_defaults
 
+  def runonce?
+    self.name == "NonlinearRunOnce" || self.name == "LinearRunOnce"
+  end
+  
   private
 
   def set_defaults
