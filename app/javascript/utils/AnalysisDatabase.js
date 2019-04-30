@@ -2,15 +2,19 @@ class AnalysisDatabase {
   constructor(mda) {
     this.mda = mda;
     this.driver = this.mda.nodes[0];
-    const varList = [];
+    this.varList = [];
     for (const d in mda.vars) {
-      varList.push(...mda.vars[d]['out']);
+      this.varList.push(...mda.vars[d]['out']);
     }
     this.inputVariables = mda.vars[this.driver.id]['out'].sort();
     this.outputVariables = mda.vars[this.driver.id]['in'].sort();
     this.nodes = this.mda.nodes;
     this.edges = this.mda.edges.concat(this.mda.inactive_edges);
     this.connections = this.computeConnections(this.edges);
+  }
+
+  isScaled() {
+    return !!this.varList.find((v) => v.scaling);
   }
 
   isInputVarCases(c) {

@@ -22,6 +22,7 @@ class MdaViewer extends React.Component {
     this.api = this.props.api;
     const isEditing = this.props.isEditing;
     const filter = {fr: undefined, to: undefined};
+    this.db = new AnalysisDatabase(props.mda);
     this.state = {
       filter: filter,
       isEditing: isEditing,
@@ -32,6 +33,7 @@ class MdaViewer extends React.Component {
       newConnectionName: '',
       errors: [],
       implEdited: false,
+      useScaling: this.db.isScaled(),
     };
     this.handleFilterChange = this.handleFilterChange.bind(this);
     this.handleAnalysisNameChange = this.handleAnalysisNameChange.bind(this);
@@ -100,7 +102,7 @@ class MdaViewer extends React.Component {
 
     const data = {from: this.state.filter.fr, to: this.state.filter.to, names: names};
     this.api.createConnection(this.props.mda.id, data,
-        (response) => {
+        () => {
           const newState = update(this.state, {newConnectionName: {$set: ''}});
           this.setState(newState);
           this.renderXdsm();
@@ -141,7 +143,7 @@ class MdaViewer extends React.Component {
 
     if (Object.keys(connAttrs).length !== 0) {
       this.api.updateConnection(
-          connId, connAttrs, (response) => {this.renderXdsm();},
+          connId, connAttrs, () => {this.renderXdsm();},
           (error) => {
             const message = error.response.data.message || "Error: Update failed";
             const newState = update(this.state, {errors: {$set: [message]}});
@@ -151,7 +153,7 @@ class MdaViewer extends React.Component {
   }
 
   handleConnectionDelete(connId) {
-    this.api.deleteConnection(connId, (response) => {this.renderXdsm();});
+    this.api.deleteConnection(connId, () => {this.renderXdsm();});
   }
 
   // *** Disciplines ************************************************************
@@ -159,7 +161,7 @@ class MdaViewer extends React.Component {
   handleDisciplineCreate(event) {
     event.preventDefault();
     this.api.createDiscipline(this.props.mda.id, {name: this.state.newDisciplineName, type: 'analysis'},
-        (response) => {
+        () => {
           const newState = update(this.state, {newDisciplineName: {$set: ''}});
           this.setState(newState);
           this.renderXdsm();
@@ -173,11 +175,11 @@ class MdaViewer extends React.Component {
   }
 
   handleDisciplineUpdate(node, discAttrs) {
-    this.api.updateDiscipline(node.id, discAttrs, (response) => {this.renderXdsm();});
+    this.api.updateDiscipline(node.id, discAttrs, () => {this.renderXdsm();});
   }
 
   handleDisciplineDelete(node) {
-    this.api.deleteDiscipline(node.id, (response) => {
+    this.api.deleteDiscipline(node.id, () => {
       if (this.state.filter.fr===node.id || this.state.filter.to===node.id) {
         this.handleFilterChange({fr: undefined, to: undefined});
       }
@@ -185,7 +187,7 @@ class MdaViewer extends React.Component {
     });
   }
 
-  handleSubAnalysisSearch(query, callback) {
+  handleSubAnalysisSearch(callback) {
     this.api.getSubAnalysisCandidates(
         (response) => {
           let options = response.data
@@ -215,9 +217,9 @@ class MdaViewer extends React.Component {
     return false;
   }
 
-  handleAnalysisPublicChange(event) {
+  handleAnalysisPublicChange() {
     this.api.updateAnalysis(this.props.mda.id, {public: !this.state.mda.public},
-        (response) => {
+        () => {
           const newState = update(this.state, {mda: {public: {$set: !this.state.mda.public}}});
           this.setState(newState);
         },
@@ -226,7 +228,7 @@ class MdaViewer extends React.Component {
     return false;
   }
 
-  handleAnalysisMemberSearch(query, callback) {
+  handleAnalysisMemberSearch(callback) {
     this.api.getMemberCandidates(this.props.mda.id,
         (response) => {
           callback(response.data);
@@ -237,7 +239,7 @@ class MdaViewer extends React.Component {
   handleAnalysisMemberCreate(selected) {
     if (selected.length) {
       this.api.addMember(selected[0].id, this.props.mda.id,
-          (response) => {
+          () => {
             const newState = update(this.state, {analysisMembers: {$push: selected}});
             this.setState(newState);
           }
@@ -245,7 +247,7 @@ class MdaViewer extends React.Component {
     }
   }
   handleAnalysisMemberDelete(user) {
-    this.api.removeMember(user.id, this.props.mda.id, (response) => {
+    this.api.removeMember(user.id, this.props.mda.id, () => {
       const idx = this.state.analysisMembers.indexOf(user);
       const newState = update(this.state, {analysisMembers: {$splice: [[idx, 1]]}});
       this.setState(newState);
@@ -255,9 +257,9 @@ class MdaViewer extends React.Component {
   handleAnalysisUpdate(event) {
     event.preventDefault();
     this.api.updateAnalysis(this.props.mda.id, {name: this.state.newAnalysisName},
-        (response) => {
+        () => {
           this.api.getAnalysis(this.props.mda.id, false,
-              (response) => {
+              () => {
                 const newState = update(this.state, {mda: {name: {$set: this.state.newAnalysisName}}});
                 this.setState(newState);
               });
@@ -290,29 +292,28 @@ class MdaViewer extends React.Component {
 
   // *** OpenmdaoImpl ************************************************************
   handleOpenmdaoImplUpdate(openmdaoImpl) {
+    delete openmdaoImpl.components['use_scaling'];
     this.api.updateOpenmdaoImpl(this.props.mda.id, openmdaoImpl,
-      (response) => {
-        // FormData: components.disc1, components.disc2 -> components.nodes
-        const newState = update(this.state, {implEdited: {$set: false}, mda: {impl: {openmdao: {$set: openmdaoImpl}}}});
-        console.log("set IMPLATTRS", newState.mda.impl.openmdao);
-        this.setState(newState);
-      }
-    )
+        () => {
+          const newState = update(this.state, {implEdited: {$set: false}, mda: {impl: {openmdao: {$set: openmdaoImpl}}}});
+          this.setState(newState);
+        }
+    );
   }
   handleOpenmdaoImplChange(openmdaoImpl) {
-    console.log("CHANGE", openmdaoImpl);
     let newState;
     if (deepIsEqual(this.state.mda.impl.openmdao, openmdaoImpl)) {
-      console.log("UNCHANGED");
       newState = update(this.state, {implEdited: {$set: false}});
     } else {
-      console.log("CHANGED");
-      newState = update(this.state, {implEdited: {$set: openmdaoImpl}});
+      if (this.state.mda.impl.openmdao.components.use_scaling === openmdaoImpl.components.use_scaling) {
+        newState = update(this.state, {implEdited: {$set: openmdaoImpl}});
+      } else {
+        newState = update(this.state, {useScaling: {$set: openmdaoImpl.components.use_scaling}});
+      }
     }
     this.setState(newState);
   }
   handleOpenmdaoImplReset() {
-    console.log("RESET");
     const newState = update(this.state, {implEdited: {$set: false}});
     this.setState(newState);
   }
@@ -321,27 +322,34 @@ class MdaViewer extends React.Component {
     const errors = this.state.errors.map((message, i) => {
       return ( <Error key={i} msg={message} onClose={() => this.handleErrorClose(i)}/> );
     });
-    const db = new AnalysisDatabase(this.state.mda);
+    const db = this.db = new AnalysisDatabase(this.state.mda);
+    const useScaling = this.state.useScaling || this.db.isScaled();
 
     let breadcrumbs;
     if (this.props.mda.path.length > 1) {
       breadcrumbs = <AnalysisBreadCrumbs api={this.api} path={this.props.mda.path} />
     }
 
-    let xdsmViewer = (<XdsmViewer ref={(xdsmViewer) => this.xdsmViewer = xdsmViewer} 
-                                  api={this.api} 
-                                  isEditing={this.state.isEditing}
-                                  mda={this.state.mda}
-                                  filter={this.state.filter} 
-                                  onFilterChange={this.handleFilterChange}/>);
+    const xdsmViewer =
+      (<XdsmViewer ref={(xdsmViewer) => this.xdsmViewer = xdsmViewer} 
+        api={this.api} 
+        isEditing={this.state.isEditing}
+        mda={this.state.mda}
+        filter={this.state.filter} 
+        onFilterChange={this.handleFilterChange}/>);
 
-    let varEditor = (<VariablesEditor db={db} filter={this.state.filter}
-                                      onFilterChange={this.handleFilterChange}
-                                      onConnectionChange={this.handleConnectionChange}
-                                      isEditing={this.state.isEditing} />);
+    const varEditor =
+      (<VariablesEditor db={db} filter={this.state.filter} useScaling={useScaling}
+        onFilterChange={this.handleFilterChange}
+        onConnectionChange={this.handleConnectionChange}
+        isEditing={this.state.isEditing} />);
 
     if (this.state.isEditing) {
-      let openmdaoImpl = this.state.implEdited || this.state.mda.impl.openmdao;
+      let openmdaoImpl = this.state.implEdited; 
+      if (!this.state.implEdited) {
+        openmdaoImpl = this.state.mda.impl.openmdao;
+        openmdaoImpl.components.use_scaling = this.state.useScaling;
+      }
       let openmdaoImplMsg;
       if (this.state.implEdited) {
         openmdaoImplMsg = (<div className="alert alert-warning" role="alert">
@@ -427,7 +435,7 @@ class MdaViewer extends React.Component {
                 onOpenmdaoImplUpdate={this.handleOpenmdaoImplUpdate}
                 onOpenmdaoImplChange={this.handleOpenmdaoImplChange}
                 onOpenmdaoImplReset={this.handleOpenmdaoImplReset}
-                />
+              />
             </div>
           </div>
         </div>);

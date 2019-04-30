@@ -74,21 +74,6 @@ class VariablesEditor extends React.Component {
         accessor: "upper",
         Cell: (cellInfo) => this.renderEditable(cellInfo),
       },
-      {
-        Header: (cellInfo) => this.renderHeader(cellInfo, 'Ref'),
-        accessor: "ref",
-        Cell: (cellInfo) => this.renderEditable(cellInfo),
-      },
-      {
-        Header: (cellInfo) => this.renderHeader(cellInfo, 'Ref0'),
-        accessor: "ref0",
-        Cell: (cellInfo) => this.renderEditable(cellInfo),
-      },
-      {
-        Header: (cellInfo) => this.renderHeader(cellInfo, 'Res.Ref'),
-        accessor: "res_ref",
-        Cell: (cellInfo) => this.renderEditable(cellInfo),
-      },
     ];
     if (this.props.isEditing) {
       columns.splice(0, 0, {
@@ -102,6 +87,25 @@ class VariablesEditor extends React.Component {
         accessor: "desc",
         Cell: (cellInfo) => this.renderEditable(cellInfo),
       });
+    }
+    if (this.props.useScaling) {
+      columns.push(...[
+        {
+          Header: (cellInfo) => this.renderHeader(cellInfo, 'Ref'),
+          accessor: "ref",
+          Cell: (cellInfo) => this.renderEditable(cellInfo),
+        },
+        {
+          Header: (cellInfo) => this.renderHeader(cellInfo, 'Ref0'),
+          accessor: "ref0",
+          Cell: (cellInfo) => this.renderEditable(cellInfo),
+        },
+        {
+          Header: (cellInfo) => this.renderHeader(cellInfo, 'Res.Ref'),
+          accessor: "res_ref",
+          Cell: (cellInfo) => this.renderEditable(cellInfo),
+        },
+      ]);
     }
     return (
       <div className="mt-3">
@@ -212,6 +216,7 @@ VariablesEditor.propTypes = {
   db: PropTypes.object.isRequired,
   filter: PropTypes.object.isRequired,
   onConnectionChange: PropTypes.func,
+  useScaling: PropTypes.bool.isRequired,
 };
 
 export default VariablesEditor;
