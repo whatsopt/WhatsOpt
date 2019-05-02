@@ -1,18 +1,24 @@
 <div class="btn-toolbar float-right">  
+<% unless @mda.operations.empty? %>
+<%= button_to mda_operations_path(@mda), method: :get, class: "btn ml-2", title:"List Operations" do %>
+  <span class="fa fa-ellipsis-v"></span>
+  List Operations
+<% end %> 
+<% end %>
 <% if policy(@mda).edit? %>
-  <%= button_to edit_mda_url(@mda), method: :get, class:"btn" do |b|%>
+  <%= button_to edit_mda_path(@mda), method: :get, class:"btn" do |b|%>
     <span class="fa fa-edit"></span>
       Edit
   <% end %>
 <% end %>
 <% if policy(@mda).operate? %>      
-  <%= button_to mda_operations_url(@mda), method: :post, class:"btn ml-2" do |b|%>
+  <%= button_to mda_operations_path(@mda), method: :post, class:"btn ml-2" do |b|%>
     <span class="fa fa-rocket"></span>
       Operate
   <% end %>  
 <% end %>
 <% if policy(@mda).destroy? %>      
-  <%= button_to mda_url(@mda), method: :delete, data: { title: 'Are you sure?', 
+  <%= button_to mda_path(@mda), method: :delete, data: { title: 'Are you sure?', 
                                                               confirm: "Remove #{@mda.name} analysis?",
                                                               commit: 'Yes',
                                                               cancel: 'No, cancel' }, 
@@ -21,7 +27,7 @@
       Delete
   <% end %> 
 <% end %>  
-  <%= button_to mdas_url, method: :get, class:"btn ml-2" do |b|%>
+  <%= button_to mdas_path, method: :get, class:"btn ml-2" do |b|%>
     <span class="fa fa-window-close"></span>
       Close
   <% end %>      

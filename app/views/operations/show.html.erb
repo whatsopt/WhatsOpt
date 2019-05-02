@@ -1,12 +1,16 @@
 <div class="btn-toolbar float-right">
+<%= button_to mda_operations_path(@ope.analysis_id), method: :get, class: "btn ml-2", title:"List" do %>
+  <span class="fa fa-ellipsis-v"></span>
+  List
+<% end %> 
 <% if policy(@ope).edit? %>
-  <%= button_to edit_operation_url(@ope), method: :get, class: "btn ml-2", title:"Re-run" do %>
+  <%= button_to edit_operation_path(@ope), method: :get, class: "btn ml-2", title:"Re-run" do %>
     <span class="fa fa-rocket"></span>
     Re-run
   <% end %> 
 <% end %>
 <% if policy(@ope).destroy? %>
-  <%= button_to operation_url(@ope), method: :delete, data: { title: 'Are you sure?', 
+  <%= button_to operation_path(@ope), method: :delete, data: { title: 'Are you sure?', 
 	                                                            confirm: "Remove #{@mda.name} #{@ope.name} operation?",
 	                                                            commit: 'Yes',
 	                                                            cancel: 'No, cancel' }, 
@@ -15,7 +19,7 @@
       Delete
   <% end %> 
 <% end %>
-<%= button_to mda_url(@mda), method: :get, class:"btn ml-2" do |b|%>
+<%= button_to mda_path(@mda), method: :get, class:"btn ml-2" do |b|%>
   <span class="fa fa-times-circle"></span>
     Close
 <% end %>      
