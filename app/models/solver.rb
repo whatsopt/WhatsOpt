@@ -8,6 +8,10 @@ class Solver < ActiveRecord::Base
     self.name == "NonlinearRunOnce" || self.name == "LinearRunOnce"
   end
   
+  def reckless?
+    self.name == "RecklessNonlinearBlockGS"
+  end
+
   private
 
   def set_defaults

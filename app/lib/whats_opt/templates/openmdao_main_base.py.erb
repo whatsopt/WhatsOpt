@@ -3,9 +3,13 @@
 
 import numpy as np
 from openmdao.api import Problem, Group, ParallelGroup, IndepVarComp
-from openmdao.api import  <%= @impl.nonlinear_solver.name %>, <%= @impl.linear_solver.name %>
-from openmdao.api import view_model
+<% if @impl.nonlinear_solver.reckless? -%>
 from openmdao_extensions.reckless_nonlinear_block_gs import RecklessNonlinearBlockGS
+<% else -%>
+from openmdao.api import <%= @impl.nonlinear_solver.name %>
+<% end -%>
+from openmdao.api import <%= @impl.linear_solver.name %>
+from openmdao.api import view_model
 
 <% @mda.sub_analyses.each do |a| -%>
 from <%= a.py_full_modulename %> import <%= a.py_classname %>
