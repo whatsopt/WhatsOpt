@@ -10,33 +10,38 @@ import VariableSelector from 'plotter/components/VariableSelector';
 import AnalysisDatabase from '../utils/AnalysisDatabase';
 import * as caseUtils from '../utils/cases.js';
 
+
+const PLOTS_TAB = 'plots';
+const VARIABLES_TAB = 'variables';
+const SCREENING_TAB = 'screening';
+
 class PlotPanel extends React.Component {
   render() {
     let plotoptim = (<ScatterPlotMatrix db={this.props.db} optim={this.props.optim}
-      cases={this.props.cases} success={this.props.success} title={this.props.title}/>);
+      cases={this.props.cases} success={this.props.success} title={this.props.title} />);
     if (this.props.optim) {
       plotoptim = (<div>
         <IterationLinePlot db={this.props.db} optim={this.props.optim}
-          cases={this.props.cases} title={this.props.title}/>
+          cases={this.props.cases} title={this.props.title} />
         <IterationRadarPlot db={this.props.db} optim={this.props.optim}
-          cases={this.props.cases} title={this.props.title}/>
+          cases={this.props.cases} title={this.props.title} />
       </div>);
     }
     let plotparall = (<ParallelCoordinates db={this.props.db} optim={this.props.optim}
-                       cases={this.props.cases} success={this.props.success} 
-                       title={this.props.title} width={1200} />)
-    let input_cases=[].concat(this.props.cases.i).concat(this.props.cases.c);
-    if (input_cases.length==2 && this.props.cases.o.length==1) {
+      cases={this.props.cases} success={this.props.success}
+      title={this.props.title} width={1200} />)
+    let input_cases = [].concat(this.props.cases.i).concat(this.props.cases.c);
+    if (input_cases.length == 2 && this.props.cases.o.length == 1) {
       plotparall = (<span>
-        <ScatterSurfacePlot casesx={input_cases[0]} casesy={input_cases[1]} 
-                            casesz={this.props.cases.o[0]} success={this.props.success}/>  
+        <ScatterSurfacePlot casesx={input_cases[0]} casesy={input_cases[1]}
+          casesz={this.props.cases.o[0]} success={this.props.success} />
         <ParallelCoordinates db={this.props.db} optim={this.props.optim}
-          cases={this.props.cases} success={this.props.success}  
+          cases={this.props.cases} success={this.props.success}
           title={this.props.title} width={600} />
       </span>);
     }
-    const klass = "tab-pane fade"+this.props.active?" show active":"";
-    return (<div className={klass} id="plots" role="tabpanel" aria-labelledby="plots-tab">
+    const klass = "tab-pane fade";
+    return (<div className={klass} id={PLOTS_TAB} role="tabpanel" aria-labelledby="plots-tab">
       {plotparall}
       {plotoptim}
     </div>);
@@ -54,12 +59,12 @@ PlotPanel.propTypes = {
 
 class VariablePanel extends React.Component {
   render() {
-    const klass = "tab-pane fade "+this.props.active?" show active":"";
+    const klass = "tab-pane fade";
     return (
-      <div className={klass} id="variables" role="tabpanel" aria-labelledby="variables-tab">
+      <div className={klass} id={VARIABLES_TAB} role="tabpanel" aria-labelledby="variables-tab">
         <VariableSelector db={this.props.db} optim={this.props.optim}
           cases={this.props.cases} selCases={this.props.selCases}
-          onSelectionChange={this.props.onSelectionChange}/>
+          onSelectionChange={this.props.onSelectionChange} />
       </div>
     );
   };
@@ -75,6 +80,21 @@ VariablePanel.propTypes = {
   onSelectionChange: PropTypes.func.isRequired,
 };
 
+class ScreeningPanel extends React.Component {
+  render() {
+    const klass = "tab-pane fade";
+    return (
+      <div className={klass} id={SCREENING_TAB} role="tabpanel" aria-labelledby="screening-tab">
+        SCREENING
+      </div>
+    );
+  };
+};
+
+ScreeningPanel.propTypes = {
+  active: PropTypes.bool.isRequired,
+};
+
 class Plotter extends React.Component {
   constructor(props) {
     super(props);
@@ -87,10 +107,10 @@ class Plotter extends React.Component {
     this.couplingVarCases = this.cases.filter((c) => this.db.isCouplingVarCases(c));
 
     const selection = this.initializeSelection(this.inputVarCases, this.outputVarCases);
-    this.state = {selection: selection, plotActive: true};
+    this.state = { selection: selection, activeTab: true };
 
     this.handleSelectionChange = this.handleSelectionChange.bind(this);
-    this.activatePlot = this.activatePlot.bind(this);
+    this.activateTab = this.activateTab.bind(this);
   }
 
   initializeSelection(inputs, outputs) {
@@ -98,7 +118,7 @@ class Plotter extends React.Component {
     const o = outputs.length;
 
     const sel = [];
-    if (i+o < 10 && i*o < 50) {
+    if (i + o < 10 && i * o < 50) {
       sel.push(...this.inputVarCases, ...this.outputVarCases);
     } else {
       const obj = this.outputVarCases.find((c) => this.db.isObjective(c));
@@ -117,39 +137,51 @@ class Plotter extends React.Component {
     let newSelection;
     if (target.checked) {
       const selected = this.cases.find((c) => caseUtils.label(c) === target.name);
-      newSelection = update(this.state.selection, {$push: [selected]});
+      newSelection = update(this.state.selection, { $push: [selected] });
     } else {
       const index = this.state.selection.findIndex((c) => caseUtils.label(c) === target.name);
-      newSelection = update(this.state.selection, {$splice: [[index, 1]]});
+      newSelection = update(this.state.selection, { $splice: [[index, 1]] });
     }
-    this.setState({selection: newSelection});
+    this.setState({ selection: newSelection });
   }
 
-  activatePlot(active) {
-    const newState = update(this.state, {plotActive: {$set: active}});
+  activateTab(event, active) {
+    const newState = update(this.state, { activeTab: { $set: active } });
     this.setState(newState);
+  }
+
+  componentDidMount(){
+    $('#plots').tab('show');
   }
 
   render() {
     const isOptim = (this.props.ope.category === "optimization");
+    const isScreening = (this.props.ope.category === "screening");
     const selection = this.state.selection;
-    const cases = {i: this.inputVarCases, o: this.outputVarCases, c: this.couplingVarCases};
-    const selCases = {i: cases.i.filter((c) => selection.includes(c)),
+    const cases = { i: this.inputVarCases, o: this.outputVarCases, c: this.couplingVarCases };
+    const selCases = {
+      i: cases.i.filter((c) => selection.includes(c)),
       o: cases.o.filter((c) => selection.includes(c)),
-      c: cases.c.filter((c) => selection.includes(c))};
-    const nbPts = this.cases[0]?this.cases[0].values.length:0;
+      c: cases.c.filter((c) => selection.includes(c))
+    };
+    const nbPts = this.cases[0] ? this.cases[0].values.length : 0;
     let details = `${nbPts} cases`;
     if (isOptim) {
       const objname = this.db.getObjective().variable.name;
-      const extremization = this.db.getObjective().isMin?"minimization":"maximization";
-      details = `Variable '${objname}' ${extremization}`;
+      const extremization = this.db.getObjective().isMin ? "minimization" : "maximization";
+      details = `${objname} ${extremization}`;
     }
     const title = `${this.props.ope.name} on ${this.props.mda.name} - ${details}`;
-    let child = (<PlotPanel db={this.db} optim={isOptim} cases={selCases}
-      title={title} active={this.state.plotActive} success={this.props.ope.success}/>);
-    if (!this.state.plotActive) {
-      child = (<VariablePanel db={this.db} optim={isOptim} cases={cases} selCases={selCases}
-        active={!this.state.plotActive} onSelectionChange={this.handleSelectionChange}/>);
+
+
+    let screeningLink;
+    if (isScreening) {
+      screeningLink = (
+        <li className="nav-item">
+          <a className="nav-link" id="screening-tab" href="#screening"
+            role="tab" aria-controls="screening" data-toggle="tab" aria-selected="false"
+            onClick={(e) => this.activateTab(e, SCREENING_TAB)}>Screening</a>
+        </li>);
     }
 
     const exportUrl = this.api.url(`/operations/${this.props.ope.id}/exports/new`);
@@ -165,16 +197,23 @@ class Plotter extends React.Component {
           <li className="nav-item">
             <a className="nav-link active" id="plots-tab" href="#plots"
               role="tab" aria-controls="plots" data-toggle="tab" aria-selected="true"
-              onClick={(e) => this.activatePlot(true)}>Plots</a>
+              onClick={(e) => this.activateTab(e, "plots")}>Plots</a>
           </li>
           <li className="nav-item">
             <a className="nav-link" id="variables-tab" href="#variables"
               role="tab" aria-controls="variables" data-toggle="tab" aria-selected="false"
-              onClick={(e) => this.activatePlot(false)}>Variables</a>
+              onClick={(e) => this.activateTab(e, "variables")}>Variables</a>
           </li>
+          {screeningLink}
         </ul>
         <div className="tab-content" id="myTabContent">
-          {child}
+          <PlotPanel db={this.db} optim={isOptim} cases={selCases}
+            title={title} active={this.state.activeTab === PLOTS_TAB}
+            success={this.props.ope.success} />
+          <VariablePanel db={this.db} optim={isOptim} cases={cases} selCases={selCases}
+            active={this.state.activeTab === VARIABLES_TAB}
+            onSelectionChange={this.handleSelectionChange} />
+          <ScreeningPanel active={this.state.activeTab === SCREENING_TAB} />
         </div>
       </div>
     );
