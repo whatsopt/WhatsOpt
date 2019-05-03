@@ -22,4 +22,13 @@ module LayoutHelper
     v << "-#{version_release}" unless version_release=="0" or version_release.blank?
     v
   end
+
+  def deployment_info
+    flagfile = "#{Rails.root}/tmp/restart.txt"
+    if File.exists?(flagfile) 
+      "deployed: #{File.atime(flagfile).strftime("%Y-%m-%d at %H:%M")}"
+    else
+      ''
+    end
+  end
 end

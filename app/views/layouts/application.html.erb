@@ -65,9 +65,10 @@
       WhatsOpt, version:
       <% if user_signed_in? %>
         <%= link_to_unless_current version, changelog_path =%>, 
-        <%= mail_to "remi.lafage@onera.fr", "contact", :encode => "hex"  %>
+        <%= deployment_info %>,
+        <%= mail_to "remi.lafage@onera.fr", "contact", :encode => "hex" %>
       <% else %>
-        <%= version %>
+        <%= version %>, <%= deployment_info %>
       <% end %>
       </small>
   </footer>
