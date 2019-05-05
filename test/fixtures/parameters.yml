@@ -14,6 +14,12 @@ float:
 
 varx1_out_init:
   init: 3.14
-  lower: 1
-  upper: 10
+  lower: 0
+  upper: 1
   variable: varx1_out
+
+varz_out_init:
+  init: 3.14
+  lower: 0
+  upper: 1
+  variable: varz_design_out

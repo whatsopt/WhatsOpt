@@ -9,14 +9,14 @@ module WhatsOpt
       
     attr_accessor :genfiles, :prefix 
     
-    def initialize(mda, server_host=nil)
+    def initialize(mda)
       @prefix="code"
       @comment_delimiters={begin: '"""', end: '"""'}
       @mda = mda
       @template_dir = File.join(File.dirname(__FILE__), "templates")
       @genfiles = []
       @server_module = 'server'
-      @server_host = server_host || 'localhost'
+      @server_host = 'localhost'
       @server_port = 31400      
     end
         

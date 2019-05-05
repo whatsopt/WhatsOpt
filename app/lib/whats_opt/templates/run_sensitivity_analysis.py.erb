@@ -6,79 +6,46 @@ import numpy as np
 # import matplotlib
 # matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-from openmdao.api import Problem, SqliteRecorder, CaseReader
-from openmdao_extensions.salib_doe_driver import SalibDOEDriver
+
 from SALib.analyze import morris as ma
 from SALib.plotting import morris as mp
-<% if @remote -%>
-from <%= @server_module %>.<%= @mda.py_modulename %>_proxy import <%= @mda.py_classname %>Proxy as <%= @mda.py_classname %> 
-<% else -%>
-from <%= @mda.py_modulename %> import <%= @mda.py_classname %> 
+
+names = []
+lower = []
+upper = []
+inputs = []
+<% @input_varcases.each do |vc| %>
+names.append("<%= vc.float_varname %>")
+#lower += np.array(<%= vc.variable.parameter.lower %>).reshape((-1,)).to_list()
+#upper += np.array(<%= vc.variable.parameter.upper %>).reshape((-1,)).to_list()
+inputs.append(np.array(<%= vc.values %>))
 <% end %>
-<%= ERB.new(File.read(File.join(@template_dir, 'options_partial.py.erb')), nil, nil, eoutvar='_sub01').result(binding) %>
-pb = Problem(<%= @mda.py_classname %>())
-pb.driver = SalibDOEDriver(sa_method_name='Morris', sa_doe_options={'n_trajs': 10, 'n_levels': 4})
-case_recorder_filename = '<%= @sqlite_filename %>'        
-recorder = SqliteRecorder(case_recorder_filename)
-pb.driver.add_recorder(recorder)
-pb.model.add_recorder(recorder)
-pb.model.nonlinear_solver.add_recorder(recorder)
-pb.model.nonlinear_solver.options['err_on_maxiter'] = True
+#bounds = zip(lower, upper)
+inputs = np.vstack(inputs)
+inputs = inputs.T
 
-<% @mda.design_variables.each do |dv| -%>
-pb.model.add_design_var('<%= dv.name %>', lower=<%= dv.lower_py_value %>, upper=<%= dv.upper_py_value %>)
-<% end -%>
-<% @mda.min_objective_variables.each do |voi| -%>
-pb.model.add_objective('<%= voi.name %>')
-<% end -%>
-<% @mda.max_objective_variables.each do |voi| -%>
-pb.model.add_objective('<%= voi.name %>')
-<% end -%>
-<% @mda.ineq_constraint_variables.each do |voi| -%>
-pb.model.add_constraint('<%= voi.name %>', upper=0.)
-<% end -%>
-<% @mda.eq_constraint_variables.each do |voi| %>
-pb.model.add_constraint('<%= voi.name %>', equals=0.)
-<% end -%>
-pb.setup()  
-pb.run_driver()        
+print(names)
 
-<% if @mda.uniq_variables.size < 20 %>
-if options.batch:
-    exit(0)
-reader = CaseReader(case_recorder_filename)
-cases = reader.list_cases('root', recurse=False)
-n = len(cases)
-data = {'inputs': {}, 'outputs': {} }
-<% @mda.design_variables.each do |dv| -%>
-data['inputs']['<%= dv.name %>'] = np.zeros((n,)+<%= dv.shape=="1"?"(1,)":dv.shape %>)
-<% end -%>
-<% @mda.response_variables.each do |r| -%>
-data['outputs']['<%= r.name %>'] = np.zeros((n,)+<%= r.shape=="1"?"(1,)":r.shape %>)
-<% end -%>
+salib_pb = {
+    'num_vars': len(names),
+    'names': names,
+    'groups': None,
+    'bounds': None
+}
 
-for i in range(len(cases)):
-    case = reader.get_case(cases[i])
-<% @mda.design_variables.each do |dv| -%>
-    data['inputs']['<%= dv.name %>'][i,:] = case.inputs['<%= dv.name %>']
-<% end -%>
-<% @mda.response_variables.each do |r| -%>
-    data['outputs']['<%= r.name %>'][i,:] = case.outputs['<%= r.name %>']
-<% end -%>
+print("INPUTS")
+print(inputs)
 
-salib_pb = pb.driver.get_salib_problem()
-inputs = pb.driver.get_cases()
-
-<% @mda.response_variables.each_with_index do |r, j| -%>
-print('*** Output: <%= r.name %>')
-output = data['outputs']['<%= r.name %>'].reshape((-1,))
+print("OUTPUT")
+<% @output_varcases.each do |vc| %>
+print('*** Output: <%= vc.float_varname %>')
+output = np.array(<%= vc.values %>)
+print(output)
 Si = ma.analyze(salib_pb, inputs, output, print_to_console=True)
-fig, (ax1, ax2) = plt.subplots(1,2)
-fig.suptitle('<%= r.name %> '+'sensitivity')
+fig, (ax1, ax2) = plt.subplots(1, 2)
+fig.suptitle('<%= vc.float_varname %> sensitivity')
 mp.horizontal_bar_plot(ax1, Si, {})
 mp.covariance_plot(ax2, Si, {})
-
-<% end -%>
+<% end %>
 
 plt.show()
-<% end %>

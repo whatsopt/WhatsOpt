@@ -61,6 +61,14 @@ class Variable < ApplicationRecord
     end
   end
 
+  def is_input?
+    !outgoing_connections.where(connections: {role: WhatsOpt::Variable::INPUT_ROLES}).blank?
+  end
+
+  def is_output?
+    !outgoing_connections.where(connections: {role: WhatsOpt::Variable::OUTPUT_ROLES}).blank?
+  end
+
   def lower_py_value
     self.parameter&.lower.blank? ? super : self.parameter.lower
   end

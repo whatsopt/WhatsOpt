@@ -1,12 +1,12 @@
 driver_z_geo:
   from_id: <%= ActiveRecord::FixtureSet.identify(:varz_design_out) %>
   to_id: <%= ActiveRecord::FixtureSet.identify(:varz_geo_in) %>
-  role: "parameter"
+  role: "design_var"
 
 driver_z_aero:
   from_id: <%= ActiveRecord::FixtureSet.identify(:varz_design_out) %>
   to_id: <%= ActiveRecord::FixtureSet.identify(:varz_aero_in) %>
-  role: "parameter"
+  role: "design_var"
 
 geo_obj_driver:
   from_id: <%= ActiveRecord::FixtureSet.identify(:varobj_geo_out) %>

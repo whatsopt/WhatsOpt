@@ -85,6 +85,14 @@ class Operation < ApplicationRecord
     end
   end
 
+  def input_cases
+    cases.select {|c| c.variable.is_input? }
+  end
+  def output_cases
+    p cases.last.variable.outgoing_connections
+    cases.select {|c| c.variable.is_output? }
+  end
+
   def perform
     ogen = WhatsOpt::OpenmdaoGenerator.new(self.analysis, self.host, self.driver, self.option_hash)
     sqlite_filename = File.join(Dir.tmpdir, "#{SecureRandom.urlsafe_base64}.sqlite")
