@@ -72,7 +72,7 @@ class AnalysisTest < ActiveSupport::TestCase
   end
 
   test "should get design variables" do
-    assert_equal ["x1"], @mda.design_variables.map(&:name).sort
+    assert_equal ["x1", "z"], @mda.design_variables.map(&:name).sort
   end  
   test "should get parameters" do
     assert_equal ["x1", "z"], @mda.parameter_variables.map(&:name).sort

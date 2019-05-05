@@ -89,7 +89,6 @@ class Operation < ApplicationRecord
     cases.select {|c| c.variable.is_input? }
   end
   def output_cases
-    p cases.last.variable.outgoing_connections
     cases.select {|c| c.variable.is_output? }
   end
 

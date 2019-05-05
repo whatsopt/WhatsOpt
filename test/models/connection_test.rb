@@ -12,13 +12,13 @@ class ConnectionTest < ActiveSupport::TestCase
   
   test "should have a role" do
     conns = Connection.joins(from: :discipline).where(disciplines: {analysis_id: @mda.id})
-    assert_equal ["design_var", "min_objective", 
-                  "parameter", "parameter", "response", 
+    assert_equal ["design_var", "design_var", "design_var", "min_objective", "response", 
                   "state_var", "state_var"], conns.map(&:role).sort
   end
   
   test "should update init parameter without changing other attrs" do
-    conn = Connection.of_analysis(@mda).with_role(WhatsOpt::Variable::DESIGN_VAR_ROLE).take
+    #conn = Connection.of_analysis(@mda).with_role(WhatsOpt::Variable::DESIGN_VAR_ROLE).take
+    conn = connections(:driver_z_geo)
     assert_equal "3.14", conn.from.parameter.init
     assert_equal "1", conn.from.parameter.lower
     conn.update_connections!({parameter_attributes: {init: "2"}})

@@ -10,8 +10,8 @@ module WhatsOpt
     class DisciplineNotFoundException < StandardError
     end
     
-    def initialize(mda, server_host=nil, driver_name=nil, driver_options={})
-      super(mda, server_host)
+    def initialize(mda, server_host='localhost', driver_name=nil, driver_options={})
+      super(mda)
       @prefix = "openmdao"
       @server_host = server_host
       @remote = !server_host.nil?
@@ -102,7 +102,7 @@ module WhatsOpt
       _generate_main(gendir, opts)
       _generate_run_scripts(gendir, opts)
       if opts[:with_server]
-        @sgen._generate_code(gendir)
+        @sgen._generate_code(gendir, @server_host)
         @genfiles += @sgen.genfiles
       end
       @genfiles
