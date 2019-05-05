@@ -3,12 +3,14 @@
 
 import sys
 import numpy as np
+import json
 # import matplotlib
 # matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 from SALib.analyze import morris as ma
 from SALib.plotting import morris as mp
+from openmdao.utils.general_utils import make_serializable
 
 inputs = np.array([[0, 1. / 3], [0, 1], [2. / 3, 1],
                         [0, 1. / 3], [2. / 3, 1. / 3], [2. / 3, 1],
@@ -32,8 +34,11 @@ salib_pb = {
 
 
 name = "output"
-print('*** Output: #{name}')
-Si = ma.analyze(salib_pb, inputs, outputs, print_to_console=True)
+Si = ma.analyze(salib_pb, inputs, outputs, print_to_console=False)
+result = {k:v.tolist() for k, v in Si.items() if isinstance(v, np.ndarray)}
+print(json.dumps(result))
+exit()
+
 fig, (ax1, ax2) = plt.subplots(1,2)
 fig.suptitle('#{name} '+'sensitivity')
 mp.horizontal_bar_plot(ax1, Si, {})
