@@ -10,7 +10,7 @@ module WhatsOpt
     class DisciplineNotFoundException < StandardError
     end
     
-    def initialize(mda, server_host='localhost', driver_name=nil, driver_options={})
+    def initialize(mda, server_host=nil, driver_name=nil, driver_options={})
       super(mda)
       @prefix = "openmdao"
       @server_host = server_host

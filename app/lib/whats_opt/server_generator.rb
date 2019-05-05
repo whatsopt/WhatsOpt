@@ -9,7 +9,7 @@ module WhatsOpt
     class ThriftError < StandardError
     end
     
-    def initialize(mda, server_host='localhost')
+    def initialize(mda, server_host=nil)
       super(mda)
       @server_host = server_host
       @prefix='remote_server'

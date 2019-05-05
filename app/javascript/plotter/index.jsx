@@ -30,8 +30,8 @@ class PlotPanel extends React.Component {
     let plotparall = (<ParallelCoordinates db={this.props.db} optim={this.props.optim}
       cases={this.props.cases} success={this.props.success}
       title={this.props.title} width={1200} />)
-    let input_cases = [].concat(this.props.cases.i).concat(this.props.cases.c);
-    if (input_cases.length == 2 && this.props.cases.o.length == 1) {
+    const inputCases = [].concat(this.props.cases.i).concat(this.props.cases.c);
+    if (inputCases.length == 2 && this.props.cases.o.length == 1) {
       plotparall = (<span>
         <ScatterSurfacePlot casesx={input_cases[0]} casesy={input_cases[1]}
           casesz={this.props.cases.o[0]} success={this.props.success} />
@@ -81,6 +81,25 @@ VariablePanel.propTypes = {
 };
 
 class ScreeningPanel extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      loading: false,
+      statusOk: false,
+      sensitivity: {},
+      error: "",
+    };
+  }
+
+  componentDidMount() {
+    this.props.api.openmdaoScreening(
+        this.props.opeId,
+        (response) => {
+          this.setState({ loading: false, ...response.data});
+        });
+  }
+
   render() {
     const klass = "tab-pane fade";
     return (
@@ -92,6 +111,8 @@ class ScreeningPanel extends React.Component {
 };
 
 ScreeningPanel.propTypes = {
+  opeId: PropTypes.number.isRequired,
+  api: PropTypes.object.isRequired,
   active: PropTypes.bool.isRequired,
 };
 
@@ -150,7 +171,7 @@ class Plotter extends React.Component {
     this.setState(newState);
   }
 
-  componentDidMount(){
+  componentDidMount() {
     $('#plots').tab('show');
   }
 
@@ -213,7 +234,8 @@ class Plotter extends React.Component {
           <VariablePanel db={this.db} optim={isOptim} cases={cases} selCases={selCases}
             active={this.state.activeTab === VARIABLES_TAB}
             onSelectionChange={this.handleSelectionChange} />
-          <ScreeningPanel active={this.state.activeTab === SCREENING_TAB} />
+          <ScreeningPanel active={this.state.activeTab === SCREENING_TAB} 
+                          api={this.api} opeId={this.props.ope.id} />
         </div>
       </div>
     );

@@ -25,6 +25,13 @@ class WhatsOptApi {
         .catch((error) => console.log(error));
   };
 
+  openmdaoScreening(opeId, callback) {
+    const path = `/operations/${opeId}/openmdao_screenings/new`;
+    axios.get(this.apiUrl(path))
+        .then(callback)
+        .catch((error) => console.log(error));
+  };
+
   getMemberCandidates(mdaId, callback) {
     const path = `/user_roles?query[analysis_id]=${mdaId}&query[select]=member_candidates`;
     axios.get(this.apiUrl(path))

@@ -17,6 +17,7 @@ module WhatsOpt
         _generate_code(dir)
         ok, out, err = _run_screening(dir)
       end
+      p out
       out ||= "{}"
       return ok, JSON.parse(out), err
     end
