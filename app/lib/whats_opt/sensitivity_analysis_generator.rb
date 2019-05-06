@@ -8,6 +8,8 @@ module WhatsOpt
       @prefix='sensitivity_analysis'
       @input_varcases = input_cases || ope.input_cases
       @output_varcases = output_cases || ope.output_cases
+      Rails.logger.info @input_varcases.map(&:float_varname)
+      Rails.logger.info @output_varcases.map(&:float_varname)
     end
 
     def analyze_sensitivity
