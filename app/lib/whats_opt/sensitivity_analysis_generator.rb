@@ -17,9 +17,16 @@ module WhatsOpt
         _generate_code(dir)
         ok, out, err = _run_screening(dir)
       end
-      p out
-      out ||= "{}"
-      return ok, JSON.parse(out), err
+      Rails.logger.info out
+      out = "nil" if out==""
+      outjson = "null"
+      begin
+        outjson = JSON.parse(out)
+      rescue 
+        outjson = "null"
+      end
+      Rails.logger.info outjson
+      return ok, outjson, err
     end
 
     def _generate_code(gendir, options={})

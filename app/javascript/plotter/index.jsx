@@ -6,10 +6,10 @@ import ScatterPlotMatrix from 'plotter/components/ScatterPlotMatrix';
 import IterationLinePlot from 'plotter/components/IterationLinePlot';
 import IterationRadarPlot from 'plotter/components/IterationRadarPlot';
 import ScatterSurfacePlot from 'plotter/components/ScatterSurfacePlot';
+import ScreeningScatterPlot from 'plotter/components/ScreeningScatterPlot';
 import VariableSelector from 'plotter/components/VariableSelector';
 import AnalysisDatabase from '../utils/AnalysisDatabase';
 import * as caseUtils from '../utils/cases.js';
-
 
 const PLOTS_TAB = 'plots';
 const VARIABLES_TAB = 'variables';
@@ -40,8 +40,8 @@ class PlotPanel extends React.Component {
           title={this.props.title} width={600} />
       </span>);
     }
-    const klass = "tab-pane fade";
-    return (<div className={klass} id={PLOTS_TAB} role="tabpanel" aria-labelledby="plots-tab">
+
+    return (<div className="tab-pane fade" id={PLOTS_TAB} role="tabpanel" aria-labelledby="plots-tab">
       {plotparall}
       {plotoptim}
     </div>);
@@ -87,7 +87,7 @@ class ScreeningPanel extends React.Component {
     this.state = {
       loading: false,
       statusOk: false,
-      sensitivity: {},
+      sensitivity: null,
       error: "",
     };
   }
@@ -96,15 +96,24 @@ class ScreeningPanel extends React.Component {
     this.props.api.openmdaoScreening(
         this.props.opeId,
         (response) => {
+          console.log(response.data);
           this.setState({ loading: false, ...response.data});
         });
   }
 
   render() {
-    const klass = "tab-pane fade";
+    let screenings;
+    if (this.state.sensitivity) {
+      let varnames = Object.keys(this.state.sensitivity).sort();
+      let outs = [];
+      for (let output of varnames) {
+        outs.push([output, this.state.sensitivity[output]])
+      };
+      screenings = outs.map((o) => (<ScreeningScatterPlot key={o[0]} outVarName={o[0]} saData={o[1]} />));
+    }
     return (
-      <div className={klass} id={SCREENING_TAB} role="tabpanel" aria-labelledby="screening-tab">
-        SCREENING
+      <div className="tab-pane fade" id={SCREENING_TAB} role="tabpanel" aria-labelledby="screening-tab">
+        {screenings}
       </div>
     );
   };

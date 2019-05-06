@@ -12,7 +12,7 @@ class SensitivityAnalysisGeneratorTest < ActiveSupport::TestCase
 
   test "should generate sa code for an analysis" do
     Dir.mktmpdir do |dir|
-      dir = "/tmp"
+      # dir = "/tmp"
       filepath = @sagen._generate_code dir
       assert File.exists?(filepath)
     end
