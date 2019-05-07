@@ -186,7 +186,7 @@ class Operation < ApplicationRecord
     var = {}
     case_attrs.each do |c|
       vname = c[:varname]
-      var[vname] ||= Variable.where(name: vname)
+      var[vname] ||= Variable.where(name: vname, io_mode: out)
                             .joins(discipline: :analysis)
                             .where(analyses: {id: self.analysis.id})
                             .take
