@@ -62,11 +62,11 @@ class Variable < ApplicationRecord
   end
 
   def is_input?
-    !outgoing_connections.where(connections: {role: WhatsOpt::Variable::INPUT_ROLES}).blank?
+    !outgoing_connections.where(connections: {role: WhatsOpt::Variable::INTEREST_INPUT_ROLES}).blank?
   end
 
   def is_output?
-    !outgoing_connections.where(connections: {role: WhatsOpt::Variable::OUTPUT_ROLES}).blank?
+    !outgoing_connections.where(connections: {role: WhatsOpt::Variable::INTEREST_OUTPUT_ROLES}).blank?
   end
 
   def lower_py_value

@@ -43,7 +43,7 @@ pb.model.add_constraint('<%= voi.name %>', equals=0.)
 pb.setup()  
 pb.run_driver()        
 
-<% if @mda.uniq_variables.size < 20 %>
+<% if @mda.responses_of_interest.size < 10 %>
 if options.batch:
     exit(0)
 reader = CaseReader(case_recorder_filename)
@@ -53,7 +53,7 @@ data = {'inputs': {}, 'outputs': {} }
 <% @mda.design_variables.each do |dv| -%>
 data['inputs']['<%= dv.name %>'] = np.zeros((n,)+<%= dv.shape=="1"?"(1,)":dv.shape %>)
 <% end -%>
-<% @mda.response_variables.each do |r| -%>
+<% @mda.responses_of_interest.each do |r| -%>
 data['outputs']['<%= r.name %>'] = np.zeros((n,)+<%= r.shape=="1"?"(1,)":r.shape %>)
 <% end -%>
 
@@ -62,14 +62,14 @@ for i in range(len(cases)):
 <% @mda.design_variables.each do |dv| -%>
     data['inputs']['<%= dv.name %>'][i,:] = case.inputs['<%= dv.name %>']
 <% end -%>
-<% @mda.response_variables.each do |r| -%>
+<% @mda.responses_of_interest.each do |r| -%>
     data['outputs']['<%= r.name %>'][i,:] = case.outputs['<%= r.name %>']
 <% end -%>
 
 salib_pb = pb.driver.get_salib_problem()
 inputs = pb.driver.get_cases()
 
-<% @mda.response_variables.each_with_index do |r, j| -%>
+<% @mda.responses_of_interest.each_with_index do |r, j| -%>
 print('*** Output: <%= r.name %>')
 output = data['outputs']['<%= r.name %>'].reshape((-1,))
 Si = ma.analyze(salib_pb, inputs, output, print_to_console=True)

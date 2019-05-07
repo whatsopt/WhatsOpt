@@ -60,9 +60,9 @@ class Analysis < ApplicationRecord
     @variables = Variable.of_analysis(id).active
   end
 
-  def uniq_variables
-    @uniq_variables = Variable.of_analysis(id).active.outputs
-  end
+  # def uniq_variables
+  #   @uniq_variables = Variable.of_analysis(id).active.outputs
+  # end
     
   def parameter_variables
     @params = variables.with_role(WhatsOpt::Variable::PARAMETER_ROLE) + design_variables
@@ -87,7 +87,11 @@ class Analysis < ApplicationRecord
   def ineq_constraint_variables
     @ineqs = variables.with_role(WhatsOpt::Variable::INEQ_CONSTRAINT_ROLE)  
   end
-  
+
+  def responses_of_interest
+    variables.with_role(WhatsOpt::Variable::INTEREST_OUTPUT_ROLES)
+  end
+
   def response_variables
     @resps = variables.with_role(WhatsOpt::Variable::RESPONSE_ROLE) + 
       min_objective_variables + max_objective_variables + eq_constraint_variables + ineq_constraint_variables

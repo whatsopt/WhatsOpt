@@ -9,8 +9,8 @@ class Case < ApplicationRecord
   validates :variable, presence: true
 
   scope :with_role_case, -> (role) { includes(:variable).references(:variables).joins('variables.outgoing_connections').where(connections: {role: role}).uniq }
-  scope :inputs, -> (ope) { Case.where(operation: ope).with_role_case(WhatsOpt::Variable::INPUT_ROLES) }
-  scope :outputs, -> (ope) { Case.where(operation: ope).with_role_case(WhatsOpt::Variable::OUTPUT_ROLES) }
+  scope :inputs, -> (ope) { Case.where(operation: ope).with_role_case(WhatsOpt::Variable::INTEREST_INPUT_ROLES) }
+  scope :outputs, -> (ope) { Case.where(operation: ope).with_role_case(WhatsOpt::Variable::INTEREST_OUTPUT_ROLES) }
 
   def nb_of_points
     values.size
