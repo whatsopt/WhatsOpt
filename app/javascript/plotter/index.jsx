@@ -33,7 +33,7 @@ class PlotPanel extends React.Component {
     const inputCases = [].concat(this.props.cases.i).concat(this.props.cases.c);
     if (inputCases.length == 2 && this.props.cases.o.length == 1) {
       plotparall = (<span>
-        <ScatterSurfacePlot casesx={input_cases[0]} casesy={input_cases[1]}
+        <ScatterSurfacePlot casesx={inputCases[0]} casesy={inputCases[1]}
           casesz={this.props.cases.o[0]} success={this.props.success} />
         <ParallelCoordinates db={this.props.db} optim={this.props.optim}
           cases={this.props.cases} success={this.props.success}
