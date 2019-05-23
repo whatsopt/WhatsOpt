@@ -86,10 +86,10 @@ class Operation < ApplicationRecord
   end
 
   def input_cases
-    cases.select {|c| c.variable.is_input? }
+    cases.select {|c| c.variable.is_connected_as_input_of_interest? }
   end
   def output_cases
-    cases.select {|c| c.variable.is_output? }
+    cases.select {|c| c.variable.is_connected_as_output_of_interest? }
   end
 
   def perform

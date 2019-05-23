@@ -61,12 +61,20 @@ class Variable < ApplicationRecord
     end
   end
 
-  def is_input?
-    !outgoing_connections.where(connections: {role: WhatsOpt::Variable::INTEREST_INPUT_ROLES}).blank?
+  def is_connected_as_input_of_interest?
+    if io_mode.to_sym == IN
+      WhatsOpt::Variable::INTEREST_INPUT_ROLES.include?(incoming_connection.role)
+    else
+      !outgoing_connections.where(connections: {role: WhatsOpt::Variable::INTEREST_INPUT_ROLES}).blank?
+    end
   end
 
-  def is_output?
-    !outgoing_connections.where(connections: {role: WhatsOpt::Variable::INTEREST_OUTPUT_ROLES}).blank?
+  def is_connected_as_output_of_interest?
+    if io_mode.to_sym == IN
+      WhatsOpt::Variable::INTEREST_OUTPUT_ROLES.include?(incoming_connection.role)
+    else
+      !outgoing_connections.where(connections: {role: WhatsOpt::Variable::INTEREST_OUTPUT_ROLES}).blank?
+    end
   end
 
   def lower_py_value
