@@ -35,7 +35,9 @@ class AnalysisSelector extends React.Component {
 
   handleSearch(query) {
     this.setState({isLoading: true});
-    this.props.onAnalysisSearch(query,
+    this.props.onAnalysisSearch(
+        // TODO: implement analysis request using the query string
+        // query,  
         (options) => {
           this.setState({isLoading: false, options: options});
         });
