@@ -108,5 +108,3 @@ gem 'bootstrap', '~> 4.0'
 gem 'font_awesome5_rails'
 gem 'data-confirm-modal'
 
-# Commandline
-gem 'highline'
