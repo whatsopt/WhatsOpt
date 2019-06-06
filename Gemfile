@@ -49,7 +49,6 @@ group :development do
   gem 'capistrano-rvm'
   gem 'capistrano-passenger'
   gem 'capistrano-git-with-submodules', '~> 2.0'
-  gem 'highline'
   # Access an IRB console on exception pages or by using <%= console %> in views
   gem 'web-console'
   gem 'listen', '>= 3.0.5', '< 3.2'
@@ -66,6 +65,8 @@ end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
+# required in dev but seems to be required also in production
+gem 'highline'
 
 source 'https://rails-assets.org' do
   gem 'rails-assets-tether', '>= 1.1.0'
