@@ -19,7 +19,7 @@ from <%= @mda.py_modulename %> import <%= @mda.py_classname %>
 pb = Problem(<%= @mda.py_classname %>())
 
 <% if @driver.pyoptsparse? -%>
-class NamedPyOptSparseDriverAdapter(pyOptSparseDriver):
+class NamedPyOptSparseDriver(pyOptSparseDriver):
     def _get_name(self):
         return '<%= "pyoptsparse_optimizer_#{@driver.algo_option.downcase}" %>'
 pb.driver = NamedPyOptSparseDriver()
