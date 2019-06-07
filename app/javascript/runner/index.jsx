@@ -227,7 +227,6 @@ class Runner extends React.Component {
       name: this.props.ope.name,
       driver: this.props.ope.driver || "runonce",
     };
-    console.log(this.props.ope.options);
     const formOptions = this._toFormOptions(this.props.ope.driver, this.props.ope.options);
     Object.assign(formData, formOptions);
     this.opeData = {};
@@ -255,12 +254,12 @@ class Runner extends React.Component {
 
   handleRun(data) {
     const form = this._filterFormOptions(data.formData);
-    // console.log("FORM DATA = "+JSON.stringify(form));
+    console.log("FORM DATA = "+JSON.stringify(form));
     const opeAttrs = {name: form.name, host: form.host, driver: form.driver, options_attributes: []};
 
     this.api.getOperation(this.props.ope.id,
         (response) => {
-        // console.log(response);
+          console.log("resp="+JSON.stringify(response.data));
           const ids = response.data.options.map((opt) => opt.id);
           for (const section in form) {
             if (section === form.driver) {
@@ -277,7 +276,7 @@ class Runner extends React.Component {
 
           const newState = update(this.state, {status: {$set: "STARTED"}});
           this.setState(newState);
-          console.log(opeAttrs);
+          console.log("opeAttrs="+JSON.stringify(opeAttrs));
 
           this.api.updateOperation(this.props.ope.id, opeAttrs,
               (response) => {this._pollOperationJob(data.formData);},
@@ -343,12 +342,13 @@ class Runner extends React.Component {
   _pollOperationJob(formData) {
     this.api.pollOperationJob(this.props.ope.id,
         (job) => {
-        // console.log("CHECK");
-        // console.log(job);
+          console.log("CHECK");
+          console.log(JSON.stringify(job.status));
           return job.status === 'DONE'|| job.status === 'FAILED';
         },
         (job) => {
-          //console.log(job);
+          console.log("UPDATE");
+          console.log(JSON.stringify(job));
           this.opeData = {};
           Object.assign(this.opeData, formData);
           this.opeStatus = job.status;
