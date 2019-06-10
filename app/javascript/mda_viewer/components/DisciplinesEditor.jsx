@@ -152,14 +152,6 @@ Discipline.propTypes = {
   onSubAnalysisSelected: PropTypes.func.isRequired,
 };
 
-const reorder = (list, startIndex, endIndex) => {
-  const result = Array.from(list);
-  const [removed] = result.splice(startIndex, 1);
-  result.splice(endIndex, 0, removed);
-
-  return result;
-};
-
 class DisciplinesEditor extends React.Component {
   constructor(props) {
     super(props);
@@ -181,15 +173,10 @@ class DisciplinesEditor extends React.Component {
     if (!result.destination) {
       return;
     }
-
-    const items = reorder(
-        this.state.nodes,
-        result.source.index,
-        result.destination.index
+    this.props.onDisciplineUpdate(
+        this.props.nodes[result.source.index+1],
+        {position: result.destination.index+1}
     );
-    this.setState({nodes: items});
-    this.props.onDisciplineUpdate(this.props.nodes[result.source.index+1],
-        {position: result.destination.index+1});
   };
 
   // Take into account in this.state of discipline changes coming

@@ -16,6 +16,14 @@ import { deepIsEqual } from '../utils/compare';
 
 const VAR_REGEXP = /^[a-zA-Z][_a-zA-Z0-9]*$/;
 
+const reorder = (list, startIndex, endIndex) => {
+  const result = Array.from(list);
+  const [removed] = result.splice(startIndex, 1);
+  result.splice(endIndex, 0, removed);
+
+  return result;
+};
+
 class MdaViewer extends React.Component {
   constructor(props) {
     super(props);
@@ -175,6 +183,11 @@ class MdaViewer extends React.Component {
   }
 
   handleDisciplineUpdate(node, discAttrs) {
+    if ('position' in discAttrs) {
+      const items = reorder(this.state.mda.nodes, this.state.mda.nodes.indexOf(node), discAttrs['position']);
+      const newState = update(this.state, {mda: {nodes: {$set: items}}});
+      this.setState(newState);
+    }
     this.api.updateDiscipline(node.id, discAttrs, () => {this.renderXdsm();});
   }
 
