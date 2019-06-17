@@ -1,6 +1,6 @@
 <h1>CHANGELOG</h1>
 
-<h3>0.15.1 (06/05/2019)</h3>
+<h3>0.16.0 (06/05/2019)</h3>
 <ul>
   <li>Add screening tab on Salib DOE Morris operation pages</li>
   <li>Upgrade gems and javascript packages</li>
