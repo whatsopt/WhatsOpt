@@ -96,7 +96,7 @@ RUN pip install jupyter \
   && pip install thrift==0.11.0 \
 	&& pip install Click \
 	&& pip install tabulate \
-	&& pip install openmdao==2.6 \
+	&& pip install openmdao \
 	&& pip install salib \
 	&& pip install git+https://github.com/SMTOrg/smt 
 	
@@ -121,37 +121,37 @@ RUN pip install jupyter \
 #	-DVSP_NO_GRAPHICS=1 ../repo/SuperProject \
 #  && make 
 
-# # Thrift
-# ENV THRIFT_VERSION 0.11.0
+# Thrift
+ENV THRIFT_VERSION 0.11.0
 
-# RUN buildDeps=" \
-# 		automake \
-# 		bison \
-# 		curl \
-# 		flex \
-# 		g++ \
-# 		libboost-dev \
-# 		libboost-filesystem-dev \
-# 		libboost-program-options-dev \
-# 		libboost-system-dev \
-# 		libboost-test-dev \
-# 		libevent-dev \
-# 		libssl-dev \
-# 		libtool \
-# 		make \
-# 		pkg-config \
-# 	"; \
-# 	apt-get update && apt-get install -y --no-install-recommends $buildDeps && rm -rf /var/lib/apt/lists/* \
-# 	&& curl -sSL "http://apache.mirrors.spacedump.net/thrift/$THRIFT_VERSION/thrift-$THRIFT_VERSION.tar.gz" -o thrift.tar.gz \
-# 	&& mkdir -p /thrift \
-# 	&& tar zxf thrift.tar.gz -C /thrift --strip-components=1 \
-# 	&& rm thrift.tar.gz \
-# 	&& cd /thrift \
-# 	&& ./configure  --without-python --without-cpp --without-ruby --without-nodejs --without-py3 \
-# 	&& make \
-# 	&& make install \
-# 	&& cd / \
-#     && rm -rf /thrift 
+RUN buildDeps=" \
+		automake \
+		bison \
+		curl \
+		flex \
+		g++ \
+		libboost-dev \
+		libboost-filesystem-dev \
+		libboost-program-options-dev \
+		libboost-system-dev \
+		libboost-test-dev \
+		libevent-dev \
+		libssl-dev \
+		libtool \
+		make \
+		pkg-config \
+	"; \
+	apt-get update && apt-get install -y --no-install-recommends $buildDeps && rm -rf /var/lib/apt/lists/* \
+	&& curl -sSL "http://apache.mirrors.spacedump.net/thrift/$THRIFT_VERSION/thrift-$THRIFT_VERSION.tar.gz" -o thrift.tar.gz \
+	&& mkdir -p /thrift \
+	&& tar zxf thrift.tar.gz -C /thrift --strip-components=1 \
+	&& rm thrift.tar.gz \
+	&& cd /thrift \
+	&& ./configure  --without-python --without-cpp --without-ruby --without-nodejs --without-py3 \
+	&& make \
+	&& make install \
+	&& cd / \
+  && rm -rf /thrift 
 
 RUN apt-get update && apt-get install -y iputils-ping
 	
