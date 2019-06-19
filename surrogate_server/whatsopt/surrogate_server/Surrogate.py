@@ -19,22 +19,28 @@ all_structs = []
 
 
 class Iface(object):
-    def create_analysis_surrogate(self, analysis_id, x, ynames, y):
+    def create_surrogate(self, surrogate_id, kind, xt, yt):
         """
         Parameters:
-         - analysis_id
-         - x
-         - ynames
-         - y
+         - surrogate_id
+         - kind
+         - xt
+         - yt
         """
         pass
 
-    def predict_values(self, analysis_id, yname, x):
+    def predict_values(self, surrogate_id, x):
         """
         Parameters:
-         - analysis_id
-         - yname
+         - surrogate_id
          - x
+        """
+        pass
+
+    def destroy_surrogate(self, surrogate_id):
+        """
+        Parameters:
+         - surrogate_id
         """
         pass
 
@@ -46,29 +52,29 @@ class Client(Iface):
             self._oprot = oprot
         self._seqid = 0
 
-    def create_analysis_surrogate(self, analysis_id, x, ynames, y):
+    def create_surrogate(self, surrogate_id, kind, xt, yt):
         """
         Parameters:
-         - analysis_id
-         - x
-         - ynames
-         - y
+         - surrogate_id
+         - kind
+         - xt
+         - yt
         """
-        self.send_create_analysis_surrogate(analysis_id, x, ynames, y)
-        self.recv_create_analysis_surrogate()
+        self.send_create_surrogate(surrogate_id, kind, xt, yt)
+        self.recv_create_surrogate()
 
-    def send_create_analysis_surrogate(self, analysis_id, x, ynames, y):
-        self._oprot.writeMessageBegin('create_analysis_surrogate', TMessageType.CALL, self._seqid)
-        args = create_analysis_surrogate_args()
-        args.analysis_id = analysis_id
-        args.x = x
-        args.ynames = ynames
-        args.y = y
+    def send_create_surrogate(self, surrogate_id, kind, xt, yt):
+        self._oprot.writeMessageBegin('create_surrogate', TMessageType.CALL, self._seqid)
+        args = create_surrogate_args()
+        args.surrogate_id = surrogate_id
+        args.kind = kind
+        args.xt = xt
+        args.yt = yt
         args.write(self._oprot)
         self._oprot.writeMessageEnd()
         self._oprot.trans.flush()
 
-    def recv_create_analysis_surrogate(self):
+    def recv_create_surrogate(self):
         iprot = self._iprot
         (fname, mtype, rseqid) = iprot.readMessageBegin()
         if mtype == TMessageType.EXCEPTION:
@@ -76,26 +82,24 @@ class Client(Iface):
             x.read(iprot)
             iprot.readMessageEnd()
             raise x
-        result = create_analysis_surrogate_result()
+        result = create_surrogate_result()
         result.read(iprot)
         iprot.readMessageEnd()
         return
 
-    def predict_values(self, analysis_id, yname, x):
+    def predict_values(self, surrogate_id, x):
         """
         Parameters:
-         - analysis_id
-         - yname
+         - surrogate_id
          - x
         """
-        self.send_predict_values(analysis_id, yname, x)
+        self.send_predict_values(surrogate_id, x)
         return self.recv_predict_values()
 
-    def send_predict_values(self, analysis_id, yname, x):
+    def send_predict_values(self, surrogate_id, x):
         self._oprot.writeMessageBegin('predict_values', TMessageType.CALL, self._seqid)
         args = predict_values_args()
-        args.analysis_id = analysis_id
-        args.yname = yname
+        args.surrogate_id = surrogate_id
         args.x = x
         args.write(self._oprot)
         self._oprot.writeMessageEnd()
@@ -116,13 +120,43 @@ class Client(Iface):
             return result.success
         raise TApplicationException(TApplicationException.MISSING_RESULT, "predict_values failed: unknown result")
 
+    def destroy_surrogate(self, surrogate_id):
+        """
+        Parameters:
+         - surrogate_id
+        """
+        self.send_destroy_surrogate(surrogate_id)
+        self.recv_destroy_surrogate()
+
+    def send_destroy_surrogate(self, surrogate_id):
+        self._oprot.writeMessageBegin('destroy_surrogate', TMessageType.CALL, self._seqid)
+        args = destroy_surrogate_args()
+        args.surrogate_id = surrogate_id
+        args.write(self._oprot)
+        self._oprot.writeMessageEnd()
+        self._oprot.trans.flush()
+
+    def recv_destroy_surrogate(self):
+        iprot = self._iprot
+        (fname, mtype, rseqid) = iprot.readMessageBegin()
+        if mtype == TMessageType.EXCEPTION:
+            x = TApplicationException()
+            x.read(iprot)
+            iprot.readMessageEnd()
+            raise x
+        result = destroy_surrogate_result()
+        result.read(iprot)
+        iprot.readMessageEnd()
+        return
+
 
 class Processor(Iface, TProcessor):
     def __init__(self, handler):
         self._handler = handler
         self._processMap = {}
-        self._processMap["create_analysis_surrogate"] = Processor.process_create_analysis_surrogate
+        self._processMap["create_surrogate"] = Processor.process_create_surrogate
         self._processMap["predict_values"] = Processor.process_predict_values
+        self._processMap["destroy_surrogate"] = Processor.process_destroy_surrogate
 
     def process(self, iprot, oprot):
         (name, type, seqid) = iprot.readMessageBegin()
@@ -139,13 +173,13 @@ class Processor(Iface, TProcessor):
             self._processMap[name](self, seqid, iprot, oprot)
         return True
 
-    def process_create_analysis_surrogate(self, seqid, iprot, oprot):
-        args = create_analysis_surrogate_args()
+    def process_create_surrogate(self, seqid, iprot, oprot):
+        args = create_surrogate_args()
         args.read(iprot)
         iprot.readMessageEnd()
-        result = create_analysis_surrogate_result()
+        result = create_surrogate_result()
         try:
-            self._handler.create_analysis_surrogate(args.analysis_id, args.x, args.ynames, args.y)
+            self._handler.create_surrogate(args.surrogate_id, args.kind, args.xt, args.yt)
             msg_type = TMessageType.REPLY
         except TTransport.TTransportException:
             raise
@@ -157,7 +191,7 @@ class Processor(Iface, TProcessor):
             logging.exception('Unexpected exception in handler')
             msg_type = TMessageType.EXCEPTION
             result = TApplicationException(TApplicationException.INTERNAL_ERROR, 'Internal error')
-        oprot.writeMessageBegin("create_analysis_surrogate", msg_type, seqid)
+        oprot.writeMessageBegin("create_surrogate", msg_type, seqid)
         result.write(oprot)
         oprot.writeMessageEnd()
         oprot.trans.flush()
@@ -168,7 +202,7 @@ class Processor(Iface, TProcessor):
         iprot.readMessageEnd()
         result = predict_values_result()
         try:
-            result.success = self._handler.predict_values(args.analysis_id, args.yname, args.x)
+            result.success = self._handler.predict_values(args.surrogate_id, args.x)
             msg_type = TMessageType.REPLY
         except TTransport.TTransportException:
             raise
@@ -185,24 +219,47 @@ class Processor(Iface, TProcessor):
         oprot.writeMessageEnd()
         oprot.trans.flush()
 
+    def process_destroy_surrogate(self, seqid, iprot, oprot):
+        args = destroy_surrogate_args()
+        args.read(iprot)
+        iprot.readMessageEnd()
+        result = destroy_surrogate_result()
+        try:
+            self._handler.destroy_surrogate(args.surrogate_id)
+            msg_type = TMessageType.REPLY
+        except TTransport.TTransportException:
+            raise
+        except TApplicationException as ex:
+            logging.exception('TApplication exception in handler')
+            msg_type = TMessageType.EXCEPTION
+            result = ex
+        except Exception:
+            logging.exception('Unexpected exception in handler')
+            msg_type = TMessageType.EXCEPTION
+            result = TApplicationException(TApplicationException.INTERNAL_ERROR, 'Internal error')
+        oprot.writeMessageBegin("destroy_surrogate", msg_type, seqid)
+        result.write(oprot)
+        oprot.writeMessageEnd()
+        oprot.trans.flush()
+
 # HELPER FUNCTIONS AND STRUCTURES
 
 
-class create_analysis_surrogate_args(object):
+class create_surrogate_args(object):
     """
     Attributes:
-     - analysis_id
-     - x
-     - ynames
-     - y
+     - surrogate_id
+     - kind
+     - xt
+     - yt
     """
 
 
-    def __init__(self, analysis_id=None, x=None, ynames=None, y=None,):
-        self.analysis_id = analysis_id
-        self.x = x
-        self.ynames = ynames
-        self.y = y
+    def __init__(self, surrogate_id=None, kind=None, xt=None, yt=None,):
+        self.surrogate_id = surrogate_id
+        self.kind = kind
+        self.xt = xt
+        self.yt = yt
 
     def read(self, iprot):
         if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
@@ -215,12 +272,17 @@ class create_analysis_surrogate_args(object):
                 break
             if fid == 1:
                 if ftype == TType.STRING:
-                    self.analysis_id = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                    self.surrogate_id = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
                 else:
                     iprot.skip(ftype)
             elif fid == 2:
+                if ftype == TType.I32:
+                    self.kind = iprot.readI32()
+                else:
+                    iprot.skip(ftype)
+            elif fid == 3:
                 if ftype == TType.LIST:
-                    self.x = []
+                    self.xt = []
                     (_etype3, _size0) = iprot.readListBegin()
                     for _i4 in range(_size0):
                         _elem5 = []
@@ -229,27 +291,17 @@ class create_analysis_surrogate_args(object):
                             _elem11 = iprot.readDouble()
                             _elem5.append(_elem11)
                         iprot.readListEnd()
-                        self.x.append(_elem5)
-                    iprot.readListEnd()
-                else:
-                    iprot.skip(ftype)
-            elif fid == 3:
-                if ftype == TType.LIST:
-                    self.ynames = []
-                    (_etype15, _size12) = iprot.readListBegin()
-                    for _i16 in range(_size12):
-                        _elem17 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
-                        self.ynames.append(_elem17)
+                        self.xt.append(_elem5)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
             elif fid == 4:
                 if ftype == TType.LIST:
-                    self.y = []
-                    (_etype21, _size18) = iprot.readListBegin()
-                    for _i22 in range(_size18):
-                        _elem23 = iprot.readDouble()
-                        self.y.append(_elem23)
+                    self.yt = []
+                    (_etype15, _size12) = iprot.readListBegin()
+                    for _i16 in range(_size12):
+                        _elem17 = iprot.readDouble()
+                        self.yt.append(_elem17)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
@@ -262,33 +314,30 @@ class create_analysis_surrogate_args(object):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
             oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
             return
-        oprot.writeStructBegin('create_analysis_surrogate_args')
-        if self.analysis_id is not None:
-            oprot.writeFieldBegin('analysis_id', TType.STRING, 1)
-            oprot.writeString(self.analysis_id.encode('utf-8') if sys.version_info[0] == 2 else self.analysis_id)
+        oprot.writeStructBegin('create_surrogate_args')
+        if self.surrogate_id is not None:
+            oprot.writeFieldBegin('surrogate_id', TType.STRING, 1)
+            oprot.writeString(self.surrogate_id.encode('utf-8') if sys.version_info[0] == 2 else self.surrogate_id)
             oprot.writeFieldEnd()
-        if self.x is not None:
-            oprot.writeFieldBegin('x', TType.LIST, 2)
-            oprot.writeListBegin(TType.LIST, len(self.x))
-            for iter24 in self.x:
-                oprot.writeListBegin(TType.DOUBLE, len(iter24))
-                for iter25 in iter24:
-                    oprot.writeDouble(iter25)
+        if self.kind is not None:
+            oprot.writeFieldBegin('kind', TType.I32, 2)
+            oprot.writeI32(self.kind)
+            oprot.writeFieldEnd()
+        if self.xt is not None:
+            oprot.writeFieldBegin('xt', TType.LIST, 3)
+            oprot.writeListBegin(TType.LIST, len(self.xt))
+            for iter18 in self.xt:
+                oprot.writeListBegin(TType.DOUBLE, len(iter18))
+                for iter19 in iter18:
+                    oprot.writeDouble(iter19)
                 oprot.writeListEnd()
             oprot.writeListEnd()
             oprot.writeFieldEnd()
-        if self.ynames is not None:
-            oprot.writeFieldBegin('ynames', TType.LIST, 3)
-            oprot.writeListBegin(TType.STRING, len(self.ynames))
-            for iter26 in self.ynames:
-                oprot.writeString(iter26.encode('utf-8') if sys.version_info[0] == 2 else iter26)
-            oprot.writeListEnd()
-            oprot.writeFieldEnd()
-        if self.y is not None:
-            oprot.writeFieldBegin('y', TType.LIST, 4)
-            oprot.writeListBegin(TType.DOUBLE, len(self.y))
-            for iter27 in self.y:
-                oprot.writeDouble(iter27)
+        if self.yt is not None:
+            oprot.writeFieldBegin('yt', TType.LIST, 4)
+            oprot.writeListBegin(TType.DOUBLE, len(self.yt))
+            for iter20 in self.yt:
+                oprot.writeDouble(iter20)
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
@@ -307,17 +356,17 @@ class create_analysis_surrogate_args(object):
 
     def __ne__(self, other):
         return not (self == other)
-all_structs.append(create_analysis_surrogate_args)
-create_analysis_surrogate_args.thrift_spec = (
+all_structs.append(create_surrogate_args)
+create_surrogate_args.thrift_spec = (
     None,  # 0
-    (1, TType.STRING, 'analysis_id', 'UTF8', None, ),  # 1
-    (2, TType.LIST, 'x', (TType.LIST, (TType.DOUBLE, None, False), False), None, ),  # 2
-    (3, TType.LIST, 'ynames', (TType.STRING, 'UTF8', False), None, ),  # 3
-    (4, TType.LIST, 'y', (TType.DOUBLE, None, False), None, ),  # 4
+    (1, TType.STRING, 'surrogate_id', 'UTF8', None, ),  # 1
+    (2, TType.I32, 'kind', None, None, ),  # 2
+    (3, TType.LIST, 'xt', (TType.LIST, (TType.DOUBLE, None, False), False), None, ),  # 3
+    (4, TType.LIST, 'yt', (TType.DOUBLE, None, False), None, ),  # 4
 )
 
 
-class create_analysis_surrogate_result(object):
+class create_surrogate_result(object):
 
 
     def read(self, iprot):
@@ -338,7 +387,7 @@ class create_analysis_surrogate_result(object):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
             oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
             return
-        oprot.writeStructBegin('create_analysis_surrogate_result')
+        oprot.writeStructBegin('create_surrogate_result')
         oprot.writeFieldStop()
         oprot.writeStructEnd()
 
@@ -355,23 +404,21 @@ class create_analysis_surrogate_result(object):
 
     def __ne__(self, other):
         return not (self == other)
-all_structs.append(create_analysis_surrogate_result)
-create_analysis_surrogate_result.thrift_spec = (
+all_structs.append(create_surrogate_result)
+create_surrogate_result.thrift_spec = (
 )
 
 
 class predict_values_args(object):
     """
     Attributes:
-     - analysis_id
-     - yname
+     - surrogate_id
      - x
     """
 
 
-    def __init__(self, analysis_id=None, yname=None, x=None,):
-        self.analysis_id = analysis_id
-        self.yname = yname
+    def __init__(self, surrogate_id=None, x=None,):
+        self.surrogate_id = surrogate_id
         self.x = x
 
     def read(self, iprot):
@@ -385,26 +432,21 @@ class predict_values_args(object):
                 break
             if fid == 1:
                 if ftype == TType.STRING:
-                    self.analysis_id = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                    self.surrogate_id = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
                 else:
                     iprot.skip(ftype)
             elif fid == 2:
-                if ftype == TType.STRING:
-                    self.yname = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
-                else:
-                    iprot.skip(ftype)
-            elif fid == 3:
                 if ftype == TType.LIST:
                     self.x = []
-                    (_etype31, _size28) = iprot.readListBegin()
-                    for _i32 in range(_size28):
-                        _elem33 = []
-                        (_etype37, _size34) = iprot.readListBegin()
-                        for _i38 in range(_size34):
-                            _elem39 = iprot.readDouble()
-                            _elem33.append(_elem39)
+                    (_etype24, _size21) = iprot.readListBegin()
+                    for _i25 in range(_size21):
+                        _elem26 = []
+                        (_etype30, _size27) = iprot.readListBegin()
+                        for _i31 in range(_size27):
+                            _elem32 = iprot.readDouble()
+                            _elem26.append(_elem32)
                         iprot.readListEnd()
-                        self.x.append(_elem33)
+                        self.x.append(_elem26)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
@@ -418,21 +460,17 @@ class predict_values_args(object):
             oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
             return
         oprot.writeStructBegin('predict_values_args')
-        if self.analysis_id is not None:
-            oprot.writeFieldBegin('analysis_id', TType.STRING, 1)
-            oprot.writeString(self.analysis_id.encode('utf-8') if sys.version_info[0] == 2 else self.analysis_id)
-            oprot.writeFieldEnd()
-        if self.yname is not None:
-            oprot.writeFieldBegin('yname', TType.STRING, 2)
-            oprot.writeString(self.yname.encode('utf-8') if sys.version_info[0] == 2 else self.yname)
+        if self.surrogate_id is not None:
+            oprot.writeFieldBegin('surrogate_id', TType.STRING, 1)
+            oprot.writeString(self.surrogate_id.encode('utf-8') if sys.version_info[0] == 2 else self.surrogate_id)
             oprot.writeFieldEnd()
         if self.x is not None:
-            oprot.writeFieldBegin('x', TType.LIST, 3)
+            oprot.writeFieldBegin('x', TType.LIST, 2)
             oprot.writeListBegin(TType.LIST, len(self.x))
-            for iter40 in self.x:
-                oprot.writeListBegin(TType.DOUBLE, len(iter40))
-                for iter41 in iter40:
-                    oprot.writeDouble(iter41)
+            for iter33 in self.x:
+                oprot.writeListBegin(TType.DOUBLE, len(iter33))
+                for iter34 in iter33:
+                    oprot.writeDouble(iter34)
                 oprot.writeListEnd()
             oprot.writeListEnd()
             oprot.writeFieldEnd()
@@ -455,9 +493,8 @@ class predict_values_args(object):
 all_structs.append(predict_values_args)
 predict_values_args.thrift_spec = (
     None,  # 0
-    (1, TType.STRING, 'analysis_id', 'UTF8', None, ),  # 1
-    (2, TType.STRING, 'yname', 'UTF8', None, ),  # 2
-    (3, TType.LIST, 'x', (TType.LIST, (TType.DOUBLE, None, False), False), None, ),  # 3
+    (1, TType.STRING, 'surrogate_id', 'UTF8', None, ),  # 1
+    (2, TType.LIST, 'x', (TType.LIST, (TType.DOUBLE, None, False), False), None, ),  # 2
 )
 
 
@@ -483,10 +520,10 @@ class predict_values_result(object):
             if fid == 0:
                 if ftype == TType.LIST:
                     self.success = []
-                    (_etype45, _size42) = iprot.readListBegin()
-                    for _i46 in range(_size42):
-                        _elem47 = iprot.readDouble()
-                        self.success.append(_elem47)
+                    (_etype38, _size35) = iprot.readListBegin()
+                    for _i39 in range(_size35):
+                        _elem40 = iprot.readDouble()
+                        self.success.append(_elem40)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
@@ -503,8 +540,8 @@ class predict_values_result(object):
         if self.success is not None:
             oprot.writeFieldBegin('success', TType.LIST, 0)
             oprot.writeListBegin(TType.DOUBLE, len(self.success))
-            for iter48 in self.success:
-                oprot.writeDouble(iter48)
+            for iter41 in self.success:
+                oprot.writeDouble(iter41)
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
@@ -526,6 +563,110 @@ class predict_values_result(object):
 all_structs.append(predict_values_result)
 predict_values_result.thrift_spec = (
     (0, TType.LIST, 'success', (TType.DOUBLE, None, False), None, ),  # 0
+)
+
+
+class destroy_surrogate_args(object):
+    """
+    Attributes:
+     - surrogate_id
+    """
+
+
+    def __init__(self, surrogate_id=None,):
+        self.surrogate_id = surrogate_id
+
+    def read(self, iprot):
+        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
+            return
+        iprot.readStructBegin()
+        while True:
+            (fname, ftype, fid) = iprot.readFieldBegin()
+            if ftype == TType.STOP:
+                break
+            if fid == 1:
+                if ftype == TType.STRING:
+                    self.surrogate_id = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                else:
+                    iprot.skip(ftype)
+            else:
+                iprot.skip(ftype)
+            iprot.readFieldEnd()
+        iprot.readStructEnd()
+
+    def write(self, oprot):
+        if oprot._fast_encode is not None and self.thrift_spec is not None:
+            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
+            return
+        oprot.writeStructBegin('destroy_surrogate_args')
+        if self.surrogate_id is not None:
+            oprot.writeFieldBegin('surrogate_id', TType.STRING, 1)
+            oprot.writeString(self.surrogate_id.encode('utf-8') if sys.version_info[0] == 2 else self.surrogate_id)
+            oprot.writeFieldEnd()
+        oprot.writeFieldStop()
+        oprot.writeStructEnd()
+
+    def validate(self):
+        return
+
+    def __repr__(self):
+        L = ['%s=%r' % (key, value)
+             for key, value in self.__dict__.items()]
+        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+
+    def __eq__(self, other):
+        return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
+
+    def __ne__(self, other):
+        return not (self == other)
+all_structs.append(destroy_surrogate_args)
+destroy_surrogate_args.thrift_spec = (
+    None,  # 0
+    (1, TType.STRING, 'surrogate_id', 'UTF8', None, ),  # 1
+)
+
+
+class destroy_surrogate_result(object):
+
+
+    def read(self, iprot):
+        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
+            return
+        iprot.readStructBegin()
+        while True:
+            (fname, ftype, fid) = iprot.readFieldBegin()
+            if ftype == TType.STOP:
+                break
+            else:
+                iprot.skip(ftype)
+            iprot.readFieldEnd()
+        iprot.readStructEnd()
+
+    def write(self, oprot):
+        if oprot._fast_encode is not None and self.thrift_spec is not None:
+            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
+            return
+        oprot.writeStructBegin('destroy_surrogate_result')
+        oprot.writeFieldStop()
+        oprot.writeStructEnd()
+
+    def validate(self):
+        return
+
+    def __repr__(self):
+        L = ['%s=%r' % (key, value)
+             for key, value in self.__dict__.items()]
+        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+
+    def __eq__(self, other):
+        return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
+
+    def __ne__(self, other):
+        return not (self == other)
+all_structs.append(destroy_surrogate_result)
+destroy_surrogate_result.thrift_spec = (
 )
 fix_spec(all_structs)
 del all_structs

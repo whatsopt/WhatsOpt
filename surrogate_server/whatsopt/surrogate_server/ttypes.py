@@ -14,5 +14,41 @@ import sys
 
 from thrift.transport import TTransport
 all_structs = []
+
+
+class SurrogateKind(object):
+    KRIGING = 0
+    KPLS = 1
+    KPLSK = 2
+    LS = 3
+    QP = 4
+    RBF = 5
+    IDW = 6
+    RMTC = 7
+    RMTB = 8
+
+    _VALUES_TO_NAMES = {
+        0: "KRIGING",
+        1: "KPLS",
+        2: "KPLSK",
+        3: "LS",
+        4: "QP",
+        5: "RBF",
+        6: "IDW",
+        7: "RMTC",
+        8: "RMTB",
+    }
+
+    _NAMES_TO_VALUES = {
+        "KRIGING": 0,
+        "KPLS": 1,
+        "KPLSK": 2,
+        "LS": 3,
+        "QP": 4,
+        "RBF": 5,
+        "IDW": 6,
+        "RMTC": 7,
+        "RMTB": 8,
+    }
 fix_spec(all_structs)
 del all_structs

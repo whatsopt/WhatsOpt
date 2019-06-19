@@ -8,23 +8,26 @@ from thrift.transport import TTransport
 from thrift.protocol import TBinaryProtocol
 from thrift.server import TServer
 
-from whatsopt.smt_server import Surrogate as SurrogateService
+from whatsopt.surrogate_server import Surrogate as SurrogateService
 from smt.surrogate_models import KRG, LS, QP, RBF
+from whatsopt.surrogate_store import SurrogateStore
 
 class SurrogateHandler:
-
     def __init__(self):
-        pass
+        self.sm_store = SurrogateStore()
 
-    def create_analysis_surrogate(self, analysis_id, xt, ynames, yt):
-        sm = KRG(data_dir='cache')
-        sm.set_training_values(np.array(xt), np.array(yt))
-        sm.train()
+    def create_surrogate(self, surrogate_id, surrogate_kind, xt, yt):
+        self.sm_store.create_surrogate(surrogate_id, surrogate_kind, xt, yt) 
 
-        print(analysis_id, xt, ynames, yt)
+    def predict_values(self, surrogate_id, x):
+        sm = self.sm_store.get_surrogate(surrogate_id)
+        if sm:
+            return sm.predict_values(np.array(x))
+        else:
+            return []
 
-    def predict_values(self, analysis_id, yname, x):
-        pass
+    def destroy_surrogate(self, surrogate_id):
+        self.sm_store.destroy_surrogate(surrogate_id)
 
 handler = SurrogateHandler()
 processor = SurrogateService.Processor(handler)

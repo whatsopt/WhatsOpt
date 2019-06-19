@@ -109,3 +109,5 @@ gem 'bootstrap', '~> 4.0'
 gem 'font_awesome5_rails'
 gem 'data-confirm-modal'
 
+# thrift
+gem 'thrift', '0.11.0'

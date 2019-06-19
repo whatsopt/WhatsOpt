@@ -1,19 +1,32 @@
-namespace py surrogate_server
-
+namespace py whatsopt.surrogate_server
+namespace rb WhatsOpt.SurrogateServer
+ 
 typedef double Float
 typedef list<Float> Vector
 typedef list<Vector> Matrix
 
+enum SurrogateKind {
+  KRIGING,
+  KPLS,
+  KPLSK,
+  LS,
+  QP,
+  RBF,
+  IDW,
+  RMTC,
+  RMTB
+}
+
 service Surrogate {
 
-  void create_analysis_surrogate(1: string surrogate_id,
-                                 2: string analysis_id, 
-                                 3: Matrix x, 
-                                 4: list<string> ynames,
-                                 5: Vector y);
+  void create_surrogate(1: string surrogate_id,
+                        2: SurrogateKind kind, 
+                        3: Matrix xt, 
+                        4: Vector yt);
 
-  Vector predict_values(1: string analysis_id, 
-                        2: string yname, 
-                        3: Matrix x);
+  Vector predict_values(1: string surrogate_id, 
+                        2: Matrix x);
 
+  void destroy_surrogate(1: string surrogate_id);
+  
 }
