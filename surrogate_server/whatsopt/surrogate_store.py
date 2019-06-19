@@ -21,7 +21,6 @@ class SurrogateStore(object):
         self.outdir = outdir
 
     def create_surrogate(self, surrogate_id, surrogate_kind, xt, yt):
-        print("SERVER")
         sm = KRG()
         sm.set_training_values(np.array(xt), np.array(yt))
         sm.train()

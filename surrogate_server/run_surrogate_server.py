@@ -17,9 +17,11 @@ class SurrogateHandler:
         self.sm_store = SurrogateStore()
 
     def create_surrogate(self, surrogate_id, surrogate_kind, xt, yt):
+        print("CREATE")
         self.sm_store.create_surrogate(surrogate_id, surrogate_kind, xt, yt) 
 
     def predict_values(self, surrogate_id, x):
+        print("PREDICT")
         sm = self.sm_store.get_surrogate(surrogate_id)
         if sm:
             return sm.predict_values(np.array(x))
@@ -27,6 +29,7 @@ class SurrogateHandler:
             return []
 
     def destroy_surrogate(self, surrogate_id):
+        print("DESTROY")
         self.sm_store.destroy_surrogate(surrogate_id)
 
 handler = SurrogateHandler()

@@ -18,7 +18,11 @@ module WhatsOpt
     end
 
     def predict_values(x)
-      _send { @client.predict_values(@surrogate_id, x) }
+      values = []
+      _send { 
+        values = @client.predict_values(@surrogate_id, x) 
+      }
+      values
     end
 
     def destroy_surrogate()
