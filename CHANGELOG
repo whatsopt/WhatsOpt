@@ -1,5 +1,11 @@
 <h1>CHANGELOG</h1>
 
+<h3>1.0.0 (17/06/2019)</h3>
+<ul>
+  <li>Présentation à la conférence AIAA Aviation 2019 (Dallas TX)</li>
+  <li>Article: https://doi.org/10.2514/6.2019-2990</li>
+</ul>
+
 <h3>0.16.0 (06/05/2019)</h3>
 <ul>
   <li>Add screening tab on Salib DOE Morris operation pages</li>
