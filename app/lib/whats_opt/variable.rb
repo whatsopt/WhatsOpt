@@ -75,6 +75,16 @@ module WhatsOpt
       self.update(type: other.type, shape: other.shape, desc: other.desc, units: other.units, active: other.active)
       self
     end
+
+    def get_variables_attributes(cases, out_nb: 1)
+      vars = []
+      cases[0...-out_nb].each do |c|
+        vars << {"name": "x", "io_mode": IN}
+      end
+      cases[-out_nb..-1].each do |c|
+        vars << {"name": "x", "io_mode": OUT}
+      end
+    end
 end
 
 end

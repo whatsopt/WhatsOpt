@@ -8,7 +8,11 @@ class Api::V1::OperationsController < Api::ApiController
   
   # POST /api/v1/{mda_id}/operations
   def create
-    mda = Analysis.find(params[:mda_id])
+    if params[:mda_id]
+      mda = Analysis.find(params[:mda_id])
+    else
+      mda = Analysis.build_for_operation(ope_params)
+    end
     authorize mda
     @operation = Operation.build_operation(mda, ope_params)
     @operation.save!

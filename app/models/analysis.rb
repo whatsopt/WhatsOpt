@@ -325,7 +325,20 @@ class Analysis < ApplicationRecord
       var.outgoing_connections.map{|conn| self.destroy_connection!(conn, sub_analysis_check=false)}
     end
   end
-  
+
+  def build_from_operation_attributes(ope_attrs)
+    name = ope_attrs.name.camelize
+    disc_vars = Variable.get_variables_attributes(cases)
+    driver_vars = []
+    mda = Analysis.new(
+      name: name,
+      disciplines_attributes: [
+        {name: '__DRIVER__', "variables_attributes": driver_vars} 
+        {name: name+'Model', "variables_attributes": disc_vars} 
+      ]
+    )
+  end
+
   private
     
     def _check_mda_import_error
