@@ -8,15 +8,18 @@ class Api::V1::OperationsController < Api::ApiController
   
   # POST /api/v1/{mda_id}/operations
   def create
-    if params[:mda_id]
-      mda = Analysis.find(params[:mda_id])
-    else
-      mda = Analysis.build_for_operation(ope_params)
+    Operation.transaction do
+      if params[:mda_id]
+        mda = Analysis.find(params[:mda_id])
+      else
+        mda = Analysis.build_from_operation(ope_params)
+        mda.save!
+      end
+      authorize mda
+      @operation = Operation.build_operation(mda, ope_params)
+      @operation.save!
+      render json: @operation, status: :created
     end
-    authorize mda
-    @operation = Operation.build_operation(mda, ope_params)
-    @operation.save!
-    render json: @operation, status: :created
   end
 
   # PATCH /api/v1/operations/1

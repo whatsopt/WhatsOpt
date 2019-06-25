@@ -106,18 +106,25 @@ class Api::V1::OperationsControllerTest < ActionDispatch::IntegrationTest
   end
   
   test "should create an operation from data" do
-    #assert_difference('Analysis.count', 1) do
-    #assert_difference('Operation.count', 1) do
-      post api_v1_operations_url(), 
-        params: {operation: {name: 'user_defined_algo', cases: [{varname: 'x1', coord_index: 0, values: [10, 20, 30]}, 
-                                                      {varname: 'obj', coord_index: 0, values: [40, 50, 60]}
-                                                      ],
-                             success: [1, 0, 1]
-                            }
-                  }, 
+    assert_difference('Analysis.count', 1) do
+      assert_difference('Operation.count', 1) do
+        assert_difference('Variable.count', 4) do
+        post api_v1_operations_url(), 
+          params: {
+            operation: {name: 'MyData', 
+              driver: 'user_defined_algo',
+              host: 'localhost',
+              cases: [{varname: 'x1', coord_index: -1, values: [10, 20, 30]}, 
+                      {varname: 'obj', coord_index: 0, values: [40, 50, 60]},
+                      {varname: 'obj', coord_index: 1, values: [70, 80, 90]}
+              ],
+              success: [1, 0, 1]
+            }
+          }, 
           as: :json, headers: @auth_headers
-    #end
-    #end
+        end
+      end
+    end
     assert_response :success
   end
 end

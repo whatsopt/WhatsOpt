@@ -1,6 +1,11 @@
 module WhatsOpt
 
   module Variable
+
+    def self.included(klass)
+      klass.extend(ClassMethods)
+    end
+
     FLOAT_T   = "Float"
     INTEGER_T = "Integer"
     STRING_T = "String"
@@ -76,15 +81,33 @@ module WhatsOpt
       self
     end
 
-    def get_variables_attributes(cases, out_nb: 1)
-      vars = []
-      cases[0...-out_nb].each do |c|
-        vars << {"name": "x", "io_mode": IN}
+    module ClassMethods
+      def reflect_io_mode(io_mode)
+        io_mode == OUT ? IN : OUT
       end
-      cases[-out_nb..-1].each do |c|
-        vars << {"name": "x", "io_mode": OUT}
+
+      def get_variables_attributes(cases, out_nb: 1)
+        vars = []
+        sizes = {}
+        cases.each do |c|
+          name = c[:varname]
+          if sizes.key?(name)
+            sizes[name] += 1
+          else
+            vars << {name: name, io_mode: IN, shape: 1}
+            sizes[name] = 1
+          end
+        end
+        vars.each do |v|
+          v[:shape] = sizes[v[:name]].to_s
+          v[:shape] = "(#{v[:shape]},)" if sizes[v[:name]] > 1 
+        end
+        vars[-out_nb..-1].each do |v|
+          v[:io_mode] = OUT
+        end
+        vars
       end
     end
-end
+  end
 
 end

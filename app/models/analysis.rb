@@ -326,14 +326,17 @@ class Analysis < ApplicationRecord
     end
   end
 
-  def build_from_operation_attributes(ope_attrs)
-    name = ope_attrs.name.camelize
-    disc_vars = Variable.get_variables_attributes(cases)
-    driver_vars = []
+  def self.build_from_operation(ope_attrs)
+    name = ope_attrs[:name].camelize
+    disc_vars = Variable.get_variables_attributes(ope_attrs[:cases])
+    driver_vars = disc_vars.map{|v| 
+      { name: v[:name], 
+        shape: v[:shape], 
+        io_mode: Variable.reflect_io_mode(v[:io_mode]) }}
     mda = Analysis.new(
       name: name,
       disciplines_attributes: [
-        {name: '__DRIVER__', "variables_attributes": driver_vars} 
+        {name: '__DRIVER__', "variables_attributes": driver_vars}, 
         {name: name+'Model', "variables_attributes": disc_vars} 
       ]
     )
