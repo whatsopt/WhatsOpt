@@ -59,6 +59,8 @@ class Operation < ApplicationRecord
       'optimization'
     when /morris/, /sobol/
       'screening'
+    when /doe/, /lhs/
+      'doe'
     else
       if analysis.objective_variables.size>0
         'optimization'
