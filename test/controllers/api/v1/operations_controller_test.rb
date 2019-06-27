@@ -114,9 +114,9 @@ class Api::V1::OperationsControllerTest < ActionDispatch::IntegrationTest
             operation: {name: 'MyData', 
               driver: 'user_defined_algo',
               host: 'localhost',
-              cases: [{varname: 'x1', coord_index: -1, values: [10, 20, 30]}, 
-                      {varname: 'obj', coord_index: 0, values: [40, 50, 60]},
-                      {varname: 'obj', coord_index: 1, values: [70, 80, 90]}
+              cases: [{varname: 'x1', coord_index: 0, values: [10, 20, 30]}, 
+                      {varname: 'x1', coord_index: 1, values: [40, 50, 60]},
+                      {varname: 'obj', coord_index: -1, values: [70, 80, 90]}
               ],
               success: [1, 0, 1]
             }
@@ -126,5 +126,36 @@ class Api::V1::OperationsControllerTest < ActionDispatch::IntegrationTest
       end
     end
     assert_response :success
+    mda = Analysis.last
+    assert_equal 1, mda.design_variables.count 
+    assert_equal 1, mda.response_variables.count 
+  end
+
+  test "should create an operation from data with several outputs" do
+    assert_difference('Analysis.count', 1) do
+      assert_difference('Operation.count', 1) do
+        assert_difference('Variable.count', 6) do
+        post api_v1_operations_url(), 
+          params: {
+            operation: {name: 'MyData', 
+              driver: 'user_defined_algo',
+              host: 'localhost',
+              cases: [{varname: 'x1', coord_index: -1, values: [10, 20, 30]}, 
+                      {varname: 'y', coord_index: -1, values: [10, 20, 30]},
+                      {varname: 'obj', coord_index: 0, values: [40, 50, 60]},
+                      {varname: 'obj', coord_index: 1, values: [70, 80, 90]}
+              ],
+              success: [1, 0, 1]
+            },
+            outvar_count_hint: 2
+          }, 
+          as: :json, headers: @auth_headers 
+        end
+      end
+    end
+    assert_response :success
+    mda = Analysis.last
+    assert_equal 1, mda.design_variables.count 
+    assert_equal 2, mda.response_variables.count 
   end
 end

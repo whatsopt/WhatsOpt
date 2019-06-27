@@ -60,8 +60,12 @@ class Operation < ApplicationRecord
     when /morris/, /sobol/
       'screening'
     else
-      'doe'
-    end 
+      if analysis.objective_variables.size>0
+        'optimization'
+      else
+        'doe'        
+      end
+    end
    end
    
   def nb_of_points

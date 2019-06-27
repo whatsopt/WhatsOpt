@@ -33,8 +33,6 @@ class Analysis < ApplicationRecord
   before_validation(on: :create) do
     _create_from_attachment if attachment_exists?
   end
-    
-  #after_initialize :set_defaults, unless: :persisted?
 
   after_save :refresh_connections
   after_save :_ensure_ancestry
@@ -60,10 +58,6 @@ class Analysis < ApplicationRecord
     @variables = Variable.of_analysis(id).active
   end
 
-  # def uniq_variables
-  #   @uniq_variables = Variable.of_analysis(id).active.outputs
-  # end
-    
   def parameter_variables
     @params = variables.with_role(WhatsOpt::Variable::PARAMETER_ROLE) + design_variables
   end
@@ -78,6 +72,10 @@ class Analysis < ApplicationRecord
   
   def max_objective_variables
     @maxobjs = variables.with_role(WhatsOpt::Variable::MAX_OBJECTIVE_ROLE) 
+  end
+
+  def objective_variables
+    @objs = variables.with_role(WhatsOpt::Variable::OBJECTIVE_ROLES) 
   end
 
   def eq_constraint_variables
@@ -139,6 +137,11 @@ class Analysis < ApplicationRecord
 
   def root_analysis
     self.root
+  end
+
+  def set_all_parameters_as_design_variables
+    conns = Connection.of_analysis(self).with_role(WhatsOpt::Variable::PARAMETER_ROLE)
+    conns.map{|c| c.update!(role: WhatsOpt::Variable::DESIGN_VAR_ROLE)}
   end
 
   def to_mda_viewer_json
@@ -206,7 +209,7 @@ class Analysis < ApplicationRecord
     {openmdao: ActiveModelSerializers::SerializableResource.new(self.openmdao_impl).as_json}
   end
 
-  def refresh_connections
+  def refresh_connections(default_role_for_inputs=WhatsOpt::Variable::PARAMETER_ROLE)
     varouts = Variable.outputs.joins(discipline: :analysis).where(analyses: {id: self.id})
     varins = Variable.inputs.joins(discipline: :analysis).where(analyses: {id: self.id})
     varouts.each do |vout|
@@ -214,7 +217,7 @@ class Analysis < ApplicationRecord
       vins.each do |vin|
         role = WhatsOpt::Variable::STATE_VAR_ROLE
         if vout.discipline.is_driver?
-          role = WhatsOpt::Variable::PARAMETER_ROLE
+          role = default_role_for_inputs
         end
         if vin.discipline.is_driver?
           role = WhatsOpt::Variable::RESPONSE_ROLE
@@ -326,15 +329,15 @@ class Analysis < ApplicationRecord
     end
   end
 
-  def self.build_from_operation(ope_attrs)
+  def self.build_from_operation(ope_attrs, outvar_count_hint=1)
     name = ope_attrs[:name].camelize
-    disc_vars = Variable.get_variables_attributes(ope_attrs[:cases])
+    disc_vars = Variable.get_variables_attributes(ope_attrs[:cases], outvar_count_hint)
     driver_vars = disc_vars.map{|v| 
       { name: v[:name], 
         shape: v[:shape], 
         io_mode: Variable.reflect_io_mode(v[:io_mode]) }}
     mda = Analysis.new(
-      name: name,
+      name: name+'Analysis',
       disciplines_attributes: [
         {name: '__DRIVER__', "variables_attributes": driver_vars}, 
         {name: name+'Model', "variables_attributes": disc_vars} 

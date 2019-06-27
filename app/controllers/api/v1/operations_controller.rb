@@ -12,8 +12,10 @@ class Api::V1::OperationsController < Api::ApiController
       if params[:mda_id]
         mda = Analysis.find(params[:mda_id])
       else
-        mda = Analysis.build_from_operation(ope_params)
+        mda = Analysis.build_from_operation(ope_params, params[:outvar_count_hint] || 1)
         mda.save!
+        mda.set_all_parameters_as_design_variables
+        mda.set_owner(current_user)
       end
       authorize mda
       @operation = Operation.build_operation(mda, ope_params)
@@ -43,7 +45,7 @@ class Api::V1::OperationsController < Api::ApiController
     end
   
     def ope_params
-      params.require(:operation).permit(:host, :driver, :name, 
+      params.require(:operation).permit(:host, :driver, :name,
                                         cases: [:varname, :coord_index, values: []],
                                         success: [],
                                         options_attributes: [:id, :name, :value, :_destroy])

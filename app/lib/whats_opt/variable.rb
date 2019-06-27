@@ -26,9 +26,13 @@ module WhatsOpt
     STATE_VAR_ROLE = "state_var"
     
     INTEREST_INPUT_ROLES = [DESIGN_VAR_ROLE]
-    INTEREST_OUTPUT_ROLES = [MIN_OBJECTIVE_ROLE, MAX_OBJECTIVE_ROLE, EQ_CONSTRAINT_ROLE, INEQ_CONSTRAINT_ROLE]
+    INPUTS_ROLE = INTEREST_INPUT_ROLES + [PARAMETER_ROLE]
+    OBJECTIVE_ROLES = [MIN_OBJECTIVE_ROLE, MAX_OBJECTIVE_ROLE]
+    INTEREST_OUTPUT_ROLES = OBJECTIVE_ROLES + [EQ_CONSTRAINT_ROLE, INEQ_CONSTRAINT_ROLE]
 
-    VARIABLE_ROLES = INTEREST_INPUT_ROLES + INTEREST_OUTPUT_ROLES + [RESPONSE_ROLE, STATE_VAR_ROLE]
+    
+
+    VARIABLE_ROLES = INTEREST_INPUT_ROLES + INTEREST_OUTPUT_ROLES + [PARAMETER_ROLE, RESPONSE_ROLE, STATE_VAR_ROLE]
 
     def dim
       @dim ||=  case self.shape
@@ -86,7 +90,7 @@ module WhatsOpt
         io_mode == OUT ? IN : OUT
       end
 
-      def get_variables_attributes(cases, out_nb: 1)
+      def get_variables_attributes(cases, outvar_count=1)
         vars = []
         sizes = {}
         cases.each do |c|
@@ -102,7 +106,7 @@ module WhatsOpt
           v[:shape] = sizes[v[:name]].to_s
           v[:shape] = "(#{v[:shape]},)" if sizes[v[:name]] > 1 
         end
-        vars[-out_nb..-1].each do |v|
+        vars[-outvar_count..-1].each do |v|
           v[:io_mode] = OUT
         end
         vars

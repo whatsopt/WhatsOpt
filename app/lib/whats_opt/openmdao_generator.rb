@@ -27,7 +27,7 @@ module WhatsOpt
       ok, lines = false, []
       @mda.set_as_root_module
       Dir.mktmpdir("check_#{@mda.basename}_") do |dir|
-        dir='/tmp' # for debug
+        #dir='/tmp' # for debug
         begin
           _generate_code(dir, with_server: false, with_runops: false)
         rescue ServerGenerator::ThriftError => e
@@ -45,7 +45,7 @@ module WhatsOpt
     def run(method="analysis", sqlite_filename=nil)
       ok, lines = false, []
       Dir.mktmpdir("run_#{@mda.basename}_#{method}") do |dir|
-        dir='/tmp' # for debug
+        #dir='/tmp' # for debug
         begin
           _generate_code(dir, sqlite_filename: sqlite_filename)
         rescue ServerGenerator::ThriftError => e
