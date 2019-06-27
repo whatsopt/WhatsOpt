@@ -11,7 +11,7 @@ class Api::V1::VersioningsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     resp = JSON.parse(response.body)
     assert_match /^\d+\.\d+\.\d+$/, resp['whatsopt']
-    assert_match /^\d+\.\d+\.\d+$/, resp['wop']
+    assert_match /^\d+\.\d+\.\d+(a|b|rc\d+)*$/, resp['wop']
   end
   
 end
