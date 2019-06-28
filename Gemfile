@@ -108,7 +108,11 @@ gem "active_model_serializers", "~> 0.10.7"
 gem "sucker_punch"
 
 # UI
-gem "popper" # bootstrap dependency
-gem "bootstrap", "~> 4.0"
-gem "font_awesome5_rails"
-gem "data-confirm-modal"
+gem 'popper' # bootstrap dependency
+gem 'bootstrap', '~> 4.0'
+gem 'font_awesome5_rails'
+gem 'data-confirm-modal'
+
+# thrift
+gem 'thrift', '0.11.0'
+
