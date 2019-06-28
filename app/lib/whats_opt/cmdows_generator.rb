@@ -1,31 +1,32 @@
-require 'nokogiri'
+# frozen_string_literal: true
+
+require "nokogiri"
 
 class WhatsOpt::CmdowsGenerator
-
   class CmdowsValidationError < StandardError
   end
-  
-  SCHEMA_FILE = File.join(File.dirname(__FILE__), 'cmdows.xsd')
+
+  SCHEMA_FILE = File.join(File.dirname(__FILE__), "cmdows.xsd")
   XSD = Nokogiri::XML::Schema(File.read(SCHEMA_FILE))
-  
+
   def initialize(mda)
     @mda = mda
     _build
   end
-  
-  def generate(validate=true)
+
+  def generate(validate = true)
     @doc ||= @builder.doc
     filename = "#{@mda.basename}.xml"
-    return @doc.to_xml, filename 
+    return @doc.to_xml, filename
   end
-  
+
   def valid?
     @doc ||= @builder.doc
     XSD.validate(@doc).each do |error|
       raise CmdowsValidationError.new(error.message)
     end
   end
-  
+
   def _build
     @builder = Nokogiri::XML::Builder.new do |xml|
       xml.cmdows do
@@ -41,7 +42,7 @@ class WhatsOpt::CmdowsGenerator
       end
     end
   end
-  
+
   def _generate_header(xml)
     xml.header do
       xml.creator @mda.owner
@@ -51,8 +52,8 @@ class WhatsOpt::CmdowsGenerator
       xml.cmdowsVersion "0.7"
     end
   end
-  
-  def _generate_design_competences(xml) 
+
+  def _generate_design_competences(xml)
     @mda.disciplines.nodes.each do |disc|
       xml.designCompetence uID: disc.id do
         xml.ID disc.id
@@ -64,7 +65,7 @@ class WhatsOpt::CmdowsGenerator
       end
     end
   end
-    
+
   def _generate_inputs_outputs(xml, disc)
     xml.inputs do
       disc.input_variables.each do |ivar|
@@ -81,7 +82,7 @@ class WhatsOpt::CmdowsGenerator
       end
     end
   end
-  
+
   def _generate_parameters(xml)
     vars = {}
     @mda.disciplines.each do |d|
@@ -93,7 +94,6 @@ class WhatsOpt::CmdowsGenerator
       xml.parameter uID: name do |xml|
         xml.label var[:name]
       end
-    end  
+    end
   end
-  
 end

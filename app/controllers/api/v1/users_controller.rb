@@ -1,5 +1,6 @@
+# frozen_string_literal: true
+
 class Api::V1::UsersController < Api::ApiController
-  
   # PUT/PATCH /api/v1/users/1
   def update
     @user = User.find(params[:id])
@@ -9,9 +10,8 @@ class Api::V1::UsersController < Api::ApiController
     end
     head :no_content
   end
-  
+
   def user_params
     params.require(:user).permit(settings: [:analyses_query])
   end
-  
 end

@@ -1,4 +1,6 @@
-require 'whats_opt/string'
+# frozen_string_literal: true
+
+require "whats_opt/string"
 
 module WhatsOpt
   module OpenmdaoModule
@@ -12,31 +14,31 @@ module WhatsOpt
     def basename
       "#{self.name.snakize}"
     end
-    
+
     def camelname
       basename.camelize
-    end    
+    end
 
     def namespace
-      namespace = self.path.map{|a| a.basename}
+      namespace = self.path.map { |a| a.basename }
       namespace.shift
-      namespace.join('.')
+      namespace.join(".")
     end
 
     def full_modulename
-      fmn = self.namespace.sub(/^#{Regexp.escape(@@root_modulename)}\.?/, '') 
+      fmn = self.namespace.sub(/^#{Regexp.escape(@@root_modulename)}\.?/, "")
       fmn += "." unless fmn.blank?
       fmn += "#{basename}"
       fmn
     end
 
     def snake_modulename
-      full_modulename.tr('.', '_')
+      full_modulename.tr(".", "_")
     end
 
     def camel_modulename
       snake_modulename.camelize
-    end    
+    end
 
     def py_modulename
       basename
@@ -63,7 +65,6 @@ module WhatsOpt
 
     def py_basefilename
       "#{basename}_base.py"
-    end   
+    end
   end
 end
-

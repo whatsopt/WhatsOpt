@@ -1,10 +1,10 @@
+# frozen_string_literal: true
 
 class Api::V1::ConnectionsController < Api::ApiController
-    
   # POST /api/v1/connections
   def create
     mda = Analysis.find(params[:mda_id])
-    authorize mda        
+    authorize mda
     names = connection_create_params[:names]
     from_disc = mda.disciplines.find(connection_create_params[:from])
     to_disc = mda.disciplines.find(connection_create_params[:to])
@@ -20,10 +20,10 @@ class Api::V1::ConnectionsController < Api::ApiController
   def update
     connection = Connection.find(params[:id])
     authorize connection.analysis
-    connection.analysis.update_connections!(connection, connection_update_params)      
-    head :no_content    
+    connection.analysis.update_connections!(connection, connection_update_params)
+    head :no_content
   end
-  
+
   # DELETE /api/v1/connections/1
   def destroy
     connection = Connection.find(params[:id])
@@ -38,28 +38,27 @@ class Api::V1::ConnectionsController < Api::ApiController
     end
   end
 
-  private    
-  
+  private
     def check_duplicates(mda, name)
       vouts = Variable.of_analysis(mda).where(name: name, io_mode: WhatsOpt::Variable::OUT)
       if vouts.count > 1
         raise VariableDuplicateError.new("Variable #{name} is duplicated: ids=#{vouts.map(&:id)}. Please call WhatsOpt administrator.")
       end
     end
-  
-#    def check_variable_existence(mda, disc_from, disc_to, varname)     
-#      if disc_to.input_variables.find_by_name(varname)
-#        raise VariableAlreadyExistsError.new("Variable " + varname + " already consumed by " + disc_to.name)
-#      end
-#      mda.disciplines.nodes.where.not(id: disc_from).each do |disc|
-#        if disc.output_variables.find_by_name(varname)
-#          raise VariableAlreadyExistsError.new("Variable " + varname + " already produced by " + disc.name)
-#        end
-#      end      
-#    end
-  
+
+    #    def check_variable_existence(mda, disc_from, disc_to, varname)
+    #      if disc_to.input_variables.find_by_name(varname)
+    #        raise VariableAlreadyExistsError.new("Variable " + varname + " already consumed by " + disc_to.name)
+    #      end
+    #      mda.disciplines.nodes.where.not(id: disc_from).each do |disc|
+    #        if disc.output_variables.find_by_name(varname)
+    #          raise VariableAlreadyExistsError.new("Variable " + varname + " already produced by " + disc.name)
+    #        end
+    #      end
+    #    end
+
     def connection_create_params
-      params.require(:connection).permit(:from, :to, { names: [] })
+      params.require(:connection).permit(:from, :to, names: [])
     end
 
     def connection_update_params
@@ -67,5 +66,4 @@ class Api::V1::ConnectionsController < Api::ApiController
                                          parameter_attributes: [:_destroy, :init, :lower, :upper],
                                          scaling_attributes: [:_destroy, :ref, :ref0, :res_ref])
     end
-
 end

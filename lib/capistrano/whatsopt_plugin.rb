@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "capistrano/scm/plugin"
 
 module Capistrano
@@ -8,14 +10,14 @@ module Capistrano
     def define_tasks
       namespace :whatsopt do
         task :create_release do
-          on roles(:app) do 
+          on roles(:app) do
             version = fetch(:version)
             appname = fetch(:appname)
             dlvdir = fetch(:dlvdir)
             system("cd ~/workspace/WhatsOpt; rake whatsopt:delivery:pack[#{version}]")
             system("scp #{dlvdir}/whatsopt-#{version}.tar.gz rlafage@ether:/home/rlafage/DELIVERY/")
-            execute :mkdir, '-p', release_path
-            execute :tar, '-xzpf', "#{dlvdir}/#{appname}.tar.gz", '-C', release_path
+            execute :mkdir, "-p", release_path
+            execute :tar, "-xzpf", "#{dlvdir}/#{appname}.tar.gz", "-C", release_path
           end
         end
 

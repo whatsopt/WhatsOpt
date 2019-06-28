@@ -1,8 +1,9 @@
-require 'whats_opt/cmdows_generator'
-require 'whats_opt/openmdao_generator'
+# frozen_string_literal: true
+
+require "whats_opt/cmdows_generator"
+require "whats_opt/openmdao_generator"
 
 class AnalysisExportsController < ApplicationController
-
   def new
     mda_id = params[:mda_id]
     format = params[:format]
@@ -21,10 +22,9 @@ class AnalysisExportsController < ApplicationController
         Rails.logger.warn "CMDOWS export warning: CMDOWS validation error"
         Rails.logger.warn "CMDOWS export warning: #{e}"
       end
-      send_data content, filename: filename, type:  'application/xml'
+      send_data content, filename: filename, type:  "application/xml"
     else
       redirect_to mdas_url, alert: "Export format '#{format}' not handled!"
-    end           
-  end  
-  
+    end
+  end
 end

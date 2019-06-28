@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class OperationRunChannel < ApplicationCable::Channel
   def subscribed
     @ope = Operation.find(params[:ope_id])
@@ -6,5 +8,4 @@ class OperationRunChannel < ApplicationCable::Channel
 
   def unsubscribed
   end
-  
 end

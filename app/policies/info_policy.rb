@@ -1,5 +1,6 @@
-class InfoPolicy < ApplicationPolicy
+# frozen_string_literal: true
 
+class InfoPolicy < ApplicationPolicy
   def changelog?
     true
   end
@@ -7,5 +8,4 @@ class InfoPolicy < ApplicationPolicy
   def show?
     true
   end
-    
 end

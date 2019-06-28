@@ -1,22 +1,23 @@
-class Api::V1::AnalysesController < Api::ApiController 
+# frozen_string_literal: true
 
+class Api::V1::AnalysesController < Api::ApiController
   before_action :set_mda, only: [:show, :update]
-  
+
   # GET /api/v1/mdas
   def index
     @mdas = policy_scope(Analysis)
     json_response @mdas
-  end    
-      
+  end
+
   # GET /api/v1/mda/1
   def show
-    if params[:format] == 'xdsm'
+    if params[:format] == "xdsm"
       render json: @mda.to_mda_viewer_json
     else
       json_response @mda
     end
   end
-  
+
   # POST /api/v1/mdas
   def create
     @mda = Analysis.new(mda_params)
@@ -31,29 +32,26 @@ class Api::V1::AnalysesController < Api::ApiController
     @mda.update!(mda_params)
     head :no_content
   end
-  
-  protected
 
+  protected
     def set_mda
       @mda = Analysis.find(params[:id])
       authorize @mda
     end
-  
+
     def mda_params
       params.require(:analysis).permit(
-        :name, 
+        :name,
         :public,
-        :disciplines_attributes => 
-          [
-            :name, 
-            :variables_attributes => [
-              :name, :io_mode, :type, :shape, :units, :desc, 
-              :parameter_attributes => [:lower, :upper, :init],
-              :scaling_attributes => [:ref, :ref0, :res_ref]
+        disciplines_attributes:           [
+            :name,
+            variables_attributes: [
+              :name, :io_mode, :type, :shape, :units, :desc,
+              parameter_attributes: [:lower, :upper, :init],
+              scaling_attributes: [:ref, :ref0, :res_ref]
             ],
-            :sub_analysis_attributes => {}
+            sub_analysis_attributes: {}
           ]
       )
     end
-  
 end
