@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 class OpenmdaoAnalysisImplSerializer < ActiveModel::Serializer
-  attributes :components, :nonlinear_solver, :linear_solver 
+  attributes :components, :nonlinear_solver, :linear_solver
 
   has_one :nonlinear_solver, class_name: "Solver"
   has_one :linear_solver, class_name: "Solver"
@@ -11,7 +13,7 @@ class OpenmdaoAnalysisImplSerializer < ActiveModel::Serializer
     end
     {
       parallel_group: object.send(:parallel_group),
-      nodes: impls.map{|impl| ActiveModelSerializers::SerializableResource.new(impl).as_json }
+      nodes: impls.map { |impl| ActiveModelSerializers::SerializableResource.new(impl).as_json }
     }
   end
 end

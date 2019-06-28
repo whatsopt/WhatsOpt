@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 class Scaling < ApplicationRecord
   belongs_to :variable
-  
+
   validates :variable, presence: true
 
   def nullified?

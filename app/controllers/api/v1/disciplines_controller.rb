@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Api::V1::DisciplinesController < Api::ApiController
   before_action :set_discipline, only: [:show, :update, :destroy]
 
@@ -5,7 +7,7 @@ class Api::V1::DisciplinesController < Api::ApiController
   def show
     json_response @discipline
   end
-  
+
   # POST /api/v1/{mda_id}/disciplines
   def create
     mda = Analysis.find(params[:mda_id])

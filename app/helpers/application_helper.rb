@@ -1,6 +1,7 @@
-module ApplicationHelper
+# frozen_string_literal: true
 
-  def bootstrap_class_for flash_type
+module ApplicationHelper
+  def bootstrap_class_for(flash_type)
     { success: "alert-success", error: "alert-danger",
       alert: "alert-warning", notice: "alert-info" }[flash_type.to_sym] || flash_type.to_s
   end
@@ -12,9 +13,8 @@ module ApplicationHelper
     end
     h
   end
-  
-  def intranet?
-    return APP_CONFIG['intranet']
-  end
 
+  def intranet?
+    APP_CONFIG["intranet"]
+  end
 end

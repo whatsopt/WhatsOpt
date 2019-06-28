@@ -1,15 +1,15 @@
-class AttachmentPolicy < ApplicationPolicy
+# frozen_string_literal: true
 
+class AttachmentPolicy < ApplicationPolicy
   def create?
-    @user.admin? or @user.has_role?(:owner, @record.container)
+    @user.admin? || @user.has_role?(:owner, @record.container)
   end
-  
+
   def update?
-    @user.admin? or @user.has_role?(:owner, @record.container)
+    @user.admin? || @user.has_role?(:owner, @record.container)
   end
-  
+
   def destroy?
-    @user.admin? or @user.has_role?(:owner, @record.container)
+    @user.admin? || @user.has_role?(:owner, @record.container)
   end
-  
 end

@@ -1,0 +1,6 @@
+inherit_gem:
+  rubocop-rails_config:
+    - config/rails.yml
+
+Layout/IndentationConsistency:
+  EnforcedStyle: indented_internal_methods

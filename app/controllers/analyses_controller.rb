@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AnalysesController < ApplicationController
   before_action :set_mda, only: [:show, :edit, :update, :destroy]
 
@@ -25,7 +27,7 @@ class AnalysesController < ApplicationController
   def create
     if params[:cancel_button]
       redirect_to mdas_url, notice: "Analysis creation cancelled."
-    else 
+    else
       @mda = Analysis.new(mda_params)
       authorize @mda
       if @mda.save
@@ -46,16 +48,16 @@ class AnalysesController < ApplicationController
   # PATCH/PUT /mdas/1
   def update
     if @mda.update(mda_params)
-      redirect_to mda_url(@mda), notice: 'MDA was successfully updated.' 
+      redirect_to mda_url(@mda), notice: "MDA was successfully updated."
     else
-      render :edit 
+      render :edit
     end
   end
 
   # DELETE /mdas/1
   def destroy
     @mda.destroy
-    redirect_to mdas_url, notice: 'MDA was successfully destroyed.'
+    redirect_to mdas_url, notice: "MDA was successfully destroyed."
   end
 
   private
@@ -66,6 +68,6 @@ class AnalysesController < ApplicationController
 
     def mda_params
       params.require(:analysis)
-        .permit(:name, :public, :attachment_attributes => [:id, :data, :_destroy])
+        .permit(:name, :public, attachment_attributes: [:id, :data, :_destroy])
     end
 end

@@ -1,7 +1,8 @@
-require 'test_helper'
+# frozen_string_literal: true
+
+require "test_helper"
 
 class AnalysisDisciplineTest < ActiveSupport::TestCase
-  
   test "should create ancestor when creating analysis_discipline" do
     disc = disciplines(:outermda_vacant_discipline)
     innermda = analyses(:cicav)
@@ -15,5 +16,4 @@ class AnalysisDisciplineTest < ActiveSupport::TestCase
     assert outermda, innermda.ancestors
     assert innermda.name, disc.name
   end
-
 end

@@ -1,91 +1,90 @@
-require 'whats_opt/discipline'
-require 'whats_opt/excel_mda_importer'
-require 'whats_opt/cmdows_mda_importer'
-require 'whats_opt/openmdao_module'
+# frozen_string_literal: true
+
+require "whats_opt/discipline"
+require "whats_opt/excel_mda_importer"
+require "whats_opt/cmdows_mda_importer"
+require "whats_opt/openmdao_module"
 
 class Analysis < ApplicationRecord
-
   include WhatsOpt::OpenmdaoModule
   include Ownable
 
   resourcify
-  
+
   has_ancestry orphan_strategy: :rootify
-  
+
   class AncestorUpdateError < StandardError
-  end 
-  
-  has_one :attachment, :as => :container, :dependent => :destroy
+  end
+
+  has_one :attachment, as: :container, dependent: :destroy
   accepts_nested_attributes_for :attachment, allow_destroy: true
   validates_associated :attachment
-  
-  has_many :disciplines, -> { includes(:variables).order(position: :asc) }, :dependent => :destroy
-  accepts_nested_attributes_for :disciplines, 
-    reject_if: proc { |attr| attr['name'].blank? }, allow_destroy: true
+
+  has_many :disciplines, -> { includes(:variables).order(position: :asc) }, dependent: :destroy
+  accepts_nested_attributes_for :disciplines,
+                                reject_if: proc { |attr| attr["name"].blank? }, allow_destroy: true
 
   has_one :analysis_discipline, dependent: :destroy
   has_one :super_discipline, through: :analysis_discipline, source: :discipline
 
-  has_many :operations, dependent: :destroy 
+  has_many :operations, dependent: :destroy
 
   has_one :openmdao_impl, class_name: "OpenmdaoAnalysisImpl", dependent: :destroy
 
   before_validation(on: :create) do
     _create_from_attachment if attachment_exists?
   end
-    
-  #after_initialize :set_defaults, unless: :persisted?
 
   after_save :refresh_connections
   after_save :_ensure_ancestry
   after_save :_ensure_driver_presence
   after_save :_ensure_openmdao_impl_presence
-  
+
   validate :_check_mda_import_error, on: :create, if: :attachment_exists?
   validates :name, presence: true, allow_blank: false
 
   def driver
-    self.disciplines.driver
+    disciplines.driver
   end
 
   def is_sub_analysis?
-    self.has_parent?
+    has_parent?
   end
 
   def is_root_analysis?
-    !self.has_parent?
+    !has_parent?
   end
 
   def variables
     @variables = Variable.of_analysis(id).active
   end
 
-  # def uniq_variables
-  #   @uniq_variables = Variable.of_analysis(id).active.outputs
-  # end
-    
   def parameter_variables
     @params = variables.with_role(WhatsOpt::Variable::PARAMETER_ROLE) + design_variables
   end
- 
+
   def design_variables
     @desvars = variables.with_role(WhatsOpt::Variable::DESIGN_VAR_ROLE)
   end
- 
+
   def min_objective_variables
     @minobjs = variables.with_role(WhatsOpt::Variable::MIN_OBJECTIVE_ROLE)
   end
-  
+
   def max_objective_variables
-    @maxobjs = variables.with_role(WhatsOpt::Variable::MAX_OBJECTIVE_ROLE) 
+    @maxobjs = variables.with_role(WhatsOpt::Variable::MAX_OBJECTIVE_ROLE)
+  end
+
+  def objective_variables
+    @objs = variables.with_role(WhatsOpt::Variable::OBJECTIVE_ROLES)
   end
 
   def eq_constraint_variables
-    @eqs = variables.with_role(WhatsOpt::Variable::EQ_CONSTRAINT_ROLE)  
+    @eqs = variables.with_role(WhatsOpt::Variable::EQ_CONSTRAINT_ROLE)
   end
 
   def ineq_constraint_variables
-    @ineqs = variables.with_role(WhatsOpt::Variable::INEQ_CONSTRAINT_ROLE)  
+    @ineqs = variables.with_role(WhatsOpt::Variable::INEQ_CONSTRAINT_ROLE)
   end
 
   def responses_of_interest
@@ -93,306 +92,315 @@ class Analysis < ApplicationRecord
   end
 
   def response_variables
-    @resps = variables.with_role(WhatsOpt::Variable::RESPONSE_ROLE) + 
-      min_objective_variables + max_objective_variables + eq_constraint_variables + ineq_constraint_variables
+    @resps = variables.with_role(WhatsOpt::Variable::RESPONSE_ROLE) +
+             min_objective_variables + max_objective_variables + eq_constraint_variables + ineq_constraint_variables
   end
-  
+
   def response_dim
-    response_variables.inject(0){|s, v| s+v.dim}
+    response_variables.inject(0) { |s, v| s + v.dim }
   end
-  
+
   def design_var_dim
-    design_variables.inject(0){|s, v| s+v.dim}
+    design_variables.inject(0) { |s, v| s + v.dim }
   end
-  
+
   def parameter_dim
-    parameter_variables.inject(0){|s, v| s+v.dim}
+    parameter_variables.inject(0) { |s, v| s + v.dim }
   end
-  
+
   def input_dim
-    parameter_variables.inject(0){|s, v| s+v.dim}
+    parameter_variables.inject(0) { |s, v| s + v.dim }
   end
-    
+
   def plain_disciplines
-    disciplines.nodes.select{|d| d.is_plain? } 
+    disciplines.nodes.select(&:is_plain?)
   end
 
   def sub_analyses
-    self.children
+    children
   end
 
   def all_plain_disciplines
-    self.children.inject(self.plain_disciplines){|ary, elt| ary + elt.all_plain_disciplines} 
+    children.inject(plain_disciplines) { |ary, elt| ary + elt.all_plain_disciplines }
   end
-  
+
   def all_sub_analyses
-    self.descendants
+    descendants
   end
 
   def all_disciplines
-    self.children.inject(self.disciplines.nodes){|ary, elt| ary + elt.all_disciplines}
+    children.inject(disciplines.nodes) { |ary, elt| ary + elt.all_disciplines }
   end
 
   def attachment_exists?
-    self.attachment && self.attachment.exists?
+    attachment&.exists?
   end
 
   def root_analysis
-    self.root
+    root
+  end
+
+  def set_all_parameters_as_design_variables
+    conns = Connection.of_analysis(self).with_role(WhatsOpt::Variable::PARAMETER_ROLE)
+    conns.map { |c| c.update!(role: WhatsOpt::Variable::DESIGN_VAR_ROLE) }
   end
 
   def to_mda_viewer_json
-    { 
-      id: self.id,
-      name: self.name,
-      public: self.public,
-      path: self.path.map{|a| {id: a.id, name: a.name}},
+    {
+      id: id,
+      name: name,
+      public: public,
+      path: path.map { |a| { id: a.id, name: a.name } },
       nodes: build_nodes,
       edges: build_edges,
       inactive_edges: build_edges(active: false),
       vars: build_var_infos,
-      impl: build_openmdao_impl,
+      impl: build_openmdao_impl
     }.to_json
   end
-  
+
   def build_nodes
-    return self.disciplines.by_position.map do |d| 
-      node = { id: "#{d.id}", type: d.type, name: d.name }
-      node.merge!(link: {id: self.parent.id, name: self.parent.name}) if (d.is_driver? && self.has_parent?)
-      node.merge!(link: {id: d.sub_analysis.id, name: d.sub_analysis.name}) if d.has_sub_analysis?
-      node 
+    disciplines.by_position.map do |d|
+      node = { id: d.id.to_s, type: d.type, name: d.name }
+      node[:link] = { id: parent.id, name: parent.name } if d.is_driver? && has_parent?
+      node[:link] = { id: d.sub_analysis.id, name: d.sub_analysis.name } if d.has_sub_analysis?
+      node
     end
   end
 
   def build_edges(active: true)
     edges = []
     _edges = {}
-    disc_ids = self.disciplines.map(&:id)
+    disc_ids = disciplines.map(&:id)
     disc_ids.each do |id|
-      _edges.update(Hash[disc_ids.collect { |item| [[id, item], []] } ])
+      _edges.update(Hash[disc_ids.collect { |item| [[id, item], []] }])
     end
     disc_ids.each do |from_id|
-      conns = Connection.joins(:from).where(variables: {discipline_id: from_id, active: active}).order('variables.name')
+      conns = Connection.joins(:from).where(variables: { discipline_id: from_id, active: active }).order("variables.name")
       conns.each do |conn|
         _edges[[from_id, conn.to.discipline.id]] << conn
-      end    
+      end
     end
     _edges.each do |k, conns|
-      unless conns.empty?
-        names = conns.map{ |c| c.from.name }.join(",")
-        ids = conns.map(&:id)
-        roles = conns.map {|c| c[:role]}
-        edges << {from: k[0].to_s, to: k[1].to_s, name: names, conn_ids: ids, active: active, roles: roles}
-      end
+      next if conns.empty?
+
+      names = conns.map { |c| c.from.name }.join(",")
+      ids = conns.map(&:id)
+      roles = conns.map { |c| c[:role] }
+      edges << { from: k[0].to_s, to: k[1].to_s, name: names, conn_ids: ids, active: active, roles: roles }
     end
     edges
   end
-  
+
   def build_var_infos
-    res = disciplines.map {|d|
-      inputs = ActiveModelSerializers::SerializableResource.new(d.input_variables, 
-        each_serializer: VariableSerializer)
+    res = disciplines.map do |d|
+      inputs = ActiveModelSerializers::SerializableResource.new(d.input_variables,
+                                                                each_serializer: VariableSerializer)
       outputs = ActiveModelSerializers::SerializableResource.new(d.output_variables,
-        each_serializer: VariableSerializer)
+                                                                 each_serializer: VariableSerializer)
       id = d.id
-      {id => {in: inputs.as_json, out: outputs.as_json}}
-    }
-    tree = res.inject({}) {|result, h| result.update(h)}
+      { id => { in: inputs.as_json, out: outputs.as_json } }
+    end
+    tree = res.inject({}) { |result, h| result.update(h) }
     tree
   end
-  
+
   def build_openmdao_impl
     self.openmdao_impl ||= OpenmdaoAnalysisImpl.new
-    {openmdao: ActiveModelSerializers::SerializableResource.new(self.openmdao_impl).as_json}
+    { openmdao: ActiveModelSerializers::SerializableResource.new(self.openmdao_impl).as_json }
   end
 
-  def refresh_connections
-    varouts = Variable.outputs.joins(discipline: :analysis).where(analyses: {id: self.id})
-    varins = Variable.inputs.joins(discipline: :analysis).where(analyses: {id: self.id})
+  def refresh_connections(default_role_for_inputs = WhatsOpt::Variable::PARAMETER_ROLE)
+    varouts = Variable.outputs.joins(discipline: :analysis).where(analyses: { id: id })
+    varins = Variable.inputs.joins(discipline: :analysis).where(analyses: { id: id })
     varouts.each do |vout|
       vins = varins.where(name: vout.name)
       vins.each do |vin|
         role = WhatsOpt::Variable::STATE_VAR_ROLE
-        if vout.discipline.is_driver?
-          role = WhatsOpt::Variable::PARAMETER_ROLE
-        end
-        if vin.discipline.is_driver?
-          role = WhatsOpt::Variable::RESPONSE_ROLE
-        end
+        role = default_role_for_inputs if vout.discipline.is_driver?
+        role = WhatsOpt::Variable::RESPONSE_ROLE if vin.discipline.is_driver?
         existing_conn_proto = Connection.where(from_id: vout.id).take
-        if existing_conn_proto
-          role = existing_conn_proto.role
-        end
-        Connection.where(from_id: vout.id, to_id: vin.id).first_or_create!(role: role)  
+        role = existing_conn_proto.role if existing_conn_proto
+        Connection.where(from_id: vout.id, to_id: vin.id).first_or_create!(role: role)
       end
     end
   end
-  
+
   def update!(mda_params)
     super
     if mda_params.key? :public
-      self.descendants.each do |inner|
+      descendants.each do |inner|
         inner.update_column(:public, mda_params[:public])
       end
     end
   end
 
-  def create_connections!(from_disc, to_disc, names, sub_analysis_check=true)
+  def create_connections!(from_disc, to_disc, names, sub_analysis_check: true)
     Analysis.transaction do
       names.each do |name|
         conn = Connection.create_connection!(from_disc, to_disc, name, sub_analysis_check)
-        if self.should_update_analysis_ancestor?(conn)
-          inner_driver_variable = self.driver.variables.where(name: name).take
-          self.parent.add_upstream_connection!(inner_driver_variable, self.super_discipline)
+        if should_update_analysis_ancestor?(conn)
+          inner_driver_variable = driver.variables.where(name: name).take
+          parent.add_upstream_connection!(inner_driver_variable, super_discipline)
         end
       end
-    end 
+    end
   end
-  
-  def update_connections!(conn, params, down_check=true, up_check=true)
+
+  def update_connections!(conn, params, down_check = true, up_check = true)
     # propagate upward
     if up_check && should_update_analysis_ancestor?(conn)
-      up_conn = Connection.of_analysis(self.parent)
-                       .joins(:from)
-                       .where(variables: {name: conn.from.name, io_mode: WhatsOpt::Variable::OUT}).take
-      self.parent.update_connections!(up_conn, params, down_check=false, up_check) unless conn.nil?
+      up_conn = Connection.of_analysis(parent)
+                          .joins(:from)
+                          .where(variables: { name: conn.from.name, io_mode: WhatsOpt::Variable::OUT }).take
+      parent.update_connections!(up_conn, params, down_check = false, up_check) unless conn.nil?
     end
-    
+
     # propagate downward
     # check connection from
     if conn.from.discipline.has_sub_analysis?
       sub_analysis = conn.from.discipline.sub_analysis
       inner_driver_var = sub_analysis.driver.variables.where(name: conn.from.name).take
-      down_conn = Connection.of_analysis(sub_analysis).where('from_id = ? or to_id = ?', inner_driver_var.id, inner_driver_var.id).take
-      sub_analysis.update_connections!(down_conn, params, down_check, up_check=false)
-    end 
+      down_conn = Connection.of_analysis(sub_analysis).where("from_id = ? or to_id = ?", inner_driver_var.id, inner_driver_var.id).take
+      sub_analysis.update_connections!(down_conn, params, down_check, up_check = false)
+    end
     # check connection tos
-    conn.from.outgoing_connections.each do |conn|        
-      if conn.to.discipline.has_sub_analysis?
-        sub_analysis = conn.to.discipline.sub_analysis
-        inner_driver_var = sub_analysis.driver.variables
-                           .where(name: conn.from.name, io_mode: WhatsOpt::Variable::OUT).take
-        down_conn = Connection.of_analysis(sub_analysis).where('from_id = ? or to_id = ?', inner_driver_var.id, inner_driver_var.id).take
-        sub_analysis.update_connections!(down_conn, params, down_check, up_check=false)
-      end
+    conn.from.outgoing_connections.each do |cn|
+      next unless cn.to.discipline.has_sub_analysis?
+
+      sub_analysis = cn.to.discipline.sub_analysis
+      inner_driver_var = sub_analysis.driver.variables
+                                     .where(name: cn.from.name, io_mode: WhatsOpt::Variable::OUT).take
+      down_conn = Connection.of_analysis(sub_analysis).where("from_id = ? or to_id = ?", inner_driver_var.id, inner_driver_var.id).take
+      sub_analysis.update_connections!(down_conn, params, down_check, up_check = false)
     end
 
     conn.update_connections!(params)
   end
-  
-  def destroy_connection!(conn, sub_analysis_check=true)
+
+  def destroy_connection!(conn, sub_analysis_check: true)
     Analysis.transaction do
       varname = conn.from.name
       conn.destroy_connection!(sub_analysis_check)
       if should_update_analysis_ancestor?(conn)
-        self.parent.remove_upstream_connection!(varname, self.super_discipline)
+        parent.remove_upstream_connection!(varname, super_discipline)
       end
     end
   end
-  
+
   def should_update_analysis_ancestor?(conn)
-    self.has_parent? and conn.driverish?
+    has_parent? && conn.driverish?
   end
-    
+
   def add_upstream_connection!(inner_driver_var, discipline)
     varname = inner_driver_var.name
-    var_from = Variable.of_analysis(self).where(name: varname, io_mode: WhatsOpt::Variable::OUT).take    
+    var_from = Variable.of_analysis(self).where(name: varname, io_mode: WhatsOpt::Variable::OUT).take
     if var_from
-      if var_from.discipline.id == discipline.id and inner_driver_var.reflected_io==WhatsOpt::Variable::OUT
-        #ok var already produced by sub-analysis
+      if (var_from.discipline.id == discipline.id) && (inner_driver_var.reflected_io == WhatsOpt::Variable::OUT)
+        # ok var already produced by sub-analysis
       else
         if var_from.discipline.id != discipline.id # var consumed by sub-analysis
           from_disc = var_from.discipline
           to_disc = discipline
-          self.create_connections!(from_disc, to_disc, [varname], sub_analysis_check=false) 
-        else 
-          raise AncestorUpdateError.new("Variable #{varname} already used in parent analysis #{self.name}: Cannot create connection.") 
+          create_connections!(from_disc, to_disc, [varname], sub_analysis_check: false)
+        else
+          raise AncestorUpdateError, "Variable #{varname} already used in parent analysis #{name}: Cannot create connection."
         end
       end
     else
-      from_disc = self.driver
+      from_disc = driver
       to_disc = discipline
       from_disc, to_disc = to_disc, from_disc if inner_driver_var.is_in?
-      self.create_connections!(from_disc, to_disc, [varname], sub_analysis_check=false) 
+      create_connections!(from_disc, to_disc, [varname], sub_analysis_check: false)
     end
   end
-  
+
   def remove_upstream_connection!(varname, discipline)
-    var = Variable.of_analysis(self).where(name: varname, discipline_id: discipline.id).take    
+    var = Variable.of_analysis(self).where(name: varname, discipline_id: discipline.id).take
     if var.is_in?
-      self.destroy_connection!(var.incoming_connection, sub_analysis_check=false)
+      destroy_connection!(var.incoming_connection, sub_analysis_check: false)
     else
-      var.outgoing_connections.map{|conn| self.destroy_connection!(conn, sub_analysis_check=false)}
+      var.outgoing_connections.map { |conn| destroy_connection!(conn, sub_analysis_check: false) }
     end
   end
-  
-  private
-    
-    def _check_mda_import_error
-      begin
-        if self.attachment.mda_excel?
-          importer = WhatsOpt::ExcelMdaImporter.new(self.attachment.path)
-        elsif self.attachment.mda_cmdows?
-          mda_name = File.basename(self.attachment.original_filename, '.*').camelcase
-          importer = WhatsOpt::CmdowsMdaImporter.new(self.attachment.path, mda_name)
-        else
-          self.errors.add(:attachment, "Bad file format")
-        end
-      rescue
-        self.errors.add(:attachment, "Import error")
-      end
+
+  def self.build_from_operation(ope_attrs, outvar_count_hint = 1)
+    name = ope_attrs[:name].camelize
+    disc_vars = Variable.get_variables_attributes(ope_attrs[:cases], outvar_count_hint)
+    driver_vars = disc_vars.map do |v|
+      { name: v[:name],
+        shape: v[:shape],
+        io_mode: Variable.reflect_io_mode(v[:io_mode]) }
     end
-    
-    def _create_from_attachment
-      begin
-        if self.attachment.exists?
-          if self.attachment.mda_excel?
-            self.name = File.basename(self.attachment.original_filename, '.xlsx').camelcase
-            importer = WhatsOpt::ExcelMdaImporter.new(self.attachment.path, self.name)
-          elsif self.attachment.mda_cmdows?
-            self.name = File.basename(self.attachment.original_filename, '.*').camelcase
-            importer = WhatsOpt::CmdowsMdaImporter.new(self.attachment.path, self.name)
-          else
-            raise WhatsOpt::MdaImporter::MdaImportError.new("bad format, can not be imported as an MDA")
-          end
-          self.name = importer.get_mda_attributes[:name]
-          vars = importer.get_variables_attributes
-          importer.get_disciplines_attributes().each do |dattr|
-            id = dattr[:id]
-            dattr.delete(:id)
-            disc = self.disciplines.build(dattr)
-            disc.variables.build(vars[id]) if vars[id]
-          end
-        else
-          raise WhatsOpt::MdaImporter::MdaImportError.new("does not exist")
-        end
-      rescue WhatsOpt::MdaImporter::MdaImportError => e
-        self.errors.add(:attachment, e.message)
+    Analysis.new(
+      name: name + "Analysis",
+      disciplines_attributes: [
+        { name: "__DRIVER__", "variables_attributes": driver_vars },
+        { name: name + "Model", "variables_attributes": disc_vars }
+      ]
+    )
+  end
+
+  private
+    def _check_mda_import_error
+      if attachment.mda_excel?
+        WhatsOpt::ExcelMdaImporter.new(attachment.path)
+      elsif attachment.mda_cmdows?
+        mda_name = File.basename(attachment.original_filename, ".*").camelcase
+        WhatsOpt::CmdowsMdaImporter.new(attachment.path, mda_name)
+      else
+        errors.add(:attachment, "Bad file format")
       end
+    rescue StandardError
+      errors.add(:attachment, "Import error")
+    end
+
+    def _create_from_attachment
+      if attachment.exists?
+        if attachment.mda_excel?
+          self.name = File.basename(attachment.original_filename, ".xlsx").camelcase
+          importer = WhatsOpt::ExcelMdaImporter.new(attachment.path, name)
+        elsif attachment.mda_cmdows?
+          self.name = File.basename(attachment.original_filename, ".*").camelcase
+          importer = WhatsOpt::CmdowsMdaImporter.new(attachment.path, name)
+        else
+          raise WhatsOpt::MdaImporter::MdaImportError, "bad format, can not be imported as an MDA"
+        end
+        self.name = importer.get_mda_attributes[:name]
+        vars = importer.get_variables_attributes
+        importer.get_disciplines_attributes.each do |dattr|
+          id = dattr[:id]
+          dattr.delete(:id)
+          disc = disciplines.build(dattr)
+          disc.variables.build(vars[id]) if vars[id]
+        end
+      else
+        raise WhatsOpt::MdaImporter::MdaImportError, "does not exist"
+      end
+    rescue WhatsOpt::MdaImporter::MdaImportError => e
+      errors.add(:attachment, e.message)
     end
 
     def _ensure_driver_presence
-      if self.valid? and self.disciplines.where(name: WhatsOpt::Discipline::NULL_DRIVER_NAME).empty?
-        self.disciplines.create!(name: WhatsOpt::Discipline::NULL_DRIVER_NAME, position: 0)
+      if valid? && disciplines.where(name: WhatsOpt::Discipline::NULL_DRIVER_NAME).empty?
+        disciplines.create!(name: WhatsOpt::Discipline::NULL_DRIVER_NAME, position: 0)
       end
     end
-    
+
     def _ensure_ancestry
       disciplines.nodes
-        .select{|d| d.has_sub_analysis? && d.sub_analysis.parent!=self}
-        .each{|d| d.sub_analysis.update(parent_id: self.id) unless new_record? }
+                 .select { |d| d.has_sub_analysis? && d.sub_analysis.parent != self }
+                 .each { |d| d.sub_analysis.update(parent_id: id) unless new_record? }
     end
 
     def _ensure_openmdao_impl_presence
-      if self.valid? and self.openmdao_impl.nil?
+      if valid? && self.openmdao_impl.nil?
         self.openmdao_impl = OpenmdaoAnalysisImpl.new
       end
     end
 
-    private 
-
+  private
     def set_defaults
       self.openmdo_impl = OpenmdaoAnalysisImpl.new
     end
 end
-

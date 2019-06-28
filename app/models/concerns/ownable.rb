@@ -1,5 +1,6 @@
-module Ownable
+# frozen_string_literal: true
 
+module Ownable
   def owner
     owners = User.with_role_for_instance(:owner, self)
     owners.take
@@ -29,16 +30,14 @@ module Ownable
     []
   end
 
-private
+  private
+    def _add_role(user, role)
+      user.add_role(role, self)
+      descendants.each { |mda| user.add_role(role, mda) }
+    end
 
-  def _add_role(user, role)
-    user.add_role(role, self)
-    self.descendants.each {|mda| user.add_role(role, mda)}
-  end
-
-  def _remove_role(user, role)
-    user.remove_role(role, self)
-    self.descendants.each {|mda| user.remove_role(role, mda)}
-  end
-
+    def _remove_role(user, role)
+      user.remove_role(role, self)
+      descendants.each { |mda| user.remove_role(role, mda) }
+    end
 end

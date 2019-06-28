@@ -1,18 +1,18 @@
-require 'open3'
+# frozen_string_literal: true
+
+require "open3"
 
 module WhatsOpt
-  
   class JupyterNotebookConverter
-
     SORRY_MESSAGE = "Oops, can not convert notebook to html!"
-    SORRY_MESSAGE_HTML = "<p><strong>"+SORRY_MESSAGE+"</strong></p>"
+    SORRY_MESSAGE_HTML = "<p><strong>" + SORRY_MESSAGE + "</strong></p>"
 
-    JUPYTER = APP_CONFIG['jupyter_cmd'] || "jupyter"
-    
+    JUPYTER = APP_CONFIG["jupyter_cmd"] || "jupyter"
+
     class HtmlConversionError < StandardError
     end
-    
-    def initialize(file, options={:format => :html})
+
+    def initialize(file, options = { format: :html })
       @file    = file
       @options = options
       @orig_format = ".ipynb"
@@ -45,13 +45,12 @@ module WhatsOpt
       ok = false
       Open3.popen2e(cmd) do |stdin, stdout_err, wait_thr|
         while line = stdout_err.gets
-          Rails::logger.debug line
+          Rails.logger.debug line
         end
         exit_status = wait_thr.value
         ok = exit_status.success?
       end
       ok
     end
-    
   end
 end

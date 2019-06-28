@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 module AnalysesHelper
   def lock_status(analysis)
-    analysis.public ? '':raw('<span><i class="fa fa-lock"></i></span>')
+    analysis.public ? "" : raw('<span><i class="fa fa-lock"></i></span>')
   end
-  
+
   def link_to_analysis_if_authorized(analysis, user)
     if policy(analysis).show?
       link_to analysis.name, mda_path(analysis)
@@ -18,19 +20,18 @@ module AnalysesHelper
       ope.name
     end
   end
-    
+
   def link_to_operations_if_authorized(analysis, user)
     res = ""
     Operation.done(analysis).each do |ope|
-      res += '<span style="margin: 0px 5px">' 
+      res += '<span style="margin: 0px 5px">'
       if policy(analysis).show?
-        res += link_to ope.name, operation_path(ope) 
+        res += link_to ope.name, operation_path(ope)
       else
         res += ope.name
       end
-      res += '</span>' 
+      res += "</span>"
     end
     raw(res)
   end
-
 end

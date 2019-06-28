@@ -1,5 +1,11 @@
 <h1>CHANGELOG</h1>
 
+<h3>1.1.0rc (27/06/2019)</h3>
+<ul>
+  <li>Upload csv data file as an operation result of an existing analysi; 
+  otherwise create analysis ad hoc</li>
+</ul>
+
 <h3>1.0.0 (17/06/2019)</h3>
 <ul>
   <li>Présentation à la conférence AIAA Aviation 2019 (Dallas TX)</li>

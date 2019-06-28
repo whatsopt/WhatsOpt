@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ApplicationPolicy
   attr_reader :user, :record
 
@@ -8,15 +10,15 @@ class ApplicationPolicy
 
   class Scope < Struct.new(:user, :scope)
     def intranet?
-      APP_CONFIG['intranet']
+      APP_CONFIG["intranet"]
     end
     def resolve
       scope.all
     end
   end
-  
+
   def intranet?
-    APP_CONFIG['intranet']
+    APP_CONFIG["intranet"]
   end
 
   def index?
@@ -24,7 +26,7 @@ class ApplicationPolicy
   end
 
   def show?
-    scope.where(:id => record.id).exists?
+    scope.where(id: record.id).exists?
   end
 
   def create?

@@ -1,10 +1,11 @@
-require 'test_helper'
-require 'whats_opt/sensitivity_analysis_generator'
-require 'tmpdir'
-require 'pathname'
+# frozen_string_literal: true
+
+require "test_helper"
+require "whats_opt/sensitivity_analysis_generator"
+require "tmpdir"
+require "pathname"
 
 class SensitivityAnalysisGeneratorTest < ActiveSupport::TestCase
-
   def setup
     @ope = operations(:screening)
     @sagen = WhatsOpt::SensitivityAnalysisGenerator.new(@ope)
@@ -14,8 +15,7 @@ class SensitivityAnalysisGeneratorTest < ActiveSupport::TestCase
     Dir.mktmpdir do |dir|
       # dir = "/tmp"
       filepath = @sagen._generate_code dir
-      assert File.exists?(filepath)
+      assert File.exist?(filepath)
     end
   end
-    
 end

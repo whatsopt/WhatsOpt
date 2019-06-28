@@ -1,20 +1,21 @@
-require 'test_helper'
-require 'whats_opt/discipline'
+# frozen_string_literal: true
+
+require "test_helper"
+require "whats_opt/discipline"
 
 class DisciplineTest < ActiveSupport::TestCase
-  
   test "should be created with a name" do
-    disc = Discipline.create(name: 'TEST')
+    disc = Discipline.create(name: "TEST")
     assert disc.valid?
     disc = Discipline.create()
-    refute disc.valid?
+    assert_not disc.valid?
   end
-  
+
   test "should have a default kind" do
-    disc = Discipline.create(name: 'TEST')
-    assert_equal WhatsOpt::Discipline::DISCIPLINE, disc.type    
+    disc = Discipline.create(name: "TEST")
+    assert_equal WhatsOpt::Discipline::DISCIPLINE, disc.type
   end
-  
+
   def test_as_json
     disc = disciplines(:geometry)
     adapter = ActiveModelSerializers::SerializableResource.new(disc)
@@ -22,8 +23,7 @@ class DisciplineTest < ActiveSupport::TestCase
   end
 
   test "should have default opendmao implementation" do
-    disc = Discipline.new(name: 'NewDisc')
+    disc = Discipline.new(name: "NewDisc")
     assert disc.openmdao_impl
   end
-
 end

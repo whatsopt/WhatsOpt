@@ -1,1 +1,3 @@
-json.array! @variables, partial: 'variables/variable', as: :variable
+# frozen_string_literal: true
+
+json.array! @variables, partial: "variables/variable", as: :variable

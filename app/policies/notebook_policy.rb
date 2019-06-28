@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class NotebookPolicy < ApplicationPolicy
   class Scope < Scope
     def resolve
@@ -13,11 +15,10 @@ class NotebookPolicy < ApplicationPolicy
   end
 
   def update?
-    intranet? && (@user.admin? or @user.has_role?(:owner, @record))
+    intranet? && (@user.admin? || @user.has_role?(:owner, @record))
   end
-  
+
   def destroy?
-    intranet? && (@user.admin? or @user.has_role?(:owner, @record))
+    intranet? && (@user.admin? || @user.has_role?(:owner, @record))
   end
-  
 end

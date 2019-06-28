@@ -1,17 +1,18 @@
-require 'whats_opt/cmdows_generator'
-require 'whats_opt/openmdao_generator'
+# frozen_string_literal: true
+
+require "whats_opt/cmdows_generator"
+require "whats_opt/openmdao_generator"
 
 class Api::V1::ExportsController < Api::ApiController
-
   def new
     mda_id = params[:mda_id]
     format = params[:format]
     with_server = !!params[:with_server]
-    with_runops = !!params[:with_runops]    
+    with_runops = !!params[:with_runops]
     with_unittests = !!params[:with_unittests]
     with_run = !(with_server || with_runops || with_server || (format == "openmdao_base"))
 
-    user_agent = request.headers['User-Agent'] 
+    user_agent = request.headers["User-Agent"]
     mda = Analysis.find(mda_id)
     authorize mda
     if format == "openmdao" || format == "openmdao_base"
@@ -28,10 +29,9 @@ class Api::V1::ExportsController < Api::ApiController
         Rails.logger.warn "CMDOWS export warning: CMDOWS validation error"
         Rails.logger.warn "CMDOWS export warning: #{e}"
       end
-      send_data content, filename: filename, type:  'application/xml'
+      send_data content, filename: filename, type:  "application/xml"
     else
       json_response({ message: "Export format #{format} not knwon" }, :bad_request)
-    end           
-  end  
-  
+    end
+  end
 end

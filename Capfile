@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Load DSL and set up stages
 require "capistrano/setup"
 
@@ -5,18 +7,18 @@ require "capistrano/setup"
 require "capistrano/deploy"
 
 # Include tasks from other gems included in your Gemfile
-require 'capistrano/rails'
-require 'capistrano/rvm'
-require 'capistrano/bundler'
-require 'capistrano/rails/assets'
-require 'capistrano/rails/migrations'
-require 'capistrano/passenger'
+require "capistrano/rails"
+require "capistrano/rvm"
+require "capistrano/bundler"
+require "capistrano/rails/assets"
+require "capistrano/rails/migrations"
+require "capistrano/passenger"
 
-if ENV['WHATSOPT_INTERNET']
+if ENV["WHATSOPT_INTERNET"]
   require_relative "lib/capistrano/whatsopt_plugin"
   install_plugin Capistrano::WhatsOptPlugin
 else
-  require 'capistrano/scm/git'
+  require "capistrano/scm/git"
   install_plugin Capistrano::SCM::Git
 
   require "capistrano/scm/git-with-submodules"
