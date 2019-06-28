@@ -33,8 +33,6 @@ module WhatsOpt
       src = @file
       filename = [@basename, @format ? ".#{@format}" : ""]
       dst = Tempfile.new(filename)
-      dst_path = File.dirname(dst.path)
-      dst_filename = File.basename(dst.path)
       ok = false
       Dir.mktmpdir do |dir|
         @input_filename = src.path

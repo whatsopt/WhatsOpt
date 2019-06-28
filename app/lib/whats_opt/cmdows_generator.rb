@@ -91,8 +91,8 @@ class WhatsOpt::CmdowsGenerator
       end
     end
     vars.each do |name, var|
-      xml.parameter uID: name do |xml|
-        xml.label var[:name]
+      xml.parameter uID: name do |elt|
+        elt.label var[:name]
       end
     end
   end

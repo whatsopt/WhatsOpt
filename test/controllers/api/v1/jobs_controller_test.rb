@@ -22,7 +22,7 @@ class Api::V1::JobsControllerTest < ActionDispatch::IntegrationTest
     @ope.job.update(pid: "66666666", status: "RUNNING", log: "dummy job\n")
     patch api_v1_operation_job_url(@ope), as: :json, headers: @auth_headers
     job = @ope.job.reload
-    assert_equal -1, job.pid
+    assert_equal(-1, job.pid)
     assert_equal "FAILED", job.status
     assert_equal "dummy job\nProcess Aborted\n", job.log
   end

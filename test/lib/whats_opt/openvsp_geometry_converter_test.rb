@@ -8,7 +8,7 @@ MakeMakefile::Logging.instance_variable_set(:@log, File.open(File::NULL, "w"))
 
 class OpenvspGeometryConverterTest < ActiveSupport::TestCase
   def openvsp?
-    found ||= find_executable("vspscript")
+    @found ||= find_executable("vspscript")
   end
 
   def setup

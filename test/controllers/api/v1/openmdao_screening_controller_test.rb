@@ -5,7 +5,6 @@ require "json"
 
 class Api::V1::OpenmdaoScreeningControllerTest < ActionDispatch::IntegrationTest
   setup do
-    user1 = users(:user1)
     @auth_headers = { "Authorization" => "Token " + TEST_API_KEY }
     @ope = operations(:screening)
   end

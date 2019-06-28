@@ -111,7 +111,7 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
 
   test "should create sellar optim analysis" do
     sellar_optim = JSON.load(sample_file("sellar_optim.json"))
-    mda_params = { analysis: JSON.load(sample_file("sellar_optim.json")) }
+    mda_params = { analysis: sellar_optim }
     post api_v1_mdas_url, params: mda_params, as: :json, headers: @auth_headers
     inner = Analysis.find_by_name("Sellar")
     outer = Analysis.find_by_name("SellarOptim")

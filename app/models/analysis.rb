@@ -235,7 +235,7 @@ class Analysis < ApplicationRecord
     end
   end
 
-  def create_connections!(from_disc, to_disc, names, sub_analysis_check = true)
+  def create_connections!(from_disc, to_disc, names, sub_analysis_check: true)
     Analysis.transaction do
       names.each do |name|
         conn = Connection.create_connection!(from_disc, to_disc, name, sub_analysis_check)
@@ -265,12 +265,12 @@ class Analysis < ApplicationRecord
       sub_analysis.update_connections!(down_conn, params, down_check, up_check = false)
     end
     # check connection tos
-    conn.from.outgoing_connections.each do |conn|
-      next unless conn.to.discipline.has_sub_analysis?
+    conn.from.outgoing_connections.each do |cn|
+      next unless cn.to.discipline.has_sub_analysis?
 
-      sub_analysis = conn.to.discipline.sub_analysis
+      sub_analysis = cn.to.discipline.sub_analysis
       inner_driver_var = sub_analysis.driver.variables
-                                     .where(name: conn.from.name, io_mode: WhatsOpt::Variable::OUT).take
+                                     .where(name: cn.from.name, io_mode: WhatsOpt::Variable::OUT).take
       down_conn = Connection.of_analysis(sub_analysis).where("from_id = ? or to_id = ?", inner_driver_var.id, inner_driver_var.id).take
       sub_analysis.update_connections!(down_conn, params, down_check, up_check = false)
     end
@@ -278,7 +278,7 @@ class Analysis < ApplicationRecord
     conn.update_connections!(params)
   end
 
-  def destroy_connection!(conn, sub_analysis_check = true)
+  def destroy_connection!(conn, sub_analysis_check: true)
     Analysis.transaction do
       varname = conn.from.name
       conn.destroy_connection!(sub_analysis_check)
@@ -302,7 +302,7 @@ class Analysis < ApplicationRecord
         if var_from.discipline.id != discipline.id # var consumed by sub-analysis
           from_disc = var_from.discipline
           to_disc = discipline
-          create_connections!(from_disc, to_disc, [varname], sub_analysis_check = false)
+          create_connections!(from_disc, to_disc, [varname], sub_analysis_check: false)
         else
           raise AncestorUpdateError, "Variable #{varname} already used in parent analysis #{name}: Cannot create connection."
         end
@@ -311,16 +311,16 @@ class Analysis < ApplicationRecord
       from_disc = driver
       to_disc = discipline
       from_disc, to_disc = to_disc, from_disc if inner_driver_var.is_in?
-      create_connections!(from_disc, to_disc, [varname], sub_analysis_check = false)
+      create_connections!(from_disc, to_disc, [varname], sub_analysis_check: false)
     end
   end
 
   def remove_upstream_connection!(varname, discipline)
     var = Variable.of_analysis(self).where(name: varname, discipline_id: discipline.id).take
     if var.is_in?
-      destroy_connection!(var.incoming_connection, sub_analysis_check = false)
+      destroy_connection!(var.incoming_connection, sub_analysis_check: false)
     else
-      var.outgoing_connections.map { |conn| destroy_connection!(conn, sub_analysis_check = false) }
+      var.outgoing_connections.map { |conn| destroy_connection!(conn, sub_analysis_check: false) }
     end
   end
 
@@ -332,7 +332,7 @@ class Analysis < ApplicationRecord
         shape: v[:shape],
         io_mode: Variable.reflect_io_mode(v[:io_mode]) }
     end
-    mda = Analysis.new(
+    Analysis.new(
       name: name + "Analysis",
       disciplines_attributes: [
         { name: "__DRIVER__", "variables_attributes": driver_vars },
@@ -344,10 +344,10 @@ class Analysis < ApplicationRecord
   private
     def _check_mda_import_error
       if attachment.mda_excel?
-        importer = WhatsOpt::ExcelMdaImporter.new(attachment.path)
+        WhatsOpt::ExcelMdaImporter.new(attachment.path)
       elsif attachment.mda_cmdows?
         mda_name = File.basename(attachment.original_filename, ".*").camelcase
-        importer = WhatsOpt::CmdowsMdaImporter.new(attachment.path, mda_name)
+        WhatsOpt::CmdowsMdaImporter.new(attachment.path, mda_name)
       else
         errors.add(:attachment, "Bad file format")
       end

@@ -4,7 +4,6 @@ require "test_helper"
 
 class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
   setup do
-    user1 = users(:user1)
     @auth_headers = { "Authorization" => "Token " + TEST_API_KEY }
 
     @mda = analyses(:cicav)
@@ -68,7 +67,7 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
     post api_v1_mda_connections_url(mda_id: @mda.id,
                                      connection: { from: @geometry.id, to: @aerodynamics.id, names: [""] }),
          as: :json, headers: @auth_headers
-    assert_match /can't be blank/, JSON.parse(response.body)["message"]
+    assert_match(/can't be blank/, JSON.parse(response.body)["message"])
     assert_response :unprocessable_entity
   end
 
@@ -84,7 +83,6 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
     connz = Connection.where(from_id: @varzout.id)
     assert_equal 2, connz.count
     connz1 = connz.first
-    connz2 = connz.second
     assert_difference("Variable.count", -1) do
       delete api_v1_connection_url(connz1), as: :json, headers: @auth_headers
       assert_response :success
@@ -105,7 +103,7 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
           mda_id: @outermda.id, connection: { from: @outermdadisc.id,
            to: @innermdadisc.id, names: [var_to_move.name] }), as: :json, headers: @auth_headers
         assert_response :success
-        assert_equal -1, @outermda.driver.output_variables.reload.count - driver_out_count
+        assert_equal(-1, @outermda.driver.output_variables.reload.count - driver_out_count)
         assert_equal 1, @outermdadisc.output_variables.reload.count - disc_out_count
       end
     end
@@ -172,8 +170,8 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
                                          connection: { from: @innermda.driver.id, to: @innermda.disciplines.last.id, names: ["newvar"] }),
              as: :json, headers: @auth_headers
         assert_response :success
-        assert_equal +1, @outermda.driver.output_variables.reload.count - driver_out_count
-        assert_equal +1, @innermdadisc.input_variables.reload.count - disc_in_count
+        assert_equal 1, @outermda.driver.output_variables.reload.count - driver_out_count
+        assert_equal 1, @innermdadisc.input_variables.reload.count - disc_in_count
       end
     end
   end
@@ -188,7 +186,7 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
              as: :json, headers: @auth_headers
         assert_response :success
         assert_equal 0, @outermda.driver.output_variables.reload.count - driver_out_count
-        assert_equal +1, @innermdadisc.input_variables.reload.count - disc_in_count
+        assert_equal 1, @innermdadisc.input_variables.reload.count - disc_in_count
       end
     end
   end

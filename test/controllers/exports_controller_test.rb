@@ -6,7 +6,7 @@ MakeMakefile::Logging.instance_variable_set(:@log, File.open(File::NULL, "w"))
 
 class ExportsControllerTest < ActionDispatch::IntegrationTest
   def thrift?
-    found ||= find_executable("thrift")
+    @found ||= find_executable("thrift")
   end
 
   setup do

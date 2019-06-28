@@ -8,7 +8,7 @@ MakeMakefile::Logging.instance_variable_set(:@log, File.open(File::NULL, "w"))
 
 class OpenmdaoGeneratorTest < ActiveSupport::TestCase
   def thrift?
-    found ||= find_executable("thrift")
+    @found ||= find_executable("thrift")
   end
 
   def setup
@@ -22,7 +22,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
       disc = @mda.disciplines[0]
       filepath = @ogen._generate_discipline disc, dir
       assert File.exist?(filepath)
-      assert_match /(\w+)_base\.py/, filepath
+      assert_match(/(\w+)_base\.py/, filepath)
     end
   end
 
@@ -107,14 +107,14 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     assert File.exist?(zippath)
     Zip::File.open(zippath) do |zip|
       zip.each do |entry|
-        assert_match /__init__.py|_base\.py|run_\w+\.py|server/, entry.name
+        assert_match(/__init__.py|_base\.py|run_\w+\.py|server/, entry.name)
       end
     end
   end
 
   test "should run openmdao check and return true when valid" do
     skip "Apache Thrift not installed" unless thrift?
-    ok, log = @ogen.check_mda_setup
+    ok, _log = @ogen.check_mda_setup
     assert ok  # ok even if discipline without connections
     # assert_empty log
   end
@@ -125,7 +125,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     ogen2 = WhatsOpt::OpenmdaoGenerator.new(mda)
     ok, log = ogen2.check_mda_setup
     assert_not ok  # check raises a runtime error
-    assert_match /Error: Variable name .* already exists/, log.join(" ")
+    assert_match(/Error: Variable name .* already exists/, log.join(" "))
     # assert_match /already been used/, log.join(' ')  # thrift error
   end
 
@@ -147,7 +147,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     Dir.mktmpdir do |dir|
       @ogen._generate_code dir
       pid = spawn("#{WhatsOpt::OpenmdaoGenerator::PYTHON} #{File.join(dir, 'run_server.py')}", [:out] => "/dev/null")
-      @ogen_remote = WhatsOpt::OpenmdaoGenerator.new(@mda, "localhost", driver_name = "runonce")
+      @ogen_remote = WhatsOpt::OpenmdaoGenerator.new(@mda, "localhost", "runonce")
       ok, log = @ogen_remote.run
       assert(ok, log)
       Process.kill("TERM", pid)
@@ -160,7 +160,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     Dir.mktmpdir do |dir|
       @ogen._generate_code dir
       pid = spawn("#{WhatsOpt::OpenmdaoGenerator::PYTHON} #{File.join(dir, 'run_server.py')}", [:out] => "/dev/null")
-      @ogen_remote = WhatsOpt::OpenmdaoGenerator.new(@mda, "localhost", driver_name = "smt_doe_lhs")
+      @ogen_remote = WhatsOpt::OpenmdaoGenerator.new(@mda, "localhost", "smt_doe_lhs")
       ok, log = @ogen_remote.run :doe
       assert(ok, log)
       Process.kill("TERM", pid)
@@ -173,7 +173,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     @ogen_remote = WhatsOpt::OpenmdaoGenerator.new(@mda, "localhost")
     ok, log = @ogen_remote.run
     assert_not ok
-    assert_match /Could not connect/, log.join(" ")
+    assert_match(/Could not connect/, log.join(" "))
   end
 
   test "should monitor remote mda" do
@@ -188,12 +188,11 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
       wait_thr.value
     end
     assert_not status.success?
-    assert_match /Could not connect/, lines.join(" ")
+    assert_match(/Could not connect/, lines.join(" "))
   end
 
   test "should use init value for independant variables" do
     skip "Apache Thrift not installed" unless thrift?
-    var = variables(:varx1_out)
     zippath = Tempfile.new("test_mda_file.zip")
     File.open(zippath, "w") do |f|
       content, _ = @ogen.generate

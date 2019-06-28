@@ -4,7 +4,6 @@ require "test_helper"
 
 class Api::V1::UserRolesControllerTest < ActionDispatch::IntegrationTest
   setup do
-    user1 = users(:user1)
     @auth_headers = { "Authorization" => "Token " + TEST_API_KEY }
     @mda = analyses(:cicav)
   end

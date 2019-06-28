@@ -8,7 +8,7 @@ require "mkmf"
 
 class ServerGeneratorTest < ActiveSupport::TestCase
   def thrift?
-    found ||= find_executable("thrift")
+    @found ||= find_executable("thrift")
   end
 
   def setup
@@ -27,7 +27,7 @@ class ServerGeneratorTest < ActiveSupport::TestCase
   test "should use thrift command to generate thrift code" do
     skip "Apache Thrift not installed" unless thrift?
     Dir.mktmpdir do |dir|
-      ok, log = @sgen._generate_with_thrift(dir)
+      ok, _log = @sgen._generate_with_thrift(dir)
       assert ok
     end
   end
