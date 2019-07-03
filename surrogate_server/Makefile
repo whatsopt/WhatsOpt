@@ -5,13 +5,13 @@ PY_SERVER_FILE = ${PY_SERVER_DIR}/Surrogate.py
 RB_CLIENT_FILE = ${RB_CLIENT_DIR}/surrogate.rb
 
 # Generate python for server
-${PY_SERVER_FILE}: surrogate.thrift
-	thrift -gen py -out . surrogate.thrift
+${PY_SERVER_FILE}: surrogate_store.thrift
+	thrift -gen py -out . surrogate_store.thrift
 
 # Generate ruby for client
-${RB_CLIENT_FILE}: surrogate.thrift
+${RB_CLIENT_FILE}: surrogate_store.thrift
 	mkdir -p ${RB_CLIENT_DIR}
-	thrift -gen rb -out ${RB_CLIENT_DIR} surrogate.thrift
+	thrift -gen rb -out ${RB_CLIENT_DIR} surrogate_store.thrift
 
 all: ${PY_SERVER_FILE} ${RB_CLIENT_FILE}
 

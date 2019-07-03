@@ -18,18 +18,20 @@ module WhatsOpt
 
     DESIGN_VAR_ROLE = "design_var"
     PARAMETER_ROLE = "parameter"
+
     RESPONSE_ROLE = "response"
     MIN_OBJECTIVE_ROLE = "min_objective"
     MAX_OBJECTIVE_ROLE = "max_objective"
     EQ_CONSTRAINT_ROLE = "eq_constraint"
     INEQ_CONSTRAINT_ROLE = "ineq_constraint"
     STATE_VAR_ROLE = "state_var"
+    RESPONSE_OF_INTEREST_ROLE = "response_of_interest"
 
     INTEREST_INPUT_ROLES = [DESIGN_VAR_ROLE]
-    INPUTS_ROLE = INTEREST_INPUT_ROLES + [PARAMETER_ROLE]
+    INPUT_ROLES = INTEREST_INPUT_ROLES + [PARAMETER_ROLE]
     OBJECTIVE_ROLES = [MIN_OBJECTIVE_ROLE, MAX_OBJECTIVE_ROLE]
-    INTEREST_OUTPUT_ROLES = OBJECTIVE_ROLES + [EQ_CONSTRAINT_ROLE, INEQ_CONSTRAINT_ROLE]
-
+    INTEREST_OUTPUT_ROLES = OBJECTIVE_ROLES + [EQ_CONSTRAINT_ROLE, INEQ_CONSTRAINT_ROLE, RESPONSE_OF_INTEREST_ROLE]
+    OUTPUT_ROLES = INTEREST_OUTPUT_ROLES + [RESPONSE_ROLE]
 
 
     VARIABLE_ROLES = INTEREST_INPUT_ROLES + INTEREST_OUTPUT_ROLES + [PARAMETER_ROLE, RESPONSE_ROLE, STATE_VAR_ROLE]
@@ -90,7 +92,7 @@ module WhatsOpt
         io_mode == OUT ? IN : OUT
       end
 
-      def get_variables_attributes(cases, outvar_count = 1)
+      def get_varattrs_from_caseattrs(cases, outvar_count = 1)
         vars = []
         sizes = {}
         cases.each do |c|

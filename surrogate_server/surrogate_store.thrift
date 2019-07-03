@@ -10,14 +10,10 @@ enum SurrogateKind {
   KPLS,
   KPLSK,
   LS,
-  QP,
-  RBF,
-  IDW,
-  RMTC,
-  RMTB
+  QP
 }
 
-service Surrogate {
+service SurrogateStore {
 
   void create_surrogate(1: string surrogate_id,
                         2: SurrogateKind kind, 

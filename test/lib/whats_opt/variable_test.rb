@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
 require "test_helper"
-# require 'whats_opt/variable'
 
 class VariableTest < ActiveSupport::TestCase
+
   test "should get attributes from cases attributes" do
     cases = [{ "varname": "x1", "coord_index": -1, "values": [10, 20, 30] },
              { "varname": "obj", "coord_index": 0, "values": [40, 50, 60] },
              { "varname": "obj", "coord_index": 1, "values": [40, 50, 60] }]
-    var_attrs = Variable.get_variables_attributes(cases)
+    var_attrs = Variable.get_varattrs_from_caseattrs(cases)
     assert_equal 2, var_attrs.size
     assert_equal ["x1", "obj"], var_attrs.map { |v| v[:name] }
 

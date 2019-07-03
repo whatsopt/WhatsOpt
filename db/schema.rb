@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 60) do
+ActiveRecord::Schema.define(version: 62) do
 
   create_table "analyses", force: :cascade do |t|
     t.string "name"
@@ -84,6 +84,16 @@ ActiveRecord::Schema.define(version: 60) do
     t.integer "log_count", default: 0
   end
 
+  create_table "meta_models", force: :cascade do |t|
+    t.integer "analysis_id"
+    t.integer "operation_id"
+    t.string "default_surrogate_kind"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["analysis_id"], name: "index_meta_models_on_analysis_id"
+    t.index ["operation_id"], name: "index_meta_models_on_operation_id"
+  end
+
   create_table "notebooks", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -155,6 +165,16 @@ ActiveRecord::Schema.define(version: 60) do
     t.integer "maxiter"
     t.integer "iprint"
     t.boolean "err_on_maxiter"
+  end
+
+  create_table "surrogates", force: :cascade do |t|
+    t.integer "meta_model_id"
+    t.integer "variable_id"
+    t.integer "coord_index"
+    t.string "kind"
+    t.string "status"
+    t.index ["meta_model_id"], name: "index_surrogates_on_meta_model_id"
+    t.index ["variable_id"], name: "index_surrogates_on_variable_id"
   end
 
   create_table "users", force: :cascade do |t|

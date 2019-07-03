@@ -16,7 +16,7 @@ else:
 from thrift.transport import TTransport, TSocket, TSSLSocket, THttpClient
 from thrift.protocol.TBinaryProtocol import TBinaryProtocol
 
-from whatsopt.surrogate_server import Surrogate
+from whatsopt.surrogate_server import SurrogateStore
 from whatsopt.surrogate_server.ttypes import *
 
 if len(sys.argv) <= 1 or sys.argv[1] == '--help':
@@ -103,7 +103,7 @@ else:
     else:
         transport = TTransport.TBufferedTransport(socket)
 protocol = TBinaryProtocol(transport)
-client = Surrogate.Client(protocol)
+client = SurrogateStore.Client(protocol)
 transport.open()
 
 if cmd == 'create_surrogate':

@@ -1,5 +1,5 @@
 require 'thrift'
-require_relative 'surrogate_server/surrogate'
+require_relative 'surrogate_server/surrogate_store'
 
 module WhatsOpt
   class SurrogateProxy
@@ -8,7 +8,7 @@ module WhatsOpt
       socket = Thrift::Socket.new('localhost', 41400)
       @transport = Thrift::BufferedTransport.new(socket)
       protocol = Thrift::BinaryProtocol.new(@transport)
-      @client = SurrogateServer::Surrogate::Client.new(protocol)
+      @client = SurrogateServer::SurrogateStore::Client.new(protocol)
     
       @surrogate_id = surrogate_id
     end

@@ -13,4 +13,6 @@ outermda:
 innermda:
   name: INNER
   ancestry: <%= ActiveRecord::FixtureSet.identify(:outermda) %>
-  
+
+cicav_metamodel_analysis:
+  name: CicavMetaModelAnalysis

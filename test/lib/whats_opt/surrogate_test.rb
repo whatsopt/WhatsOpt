@@ -1,7 +1,19 @@
 require 'test_helper'
-require 'whats_opt/surrogate_server/surrogate_types'
+require 'whats_opt/surrogate_server/surrogate_store_types'
 
 class SurrogateTest < ActiveSupport::TestCase
+
+  PYTHON = APP_CONFIG["python_cmd"] || "python"
+
+  def setup
+    @pid = spawn("#{PYTHON} #{File.join(Rails.root, 'surrogate_server', 'run_surrogate_server.py')}", [:out] => "/dev/null")
+    sleep(2) # startup time
+  end
+
+  def teardown
+    Process.kill("TERM", @pid)
+    Process.waitpid @pid
+  end
 
   test "should predict values" do
     @surr_proxy = WhatsOpt::SurrogateProxy.new("s1")

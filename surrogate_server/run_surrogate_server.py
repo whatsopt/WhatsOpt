@@ -8,17 +8,28 @@ from thrift.transport import TTransport
 from thrift.protocol import TBinaryProtocol
 from thrift.server import TServer
 
-from whatsopt.surrogate_server import Surrogate as SurrogateService
-from smt.surrogate_models import KRG, LS, QP, RBF
+from whatsopt.surrogate_server import ttypes as SurrogateStoreTypes
+from whatsopt.surrogate_server import SurrogateStore as SurrogateStoreService
 from whatsopt.surrogate_store import SurrogateStore
 
-class SurrogateHandler:
+SURROGATES_MAP = {
+    SurrogateStoreTypes.SurrogateKind.KRIGING: SurrogateStore.SURROGATE_NAMES[0],
+    SurrogateStoreTypes.SurrogateKind.KPLS: SurrogateStore.SURROGATE_NAMES[1],
+    SurrogateStoreTypes.SurrogateKind.KPLSK: SurrogateStore.SURROGATE_NAMES[2],
+    SurrogateStoreTypes.SurrogateKind.LS: SurrogateStore.SURROGATE_NAMES[3],
+    SurrogateStoreTypes.SurrogateKind.QP: SurrogateStore.SURROGATE_NAMES[4],
+}
+
+
+class SurrogateStoreHandler:
     def __init__(self):
         self.sm_store = SurrogateStore()
 
     def create_surrogate(self, surrogate_id, surrogate_kind, xt, yt):
-        print("CREATE")
-        self.sm_store.create_surrogate(surrogate_id, surrogate_kind, xt, yt) 
+        print("CREATE ", surrogate_kind, SURROGATES_MAP[surrogate_kind])
+        self.sm_store.create_surrogate(
+            surrogate_id, SURROGATES_MAP[surrogate_kind], xt, yt
+        )
 
     def predict_values(self, surrogate_id, x):
         print("PREDICT")
@@ -32,9 +43,10 @@ class SurrogateHandler:
         print("DESTROY")
         self.sm_store.destroy_surrogate(surrogate_id)
 
-handler = SurrogateHandler()
-processor = SurrogateService.Processor(handler)
-transport = TSocket.TServerSocket('0.0.0.0', port=41400)
+
+handler = SurrogateStoreHandler()
+processor = SurrogateStoreService.Processor(handler)
+transport = TSocket.TServerSocket("0.0.0.0", port=41400)
 tfactory = TTransport.TBufferedTransportFactory()
 pfactory = TBinaryProtocol.TBinaryProtocolFactory()
 

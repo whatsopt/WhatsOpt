@@ -5,11 +5,11 @@
 #
 
 require 'thrift'
-require 'surrogate_types'
+require 'surrogate_store_types'
 
 module WhatsOpt
   module SurrogateServer
-    module Surrogate
+    module SurrogateStore
       class Client
         include ::Thrift::Client
 

@@ -21,6 +21,8 @@ class Operation < ApplicationRecord
   has_many :cases, dependent: :destroy
   has_one :job, dependent: :destroy
 
+  has_many :meta_models, dependent: :destroy
+
   validates :name, presence: true, allow_blank: false
   validate :success_flags_consistent_with_cases
 
@@ -44,6 +46,21 @@ class Operation < ApplicationRecord
       operation.build_job(status: "PENDING", log: "")
     end
     operation
+  end
+
+  def build_metamodel_varattrs
+    input_vars = analysis.design_variables
+    output_vars = analysis.responses_of_interest
+    varattrs = []
+    input_vars.each do |v|
+      varattr = ActiveModelSerializers::SerializableResource.new(v).as_json
+      varattr[:io_mode] = WhatsOpt::Variable::IN
+      varattrs << varattr
+    end
+    output_vars.map do |v|
+      varattrs << ActiveModelSerializers::SerializableResource.new(v).as_json
+    end    
+    varattrs
   end
 
   def to_plotter_json

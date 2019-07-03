@@ -14,12 +14,8 @@ module WhatsOpt
       KPLSK = 2
       LS = 3
       QP = 4
-      RBF = 5
-      IDW = 6
-      RMTC = 7
-      RMTB = 8
-      VALUE_MAP = {0 => "KRIGING", 1 => "KPLS", 2 => "KPLSK", 3 => "LS", 4 => "QP", 5 => "RBF", 6 => "IDW", 7 => "RMTC", 8 => "RMTB"}
-      VALID_VALUES = Set.new([KRIGING, KPLS, KPLSK, LS, QP, RBF, IDW, RMTC, RMTB]).freeze
+      VALUE_MAP = {0 => "KRIGING", 1 => "KPLS", 2 => "KPLSK", 3 => "LS", 4 => "QP"}
+      VALID_VALUES = Set.new([KRIGING, KPLS, KPLSK, LS, QP]).freeze
     end
 
   end

@@ -14,7 +14,7 @@ class Api::V1::OperationsController < Api::ApiController
       if params[:mda_id]
         mda = Analysis.find(params[:mda_id])
       else
-        mda = Analysis.build_from_operation(ope_params, params[:outvar_count_hint] || 1)
+        mda = Analysis.build_analysis(ope_params, params[:outvar_count_hint] || 1)
         mda.save!
         mda.set_all_parameters_as_design_variables
         mda.set_owner(current_user)
