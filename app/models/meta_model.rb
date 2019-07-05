@@ -11,7 +11,7 @@ class MetaModel < ApplicationRecord
   def build_surrogates
     analysis.response_variables.each do |v|
       (0...v.dim).each do |index|
-        build_surrogate(variable: v, coord_index: index-1)
+        surrogates.build(variable: v, coord_index: index-1)
       end
     end
   end

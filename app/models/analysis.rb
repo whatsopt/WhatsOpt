@@ -336,8 +336,8 @@ class Analysis < ApplicationRecord
     Analysis.new(
       name: name,
       disciplines_attributes: [
-        { name: "__DRIVER__", "variables_attributes": driver_vars },
-        { name: name + "Model", "variables_attributes": disc_vars }
+        { name: "__DRIVER__", variables_attributes: driver_vars },
+        { name: name + "Model", variables_attributes: disc_vars }
       ]
     )
   end
@@ -348,15 +348,17 @@ class Analysis < ApplicationRecord
     driver_vars = metamodel_varattrs.map do |v|
       { name: v[:name],
         shape: v[:shape],
-        io_mode: Variable.reflect_io_mode(v[:io_mode]) }
+        io_mode: Variable.reflect_io_mode(v[:io_mode]), 
+        parameter_attributes: v[:parameter_attributes]
+      }
     end
-    Analysis.new(
+    analysis_attrs= {
       name: name,
       disciplines_attributes: [
-        { name: "__DRIVER__", "variables_attributes": driver_vars },
-        { name: name + "Model", "variables_attributes": metamodel_varattrs }
-      ]
-    )
+        { name: "__DRIVER__", variables_attributes: driver_vars },
+        { name: name + "Model", variables_attributes: metamodel_varattrs }
+    ]}
+    Analysis.new(analysis_attrs)
   end
 
   private

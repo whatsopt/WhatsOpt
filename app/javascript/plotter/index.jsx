@@ -96,11 +96,11 @@ class ScreeningPanel extends React.Component {
 
   componentDidMount() {
     this.props.api.openmdaoScreening(
-        this.props.opeId,
-        (response) => {
-          console.log(response.data);
-          this.setState({ loading: false, ...response.data});
-        });
+      this.props.opeId,
+      (response) => {
+        console.log(response.data);
+        this.setState({ loading: false, ...response.data });
+      });
   }
 
   render() {
@@ -145,7 +145,7 @@ class MetaModelPanel extends React.Component {
   }
 
   render() {
-    let metamodel = (<MetaModelManager onMetaModelCreate={this.props.onMetaModelCreate}/>);
+    let metamodel = (<MetaModelManager onMetaModelCreate={this.props.onMetaModelCreate} />);
     return (
       <div className="tab-pane fade" id={METAMODEL_TAB} role="tabpanel" aria-labelledby="metamodel-tab">
         {metamodel}
@@ -209,7 +209,7 @@ class Plotter extends React.Component {
     this.setState({ selection: newSelection });
   }
 
-  handleMetaModelCreate() {
+  handleMetaModelCreate(event) {
     console.log("Create MetaModel... To be implemented")
   }
 
@@ -292,10 +292,10 @@ class Plotter extends React.Component {
           <VariablePanel db={this.db} optim={isOptim} cases={cases} selCases={selCases}
             active={this.state.activeTab === VARIABLES_TAB}
             onSelectionChange={this.handleSelectionChange} />
-          <ScreeningPanel active={this.state.activeTab === SCREENING_TAB} 
-                          api={this.api} opeId={this.props.ope.id} />
-          <MetaModelPanel active={this.state.activeTab === METAMODEL_TAB} 
-                          onMetaModelCreate={this.handleMetaModelCreate} />
+          <ScreeningPanel active={this.state.activeTab === SCREENING_TAB}
+            api={this.api} opeId={this.props.ope.id} />
+          <MetaModelPanel active={this.state.activeTab === METAMODEL_TAB}
+            onMetaModelCreate={this.handleMetaModelCreate} />
         </div>
       </div>
     );

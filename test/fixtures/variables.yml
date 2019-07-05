@@ -19,7 +19,7 @@ varz_design_out:
   discipline: driver_cicav
   io_mode: out
   type: Float
-  shape: 1
+  shape: (2,)
   active: true
   
 varobj_objective_in:
@@ -43,7 +43,7 @@ varz_geo_in:
   discipline: geometry
   io_mode: in
   type: Float
-  shape: 1
+  shape: (2,)
   active: true
     
 varya_geo_in:
@@ -99,7 +99,7 @@ varz_aero_in:
   discipline: aerodynamics
   io_mode: in
   type: Float
-  shape: 1
+  shape: (2,)
   active: true
 
 # DUPLICATED VARS ##################################################  

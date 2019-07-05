@@ -8,7 +8,7 @@ class Api::V1::MetaModelsController < Api::ApiController
     json_response @meta_model
   end
 
-  # POST /api/v1/{operation_id}/meta_model
+  # POST /api/v1/{operation_id}/meta_models
   def create
     if params[:operation_id]
       ope = Operation.find(params[:operation_id])
@@ -17,7 +17,7 @@ class Api::V1::MetaModelsController < Api::ApiController
       mda.save!
       mda.set_all_parameters_as_design_variables
       mda.set_owner(current_user)
-      @meta_model = MetaModel.build(analysis: mda, operation: ope)
+      @meta_model = mda.build_meta_model(operation: ope)
       @meta_model.build_surrogates
       @meta_model.save!
     end

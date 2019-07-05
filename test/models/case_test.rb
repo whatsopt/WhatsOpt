@@ -11,10 +11,8 @@ class CaseTest < ActiveSupport::TestCase
   end
 
   def test_scope
-    incase = cases(:case1)
-    outcase = cases(:case2)
     ope = operations(:doe)
-    assert_equal [incase], ope.input_cases
-    assert_equal [outcase], ope.output_cases
+    assert_equal [cases(:case1), cases(:case3), cases(:case4)], ope.input_cases
+    assert_equal [cases(:case2)], ope.output_cases
   end
 end
