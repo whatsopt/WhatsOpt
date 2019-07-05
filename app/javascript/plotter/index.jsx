@@ -243,7 +243,7 @@ class Plotter extends React.Component {
     const title = `${this.props.ope.name} on ${this.props.mda.name} - ${details}`;
 
 
-    let screeningItem;
+    let screeningItem, screeningPanel;
     if (isScreening) {
       screeningItem = (
         <li className="nav-item">
@@ -251,8 +251,10 @@ class Plotter extends React.Component {
             role="tab" aria-controls="screening" data-toggle="tab" aria-selected="false"
             onClick={(e) => this.activateTab(e, SCREENING_TAB)}>Screening</a>
         </li>);
+      screeningPanel = (<ScreeningPanel active={this.state.activeTab === SCREENING_TAB}
+        api={this.api} opeId={this.props.ope.id} />);
     }
-    let metaModelItem;
+    let metaModelItem, metaModelPanel;
     if (isDoe) {
       metaModelItem = (
         <li className="nav-item">
@@ -260,6 +262,9 @@ class Plotter extends React.Component {
             role="tab" aria-controls="metamodel" data-toggle="tab" aria-selected="false"
             onClick={(e) => this.activateTab(e, METAMODEL_TAB)}>MetaModel</a>
         </li>);
+      metaModelPanel = (
+        <MetaModelPanel active={this.state.activeTab === METAMODEL_TAB}
+          onMetaModelCreate={this.handleMetaModelCreate} />);
     }
 
     const exportUrl = this.api.url(`/operations/${this.props.ope.id}/exports/new`);
@@ -292,10 +297,8 @@ class Plotter extends React.Component {
           <VariablePanel db={this.db} optim={isOptim} cases={cases} selCases={selCases}
             active={this.state.activeTab === VARIABLES_TAB}
             onSelectionChange={this.handleSelectionChange} />
-          <ScreeningPanel active={this.state.activeTab === SCREENING_TAB}
-            api={this.api} opeId={this.props.ope.id} />
-          <MetaModelPanel active={this.state.activeTab === METAMODEL_TAB}
-            onMetaModelCreate={this.handleMetaModelCreate} />
+          {screeningPanel}
+          {metaModelPanel}
         </div>
       </div>
     );

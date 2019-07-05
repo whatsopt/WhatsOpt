@@ -24,24 +24,26 @@ const SCHEMA_METAMODEL = {
 class MetaModelManager extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {reset: Date.now()};
+    this.state = { reset: Date.now(), surrogate_kind: "KRIGING" };
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
   }
 
   handleChange(data) {
+    console.log(data);
   }
 
   handleSubmit(data) {
+    this.props.onMetaModelCreate(data);
   }
 
   render() {
     const formData = {
-      metamodel: {kind: "Kriging"},
+      metamodel: { kind: "Kriging" },
     };
     // UI schema
     const uiSchema = {
-      "metamodel": { },
+      "metamodel": {},
     }
 
     return (
@@ -49,8 +51,8 @@ class MetaModelManager extends React.Component {
         <div className="row">
           <div className="col-md-3">
             <Form key={this.state.reset} schema={SCHEMA_METAMODEL} formData={formData} uiSchema={uiSchema}
-              onChange={(data) => this.handleChange(data)}
-              onSubmit={(data) => this.handleSubmit(data)} liveValidate={true}>
+              onChange={this.handleChange}
+              onSubmit={this.handleSubmit} liveValidate={true}>
               <div className="form-group">
                 <button type="submit" className="btn btn-primary">Create</button>
               </div>
