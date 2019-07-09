@@ -1,7 +1,7 @@
 require 'test_helper'
 require 'whats_opt/surrogate_server/surrogate_store_types'
 
-class SurrogateTest < ActiveSupport::TestCase
+class SurrogateProxyTest < ActiveSupport::TestCase
 
   PYTHON = APP_CONFIG["python_cmd"] || "python"
 

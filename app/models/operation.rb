@@ -18,7 +18,7 @@ class Operation < ApplicationRecord
   has_many :options, dependent: :destroy
   accepts_nested_attributes_for :options, reject_if: proc { |attr| attr["name"].blank? }, allow_destroy: true
 
-  has_many :cases, dependent: :destroy
+  has_many :cases, -> { joins(:variable).order('name ASC') }, dependent: :destroy
   has_one :job, dependent: :destroy
 
   has_many :meta_models, dependent: :destroy
@@ -126,6 +126,10 @@ class Operation < ApplicationRecord
 
   def output_cases
     cases.select { |c| c.variable.is_connected_as_output_of_interest? }
+  end
+
+  def sorted_cases
+    input_cases + output_cases
   end
 
   def perform

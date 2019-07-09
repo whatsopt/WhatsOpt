@@ -2,5 +2,7 @@ surrogate_obj:
   kind: KRIGING
   meta_model: cicav_metamodel
   variable: disc_metamodel_varobj_objective_out
+  coord_index: -1
+  status: created
 
 

@@ -8,11 +8,11 @@ class CsvCaseGeneratorTest < ActiveSupport::TestCase
     @ope = operations(:doe)
   end
 
-  CSV_DATA = "success;x1;obj;z[0];z[1]\n1;1.0;4;8;5\n0;2.5;5;3;4\n1;5;6;6;3\n"
+  CSV_DATA = "success;x1;z[0];z[1];obj\n1;1.0;8;5;4\n0;2.5;3;4;5\n1;5;6;3;6\n"
 
   test "should generate csv file from given operation cases" do
     @csvgen = WhatsOpt::CsvCaseGenerator.new
-    content, filename = @csvgen.generate @ope.cases, @ope.success
+    content, filename = @csvgen.generate @ope.sorted_cases, @ope.success
     assert_equal CSV_DATA, content
     assert_equal "cases.csv", filename
   end
@@ -21,7 +21,7 @@ class CsvCaseGeneratorTest < ActiveSupport::TestCase
     zippath = Tempfile.new("cases.zip")
     File.open(zippath, "w") do |f|
       @csvgen = WhatsOpt::CsvCaseGenerator.new(zip: true)
-      content, _ = @csvgen.generate @ope.cases, @ope.success
+      content, _ = @csvgen.generate @ope.sorted_cases, @ope.success
       f.write content
     end
 

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require 'matrix'
 
 class MetaModel < ApplicationRecord
   belongs_to :analysis
@@ -24,9 +25,25 @@ class MetaModel < ApplicationRecord
   def predict(values)
     res = []
     surrogates.each do |surr|
-
+      yvals = surr.predict(values)
+      if res.empty?
+        res = yvals.map{|y| [y]}
+      else
+        yvals.each_with_index do |y, i|
+          res[i] << y
+        end
+      end
     end
     res
+  end
+
+  def training_input_values
+    Matrix.columns(operation.input_cases.map(&:values)).to_a
+  end
+
+  def training_output_values(varname, coord_index)
+    p varname, coord_index
+    operation.cases.where(coord_index: coord_index).joins(:variable).where(variables: {name: varname}).take.values
   end
 
 private
