@@ -6,7 +6,7 @@ class CaseTest < ActiveSupport::TestCase
   def test_as_json
     cas = cases(:case1)
     adapter = ActiveModelSerializers::SerializableResource.new(cas)
-    expected = { values: [1, 2, 3], varname: "x1", coord_index: -1 }
+    expected = { values: [1.0, 2.5, 5, 7.5, 9.8], varname: "x1", coord_index: -1 }
     assert_equal expected, adapter.as_json
   end
 

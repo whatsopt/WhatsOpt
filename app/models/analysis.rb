@@ -16,6 +16,8 @@ class Analysis < ApplicationRecord
   class AncestorUpdateError < StandardError
   end
 
+  has_one :meta_model, dependent: :destroy
+
   has_one :attachment, as: :container, dependent: :destroy
   accepts_nested_attributes_for :attachment, allow_destroy: true
   validates_associated :attachment
@@ -30,8 +32,6 @@ class Analysis < ApplicationRecord
   has_many :operations, dependent: :destroy
 
   has_one :openmdao_impl, class_name: "OpenmdaoAnalysisImpl", dependent: :destroy
-
-  has_one :meta_model, dependent: :nullify
 
   before_validation(on: :create) do
     _create_from_attachment if attachment_exists?
@@ -58,7 +58,7 @@ class Analysis < ApplicationRecord
   end
 
   def variables
-    @variables = Variable.of_analysis(id).active
+    @variables = Variable.of_analysis(id).active.order('name ASC')
   end
 
   def parameter_variables
@@ -356,7 +356,8 @@ class Analysis < ApplicationRecord
       name: name,
       disciplines_attributes: [
         { name: "__DRIVER__", variables_attributes: driver_vars },
-        { name: name + "Model", variables_attributes: metamodel_varattrs }
+        { name: "#{ope.analysis.name.camelize}Model", type: WhatsOpt::Discipline::METAMODEL,
+          variables_attributes: metamodel_varattrs }
     ]}
     Analysis.new(analysis_attrs)
   end

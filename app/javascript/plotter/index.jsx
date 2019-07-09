@@ -136,12 +136,6 @@ class MetaModelPanel extends React.Component {
   }
 
   componentDidMount() {
-    // this.props.api.openmdaoScreening(
-    //     this.props.opeId,
-    //     (response) => {
-    //       console.log(response.data);
-    //       this.setState({ loading: false, ...response.data});
-    //     });
   }
 
   render() {
@@ -210,7 +204,12 @@ class Plotter extends React.Component {
   }
 
   handleMetaModelCreate(event) {
-    console.log("Create MetaModel... To be implemented")
+    console.log("Create MetaModel... ");
+    this.props.api.createMetaModel(
+      this.props.ope.id,
+      (response) => {
+        console.log(response.data);
+      });
   }
 
   activateTab(event, active) {
@@ -264,6 +263,7 @@ class Plotter extends React.Component {
         </li>);
       metaModelPanel = (
         <MetaModelPanel active={this.state.activeTab === METAMODEL_TAB}
+          opeId={this.props.ope.id}
           onMetaModelCreate={this.handleMetaModelCreate} />);
     }
 

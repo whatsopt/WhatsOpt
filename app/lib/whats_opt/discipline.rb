@@ -9,7 +9,8 @@ module WhatsOpt
     DISCIPLINE = "analysis"
     FUNCTION = "function"
     ANALYSIS = "mda"
+    METAMODEL = "metamodel"
 
-    TYPES = [NULL_DRIVER, DISCIPLINE, FUNCTION, ANALYSIS]
+    TYPES = [NULL_DRIVER, DISCIPLINE, FUNCTION, ANALYSIS, METAMODEL]
   end
 end

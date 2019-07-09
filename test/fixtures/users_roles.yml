@@ -10,10 +10,14 @@ users_roles3:
   user: user1 
   role: owner_innermda_role
 
-users_roles5:
+users_roles4:
   user: user1 
   role: owner_cicav_mda_role
-  
+
+users_roles5:
+  user: user1 
+  role: owner_cicav_meta_model_role
+
 users_roles6:
   user: user1 
   role: owner_dummy_mda_role

@@ -12,7 +12,7 @@ const SCHEMA_METAMODEL = {
       "properties": {
         "kind": {
           "title": "Surrogate Kind",
-          "enum": ["Kriging", "KPLS", "KPLSK", "LS", "QP", "RBF"],
+          "enum": ["KRIGING", "KPLS", "KPLSK", "LS", "QP"],
           "default": "",
         },
       },
@@ -39,7 +39,7 @@ class MetaModelManager extends React.Component {
 
   render() {
     const formData = {
-      metamodel: { kind: "Kriging" },
+      metamodel: { kind: "KRIGING" },
     };
     // UI schema
     const uiSchema = {

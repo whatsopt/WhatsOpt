@@ -1,24 +1,24 @@
 case1:
     operation: doe
     variable: varx1_out
-    values: [1, 2, 3]
+    values: [1.0, 2.5, 5, 7.5, 9.8]
     
 case2:
     operation: doe
     variable: varobj_geo_out
-    values: [4, 5, 6]
+    values: [4, 5, 6, 7, 8]
 
 case3:
     operation: doe
     variable: varz_design_out
     coord_index: 0
-    values: [7.1, 7.2, 7.3]
+    values: [8, 3, 6, 9, 10]
 
 case4:
     operation: doe
     variable: varz_design_out
     coord_index: 1
-    values: [8.1, 8.2, 8.3]
+    values: [5, 4, 3, 2, 1]
 
 empty_case:
     operation: inprogress2

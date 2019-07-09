@@ -24,7 +24,7 @@ Rails.application.routes.draw do
         resources :connections, only: [:create, :update, :destroy]
         resources :operations, only: [:show, :create, :update, :destroy] do
           resource :job, only: [:show, :create, :update]        
-          resources :meta_models, only: [:create]        
+          resources :meta_models, only: [:create, :update]        
           get 'openmdao_screenings/new'
         end
         resource :openmdao_impl, only: [:show, :update]
