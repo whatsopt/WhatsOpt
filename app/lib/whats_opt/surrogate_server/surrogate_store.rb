@@ -13,6 +13,27 @@ module WhatsOpt
       class Client
         include ::Thrift::Client
 
+        def ping()
+          send_ping()
+          recv_ping()
+        end
+
+        def send_ping()
+          send_message('ping', Ping_args)
+        end
+
+        def recv_ping()
+          result = receive_message(Ping_result)
+          return
+        end
+
+        def shutdown()
+          send_shutdown()
+        end
+
+        def send_shutdown()
+          send_oneway_message('shutdown', Shutdown_args)
+        end
         def create_surrogate(surrogate_id, kind, xt, yt)
           send_create_surrogate(surrogate_id, kind, xt, yt)
           recv_create_surrogate()
@@ -61,6 +82,19 @@ module WhatsOpt
       class Processor
         include ::Thrift::Processor
 
+        def process_ping(seqid, iprot, oprot)
+          args = read_args(iprot, Ping_args)
+          result = Ping_result.new()
+          @handler.ping()
+          write_result(result, oprot, 'ping', seqid)
+        end
+
+        def process_shutdown(seqid, iprot, oprot)
+          args = read_args(iprot, Shutdown_args)
+          @handler.shutdown()
+          return
+        end
+
         def process_create_surrogate(seqid, iprot, oprot)
           args = read_args(iprot, Create_surrogate_args)
           result = Create_surrogate_result.new()
@@ -85,6 +119,66 @@ module WhatsOpt
       end
 
       # HELPER FUNCTIONS AND STRUCTURES
+
+      class Ping_args
+        include ::Thrift::Struct, ::Thrift::Struct_Union
+
+        FIELDS = {
+
+        }
+
+        def struct_fields; FIELDS; end
+
+        def validate
+        end
+
+        ::Thrift::Struct.generate_accessors self
+      end
+
+      class Ping_result
+        include ::Thrift::Struct, ::Thrift::Struct_Union
+
+        FIELDS = {
+
+        }
+
+        def struct_fields; FIELDS; end
+
+        def validate
+        end
+
+        ::Thrift::Struct.generate_accessors self
+      end
+
+      class Shutdown_args
+        include ::Thrift::Struct, ::Thrift::Struct_Union
+
+        FIELDS = {
+
+        }
+
+        def struct_fields; FIELDS; end
+
+        def validate
+        end
+
+        ::Thrift::Struct.generate_accessors self
+      end
+
+      class Shutdown_result
+        include ::Thrift::Struct, ::Thrift::Struct_Union
+
+        FIELDS = {
+
+        }
+
+        def struct_fields; FIELDS; end
+
+        def validate
+        end
+
+        ::Thrift::Struct.generate_accessors self
+      end
 
       class Create_surrogate_args
         include ::Thrift::Struct, ::Thrift::Struct_Union

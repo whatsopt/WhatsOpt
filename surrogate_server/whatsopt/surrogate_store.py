@@ -1,5 +1,6 @@
 from os import remove
 import numpy as np
+import os
 
 try:
     import cPickle as pickle
@@ -56,8 +57,9 @@ class SurrogateStore(object):
 
     def destroy_surrogate(self, surrogate_id):
         filename = self._sm_filename(surrogate_id)
-        remove(filename)
+        if os.path.exists(filename):
+            os.remove(filename)
 
     def _sm_filename(self, surrogate_id):
-        return "%s/surrogate_%s.dat" % (self.outdir, surrogate_id)
+        return "%s/surrogate_%s.pkl" % (self.outdir, surrogate_id)
 

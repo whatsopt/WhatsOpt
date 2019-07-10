@@ -42,7 +42,6 @@ class MetaModel < ApplicationRecord
   end
 
   def training_output_values(varname, coord_index)
-    p varname, coord_index
     operation.cases.where(coord_index: coord_index).joins(:variable).where(variables: {name: varname}).take.values
   end
 

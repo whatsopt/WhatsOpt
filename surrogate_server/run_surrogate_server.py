@@ -22,8 +22,14 @@ SURROGATES_MAP = {
 
 
 class SurrogateStoreHandler:
-    def __init__(self):
-        self.sm_store = SurrogateStore()
+    def __init__(self, outdir="."):
+        self.sm_store = SurrogateStore(outdir)
+
+    def ping(self):
+        print("Surrogate server... Ping!")
+
+    def shutdown(self):
+        exit(0)
 
     def create_surrogate(self, surrogate_id, surrogate_kind, xt, yt):
         print("CREATE ", surrogate_kind, SURROGATES_MAP[surrogate_kind])
@@ -44,14 +50,29 @@ class SurrogateStoreHandler:
         self.sm_store.destroy_surrogate(surrogate_id)
 
 
-handler = SurrogateStoreHandler()
-processor = SurrogateStoreService.Processor(handler)
-transport = TSocket.TServerSocket("0.0.0.0", port=41400)
-tfactory = TTransport.TBufferedTransportFactory()
-pfactory = TBinaryProtocol.TBinaryProtocolFactory()
+if __name__ == "__main__":
+    from optparse import OptionParser
 
-server = TServer.TSimpleServer(processor, transport, tfactory, pfactory)
+    parser = OptionParser()
+    parser.add_option(
+        "-o",
+        "--outdir",
+        dest="outdir",
+        default=".",
+        help="save trained surrogate to DIRECTORY",
+        metavar="DIRECTORY",
+    )
+    (options, args) = parser.parse_args()
+    outdir = options.outdir
+    print("Surrogates saved to {}".format(outdir))
+    handler = SurrogateStoreHandler(outdir)
+    processor = SurrogateStoreService.Processor(handler)
+    transport = TSocket.TServerSocket("0.0.0.0", port=41400)
+    tfactory = TTransport.TBufferedTransportFactory()
+    pfactory = TBinaryProtocol.TBinaryProtocolFactory()
 
-print("Starting Surrogate server...")
-server.serve()
-print("done!")
+    server = TServer.TSimpleServer(processor, transport, tfactory, pfactory)
+
+    print("Starting Surrogate server...")
+    server.serve()
+    print("done!")

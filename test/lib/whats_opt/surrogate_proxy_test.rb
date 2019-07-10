@@ -3,21 +3,16 @@ require 'whats_opt/surrogate_server/surrogate_store_types'
 
 class SurrogateProxyTest < ActiveSupport::TestCase
 
-  PYTHON = APP_CONFIG["python_cmd"] || "python"
-
   def setup
-    @pid = spawn("#{PYTHON} #{File.join(Rails.root, 'surrogate_server', 'run_surrogate_server.py')}", [:out] => "/dev/null")
-    sleep(2) # startup time
+    @surr_proxy = WhatsOpt::SurrogateProxy.new
   end
 
   def teardown
-    Process.kill("TERM", @pid)
-    Process.waitpid @pid
+    @surr_proxy.destroy_surrogate
+    @surr_proxy.shutdown_server
   end
 
   test "should predict values" do
-    @surr_proxy = WhatsOpt::SurrogateProxy.new("s1")
-
     xt = [[0.0], [1.0], [2.0], [3.0], [4.0]]
     yt = [0.0, 1.0, 1.5, 0.5, 1.0]
     surr_kind = WhatsOpt::SurrogateServer::SurrogateKind::KRIGING
@@ -25,7 +20,23 @@ class SurrogateProxyTest < ActiveSupport::TestCase
     values = @surr_proxy.predict_values([[1.0], [2.5]])
     assert_in_delta(1.0, values[0]) 
     assert_in_delta(0.983, values[1]) 
-    @surr_proxy.destroy_surrogate()
+    @surr_proxy.destroy_surrogate
+  end
+
+  test "should check server presence" do 
+    assert @surr_proxy.server_available?
+  end
+
+  test "should check server absence" do 
+    teardown
+    refute @surr_proxy.server_available?
+  end
+
+  test "should not start server" do 
+    teardown
+    refute @surr_proxy.server_available?
+    @surr_proxy = WhatsOpt::SurrogateProxy.new(server_start: false)
+    refute @surr_proxy.server_available?
   end
 
 end

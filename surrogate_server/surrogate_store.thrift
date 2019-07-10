@@ -15,6 +15,9 @@ enum SurrogateKind {
 
 service SurrogateStore {
 
+  void ping();
+  oneway void shutdown();
+
   void create_surrogate(1: string surrogate_id,
                         2: SurrogateKind kind, 
                         3: Matrix xt, 
