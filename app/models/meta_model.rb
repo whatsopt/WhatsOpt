@@ -14,6 +14,8 @@ class MetaModel < ApplicationRecord
   MATRIX_FORMAT = 'matrix'
   FORMATS = [MATRIX_FORMAT]
 
+  class PredictionError < StandardError; end
+
   def build_surrogates
     analysis.response_variables.each do |v|
       (0...v.dim).each do |index|
@@ -35,6 +37,8 @@ class MetaModel < ApplicationRecord
       end
     end
     res
+  rescue => e
+    raise PredictionError.new("Cannot make prediction for '#{values}'")
   end
 
   def training_input_values

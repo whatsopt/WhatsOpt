@@ -125,6 +125,8 @@ class Client(Iface):
         result = create_surrogate_result()
         result.read(iprot)
         iprot.readMessageEnd()
+        if result.exc is not None:
+            raise result.exc
         return
 
     def predict_values(self, surrogate_id, x):
@@ -158,6 +160,8 @@ class Client(Iface):
         iprot.readMessageEnd()
         if result.success is not None:
             return result.success
+        if result.exc is not None:
+            raise result.exc
         raise TApplicationException(TApplicationException.MISSING_RESULT, "predict_values failed: unknown result")
 
     def destroy_surrogate(self, surrogate_id):
@@ -259,6 +263,9 @@ class Processor(Iface, TProcessor):
             msg_type = TMessageType.REPLY
         except TTransport.TTransportException:
             raise
+        except SurrogateException as exc:
+            msg_type = TMessageType.REPLY
+            result.exc = exc
         except TApplicationException as ex:
             logging.exception('TApplication exception in handler')
             msg_type = TMessageType.EXCEPTION
@@ -282,6 +289,9 @@ class Processor(Iface, TProcessor):
             msg_type = TMessageType.REPLY
         except TTransport.TTransportException:
             raise
+        except SurrogateException as exc:
+            msg_type = TMessageType.REPLY
+            result.exc = exc
         except TApplicationException as ex:
             logging.exception('TApplication exception in handler')
             msg_type = TMessageType.EXCEPTION
@@ -572,7 +582,14 @@ create_surrogate_args.thrift_spec = (
 
 
 class create_surrogate_result(object):
+    """
+    Attributes:
+     - exc
+    """
 
+
+    def __init__(self, exc=None,):
+        self.exc = exc
 
     def read(self, iprot):
         if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
@@ -583,6 +600,12 @@ class create_surrogate_result(object):
             (fname, ftype, fid) = iprot.readFieldBegin()
             if ftype == TType.STOP:
                 break
+            if fid == 1:
+                if ftype == TType.STRUCT:
+                    self.exc = SurrogateException()
+                    self.exc.read(iprot)
+                else:
+                    iprot.skip(ftype)
             else:
                 iprot.skip(ftype)
             iprot.readFieldEnd()
@@ -593,6 +616,10 @@ class create_surrogate_result(object):
             oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
             return
         oprot.writeStructBegin('create_surrogate_result')
+        if self.exc is not None:
+            oprot.writeFieldBegin('exc', TType.STRUCT, 1)
+            self.exc.write(oprot)
+            oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
 
@@ -611,6 +638,8 @@ class create_surrogate_result(object):
         return not (self == other)
 all_structs.append(create_surrogate_result)
 create_surrogate_result.thrift_spec = (
+    None,  # 0
+    (1, TType.STRUCT, 'exc', [SurrogateException, None], None, ),  # 1
 )
 
 
@@ -707,11 +736,13 @@ class predict_values_result(object):
     """
     Attributes:
      - success
+     - exc
     """
 
 
-    def __init__(self, success=None,):
+    def __init__(self, success=None, exc=None,):
         self.success = success
+        self.exc = exc
 
     def read(self, iprot):
         if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
@@ -732,6 +763,12 @@ class predict_values_result(object):
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
+            elif fid == 1:
+                if ftype == TType.STRUCT:
+                    self.exc = SurrogateException()
+                    self.exc.read(iprot)
+                else:
+                    iprot.skip(ftype)
             else:
                 iprot.skip(ftype)
             iprot.readFieldEnd()
@@ -748,6 +785,10 @@ class predict_values_result(object):
             for iter41 in self.success:
                 oprot.writeDouble(iter41)
             oprot.writeListEnd()
+            oprot.writeFieldEnd()
+        if self.exc is not None:
+            oprot.writeFieldBegin('exc', TType.STRUCT, 1)
+            self.exc.write(oprot)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
@@ -768,6 +809,7 @@ class predict_values_result(object):
 all_structs.append(predict_values_result)
 predict_values_result.thrift_spec = (
     (0, TType.LIST, 'success', (TType.DOUBLE, None, False), None, ),  # 0
+    (1, TType.STRUCT, 'exc', [SurrogateException, None], None, ),  # 1
 )
 
 

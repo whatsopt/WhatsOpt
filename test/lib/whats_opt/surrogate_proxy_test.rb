@@ -9,7 +9,7 @@ class SurrogateProxyTest < ActiveSupport::TestCase
 
   def teardown
     @surr_proxy.destroy_surrogate
-    @surr_proxy.shutdown_server
+    WhatsOpt::SurrogateProxy.shutdown_server
   end
 
   test "should predict values" do

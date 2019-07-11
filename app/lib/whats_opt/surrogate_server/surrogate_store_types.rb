@@ -18,5 +18,28 @@ module WhatsOpt
       VALID_VALUES = Set.new([KRIGING, KPLS, KPLSK, LS, QP]).freeze
     end
 
+    class SurrogateException < ::Thrift::Exception
+      include ::Thrift::Struct, ::Thrift::Struct_Union
+      def initialize(message=nil)
+        super()
+        self.msg = message
+      end
+
+      def message; msg end
+
+      MSG = 1
+
+      FIELDS = {
+        MSG => {:type => ::Thrift::Types::STRING, :name => 'msg'}
+      }
+
+      def struct_fields; FIELDS; end
+
+      def validate
+      end
+
+      ::Thrift::Struct.generate_accessors self
+    end
+
   end
 end

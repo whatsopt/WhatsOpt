@@ -45,6 +45,7 @@ module WhatsOpt
 
         def recv_create_surrogate()
           result = receive_message(Create_surrogate_result)
+          raise result.exc unless result.exc.nil?
           return
         end
 
@@ -60,6 +61,7 @@ module WhatsOpt
         def recv_predict_values()
           result = receive_message(Predict_values_result)
           return result.success unless result.success.nil?
+          raise result.exc unless result.exc.nil?
           raise ::Thrift::ApplicationException.new(::Thrift::ApplicationException::MISSING_RESULT, 'predict_values failed: unknown result')
         end
 
@@ -98,14 +100,22 @@ module WhatsOpt
         def process_create_surrogate(seqid, iprot, oprot)
           args = read_args(iprot, Create_surrogate_args)
           result = Create_surrogate_result.new()
-          @handler.create_surrogate(args.surrogate_id, args.kind, args.xt, args.yt)
+          begin
+            @handler.create_surrogate(args.surrogate_id, args.kind, args.xt, args.yt)
+          rescue ::WhatsOpt::SurrogateServer::SurrogateException => exc
+            result.exc = exc
+          end
           write_result(result, oprot, 'create_surrogate', seqid)
         end
 
         def process_predict_values(seqid, iprot, oprot)
           args = read_args(iprot, Predict_values_args)
           result = Predict_values_result.new()
-          result.success = @handler.predict_values(args.surrogate_id, args.x)
+          begin
+            result.success = @handler.predict_values(args.surrogate_id, args.x)
+          rescue ::WhatsOpt::SurrogateServer::SurrogateException => exc
+            result.exc = exc
+          end
           write_result(result, oprot, 'predict_values', seqid)
         end
 
@@ -207,9 +217,10 @@ module WhatsOpt
 
       class Create_surrogate_result
         include ::Thrift::Struct, ::Thrift::Struct_Union
+        EXC = 1
 
         FIELDS = {
-
+          EXC => {:type => ::Thrift::Types::STRUCT, :name => 'exc', :class => ::WhatsOpt::SurrogateServer::SurrogateException}
         }
 
         def struct_fields; FIELDS; end
@@ -241,9 +252,11 @@ module WhatsOpt
       class Predict_values_result
         include ::Thrift::Struct, ::Thrift::Struct_Union
         SUCCESS = 0
+        EXC = 1
 
         FIELDS = {
-          SUCCESS => {:type => ::Thrift::Types::LIST, :name => 'success', :element => {:type => ::Thrift::Types::DOUBLE}}
+          SUCCESS => {:type => ::Thrift::Types::LIST, :name => 'success', :element => {:type => ::Thrift::Types::DOUBLE}},
+          EXC => {:type => ::Thrift::Types::STRUCT, :name => 'exc', :class => ::WhatsOpt::SurrogateServer::SurrogateException}
         }
 
         def struct_fields; FIELDS; end

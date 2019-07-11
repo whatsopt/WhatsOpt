@@ -33,17 +33,28 @@ class SurrogateStoreHandler:
 
     def create_surrogate(self, surrogate_id, surrogate_kind, xt, yt):
         print("CREATE ", surrogate_kind, SURROGATES_MAP[surrogate_kind])
-        self.sm_store.create_surrogate(
-            surrogate_id, SURROGATES_MAP[surrogate_kind], xt, yt
-        )
+        try:
+            self.sm_store.create_surrogate(
+                surrogate_id, SURROGATES_MAP[surrogate_kind], xt, yt
+            )
+        except Exception as err:
+            exc = SurrogateStoreTypes.SurrogateException()
+            exc.msg = str(err)
+            raise exc
 
     def predict_values(self, surrogate_id, x):
         print("PREDICT")
-        sm = self.sm_store.get_surrogate(surrogate_id)
-        if sm:
-            return sm.predict_values(np.array(x))
-        else:
-            return []
+        try:
+            sm = self.sm_store.get_surrogate(surrogate_id)
+            if sm:
+                return sm.predict_values(np.array(x))
+            else:
+                return []
+        except Exception as err:
+            print("COUCOUC")
+            exc = SurrogateStoreTypes.SurrogateException()
+            exc.msg = str(err)
+            raise exc
 
     def destroy_surrogate(self, surrogate_id):
         print("DESTROY")

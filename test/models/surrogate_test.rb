@@ -8,7 +8,7 @@ class SurrogateTest < ActiveSupport::TestCase
   end
 
   teardown do
-    @surr.proxy.shutdown_server
+    WhatsOpt::SurrogateProxy.shutdown_server
   end
 
   test "should be train and predict" do

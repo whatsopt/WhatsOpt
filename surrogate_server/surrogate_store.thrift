@@ -13,6 +13,10 @@ enum SurrogateKind {
   QP
 }
 
+exception SurrogateException {
+  1: string msg
+}
+
 service SurrogateStore {
 
   void ping();
@@ -21,10 +25,10 @@ service SurrogateStore {
   void create_surrogate(1: string surrogate_id,
                         2: SurrogateKind kind, 
                         3: Matrix xt, 
-                        4: Vector yt);
+                        4: Vector yt) throws (1: SurrogateException exc);
 
   Vector predict_values(1: string surrogate_id, 
-                        2: Matrix x);
+                        2: Matrix x) throws (1: SurrogateException exc);
 
   void destroy_surrogate(1: string surrogate_id);
   
