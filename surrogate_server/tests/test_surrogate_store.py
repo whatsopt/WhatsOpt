@@ -1,7 +1,6 @@
 import unittest
 import numpy as np
 from whatsopt.surrogate_store import SurrogateStore
-from whatsopt.surrogate_server import Surrogate
 
 SMT_NOT_INSTALLED = False
 try:
@@ -10,41 +9,23 @@ try:
 except:
     SMT_NOT_INSTALLED = True
 
-from thrift import Thrift
-from thrift.transport import TSocket
-from thrift.transport import TTransport
-from thrift.protocol import TBinaryProtocol
-
-
-class SurrogateProxy(object):
-    def __init__(self):
-        transport = TSocket.TSocket("localhost", 41400)
-        transport = TTransport.TBufferedTransport(transport)
-        protocol = TBinaryProtocol.TBinaryProtocol(transport)
-        self._thrift_client = Surrogate.Client(protocol)
-        transport.open()
-
-    def create_surrogate(self, surrogate_id, surrogate_kind, xt, yt):
-        self._thrift_client.create_surrogate(surrogate_id, surrogate_kind, xt, yt)
-
 
 class TestSurrogateStore(unittest.TestCase):
-    @unittest.skip("skip")
+    # @unittest.skip("skip")
     def test_create_surrogate(self):
         xt = np.array([[0.0, 1.0, 2.0, 3.0, 4.0]]).T
         yt = np.array([0.0, 1.0, 1.5, 0.5, 1.0]).T
 
-        sm = SurrogateProxy()
-        sm.create_surrogate("1", SurrogateStore.SURROGATE_NAMES[0], xt, yt)
+        store = SurrogateStore()
+        sm = store.create_surrogate("1", "KRIGING", xt, yt)
 
     # @unittest.skip("skip")
-    def test_save(self):
-
-        xt = np.array([0.0, 1.0, 2.0, 3.0, 4.0])
-        yt = np.array([0.0, 1.0, 1.5, 0.5, 1.0])
+    def test_get_existing_surrogate(self):
+        xt = np.array([[0.0, 1.0, 2.0, 3.0, 4.0]]).T
+        yt = np.array([0.0, 1.0, 1.5, 0.5, 1.0]).T
 
         store = SurrogateStore()
-        sm = store.create_surrogate("1", SurrogateStore.SURROGATE_NAMES[0], xt, yt)
+        sm = store.create_surrogate("1", "KRIGING", xt, yt)
 
         num = 13
         x = np.linspace(0.0, 4.0, num)
@@ -54,6 +35,12 @@ class TestSurrogateStore(unittest.TestCase):
         y2 = sm2.predict_values(x)
 
         assert np.array_equal(y1, y2)
+
+    def test_get_non_existing_surrogate(self):
+        store = SurrogateStore()
+
+        with self.assertRaises(FileNotFoundError):
+            store.get_surrogate("2")
 
     @unittest.skip("skip")
     def test_save_mfk(self):
