@@ -1,4 +1,5 @@
 import unittest
+import os
 import numpy as np
 from whatsopt.surrogate_store import SurrogateStore as SurrogateStoreImpl
 from whatsopt.surrogate_server import SurrogateStore
