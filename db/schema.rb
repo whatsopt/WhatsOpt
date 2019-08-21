@@ -85,12 +85,12 @@ ActiveRecord::Schema.define(version: 62) do
   end
 
   create_table "meta_models", force: :cascade do |t|
-    t.integer "analysis_id"
+    t.integer "discipline_id"
     t.integer "operation_id"
     t.string "default_surrogate_kind"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["analysis_id"], name: "index_meta_models_on_analysis_id"
+    t.index ["discipline_id"], name: "index_meta_models_on_discipline_id"
     t.index ["operation_id"], name: "index_meta_models_on_operation_id"
   end
 

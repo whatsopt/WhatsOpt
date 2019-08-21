@@ -134,7 +134,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     Dir.mktmpdir do |dir|
       @ogen._generate_code dir
       pid = spawn("#{WhatsOpt::OpenmdaoGenerator::PYTHON} #{File.join(dir, 'run_server.py')}", [:out] => "/dev/null")
-      @ogen_remote = WhatsOpt::OpenmdaoGenerator.new(@mda, "localhost")
+      @ogen_remote = WhatsOpt::OpenmdaoGenerator.new(@mda, server_host: "localhost")
       ok, log = @ogen_remote.run
       assert(ok, log)
       Process.kill("TERM", pid)
@@ -147,7 +147,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     Dir.mktmpdir do |dir|
       @ogen._generate_code dir
       pid = spawn("#{WhatsOpt::OpenmdaoGenerator::PYTHON} #{File.join(dir, 'run_server.py')}", [:out] => "/dev/null")
-      @ogen_remote = WhatsOpt::OpenmdaoGenerator.new(@mda, "localhost", "runonce")
+      @ogen_remote = WhatsOpt::OpenmdaoGenerator.new(@mda, server_host: "localhost", driver_name: "runonce")
       ok, log = @ogen_remote.run
       assert(ok, log)
       Process.kill("TERM", pid)
@@ -160,7 +160,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     Dir.mktmpdir do |dir|
       @ogen._generate_code dir
       pid = spawn("#{WhatsOpt::OpenmdaoGenerator::PYTHON} #{File.join(dir, 'run_server.py')}", [:out] => "/dev/null")
-      @ogen_remote = WhatsOpt::OpenmdaoGenerator.new(@mda, "localhost", "smt_doe_lhs")
+      @ogen_remote = WhatsOpt::OpenmdaoGenerator.new(@mda, server_host: "localhost", driver_name: "smt_doe_lhs")
       ok, log = @ogen_remote.run :doe
       assert(ok, log)
       Process.kill("TERM", pid)
@@ -170,7 +170,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
 
   test "should run remote mda and return false when failed" do
     skip "Apache Thrift not installed" unless thrift?
-    @ogen_remote = WhatsOpt::OpenmdaoGenerator.new(@mda, "localhost")
+    @ogen_remote = WhatsOpt::OpenmdaoGenerator.new(@mda, server_host: "localhost")
     ok, log = @ogen_remote.run
     assert_not ok
     assert_match(/Could not connect/, log.join(" "))
@@ -178,7 +178,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
 
   test "should monitor remote mda" do
     skip "Apache Thrift not installed" unless thrift?
-    @ogen_remote = WhatsOpt::OpenmdaoGenerator.new(@mda, "localhost")
+    @ogen_remote = WhatsOpt::OpenmdaoGenerator.new(@mda, server_host: "localhost")
     lines = []
     status = @ogen_remote.monitor do |stdin, stdouterr, wait_thr|
       stdin.close
@@ -223,6 +223,19 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
         "server/outer_conversions.py", "server/outer_proxy.py", "vacant_discipline.py", "vacant_discipline_base.py",
         "server/sub_analysis_proxy.py"]).sort
       assert_equal expected, basenames
+    end
+  end
+
+  test "should generate metamodel code" do
+    skip "Apache Thrift not installed" unless thrift?
+    mda = analyses(:cicav_metamodel_analysis)
+    ogen = WhatsOpt::OpenmdaoGenerator.new(mda)
+    Dir.mktmpdir do |dir|
+      dir = '/tmp'
+      ogen._generate_code dir
+      dirpath = Pathname.new(dir)
+      basenames = ogen.genfiles.map { |f| Pathname.new(f).relative_path_from(dirpath).to_s }.sort
+      assert_includes basenames, "meta_model_disc.py"
     end
   end
 end

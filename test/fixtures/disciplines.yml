@@ -83,7 +83,7 @@ driver_cicav_metamodel:
   position: 0
 
 disc_cicav_metamodel:
-  name: MetaModel
+  name: MetaModelDisc
   type: metamodel
   analysis: cicav_metamodel_analysis
   position: 1

@@ -13,6 +13,7 @@ class Discipline < ApplicationRecord
   # has_many :variables, :dependent => :destroy
   has_one :analysis_discipline, dependent: :destroy
   has_one :sub_analysis, through: :analysis_discipline, source: :analysis
+  has_one :meta_model, dependent: :destroy
 
   belongs_to :analysis
   acts_as_list scope: :analysis, top_of_list: 0

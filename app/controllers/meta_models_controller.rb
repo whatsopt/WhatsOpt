@@ -10,7 +10,7 @@ class MetaModelsController < ApplicationController
     if mda.save
       mda.set_all_parameters_as_design_variables
       mda.set_owner(current_user)
-      @meta_model = mda.build_meta_model(operation: ope)
+      @meta_model = mda.disciplines.last.build_meta_model(operation: ope)  # just one plain discipline in the analysis which is 
       @meta_model.build_surrogates
       if @meta_model.save
         redirect_to mda_url(mda), notice: "Metamodel was successfully created."

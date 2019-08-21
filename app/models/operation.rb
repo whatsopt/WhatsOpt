@@ -133,7 +133,7 @@ class Operation < ApplicationRecord
   end
 
   def perform
-    ogen = WhatsOpt::OpenmdaoGenerator.new(analysis, host, driver, option_hash)
+    ogen = WhatsOpt::OpenmdaoGenerator.new(analysis, server_host: host, driver_name: driver, driver_options: option_hash)
     sqlite_filename = File.join(Dir.tmpdir, "#{SecureRandom.urlsafe_base64}.sqlite")
     tmplog_filename = File.join(Dir.tmpdir, "#{SecureRandom.urlsafe_base64}.log")
     FileUtils.touch(tmplog_filename) # ensure logfile existence

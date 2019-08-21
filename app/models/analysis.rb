@@ -16,8 +16,6 @@ class Analysis < ApplicationRecord
   class AncestorUpdateError < StandardError
   end
 
-  has_one :meta_model, dependent: :destroy
-
   has_one :attachment, as: :container, dependent: :destroy
   accepts_nested_attributes_for :attachment, allow_destroy: true
   validates_associated :attachment

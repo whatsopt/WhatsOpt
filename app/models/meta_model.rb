@@ -2,12 +2,12 @@
 require 'matrix'
 
 class MetaModel < ApplicationRecord
-  belongs_to :analysis
+  belongs_to :discipline
   belongs_to :operation
 
   has_many :surrogates, dependent: :destroy
 
-  validates :analysis, presence: true
+  validates :discipline, presence: true
 
   after_initialize :_set_defaults
 
@@ -15,6 +15,10 @@ class MetaModel < ApplicationRecord
   FORMATS = [MATRIX_FORMAT]
 
   class PredictionError < StandardError; end
+
+  def analysis
+    discipline.analysis  # a metamodel a no existence out of analysis context
+  end
 
   def build_surrogates
     analysis.response_variables.each do |v|

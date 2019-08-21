@@ -1,5 +1,5 @@
 cicav_metamodel:
-  analysis: cicav_metamodel_analysis
+  discipline: disc_cicav_metamodel
   operation: doe
   default_surrogate_kind: KRIGING
 

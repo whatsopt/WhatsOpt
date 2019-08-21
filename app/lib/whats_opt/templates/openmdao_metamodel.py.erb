@@ -1,3 +1,5 @@
+import os
+import re
 import numpy as np
 import requests
 
@@ -8,8 +10,10 @@ except ImportError:
     # Python 2
     from urlparse import urlparse
 
+<% if @remote %>
 WHATSOPT_DIRNAME = os.path.join(os.path.expanduser('~'), '.whatsopt')
 API_KEY_FILENAME = os.path.join(WHATSOPT_DIRNAME, 'api_key')
+<% end %>
 
 from <%= @discipline.py_full_modulename %>_base import <%= @discipline.py_classname %>Base
 
@@ -18,8 +22,7 @@ class <%= @discipline.py_classname %>(<%= @discipline.py_classname %>Base):
 		
     def __init__(self, *args, **kwargs):
         super(<%= @discipline.py_classname %>, self).__init__(*args, **kwargs)
-        
-        self.url = "<%= root_url %>/api/v1/meta_models/<%= @discipline.meta_model.id %>"
+        self.url = "<%= @whatsopt_url %>/api/v1/meta_models/<%= @discipline.meta_model.id %>"
         self.session = requests.Session()  
         urlinfos = urlparse(self.url)
         self.session.trust_env = re.match(r"\w+.onera\.fr", urlinfos.netloc)
@@ -27,17 +30,17 @@ class <%= @discipline.py_classname %>(<%= @discipline.py_classname %>Base):
         with open(API_KEY_FILENAME, 'r') as f:
             self.api_key = f.read()
         <% else %>
-        self.api_key = <%= current_user.api_key %>
+        self.api_key = "<%= @api_key %>"
         <% end %>
-        self.headers = {'Authorization': 'Token token=' + <%= self.api_key %>, 'User-Agent': 'metamodel'}
+        self.headers = {'Authorization': 'Token token=' + self.api_key, 'User-Agent': 'metamodel'}
 
     def compute(self, inputs, outputs):
         """ <%= @discipline.py_classname %> metamodel computation """
-        pass
-        <%# resp = self.session.put(self.url, headers=self.headers, 
+        print("COMPUTE")
+        resp = self.session.put(self.url, headers=self.headers, 
             json={"meta_model": 
                     { "format": "matrix", "values": [[3, 5, 7], [6, 10, 1]]
                     }
                  })
-        resp.raise_for_status() %>
+        resp.raise_for_status()
 
