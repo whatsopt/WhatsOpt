@@ -26,7 +26,7 @@ class Api::V1::MetaModelsController < Api::ApiController
   # PATCH /api/v1/meta_models/1
   def update
     if (metamodel_params[:format] == MetaModel::MATRIX_FORMAT)
-      responses = @meta_model.predict params[:meta_model][:values]  # strong parmas do not work on nested arrays
+      responses = @meta_model.predict params[:meta_model][:values]  # strong params do not work on nested arrays
       json_response({ responses: responses })
     else
       json_response({ message: "Format not valid. Should be in #{MetaModel::FORMATS}, "\

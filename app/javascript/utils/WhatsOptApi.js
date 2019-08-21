@@ -4,6 +4,8 @@ const API_URL = `/api/v1`;
 
 class WhatsOptApi {
   constructor(csrfToken, apiKey, relativeUrlRoot) {
+    this.csrfToken = csrfToken;
+    this.apiKey = apiKey;
     axios.defaults.headers.common['X-CSRF-Token'] = csrfToken;
     axios.defaults.headers.common['Accept'] = 'application/json';
     axios.defaults.headers.common['Authorization'] = 'Token ' + apiKey;

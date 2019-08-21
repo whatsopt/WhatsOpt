@@ -139,7 +139,7 @@ class MetaModelPanel extends React.Component {
   }
 
   render() {
-    let metamodel = (<MetaModelManager onMetaModelCreate={this.props.onMetaModelCreate} />);
+    let metamodel = (<MetaModelManager {...this.props} />);
     return (
       <div className="tab-pane fade" id={METAMODEL_TAB} role="tabpanel" aria-labelledby="metamodel-tab">
         {metamodel}
@@ -149,7 +149,10 @@ class MetaModelPanel extends React.Component {
 };
 
 MetaModelPanel.propTypes = {
+  opeId: PropTypes.number.isRequired,
+  api: PropTypes.object.isRequired,
   onMetaModelCreate: PropTypes.func.isRequired,
+  active: PropTypes.bool.isRequired,
 };
 
 class Plotter extends React.Component {
@@ -263,6 +266,7 @@ class Plotter extends React.Component {
         </li>);
       metaModelPanel = (
         <MetaModelPanel active={this.state.activeTab === METAMODEL_TAB}
+          api={this.api}
           opeId={this.props.ope.id}
           onMetaModelCreate={this.handleMetaModelCreate} />);
     }
