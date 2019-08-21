@@ -111,7 +111,11 @@ module WhatsOpt
     def _generate_discipline(discipline, gendir, options = {})
       @discipline = discipline  # @discipline used in template
       @dimpl = @discipline.openmdao_impl || OpenmdaoDisciplineImpl.new
-      _generate(discipline.py_filename, "openmdao_discipline.py.erb", gendir) unless options[:only_base]
+      if @discipline.type == 'metamodel'
+        _generate(discipline.py_filename, "openmdao_metamodel.py.erb", gendir)
+      else
+        _generate(discipline.py_filename, "openmdao_discipline.py.erb", gendir) unless options[:only_base]
+      end
       _generate(discipline.py_basefilename, "openmdao_discipline_base.py.erb", gendir)
     end
 

@@ -8,7 +8,7 @@ class MetaModelTest < ActiveSupport::TestCase
   end
 
   teardown do
-    #WhatsOpt::SurrogateProxy.shutdown_server
+    WhatsOpt::SurrogateProxy.shutdown_server
   end
 
   test "should have training input values" do

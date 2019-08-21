@@ -45,18 +45,18 @@ class Surrogate < ApplicationRecord
     proxy.create_surrogate(surr_kind, xt, yt)
     update(status: STATUS_TRAINED)
   rescue => exception
-    puts exception
-    Rails.logger.warn exception
+    Rails.logger.warn "SURROGATE TRAIN: #{exception} on surrogate #{id}: #{exception.msg}"
     update(status: STATUS_FAILED)
   ensure
     save!
   end
   
   def predict(x)
+    train unless trained?
     y = proxy.predict_values(x)
   rescue => exception
-    #puts "#{exception} on surrogate #{id}"
-    Rails.logger.warn "#{exception} on surrogate #{id}"
+    # puts "#{exception} on surrogate #{id}"
+    Rails.logger.warn "SURROGATE PREDICT: #{exception} on surrogate #{id}: #{exception.msg}"
     update(status: STATUS_FAILED)
     raise
   else

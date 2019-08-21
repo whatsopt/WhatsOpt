@@ -51,7 +51,6 @@ class SurrogateStoreHandler:
             else:
                 return []
         except Exception as err:
-            print("COUCOUC")
             exc = SurrogateStoreTypes.SurrogateException()
             exc.msg = str(err)
             raise exc

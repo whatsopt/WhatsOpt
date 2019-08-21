@@ -24,6 +24,12 @@ class MetaModel < ApplicationRecord
     end
   end
 
+  def train(force: true)
+    surrogates.each do |surr|
+      surr.train if force || !surr.trained?
+    end
+  end
+
   def predict(values)
     res = []
     surrogates.each do |surr|

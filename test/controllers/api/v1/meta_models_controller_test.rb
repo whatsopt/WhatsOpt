@@ -10,6 +10,10 @@ class Api::V1::MetaModelsControllerTest < ActionDispatch::IntegrationTest
     @user = users(:user1)
   end
 
+  teardown do
+    WhatsOpt::SurrogateProxy.shutdown_server
+  end
+
   test "should create a metamodel" do
     assert_difference("Analysis.count", 1) do
       assert_difference("MetaModel.count", 1) do
