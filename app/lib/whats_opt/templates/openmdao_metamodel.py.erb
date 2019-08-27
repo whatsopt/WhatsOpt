@@ -62,10 +62,8 @@ class <%= @discipline.py_classname %>(<%= @discipline.py_classname %>Base):
         for k in sorted(outputs):
             shp = outputs[k].shape
             if isinstance(outputs[k], np.ndarray):
-                print(type(outputs[k]))
                 size = outputs[k].size
             else:
                 size = 1
             outputs[k] = np.array(responses[0][index:index+size]).reshape(shp)
-            print(k, shp, size, outputs[k], index)
             index += size
