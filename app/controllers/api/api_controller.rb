@@ -12,6 +12,7 @@ class Api::ApiController < ActionController::Base
 
   respond_to :json
 
+  # API is protected through Api Key authentication not CSRF
   protect_from_forgery with: :null_session
 
   before_action :authenticate

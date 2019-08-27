@@ -114,3 +114,21 @@ innermda_disc_y_outermda_driver:
   from_id: <%= ActiveRecord::FixtureSet.identify(:vary_outermda_innermda_disc_out) %>
   to_id: <%= ActiveRecord::FixtureSet.identify(:vary_outermda_driver_in) %>
   role: "response"
+
+# METAMODEL ################################################################
+driver_metamodel_x1_out:
+  from_id: <%= ActiveRecord::FixtureSet.identify(:driver_metamodel_varx1_out) %>
+  to_id: <%= ActiveRecord::FixtureSet.identify(:disc_metamodel_varx1_in) %>
+  role: "design_var"
+driver_metamodel_z_out:
+  from_id: <%= ActiveRecord::FixtureSet.identify(:driver_metamodel_varz_design_out) %>
+  to_id: <%= ActiveRecord::FixtureSet.identify(:disc_metamodel_varz_design_in) %>
+  role: "design_var"
+driver_metamodel_y2_in:
+  from_id: <%= ActiveRecord::FixtureSet.identify(:driver_metamodel_vary2_out) %>
+  to_id: <%= ActiveRecord::FixtureSet.identify(:disc_metamodel_vary2_in) %>
+  role: "response"
+driver_metamodel_obj_out:
+  from_id: <%= ActiveRecord::FixtureSet.identify(:driver_metamodel_varobj_objective_out) %>
+  to_id: <%= ActiveRecord::FixtureSet.identify(:disc_metamodel_varobj_objective_in) %>
+  role: "objective"

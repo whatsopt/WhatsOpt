@@ -13,6 +13,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const apiKey = plotterElt.data('api-key');
 
   const api = new WhatsOptApi(csrfToken, apiKey, relativeUrlRoot);
-  ReactDOM.render(<Plotter mda={mda} ope={ope} api={api}/>, plotterElt[0]);
+  ReactDOM.render(<Plotter mda={mda} ope={ope} api={api} />, plotterElt[0]);
 }
 );

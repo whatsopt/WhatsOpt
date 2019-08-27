@@ -3,21 +3,28 @@
 require "test_helper"
 
 class OperationTest < ActiveSupport::TestCase
-  def test_as_json
+  test "as json" do
     ope = operations(:doe)
     ActiveModelSerializers::SerializableResource.new(ope)
     assert ope.as_json
   end
 
-  def test_operations_in_progress_with_no_case
+  test "operations in progress with no case" do
     mda = analyses(:cicav)
     ope = Operation.in_progress(mda).take
     assert_equal [], ope.success
     assert_equal operations(:inprogress).id, ope.id
   end
 
-  def test_operations_has_success_infos
+  test "operations has success infos" do
     ope = operations(:doe)
     assert ope.success
+  end
+
+  test "should build varattrs from an operation" do
+    ope = operations(:doe)
+    varattrs = ope.build_metamodel_varattrs
+    expected = [{:name=>"obj", :io_mode=>:out, :shape=>"1", :type=>"Float", :desc=>nil, :units=>nil, :active=>true, :parameter_attributes=>{}, :scaling=>nil}, {:name=>"x1", :io_mode=>:in, :shape=>"1", :type=>"Float", :desc=>nil, :units=>nil, :active=>true, :parameter_attributes=>{:init=>"3.14", :lower=>"1", :upper=>"10"}, :scaling=>nil}, {:name=>"z", :io_mode=>:in, :shape=>"(2,)", :type=>"Float", :desc=>nil, :units=>nil, :active=>true, :parameter_attributes=>{:init=>"3.14", :lower=>"1", :upper=>"10"}, :scaling=>nil}]
+    assert_equal expected, varattrs
   end
 end

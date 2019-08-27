@@ -31,7 +31,7 @@ class AnalysisDatabase {
   }
   isCouplingVarCases(c) {
     return !(this.inputVariables.find((v) => v.name === c.varname)
-             || this.outputVariables.find((v) => v.name === c.varname));
+      || this.outputVariables.find((v) => v.name === c.varname));
   }
 
   isObjective(c) {
@@ -58,17 +58,19 @@ class AnalysisDatabase {
     }
     let isMin;
     let conn;
-    for (let i=0; i<this.connections.length; i++) {
+    for (let i = 0; i < this.connections.length; i++) {
       if (this.connections[i].role === "min_objective"
-          || this.connections[i].role === "max_objective") {
+        || this.connections[i].role === "max_objective") {
         conn = this.connections[i];
         isMin = (conn.role === "min_objective");
         break;
       }
     }
     if (conn) {
-      this.objective = {variable: this.outputVariables.find((v) => v.name === conn.name),
-        isMin: isMin};
+      this.objective = {
+        variable: this.outputVariables.find((v) => v.name === conn.name),
+        isMin: isMin
+      };
     }
     return this.objective;
   }
@@ -134,10 +136,12 @@ class AnalysisDatabase {
 
     const connections = conns.map((conn) => {
       const infos = this._findInfos(conn);
-      const val = {id: conn.connId, from: conn.frName, to: conn.toName.join(', '), name: infos.vName, desc: infos.desc,
+      const val = {
+        id: conn.connId, from: conn.frName, to: conn.toName.join(', '), name: infos.vName, desc: infos.desc,
         type: infos.type, shape: infos.shape, units: infos.units, init: infos.init, ref: infos.ref,
-        ref0: infos.ref0, res_ref: infos.res_ref, lower: infos.lower, upper: infos.upper,active: infos.active, 
-        role: conn.role, fromId: conn.fr, toIds: conn.to};
+        ref0: infos.ref0, res_ref: infos.res_ref, lower: infos.lower, upper: infos.upper, active: infos.active,
+        role: conn.role, fromId: conn.fr, toIds: conn.to
+      };
       return val;
     });
 
@@ -147,20 +151,20 @@ class AnalysisDatabase {
   getNodeName(id) {
     try {
       return this._findNode(id).name;
-    } catch(error) {
+    } catch (error) {
       console.error(error);
-      return "unknown_"+id;
+      return "unknown_" + id;
     }
   }
 
   _findNode(id) {
-    for (var i=0; i < this.mda.nodes.length; i++) {
+    for (var i = 0; i < this.mda.nodes.length; i++) {
       const node = this.mda.nodes[i];
       if (node.id == id) { // weak equality to deal with 1522 == "1522" transparently
-        return (i==0)?{id: id, name: "Driver"}:{id: node.id, name: node.name};
+        return (i == 0) ? { id: id, name: "Driver" } : { id: node.id, name: node.name };
       }
     };
-    throw Error("Node id ("+ id +") unknown: " + JSON.stringify(this.mda.nodes));
+    throw Error("Node id (" + id + ") unknown: " + JSON.stringify(this.mda.nodes));
   };
 
   _findInfos(conn) {
@@ -178,38 +182,40 @@ class AnalysisDatabase {
     let res_ref = "";
     const active = vfr.active;
 
-    if (vfr.parameter) {
-      init = vfr.parameter.init;
-      lower = vfr.parameter.lower;
-      upper = vfr.parameter.upper;
+    if (vfr.parameter_attributes) {
+      init = vfr.parameter_attributes.init;
+      lower = vfr.parameter_attributes.lower;
+      upper = vfr.parameter_attributes.upper;
     }
-    if (vfr.scaling) {
-      ref = vfr.scaling.ref;
-      ref0 = vfr.scaling.ref0;
-      res_ref = vfr.scaling.res_ref;
+    if (vfr.scaling_attributes) {
+      ref = vfr.scaling_attributes.ref;
+      ref0 = vfr.scaling_attributes.ref0;
+      res_ref = vfr.scaling_attributes.res_ref;
     }
-    const infos = {id: conn.connId, idfrName: conn.frName, frUnits: vfr.units,
+    const infos = {
+      id: conn.connId, idfrName: conn.frName, frUnits: vfr.units,
       vName: varname, desc: desc,
       toName: conn.toName.join(', '),
-      type: vartype, shape: shape, 
+      type: vartype, shape: shape,
       init: init, lower: lower, upper: upper,
       ref: ref, ref0: ref0, res_ref: res_ref,
-      units: units, active: active};
+      units: units, active: active
+    };
     return infos;
   }
 
   _findVariable(disc, vname, ioMode) {
     const vars = this.mda.vars;
-    let vinfo = {units: '', desc: '', type: '', shape: '', init: '', lower: '', upper: '', ref: '', ref0: '', res_ref: '', active: true};
+    let vinfo = { units: '', desc: '', type: '', shape: '', init: '', lower: '', upper: '', ref: '', ref0: '', res_ref: '', active: true };
     const vinfos = vars[disc][ioMode].filter((v) => {
       return v.name === vname;
     });
     if (vinfos.length === 1) {
       vinfo = vinfos[0];
     } else if (vinfos.length > 1) {
-      console.log("Warning: Find several occurences of " + vname + "("+ioMode +"): " + JSON.stringify(vinfos));
+      console.log("Warning: Find several occurences of " + vname + "(" + ioMode + "): " + JSON.stringify(vinfos));
       vinfo = vinfos[0];
-      console.log("Take the first: "+JSON.stringify(vinfo));
+      console.log("Take the first: " + JSON.stringify(vinfo));
     } else {
       throw Error(`Expected one variable "${vname}" found ${vinfos.length} in ${JSON.stringify(vars[disc][ioMode])}`);
     }

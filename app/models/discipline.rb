@@ -9,10 +9,11 @@ class Discipline < ApplicationRecord
 
   self.inheritance_column = :disable_inheritance
 
-  has_many :variables, -> { includes(:parameter) }, dependent: :destroy
+  has_many :variables, -> { includes(:parameter).order('name ASC') }, dependent: :destroy
   # has_many :variables, :dependent => :destroy
   has_one :analysis_discipline, dependent: :destroy
   has_one :sub_analysis, through: :analysis_discipline, source: :analysis
+  has_one :meta_model, dependent: :destroy
 
   belongs_to :analysis
   acts_as_list scope: :analysis, top_of_list: 0

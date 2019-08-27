@@ -56,7 +56,7 @@ class Analysis < ApplicationRecord
   end
 
   def variables
-    @variables = Variable.of_analysis(id).active
+    @variables = Variable.of_analysis(id).active.order('name ASC')
   end
 
   def parameter_variables
@@ -92,8 +92,7 @@ class Analysis < ApplicationRecord
   end
 
   def response_variables
-    @resps = variables.with_role(WhatsOpt::Variable::RESPONSE_ROLE) +
-             min_objective_variables + max_objective_variables + eq_constraint_variables + ineq_constraint_variables
+    @resps = variables.with_role(WhatsOpt::Variable::OUTPUT_ROLES)
   end
 
   def response_dim
@@ -324,21 +323,41 @@ class Analysis < ApplicationRecord
     end
   end
 
-  def self.build_from_operation(ope_attrs, outvar_count_hint = 1)
-    name = ope_attrs[:name].camelize
-    disc_vars = Variable.get_variables_attributes(ope_attrs[:cases], outvar_count_hint)
+  def self.build_analysis(ope_attrs, outvar_count_hint = 1)
+    name = "#{ope_attrs[:name].camelize}Analysis"
+    disc_vars = Variable.get_varattrs_from_caseattrs(ope_attrs[:cases], outvar_count_hint)
     driver_vars = disc_vars.map do |v|
       { name: v[:name],
         shape: v[:shape],
         io_mode: Variable.reflect_io_mode(v[:io_mode]) }
     end
     Analysis.new(
-      name: name + "Analysis",
+      name: name,
       disciplines_attributes: [
-        { name: "__DRIVER__", "variables_attributes": driver_vars },
-        { name: name + "Model", "variables_attributes": disc_vars }
+        { name: "__DRIVER__", variables_attributes: driver_vars },
+        { name: name + "Model", variables_attributes: disc_vars }
       ]
     )
+  end
+
+  def self.build_metamodel_analysis(ope)
+    name = "#{ope.analysis.name.camelize}MetaModel"
+    metamodel_varattrs = ope.build_metamodel_varattrs
+    driver_vars = metamodel_varattrs.map do |v|
+      { name: v[:name],
+        shape: v[:shape],
+        io_mode: Variable.reflect_io_mode(v[:io_mode]), 
+        parameter_attributes: v[:parameter_attributes]
+      }
+    end
+    analysis_attrs= {
+      name: name,
+      disciplines_attributes: [
+        { name: "__DRIVER__", variables_attributes: driver_vars },
+        { name: "#{ope.analysis.name.camelize}Model", type: WhatsOpt::Discipline::METAMODEL,
+          variables_attributes: metamodel_varattrs }
+    ]}
+    Analysis.new(analysis_attrs)
   end
 
   private

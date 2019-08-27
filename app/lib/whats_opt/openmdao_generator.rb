@@ -11,7 +11,7 @@ module WhatsOpt
     class DisciplineNotFoundException < StandardError
     end
 
-    def initialize(mda, server_host = nil, driver_name = nil, driver_options = {})
+    def initialize(mda, server_host: nil, driver_name: nil, driver_options: {}, whatsopt_url: "", api_key: "")
       super(mda)
       @prefix = "openmdao"
       @server_host = server_host
@@ -22,13 +22,15 @@ module WhatsOpt
       @driver_options = driver_options
       @root_modulepath = nil
       @impl = @mda.openmdao_impl || OpenmdaoAnalysisImpl.new
+      @whatsopt_url = whatsopt_url
+      @api_key = api_key
     end
 
     def check_mda_setup
       ok, lines = false, []
       @mda.set_as_root_module
       Dir.mktmpdir("check_#{@mda.basename}_") do |dir|
-        # dir='/tmp' # for debug
+        dir='/tmp' # for debug
         begin
           _generate_code(dir, with_server: false, with_runops: false)
         rescue ServerGenerator::ThriftError => e
@@ -111,14 +113,18 @@ module WhatsOpt
     def _generate_discipline(discipline, gendir, options = {})
       @discipline = discipline  # @discipline used in template
       @dimpl = @discipline.openmdao_impl || OpenmdaoDisciplineImpl.new
-      _generate(discipline.py_filename, "openmdao_discipline.py.erb", gendir) unless options[:only_base]
+      if @discipline.type == 'metamodel'
+        _generate(discipline.py_filename, "openmdao_metamodel.py.erb", gendir)
+      else
+        _generate(discipline.py_filename, "openmdao_discipline.py.erb", gendir) unless options[:only_base]
+      end
       _generate(discipline.py_basefilename, "openmdao_discipline_base.py.erb", gendir)
     end
 
     # options: only_base=true, sqlite_filename=nil
     def _generate_sub_analysis(super_discipline, gendir, options = {})
       mda = super_discipline.sub_analysis
-      sub_ogen = OpenmdaoGenerator.new(mda, @server_host, @driver_name, @driver_options)
+      sub_ogen = OpenmdaoGenerator.new(mda, server_host: @server_host, driver_name: @driver_name, driver_options: @driver_options)
       gendir = File.join(gendir, mda.basename)
       Dir.mkdir(gendir) unless Dir.exist?(gendir)
 

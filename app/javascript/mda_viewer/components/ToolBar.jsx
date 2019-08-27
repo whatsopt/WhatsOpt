@@ -12,7 +12,7 @@ class OpenMDAOLogLine extends React.Component {
   }
 }
 
-OpenMDAOLogLine.propTypes= {
+OpenMDAOLogLine.propTypes = {
   line: PropTypes.string.isRequired,
 };
 
@@ -38,26 +38,28 @@ class ToolBar extends React.Component {
 
   getStatus() {
     this.api.openmdaoChecking(
-        this.props.mdaId,
-        (response) => {this.setState({loading: false, statusOk: response.data.statusOk, log: response.data.log});});
+      this.props.mdaId,
+      (response) => { this.setState({ loading: false, statusOk: response.data.statusOk, log: response.data.log }); });
   }
 
   saveAsPng() {
     const elt = d3.select('svg').node();
     const bbox = elt.getBBox();
-    saveSvgAsPng.saveSvgAsPng(elt, "xdsm.png", {backgroundColor: 'white',
-      width: bbox.width-100,
-      height: bbox.height-20});
+    saveSvgAsPng.saveSvgAsPng(elt, "xdsm.png", {
+      backgroundColor: 'white',
+      width: bbox.width - 100,
+      height: bbox.height - 20
+    });
   }
 
   exportCsv() {
     let connections = this.props.db.computeConnections();
     this._exportCsvVariables(connections);
   }
-  
+
   _convertVariablesToCsv(connections) {
-    let headers=['Active', 'From', 'To', 'Name', 'Description', 'Role', 
-                 'Type', 'Shape', 'Units', 'Init', 'Lower', 'Upper'];
+    let headers = ['Active', 'From', 'To', 'Name', 'Description', 'Role',
+      'Type', 'Shape', 'Units', 'Init', 'Lower', 'Upper'];
     let rows = [];
     connections.forEach((conn) => {
       let row = [];
@@ -65,11 +67,11 @@ class ToolBar extends React.Component {
       row.push(conn.units, conn.init, conn.lower, conn.upper);
       rows.push(row.join(';'));
     })
-    let csv = headers.join(';')+'\n'+rows.join('\n')+'\n';
+    let csv = headers.join(';') + '\n' + rows.join('\n') + '\n';
     return csv;
   }
 
-  _exportCsvVariables(connections) {  
+  _exportCsvVariables(connections) {
     let csv = this._convertVariablesToCsv(connections);
     let filename = 'analysis.csv';
     let data = 'data:application/csv;charset=utf-8,' + encodeURIComponent(csv);
@@ -82,20 +84,20 @@ class ToolBar extends React.Component {
     link.click();
     document.body.removeChild(link);
   }
-  
+
   render() {
     const lines = this.state.log.map((l, i) => {
-      return ( <OpenMDAOLogLine key={i} line={l}/> );
+      return (<OpenMDAOLogLine key={i} line={l} />);
     });
-    let btnStatusClass = this.state.statusOk?"btn btn-success":"btn btn-warning";
-    let btnIcon = this.state.statusOk?<i className="fa fa-check"/>:<i className="fa fa-exclamation-triangle"></i>;
+    let btnStatusClass = this.state.statusOk ? "btn btn-success" : "btn btn-warning";
+    let btnIcon = this.state.statusOk ? <i className="fa fa-check" /> : <i className="fa fa-exclamation-triangle"></i>;
     if (this.state.loading) {
       btnStatusClass = "btn btn-info";
       btnIcon = <i className="fa fa-cog fa-spin" />;
     }
-    const base = "/analyses/"+this.props.mdaId+"/exports/new";
-    const hrefOm = this.api.url(base+".openmdao");
-    const hrefCd = this.api.url(base+".cmdows");
+    const base = `/analyses/${this.props.mdaId}/exports/new`;
+    const hrefOm = this.api.url(base + ".openmdao");
+    const hrefCd = this.api.url(base + ".cmdows");
     return (
       <div>
         <div className="btn-toolbar" role="toolbar">
@@ -126,7 +128,7 @@ class ToolBar extends React.Component {
   }
 }
 
-ToolBar.propTypes= {
+ToolBar.propTypes = {
   api: PropTypes.object.isRequired,
   db: PropTypes.object.isRequired,
   mdaId: PropTypes.number.isRequired,

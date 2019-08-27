@@ -24,6 +24,8 @@ class Variable < ApplicationRecord
   has_many :outgoing_connections, -> { includes :to }, class_name: "Connection", foreign_key: "from_id", dependent: :destroy
   has_many :cases
 
+  has_one :surrogate, dependent: :destroy
+
   accepts_nested_attributes_for :parameter, reject_if: proc { |attr|
                                                          attr["init"].nil? &&
                                                            attr["lower"].nil? &&
@@ -67,7 +69,7 @@ class Variable < ApplicationRecord
   end
 
   def is_connected_as_input_of_interest?
-    if io_mode.to_sym == IN
+    if is_in?
       WhatsOpt::Variable::INTEREST_INPUT_ROLES.include?(incoming_connection.role)
     else
       !outgoing_connections.where(connections: { role: WhatsOpt::Variable::INTEREST_INPUT_ROLES }).blank?
@@ -75,7 +77,7 @@ class Variable < ApplicationRecord
   end
 
   def is_connected_as_output_of_interest?
-    if io_mode.to_sym == IN
+    if is_in?
       WhatsOpt::Variable::INTEREST_OUTPUT_ROLES.include?(incoming_connection.role)
     else
       !outgoing_connections.where(connections: { role: WhatsOpt::Variable::INTEREST_OUTPUT_ROLES }).blank?

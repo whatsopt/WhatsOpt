@@ -4,7 +4,11 @@ admin_role:
 owner_cicav_mda_role:
   name: :owner
   resource: cicav (Analysis)
-  
+
+owner_cicav_meta_model_role:
+  name: :owner
+  resource: cicav_metamodel_analysis (Analysis)
+
 owner_outermda_role:
   name: :owner
   resource: outermda (Analysis)

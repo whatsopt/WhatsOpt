@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   resources :variables
   resources :analyses, shallow: true, as: :mdas do
     resources :operations do
+      resources :meta_models, only: [:create]        
       get 'exports/new', to: 'operation_exports#new'
     end
     get 'exports/new', to: 'analysis_exports#new'
@@ -24,13 +25,14 @@ Rails.application.routes.draw do
         resources :connections, only: [:create, :update, :destroy]
         resources :operations, only: [:show, :create, :update, :destroy] do
           resource :job, only: [:show, :create, :update]        
+          resources :meta_models, only: [:create, :update]        
           get 'openmdao_screenings/new'
         end
         resource :openmdao_impl, only: [:show, :update]
         post 'openmdao_checking', to: 'openmdao_checking#create' 
         get 'exports/new'
       end
-      resources :operations, onl: [:create]
+      resources :operations, only: [:create]
       resources :users, only: [:index, :update]  
       resources :user_roles, only: [:index, :update]  
       resource :versioning, only: [:show]  
