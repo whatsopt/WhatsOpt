@@ -1,0 +1,71 @@
+import os
+import re
+import numpy as np
+import requests
+import json
+
+try:
+    # Python 3
+    from urllib.parse import urlparse
+except ImportError:
+    # Python 2
+    from urlparse import urlparse
+
+<% unless @remote %>
+WHATSOPT_DIRNAME = os.path.join(os.path.expanduser('~'), '.whatsopt')
+API_KEY_FILENAME = os.path.join(WHATSOPT_DIRNAME, 'api_key')
+<% end %>
+
+from <%= @discipline.py_full_modulename %>_base import <%= @discipline.py_classname %>Base
+
+class <%= @discipline.py_classname %>(<%= @discipline.py_classname %>Base):
+    """ An OpenMDAO metamodel for <%= @discipline.py_classname %> discipline """
+		
+    def __init__(self, *args, **kwargs):
+        super(<%= @discipline.py_classname %>, self).__init__(*args, **kwargs)
+        self.url = "<%= @whatsopt_url %>/api/v1/meta_models/<%= @discipline.meta_model.id %>"
+        self.session = requests.Session()  
+        urlinfos = urlparse(self.url)
+        self.session.trust_env = re.match(r"\w+.onera\.fr", urlinfos.netloc)
+        <% if @remote %>
+        self.api_key = "<%= @api_key %>"
+        <% else %>
+        with open(API_KEY_FILENAME, 'r') as f:
+            self.api_key = f.read()
+        <% end %>
+        self.headers = {'Authorization': 'Token token=' + self.api_key, 'User-Agent': 'metamodel'}
+
+    def compute(self, inputs, outputs):
+        """ <%= @discipline.py_classname %> metamodel computation """
+        sample = <%= @discipline.py_classname %>._to_json_param(inputs)
+        resp = self.session.put(self.url, headers=self.headers, 
+            json={"meta_model": 
+                    { "format": "matrix", "values": sample
+                    }
+                 })
+        if resp.ok:
+            <%= @discipline.py_classname %>._from_json_responses(resp.json()["responses"], outputs)
+        else:
+            resp.raise_for_status()
+
+    @staticmethod
+    def _to_json_param(inputs):
+        parts = []
+        for k in sorted(inputs):
+            parts.append(np.copy(inputs[k]).reshape(-1))
+        sample = np.concatenate(parts)
+        return [list(sample)]
+
+    @staticmethod
+    def _from_json_responses(responses, outputs):
+        index = 0
+        for k in sorted(outputs):
+            shp = outputs[k].shape
+            if isinstance(outputs[k], np.ndarray):
+                print(type(outputs[k]))
+                size = outputs[k].size
+            else:
+                size = 1
+            outputs[k] = np.array(responses[0][index:index+size]).reshape(shp)
+            print(k, shp, size, outputs[k], index)
+            index += size
