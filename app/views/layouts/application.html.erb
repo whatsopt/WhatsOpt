@@ -8,7 +8,7 @@
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
   <!-- Disable ActionCable <%= action_cable_meta_tag %> -->
   <%= csrf_meta_tags %>
-  <meta name="relative-url-root" content="<%= Rails.application.config.action_controller.relative_url_root%>" />
+  <meta name="relative-url-root" content="<%= Rails.application.config.relative_url_root%>" />
   <%= favicon_link_tag asset_path('favicon-32.png'), :rel => 'icon', :type =>  'image/png' %>
 </head>
 <body>

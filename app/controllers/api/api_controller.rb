@@ -19,6 +19,10 @@ class Api::ApiController < ActionController::Base
 
   attr_reader :current_user
 
+  def whatsopt_url
+    request.base_url + Rails.application.config.relative_url_root 
+  end
+
   private
     def authenticate
       authenticate_or_request_with_http_token do |token, options|

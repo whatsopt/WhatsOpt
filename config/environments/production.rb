@@ -88,6 +88,6 @@ Rails.application.configure do
   config.active_record.dump_schema_after_migration = false
   
   # set the relative root, because we're deploying to /whatsopt
-  config.action_controller.relative_url_root  = "/whatsopt"
+  config.relative_url_root = "/whatsopt"
 
 end

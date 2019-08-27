@@ -31,6 +31,8 @@ class SurrogateStore(object):
             "LS": LS,
             "QP": QP,
         }
+        if not os.path.exists(outdir):
+            os.makedirs(outdir)
 
     def create_surrogate(self, surrogate_id, surrogate_kind, xt, yt):
         if surrogate_kind not in SurrogateStore.SURROGATE_NAMES:
