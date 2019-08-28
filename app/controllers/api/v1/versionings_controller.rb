@@ -25,7 +25,7 @@ class Api::V1::VersioningsController < Api::ApiController
       filepath = File.join(Rails.root, "wop", "whatsopt", "__init__.py")
       File.open(filepath).each do |line|
         line.chomp!
-        if line =~ /^__version__='(.*)'$/
+        if line =~ /^__version__\s+=\s+"(.*)"$/
           return $1
         end
       end

@@ -20,7 +20,7 @@ class Api::ApiController < ActionController::Base
   attr_reader :current_user
 
   def whatsopt_url
-    request.base_url + Rails.application.config.relative_url_root 
+    request.base_url + Rails.application.config.relative_url_root.to_s 
   end
 
   private
