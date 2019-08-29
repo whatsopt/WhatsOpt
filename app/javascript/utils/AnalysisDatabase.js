@@ -69,7 +69,7 @@ class AnalysisDatabase {
     if (conn) {
       this.objective = {
         variable: this.outputVariables.find((v) => v.name === conn.name),
-        isMin: isMin
+        isMin: isMin,
       };
     }
     return this.objective;
@@ -140,7 +140,7 @@ class AnalysisDatabase {
         id: conn.connId, from: conn.frName, to: conn.toName.join(', '), name: infos.vName, desc: infos.desc,
         type: infos.type, shape: infos.shape, units: infos.units, init: infos.init, ref: infos.ref,
         ref0: infos.ref0, res_ref: infos.res_ref, lower: infos.lower, upper: infos.upper, active: infos.active,
-        role: conn.role, fromId: conn.fr, toIds: conn.to
+        role: conn.role, fromId: conn.fr, toIds: conn.to,
       };
       return val;
     });
@@ -161,7 +161,7 @@ class AnalysisDatabase {
     for (var i = 0; i < this.mda.nodes.length; i++) {
       const node = this.mda.nodes[i];
       if (node.id == id) { // weak equality to deal with 1522 == "1522" transparently
-        return (i == 0) ? { id: id, name: "Driver" } : { id: node.id, name: node.name };
+        return (i == 0) ? {id: id, name: "Driver"} : {id: node.id, name: node.name};
       }
     };
     throw Error("Node id (" + id + ") unknown: " + JSON.stringify(this.mda.nodes));
@@ -179,7 +179,7 @@ class AnalysisDatabase {
     let upper = "";
     let ref = "";
     let ref0 = "";
-    let res_ref = "";
+    let resRef = "";
     const active = vfr.active;
 
     if (vfr.parameter_attributes) {
@@ -190,7 +190,7 @@ class AnalysisDatabase {
     if (vfr.scaling_attributes) {
       ref = vfr.scaling_attributes.ref;
       ref0 = vfr.scaling_attributes.ref0;
-      res_ref = vfr.scaling_attributes.res_ref;
+      resRef = vfr.scaling_attributes.res_ref;
     }
     const infos = {
       id: conn.connId, idfrName: conn.frName, frUnits: vfr.units,
@@ -198,15 +198,18 @@ class AnalysisDatabase {
       toName: conn.toName.join(', '),
       type: vartype, shape: shape,
       init: init, lower: lower, upper: upper,
-      ref: ref, ref0: ref0, res_ref: res_ref,
-      units: units, active: active
+      ref: ref, ref0: ref0, res_ref: resRef,
+      units: units, active: active,
     };
     return infos;
   }
 
   _findVariable(disc, vname, ioMode) {
     const vars = this.mda.vars;
-    let vinfo = { units: '', desc: '', type: '', shape: '', init: '', lower: '', upper: '', ref: '', ref0: '', res_ref: '', active: true };
+    let vinfo = {
+      units: '', desc: '', type: '', shape: '', init: '', lower: '', upper: '', ref: '', ref0: '',
+      res_ref: '', active: true,
+    };
     const vinfos = vars[disc][ioMode].filter((v) => {
       return v.name === vname;
     });

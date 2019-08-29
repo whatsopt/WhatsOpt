@@ -1,14 +1,22 @@
 {
-  "plugins": ["react"],
+  "settings": {
+    "react": {
+      "version": "detect",
+    },
+  },
+  "plugins": [
+    "react"
+  ],
   "extends": [
-	"google",
+    "google",
     "plugin:react/recommended"
   ],
   "parserOptions": {
-    "ecmaVersion": 6,
+    "ecmaVersion": 2018,
     "sourceType": "module",
     "ecmaFeatures": {
-    	"jsx":true
+      "jsx": true,
+      "experimentalObjectRestSpread": true,
     }
   },
   "env": {
@@ -20,12 +28,14 @@
       "error",
       120
     ],
-	"guard-for-in": "off",
+    "guard-for-in": "off",
     "quotes": "off",
     "no-var": "off",
     "linebreak-style": "off",
     "require-jsdoc": "off",
     "brace-style": "off",
-    "react/jsx-uses-vars": [2]
+    "react/jsx-uses-vars": [
+      2
+    ]
   }
 }

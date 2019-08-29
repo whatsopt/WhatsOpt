@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import update from 'immutability-helper';
 
 import {AsyncTypeahead} from 'react-bootstrap-typeahead';
 
@@ -37,7 +36,7 @@ class AnalysisSelector extends React.Component {
     this.setState({isLoading: true});
     this.props.onAnalysisSearch(
         // TODO: implement analysis request using the query string
-        // query,  
+        // query,
         (options) => {
           this.setState({isLoading: false, options: options});
         });
@@ -47,7 +46,7 @@ class AnalysisSelector extends React.Component {
     if (selected.length) {
       this.setState({selected, defaultSelected: selected});
       this.props.onAnalysisSelected(selected);
-      //this.typeahead.getInstance().clear();
+      // this.typeahead.getInstance().clear();
     }
   }
 }

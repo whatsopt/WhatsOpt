@@ -33,7 +33,7 @@ class ScatterPlotMatrix extends React.Component {
           color: this.props.success,
           cmin: 0,
           cmax: 1,
-          colorscale: COLORSCALE, 
+          colorscale: COLORSCALE,
         };
         data.push(trace);
 
