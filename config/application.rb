@@ -24,7 +24,5 @@ module WhatsOpt
     # Require `belongs_to` associations by default. Previous versions < rails 6 had false.
     config.active_record.belongs_to_required_by_default = false
 
-    # 
-    config.hosts.clear
   end
 end

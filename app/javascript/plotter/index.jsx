@@ -274,7 +274,7 @@ class Plotter extends React.Component {
     const exportUrl = this.api.url(`/operations/${this.props.ope.id}/exports/new`);
     return (
       <div>
-        <h1>{this.props.ope.name} on {this.props.mda.name} COUCOU</h1>
+        <h1>{this.props.ope.name} on {this.props.mda.name}</h1>
 
         <div className="btn-group mr-2  float-right" role="group">
           <a className="btn btn-primary" href={exportUrl}>Export Csv</a>

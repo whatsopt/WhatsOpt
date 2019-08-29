@@ -60,6 +60,6 @@ Rails.application.configure do
   # routes, locales, etc. This feature depends on the listen gem.
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
 
-  # allow request on any host runnng the rails server
+  # Allow request on any host running the rails server
   config.hosts.clear
 end
