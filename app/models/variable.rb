@@ -48,8 +48,8 @@ class Variable < ApplicationRecord
   scope :inputs, -> { where(io_mode: IN) }
   scope :outputs, -> { where(io_mode: OUT) }
 
-  scope :of_analysis, ->(analysis_id) { Variable.joins(discipline: :analysis).where(analyses: { id: analysis_id }) }
-  scope :of_discipline, ->(discipline_id) { Variable.joins(discipline: { id: discipline_id }) }
+  scope :of_analysis, ->(analysis_id) { joins(discipline: :analysis).where(analyses: { id: analysis_id }) }
+  scope :of_discipline, ->(discipline_id) { joins(discipline: { id: discipline_id }) }
   scope :with_role, ->(role) { joins(:outgoing_connections).where(connections: { role: role }).uniq }
 
   after_initialize :set_defaults, unless: :persisted?

@@ -6,10 +6,8 @@ module WhatsOpt
   module OpenmdaoModule
     using WhatsOpt
 
-    NULL_ROOT_MODULENAME = ""
-
     cattr_reader :root_modulename
-    @@root_modulename = NULL_ROOT_MODULENAME
+    @@root_modulename = ""
 
     def basename
       "#{self.name.snakize}"
@@ -52,7 +50,7 @@ module WhatsOpt
       @@root_modulename = self.namespace
     end
     def unset_root_module
-      @@root_modulename = NULL_ROOT_MODULENAME
+      @@root_modulename = ""
     end
 
     def py_classname

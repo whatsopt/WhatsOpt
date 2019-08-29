@@ -12,6 +12,7 @@ class SurrogateTest < ActiveSupport::TestCase
   end
 
   test "should be train and predict" do
+    skip_if_parallel
     assert_equal Surrogate::STATUS_CREATED, @surr.status
     @surr.train
     assert File.exists?(@surr_file)

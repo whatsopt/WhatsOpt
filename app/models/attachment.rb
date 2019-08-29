@@ -42,7 +42,7 @@ class Attachment < ActiveRecord::Base
   belongs_to :mda_cmdows, -> { where("attachments.container_type = 'Analysis'") }, foreign_key: "container_id"
   belongs_to :geometry_model, -> { where("attachments.container_type = 'GeometryModel'") }, foreign_key: "container_id"
 
-  after_initialize :ensure_category_setting, on: :create
+  after_initialize :ensure_category_setting
   before_post_process :ensure_category_setting
 
   validates_attachment_presence  :data

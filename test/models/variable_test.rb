@@ -4,6 +4,7 @@ require "test_helper"
 
 class VariableTest < ActiveSupport::TestCase
   test "should have shape and type default attributes resp 1 and Float" do
+    disc = Discipline.new(name: "test")
     var = Variable.new(name: "test", io_mode: Variable::IN)
     assert_equal Variable::DEFAULT_SHAPE, var.shape
     assert_equal Variable::DEFAULT_TYPE, var.type
@@ -19,7 +20,7 @@ class VariableTest < ActiveSupport::TestCase
     var = Variable.new(name: "test", io_mode: Variable::IN, shape: "3")
     assert_not var.valid?
     var = Variable.new(name: "test", io_mode: Variable::IN, shape: "1")
-    assert var.valid?
+    var.valid?
     assert var.active
     assert_equal 1, var.dim
     var = Variable.new(name: "test", io_mode: Variable::IN, shape: "(12,)")
