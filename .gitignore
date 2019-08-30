@@ -69,3 +69,5 @@ yarn-debug.log*
 # Ignore pickled files
 **/*.pkl
 
+# Ignore parallel test databases
+db/test.sqlite3-*

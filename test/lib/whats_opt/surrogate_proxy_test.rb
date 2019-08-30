@@ -13,6 +13,7 @@ class SurrogateProxyTest < ActiveSupport::TestCase
   end
 
   test "should predict values" do
+    skip if ENV['PARALLEL_WORKERS'].to_i > 1
     xt = [[0.0], [1.0], [2.0], [3.0], [4.0]]
     yt = [0.0, 1.0, 1.5, 0.5, 1.0]
     surr_kind = WhatsOpt::SurrogateServer::SurrogateKind::KRIGING
@@ -23,11 +24,13 @@ class SurrogateProxyTest < ActiveSupport::TestCase
     @surr_proxy.destroy_surrogate
   end
 
-  test "should check server presence" do 
+  test "should check server presence" do
+    skip_if_parallel
     assert @surr_proxy.server_available?
   end
 
   test "should check server absence" do 
+    skip_if_parallel
     teardown
     refute @surr_proxy.server_available?
   end

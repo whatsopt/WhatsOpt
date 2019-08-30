@@ -12,7 +12,7 @@ import ConnectionsEditor from 'mda_viewer/components/ConnectionsEditor';
 import VariablesEditor from 'mda_viewer/components/VariablesEditor';
 import OpenmdaoImplEditor from 'mda_viewer/components/OpenmdaoImplEditor';
 import AnalysisDatabase from '../utils/AnalysisDatabase';
-import { deepIsEqual } from '../utils/compare';
+import {deepIsEqual} from '../utils/compare';
 
 const VAR_REGEXP = /^[a-zA-Z][_a-zA-Z0-9]*$/;
 
@@ -93,8 +93,10 @@ class MdaViewer extends React.Component {
   handleConnectionNameChange(event) {
     event.preventDefault();
     const errors = this._validateConnectionNames(event.target.value);
-    const newState = update(this.state, {newConnectionName: {$set: event.target.value},
-      errors: {$set: errors}});
+    const newState = update(this.state, {
+      newConnectionName: {$set: event.target.value},
+      errors: {$set: errors},
+    });
     this.setState(newState);
   }
 
@@ -193,7 +195,7 @@ class MdaViewer extends React.Component {
 
   handleDisciplineDelete(node) {
     this.api.deleteDiscipline(node.id, () => {
-      if (this.state.filter.fr===node.id || this.state.filter.to===node.id) {
+      if (this.state.filter.fr === node.id || this.state.filter.to === node.id) {
         this.handleFilterChange({fr: undefined, to: undefined});
       }
       this.renderXdsm();
@@ -203,9 +205,9 @@ class MdaViewer extends React.Component {
   handleSubAnalysisSearch(callback) {
     this.api.getSubAnalysisCandidates(
         (response) => {
-          let options = response.data
-            .filter((analysis) => (analysis.id !== this.props.mda.id))
-            .map((analysis) => {return {id: analysis.id, label: `#${analysis.id} ${analysis.name}`}})
+          const options = response.data
+              .filter((analysis) => (analysis.id !== this.props.mda.id))
+              .map((analysis) => {return {id: analysis.id, label: `#${analysis.id} ${analysis.name}`};});
           callback(options);
         }
     );
@@ -219,13 +221,15 @@ class MdaViewer extends React.Component {
           }
       );
     }
-  }  
-  
+  }
+
   // *** Analysis ************************************************************
   handleAnalysisNameChange(event) {
     event.preventDefault();
-    const newState = update(this.state, {newAnalysisName: {$set: event.target.value},
-      errors: {$set: []}});
+    const newState = update(this.state, {
+      newAnalysisName: {$set: event.target.value},
+      errors: {$set: []},
+    });
     this.setState(newState);
     return false;
   }
@@ -248,7 +252,7 @@ class MdaViewer extends React.Component {
         }
     );
   }
-  
+
   handleAnalysisMemberCreate(selected) {
     if (selected.length) {
       this.api.addMember(selected[0].id, this.props.mda.id,
@@ -288,10 +292,14 @@ class MdaViewer extends React.Component {
     this.api.getAnalysis(this.props.mda.id, true,
         (response) => {
           const newState = update(this.state,
-              {mda: {nodes: {$set: response.data.nodes},
-                edges: {$set: response.data.edges},
-                inactive_edges: {$set: response.data.inactive_edges},
-                vars: {$set: response.data.vars}}});
+              {
+                mda: {
+                  nodes: {$set: response.data.nodes},
+                  edges: {$set: response.data.edges},
+                  inactive_edges: {$set: response.data.inactive_edges},
+                  vars: {$set: response.data.vars},
+                },
+              });
           this.setState(newState);
           const mda = {nodes: response.data.nodes, edges: response.data.edges};
           this.xdsmViewer.update(mda);
@@ -308,7 +316,8 @@ class MdaViewer extends React.Component {
     delete openmdaoImpl.components['use_scaling'];
     this.api.updateOpenmdaoImpl(this.props.mda.id, openmdaoImpl,
         () => {
-          const newState = update(this.state, {implEdited: {$set: false}, mda: {impl: {openmdao: {$set: openmdaoImpl}}}});
+          const newState = update(this.state, {implEdited: {$set: false},
+            mda: {impl: {openmdao: {$set: openmdaoImpl}}}});
           this.setState(newState);
         }
     );
@@ -333,23 +342,23 @@ class MdaViewer extends React.Component {
 
   render() {
     const errors = this.state.errors.map((message, i) => {
-      return ( <Error key={i} msg={message} onClose={() => this.handleErrorClose(i)}/> );
+      return (<Error key={i} msg={message} onClose={() => this.handleErrorClose(i)} />);
     });
     const db = this.db = new AnalysisDatabase(this.state.mda);
     const useScaling = this.state.useScaling || this.db.isScaled();
 
     let breadcrumbs;
     if (this.props.mda.path.length > 1) {
-      breadcrumbs = <AnalysisBreadCrumbs api={this.api} path={this.props.mda.path} />
+      breadcrumbs = <AnalysisBreadCrumbs api={this.api} path={this.props.mda.path} />;
     }
 
     const xdsmViewer =
-      (<XdsmViewer ref={(xdsmViewer) => this.xdsmViewer = xdsmViewer} 
-        api={this.api} 
+      (<XdsmViewer ref={(xdsmViewer) => this.xdsmViewer = xdsmViewer}
+        api={this.api}
         isEditing={this.state.isEditing}
         mda={this.state.mda}
-        filter={this.state.filter} 
-        onFilterChange={this.handleFilterChange}/>);
+        filter={this.state.filter}
+        onFilterChange={this.handleFilterChange} />);
 
     const varEditor =
       (<VariablesEditor db={db} filter={this.state.filter} useScaling={useScaling}
@@ -358,7 +367,7 @@ class MdaViewer extends React.Component {
         isEditing={this.state.isEditing} />);
 
     if (this.state.isEditing) {
-      let openmdaoImpl = this.state.implEdited; 
+      let openmdaoImpl = this.state.implEdited;
       if (!this.state.implEdited) {
         openmdaoImpl = this.state.mda.impl.openmdao;
         openmdaoImpl.components.use_scaling = this.state.useScaling;
@@ -377,7 +386,7 @@ class MdaViewer extends React.Component {
               <i className="fa fa-times-circle" /> Close
             </button>
           </form>
-          <h1>Edit {this.state.mda.name}</h1> 
+          <h1>Edit {this.state.mda.name}</h1>
           {breadcrumbs}
           <div className="mda-section">
             {xdsmViewer}
@@ -456,7 +465,7 @@ class MdaViewer extends React.Component {
     return (
       <div>
         <div className="mda-section">
-          <ToolBar mdaId={this.props.mda.id} api={this.api} db={db}/>
+          <ToolBar mdaId={this.props.mda.id} api={this.api} db={db} />
         </div>
         {breadcrumbs}
         <div className="mda-section">
@@ -478,6 +487,7 @@ MdaViewer.propTypes = {
     name: PropTypes.string,
     public: PropTypes.bool,
     id: PropTypes.number,
+    path: PropTypes.array,
   }),
 };
 

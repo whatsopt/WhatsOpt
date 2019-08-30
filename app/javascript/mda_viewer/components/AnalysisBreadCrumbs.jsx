@@ -7,8 +7,8 @@ class AnalysisBreadCrumbs extends React.Component {
   }
 
   render() {
-    let crumbs = this.props.path.map((anc, i) => {
-      let href = this.props.api.url(`/analyses/${anc.id}`);
+    const crumbs = this.props.path.map((anc, i) => {
+      const href = this.props.api.url(`/analyses/${anc.id}`);
       let klass = "breadcrumb-item";
       let name = <a href={href}>{anc.name}</a>;
       if (this.props.path.length-1===i) {
@@ -24,7 +24,7 @@ class AnalysisBreadCrumbs extends React.Component {
           {crumbs}
         </ol>
       </nav>
-    )
+    );
   }
 }
 

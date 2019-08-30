@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import update from 'immutability-helper';
 import Form from "react-jsonschema-form-bs4";
-import { deepIsEqual } from '../utils/compare';
+import {deepIsEqual} from '../utils/compare';
 
 class LogLine extends React.Component {
   constructor(props) {
@@ -59,21 +59,21 @@ const SCHEMA = {
         // "pyoptsparse_optimizer_snopt",
         "onerasego_optimizer_segomoe",
       ],
-      "enumNames": ["RunOnce", 
-        "SMT - LHS", 
-        "Scipy - COBYLA", 
-        "Scipy - BFGS", 
+      "enumNames": ["RunOnce",
+        "SMT - LHS",
+        "Scipy - COBYLA",
+        "Scipy - BFGS",
         "Scipy - SLSQP",
         "pyOptSparse - CONMIN",
         // "pyOptSparse - FSQP",
         "pyOptSparse - SLSQP",
-        // "pyOptSparse - PSQP", 
-        "pyOptSparse - NSGA2", 
-        // "pyOptSparse - SNOPT", 
+        // "pyOptSparse - PSQP",
+        "pyOptSparse - NSGA2",
+        // "pyOptSparse - SNOPT",
         "Onera - SEGOMOE"],
       "default": "runonce",
     },
-    //"setSolverOptions": {"type": "boolean", "title": "Set solvers options", "default": false},
+    // "setSolverOptions": {"type": "boolean", "title": "Set solvers options", "default": false},
   },
   required: ["name", "host", "driver"],
   dependencies: {
@@ -87,7 +87,7 @@ const SCHEMA = {
             // "pyoptsparse_optimizer_fsqp",
             "pyoptsparse_optimizer_slsqp",
             // "pyoptsparse_optimizer_psqp",
-            "pyoptsparse_optimizer_nsga2"
+            "pyoptsparse_optimizer_nsga2",
           ]}},
         },
         {
@@ -99,7 +99,7 @@ const SCHEMA = {
                 "smt_doe_lhs_nbpts": {
                   "title": "Number of sampling points",
                   "type": OPTTYPES.smt_doe_lhs_nbpts,
-                  "default": OPTDEFAULTS.smt_doe_lhs_nbpts
+                  "default": OPTDEFAULTS.smt_doe_lhs_nbpts,
                 },
               },
             },
@@ -107,56 +107,58 @@ const SCHEMA = {
         },
         {
           "properties": {"driver": {"enum": ["scipy_optimizer_slsqp"]},
-          "scipy_optimizer_slsqp": {
-            "title": "Options for Scipy optimizer",
-            "type": "object",
-            "properties": {
-              "scipy_optimizer_slsqp_tol": {"title": "Objective function tolerance for stopping criterion",
-                "type": OPTTYPES.scipy_optimizer_slsqp_tol,
-                "default": OPTDEFAULTS.scipy_optimizer_slsqp_tol},
-              "scipy_optimizer_slsqp_disp": {"title": "Print convergence messages",
-                "type": OPTTYPES.scipy_optimizer_slsqp_disp,
-                "default": OPTDEFAULTS.scipy_optimizer_slsqp_disp},
-              "scipy_optimizer_slsqp_maxiter": {"title": "Maximum of iterations",
-                "type": OPTTYPES.scipy_optimizer_slsqp_maxiter,
-                "default": OPTDEFAULTS.scipy_optimizer_slsqp_maxiter}
+            "scipy_optimizer_slsqp": {
+              "title": "Options for Scipy optimizer",
+              "type": "object",
+              "properties": {
+                "scipy_optimizer_slsqp_tol": {"title": "Objective function tolerance for stopping criterion",
+                  "type": OPTTYPES.scipy_optimizer_slsqp_tol,
+                  "default": OPTDEFAULTS.scipy_optimizer_slsqp_tol},
+                "scipy_optimizer_slsqp_disp": {"title": "Print convergence messages",
+                  "type": OPTTYPES.scipy_optimizer_slsqp_disp,
+                  "default": OPTDEFAULTS.scipy_optimizer_slsqp_disp},
+                "scipy_optimizer_slsqp_maxiter": {"title": "Maximum of iterations",
+                  "type": OPTTYPES.scipy_optimizer_slsqp_maxiter,
+                  "default": OPTDEFAULTS.scipy_optimizer_slsqp_maxiter},
               },
             },
           },
         },
         {
           "properties": {"driver": {"enum": ["pyoptsparse_optimizer_snopt"]},
-          "pyoptsparse_optimizer_snopt": {
-            "title": "Options for PyOptSparse optimizer",
-            "type": "object",
-            "properties": {
-              "pyoptsparse_optimizer_snopt_tol": {"title": "Nonlinear constraint violation tolerance",
-                "type": OPTTYPES.pyoptsparse_optimizer_snopt_tol,
-                "default": OPTDEFAULTS.pyoptsparse_optimizer_snopt_tol},
-              "pyoptsparse_optimizer_snopt_maxiter": {"title": "Major iteration limit",
-                "type": OPTTYPES.pyoptsparse_optimizer_snopt_maxiter,
-                "default": OPTDEFAULTS.pyoptsparse_optimizer_snopt_maxiter}
+            "pyoptsparse_optimizer_snopt": {
+              "title": "Options for PyOptSparse optimizer",
+              "type": "object",
+              "properties": {
+                "pyoptsparse_optimizer_snopt_tol": {"title": "Nonlinear constraint violation tolerance",
+                  "type": OPTTYPES.pyoptsparse_optimizer_snopt_tol,
+                  "default": OPTDEFAULTS.pyoptsparse_optimizer_snopt_tol},
+                "pyoptsparse_optimizer_snopt_maxiter": {"title": "Major iteration limit",
+                  "type": OPTTYPES.pyoptsparse_optimizer_snopt_maxiter,
+                  "default": OPTDEFAULTS.pyoptsparse_optimizer_snopt_maxiter},
               },
             },
           },
-        }, 
+        },
         {
           "properties": {"driver": {"enum": ["onerasego_optimizer_segomoe"]},
-          "onerasego_optimizer_segomoe": {
-            "title": "Options for Onera SEGOMOE optimizer",
-            "type": "object",
-            "properties": {
-              "onerasego_optimizer_segomoe_maxiter": {"title": "Number max of iterations to run",
-                "type": OPTTYPES.onerasego_optimizer_segomoe_maxiter,
-                "default": OPTDEFAULTS.onerasego_optimizer_segomoe_maxiter},
-              "onerasego_optimizer_segomoe_ncluster": {"title": "Number of clusters used for objective and constraints surrogate mixture models (0: automatic)",
-                "type": OPTTYPES.onerasego_optimizer_segomoe_ncluster,
-                "default": OPTDEFAULTS.onerasego_optimizer_segomoe_ncluster},
-              "onerasego_optimizer_segomoe_optimizer": {"title": "Internal optimizer used for enrichment step",
-                "type": OPTTYPES.onerasego_optimizer_segomoe_optimizer,
-                "default": OPTDEFAULTS.onerasego_optimizer_segomoe_optimizer,
-                "enum": ["cobyla", "slsqp"],
-                "enumNames": ["COBYLA", "SLSQP"]},
+            "onerasego_optimizer_segomoe": {
+              "title": "Options for Onera SEGOMOE optimizer",
+              "type": "object",
+              "properties": {
+                "onerasego_optimizer_segomoe_maxiter": {"title": "Number max of iterations to run",
+                  "type": OPTTYPES.onerasego_optimizer_segomoe_maxiter,
+                  "default": OPTDEFAULTS.onerasego_optimizer_segomoe_maxiter},
+                "onerasego_optimizer_segomoe_ncluster": {
+                  "title":
+                  "Number of clusters used for objective and constraints surrogate mixture models (0: automatic)",
+                  "type": OPTTYPES.onerasego_optimizer_segomoe_ncluster,
+                  "default": OPTDEFAULTS.onerasego_optimizer_segomoe_ncluster},
+                "onerasego_optimizer_segomoe_optimizer": {"title": "Internal optimizer used for enrichment step",
+                  "type": OPTTYPES.onerasego_optimizer_segomoe_optimizer,
+                  "default": OPTDEFAULTS.onerasego_optimizer_segomoe_optimizer,
+                  "enum": ["cobyla", "slsqp"],
+                  "enumNames": ["COBYLA", "SLSQP"]},
               },
             },
           },
@@ -167,51 +169,7 @@ const SCHEMA = {
 };
 
 const UI_SCHEMA = {
-}
-
-const SCHEMA_NONLINEAR_SOLVER = {
-  "type": "object",
-  "properties": {
-    "nonlinear_solver": {
-      "title": "Nonlinear solver",
-      "type": "object",
-      "properties": {
-        "name": {
-          "title": "Solver name",
-          "enum": ["NonlinearBlockGS", "RecklessNonlinearBlockGS", "NonlinearBlockJac", "NonlinearRunOnce", "NewtonSolver", "BroydenSolver"]
-        },
-        "atol": { "type": "number", "title": "Absolute error tolerance" },
-        "rtol": { "type": "number", "title": "Relative error tolerance" },
-        "maxiter": { "type": "number", "title": "Maximum number of iterations (maxiter)" },
-        "err_on_maxiter": { "type": "boolean", "title": "Mark as failed if not converged" },
-        "iprint": { "type": "integer", "title": "Level of solver traces" }
-      },
-      "required": ["name", "atol", "rtol", "maxiter", "iprint"],
-    },
-  },
-}
-
-const SCHEMA_LINEAR_SOLVER = {
-  "type": "object",
-  "properties": {
-    "linear_solver": {
-      "title": "Linear solver",
-      "type": "object",
-      "properties": {
-        "name": {
-          "title": "Solver name",
-          "enum": ["ScipyKrylov", "LinearBlockGS", "LinearBlockJac", "LinearRunOnce", "DirectSolver", "PETScKrylov", "LinearUserDefined"]
-        },
-        "atol": { "type": "number", "title": "Absolute error tolerance" },
-        "rtol": { "type": "number", "title": "Relative error tolerance" },
-        "maxiter": { "type": "number", "title": "Maximum number of iterations (maxiter)" },
-        "err_on_maxiter": { "type": "boolean", "title": "Mark as failed if not converged" },
-        "iprint": { "type": "integer", "title": "Level of solver traces" }
-      },
-      "required": ["name", "atol", "rtol", "maxiter", "iprint"],
-    },
-  },
-}
+};
 
 class Runner extends React.Component {
   constructor(props) {
@@ -220,7 +178,7 @@ class Runner extends React.Component {
 
     const status = (this.props.ope.job && this.props.ope.job.status) || 'PENDING';
     const log = (this.props.ope.job && this.props.ope.job.log) || "";
-    const log_count = (this.props.ope.job && this.props.ope.job.log_count) || 0;
+    const logCount = (this.props.ope.job && this.props.ope.job.log_count) || 0;
 
     const formData = {
       host: this.props.ope.host,
@@ -238,10 +196,10 @@ class Runner extends React.Component {
       cases: this.props.ope.cases,
       status: status,
       log: log,
-      log_count: log_count,
+      log_count: logCount,
       startInMs: this.props.ope.job && this.props.ope.job && this.props.ope.job.start_in_ms,
       endInMs: this.props.ope.job && this.props.ope.job && this.props.ope.job.end_in_ms,
-      //setSolverOptions: false,
+      // setSolverOptions: false,
     };
 
     this.handleRun = this.handleRun.bind(this);
@@ -307,7 +265,7 @@ class Runner extends React.Component {
     console.log("OPEDATA= "+JSON.stringify(this.opeData));
     console.log("FILTERDATA= "+JSON.stringify(this._filterFormOptions(data.formData)));
     const formData = data.formData;
-    // let schema = {...this.state.schema} 
+    // let schema = {...this.state.schema}
     // if (formData.setSolverOptions) {
     //   schema.properties = Object.assign(schema.properties, {
     //     ...(SCHEMA_NONLINEAR_SOLVER.properties),
@@ -327,12 +285,12 @@ class Runner extends React.Component {
     if (deepIsEqual(formData, this.opeData)) {
       console.log("NOT CHANGED");
       newState = update(this.state, {
-        //schema: {$set: schema},
+        // schema: {$set: schema},
         formData: {$set: formData},
         status: {$set: this.opeStatus}});
     } else {
       newState = update(this.state, {
-        //schema: {$set: schema},
+        // schema: {$set: schema},
         formData: {$set: formData},
         status: {$set: "PENDING"}});
     }
@@ -393,10 +351,10 @@ class Runner extends React.Component {
   }
 
   render() {
-    //console.log(this.state.log);
+    // console.log(this.state.log);
     const lines = this.state.log.split('\n').map((l, i) => {
-      let count = Math.max(this.state.log_count-100, 0)+i;
-      let line = `#${count}  ${l}`
+      const count = Math.max(this.state.log_count-100, 0)+i;
+      const line = `#${count}  ${l}`;
       return ( <LogLine key={count} line={line}/> );
     });
 
@@ -429,7 +387,7 @@ class Runner extends React.Component {
     if (this.state.startInMs && this.state.endInMs) {
       elapsed = Math.ceil((this.state.endInMs - this.state.startInMs)/1000);
     }
-    //console.log("START: "+this.state.startInMs+"    END: "+this.state.endInMs);
+    // console.log("START: "+this.state.startInMs+"    END: "+this.state.endInMs);
 
     return (
       <div>
@@ -446,7 +404,8 @@ class Runner extends React.Component {
             onSubmit={this.handleRun} onChange={this.handleChange} >
             <div className="form-group">
               <button type="submit" className="btn btn-primary" disabled={active}>Run</button>
-              <button type="button" className="ml-1 btn btn-secondary" disabled={!active} onClick={this.handleAbort}>Abort</button>
+              <button type="button" className="ml-1 btn btn-secondary"
+                disabled={!active} onClick={this.handleAbort}>Abort</button>
             </div>
           </Form>
         </div>
@@ -485,7 +444,7 @@ Runner.propTypes = {
     id: PropTypes.number.isRequired,
     name: PropTypes.string.isRequired,
     impl: PropTypes.shape({
-      openmdao: PropTypes.object.isRequired
+      openmdao: PropTypes.object.isRequired,
     }),
   }),
   ope: PropTypes.shape({
@@ -498,6 +457,7 @@ Runner.propTypes = {
     job: PropTypes.shape({
       status: PropTypes.string.isRequired,
       log: PropTypes.string,
+      log_count: PropTypes.number,
       start_in_ms: PropTypes.number,
       end_in_ms: PropTypes.number,
     }),

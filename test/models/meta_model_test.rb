@@ -20,6 +20,7 @@ class MetaModelTest < ActiveSupport::TestCase
   end
 
   test "should predict" do
+    skip_if_parallel
     x = [[1.0, 8, 5], [8, 9, 10], [5, 4, 3]]
     y = @mm.predict(x)
     assert_in_delta 4, y[0][0]

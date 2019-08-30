@@ -83,7 +83,7 @@ class XdsmViewer extends React.Component {
     this.xdsm.draw();
     this._setLinks();
   }
-  
+
   _onSelectionChange(filter) {
     this.props.onFilterChange(filter);
   }
@@ -107,14 +107,14 @@ class XdsmViewer extends React.Component {
     $(".ellipsized").attr("data-toggle", "tooltip");
     $(() => {$('.ellipsized').tooltip({placement: 'right'});});
   }
-  
+
   _setLinks() {
     this.props.mda.nodes.forEach((node) => {
       if (node.link) {
-        let edit = this.props.isEditing?"/edit":"";
-        let link = `/analyses/${node.link.id}${edit}`; 
-        let $label = $('.id'+node.id+' tspan');
-        let label = $label.text();
+        const edit = this.props.isEditing?"/edit":"";
+        const link = `/analyses/${node.link.id}${edit}`;
+        const $label = $('.id'+node.id+' tspan');
+        const label = $label.text();
         $label.html(`<a class='analysis-link' href="${this.props.api.url(link)}">${label}</a>`);
       }
     });

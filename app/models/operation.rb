@@ -26,8 +26,8 @@ class Operation < ApplicationRecord
   validates :name, presence: true, allow_blank: false
   validate :success_flags_consistent_with_cases
 
-  scope :in_progress, ->(analysis) { Operation.where(analysis: analysis).left_outer_joins(:cases).where(cases: { operation_id: nil }) }
-  scope :done, ->(analysis) { Operation.where(analysis: analysis).left_outer_joins(:cases).where.not(cases: { operation_id: nil }).uniq }
+  scope :in_progress, ->(analysis) { where(analysis: analysis).left_outer_joins(:cases).where(cases: { operation_id: nil }) }
+  scope :done, ->(analysis) { where(analysis: analysis).left_outer_joins(:cases).where.not(cases: { operation_id: nil }).uniq }
 
   serialize :success, Array
 

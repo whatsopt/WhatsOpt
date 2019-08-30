@@ -2,11 +2,9 @@ development:
   adapter: async
 
 test:
-  adapter: async
+  adapter: test
 
-production: &redis
+production:
   adapter: redis
-  url: redis://selene.onecert.fr:6379/1
-
-staging:
-  adapter: async
+  url: <%= ENV.fetch("REDIS_URL") { "redis://localhost:6379/1" } %>
+  channel_prefix: whats_opt_production

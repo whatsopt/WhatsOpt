@@ -31,7 +31,7 @@ class PlotPanel extends React.Component {
     }
     let plotparall = (<ParallelCoordinates db={this.props.db} optim={this.props.optim}
       cases={this.props.cases} success={this.props.success}
-      title={this.props.title} width={1200} />)
+      title={this.props.title} width={1200} />);
     const inputCases = [].concat(this.props.cases.i).concat(this.props.cases.c);
     if (inputCases.length == 2 && this.props.cases.o.length == 1) {
       plotparall = (<span>
@@ -83,7 +83,6 @@ VariablePanel.propTypes = {
 };
 
 class ScreeningPanel extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {
@@ -96,20 +95,20 @@ class ScreeningPanel extends React.Component {
 
   componentDidMount() {
     this.props.api.openmdaoScreening(
-      this.props.opeId,
-      (response) => {
-        console.log(response.data);
-        this.setState({ loading: false, ...response.data });
-      });
+        this.props.opeId,
+        (response) => {
+          console.log(response.data);
+          this.setState({loading: false, ...response.data});
+        });
   }
 
   render() {
     let screenings;
     if (this.state.sensitivity) {
-      let varnames = Object.keys(this.state.sensitivity).sort();
-      let outs = [];
-      for (let output of varnames) {
-        outs.push([output, this.state.sensitivity[output]])
+      const varnames = Object.keys(this.state.sensitivity).sort();
+      const outs = [];
+      for (const output of varnames) {
+        outs.push([output, this.state.sensitivity[output]]);
       };
       screenings = outs.map((o) => (<ScreeningScatterPlot key={o[0]} outVarName={o[0]} saData={o[1]} />));
     }
@@ -128,7 +127,6 @@ ScreeningPanel.propTypes = {
 };
 
 class MetaModelPanel extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {
@@ -139,7 +137,7 @@ class MetaModelPanel extends React.Component {
   }
 
   render() {
-    let metamodel = (<MetaModelManager {...this.props} />);
+    const metamodel = (<MetaModelManager {...this.props} />);
     return (
       <div className="tab-pane fade" id={METAMODEL_TAB} role="tabpanel" aria-labelledby="metamodel-tab">
         {metamodel}
@@ -167,7 +165,7 @@ class Plotter extends React.Component {
     this.couplingVarCases = this.cases.filter((c) => this.db.isCouplingVarCases(c));
 
     const selection = this.initializeSelection(this.inputVarCases, this.outputVarCases);
-    this.state = { selection: selection, activeTab: true };
+    this.state = {selection: selection, activeTab: true};
 
     this.handleSelectionChange = this.handleSelectionChange.bind(this);
     this.handleMetaModelCreate = this.handleMetaModelCreate.bind(this);
@@ -198,25 +196,25 @@ class Plotter extends React.Component {
     let newSelection;
     if (target.checked) {
       const selected = this.cases.find((c) => caseUtils.label(c) === target.name);
-      newSelection = update(this.state.selection, { $push: [selected] });
+      newSelection = update(this.state.selection, {$push: [selected]});
     } else {
       const index = this.state.selection.findIndex((c) => caseUtils.label(c) === target.name);
-      newSelection = update(this.state.selection, { $splice: [[index, 1]] });
+      newSelection = update(this.state.selection, {$splice: [[index, 1]]});
     }
-    this.setState({ selection: newSelection });
+    this.setState({selection: newSelection});
   }
 
   handleMetaModelCreate(event) {
     console.log("Create MetaModel... ");
     this.props.api.createMetaModel(
-      this.props.ope.id,
-      (response) => {
-        console.log(response.data);
-      });
+        this.props.ope.id,
+        (response) => {
+          console.log(response.data);
+        });
   }
 
   activateTab(event, active) {
-    const newState = update(this.state, { activeTab: { $set: active } });
+    const newState = update(this.state, {activeTab: {$set: active}});
     this.setState(newState);
   }
 
@@ -229,11 +227,11 @@ class Plotter extends React.Component {
     const isScreening = (this.props.ope.category === "screening");
     const isDoe = (this.props.ope.category === "doe");
     const selection = this.state.selection;
-    const cases = { i: this.inputVarCases, o: this.outputVarCases, c: this.couplingVarCases };
+    const cases = {i: this.inputVarCases, o: this.outputVarCases, c: this.couplingVarCases};
     const selCases = {
       i: cases.i.filter((c) => selection.includes(c)),
       o: cases.o.filter((c) => selection.includes(c)),
-      c: cases.c.filter((c) => selection.includes(c))
+      c: cases.c.filter((c) => selection.includes(c)),
     };
     const nbPts = this.cases[0] ? this.cases[0].values.length : 0;
     let details = `${nbPts} cases`;
@@ -245,7 +243,7 @@ class Plotter extends React.Component {
     const title = `${this.props.ope.name} on ${this.props.mda.name} - ${details}`;
 
 
-    let screeningItem, screeningPanel;
+    let screeningItem; let screeningPanel;
     if (isScreening) {
       screeningItem = (
         <li className="nav-item">
@@ -256,7 +254,7 @@ class Plotter extends React.Component {
       screeningPanel = (<ScreeningPanel active={this.state.activeTab === SCREENING_TAB}
         api={this.api} opeId={this.props.ope.id} />);
     }
-    let metaModelItem, metaModelPanel;
+    let metaModelItem; let metaModelPanel;
     if (isDoe) {
       metaModelItem = (
         <li className="nav-item">

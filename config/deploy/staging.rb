@@ -1,5 +1,7 @@
 set :stage, :staging
 
+set :branch, ENV['BRANCH'] if ENV['BRANCH']
+
 set :deploy_to, "/var/www/html/rails/whatsopt"
 
 set :rvm_ruby_version, "ruby-2.5.3@whatsopt"

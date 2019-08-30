@@ -38,8 +38,8 @@ class ToolBar extends React.Component {
 
   getStatus() {
     this.api.openmdaoChecking(
-      this.props.mdaId,
-      (response) => { this.setState({ loading: false, statusOk: response.data.statusOk, log: response.data.log }); });
+        this.props.mdaId,
+        (response) => {this.setState({loading: false, statusOk: response.data.statusOk, log: response.data.log});});
   }
 
   saveAsPng() {
@@ -48,35 +48,35 @@ class ToolBar extends React.Component {
     saveSvgAsPng.saveSvgAsPng(elt, "xdsm.png", {
       backgroundColor: 'white',
       width: bbox.width - 100,
-      height: bbox.height - 20
+      height: bbox.height - 20,
     });
   }
 
   exportCsv() {
-    let connections = this.props.db.computeConnections();
+    const connections = this.props.db.computeConnections();
     this._exportCsvVariables(connections);
   }
 
   _convertVariablesToCsv(connections) {
-    let headers = ['Active', 'From', 'To', 'Name', 'Description', 'Role',
+    const headers = ['Active', 'From', 'To', 'Name', 'Description', 'Role',
       'Type', 'Shape', 'Units', 'Init', 'Lower', 'Upper'];
-    let rows = [];
+    const rows = [];
     connections.forEach((conn) => {
-      let row = [];
+      const row = [];
       row.push(conn.active, conn.from, conn.to, conn.name, conn.desc, conn.role, conn.type, conn.shape);
       row.push(conn.units, conn.init, conn.lower, conn.upper);
       rows.push(row.join(';'));
-    })
-    let csv = headers.join(';') + '\n' + rows.join('\n') + '\n';
+    });
+    const csv = headers.join(';') + '\n' + rows.join('\n') + '\n';
     return csv;
   }
 
   _exportCsvVariables(connections) {
-    let csv = this._convertVariablesToCsv(connections);
-    let filename = 'analysis.csv';
-    let data = 'data:application/csv;charset=utf-8,' + encodeURIComponent(csv);
+    const csv = this._convertVariablesToCsv(connections);
+    const filename = 'analysis.csv';
+    const data = 'data:application/csv;charset=utf-8,' + encodeURIComponent(csv);
 
-    let link = document.createElement('a');
+    const link = document.createElement('a');
     link.setAttribute('href', data);
     link.setAttribute('download', filename);
     link.style.visibility = 'hidden';

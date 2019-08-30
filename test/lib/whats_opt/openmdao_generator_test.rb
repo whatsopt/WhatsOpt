@@ -7,6 +7,7 @@ require "mkmf" # for find_executable
 MakeMakefile::Logging.instance_variable_set(:@log, File.open(File::NULL, "w"))
 
 class OpenmdaoGeneratorTest < ActiveSupport::TestCase
+
   def thrift?
     @found ||= find_executable("thrift")
   end
@@ -130,6 +131,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
   end
 
   test "should run optimization as default" do
+    skip_if_parallel
     skip "Apache Thrift not installed" unless thrift?
     Dir.mktmpdir do |dir|
       @ogen._generate_code dir
@@ -143,6 +145,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
   end
 
   test "should run mda once" do
+    skip_if_parallel
     skip "Apache Thrift not installed" unless thrift?
     Dir.mktmpdir do |dir|
       @ogen._generate_code dir
@@ -156,6 +159,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
   end
 
   test "should run doe" do
+    skip_if_parallel
     skip "Apache Thrift not installed" unless thrift?
     Dir.mktmpdir do |dir|
       @ogen._generate_code dir
@@ -169,6 +173,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
   end
 
   test "should run remote mda and return false when failed" do
+    skip_if_parallel
     skip "Apache Thrift not installed" unless thrift?
     @ogen_remote = WhatsOpt::OpenmdaoGenerator.new(@mda, server_host: "localhost")
     ok, log = @ogen_remote.run
@@ -177,7 +182,8 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
   end
 
   test "should monitor remote mda" do
-    skip "Apache Thrift not installed" unless thrift?
+    skip_if_parallel
+    skip "Apache Thrift not installed" unless thrift? 
     @ogen_remote = WhatsOpt::OpenmdaoGenerator.new(@mda, server_host: "localhost")
     lines = []
     status = @ogen_remote.monitor do |stdin, stdouterr, wait_thr|
