@@ -11,6 +11,7 @@ from thrift.server import TServer
 from whatsopt.surrogate_server import ttypes as SurrogateStoreTypes
 from whatsopt.surrogate_server import SurrogateStore as SurrogateStoreService
 from whatsopt.surrogate_store import SurrogateStore
+from whatsopt.utils import r2_score
 
 SURROGATES_MAP = {
     SurrogateStoreTypes.SurrogateKind.KRIGING: SurrogateStore.SURROGATE_NAMES[0],
@@ -20,6 +21,7 @@ SURROGATES_MAP = {
     SurrogateStoreTypes.SurrogateKind.QP: SurrogateStore.SURROGATE_NAMES[4],
 }
 
+NULL_QUALIFICATION = SurrogateStoreTypes.SurrogateQualification(r2=0.0, yp=[])
 
 class SurrogateStoreHandler:
     def __init__(self, outdir="."):
@@ -32,7 +34,7 @@ class SurrogateStoreHandler:
         exit(0)
 
     def create_surrogate(self, surrogate_id, surrogate_kind, xt, yt):
-        print("CREATE ", surrogate_kind, SURROGATES_MAP[surrogate_kind])
+        print("CREATE ", surrogate_id, surrogate_kind, SURROGATES_MAP[surrogate_kind])
         try:
             self.sm_store.create_surrogate(
                 surrogate_id, SURROGATES_MAP[surrogate_kind], xt, yt
@@ -42,8 +44,21 @@ class SurrogateStoreHandler:
             exc.msg = str(err)
             raise exc
 
+    def qualify(self, surrogate_id, xv, yv):
+        print("QUALIFY ", surrogate_id)
+        try:
+            yp = self.predict_values(surrogate_id, np.array(xv))
+            yv = np.array(yv).reshape(yp.shape)
+            r2 = r2_score(yv, yp)
+            print("R2={}".format(r2))
+            return SurrogateStoreTypes.SurrogateQualification(r2=r2, yp=yp)
+        except Exception as err:
+            exc = SurrogateStoreTypes.SurrogateException()
+            exc.msg = str(err)
+            raise exc
+
     def predict_values(self, surrogate_id, x):
-        print("PREDICT")
+        print("PREDICT", surrogate_id)
         try:
             sm = self.sm_store.get_surrogate(surrogate_id)
             if sm:

@@ -97,10 +97,91 @@ class SurrogateException(TException):
 
     def __ne__(self, other):
         return not (self == other)
+
+
+class SurrogateQualification(object):
+    """
+    Attributes:
+     - r2
+     - yp
+    """
+
+
+    def __init__(self, r2=None, yp=None,):
+        self.r2 = r2
+        self.yp = yp
+
+    def read(self, iprot):
+        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
+            return
+        iprot.readStructBegin()
+        while True:
+            (fname, ftype, fid) = iprot.readFieldBegin()
+            if ftype == TType.STOP:
+                break
+            if fid == 1:
+                if ftype == TType.DOUBLE:
+                    self.r2 = iprot.readDouble()
+                else:
+                    iprot.skip(ftype)
+            elif fid == 2:
+                if ftype == TType.LIST:
+                    self.yp = []
+                    (_etype3, _size0) = iprot.readListBegin()
+                    for _i4 in range(_size0):
+                        _elem5 = iprot.readDouble()
+                        self.yp.append(_elem5)
+                    iprot.readListEnd()
+                else:
+                    iprot.skip(ftype)
+            else:
+                iprot.skip(ftype)
+            iprot.readFieldEnd()
+        iprot.readStructEnd()
+
+    def write(self, oprot):
+        if oprot._fast_encode is not None and self.thrift_spec is not None:
+            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
+            return
+        oprot.writeStructBegin('SurrogateQualification')
+        if self.r2 is not None:
+            oprot.writeFieldBegin('r2', TType.DOUBLE, 1)
+            oprot.writeDouble(self.r2)
+            oprot.writeFieldEnd()
+        if self.yp is not None:
+            oprot.writeFieldBegin('yp', TType.LIST, 2)
+            oprot.writeListBegin(TType.DOUBLE, len(self.yp))
+            for iter6 in self.yp:
+                oprot.writeDouble(iter6)
+            oprot.writeListEnd()
+            oprot.writeFieldEnd()
+        oprot.writeFieldStop()
+        oprot.writeStructEnd()
+
+    def validate(self):
+        return
+
+    def __repr__(self):
+        L = ['%s=%r' % (key, value)
+             for key, value in self.__dict__.items()]
+        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+
+    def __eq__(self, other):
+        return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
+
+    def __ne__(self, other):
+        return not (self == other)
 all_structs.append(SurrogateException)
 SurrogateException.thrift_spec = (
     None,  # 0
     (1, TType.STRING, 'msg', 'UTF8', None, ),  # 1
+)
+all_structs.append(SurrogateQualification)
+SurrogateQualification.thrift_spec = (
+    None,  # 0
+    (1, TType.DOUBLE, 'r2', None, None, ),  # 1
+    (2, TType.LIST, 'yp', (TType.DOUBLE, None, False), None, ),  # 2
 )
 fix_spec(all_structs)
 del all_structs

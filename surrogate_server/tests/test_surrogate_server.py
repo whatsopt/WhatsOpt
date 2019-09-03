@@ -31,6 +31,9 @@ class SurrogateStoreProxy(object):
     def predict_values(self, surrogate_id, xe):
         return self._thrift_client.predict_values(surrogate_id, xe)
 
+    def qualify(self, surrogate_id, xv, yv):
+        return self._thrift_client.qualify(surrogate_id, xv, yv)
+
     def close(self):
         self.transport.close()
 
@@ -45,7 +48,7 @@ class TestSurrogateServer(unittest.TestCase):
     # @unittest.skip("skip")
     def test_create_surrogate(self):
         xt = np.array([[0.0, 1.0, 2.0, 3.0, 4.0]]).T
-        yt = np.array([0.0, 1.0, 1.5, 0.5, 1.0]).T
+        yt = np.array([0.0, 1.0, 1.5, 0.5, 1.0])
 
         self.store.create_surrogate("1", SurrogateStore.SurrogateKind.KRIGING, xt, yt)
 
@@ -53,7 +56,7 @@ class TestSurrogateServer(unittest.TestCase):
     def test_predict(self):
 
         xt = np.array([[0.0, 1.0, 2.0, 3.0, 4.0]]).T
-        yt = np.array([0.0, 1.0, 1.5, 0.5, 1.0]).T
+        yt = np.array([0.0, 1.0, 1.5, 0.5, 1.0])
 
         self.store.create_surrogate("1", SurrogateStore.SurrogateKind.KRIGING, xt, yt)
 
@@ -63,6 +66,16 @@ class TestSurrogateServer(unittest.TestCase):
 
         self.assertEqual(13, len(y1))
         self.store.close()
+
+    def test_qualification(self):
+        xt = np.array([[0.0, 1.0, 2.0, 3.0, 4.0]]).T
+        yt = np.array([0.0, 1.0, 1.5, 0.5, 1.0])
+
+        self.store.create_surrogate("1", SurrogateStore.SurrogateKind.KRIGING, xt, yt)
+        q = self.store.qualify("1", np.array([[0.0, 2.0, 4.0]]).T, np.array([0.0, 1.5, 1.0]))
+        self.assertAlmostEqual(1.0, q.r2)
+        for i, v in enumerate([0.0, 1.5, 1.0]):
+            self.assertAlmostEqual(v, q.yp[i])
 
 
 if __name__ == "__main__":

@@ -12,36 +12,37 @@ except:
 
 
 class TestSurrogateStore(unittest.TestCase):
+
+    def setUp(self):
+        self.store = SurrogateStore()
+
     # @unittest.skip("skip")
     def test_create_surrogate(self):
         xt = np.array([[0.0, 1.0, 2.0, 3.0, 4.0]]).T
         yt = np.array([0.0, 1.0, 1.5, 0.5, 1.0]).T
 
-        store = SurrogateStore()
-        sm = store.create_surrogate("1", "KRIGING", xt, yt)
+        self.store.create_surrogate("1", "KRIGING", xt, yt)
 
     # @unittest.skip("skip")
     def test_get_existing_surrogate(self):
         xt = np.array([[0.0, 1.0, 2.0, 3.0, 4.0]]).T
         yt = np.array([0.0, 1.0, 1.5, 0.5, 1.0]).T
 
-        store = SurrogateStore()
-        sm = store.create_surrogate("1", "KRIGING", xt, yt)
+        sm = self.store.create_surrogate("1", "KRIGING", xt, yt)
 
         num = 13
         x = np.linspace(0.0, 4.0, num)
         y1 = sm.predict_values(x)
 
-        sm2 = store.get_surrogate("1")
+        sm2 = self.store.get_surrogate("1")
         y2 = sm2.predict_values(x)
 
         assert np.array_equal(y1, y2)
 
     def test_get_non_existing_surrogate(self):
-        store = SurrogateStore()
 
         with self.assertRaises(FileNotFoundError):
-            store.get_surrogate("2")
+            self.store.get_surrogate("2")
 
     @unittest.skip("skip")
     def test_save_mfk(self):
