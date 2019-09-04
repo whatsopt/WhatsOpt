@@ -33,8 +33,21 @@ class SurrogateTest < ActiveSupport::TestCase
     @surr = surrogates(:surrogate_obj2)
     skip_if_parallel
     assert_equal Surrogate::STATUS_CREATED, @surr.status
-    @surr.train
+    @surr.train # use one point for testing out of 10 points of the doe
+    @surr.reload
     assert_equal Surrogate::STATUS_TRAINED, @surr.status 
+    assert_in_delta(1.0, @surr.r2) 
+    assert_equal (50-1)/10+1, @surr.xvalid.size
+    assert_equal (50-1)/10+1, @surr.yvalid.size
+    assert_equal (50-1)/10+1, @surr.ypred.size
+    @surr.train(test_part: 15)  # use one point for testing out of 15 points of the doe
+    @surr.reload
+    assert_equal Surrogate::STATUS_TRAINED, @surr.status 
+    assert_in_delta(1.0, @surr.r2) 
+
+    assert_equal (50-1)/15+1, @surr.xvalid.size
+    assert_equal (50-1)/15+1, @surr.yvalid.size
+    assert_equal (50-1)/15+1, @surr.ypred.size
   end
 
 end

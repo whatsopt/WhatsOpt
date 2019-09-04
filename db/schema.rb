@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 63) do
+ActiveRecord::Schema.define(version: 64) do
 
   create_table "analyses", force: :cascade do |t|
     t.string "name"
@@ -173,6 +173,7 @@ ActiveRecord::Schema.define(version: 63) do
     t.integer "coord_index"
     t.string "kind"
     t.string "status"
+    t.text "quality"
     t.index ["meta_model_id"], name: "index_surrogates_on_meta_model_id"
     t.index ["variable_id"], name: "index_surrogates_on_variable_id"
   end

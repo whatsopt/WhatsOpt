@@ -4,6 +4,7 @@ class MetaModelTest < ActiveSupport::TestCase
 
   setup do
     @mm = meta_models(:cicav_metamodel)
+    @mm2 = meta_models(:cicav_metamodel2)
     @varobj = variables(:disc_metamodel_varobj_objective_out)
   end
 
@@ -32,6 +33,12 @@ class MetaModelTest < ActiveSupport::TestCase
     assert_raises MetaModel::PredictionError do 
       y = @mm.predict(x)
     end
+  end
+
+  test "should be qualified" do
+    assert_equal 1, @mm2.qualification.size
+    assert_equal [:name, :r2, :xvalid, :ypred, :yvalid], @mm2.qualification[0].keys.sort
+    assert_in_delta(1.0, @mm2.qualification[0][:r2])
   end
 
 end

@@ -60,9 +60,7 @@ class MetaModel < ApplicationRecord
   end
 
   def qualification
-    surrogates.each do |surr|
-      surr.train if !surr.trained?
-    end
+    surrogates.map(&:qualify)
   end
 
 private

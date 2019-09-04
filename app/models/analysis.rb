@@ -217,9 +217,9 @@ class Analysis < ApplicationRecord
   def build_metamodel_infos
     res = false
     if is_metamodel_analysis?
-      disciplines.inject([]) {|acc, d| acc + d.metamodel_qualification}
+      res = disciplines.inject([]) {|acc, d| acc + d.metamodel_qualification}
     end
-    res.to_json
+    res
   end
 
   def refresh_connections(default_role_for_inputs = WhatsOpt::Variable::PARAMETER_ROLE)
