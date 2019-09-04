@@ -49,6 +49,22 @@ module WhatsOpt
           return
         end
 
+        def qualify(surrogate_id, xv, yv)
+          send_qualify(surrogate_id, xv, yv)
+          return recv_qualify()
+        end
+
+        def send_qualify(surrogate_id, xv, yv)
+          send_message('qualify', Qualify_args, :surrogate_id => surrogate_id, :xv => xv, :yv => yv)
+        end
+
+        def recv_qualify()
+          result = receive_message(Qualify_result)
+          return result.success unless result.success.nil?
+          raise result.exc unless result.exc.nil?
+          raise ::Thrift::ApplicationException.new(::Thrift::ApplicationException::MISSING_RESULT, 'qualify failed: unknown result')
+        end
+
         def predict_values(surrogate_id, x)
           send_predict_values(surrogate_id, x)
           return recv_predict_values()
@@ -106,6 +122,17 @@ module WhatsOpt
             result.exc = exc
           end
           write_result(result, oprot, 'create_surrogate', seqid)
+        end
+
+        def process_qualify(seqid, iprot, oprot)
+          args = read_args(iprot, Qualify_args)
+          result = Qualify_result.new()
+          begin
+            result.success = @handler.qualify(args.surrogate_id, args.xv, args.yv)
+          rescue ::WhatsOpt::SurrogateServer::SurrogateException => exc
+            result.exc = exc
+          end
+          write_result(result, oprot, 'qualify', seqid)
         end
 
         def process_predict_values(seqid, iprot, oprot)
@@ -220,6 +247,44 @@ module WhatsOpt
         EXC = 1
 
         FIELDS = {
+          EXC => {:type => ::Thrift::Types::STRUCT, :name => 'exc', :class => ::WhatsOpt::SurrogateServer::SurrogateException}
+        }
+
+        def struct_fields; FIELDS; end
+
+        def validate
+        end
+
+        ::Thrift::Struct.generate_accessors self
+      end
+
+      class Qualify_args
+        include ::Thrift::Struct, ::Thrift::Struct_Union
+        SURROGATE_ID = 1
+        XV = 2
+        YV = 3
+
+        FIELDS = {
+          SURROGATE_ID => {:type => ::Thrift::Types::STRING, :name => 'surrogate_id'},
+          XV => {:type => ::Thrift::Types::LIST, :name => 'xv', :element => {:type => ::Thrift::Types::LIST, :element => {:type => ::Thrift::Types::DOUBLE}}},
+          YV => {:type => ::Thrift::Types::LIST, :name => 'yv', :element => {:type => ::Thrift::Types::DOUBLE}}
+        }
+
+        def struct_fields; FIELDS; end
+
+        def validate
+        end
+
+        ::Thrift::Struct.generate_accessors self
+      end
+
+      class Qualify_result
+        include ::Thrift::Struct, ::Thrift::Struct_Union
+        SUCCESS = 0
+        EXC = 1
+
+        FIELDS = {
+          SUCCESS => {:type => ::Thrift::Types::STRUCT, :name => 'success', :class => ::WhatsOpt::SurrogateServer::SurrogateQualification},
           EXC => {:type => ::Thrift::Types::STRUCT, :name => 'exc', :class => ::WhatsOpt::SurrogateServer::SurrogateException}
         }
 

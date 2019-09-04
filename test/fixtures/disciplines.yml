@@ -87,3 +87,15 @@ disc_cicav_metamodel:
   type: metamodel
   analysis: cicav_metamodel_analysis
   position: 1
+
+driver_cicav_metamodel2:
+  name: __DRIVER__
+  type: null_driver
+  analysis: cicav_metamodel2_analysis
+  position: 0
+
+disc_cicav_metamodel2:
+  name: MetaModelDisc2
+  type: metamodel
+  analysis: cicav_metamodel2_analysis
+  position: 1

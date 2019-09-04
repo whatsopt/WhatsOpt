@@ -10,11 +10,13 @@ class NotebookControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should get notebooks list" do
+    skip "notebooks deprecated"
     get notebooks_url
     assert_response :success
   end
 
   test "should assign owner on creation" do
+    skip "notebooks deprecated"
     assert_difference("Notebook.count") do
       post notebooks_url, params: { notebook: { title: "Test", attachment_attributes: { data: @nb } } }
     end
@@ -22,6 +24,7 @@ class NotebookControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should not destroy notebook, if not owner" do
+    skip "notebooks deprecated"
     post notebooks_url, params: { notebook: { title: "Test", attachment_attributes: { data: @nb } } }
     sign_out users(:user1)
     sign_in users(:user2)
@@ -33,6 +36,7 @@ class NotebookControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update the attachment and the title" do
+    skip "notebooks deprecated"
     post notebooks_url, params: { notebook: { title: "Test", attachment_attributes: { data: @nb } } }
     assert_equal "Test", Notebook.last.title
     put notebook_url(Notebook.last), params: { notebook: { title: "Test2", attachment_attributes: { data: @nb2 } } }

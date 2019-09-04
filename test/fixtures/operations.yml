@@ -21,3 +21,13 @@ screening:
     driver: salib_doe_morris
     analysis: cicav
     success: []
+
+doe_metamodel2:
+    name: LHS
+    driver: smt_doe_lhs
+    analysis: cicav
+    success: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+              1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+              1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+              1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+              1, 1, 1, 1, 1, 1, 1, 1, 1, 1]

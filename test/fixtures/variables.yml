@@ -356,3 +356,68 @@ disc_metamodel_varobj_objective_out:
   type: Float
   shape: 1  
   active: true
+
+# METAMODEL2 ##################################################################
+driver_metamodel2_varx1_out:
+  name: x1
+  discipline: driver_cicav_metamodel2
+  io_mode: out
+  type: Float
+  shape: 1
+  active: true
+
+driver_metamodel2_vary2_in:
+  name: y2
+  discipline: driver_cicav_metamodel2
+  io_mode: in
+  type: Float
+  shape: 1
+  active: true
+
+driver_metamodel2_varz_design_out:
+  name: z
+  discipline: driver_cicav_metamodel2
+  io_mode: out
+  type: Float
+  shape: 1
+  active: true
+  
+driver_metamodel2_varobj_objective_in:
+  name: obj
+  discipline: driver_cicav_metamodel2
+  io_mode: in
+  type: Float
+  shape: 1  
+  active: true
+
+disc_metamodel2_varx1_in:
+  name: x1
+  discipline: disc_cicav_metamodel2
+  io_mode: in
+  type: Float
+  shape: 1
+  active: true
+
+disc_metamodel2_vary2_out:
+  name: y2
+  discipline: disc_cicav_metamodel2
+  io_mode: out
+  type: Float
+  shape: 1
+  active: true
+
+disc_metamodel2_varz_design_in:
+  name: z
+  discipline: disc_cicav_metamodel2
+  io_mode: in
+  type: Float
+  shape: 1
+  active: true
+  
+disc_metamodel2_varobj_objective_out:
+  name: obj
+  discipline: disc_cicav_metamodel2
+  io_mode: out
+  type: Float
+  shape: 1  
+  active: true

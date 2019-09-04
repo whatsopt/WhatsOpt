@@ -43,6 +43,10 @@ class Discipline < ApplicationRecord
     type == WhatsOpt::Discipline::NULL_DRIVER
   end
 
+  def is_metamodel?
+    !!(meta_model || (has_sub_analysis? && sub_analysis.is_metamodel_analysis?))
+  end
+
   def has_sub_analysis?
     !!sub_analysis
   end
@@ -96,6 +100,10 @@ class Discipline < ApplicationRecord
     new_sub_analysis = Analysis.new(mda_params)
     AnalysisDiscipline.build_analysis_discipline(self, new_sub_analysis)
     new_sub_analysis
+  end
+
+  def metamodel_qualification
+    meta_model&.qualification.nil? ? [] : meta_model.qualification
   end
 
   private

@@ -3,3 +3,7 @@ cicav_metamodel:
   operation: doe
   default_surrogate_kind: KRIGING
 
+cicav_metamodel2:
+  discipline: disc_cicav_metamodel2
+  operation: doe_metamodel2
+  default_surrogate_kind: KRIGING

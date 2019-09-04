@@ -65,6 +65,12 @@ module WhatsOpt
       _send { @client.create_surrogate(@surrogate_id, surrogate_kind, x, y) }
     end
 
+    def qualify(xv, yv) 
+      quality = nil
+      _send { quality = @client.qualify(@surrogate_id, xv, yv) }
+      quality
+    end
+
     def predict_values(x)
       values = []
       _send { 

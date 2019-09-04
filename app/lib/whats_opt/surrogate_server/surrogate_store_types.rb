@@ -41,5 +41,23 @@ module WhatsOpt
       ::Thrift::Struct.generate_accessors self
     end
 
+    class SurrogateQualification
+      include ::Thrift::Struct, ::Thrift::Struct_Union
+      R2 = 1
+      YP = 2
+
+      FIELDS = {
+        R2 => {:type => ::Thrift::Types::DOUBLE, :name => 'r2'},
+        YP => {:type => ::Thrift::Types::LIST, :name => 'yp', :element => {:type => ::Thrift::Types::DOUBLE}}
+      }
+
+      def struct_fields; FIELDS; end
+
+      def validate
+      end
+
+      ::Thrift::Struct.generate_accessors self
+    end
+
   end
 end

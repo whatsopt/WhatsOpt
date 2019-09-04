@@ -18,8 +18,23 @@ class SurrogateTest < ActiveSupport::TestCase
     assert File.exists?(@surr_file)
     @surr.reload
     assert_equal Surrogate::STATUS_TRAINED, @surr.status 
-    assert_in_delta(2.35, @surr.predict([[3.3, 2, 7]]).first)
-    assert_in_delta(6.012, @surr.predict([[3.3, 2, 7], [5, 4, 3]]).second)
+    assert_in_delta(2.502, @surr.predict([[3.3, 2, 7]]).first, 1)
+    assert_in_delta(6.034, @surr.predict([[3.3, 2, 7], [5, 4, 3]]).second, 1)
   end
   
+  test "extract at indices" do
+    skip_if_parallel
+    xt, xv = @surr._extract_at_indices([1,2,3,4,5], [1, 3])
+    assert_equal [1, 3, 5], xt
+    assert_equal [2, 4], xv 
+  end
+
+  test "should compute qualification" do
+    @surr = surrogates(:surrogate_obj2)
+    skip_if_parallel
+    assert_equal Surrogate::STATUS_CREATED, @surr.status
+    @surr.train
+    assert_equal Surrogate::STATUS_TRAINED, @surr.status 
+  end
+
 end

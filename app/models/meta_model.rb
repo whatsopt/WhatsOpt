@@ -52,11 +52,17 @@ class MetaModel < ApplicationRecord
   end
 
   def training_input_values
-    Matrix.columns(operation.input_cases.map(&:values)).to_a
+    @training_inputs ||= Matrix.columns(operation.input_cases.map(&:values)).to_a
   end
 
   def training_output_values(varname, coord_index)
-    operation.cases.where(coord_index: coord_index).joins(:variable).where(variables: {name: varname}).take.values
+    @training_outputs ||= operation.cases.where(coord_index: coord_index).joins(:variable).where(variables: {name: varname}).take.values
+  end
+
+  def qualification
+    surrogates.each do |surr|
+      surr.train if !surr.trained?
+    end
   end
 
 private

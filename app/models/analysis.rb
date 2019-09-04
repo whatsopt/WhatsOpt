@@ -55,6 +55,10 @@ class Analysis < ApplicationRecord
     !has_parent?
   end
 
+  def is_metamodel_analysis?
+    !disciplines.nodes.detect {|d| !d.is_metamodel?}
+  end
+
   def variables
     @variables = Variable.of_analysis(id).active.order('name ASC')
   end
@@ -154,7 +158,8 @@ class Analysis < ApplicationRecord
       edges: build_edges,
       inactive_edges: build_edges(active: false),
       vars: build_var_infos,
-      impl: build_openmdao_impl
+      impl: { openmdao: build_openmdao_impl,
+              metamodel: build_metamodel_infos }
     }.to_json
   end
 
@@ -206,7 +211,15 @@ class Analysis < ApplicationRecord
 
   def build_openmdao_impl
     self.openmdao_impl ||= OpenmdaoAnalysisImpl.new
-    { openmdao: ActiveModelSerializers::SerializableResource.new(self.openmdao_impl).as_json }
+    ActiveModelSerializers::SerializableResource.new(self.openmdao_impl).as_json
+  end
+
+  def build_metamodel_infos
+    res = false
+    if is_metamodel_analysis?
+      disciplines.inject([]) {|acc, d| acc + d.metamodel_qualification}
+    end
+    res.to_json
   end
 
   def refresh_connections(default_role_for_inputs = WhatsOpt::Variable::PARAMETER_ROLE)

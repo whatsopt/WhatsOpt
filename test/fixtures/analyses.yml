@@ -16,3 +16,6 @@ innermda:
 
 cicav_metamodel_analysis:
   name: CicavMetaModel
+
+cicav_metamodel2_analysis:
+  name: CicavMetaModel

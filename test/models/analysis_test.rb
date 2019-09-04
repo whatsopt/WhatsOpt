@@ -102,4 +102,11 @@ class AnalysisTest < ActiveSupport::TestCase
     assert_equal "NonlinearBlockGS", impl.nonlinear_solver.name
     assert_equal "ScipyKrylov", impl.linear_solver.name
   end
+
+  test "should know if it is a metamodel" do
+    mda = analyses(:outermda)
+    refute mda.is_metamodel_analysis?
+    mda = analyses(:cicav_metamodel_analysis)
+    assert mda.is_metamodel_analysis?
+  end
 end

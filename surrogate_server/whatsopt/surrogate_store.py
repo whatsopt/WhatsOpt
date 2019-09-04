@@ -46,6 +46,7 @@ class SurrogateStore(object):
         sm.train()
 
         filename = self._sm_filename(surrogate_id)
+        print("DUMP ", filename)
         with open(filename, "wb") as f:
             pickle.dump(sm, f)
         return sm
