@@ -21,7 +21,7 @@ class MetaModelQualification extends React.Component {
   }
 
   render() {
-    const qualities = this.props.quality.sort((a, b) => a.r2 < b.r2)
+    const qualities = this.props.quality.sort((a, b) => a.r2 > b.r2)
     console.log(this.state.selected);
     // Quality Buttons
     const qualityButtons = qualities.map((q, i) => {
@@ -32,7 +32,7 @@ class MetaModelQualification extends React.Component {
       const btnClass = "btn m-1";
       return (
         <button key={q.name} className={btnClass} onClick={(e) => this.handleQualityDisplay(i)}>
-          {q.name} <span className={badgeKind}>{q.r2.toFixed(4)}</span>
+          {q.name} <span className={badgeKind}>{q.r2.toPrecision(8)}</span>
         </button>
       );
     });
