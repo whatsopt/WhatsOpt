@@ -2,6 +2,7 @@
   "license": "UNLICENSED",
   "dependencies": {
     "@babel/preset-react": "^7.0.0",
+    "ify-loader": "^1.1.0",
     "@rails/webpacker": "^4.0.2",
     "actioncable": "^5.2.0",
     "autoprefixer": "^9.3.1",

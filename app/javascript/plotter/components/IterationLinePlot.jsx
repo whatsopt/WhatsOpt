@@ -1,6 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Plot from 'react-plotly.js';
+//import Plot from 'react-plotly.js';
+import Plotly from './custom-plotly'
+import createPlotlyComponent from 'react-plotly.js/factory';
+const Plot = createPlotlyComponent(Plotly);
+
 import * as caseUtils from '../../utils/cases.js';
 
 class IterationLinePlot extends React.Component {
