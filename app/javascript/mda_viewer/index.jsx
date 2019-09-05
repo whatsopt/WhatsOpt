@@ -11,6 +11,7 @@ import DisciplinesEditor from 'mda_viewer/components/DisciplinesEditor';
 import ConnectionsEditor from 'mda_viewer/components/ConnectionsEditor';
 import VariablesEditor from 'mda_viewer/components/VariablesEditor';
 import OpenmdaoImplEditor from 'mda_viewer/components/OpenmdaoImplEditor';
+import MetaModelQualification from 'mda_viewer/components/MetaModelQualification';
 import AnalysisDatabase from '../utils/AnalysisDatabase';
 import {deepIsEqual} from '../utils/compare';
 
@@ -462,6 +463,21 @@ class MdaViewer extends React.Component {
           </div>
         </div>);
     };
+
+    let metaModelItem; let metaModelPanel;
+    if (this.props.mda.impl.metamodel) {
+      metaModelItem = (
+        <li className="nav-item">
+          <a className="nav-link" id="metamodel-tab" href="#metamodel"
+            role="tab" aria-controls="metamodel" data-toggle="tab" aria-selected="false">MetaModel</a>
+        </li>);
+      metaModelPanel = (
+        <div className="tab-pane fade" id="metamodel" role="tabpanel" aria-labelledby="metamodel-tab">
+          <MetaModelQualification quality={this.props.mda.impl.metamodel.quality} />
+        </div>
+      ); 
+    }
+
     return (
       <div>
         <div className="mda-section">
@@ -472,7 +488,19 @@ class MdaViewer extends React.Component {
           {xdsmViewer}
         </div>
         <div className="mda-section">
-          {varEditor}
+          <ul className="nav nav-tabs" id="myTab" role="tablist">
+            <li className="nav-item">
+              <a className="nav-link active" id="variables-tab" data-toggle="tab" href="#variables"
+                role="tab" aria-controls="variables" aria-selected="true">Variables</a>
+            </li>
+            {metaModelItem}
+          </ul>
+          <div className="tab-content" id="myTabContent">
+            <div className="tab-pane fade show active" id="variables" role="tabpanel" aria-labelledby="variables-tab">
+              {varEditor}
+            </div>
+            {metaModelPanel}
+          </div>
         </div>
       </div>
     );

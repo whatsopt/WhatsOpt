@@ -159,7 +159,7 @@ class Analysis < ApplicationRecord
       inactive_edges: build_edges(active: false),
       vars: build_var_infos,
       impl: { openmdao: build_openmdao_impl,
-              metamodel: build_metamodel_infos }
+              metamodel: { quality: build_metamodel_quality } }
     }.to_json
   end
 
@@ -214,7 +214,7 @@ class Analysis < ApplicationRecord
     ActiveModelSerializers::SerializableResource.new(self.openmdao_impl).as_json
   end
 
-  def build_metamodel_infos
+  def build_metamodel_quality
     res = false
     if is_metamodel_analysis?
       res = disciplines.inject([]) {|acc, d| acc + d.metamodel_qualification}
