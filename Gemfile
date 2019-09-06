@@ -113,7 +113,7 @@ gem "sucker_punch"
 # UI
 gem 'popper' # bootstrap dependency
 gem 'bootstrap', '~> 4.0'
-gem 'font_awesome5_rails', '~> 0.6.0'
+gem 'font_awesome5_rails'
 gem 'data-confirm-modal'
 
 # thrift
