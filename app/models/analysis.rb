@@ -215,7 +215,7 @@ class Analysis < ApplicationRecord
   end
 
   def build_metamodel_quality
-    res = false
+    res = []
     if is_metamodel_analysis?
       res = disciplines.inject([]) {|acc, d| acc + d.metamodel_qualification}
     end

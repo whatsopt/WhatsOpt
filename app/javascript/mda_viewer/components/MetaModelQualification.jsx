@@ -16,13 +16,11 @@ class MetaModelQualification extends React.Component {
   }
 
   handleQualityDisplay(quality_index) {
-    console.log("display quality of "+quality_index);
     this.setState({selected: quality_index})
   }
 
   render() {
     const qualities = this.props.quality.sort((a, b) => a.r2 > b.r2)
-    console.log(this.state.selected);
     // Quality Buttons
     const qualityButtons = qualities.map((q, i) => {
       let badgeKind = "badge " 

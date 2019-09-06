@@ -465,7 +465,8 @@ class MdaViewer extends React.Component {
     };
 
     let metaModelItem; let metaModelPanel;
-    if (this.props.mda.impl.metamodel.quality) {
+    const quality = this.props.mda.impl.metamodel.quality;
+    if (quality && quality.length>0) {
       metaModelItem = (
         <li className="nav-item">
           <a className="nav-link" id="metamodel-tab" href="#metamodel"
