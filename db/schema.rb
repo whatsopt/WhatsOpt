@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 64) do
+ActiveRecord::Schema.define(version: 65) do
 
   create_table "analyses", force: :cascade do |t|
     t.string "name"
@@ -92,12 +92,6 @@ ActiveRecord::Schema.define(version: 64) do
     t.datetime "updated_at", null: false
     t.index ["discipline_id"], name: "index_meta_models_on_discipline_id"
     t.index ["operation_id"], name: "index_meta_models_on_operation_id"
-  end
-
-  create_table "notebooks", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "title"
   end
 
   create_table "openmdao_analysis_impls", force: :cascade do |t|

@@ -29,10 +29,6 @@ member_cicav_mda_role:
   name: :member
   resource: cicav (Analysis)
 
-owner_notebook_one:
-  name: :owner
-  resource: notebook_one (Notebook)
-
 owner_gm_one:
   name: :owner
   resource: gm_one (GeometryModel)
