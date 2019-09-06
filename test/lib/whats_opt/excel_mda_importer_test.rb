@@ -140,7 +140,7 @@ end
 class ExcelMdaImporterErrorTest < ActiveSupport::TestCase
   test "should raise error when not an excel file" do
     assert_raises WhatsOpt::ExcelMdaImporter::ExcelMdaImportError do
-      @emi = WhatsOpt::ExcelMdaImporter.new(sample_file("notebook_sample.ipynb"))
+      @emi = WhatsOpt::ExcelMdaImporter.new(sample_file("fake_excel.xlsx"))
     end
   end
 end

@@ -7,18 +7,14 @@ class Attachment < ActiveRecord::Base
   has_attached_file :data,
                     path: ":rails_root/upload/:attachment/:id/:style/:basename.:extension",
                     processors: lambda { |a|
-                                  if a.notebook?
-                                    [:notebook_processor]
-                                  elsif a.geometry_model?
+                                  if a.geometry_model?
                                     [:geometry_model_processor]
                                   else
                                     []
                                   end
                                 },
                     styles: lambda { |a|
-                              if a.instance.notebook?
-                                { html: { format: :html } }
-                              elsif a.instance.geometry_model?
+                              if a.instance.geometry_model?
                                 { x3d: { format: :x3d } }
                               else
                                 {}
@@ -29,15 +25,13 @@ class Attachment < ActiveRecord::Base
 
   NOT_FOUND = "__NOT_FOUND__"
   ATTACH_UNDEFINED = "Undefined"
-  ATTACH_NOTEBOOK = "Notebook"
   ATTACH_MDA_EXCEL = "MdaExcel"
   ATTACH_MDA_CMDOWS = "MdaCmdows"
   ATTACH_GEOMETRY_MODEL = "GeometryModel"
-  ATTACHMENT_CATEGORIES = [ATTACH_UNDEFINED, ATTACH_NOTEBOOK, ATTACH_MDA_EXCEL, ATTACH_MDA_CMDOWS, ATTACH_GEOMETRY_MODEL].freeze
+  ATTACHMENT_CATEGORIES = [ATTACH_UNDEFINED, ATTACH_MDA_EXCEL, ATTACH_MDA_CMDOWS, ATTACH_GEOMETRY_MODEL].freeze
 
   belongs_to :container, polymorphic: true
   belongs_to :study, -> { where("attachments.container_type = 'Study'") }, foreign_key: "container_id"
-  belongs_to :notebook, -> { where("attachments.container_type = 'Notebook'") }, foreign_key: "container_id"
   belongs_to :mda_excel, -> { where("attachments.container_type = 'Analysis'") }, foreign_key: "container_id"
   belongs_to :mda_cmdows, -> { where("attachments.container_type = 'Analysis'") }, foreign_key: "container_id"
   belongs_to :geometry_model, -> { where("attachments.container_type = 'GeometryModel'") }, foreign_key: "container_id"
@@ -49,16 +43,11 @@ class Attachment < ActiveRecord::Base
   validates_attachment_size      :data, less_than: 100.megabytes
   validates_attachment_file_name :data, matches: [/\.ipynb\Z/, /\.xlsx\Z/, /\.cmdows\Z/, /\.xml\Z/, /\.vsp3\Z/]
 
-  scope :notebooks, -> { where(category: ATTACH_NOTEBOOK) }
   scope :mda_excel, -> { where(category: ATTACH_MDA_EXCEL) }
   scope :mda_cmdows, -> { where(category: ATTACH_MDA_CMDOWS) }
 
   def exists?
     Pathname.new(path).exist?
-  end
-
-  def notebook?
-    category == ATTACH_NOTEBOOK
   end
 
   def geometry_model?
@@ -95,8 +84,6 @@ class Attachment < ActiveRecord::Base
     def ensure_category_setting
       unless category
         case data_file_name
-        when /\.ipynb\Z/
-          self.category = ATTACH_NOTEBOOK
         when /\.xlsx\Z/
           self.category = ATTACH_MDA_EXCEL
         when /\.cmdows\Z/, /\.xml\Z/

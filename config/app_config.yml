@@ -1,7 +1,6 @@
 defaults: &defaults
   intranet:    <%= !ENV['WHATSOPT_INTERNET'] %>
   python_cmd:  python
-  jupyter_cmd: jupyter
   openvsp_cmd: vspscript
   thrift_cmd:  thrift
   wop_cmd:     wop
@@ -16,14 +15,12 @@ test:
 staging:
   intranet:    <%= !ENV['WHATSOPT_INTERNET'] %>
   python_cmd:  /d/rlafage/opt/miniconda3/bin/python
-  jupyter_cmd: /d/rlafage/opt/miniconda3/bin/jupyter
   wop_cmd:     /d/rlafage/opt/miniconda3/bin/wop
   openvsp_cmd: /tmp_user/rdri206h/rlafage/OpenVSP-3.13.3-Linux/vspscript
   
 production:
   intranet:    <%= !ENV['WHATSOPT_INTERNET'] %>
   python_cmd:  /dtis-app/whatsopt-deps/miniconda3/bin/python
-  jupyter_cmd: /dtis-app/whatsopt-deps/miniconda3/bin/jupyter
   openvsp_cmd: /dtis-app/whatsopt-deps/OpenVSP-3.13.3/vspscript
   thrift_cmd:  /dtis-app/whatsopt-deps/thrift-0.11.0/bin/thrift
   wop_cmd:     /dtis-app/whatsopt-deps/miniconda3/wop

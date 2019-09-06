@@ -11,7 +11,6 @@ Rails.application.routes.draw do
     end
     get 'exports/new', to: 'analysis_exports#new'
   end
-  resources :notebooks
   resources :geometry_models
   resources :attachments, only: [:show, :index]
     
