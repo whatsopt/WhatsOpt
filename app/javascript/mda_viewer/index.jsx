@@ -465,7 +465,7 @@ class MdaViewer extends React.Component {
     };
 
     let metaModelItem; let metaModelPanel;
-    if (this.props.mda.impl.metamodel) {
+    if (this.props.mda.impl.metamodel.quality) {
       metaModelItem = (
         <li className="nav-item">
           <a className="nav-link" id="metamodel-tab" href="#metamodel"
@@ -516,6 +516,12 @@ MdaViewer.propTypes = {
     public: PropTypes.bool,
     id: PropTypes.number,
     path: PropTypes.array,
+    impl: PropTypes.shape({
+      openmdao: PropTypes.object.isRequired,
+      metamodel: PropTypes.shape(
+        {quality: PropTypes.array.isRequired, }
+      )
+    }),
   }),
 };
 
