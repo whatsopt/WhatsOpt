@@ -138,7 +138,7 @@ GEM
     ffi (1.11.1-java)
     ffi (1.11.1-x64-mingw32)
     ffi (1.11.1-x86-mingw32)
-    font_awesome5_rails (0.8.0)
+    font_awesome5_rails (0.6.0)
       railties (>= 4.2)
     formatador (0.2.5)
     globalid (0.4.2)
@@ -428,7 +428,7 @@ DEPENDENCIES
   data-confirm-modal
   devise
   devise_ldap_authenticatable
-  font_awesome5_rails
+  font_awesome5_rails (~> 0.6.0)
   guard
   guard-minitest
   highline

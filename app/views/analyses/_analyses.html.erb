@@ -21,7 +21,7 @@
         <td><%= mda&.owner&.login %></td>
         <td>
           <% unless mda.public %>
-            <i class="fa fa-lock"></i>
+            <i class="fas fa-lock"></i>
           <% end %>    
         </td>
         <td><%= time_ago_in_words(mda.created_at)%> ago</td>
@@ -30,7 +30,7 @@
           <% unless Operation.done(mda).empty? %>
             <%= link_to mda_operations_path(mda), 
               class: "btn btn-sm", title: "List Operations" do %>
-              <i class="fa fa-ellipsis-v"></i> 
+              <i class="fas fa-ellipsis-v"></i> 
             <% end %>
           <% end %>
         </td>
@@ -38,14 +38,14 @@
           <% if policy(mda).update? %>
             <%= link_to edit_mda_path(mda), 
               class: "btn btn-sm", title: "Edit" do %>
-              <i class="fa fa-edit"></i> 
+              <i class="fas fa-edit"></i> 
             <% end %>    
           <% end %>
           
           <% if policy(mda).operate? %>      
               <%= link_to mda_operations_url(mda), method: :post, 
                 class: "btn btn-sm", title: "Operate" do %>
-                <i class="fa fa-rocket"></i> 
+                <i class="fas fa-rocket"></i> 
               <% end %>    
           <% end %>
           
@@ -55,7 +55,7 @@
                                                                 commit: 'Yes',
                                                                 cancel: 'No, cancel' }, 
                 class: "btn btn-sm text-danger", title:"Delete" do %>
-                <i class="fa fa-times"></i> 
+                <i class="fas fa-times"></i> 
               <% end %>    
           <% end %>
         </td>
