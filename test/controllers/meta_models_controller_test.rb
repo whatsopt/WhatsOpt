@@ -18,7 +18,7 @@ class MetaModelsControllerTest < ActionDispatch::IntegrationTest
     assert_difference("Analysis.count", 1) do
       assert_difference("MetaModel.count", 1) do
         assert_difference("Surrogate.count", 1) do
-          post operation_meta_models_url(@ope)
+          post operation_meta_models_url(@ope), params: {meta_model: {kind: Surrogate::SURROGATES[1]}}
         end
       end
     end
@@ -35,7 +35,7 @@ class MetaModelsControllerTest < ActionDispatch::IntegrationTest
     mm = MetaModel.last
     assert_equal @ope, mm.operation
     assert_equal mda.disciplines.last, mm.discipline
-    assert_equal Surrogate::SURROGATES[0], mm.default_surrogate_kind
+    assert_equal Surrogate::SURROGATES[1], mm.default_surrogate_kind
     assert_equal 1, mm.surrogates.count
     surr = Surrogate.last
     assert_equal surr, mm.surrogates.first

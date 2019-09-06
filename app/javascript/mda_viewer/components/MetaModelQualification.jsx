@@ -70,7 +70,7 @@ class MetaModelQualification extends React.Component {
 
     return (
       <div className="editor-section">
-        <label>Coefficients of determination R<sup>2</sup> for outputs <em>the closer to one, the better</em></label>
+        <label>Coefficients of determination R<sup>2</sup> for outputs: <em>the closer to one, the better</em></label>
         <div>
           <span className="mb-3">{qualityButtons}</span>
         </div>

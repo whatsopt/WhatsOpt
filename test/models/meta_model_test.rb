@@ -37,7 +37,7 @@ class MetaModelTest < ActiveSupport::TestCase
 
   test "should be qualified" do
     assert_equal 1, @mm2.qualification.size
-    assert_equal [:name, :r2, :xvalid, :ypred, :yvalid], @mm2.qualification[0].keys.sort
+    assert_equal [:kind, :name, :r2, :xvalid, :ypred, :yvalid], @mm2.qualification[0].keys.sort
     assert_in_delta(1.0, @mm2.qualification[0][:r2])
   end
 
