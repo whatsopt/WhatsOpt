@@ -2,6 +2,14 @@ require 'whats_opt/surrogate_server/surrogate_store_types'
 
 class Surrogate < ApplicationRecord
 
+  SURROGATE_MAP = {
+    KRIGING: WhatsOpt::SurrogateServer::SurrogateKind::KRIGING,
+    KPLS: WhatsOpt::SurrogateServer::SurrogateKind::KPLS,
+    KPLSK: WhatsOpt::SurrogateServer::SurrogateKind::KPLSK,
+    LS: WhatsOpt::SurrogateServer::SurrogateKind::LS,
+    QP: WhatsOpt::SurrogateServer::SurrogateKind::QP
+  }
+
   store :quality, accessors: [:r2, :xvalid, :yvalid, :ypred], coder: JSON
 
   belongs_to :meta_model
@@ -12,19 +20,15 @@ class Surrogate < ApplicationRecord
   validates :coord_index, presence: true
 
   SURROGATES = %w(KRIGING KPLS KPLSK LS QP)
+  validates :kind, :inclusion => {:in => SURROGATES}
+
   STATUS_CREATED = "created"
   STATUS_TRAINED = "trained"
   STATUS_FAILED = "failed"
   STATUS_DELETED = "failed"
   STATUSES = [STATUS_CREATED, STATUS_TRAINED, STATUS_FAILED, STATUS_DELETED]
 
-  SURROGATE_MAP = {
-    KRIGING: WhatsOpt::SurrogateServer::SurrogateKind::KRIGING,
-    KPLS: WhatsOpt::SurrogateServer::SurrogateKind::KPLS,
-    KPLSK: WhatsOpt::SurrogateServer::SurrogateKind::KPLSK,
-    LS: WhatsOpt::SurrogateServer::SurrogateKind::LS,
-    QP: WhatsOpt::SurrogateServer::SurrogateKind::QP
-  }
+
 
   after_initialize :_set_defaults
   before_destroy :_delete_surrogate
@@ -70,7 +74,7 @@ class Surrogate < ApplicationRecord
 
   def qualify(test_part: 10, force: false)
     train(test_part: test_part) if force || !qualified?
-    {name: variable.name, r2: self.r2, xvalid: self.xvalid, yvalid: self.yvalid, ypred: self.ypred}
+    {name: variable.name, kind: kind, r2: self.r2, xvalid: self.xvalid, yvalid: self.yvalid, ypred: self.ypred}
   end
 
   def predict(x)

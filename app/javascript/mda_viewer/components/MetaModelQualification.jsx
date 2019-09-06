@@ -25,8 +25,8 @@ class MetaModelQualification extends React.Component {
     const qualityButtons = qualities.map((q, i) => {
       let badgeKind = "badge " 
       badgeKind += ((q.r2 < 0.5)?"badge-danger":"");
-      badgeKind += ((0.5 <= q.r2 && q.r2 < 0.9)?"badge-warning":"");
-      badgeKind += ((0.9 <= q.r2)?"badge-success":"");
+      badgeKind += ((0.5 <= q.r2 && q.r2 < 0.95)?"badge-warning":"");
+      badgeKind += ((0.95 <= q.r2)?"badge-success":"");
       const btnClass = "btn m-1";
       return (
         <button key={q.name} className={btnClass} onClick={(e) => this.handleQualityDisplay(i)}>
@@ -41,9 +41,10 @@ class MetaModelQualification extends React.Component {
       const data = [];
 
       const ylabel = "Output predicted"
-      console.log(qualities[this.state.selected]);
-      const yvalid = qualities[this.state.selected].yvalid;
-      const ypred = qualities[this.state.selected].ypred;
+      const selected = qualities[this.state.selected];
+
+      const yvalid = selected.yvalid;
+      const ypred = selected.ypred;
       const trace1 = {
         x: yvalid,
         y: yvalid,
@@ -54,22 +55,22 @@ class MetaModelQualification extends React.Component {
       data.push(trace1);
 
       const trace2 = {
-        x: qualities[this.state.selected].yvalid,
-        y: qualities[this.state.selected].ypred,
+        x: yvalid,
+        y: ypred,
         type: 'scatter',
         mode: 'markers',
         name: "predicted",
       };
       data.push(trace2);
 
-      const title = qualities[this.state.selected]["name"];
+      const title = `${selected["name"]} predicted with ${selected["kind"]} surrogate`;
       const layout = {width: 600, height: 500, title: title};
       plot = (<Plot data={data} layout={layout} />);
     }
 
     return (
       <div className="editor-section">
-        <label>Coefficients of determination R<sup>2</sup> for outputs: the closer to one, the better</label>
+        <label>Coefficients of determination R<sup>2</sup> for outputs <em>the closer to one, the better</em></label>
         <div>
           <span className="mb-3">{qualityButtons}</span>
         </div>

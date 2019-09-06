@@ -10,7 +10,9 @@ class MetaModelsController < ApplicationController
     if mda.save
       mda.set_all_parameters_as_design_variables
       mda.set_owner(current_user)
-      @meta_model = mda.disciplines.last.build_meta_model(operation: ope)  # just one plain discipline in the analysis which is 
+      @meta_model = mda.disciplines.last.build_meta_model( # just one plain discipline in the analysis 
+                      operation: ope, 
+                      default_surrogate_kind: meta_model_params["kind"])  
       @meta_model.build_surrogates
       if @meta_model.save
         redirect_to mda_url(mda), notice: "Metamodel was successfully created."
@@ -20,6 +22,12 @@ class MetaModelsController < ApplicationController
     else
       redirect_to operation_url(ope), notice: "Something went wrong. Can not create analysis from current operation data."
     end
+  end
+
+  private 
+
+  def meta_model_params
+    params.require(:meta_model).permit(:kind)
   end
 
 end
