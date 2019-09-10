@@ -2,6 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import WhatsOptApi from '../utils/WhatsOptApi';
 import MdaViewer from 'mda_viewer';
+import 'trix'
+import '@rails/actiontext'
 
 document.addEventListener('DOMContentLoaded', () => {
   const csrfToken = document.getElementsByName('csrf-token')[0].getAttribute('content');

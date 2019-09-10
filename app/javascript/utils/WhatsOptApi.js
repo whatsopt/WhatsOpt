@@ -74,6 +74,7 @@ class WhatsOptApi {
 
   updateAnalysis(mdaId, mdaAttrs, callback, onError) {
     const path = `/analyses/${mdaId}`;
+    console.log(mdaAttrs);
     axios.put(this.apiUrl(path), {analysis: mdaAttrs})
         .then(callback)
         .catch(onError);
