@@ -29,7 +29,7 @@ class Api::V1::AnalysesController < Api::ApiController
 
   # PUT/PATCH /api/v1/mdas/1
   def update
-    @mda.update!(mda_params)
+    @mda.update(mda_params)
     head :no_content
   end
 
@@ -42,6 +42,7 @@ class Api::V1::AnalysesController < Api::ApiController
     def mda_params
       params.require(:analysis).permit(
         :name,
+        :note,
         :public,
         disciplines_attributes:           [
             :name,

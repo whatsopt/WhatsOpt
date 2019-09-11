@@ -6,6 +6,7 @@ import XdsmViewer from 'mda_viewer/components/XdsmViewer';
 import ToolBar from 'mda_viewer/components/ToolBar';
 import Error from 'mda_viewer/components/Error';
 import AnalysisEditor from 'mda_viewer/components/AnalysisEditor';
+import AnalysisNotePanel from 'mda_viewer/components/AnalysisNotePanel';
 import AnalysisBreadCrumbs from 'mda_viewer/components/AnalysisBreadCrumbs';
 import DisciplinesEditor from 'mda_viewer/components/DisciplinesEditor';
 import ConnectionsEditor from 'mda_viewer/components/ConnectionsEditor';
@@ -39,6 +40,7 @@ class MdaViewer extends React.Component {
       analysisMembers: this.props.members,
       newAnalysisName: this.props.mda.name,
       newDisciplineName: '',
+      analysisNote: '',
       newConnectionName: '',
       errors: [],
       implEdited: false,
@@ -46,6 +48,7 @@ class MdaViewer extends React.Component {
     };
     this.handleFilterChange = this.handleFilterChange.bind(this);
     this.handleAnalysisNameChange = this.handleAnalysisNameChange.bind(this);
+    this.handleAnalysisNoteChange = this.handleAnalysisNoteChange.bind(this);
     this.handleAnalysisPublicChange = this.handleAnalysisPublicChange.bind(this);
     this.handleAnalysisMemberSearch = this.handleAnalysisMemberSearch.bind(this);
     this.handleAnalysisMemberCreate = this.handleAnalysisMemberCreate.bind(this);
@@ -235,22 +238,31 @@ class MdaViewer extends React.Component {
     return false;
   }
 
+  handleAnalysisNoteChange(event) {
+    event.preventDefault();
+    const newState = update(this.state, {
+      mda: {note: {$set: event.target.innerHTML}},
+    });
+    this.setState(newState);
+    return false;
+  }
+
   handleAnalysisPublicChange() {
     this.api.updateAnalysis(this.props.mda.id, {public: !this.state.mda.public},
-        () => {
-          const newState = update(this.state, {mda: {public: {$set: !this.state.mda.public}}});
-          this.setState(newState);
-        },
-        (error) => {console.log(error);}
+      () => {
+        const newState = update(this.state, {mda: {public: {$set: !this.state.mda.public}}});
+        this.setState(newState);
+      },
+      (error) => {console.log(error);}
     );
     return false;
   }
 
   handleAnalysisMemberSearch(callback) {
     this.api.getMemberCandidates(this.props.mda.id,
-        (response) => {
-          callback(response.data);
-        }
+      (response) => {
+        callback(response.data);
+      }
     );
   }
 
@@ -274,11 +286,13 @@ class MdaViewer extends React.Component {
 
   handleAnalysisUpdate(event) {
     event.preventDefault();
-    this.api.updateAnalysis(this.props.mda.id, {name: this.state.newAnalysisName},
+    this.api.updateAnalysis(this.props.mda.id, {name: this.state.newAnalysisName, note: this.state.mda.note},
         () => {
           this.api.getAnalysis(this.props.mda.id, false,
               () => {
-                const newState = update(this.state, {mda: {name: {$set: this.state.newAnalysisName}}});
+                const newState = update(this.state, {mda: {name: {$set: this.state.newAnalysisName},
+                                                           note: {$set: this.state.mda.note},
+                }});
                 this.setState(newState);
               });
         },
@@ -417,11 +431,13 @@ class MdaViewer extends React.Component {
           <div className="tab-content" id="myTabContent">
             {errors}
             <div className="tab-pane fade" id="analysis" role="tabpanel" aria-labelledby="analysis-tab">
-              <AnalysisEditor newAnalysisName={this.state.newAnalysisName}
+              <AnalysisEditor mdaId={db.mda.id} api={this.api} note={db.mda.note}
+                newAnalysisName={this.state.newAnalysisName}
                 analysisPublic={this.state.mda.public}
                 analysisMembers={this.state.analysisMembers}
                 onAnalysisUpdate={this.handleAnalysisUpdate}
                 onAnalysisNameChange={this.handleAnalysisNameChange}
+                onAnalysisNoteChange={this.handleAnalysisNoteChange}
                 onAnalysisPublicChange={this.handleAnalysisPublicChange}
                 onAnalysisMemberSearch={this.handleAnalysisMemberSearch}
                 onAnalysisMemberSelected={this.handleAnalysisMemberCreate}
@@ -464,6 +480,17 @@ class MdaViewer extends React.Component {
         </div>);
     };
 
+    let noteItem; let notePanel;
+    const note = this.props.mda.note;
+    if (note && note.length>0) {
+      noteItem = (
+        <li className="nav-item">
+          <a className="nav-link" id="note-tab" href="#note"
+            role="tab" aria-controls="note" data-toggle="tab" aria-selected="false">Note</a>
+        </li>);
+      notePanel = (<AnalysisNotePanel note={this.props.mda.note}/>);
+    }
+
     let metaModelItem; let metaModelPanel;
     const quality = this.props.mda.impl.metamodel.quality;
     if (quality && quality.length>0) {
@@ -494,12 +521,14 @@ class MdaViewer extends React.Component {
               <a className="nav-link active" id="variables-tab" data-toggle="tab" href="#variables"
                 role="tab" aria-controls="variables" aria-selected="true">Variables</a>
             </li>
+            {noteItem}
             {metaModelItem}
           </ul>
           <div className="tab-content" id="myTabContent">
             <div className="tab-pane fade show active" id="variables" role="tabpanel" aria-labelledby="variables-tab">
               {varEditor}
             </div>
+            {notePanel}
             {metaModelPanel}
           </div>
         </div>

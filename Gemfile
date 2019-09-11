@@ -119,3 +119,5 @@ gem 'data-confirm-modal'
 # thrift
 gem 'thrift', '0.11.0'
 
+# Actiontext image processing
+gem 'image_processing', '~> 1.2'

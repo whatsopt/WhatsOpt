@@ -11,6 +11,8 @@ class Analysis < ApplicationRecord
 
   resourcify
 
+  has_rich_text :note
+
   has_ancestry orphan_strategy: :rootify
 
   class AncestorUpdateError < StandardError
@@ -152,6 +154,7 @@ class Analysis < ApplicationRecord
     {
       id: id,
       name: name,
+      note: note.to_s,
       public: public,
       path: path.map { |a| { id: a.id, name: a.name } },
       nodes: build_nodes,
