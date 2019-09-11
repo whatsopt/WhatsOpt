@@ -35,7 +35,13 @@
   }
 }
 
-//.trix-button-group--file-tools, .trix-button--icon-attach { display: none; }
+trix-toolbar .trix-button-group--file-tools { 
+  border-style: none;
+}
+.trix-button--icon-attach { 
+  display: none; 
+  border-style: none;
+}
 
 trix-editor {
   &.form-control {

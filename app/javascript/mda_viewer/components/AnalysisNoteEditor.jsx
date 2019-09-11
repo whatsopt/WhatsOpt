@@ -10,11 +10,9 @@ class AnalysisNoteEditor extends React.Component {
 
   componentDidMount() {
     this.trixInput.current.addEventListener("trix-change", event => {
-      console.log("trix change event fired");
       this.props.onAnalysisNoteChange(event); //calling custom event
     });
     this.trixInput.current.addEventListener("trix-file-accept", event => {
-      console.log("disable file dropped file");
       event.preventDefault();
     });
   }
@@ -24,13 +22,17 @@ class AnalysisNoteEditor extends React.Component {
 
     // const dataDirectUploadUrl = this.props.api.url("rails/active_storage/direct_uploads");
     // const dataBlobUrlTemplate = this.props.api.url("rails/active_storage/blobs/:signed_id/:filename");
-    //  data-direct-upload-url={dataDirectUploadUrl}
-    //  data-blob-url-template={dataBlobUrlTemplate}
+    // const dataDirectUploadUrl = "http://endymion:3000/rails/active_storage/direct_uploads";
+    // const dataBlobUrlTemplate = "http://endymion:3000/rails/active_storage/blobs/:signed_id/:filename";
+    // data-direct-upload-url={dataDirectUploadUrl}
+    // data-blob-url-template={dataBlobUrlTemplate}
+
     return (
         <div>
           <label htmlFor="note">Note</label>
           <input type="hidden" name="analysis[note]" id={id} value={this.props.note} />
-          <trix-editor id="analysis_note" input={id} class="trix-content form-control" ref={this.trixInput} >
+          {/* <textarea name="analysis[note]" id={id} defaultValue={this.props.note} /> */}
+          <trix-editor id="analysis_note" input={id} class="trix-content form-control" ref={this.trixInput}>
           </trix-editor>
         </div>
     );
