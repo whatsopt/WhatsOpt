@@ -48,9 +48,11 @@ class Operation < ApplicationRecord
     operation
   end
 
-  def build_metamodel_varattrs
+  def build_metamodel_varattrs(varnames=nil)
     input_vars = analysis.design_variables
-    output_vars = analysis.responses_of_interest
+    input_vars = input_vars.select{|v| varnames[:inputs].include?(v.name)} if (varnames && varnames[:inputs])
+    output_vars = analysis.response_variables
+    output_vars = output_vars.select{|v| varnames[:outputs].include?(v.name)} if (varnames && varnames[:outputs])
     varattrs = {}
     cases.each do |c|
       varattr = ActiveModelSerializers::SerializableResource.new(c.variable).as_json

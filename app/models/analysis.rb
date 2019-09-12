@@ -356,9 +356,9 @@ class Analysis < ApplicationRecord
     )
   end
 
-  def self.build_metamodel_analysis(ope)
+  def self.build_metamodel_analysis(ope, varnames)
     name = "#{ope.analysis.name.camelize}MetaModel"
-    metamodel_varattrs = ope.build_metamodel_varattrs
+    metamodel_varattrs = ope.build_metamodel_varattrs(varnames)
     driver_vars = metamodel_varattrs.map do |v|
       { name: v[:name],
         shape: v[:shape],

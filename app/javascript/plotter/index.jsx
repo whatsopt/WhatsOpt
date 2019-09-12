@@ -95,11 +95,11 @@ class ScreeningPanel extends React.Component {
 
   componentDidMount() {
     this.props.api.openmdaoScreening(
-        this.props.opeId,
-        (response) => {
-          console.log(response.data);
-          this.setState({loading: false, ...response.data});
-        });
+      this.props.opeId,
+      (response) => {
+        console.log(response.data);
+        this.setState({ loading: false, ...response.data });
+      });
   }
 
   render() {
@@ -129,8 +129,6 @@ ScreeningPanel.propTypes = {
 class MetaModelPanel extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-    };
   }
 
   componentDidMount() {
@@ -147,10 +145,15 @@ class MetaModelPanel extends React.Component {
 };
 
 MetaModelPanel.propTypes = {
+  active: PropTypes.bool.isRequired,
   opeId: PropTypes.number.isRequired,
   api: PropTypes.object.isRequired,
+  selCases: PropTypes.shape({
+    i: PropTypes.array.isRequired,
+    o: PropTypes.array.isRequired,
+    c: PropTypes.array.isRequired,  
+  }),
   onMetaModelCreate: PropTypes.func.isRequired,
-  active: PropTypes.bool.isRequired,
 };
 
 class Plotter extends React.Component {
@@ -165,7 +168,7 @@ class Plotter extends React.Component {
     this.couplingVarCases = this.cases.filter((c) => this.db.isCouplingVarCases(c));
 
     const selection = this.initializeSelection(this.inputVarCases, this.outputVarCases);
-    this.state = {selection: selection, activeTab: true};
+    this.state = { selection: selection, activeTab: true };
 
     this.handleSelectionChange = this.handleSelectionChange.bind(this);
     this.handleMetaModelCreate = this.handleMetaModelCreate.bind(this);
@@ -196,25 +199,25 @@ class Plotter extends React.Component {
     let newSelection;
     if (target.checked) {
       const selected = this.cases.find((c) => caseUtils.label(c) === target.name);
-      newSelection = update(this.state.selection, {$push: [selected]});
+      newSelection = update(this.state.selection, { $push: [selected] });
     } else {
       const index = this.state.selection.findIndex((c) => caseUtils.label(c) === target.name);
-      newSelection = update(this.state.selection, {$splice: [[index, 1]]});
+      newSelection = update(this.state.selection, { $splice: [[index, 1]] });
     }
-    this.setState({selection: newSelection});
+    this.setState({ selection: newSelection });
   }
 
   handleMetaModelCreate(event) {
     console.log("Create MetaModel... ");
     this.props.api.createMetaModel(
-        this.props.ope.id,
-        (response) => {
-          console.log(response.data);
-        });
+      this.props.ope.id,
+      (response) => {
+        console.log(response.data);
+      });
   }
 
   activateTab(event, active) {
-    const newState = update(this.state, {activeTab: {$set: active}});
+    const newState = update(this.state, { activeTab: { $set: active } });
     this.setState(newState);
   }
 
@@ -227,7 +230,7 @@ class Plotter extends React.Component {
     const isScreening = (this.props.ope.category === "screening");
     const isDoe = (this.props.ope.category === "doe");
     const selection = this.state.selection;
-    const cases = {i: this.inputVarCases, o: this.outputVarCases, c: this.couplingVarCases};
+    const cases = { i: this.inputVarCases, o: this.outputVarCases, c: this.couplingVarCases };
     const selCases = {
       i: cases.i.filter((c) => selection.includes(c)),
       o: cases.o.filter((c) => selection.includes(c)),
@@ -256,6 +259,7 @@ class Plotter extends React.Component {
     }
     let metaModelItem; let metaModelPanel;
     if (isDoe) {
+      let varnames = [...new Set(selection.map(v => v.varname))]; 
       metaModelItem = (
         <li className="nav-item">
           <a className="nav-link" id="metamodel-tab" href="#metamodel"
@@ -266,6 +270,7 @@ class Plotter extends React.Component {
         <MetaModelPanel active={this.state.activeTab === METAMODEL_TAB}
           api={this.api}
           opeId={this.props.ope.id}
+          selCases={selCases}
           onMetaModelCreate={this.handleMetaModelCreate} />);
     }
 
@@ -284,23 +289,23 @@ class Plotter extends React.Component {
               role="tab" aria-controls="plots" data-toggle="tab" aria-selected="true"
               onClick={(e) => this.activateTab(e, "plots")}>Plots</a>
           </li>
+          {screeningItem}
+          {metaModelItem}
           <li className="nav-item">
             <a className="nav-link" id="variables-tab" href="#variables"
               role="tab" aria-controls="variables" data-toggle="tab" aria-selected="false"
               onClick={(e) => this.activateTab(e, "variables")}>Variables</a>
           </li>
-          {screeningItem}
-          {metaModelItem}
         </ul>
         <div className="tab-content" id="myTabContent">
           <PlotPanel db={this.db} optim={isOptim} cases={selCases}
             title={title} active={this.state.activeTab === PLOTS_TAB}
             success={this.props.ope.success} />
+          {screeningPanel}
+          {metaModelPanel}
           <VariablePanel db={this.db} optim={isOptim} cases={cases} selCases={selCases}
             active={this.state.activeTab === VARIABLES_TAB}
             onSelectionChange={this.handleSelectionChange} />
-          {screeningPanel}
-          {metaModelPanel}
         </div>
       </div>
     );

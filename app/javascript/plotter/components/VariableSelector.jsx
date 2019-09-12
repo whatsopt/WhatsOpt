@@ -31,13 +31,19 @@ VariableList.propTypes = {
 
 class VariableSelector extends React.Component {
   render() {
+    let stateVars;
+    if (this.props.cases.c.length > 0) {
+      stateVars = (
+        <VariableList cases={this.props.cases.c} title="State Variables"
+                      selection={this.props.selCases.c} onSelectionChange={this.props.onSelectionChange}/>
+      );
+    }
     return (<div className='container-fluid'>
-      <VariableList cases={this.props.cases.o} title="Response Variables"
-        selection={this.props.selCases.o} onSelectionChange={this.props.onSelectionChange}/>
       <VariableList cases={this.props.cases.i} title="Design Variables"
         selection={this.props.selCases.i} onSelectionChange={this.props.onSelectionChange}/>
-      <VariableList cases={this.props.cases.c} title="State Variables"
-        selection={this.props.selCases.c} onSelectionChange={this.props.onSelectionChange}/>
+      <VariableList cases={this.props.cases.o} title="Response Variables"
+        selection={this.props.selCases.o} onSelectionChange={this.props.onSelectionChange}/>
+      {stateVars}
     </div>);
   }
 };
