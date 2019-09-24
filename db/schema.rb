@@ -80,6 +80,15 @@ ActiveRecord::Schema.define(version: 67) do
     t.text "values"
   end
 
+  create_table "components", force: :cascade do |t|
+    t.integer "discipline_id"
+    t.boolean "has_derivatives", default: false
+    t.boolean "is_implicit", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["discipline_id"], name: "index_components_on_discipline_id"
+  end
+
   create_table "connections", force: :cascade do |t|
     t.integer "from_id"
     t.integer "to_id"
@@ -158,9 +167,9 @@ ActiveRecord::Schema.define(version: 67) do
   end
 
   create_table "parameters", force: :cascade do |t|
-    t.text "init"
-    t.text "lower"
-    t.text "upper"
+    t.string "init", default: ""
+    t.string "lower", default: ""
+    t.string "upper", default: ""
     t.integer "variable_id"
   end
 
