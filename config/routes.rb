@@ -3,7 +3,6 @@ Rails.application.routes.draw do
   devise_for :users
   resources :users, only: [:show]
   
-  resources :variables
   resources :analyses, shallow: true, as: :mdas do
     resources :operations do
       resources :meta_models, only: [:create]        
