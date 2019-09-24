@@ -6,39 +6,40 @@ MAINTAINER remi.lafage@onera.fr
 
 # adapted from drecom/ubuntu-base drecom/ubuntu-ruby
 RUN apt-get update \
-&&  apt-get upgrade -y --force-yes \
-&&  apt-get install -y --force-yes \
-    libssl-dev \
-    libreadline-dev \
-    zlib1g-dev \
-    wget \
-    curl \
-    git \
-    build-essential \
-    vim \
-    dtach \
-    imagemagick \
-    libmagick++-dev \
-    libqtwebkit-dev \
-    libffi-dev \
-    mysql-client \
-    libmysqlclient-dev \
-    libxslt1-dev \
-    redis-tools \
-    xvfb \
-    tzdata \
-	  libyaml-dev \
-	  libsqlite3-dev \
-	  sqlite3 \
-	  libxml2-dev \
-	  libcurl4-openssl-dev \
-&&  apt-get clean \
-&&  rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/*
+	&&  apt-get upgrade -y --force-yes \
+	&&  apt-get install -y --force-yes \
+	ca-certificates \
+	libssl-dev \
+	libreadline-dev \
+	zlib1g-dev \
+	wget \
+	curl \
+	git \
+	build-essential \
+	vim \
+	dtach \
+	imagemagick \
+	libmagick++-dev \
+	libqtwebkit-dev \
+	libffi-dev \
+	mysql-client \
+	libmysqlclient-dev \
+	libxslt1-dev \
+	redis-tools \
+	xvfb \
+	tzdata \
+	libyaml-dev \
+	libsqlite3-dev \
+	sqlite3 \
+	libxml2-dev \
+	libcurl4-openssl-dev \
+	&&  apt-get clean \
+	&&  rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/*
 
 # node.js LTS install
 RUN curl --silent --location https://deb.nodesource.com/setup_10.x | bash - \
-    && apt-get install -y nodejs \
-    && npm -g up
+	&& apt-get install -y nodejs \
+	&& npm -g up
 
 # yarn install
 RUN curl -o- -L https://yarnpkg.com/install.sh | bash
@@ -46,44 +47,44 @@ ENV PATH /root/.yarn/bin:$PATH
 
 # Ruby
 RUN git clone git://github.com/rbenv/rbenv.git /usr/local/rbenv \
-&&  git clone git://github.com/rbenv/ruby-build.git /usr/local/rbenv/plugins/ruby-build \
-&&  git clone git://github.com/jf/rbenv-gemset.git /usr/local/rbenv/plugins/rbenv-gemset \
-&&  /usr/local/rbenv/plugins/ruby-build/install.sh
+	&&  git clone git://github.com/rbenv/ruby-build.git /usr/local/rbenv/plugins/ruby-build \
+	&&  git clone git://github.com/jf/rbenv-gemset.git /usr/local/rbenv/plugins/rbenv-gemset \
+	&&  /usr/local/rbenv/plugins/ruby-build/install.sh
 ENV PATH /usr/local/rbenv/bin:$PATH
 ENV RBENV_ROOT /usr/local/rbenv
 
 RUN echo 'export RBENV_ROOT=/usr/local/rbenv' >> /etc/profile.d/rbenv.sh \
-&&  echo 'export PATH=/usr/local/rbenv/bin:$PATH' >> /etc/profile.d/rbenv.sh \
-&&  echo 'eval "$(rbenv init -)"' >> /etc/profile.d/rbenv.sh
+	&&  echo 'export PATH=/usr/local/rbenv/bin:$PATH' >> /etc/profile.d/rbenv.sh \
+	&&  echo 'eval "$(rbenv init -)"' >> /etc/profile.d/rbenv.sh
 
 RUN echo 'export RBENV_ROOT=/usr/local/rbenv' >> /root/.bashrc \
-&&  echo 'export PATH=/usr/local/rbenv/bin:$PATH' >> /root/.bashrc \
-&&  echo 'eval "$(rbenv init -)"' >> /root/.bashrc
+	&&  echo 'export PATH=/usr/local/rbenv/bin:$PATH' >> /root/.bashrc \
+	&&  echo 'eval "$(rbenv init -)"' >> /root/.bashrc
 
 ENV CONFIGURE_OPTS --disable-install-doc
 ENV PATH /usr/local/rbenv/bin:/usr/local/rbenv/shims:$PATH
 
 RUN eval "$(rbenv init -)"; rbenv install 2.5.3 \
-&&  eval "$(rbenv init -)"; rbenv global 2.5.3 \
-&&  eval "$(rbenv init -)"; gem update --system \
-&& eval "$(rbenv init -)"; gem install bundler --force
+	&&  eval "$(rbenv init -)"; rbenv global 2.5.3 \
+	&&  eval "$(rbenv init -)"; gem update --system \
+	&& eval "$(rbenv init -)"; gem install bundler --force
 
 # Python
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 ENV PATH /opt/conda/bin:$PATH
 
 RUN apt-get update --fix-missing && \
-    apt-get install -y wget bzip2 ca-certificates curl git && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+	apt-get install -y wget bzip2 ca-certificates curl git && \
+	apt-get clean && \
+	rm -rf /var/lib/apt/lists/*
 
 RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-4.5.12-Linux-x86_64.sh -O ~/miniconda.sh && \
-    /bin/bash ~/miniconda.sh -b -p /opt/conda && \
-    rm ~/miniconda.sh && \
-    /opt/conda/bin/conda clean -tipsy && \
-    ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
-    echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
-    echo "conda activate base" >> ~/.bashrc
+	/bin/bash ~/miniconda.sh -b -p /opt/conda && \
+	rm ~/miniconda.sh && \
+	/opt/conda/bin/conda clean -tipsy && \
+	ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
+	echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
+	echo "conda activate base" >> ~/.bashrc
 
 RUN conda update conda
 RUN conda install --yes numpy scipy cython 
@@ -91,15 +92,14 @@ RUN conda install --yes numpy scipy cython
 RUN pip install --upgrade pip;
 
 # pip install
-RUN pip install jupyter \
-  && pip install matplotlib \
-  && pip install thrift==0.11.0 \
+RUN pip install matplotlib \
+	&& pip install thrift==0.11.0 \
 	&& pip install Click \
 	&& pip install tabulate \
 	&& pip install openmdao \
 	&& pip install salib \
 	&& pip install git+https://github.com/SMTOrg/smt 
-	
+
 # OpenVSP
 #RUN apt-get install -y git cmake libxml2-dev \
 #			g++ libcpptest-dev libeigen3-dev \
@@ -125,21 +125,21 @@ RUN pip install jupyter \
 ENV THRIFT_VERSION 0.11.0
 
 RUN buildDeps=" \
-		automake \
-		bison \
-		curl \
-		flex \
-		g++ \
-		libboost-dev \
-		libboost-filesystem-dev \
-		libboost-program-options-dev \
-		libboost-system-dev \
-		libboost-test-dev \
-		libevent-dev \
-		libssl-dev \
-		libtool \
-		make \
-		pkg-config \
+	automake \
+	bison \
+	curl \
+	flex \
+	g++ \
+	libboost-dev \
+	libboost-filesystem-dev \
+	libboost-program-options-dev \
+	libboost-system-dev \
+	libboost-test-dev \
+	libevent-dev \
+	libssl-dev \
+	libtool \
+	make \
+	pkg-config \
 	"; \
 	apt-get update && apt-get install -y --no-install-recommends $buildDeps && rm -rf /var/lib/apt/lists/* \
 	&& curl -sSL "http://apache.mirrors.spacedump.net/thrift/$THRIFT_VERSION/thrift-$THRIFT_VERSION.tar.gz" -o thrift.tar.gz \
@@ -151,10 +151,10 @@ RUN buildDeps=" \
 	&& make \
 	&& make install \
 	&& cd / \
-  && rm -rf /thrift 
+	&& rm -rf /thrift 
 
 RUN apt-get update && apt-get install -y iputils-ping
-	
+
 RUN mkdir -p /whatsopt 
 WORKDIR /whatsopt
 
