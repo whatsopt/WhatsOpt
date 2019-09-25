@@ -36,7 +36,11 @@ class MetaModel < ApplicationRecord
 
   def predict(values)
     res = []
-    surrogates.each do |surr|
+    # Convention: values in res corresponds to var names alphabetically sorted
+    sorted = surrogates.sort_by { |surr| surr.variable.name }
+    names = sorted.map { |surr| surr.variable.name }
+    Rails.logger.info "Predict with surrogates of : #{names}"
+    sorted.each do |surr|
       yvals = surr.predict(values)
       if res.empty?
         res = yvals.map{|y| [y]}
@@ -52,7 +56,7 @@ class MetaModel < ApplicationRecord
   end
 
   def training_input_values
-    @training_inputs ||= Matrix.columns(operation.input_cases.map(&:values)).to_a
+    @training_inputs ||= Matrix.columns(operation.input_cases.sort_by{|c| c.variable.name }.map(&:values)).to_a
   end
 
   def training_output_values(varname, coord_index)
