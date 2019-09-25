@@ -10,6 +10,7 @@ user1:
 user2:
   login: bob
   email: bob.smith@onera.fr
+  api_key: FriendlyApiKeyUser2
   
 user3:
   login: charles
