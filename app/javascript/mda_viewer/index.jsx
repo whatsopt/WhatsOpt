@@ -258,7 +258,8 @@ class MdaViewer extends React.Component {
     return false;
   }
 
-  handleAnalysisMemberSearch(callback) {
+  handleAnalysisMemberSearch(query, callback) {
+    // TODO: query could be used to filter user on server side
     this.api.getMemberCandidates(this.props.mda.id,
       (response) => {
         callback(response.data);
