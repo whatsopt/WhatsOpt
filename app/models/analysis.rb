@@ -154,7 +154,7 @@ class Analysis < ApplicationRecord
     {
       id: id,
       name: name,
-      note: note.to_s,
+      note: note.blank? ? "":note.to_s,
       public: public,
       path: path.map { |a| { id: a.id, name: a.name } },
       nodes: build_nodes,
@@ -236,6 +236,14 @@ class Analysis < ApplicationRecord
         role = WhatsOpt::Variable::RESPONSE_ROLE if vin.discipline.is_driver?
         existing_conn_proto = Connection.where(from_id: vout.id).take
         role = existing_conn_proto.role if existing_conn_proto
+        # if existing_conn_proto
+        #   if (role == WhatsOpt::Variable::PARAMETER_ROLE && 
+        #       existing_conn_proto.role == WhatsOpt::Variable::DESIGN_VAR_ROLE) ||
+        #      (role == WhatsOpt::Variable::RESPONSE_ROLE && 
+        #        WhatsOpt::Variable::INTEREST_OUTPUT_ROLES.include?(existing_conn_proto.role))
+        #     role = existing_conn_proto.role
+        #   end
+        # end
         Connection.where(from_id: vout.id, to_id: vin.id).first_or_create!(role: role)
       end
     end
