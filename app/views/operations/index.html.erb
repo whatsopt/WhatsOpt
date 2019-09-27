@@ -16,7 +16,8 @@
 	<thead>
 		<tr>
       <th class="col-md-3">Name</th>
-      <th class="col-md-3">Driver</th>
+      <th class="col-md-1">Category</th>
+      <th class="col-md-2">Driver</th>
       <th class="col-md-2">Created</th>
       <th class="col-md-2">Duration</th>
 		  <th class="col-md-2">Action(s)</th>
@@ -27,6 +28,7 @@
 	  <% @operations.each do |ope| %>
 	    <tr>
 	      <td><%= link_to_operation_if_authorized(ope, current_user) %></td>
+        <td><%= ope.category.humanize %></td>
         <td><%= ope.driver.humanize(capitalize: false) %></td>
 	      <td><%= (ope.job && ope.job.started_at) ? time_ago_in_words(ope.job.started_at):"?"%> ago</td>
 	      <td><%= (ope.job && ope.job.started_at && ope.job.ended_at) ? distance_of_time_in_words(ope.job.started_at, ope.job.ended_at, include_seconds: true):"?"%></td>
