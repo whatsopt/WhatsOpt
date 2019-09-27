@@ -46,17 +46,6 @@ class Api::V1::ConnectionsController < Api::ApiController
       end
     end
 
-    #    def check_variable_existence(mda, disc_from, disc_to, varname)
-    #      if disc_to.input_variables.find_by_name(varname)
-    #        raise VariableAlreadyExistsError.new("Variable " + varname + " already consumed by " + disc_to.name)
-    #      end
-    #      mda.disciplines.nodes.where.not(id: disc_from).each do |disc|
-    #        if disc.output_variables.find_by_name(varname)
-    #          raise VariableAlreadyExistsError.new("Variable " + varname + " already produced by " + disc.name)
-    #        end
-    #      end
-    #    end
-
     def connection_create_params
       params.require(:connection).permit(:from, :to, names: [])
     end

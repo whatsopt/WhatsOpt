@@ -57,6 +57,11 @@ class Connection < ApplicationRecord
       vin = Variable.where(discipline_id: to_disc.id, name: name, io_mode: WhatsOpt::Variable::IN)
                     .first_or_create!(shape: 1, type: "Float", desc: "", units: "", active: true)
       conn = Connection.where(from_id: vout.id, to_id: vin.id).first_or_create!
+      # downgrade the role if needed
+      role = conn.role
+      if !conn.from.discipline.is_driver? and !conn.to.discipline.is_driver?
+        conn.update(role: WhatsOpt::Variable::STATE_VAR_ROLE)
+      end
       conn
     end
   end
