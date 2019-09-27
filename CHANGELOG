@@ -6,6 +6,7 @@
   <li>The user can insert a note (free text) attached to a an analysis.</li>
   <li>The user can specify inputs and outputs when creating a metamodel from a DOE.</li>
   <li>Notebooks management is removed</li>
+  <li>Implementation: upgrade to rails 6</li>
 </ul>
 
 <h3>1.1.0 (28/08/2019)</h3>
