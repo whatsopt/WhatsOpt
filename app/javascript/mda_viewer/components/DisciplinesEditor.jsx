@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import AnalysisSelector from './AnalysisSelector';
 
 // mapping with XDSMjs type values
@@ -11,9 +11,15 @@ const ANALYSIS = 'mda';
 class Discipline extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {discName: '', discType: DISCIPLINE, isEditing: false};
+    this.state = {
+      discName: '', discType: DISCIPLINE,
+      discHost: '', discPort: 31400,
+      isEditing: false,
+    };
 
     this.handleDiscNameChange = this.handleDiscNameChange.bind(this);
+    this.handleDiscHostChange = this.handleDiscHostChange.bind(this);
+    this.handleDiscPortChange = this.handleDiscPortChange.bind(this);
     this.handleEdit = this.handleEdit.bind(this);
     this.handleCancelEdit = this.handleCancelEdit.bind(this);
     this.handleUpdate = this.handleUpdate.bind(this);
@@ -23,26 +29,51 @@ class Discipline extends React.Component {
   }
 
   handleDiscNameChange(event) {
-    this.setState({discName: event.target.value});
+    this.setState({ discName: event.target.value });
+  }
+  handleDiscHostChange(event) {
+    this.setState({ discHost: event.target.value });
+
+  }
+  handleDiscPortChange(event) {
+    this.setState({ discPort: event.target.value });
   }
 
   handleEdit(event) {
     const newState = {
       discName: this.props.node.name,
       discType: this.props.node.type,
+      discHost: this.props.node.endpoint ? this.props.node.endpoint.host : "",
+      discPort: this.props.node.endpoint ? this.props.node.endpoint.port : 31400,
       isEditing: true,
     };
     this.setState(newState);
   }
 
   handleCancelEdit() {
-    this.setState({isEditing: false});
+    this.setState({ isEditing: false });
+  }
+
+  isLocalHost(host) {
+    return (host === "" || host === "localhost" || host === "127.0.0.1");
   }
 
   handleUpdate(event) {
     event.preventDefault();
     this.handleCancelEdit();
-    const discattrs = {name: this.state.discName, type: this.state.discType};
+    const discattrs = {
+      name: this.state.discName, type: this.state.discType,
+      endpoint_attributes: { host: this.state.discHost, port: this.state.discPort },
+    };
+    const endpoint = this.props.node.endpoint;
+    if (endpoint && endpoint.id) {
+      const endattrs = discattrs.endpoint_attributes;
+      endattrs.id = endpoint.id;
+      if (this.isLocalHost(endattrs.host)) {
+        endattrs._destroy = 1;
+      }
+    }
+    console.log(JSON.stringify(discattrs));
     this.props.onDisciplineUpdate(this.props.node, discattrs);
     if (this.state.selected) {
       this.props.onSubAnalysisSelected(this.props.node, this.state.selected);
@@ -56,47 +87,51 @@ class Discipline extends React.Component {
       text: 'Really do this?',
       commit: 'Yes',
       cancel: 'No, cancel',
-      onConfirm: function() {self.props.onDisciplineDelete(self.props.node);},
-      onCancel: function() { },
+      onConfirm: function () { self.props.onDisciplineDelete(self.props.node); },
+      onCancel: function () { },
     });
   }
 
   handleSelectChange(event) {
     const discType = event.target.value;
     if (discType !== ANALYSIS && this.state.selected) { // unset analysis if needed
-      this.setState({discType, selected: []});
+      this.setState({ discType, selected: [] });
     } else {
-      this.setState({discType});
+      this.setState({ discType });
     }
   }
 
   handleSubAnalysisSelected(selected) {
     console.log("Select " + JSON.stringify(selected));
-    this.setState({selected});
-    // let name = selected[0].label.match(/#\d+ (.*)/);
-    // if (name) {
-    //   this.setState({selected, discName: name[1]});
-    // } else {
-    //   this.setState({selected});
-    // }
-    // this.props.onSubAnalysisSelected(this.props.node, selected);
+    this.setState({ selected });
   }
 
   render() {
     if (this.state.isEditing) {
-      let subAnalysis = null;
+      let deploymentOrSubAnalysis;
       let selected = [];
       const link = this.props.node.link;
       if (link) {
-        selected = [{id: link.id, label: `#${link.id} ${link.name}`}];
+        selected = [{ id: link.id, label: `#${link.id} ${link.name}` }];
       }
       if (this.state.discType === ANALYSIS) {
-        subAnalysis =
-          <AnalysisSelector
-            selected={selected}
-            onAnalysisSearch={this.props.onSubAnalysisSearch}
-            onAnalysisSelected={this.handleSubAnalysisSelected}
-          />;
+        deploymentOrSubAnalysis = (
+          <div className="form-group ml-2">
+            <AnalysisSelector
+              selected={selected}
+              onAnalysisSearch={this.props.onSubAnalysisSearch}
+              onAnalysisSelected={this.handleSubAnalysisSelected}
+            />
+          </div>
+        );
+      } else {
+        deploymentOrSubAnalysis = (
+          <div className="form-group ml-2">
+            <label>deployed on</label>
+            <input className="form-control ml-1" id="name" type="text" defaultValue={this.state.discHost}
+              placeholder='localhost' onChange={this.handleDiscHostChange} />
+          </div>
+        );
       }
       return (
         <Draggable draggableId={this.props.node.id} index={this.props.index}>
@@ -114,7 +149,7 @@ class Discipline extends React.Component {
                     <option value={ANALYSIS}>Sub-Analysis</option>
                   </select>
                 </div>
-                {subAnalysis}
+                {deploymentOrSubAnalysis}
                 <button type="submit" className="btn btn-primary ml-3">Update</button>
                 <button type="button" onClick={this.handleCancelEdit} className="btn btn-secondary ml-1">Cancel</button>
               </form>
@@ -122,12 +157,18 @@ class Discipline extends React.Component {
         </Draggable>
       );
     } else {
+      let item = this.props.node.name;
+      const endpoint = this.props.node.endpoint;
+      if (endpoint && !this.isLocalHost(endpoint.host)) {
+        item += ` on ${endpoint.host}`;
+      }
+
       return (
         <Draggable draggableId={this.props.node.id} index={this.props.index}>
           {(provided, snapshot) => (
             <li ref={provided.innerRef} {...provided.dragHandleProps} {...provided.draggableProps}
               className="list-group-item editor-discipline col-md-4">
-              <span className="align-bottom">{this.props.node.name}</span>
+              <span className="align-bottom">{item}</span>
               <button className="d-inline btn btn-light btn-inverse btn-sm float-right text-danger"
                 title="Delete" onClick={this.handleDelete}>
                 <i className="fa fa-times" />
@@ -156,7 +197,7 @@ class DisciplinesEditor extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {nodes: this.props.nodes.slice(1)};
+    this.state = { nodes: this.props.nodes.slice(1) };
 
     this.onDragStart = this.onDragStart.bind(this);
     this.onDragUpdate = this.onDragUpdate.bind(this);
@@ -174,15 +215,15 @@ class DisciplinesEditor extends React.Component {
       return;
     }
     this.props.onDisciplineUpdate(
-        this.props.nodes[result.source.index + 1],
-        {position: result.destination.index + 1}
+      this.props.nodes[result.source.index + 1],
+      { position: result.destination.index + 1 }
     );
   };
 
   // Take into account in this.state of discipline changes coming
   // from Discipline components that should arrive through new props
   static getDerivedStateFromProps(nextProps, prevState) {
-    return {nodes: nextProps.nodes.slice(1)};
+    return { nodes: nextProps.nodes.slice(1) };
   }
 
   render() {

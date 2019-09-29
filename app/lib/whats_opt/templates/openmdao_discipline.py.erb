@@ -6,9 +6,13 @@ class <%= @discipline.py_classname %>(<%= @discipline.py_classname %>Base):
 		
     def compute(self, inputs, outputs):
         """ <%= @discipline.py_classname %> computation """
+<% if @discipline.has_endpoint?  && @with_server %>
+        self._discipline_proxy.compute(inputs, outputs)
+<% else %>
     <% @discipline.output_variables.numeric.each do |var_out| %>
         outputs['<%= var_out.py_varname %>'] = <%= var_out.default_py_value %> <% end %>  
-        
+<% end %>
+
 # Reminder: inputs of compute()
 #   <% @discipline.input_variables.numeric.each do |var_in| %>
 #       inputs['<%= var_in.py_varname %>'] -> shape: <%= var_in.shape -%>, type: <%= var_in.type -%>

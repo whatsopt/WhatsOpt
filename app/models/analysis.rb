@@ -168,7 +168,9 @@ class Analysis < ApplicationRecord
 
   def build_nodes
     disciplines.by_position.map do |d|
-      node = { id: d.id.to_s, type: d.type, name: d.name }
+      node = { id: d.id.to_s, type: d.type, name: d.name, endpoint: d.endpoint }
+      node = ActiveModelSerializers::SerializableResource.new(d).as_json
+      node[:id] = node[:id].to_s
       node[:link] = { id: parent.id, name: parent.name } if d.is_driver? && has_parent?
       node[:link] = { id: d.sub_analysis.id, name: d.sub_analysis.name } if d.has_sub_analysis?
       node

@@ -26,4 +26,11 @@ class DisciplineTest < ActiveSupport::TestCase
     disc = Discipline.new(name: "NewDisc")
     assert disc.openmdao_impl
   end
+
+  test "can have an endpoint" do
+    disc = Discipline.new(name: "NewDisc")
+    assert_difference("Endpoint.count") do
+      disc.update!(endpoint_attributes: {host: "test", port: 30000})
+    end
+  end
 end

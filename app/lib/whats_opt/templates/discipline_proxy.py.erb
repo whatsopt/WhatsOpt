@@ -14,6 +14,12 @@ class <%= disc.camelname %>Proxy(<%= disc.camelname %>Base):
     def compute(self, inputs, outputs):
         output = self._thrift_client.compute_<%= disc.snake_modulename %>(to_thrift_<%= disc.snake_modulename %>_input(inputs))
         to_openmdao_<%= disc.snake_modulename %>_outputs(output, outputs)
+
+    def ping(self):
+        self._thrift_client.ping()
+
+    def shutdown(self):
+        self._thrift_client.shutdown()
 <% end %>
 
     

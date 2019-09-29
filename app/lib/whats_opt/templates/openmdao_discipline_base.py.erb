@@ -4,8 +4,29 @@
 import numpy as np
 from openmdao.api import <%= @dimpl.implicit_component ? "ImplicitComponent" : "ExplicitComponent" %>
 
+<% if @discipline.has_endpoint? && @with_server %>
+from thrift import Thrift
+from thrift.transport import TSocket
+from thrift.transport import TTransport
+from thrift.protocol import TBinaryProtocol
+
+from <%= @server_module %>.<%= @mda.py_full_modulename %> import <%= @mda.py_classname %>
+from <%= @server_module %>.discipline_proxy import <%= @discipline.py_classname %>Proxy
+<% end %>
+
 class <%= @discipline.py_classname %>Base(<%= @dimpl.implicit_component ? "ImplicitComponent" : "ExplicitComponent" %>):
     """ An OpenMDAO base component to encapsulate <%= @discipline.py_classname %> discipline """
+
+<% if @discipline.has_endpoint? && @with_server %>
+    def __init__(self, *args, **kwargs):
+        super(<%= @discipline.py_classname %>Base, self).__init__(*args, **kwargs)
+        transport = TSocket.TSocket('<%= @discipline.endpoint.host %>', <%= @discipline.endpoint.port %>)
+        transport = TTransport.TBufferedTransport(transport)
+        protocol = TBinaryProtocol.TBinaryProtocol(transport)
+        self._thrift_client = <%= @mda.py_classname %>.Client(protocol)
+        self._discipline_proxy = <%= @discipline.py_classname %>Proxy(self._thrift_client)
+        transport.open()
+<% end %>
 
 <% unless @discipline.variables.empty? -%>
     def setup(self):
@@ -20,6 +41,7 @@ class <%= @discipline.py_classname %>Base(<%= @dimpl.implicit_component ? "Impli
                         ref=<%= var.scaling_ref_py_value %>, ref0=<%= var.scaling_ref0_py_value %>, res_ref=<%= var.scaling_res_ref_py_value %>)
 <% end -%>
 <% end %>
+
 <% if @dimpl.support_derivatives -%>
         self.declare_partials('*', '*')
 <% end -%>
