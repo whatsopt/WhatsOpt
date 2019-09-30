@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "resolv"
 require "whats_opt/openmdao_module"
 require "whats_opt/discipline"
 
@@ -59,6 +60,16 @@ class Discipline < ApplicationRecord
 
   def has_endpoint?
     !!endpoint
+  end
+
+  def local?(remote_ip)
+    return true unless has_endpoint?
+    endpoint_ip = Resolv.getaddress(endpoint.host)
+    Rails.logger.info "Compare remote_ip=#{remote_ip} and disc endpoint=#{endpoint_ip}"
+    return endpoint_ip == remote_ip
+  rescue 
+    Rails.logger.warn "Can not resolve '#{endpoint.host}' host name hosting #{name} discipline"
+    return true  # default to local
   end
 
   def path

@@ -11,12 +11,13 @@ module WhatsOpt
     class DisciplineNotFoundException < StandardError
     end
 
-    def initialize(mda, server_host: nil, driver_name: nil, driver_options: {}, whatsopt_url: "", api_key: "")
+    def initialize(mda, server_host: nil, driver_name: nil, driver_options: {}, 
+                   whatsopt_url: "", api_key: "", remote_ip: "")
       super(mda)
       @prefix = "openmdao"
       @server_host = server_host
       @remote = !server_host.nil?
-      @sgen = WhatsOpt::ServerGenerator.new(mda, server_host)
+      @sgen = WhatsOpt::ServerGenerator.new(mda, server_host, remote_ip)
       @sqlite_filename = "cases.sqlite"
       @driver_name = driver_name.to_sym if driver_name
       @driver_options = driver_options
@@ -24,6 +25,7 @@ module WhatsOpt
       @impl = @mda.openmdao_impl || OpenmdaoAnalysisImpl.new
       @whatsopt_url = whatsopt_url
       @api_key = api_key
+      @remote_ip = remote_ip
     end
 
     def check_mda_setup

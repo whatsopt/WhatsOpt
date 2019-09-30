@@ -4,7 +4,7 @@
 import numpy as np
 from openmdao.api import <%= @dimpl.implicit_component ? "ImplicitComponent" : "ExplicitComponent" %>
 
-<% if @discipline.has_endpoint? && @with_server %>
+<% unless @discipline.local?(@remote_ip) %>
 from thrift import Thrift
 from thrift.transport import TSocket
 from thrift.transport import TTransport
@@ -17,7 +17,7 @@ from <%= @server_module %>.discipline_proxy import <%= @discipline.py_classname 
 class <%= @discipline.py_classname %>Base(<%= @dimpl.implicit_component ? "ImplicitComponent" : "ExplicitComponent" %>):
     """ An OpenMDAO base component to encapsulate <%= @discipline.py_classname %> discipline """
 
-<% if @discipline.has_endpoint? && @with_server %>
+<% unless @discipline.local?(@remote_ip) %>
     def __init__(self, *args, **kwargs):
         super(<%= @discipline.py_classname %>Base, self).__init__(*args, **kwargs)
         transport = TSocket.TSocket('<%= @discipline.endpoint.host %>', <%= @discipline.endpoint.port %>)

@@ -13,16 +13,29 @@ class <%= @mda.py_classname %>Proxy(<%= @mda.py_classname %>Original):
     
     def __init__(self):
         super(<%= @mda.py_classname %>Proxy, self).__init__()
+<% if !@server_host.blank? %>    
         transport = TSocket.TSocket('<%= @server_host %>', <%= @server_port %>)
         transport = TTransport.TBufferedTransport(transport)
         protocol = TBinaryProtocol.TBinaryProtocol(transport)
         self._thrift_client = <%= @mda.py_classname %>.Client(protocol)
         transport.open()
+<% end %>
 
-    <% @mda.all_plain_disciplines.each do |disc| %>
+<% @mda.all_plain_disciplines.each do |disc| %>
     def create_<%= disc.basename %>(self):
-        return <%= disc.py_classname %>Proxy(self._thrift_client)
-    <% end %>
+<% if !@server_host.blank? %>    
+        thrift_client = self._thrift_client
+        return <%= disc.py_classname %>Proxy(thrift_client)
+<% else %>
+        transport = TSocket.TSocket('<%= disc.endpoint.host %>', <%= disc.endpoint.host %>)
+        transport = TTransport.TBufferedTransport(transport)
+        protocol = TBinaryProtocol.TBinaryProtocol(transport)
+        thrift_client = <%= @mda.py_classname %>.Client(protocol)
+        transport.open()
+        return <%= disc.py_classname %>Proxy(thrift_client)
+<% end %>
+        
+<% end %>
 
     def ping(self):
         self._thrift_client.ping()

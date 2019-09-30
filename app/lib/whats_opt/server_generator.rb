@@ -10,11 +10,12 @@ module WhatsOpt
     class ThriftError < StandardError
     end
 
-    def initialize(mda, server_host = nil)
+    def initialize(mda, server_host = nil, remote_ip = "")
       super(mda)
       @server_host = server_host
       @prefix = "remote_server"
       @comment_delimiters = { begin: "/*", end: "*/" }
+      @remote_ip = remote_ip
     end
 
     def _generate_code(gendir, options = {})
