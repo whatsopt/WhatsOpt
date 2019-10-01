@@ -25,8 +25,7 @@ class Api::V1::DisciplineControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     resp = JSON.parse(response.body)
     assert_equal "TestDiscipline", resp["name"]
-    assert_equal @mda.id, resp["analysis_id"]
-    assert_equal @mda.disciplines.count - 1, resp["position"]
+    assert_equal @mda.id, Discipline.last.analysis.id
   end
 
   test "should update discipline" do
@@ -41,7 +40,8 @@ class Api::V1::DisciplineControllerTest < ActionDispatch::IntegrationTest
     resp = JSON.parse(response.body)
     assert_equal "NewName", resp["name"]
     assert_equal "function", resp["type"]
-    assert_equal 2, resp["position"].to_i
+    @disc.reload
+    assert_equal 2, @disc.position
     @disc2.reload
     assert_equal 1, @disc2.position
   end

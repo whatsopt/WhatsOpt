@@ -17,7 +17,6 @@ module WhatsOpt
       @prefix = "openmdao"
       @server_host = server_host
       @remote = !server_host.nil?
-      p "*************************", @remote
       @sgen = WhatsOpt::ServerGenerator.new(mda, server_host, remote_ip)
       @sqlite_filename = "cases.sqlite"
       @driver_name = driver_name.to_sym if driver_name
