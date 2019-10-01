@@ -17,6 +17,7 @@ module WhatsOpt
       @prefix = "openmdao"
       @server_host = server_host
       @remote = !server_host.nil?
+      p "*************************", @remote
       @sgen = WhatsOpt::ServerGenerator.new(mda, server_host, remote_ip)
       @sqlite_filename = "cases.sqlite"
       @driver_name = driver_name.to_sym if driver_name
@@ -66,7 +67,7 @@ module WhatsOpt
 
     def monitor(method = "analysis", sqlite_filename = nil, &block)
       Dir.mktmpdir("run_#{@mda.basename}_#{method}") do |dir|
-        # dir='/tmp' # for debug
+        dir='/tmp' # for debug
         _generate_code dir, sqlite_filename: sqlite_filename
         _monitor_mda(dir, method, &block)
       end

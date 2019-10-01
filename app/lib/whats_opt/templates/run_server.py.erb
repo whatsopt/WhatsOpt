@@ -7,6 +7,7 @@ from thrift.server import TServer
 
 from <%= @server_module %>.<%= @mda.py_modulename %> import <%= @mda.py_classname %> as <%= @mda.camelname %>Service
 from <%= @server_module %>.<%= @mda.py_modulename %>_conversions import *
+from <%= @server_module %>.remote_discipline import *
 from <%= @mda.py_modulename %> import <%= @mda.py_classname %>Factory as Factory
 
 class <%= @mda.camelname %>Handler:
@@ -29,10 +30,21 @@ class <%= @mda.camelname %>Handler:
     # <%= @mda.camelname %> interface
     <% @mda.all_plain_disciplines.each do |disc| %>
     def compute_<%= disc.snake_modulename %>(self, ins):
+    <% if !disc.local?(@remote_ip) %>
+        transport = TSocket.TSocket('<%= disc.endpoint&.host %>', <%= disc.endpoint&.port %>)
+        transport = TTransport.TBufferedTransport(transport)
+        protocol = TBinaryProtocol.TBinaryProtocol(transport)
+        thrift_client = <%= @mda.py_classname %>.Client(protocol)
+        transport.open()
+        outs = thrift_client.compute_<%= disc.snake_modulename %>(ins)
+        transport.close()
+        return outs
+    <% else %>
         outputs = {}
         inputs = to_openmdao_<%= disc.snake_modulename %>_inputs(ins)
         self.<%= disc.snake_modulename %>.compute(inputs, outputs)
         return to_thrift_<%= disc.snake_modulename %>_output(outputs)
+    <% end %>
     <% end %>
 
 
