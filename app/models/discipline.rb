@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "resolv"
 require "whats_opt/openmdao_module"
 require "whats_opt/discipline"
 
@@ -19,9 +20,11 @@ class Discipline < ApplicationRecord
   acts_as_list scope: :analysis, top_of_list: 0
 
   has_one :openmdao_impl, class_name: "OpenmdaoDisciplineImpl", dependent: :destroy
+  has_one :endpoint, as: :service, dependent: :destroy
 
   accepts_nested_attributes_for :variables, reject_if: proc { |attr| attr["name"].blank? }, allow_destroy: true
   accepts_nested_attributes_for :sub_analysis, reject_if: proc { |attr| attr["name"].blank? }, allow_destroy: true
+  accepts_nested_attributes_for :endpoint, reject_if: proc { |attr| attr["host"].blank? || attr["host"]=="localhost" }, allow_destroy: true
 
   validates :name, presence: true, allow_blank: false
 
@@ -55,6 +58,20 @@ class Discipline < ApplicationRecord
     !has_sub_analysis?
   end
 
+  def has_endpoint?
+    !!endpoint
+  end
+
+  def local?(remote_ip)
+    return true unless has_endpoint?
+    endpoint_ip = Resolv.getaddress(endpoint.host)
+    Rails.logger.info "Compare remote_ip=#{remote_ip} and disc endpoint=#{endpoint_ip}"
+    return endpoint_ip == remote_ip
+  rescue 
+    Rails.logger.warn "Can not resolve '#{endpoint.host}' host name hosting #{name} discipline"
+    return true  # default to local
+  end
+
   def path
     if has_sub_analysis?
       sub_analysis.path
@@ -66,7 +83,6 @@ class Discipline < ApplicationRecord
   def update_discipline(params)
     if params[:position]
       insert_at(params[:position])
-      params = params.except(:role)
     end
     update(params)
     if sub_analysis && type != WhatsOpt::Discipline::ANALYSIS

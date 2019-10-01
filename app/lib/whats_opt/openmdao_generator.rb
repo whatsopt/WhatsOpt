@@ -11,12 +11,13 @@ module WhatsOpt
     class DisciplineNotFoundException < StandardError
     end
 
-    def initialize(mda, server_host: nil, driver_name: nil, driver_options: {}, whatsopt_url: "", api_key: "")
+    def initialize(mda, server_host: nil, driver_name: nil, driver_options: {}, 
+                   whatsopt_url: "", api_key: "", remote_ip: "")
       super(mda)
       @prefix = "openmdao"
       @server_host = server_host
       @remote = !server_host.nil?
-      @sgen = WhatsOpt::ServerGenerator.new(mda, server_host)
+      @sgen = WhatsOpt::ServerGenerator.new(mda, server_host, remote_ip)
       @sqlite_filename = "cases.sqlite"
       @driver_name = driver_name.to_sym if driver_name
       @driver_options = driver_options
@@ -24,6 +25,7 @@ module WhatsOpt
       @impl = @mda.openmdao_impl || OpenmdaoAnalysisImpl.new
       @whatsopt_url = whatsopt_url
       @api_key = api_key
+      @remote_ip = remote_ip
     end
 
     def check_mda_setup
@@ -64,7 +66,7 @@ module WhatsOpt
 
     def monitor(method = "analysis", sqlite_filename = nil, &block)
       Dir.mktmpdir("run_#{@mda.basename}_#{method}") do |dir|
-        # dir='/tmp' # for debug
+        dir='/tmp' # for debug
         _generate_code dir, sqlite_filename: sqlite_filename
         _monitor_mda(dir, method, &block)
       end
@@ -113,6 +115,7 @@ module WhatsOpt
     def _generate_discipline(discipline, gendir, options = {})
       @discipline = discipline  # @discipline used in template
       @dimpl = @discipline.openmdao_impl || OpenmdaoDisciplineImpl.new
+      @with_server = options[:with_server]
       if @discipline.type == 'metamodel'
         _generate(discipline.py_filename, "openmdao_metamodel.py.erb", gendir)
       else

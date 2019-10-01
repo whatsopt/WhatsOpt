@@ -10,11 +10,13 @@ module WhatsOpt
     class ThriftError < StandardError
     end
 
-    def initialize(mda, server_host = nil)
+    def initialize(mda, server_host = nil, remote_ip = "")
       super(mda)
       @server_host = server_host
+      @remote = !server_host.nil?
       @prefix = "remote_server"
       @comment_delimiters = { begin: "/*", end: "*/" }
+      @remote_ip = remote_ip
     end
 
     def _generate_code(gendir, options = {})
@@ -26,6 +28,7 @@ module WhatsOpt
       _generate("#{@mda.basename}_conversions.py", "analysis_conversions.py.erb", server_dir)
       _generate("#{@mda.basename}_proxy.py", "analysis_proxy.py.erb", server_dir)
       _generate("discipline_proxy.py", "discipline_proxy.py.erb", server_dir)
+      _generate("remote_discipline.py", "remote_discipline.py.erb", server_dir)
       _generate("sub_analysis_proxy.py", "sub_analysis_proxy.py.erb", server_dir)
       _generate("run_server.py", "run_server.py.erb", gendir)
     end

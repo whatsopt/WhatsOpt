@@ -1,13 +1,8 @@
-from .<%= @mda.py_modulename %> import <%= @mda.py_classname %>
 from .<%= @mda.basename %>_conversions import *
 
-<% @mda.all_plain_disciplines.each do |disc| -%>
-from <%= disc.py_full_modulename %>_base import <%= disc.camelname %>Base
-<% end %>
-
 <% @mda.all_plain_disciplines.each do |disc| %>
-class <%= disc.camelname %>Proxy(<%= disc.camelname %>Base):
-    def __init__(self, thrift_client):
+class <%= disc.camelname %>Proxy(object):
+    def __init__(self, thrift_client=None):
         super(<%= disc.camelname %>Proxy, self).__init__()
         self._thrift_client = thrift_client
         

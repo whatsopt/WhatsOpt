@@ -98,7 +98,8 @@ RUN pip install matplotlib \
 	&& pip install tabulate \
 	&& pip install openmdao \
 	&& pip install salib \
-	&& pip install git+https://github.com/SMTOrg/smt 
+	&& pip install git+https://github.com/SMTOrg/smt \
+	&& pip install wop
 
 # OpenVSP
 #RUN apt-get install -y git cmake libxml2-dev \

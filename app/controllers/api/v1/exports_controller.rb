@@ -16,7 +16,8 @@ class Api::V1::ExportsController < Api::ApiController
     mda = Analysis.find(mda_id)
     authorize mda
     if format == "openmdao" || format == "openmdao_base"
-      ogen = WhatsOpt::OpenmdaoGenerator.new(mda, whatsopt_url: whatsopt_url, api_key: current_user.api_key)
+      ogen = WhatsOpt::OpenmdaoGenerator.new(mda, whatsopt_url: whatsopt_url, 
+                                             api_key: current_user.api_key, remote_ip: request.remote_ip)
       content, filename = ogen.generate(only_base: (format == "openmdao_base"), user_agent: user_agent, with_run: with_run,
                                         with_server: with_server, with_runops: with_runops, with_unittests: with_unittests)
       send_data content, filename: filename

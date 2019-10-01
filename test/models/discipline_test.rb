@@ -19,11 +19,18 @@ class DisciplineTest < ActiveSupport::TestCase
   def test_as_json
     disc = disciplines(:geometry)
     adapter = ActiveModelSerializers::SerializableResource.new(disc)
-    assert_equal [:analysis_id, :id, :name, :position, :type], adapter.as_json.keys.sort
+    assert_equal [:endpoint, :id, :name, :type], adapter.as_json.keys.sort
   end
 
   test "should have default opendmao implementation" do
     disc = Discipline.new(name: "NewDisc")
     assert disc.openmdao_impl
+  end
+
+  test "can have an endpoint" do
+    disc = Discipline.new(name: "NewDisc")
+    assert_difference("Endpoint.count") do
+      disc.update!(endpoint_attributes: {host: "test", port: 30000})
+    end
   end
 end

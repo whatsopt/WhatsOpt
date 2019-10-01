@@ -1,0 +1,41 @@
+# DO NOT EDIT unless you know what you are doing
+# analysis_id: <%= @mda.id %>
+
+import numpy as np
+
+from thrift import Thrift
+from thrift.transport import TSocket
+from thrift.transport import TTransport
+from thrift.protocol import TBinaryProtocol
+
+from <%= @server_module %>.<%= @mda.py_full_modulename %> import <%= @mda.py_classname %>
+<% @mda.all_plain_disciplines.each do |disc| %>
+from <%= disc.py_full_modulename %> import <%= disc.py_classname %>
+<% end %>
+<% @mda.all_plain_disciplines.each do |disc| %>
+from .discipline_proxy import <%= disc.py_classname %>Proxy
+<% end %>
+
+<% @mda.all_plain_disciplines.each do |disc| %>
+class Remote<%= disc.py_classname %>(<%= disc.py_classname %>):
+    """ An OpenMDAO base component to encapsulate <%= disc.py_classname %> discipline """
+
+    def __init__(self, thrift_client = None, *args, **kwargs):
+        super(Remote<%= disc.py_classname %>, self).__init__(*args, **kwargs)
+        if thrift_client is None:
+            transport = TSocket.TSocket('<%= disc.endpoint&.host %>', <%= disc.endpoint&.port %>)
+            transport = TTransport.TBufferedTransport(transport)
+            protocol = TBinaryProtocol.TBinaryProtocol(transport)
+            thrift_client = <%= @mda.py_classname %>.Client(protocol)
+            self._discipline_proxy = <%= disc.py_classname %>Proxy(thrift_client)
+            transport.open()
+        else:
+            self._discipline_proxy = <%= disc.py_classname %>Proxy(thrift_client)
+
+    def compute(self, inputs, outputs):
+        """ <%= disc.py_classname %> computation """
+        self._discipline_proxy.compute(inputs, outputs)
+
+<% end %>
+
+        

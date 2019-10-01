@@ -8,7 +8,7 @@ class <%= @discipline.py_classname %>(<%= @discipline.py_classname %>Base):
         """ <%= @discipline.py_classname %> computation """
     <% @discipline.output_variables.numeric.each do |var_out| %>
         outputs['<%= var_out.py_varname %>'] = <%= var_out.default_py_value %> <% end %>  
-        
+
 # Reminder: inputs of compute()
 #   <% @discipline.input_variables.numeric.each do |var_in| %>
 #       inputs['<%= var_in.py_varname %>'] -> shape: <%= var_in.shape -%>, type: <%= var_in.type -%>

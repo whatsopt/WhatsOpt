@@ -25,8 +25,7 @@ class Api::V1::DisciplineControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     resp = JSON.parse(response.body)
     assert_equal "TestDiscipline", resp["name"]
-    assert_equal @mda.id, resp["analysis_id"]
-    assert_equal @mda.disciplines.count - 1, resp["position"]
+    assert_equal @mda.id, Discipline.last.analysis.id
   end
 
   test "should update discipline" do
@@ -41,7 +40,8 @@ class Api::V1::DisciplineControllerTest < ActionDispatch::IntegrationTest
     resp = JSON.parse(response.body)
     assert_equal "NewName", resp["name"]
     assert_equal "function", resp["type"]
-    assert_equal 2, resp["position"].to_i
+    @disc.reload
+    assert_equal 2, @disc.position
     @disc2.reload
     assert_equal 1, @disc2.position
   end
@@ -54,5 +54,13 @@ class Api::V1::DisciplineControllerTest < ActionDispatch::IntegrationTest
       drivervar_count = @disc.analysis.driver.variables.reload.count
       assert_equal initial_drivervar_count - 2, drivervar_count
     end
+  end
+
+  test "should update discipline with an endpoint" do
+    patch api_v1_discipline_url(@disc), params: { discipline: { endpoint_attributes: { host: "endymion", port: 40000} } }, as: :json, headers: @auth_headers
+    assert_response :success 
+    endpoint = Endpoint.all.last
+    assert_equal "endymion", endpoint.host 
+    assert_equal 40000, endpoint.port 
   end
 end

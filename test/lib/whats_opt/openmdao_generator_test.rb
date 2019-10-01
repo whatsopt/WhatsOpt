@@ -79,7 +79,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
                   "server/cicav/Cicav-remote", "server/cicav/Cicav.py",
                   "server/cicav/constants.py", "server/cicav_conversions.py",
                   "server/cicav_proxy.py", "server/cicav/ttypes.py",
-                  "server/discipline_proxy.py", "server/sub_analysis_proxy.py"]
+                  "server/discipline_proxy.py", "server/remote_discipline.py", "server/sub_analysis_proxy.py"]
     _assert_file_generation expected
   end
 
@@ -227,7 +227,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
         "inner/plain_discipline_base.py", "outer.py", "outer_base.py", "run_analysis.py", "run_server.py", "server/__init__.py", "server/analysis.thrift", "server/discipline_proxy.py", "server/outer/Outer-remote",
         "server/outer/Outer.py", "server/outer/__init__.py", "server/outer/constants.py", "server/outer/ttypes.py",
         "server/outer_conversions.py", "server/outer_proxy.py", "vacant_discipline.py", "vacant_discipline_base.py",
-        "server/sub_analysis_proxy.py"]).sort
+        "server/remote_discipline.py", "server/sub_analysis_proxy.py"]).sort
       assert_equal expected, basenames
     end
   end
