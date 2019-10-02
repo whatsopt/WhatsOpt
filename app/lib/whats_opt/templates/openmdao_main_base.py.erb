@@ -23,7 +23,7 @@ from <%= @server_module %>.sub_analysis_proxy import <%= disc.py_classname %>Pro
 <% end -%>
 <% end %>
 <% @mda.plain_disciplines.each do |disc| %>
-<% if @remote || !disc.local?(@remote_ip) %>
+<% if @remote || (!disc.local?(@remote_ip) && @with_server) %>
 from <%= @server_module %>.remote_discipline import Remote<%= disc.py_classname %>
 <% end -%>
 <% end -%>
@@ -71,7 +71,7 @@ class <%= @mda.py_classname %>Base(<%= @impl.parallel_group ? "ParallelGroup" : 
 <% end %>
 <% @mda.plain_disciplines.each do |d| -%>
     def create_<%= d.basename %>(self):
-<% if !d.local?(@remote_ip) -%>
+<% if !d.local?(@remote_ip) && @with_server -%>
         return Remote<%= d.py_classname %>()
 <% else -%>
     	return <%= d.py_classname %>()
