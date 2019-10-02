@@ -1,0 +1,24 @@
+defaults: &defaults
+  intranet:    <%= !ENV['WHATSOPT_INTERNET'] %>
+  python_cmd:  python
+  openvsp_cmd: vspscript
+  thrift_cmd:  thrift
+
+development:
+  <<: *defaults
+
+test:
+  <<: *defaults
+
+staging:
+  intranet:    <%= !ENV['WHATSOPT_INTERNET'] %>
+  python_cmd:  python
+  openvsp_cmd: vspscript
+  thrift_cmd:  thrift
+  
+production:
+  intranet:    <%= !ENV['WHATSOPT_INTERNET'] %>
+  python_cmd:  python
+  openvsp_cmd: vspscript
+  thrift_cmd:  thrift
+

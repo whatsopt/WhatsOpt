@@ -3,8 +3,6 @@ defaults: &defaults
   python_cmd:  python
   openvsp_cmd: vspscript
   thrift_cmd:  thrift
-  wop_cmd:     wop
-  wop_env:     {}
 
 development:
   <<: *defaults
@@ -15,7 +13,6 @@ test:
 staging:
   intranet:    <%= !ENV['WHATSOPT_INTERNET'] %>
   python_cmd:  /d/rlafage/opt/miniconda3/bin/python
-  wop_cmd:     /d/rlafage/opt/miniconda3/bin/wop
   openvsp_cmd: /tmp_user/rdri206h/rlafage/OpenVSP-3.13.3-Linux/vspscript
   
 production:
@@ -23,5 +20,4 @@ production:
   python_cmd:  /dtis-app/whatsopt-deps/miniconda3/bin/python
   openvsp_cmd: /dtis-app/whatsopt-deps/OpenVSP-3.13.3/vspscript
   thrift_cmd:  /dtis-app/whatsopt-deps/thrift-0.11.0/bin/thrift
-  wop_cmd:     /dtis-app/whatsopt-deps/miniconda3/wop
-  wop_env:     {LC_ALL: fr_FR.UTF-8, LANG: fr_FR.UTF-8}
+
