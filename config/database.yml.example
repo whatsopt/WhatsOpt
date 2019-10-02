@@ -19,28 +19,13 @@ development:
 test:
   <<: *default
   database: db/test.sqlite3
-
-staging:
-  adapter:  mysql2
-  database: whatsopt
-  encoding: utf8
-  username: whatsopt
-  password: WhatsOpt2017!
-  pool: 5
   
 production:
   adapter:  mysql2
   database: whatsopt
   encoding: utf8
-  username: rlafage
-  password: rlafage123
+  username: whatsopt
+  password: whatsopt_password
   pool: 5
 
-internet:
-  adapter:  mysql2
-  database: whatsopt
-  encoding: utf8
-  username: rlafage
-  password: rlafage123
-  pool: 5
   

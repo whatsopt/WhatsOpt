@@ -1,11 +1,9 @@
 lock '~>3.11.0'
 
 set :application, 'WhatsOpt' # config valid only for current version of Capistrano
-#set :deploy_user, 'rlafage'
 
 set :repo_url, 'ssh://rlafage@endymion/d/designlab/gitrepos/WhatsOpt.git'
 
-#set :git_strategy, Capistrano::SCM::Git::WithSubmodules
 set :branch, :master
 set :keep_releases, 5
 
@@ -13,7 +11,7 @@ set :log_level, :info
 
 # set :linked_files, %w{config/database.yml config/secrets.yml}
 set :linked_dirs, %w{node_modules log tmp upload vendor/bundle public/system}
-set :linked_files, %w{config/master.key app/config/configuration.yml app/config/ldap.yml}
+set :linked_files, %w{config/master.key config/configuration.yml config/ldap.yml config/database.yml}
 
 # fix ssh twice prompt with sshkit 1.11
 # cf. https://github.com/capistrano/capistrano/issues/1774

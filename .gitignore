@@ -74,6 +74,7 @@ db/test.sqlite3-*
 
 # Ignore configuration
 config/configuration.yml
+config/database.yml
 config/ldap.yml
 
 
