@@ -126,7 +126,7 @@ class Analysis < ApplicationRecord
   end
 
   def all_plain_disciplines
-    children.inject(plain_disciplines) { |ary, elt| ary + elt.all_plain_disciplines }
+    @allplain ||= children.inject(plain_disciplines) { |ary, elt| ary + elt.all_plain_disciplines }
   end
 
   def all_sub_analyses
@@ -134,7 +134,7 @@ class Analysis < ApplicationRecord
   end
 
   def all_disciplines
-    children.inject(disciplines.nodes) { |ary, elt| ary + elt.all_disciplines }
+    @alldiscs ||= children.inject(disciplines.nodes) { |ary, elt| ary + elt.all_disciplines }
   end
 
   def attachment_exists?
@@ -143,6 +143,10 @@ class Analysis < ApplicationRecord
 
   def root_analysis
     root
+  end
+
+  def has_a_remote_discipline?(localhost)
+    @remote ||= all_plain_disciplines.detect {|d| local?(localhost) }
   end
 
   def set_all_parameters_as_design_variables

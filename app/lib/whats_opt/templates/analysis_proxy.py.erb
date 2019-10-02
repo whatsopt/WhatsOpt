@@ -29,8 +29,6 @@ class <%= @mda.py_classname %>Proxy(<%= @mda.py_classname %>Original):
 <% if @remote %>    
         thrift_client = self._thrift_client
         return Remote<%= disc.py_classname %>(thrift_client)        
-<% elsif !disc.local?(@remote_ip) %>
-        return Remote<%= disc.py_classname %>()
 <% else %>
         return super(<%= @mda.py_classname %>Proxy, self).create_<%= disc.basename %>()
 <% end %>
