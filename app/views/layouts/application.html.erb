@@ -25,15 +25,8 @@
 	    <div class="collapse navbar-collapse" id="navbarNavDropdown">
         <ul class="navbar-nav mr-auto">
 		    <li class="nav-item"><%= link_to "Analyses", mdas_path, class: "nav-link" %></li>
-      <% if intranet? %>
+      <% if manage_geometry_models? %>
         <li class="nav-item"><%= link_to "Hangar", geometry_models_path, class: "nav-link" %></li>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Redmine</a>
-          <div  class="dropdown-menu" aria-labelledby="dropdown01">
-            <%= link_to "Wiki", wiki_path, class: "dropdown-item" %>
-            <%= link_to "Issues", issues_path, class: "dropdown-item" %>
-          </div>
-        </li>
       <% end %>
         </ul>
           <ul class="navbar-nav">

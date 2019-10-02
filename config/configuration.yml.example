@@ -1,5 +1,7 @@
 defaults: &defaults
-  intranet:    <%= !ENV['WHATSOPT_INTERNET'] %>
+  manage_operations: true
+  manage_geometry_models: true
+  use_ldap: false
   python_cmd:  python
   openvsp_cmd: vspscript
   thrift_cmd:  thrift
@@ -10,14 +12,10 @@ development:
 test:
   <<: *defaults
 
-staging:
-  intranet:    <%= !ENV['WHATSOPT_INTERNET'] %>
-  python_cmd:  python
-  openvsp_cmd: vspscript
-  thrift_cmd:  thrift
-  
 production:
-  intranet:    <%= !ENV['WHATSOPT_INTERNET'] %>
+  manage_operations: true
+  manage_geometry_models: false
+  use_ldap: true
   python_cmd:  python
   openvsp_cmd: vspscript
   thrift_cmd:  thrift

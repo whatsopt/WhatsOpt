@@ -14,7 +14,12 @@ module ApplicationHelper
     h
   end
 
-  def intranet?
-    APP_CONFIG["intranet"]
+  def manage_geometry_models?
+    APP_CONFIG['manage_geometry_models']
   end
+
+  def manage_operations?
+    APP_CONFIG['manage_operations']
+  end
+
 end

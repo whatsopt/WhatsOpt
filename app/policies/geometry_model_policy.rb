@@ -1,15 +1,20 @@
 # frozen_string_literal: true
 
 class GeometryModelPolicy < ApplicationPolicy
+
+  def manage_geometry_models?
+    APP_CONFIG['manage_geometry_models']
+  end
+
   def create?
-    intranet?
+    manage_geometry_models?
   end
 
   def update?
-    intranet? && (@user.admin? || @user.has_role?(:owner, @record))
+    manage_geometry_models? && (@user.admin? || @user.has_role?(:owner, @record))
   end
 
   def destroy?
-    intranet? && (@user.admin? || @user.has_role?(:owner, @record))
+    manage_geometry_models? && (@user.admin? || @user.has_role?(:owner, @record))
   end
 end

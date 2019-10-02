@@ -9,16 +9,12 @@ class ApplicationPolicy
   end
 
   class Scope < Struct.new(:user, :scope)
-    def intranet?
-      APP_CONFIG["intranet"]
+    def manage_geometry_models?
+      APP_CONFIG['manage_geometry_models']
     end
     def resolve
       scope.all
     end
-  end
-
-  def intranet?
-    APP_CONFIG["intranet"]
   end
 
   def index?

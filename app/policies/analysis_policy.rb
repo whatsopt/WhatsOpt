@@ -26,7 +26,7 @@ class AnalysisPolicy < ApplicationPolicy
   end
 
   def operate?
-    intranet? && update?
+    APP_CONFIG['manage_operations'] && update?
   end
 
   def edit?
