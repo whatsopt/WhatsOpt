@@ -23,12 +23,8 @@ def create_user(params)
 end
 
 # Admin
-u=create_user(login: "admin", 
-              email: "admin@onera.fr")
-u.add_role(:admin)
-u.save!
+# u=create_user(login: "admin", 
+#               email: "admin@example.com")
+# u.add_role(:admin)
+# u.save!
 
-# Onera 
-u = create_user(login: "rlafage",
-                email: "test@onera.fr")
-u.save!
