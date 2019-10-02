@@ -1,5 +1,11 @@
 <h1>CHANGELOG</h1>
 
+<h3>1.3.0 (??/??/2019)</h3>
+<ul>
+  <li>The user can distribute disciplines on different hosts.</li>
+  <li>fix bug to take into account solvers options in run scripts.</li>
+</ul>
+
 <h3>1.2.0 (30/09/2019)</h3>
 <ul>
   <li>The user get quality indices (r2 score) for each surrogates of a metamodel.</li>
