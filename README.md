@@ -15,48 +15,60 @@ WhatsOpt is a web application allowing to define and share multi-disciplinary an
 WhatsOpt rails application setup:
 <pre>
   git clone https://github.com/OneraHub/WhatsOpt
-  cd WhatsOpt
-  bundle install
-  rails db:migrate
 </pre>
 WhatsOpt command line interface setup:
 <pre>
   pip install wop
 </pre>
-The wop package pulls Python package dependencies used by WhatsOpt application, specially the [OpenMDAO framework](https://openmdao.org) which is currently the execution framework used by WhatsOpt.
+The <code>wop</code> package pulls also Python dependencies used by WhatsOpt application, specially the [OpenMDAO framework](https://openmdao.org) which is currently the execution framework used by WhatsOpt.
 
-### Development
+### Development setup
 <pre>
+  cd WhatsOpt
+  bundle install
+  rails db:migrate
+  rails db:seed
   cp config/database.yml.example config/database.yml
   rails s -b 0.0.0.0
 </pre>
-The you can visit the http://localhost:3000 url and log with the default user login: whatsopt, password: whatsopt.
-Otherwise you can run the test suite with
+
+Then you can visit the http://localhost:3000 url and log in with the default user login: whatsopt, password: whatsopt.
+
+You can also run the test suite with:
+
 <code>
   rails test
 </code>
 
-### Production
+### Production setup
 Ruby on Rails ecosystem allows various options for application server configuration and deployment. Refer to related Ruby on Rails documentation to know your deployment options.
 
 The guide lines summarized below are related to the deployment of WhatsOpt on [Onera server](https://ether.onera.fr/whatsopt) and the code present . It relies on:
 * Apache Server
 * Passenger (aka module for rails)
 * MySQL
+
 Once those prerequisites are installed on your server, you have to fit:
 * <code>config/environments/configuration.yml</code>
 * <code>config/environments/database.yml</code>
 * <code>config/environments/production.rb</code>
 * <code>config/environments/ldap.yml</code> (if needed) 
+
 For deployment in production capistrano utility is used, you have to fit to your needs the following files:
 * <code>config/deploy.rb</code>
 * <code>config/deploy/production.rb</code>
+
 then the deployment is one command line away:
 <pre>
-cap production deploy
+  cap production deploy
 </pre>
 
 ## Optional setup
-* SMT 0.3.4: enable metamodel creation
-* SALib 1.3.3: enable sensitivity analysis operations
-* Thrift 0.11.0: enable server creation and remote operations on local network
+To get additional features you need to install the following Python packages:
+* SMT: enable metamodel creation
+* SALib: enable sensitivity analysis operations
+* Thrift: enable server creation and remote operations on local network
+
+<pre>
+  pip install smt==0.3.4 salib==1.3.3 thrift==0.11.0
+</pre>
