@@ -1,7 +1,7 @@
 defaults: &defaults
-  manage_operations: true
-  manage_geometry_models: true
-  use_ldap: false
+  enable_remote_operations: true
+  enable_geometry_models: true
+  enable_enable: false
   python_cmd:  python
   openvsp_cmd: vspscript
   thrift_cmd:  thrift
@@ -13,9 +13,9 @@ test:
   <<: *defaults
 
 production:
-  manage_operations: true
-  manage_geometry_models: false
-  use_ldap: true
+  enable_remote_operations: true
+  enable_geometry_models: false
+  enable_enable: true
   python_cmd:  python
   openvsp_cmd: vspscript
   thrift_cmd:  thrift

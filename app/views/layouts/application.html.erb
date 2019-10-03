@@ -25,7 +25,7 @@
 	    <div class="collapse navbar-collapse" id="navbarNavDropdown">
         <ul class="navbar-nav mr-auto">
 		    <li class="nav-item"><%= link_to "Analyses", mdas_path, class: "nav-link" %></li>
-      <% if manage_geometry_models? %>
+      <% if enable_geometry_models? %>
         <li class="nav-item"><%= link_to "Hangar", geometry_models_path, class: "nav-link" %></li>
       <% end %>
         </ul>

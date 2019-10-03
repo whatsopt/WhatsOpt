@@ -22,6 +22,11 @@ def create_user(params)
   u
 end
 
+# WhatsOpt generic user
+u=create_user(login: "whatsopt", 
+              email: "whatsopt@example.com")
+u.save!
+
 # Admin
 # u=create_user(login: "admin", 
 #               email: "admin@example.com")
