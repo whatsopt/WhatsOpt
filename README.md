@@ -8,8 +8,8 @@ WhatsOpt is a web application allowing to define and share multi-disciplinary an
 # Installation
 
 ## Prerequisites
-* Ruby 2.5+ (rvm recommended to manage Ruby environments)
-* Python 3.6+ (Anaconda recommended to manage Python environments)
+* Ruby 2.5+ ([rvm](https://rvm.io/) recommended to manage Ruby environments)
+* Python 3.6+ ([Anaconda](https://www.anaconda.com/distribution/) recommended to manage Python environments)
 
 ## Setup
 WhatsOpt rails application setup:
@@ -23,9 +23,9 @@ WhatsOpt command line interface setup:
 <pre>
   pip install wop
 </pre>
-The wop package pulls also other Python package dependencies used by WhatsOpt application, specially the [OpenMDAO framework](https://openmdao.org) which is currently the execution framework used by WhatsOpt.
+The wop package pulls Python package dependencies used by WhatsOpt application, specially the [OpenMDAO framework](https://openmdao.org) which is currently the execution framework used by WhatsOpt.
 
-### Development mode
+### Development
 <pre>
   cp config/database.yml.example config/database.yml
   rails s -b 0.0.0.0
@@ -33,13 +33,28 @@ The wop package pulls also other Python package dependencies used by WhatsOpt ap
 The you can visit the http://localhost:3000 url and log with the default user login: whatsopt, password: whatsopt.
 Otherwise you can run the test suite with
 <code>
-  rake tests
+  rails test
 </code>
 
 ### Production
-WhatsOpt is deployed on [public server](https://ether.onera.fr/whatsopt)
-<code>
-</code>  
+Ruby on Rails ecosystem allows various options for application server configuration and deployment. Refer to related Ruby on Rails documentation to know your deployment options.
+
+The guide lines summarized below are related to the deployment of WhatsOpt on [Onera server](https://ether.onera.fr/whatsopt) and the code present . It relies on:
+* Apache Server
+* Passenger (aka module for rails)
+* MySQL
+Once those prerequisites are installed on your server, you have to fit:
+* <code>config/environments/configuration.yml</code>
+* <code>config/environments/database.yml</code>
+* <code>config/environments/production.rb</code>
+* <code>config/environments/ldap.yml</code> (if needed) 
+For deployment in production capistrano utility is used, you have to fit to your needs the following files:
+* <code>config/deploy.rb</code>
+* <code>config/deploy/production.rb</code>
+then the deployment is one command line away:
+<pre>
+cap production deploy
+</pre>
 
 ## Optional setup
 * SMT 0.3.4: enable metamodel creation
