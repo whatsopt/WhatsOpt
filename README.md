@@ -1,9 +1,29 @@
 # WhatsOpt
 WhatsOpt is a web application allowing to define and share multi-disciplinary analyses in terms of disciplines and data exchange. It was develop at ONERA, in the context of overall aircraft design activities. From that high-level definition, users can generate source code skeleton required to plug the actual implementation of their disciplines and get an actual executable model of the concept under study. WhatsOpt allows to generate code to run numerical methods such as sensitivity analysis, design of experiments and optimizations.
 
-* [WhatsOpt paper](https://www.researchgate.net/publication/333806928_WhatsOpt_a_web_application_for_multidisciplinary_design_analysis_and_optimization): Lafage, R., Defoort, S., & Lefebvre, T. (2019). _WhatsOpt: a web application for multidisciplinary design analysis and optimization. In AIAA Aviation 2019 Forum (p. 2990)._
+## Resources
+
+* [WhatsOpt paper](https://www.researchgate.net/publication/333806928_WhatsOpt_a_web_application_for_multidisciplinary_design_analysis_and_optimization): _WhatsOpt: a web application for multidisciplinary design analysis and optimization._ 
 * [WhatsOpt doc](https://github.com/OneraHub/WhatsOpt-Doc): Notebooks and examples
 * [WhatsOpt videos](https://www.youtube.com/playlist?list=PLhWP4LJdKyGcFZyvsNLU4s2_sdmTSGVeo): Tutorials
+
+## Citation
+If you happen to find WhatsOpt useful for your research, it will be appreciated if you cite us with:
+>Lafage, R., Defoort, S., & Lefebvre, T. (2019). _WhatsOpt: a web application for multidisciplinary design analysis and optimization. In AIAA Aviation 2019 Forum (p. 2990)._
+
+or if you use Bibtex, you can use the following entry:
+<pre>
+@inproceedings{lafage2019whatsopt,
+  title={WhatsOpt: a web application for multidisciplinary design analysis and optimization},
+  doi={10.2514/6.2019-2990}, 
+  url={https://doi.org/10.2514/6.2019-2990}
+  author={Lafage, R{\'e}mi and Defoort, Sebastien and Lefebvre, Thierry},
+  booktitle={AIAA Aviation 2019 Forum},
+  pages={2990},
+  year={2019}
+}
+</pre>
+
 
 # Installation
 
@@ -32,7 +52,7 @@ The <code>wop</code> package pulls also Python dependencies used by WhatsOpt app
   rails s -b 0.0.0.0
 </pre>
 
-Then you can visit the http://localhost:3000 url and log in with the default user login: whatsopt, password: whatsopt.
+Then you can visit the http://localhost:3000 url and log in with the default user login/passwd: whatsopt/whatsopt!
 
 You can also run the test suite with:
 
