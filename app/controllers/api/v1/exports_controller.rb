@@ -10,7 +10,8 @@ class Api::V1::ExportsController < Api::ApiController
     with_server = !!params[:with_server]
     with_runops = !!params[:with_runops]
     with_unittests = !!params[:with_unittests]
-    with_run = !(with_server || with_runops || with_server || (format == "openmdao_base"))
+    #with_run = !(with_server || with_runops || with_server || (format == "openmdao_base"))
+    with_run=true
 
     user_agent = request.headers["User-Agent"]
     mda = Analysis.find(mda_id)

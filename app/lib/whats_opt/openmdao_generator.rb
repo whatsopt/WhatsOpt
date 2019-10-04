@@ -105,7 +105,7 @@ module WhatsOpt
       end
       _generate_main(gendir, opts)
       _generate_run_scripts(gendir, opts)
-      if opts[:with_server]
+      if opts[:with_server] || @mda.has_remote_discipline?(@remote_ip)
         @sgen._generate_code(gendir, @server_host)
         @genfiles += @sgen.genfiles
       end
@@ -149,21 +149,30 @@ module WhatsOpt
       if @driver_name # coming from GUI running remote driver
         @driver = OpenmdaoDriverFactory.new(@driver_name, @driver_options).create_driver
         if @driver.optimization?
-          @sqlite_filename = options[:sqlite_filename] || "#{@mda.basename}_optimization.sqlite"
-          _generate("run_optimization.py", "run_optimization.py.erb", gendir)
-        elsif @driver.doe?
+          if @mda.has_objective?
+            @sqlite_filename = options[:sqlite_filename] || "#{@mda.basename}_optimization.sqlite"
+            _generate("run_optimization.py", "run_optimization.py.erb", gendir)
+          else
+            # TODO: generate run_optimization.py with error message
+          end
+        end
+        if @driver.doe?
           @sqlite_filename = options[:sqlite_filename] || "#{@mda.basename}_doe.sqlite"
           _generate("run_doe.py", "run_doe.py.erb", gendir)
+        else
+          # TODO: generate run_doe.py with error message
         end
-      elsif options[:with_runops]
+      elsif options[:with_runops] || (@mda.is_root_analysis? && @mda.has_design_variables?)
         @driver = OpenmdaoDriverFactory.new(DEFAULT_DOE_DRIVER).create_driver
         @sqlite_filename = options[:sqlite_filename] || "#{@mda.basename}_doe.sqlite"
         _generate("run_doe.py", "run_doe.py.erb", gendir)
-        @driver = OpenmdaoDriverFactory.new(DEFAULT_OPTIMIZATION_DRIVER).create_driver
-        @sqlite_filename = options[:sqlite_filename] || "#{@mda.basename}_optimization.sqlite"
-        _generate("run_optimization.py", "run_optimization.py.erb", gendir)
+        if @mda.is_root_analysis? && @mda.has_objective?
+          @driver = OpenmdaoDriverFactory.new(DEFAULT_OPTIMIZATION_DRIVER).create_driver
+          @sqlite_filename = options[:sqlite_filename] || "#{@mda.basename}_optimization.sqlite"
+          _generate("run_optimization.py", "run_optimization.py.erb", gendir)
+        end
       end
-      if options[:with_runops]
+      if options[:with_runops] || (@mda.is_root_analysis? && @mda.has_design_variables?)
         @sqlite_filename = options[:sqlite_filename] || "#{@mda.basename}_screening.sqlite"
         _generate("run_screening.py", "run_screening.py.erb", gendir)
       end

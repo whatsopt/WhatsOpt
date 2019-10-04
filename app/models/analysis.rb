@@ -73,6 +73,10 @@ class Analysis < ApplicationRecord
     @desvars = variables.with_role(WhatsOpt::Variable::DESIGN_VAR_ROLE)
   end
 
+  def has_design_variables?
+    @has_desvars = !design_variables.empty?
+  end
+
   def min_objective_variables
     @minobjs = variables.with_role(WhatsOpt::Variable::MIN_OBJECTIVE_ROLE)
   end
@@ -83,6 +87,10 @@ class Analysis < ApplicationRecord
 
   def objective_variables
     @objs = variables.with_role(WhatsOpt::Variable::OBJECTIVE_ROLES)
+  end
+
+  def has_objective? 
+    @has_obj = !objective_variables.empty?
   end
 
   def eq_constraint_variables
@@ -145,8 +153,8 @@ class Analysis < ApplicationRecord
     root
   end
 
-  def has_a_remote_discipline?(localhost)
-    @remote ||= all_plain_disciplines.detect {|d| local?(localhost) }
+  def has_remote_discipline?(localhost)
+    @remote ||= all_plain_disciplines.detect {|d| !d.local?(localhost) }
   end
 
   def set_all_parameters_as_design_variables
