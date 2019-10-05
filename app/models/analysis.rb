@@ -398,6 +398,19 @@ class Analysis < ApplicationRecord
     Analysis.new(analysis_attrs)
   end
 
+  def parameterize(parameterization)
+    names = parameterization[:parameters].map {|p| p[:varname]}
+    values = parameterization[:parameters].inject({}) {|acc, elt| acc[elt[:varname]] = elt[:value]; acc}
+    vars = Variable.of_analysis(id).where(name: names, io_mode: WhatsOpt::Variable::OUT)
+    vars.each do |v|
+      if v.parameter
+        v.parameter.update(init: values[v.name])
+      else
+        v.update(parameter_attributes: {init: values[v.name]})
+      end
+    end
+  end
+
   private
     def _check_mda_import_error
       if attachment.mda_excel?

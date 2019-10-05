@@ -27,6 +27,7 @@ Rails.application.routes.draw do
           get 'openmdao_screenings/new'
         end
         resource :openmdao_impl, only: [:show, :update]
+        resource :parameterization, only: [:update]
         post 'openmdao_checking', to: 'openmdao_checking#create' 
         get 'exports/new'
       end
