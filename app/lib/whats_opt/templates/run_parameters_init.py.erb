@@ -1,0 +1,6 @@
+def initialize(mda):
+<%- @mda.parameter_variables.each do |param| %>
+    mda['<%= param.name %>'] = <%= param.init_py_value %><%- end %>
+<%- if @mda.parameter_variables.empty? %>
+    pass
+<%- end %>

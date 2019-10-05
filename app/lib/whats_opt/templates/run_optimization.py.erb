@@ -6,6 +6,7 @@ import numpy as np
 # import matplotlib
 # matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+from run_parameters_init import initialize
 <% if @remote -%>
 from openmdao.api import Problem, SqliteRecorder, CaseReader, ScipyOptimizeDriver, pyOptSparseDriver
 from openmdao_extensions.onera_sego_driver import OneraSegoDriver
@@ -65,6 +66,9 @@ pb.model.add_constraint('<%= voi.name %>', upper=0.)<% end %>
 <% @mda.eq_constraint_variables.each do |voi| %>
 pb.model.add_constraint('<%= voi.name %>', equals=0.)<% end %>
 pb.setup()  
+
+initialize(pb)
+
 pb.run_driver()      
 
 if options.batch:

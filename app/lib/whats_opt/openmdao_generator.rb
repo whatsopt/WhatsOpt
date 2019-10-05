@@ -146,6 +146,10 @@ module WhatsOpt
 
     # options: sqlite_filename: nil, with_runops: true, with_run: true
     def _generate_run_scripts(gendir, options = {})
+      if options[:with_run]
+        _generate("run_parameters_init.py", "run_parameters_init.py.erb", gendir)
+        _generate("run_analysis.py", "run_analysis.py.erb", gendir)
+      end    
       if @driver_name # coming from GUI running remote driver
         @driver = OpenmdaoDriverFactory.new(@driver_name, @driver_options).create_driver
         if @driver.optimization?
@@ -176,7 +180,6 @@ module WhatsOpt
         @sqlite_filename = options[:sqlite_filename] || "#{@mda.basename}_screening.sqlite"
         _generate("run_screening.py", "run_screening.py.erb", gendir)
       end
-      _generate("run_analysis.py", "run_analysis.py.erb", gendir) if options[:with_run]
     end
 
     def _generate_test_scripts(discipline, gendir)
