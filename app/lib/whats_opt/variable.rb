@@ -73,6 +73,10 @@ module WhatsOpt
       self.is_in? ? OUT : IN
     end
 
+    def is_scalar?
+      ndim == 0
+    end
+
     def is_out?
       self.io_mode.to_sym == OUT
     end

@@ -56,7 +56,7 @@ class Variable < ApplicationRecord
   before_save :mark_dependents_for_removal
 
   def init_py_value
-    if parameter&.init.blank?
+    if self.parameter&.init.blank?
       if is_in? # retrieve init value from connected uniq 'out' variable
         val = incoming_connection&.from&.init_py_value
         val || default_py_value # in case not connected
@@ -64,7 +64,16 @@ class Variable < ApplicationRecord
         default_py_value
       end
     else
-      parameter.init
+      self.parameter.init
+    end
+  end
+
+  def set_init_value(val)
+    val = init_py_value_from(val)
+    if self.parameter
+      self.parameter.update(init: val)
+    else
+      self.update(parameter_attributes: {init: val})
     end
   end
 

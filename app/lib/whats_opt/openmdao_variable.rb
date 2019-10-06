@@ -6,6 +6,13 @@ module WhatsOpt
   module OpenmdaoVariable
     include WhatsOpt::Variable
 
+    def init_py_value_from(val)
+      if self.is_scalar? && val =~ /\[(.*)\]/
+        val = $1
+      end
+      val
+    end
+
     def py_varname
       self.name.tr("./()", "_")
     end

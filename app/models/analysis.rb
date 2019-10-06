@@ -403,11 +403,7 @@ class Analysis < ApplicationRecord
     values = parameterization[:parameters].inject({}) {|acc, elt| acc[elt[:varname]] = elt[:value]; acc}
     vars = Variable.of_analysis(id).where(name: names, io_mode: WhatsOpt::Variable::OUT)
     vars.each do |v|
-      if v.parameter
-        v.parameter.update(init: values[v.name])
-      else
-        v.update(parameter_attributes: {init: values[v.name]})
-      end
+      v.set_init_value(values[v.name])
     end
   end
 
