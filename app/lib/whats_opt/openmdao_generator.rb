@@ -26,6 +26,7 @@ module WhatsOpt
       @whatsopt_url = whatsopt_url
       @api_key = api_key
       @remote_ip = remote_ip
+      @check_only = false
     end
 
     def check_mda_setup
@@ -34,6 +35,7 @@ module WhatsOpt
       Dir.mktmpdir("check_#{@mda.basename}_") do |dir|
         dir='/tmp' # for debug
         begin
+          @check_only = true
           _generate_code(dir, with_server: false, with_runops: false)
         rescue ServerGenerator::ThriftError => e
           ok = false
@@ -105,7 +107,7 @@ module WhatsOpt
       end
       _generate_main(gendir, opts)
       _generate_run_scripts(gendir, opts)
-      if opts[:with_server] || @mda.has_remote_discipline?(@remote_ip)
+      if opts[:with_server] || (!@check_only && @mda.has_remote_discipline?(@remote_ip))
         @sgen._generate_code(gendir, @server_host)
         @genfiles += @sgen.genfiles
       end
