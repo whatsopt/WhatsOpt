@@ -4,3 +4,13 @@ def initialize(mda):
 <%- if @mda.parameter_variables.empty? %>
     pass
 <%- end %>
+
+
+if __name__ == "__main__":
+    from tabulate import tabulate
+
+    mda = {}
+    initialize(mda)
+    headers = ["parameter", "value"]
+    data = [[k, mda[k]] for k in mda]
+    print(tabulate(data, headers))
