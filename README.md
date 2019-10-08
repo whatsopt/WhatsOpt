@@ -3,7 +3,7 @@ WhatsOpt is a web application allowing to define and share multi-disciplinary an
 
 ## Resources
 
-* [WhatsOpt paper](https://www.researchgate.net/publication/333806928_WhatsOpt_a_web_application_for_multidisciplinary_design_analysis_and_optimization): _WhatsOpt: a web application for multidisciplinary design analysis and optimization._ 
+* [WhatsOpt paper](https://www.researchgate.net/publication/333806928_WhatsOpt_a_web_application_for_multidisciplinary_design_analysis_and_optimization): WhatsOpt: a web application for multidisciplinary design analysis and optimization.
 * [WhatsOpt doc](https://github.com/OneraHub/WhatsOpt-Doc): Notebooks and examples
 * [WhatsOpt videos](https://www.youtube.com/playlist?list=PLhWP4LJdKyGcFZyvsNLU4s2_sdmTSGVeo): Tutorials
 
@@ -24,12 +24,13 @@ or if you use Bibtex, you can use the following entry:
 }
 </pre>
 
-
 # Installation
 
 ## Prerequisites
 * Ruby 2.5+ ([rvm](https://rvm.io/) recommended to manage Ruby environments)
 * Python 3.6+ ([Anaconda](https://www.anaconda.com/distribution/) recommended to manage Python environments)
+* Node.js 8.16.0+
+* Yarn 1.x+
 
 ## Setup
 WhatsOpt rails application setup:
@@ -40,9 +41,11 @@ WhatsOpt command line interface setup:
 <pre>
   pip install wop
 </pre>
-The <code>wop</code> package pulls also Python dependencies used by WhatsOpt application, specially the [OpenMDAO framework](https://openmdao.org) which is currently the execution framework used by WhatsOpt.
+The <code>wop</code> package pulls also Python dependencies used by WhatsOpt application, specially the [OpenMDAO framework](https://openmdao.org) which is currently the execution framework used by WhatsOpt. See also [optional setup section](#optional-setup) for further installtion instructions.
 
 ### Development setup
+This is the typical development mode of a Rails application, it is simpler to install than a typical production server (with a full-blown web server and database engine). It will allow you to get started with WhatsOpt in your local environment.   
+
 <pre>
   cd WhatsOpt
   bundle install
@@ -63,7 +66,7 @@ You can also run the test suite with:
 ### Production setup
 Ruby on Rails ecosystem allows various options for application server configuration and deployment. Refer to related Ruby on Rails documentation to know your deployment options.
 
-The guide lines summarized below are related to the deployment of WhatsOpt on [Onera server](https://ether.onera.fr/whatsopt) and the code present . It relies on:
+The guide lines summarized below are related to the deployment of WhatsOpt on [ONERA server](https://ether.onera.fr/whatsopt). It relies on:
 * Apache Server
 * Passenger (aka module for rails)
 * MySQL
@@ -92,3 +95,9 @@ To get additional features you need to install the following Python packages:
 <pre>
   pip install smt==0.3.4 salib==1.3.3 thrift==0.11.0
 </pre>
+
+## Contact
+
+WhatsOpt was created by Rémi Lafage in the context of internal research projects at [ONERA, the French Aerospace Lab](https://www.onera.fr/en). 
+
+Contact: remi [dot] lafage [at] onera [dot] fr
