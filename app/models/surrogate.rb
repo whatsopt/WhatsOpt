@@ -1,7 +1,8 @@
-require 'whats_opt/surrogate_server/surrogate_store_types'
+# frozen_string_literal: true
+
+require "whats_opt/surrogate_server/surrogate_store_types"
 
 class Surrogate < ApplicationRecord
-
   SURROGATE_MAP = {
     KRIGING: WhatsOpt::SurrogateServer::SurrogateKind::KRIGING,
     KPLS: WhatsOpt::SurrogateServer::SurrogateKind::KPLS,
@@ -20,7 +21,7 @@ class Surrogate < ApplicationRecord
   validates :coord_index, presence: true
 
   SURROGATES = %w(KRIGING KPLS KPLSK LS QP)
-  validates :kind, :inclusion => {:in => SURROGATES}
+  validates :kind, inclusion: { in: SURROGATES }
 
   STATUS_CREATED = "created"
   STATUS_TRAINED = "trained"
@@ -52,18 +53,18 @@ class Surrogate < ApplicationRecord
   def train(test_part: 10)
     all_xt = meta_model.training_input_values
     indices = []
-    if test_part > 1 and test_part < all_xt.size/2
+    if (test_part > 1) && (test_part < all_xt.size/2)
       indices = (0...all_xt.size).step(test_part)
-    end 
+    end
     xt, self.xvalid = _extract_at_indices(all_xt, indices)
     all_yt = meta_model.training_output_values(variable.name, coord_index)
     yt, self.yvalid = _extract_at_indices(all_yt, indices)
     surr_kind = SURROGATE_MAP[kind.to_sym]
     proxy.create_surrogate(surr_kind, xt, yt)
-    unless indices.to_a.empty? 
+    unless indices.to_a.empty?
       quality = proxy.qualify(self.xvalid, self.yvalid)
       self.r2, self.ypred = quality.r2, quality.yp
-    end 
+    end
     self.status = STATUS_TRAINED
   rescue WhatsOpt::SurrogateServer::SurrogateException => exc
     Rails.logger.warn "SURROGATE TRAIN: #{exception} on surrogate #{id}: #{exc}"
@@ -74,7 +75,7 @@ class Surrogate < ApplicationRecord
 
   def qualify(test_part: 10, force: false)
     train(test_part: test_part) if force || !qualified?
-    {name: variable.name, kind: kind, r2: self.r2, xvalid: self.xvalid, yvalid: self.yvalid, ypred: self.ypred}
+    { name: variable.name, kind: kind, r2: self.r2, xvalid: self.xvalid, yvalid: self.yvalid, ypred: self.ypred }
   end
 
   def predict(x)
@@ -90,25 +91,23 @@ class Surrogate < ApplicationRecord
   end
 
   def _extract_at_indices(vals, indices)
-    xt = vals.select.with_index {|v, i| !indices.include?(i)}
-    xv = indices.map {|i| vals[i]} 
-    return xt, xv 
+    xt = vals.select.with_index { |v, i| !indices.include?(i) }
+    xv = indices.map { |i| vals[i] }
+    return xt, xv
   end
 
   private
+    def _set_defaults
+      self.kind = SURROGATES[0] if self.kind.blank?
+      self.status = STATUS_CREATED if self.status.blank?
+      self.r2 = -1.0 if self.r2.blank?
+      self.xvalid = [] if self.xvalid.blank?
+      self.yvalid = [] if self.yvalid.blank?
+      self.ypred = [] if self.ypred.blank?
+    end
 
-  def _set_defaults
-    self.kind = SURROGATES[0] if self.kind.blank? 
-    self.status = STATUS_CREATED if self.status.blank? 
-    self.r2 = -1.0 if self.r2.blank?  
-    self.xvalid = [] if self.xvalid.blank?  
-    self.yvalid = [] if self.yvalid.blank?  
-    self.ypred = [] if self.ypred.blank?  
-  end
-
-  def _delete_surrogate
-    update(status: STATUS_DELETED)
-    proxy.destroy_surrogate
-  end
-
+    def _delete_surrogate
+      update(status: STATUS_DELETED)
+      proxy.destroy_surrogate
+    end
 end

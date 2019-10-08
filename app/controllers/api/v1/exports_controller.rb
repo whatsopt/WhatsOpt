@@ -10,14 +10,14 @@ class Api::V1::ExportsController < Api::ApiController
     with_server = !!params[:with_server]
     with_runops = !!params[:with_runops]
     with_unittests = !!params[:with_unittests]
-    #with_run = !(with_server || with_runops || with_server || (format == "openmdao_base"))
+    # with_run = !(with_server || with_runops || with_server || (format == "openmdao_base"))
     with_run=true
 
     user_agent = request.headers["User-Agent"]
     mda = Analysis.find(mda_id)
     authorize mda
     if format == "openmdao" || format == "openmdao_base"
-      ogen = WhatsOpt::OpenmdaoGenerator.new(mda, whatsopt_url: whatsopt_url, 
+      ogen = WhatsOpt::OpenmdaoGenerator.new(mda, whatsopt_url: whatsopt_url,
                                              api_key: current_user.api_key, remote_ip: request.remote_ip)
       content, filename = ogen.generate(only_base: (format == "openmdao_base"), user_agent: user_agent, with_run: with_run,
                                         with_server: with_server, with_runops: with_runops, with_unittests: with_unittests)

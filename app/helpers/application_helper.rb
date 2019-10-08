@@ -15,11 +15,10 @@ module ApplicationHelper
   end
 
   def enable_geometry_models?
-    APP_CONFIG['enable_geometry_models']
+    APP_CONFIG["enable_geometry_models"]
   end
 
   def enable_remote_operations?
-    APP_CONFIG['enable_remote_operations']
+    APP_CONFIG["enable_remote_operations"]
   end
-
 end

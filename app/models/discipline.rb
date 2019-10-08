@@ -10,7 +10,7 @@ class Discipline < ApplicationRecord
 
   self.inheritance_column = :disable_inheritance
 
-  has_many :variables, -> { includes(:parameter).order('name ASC') }, dependent: :destroy
+  has_many :variables, -> { includes(:parameter).order("name ASC") }, dependent: :destroy
   # has_many :variables, :dependent => :destroy
   has_one :analysis_discipline, dependent: :destroy
   has_one :sub_analysis, through: :analysis_discipline, source: :analysis
@@ -66,10 +66,10 @@ class Discipline < ApplicationRecord
     return true unless has_endpoint?
     endpoint_ip = Resolv.getaddress(endpoint.host)
     Rails.logger.info "Compare remote_ip=#{remote_ip} and disc endpoint=#{endpoint_ip}"
-    return endpoint_ip == remote_ip
-  rescue 
+    endpoint_ip == remote_ip
+  rescue
     Rails.logger.warn "Can not resolve '#{endpoint.host}' host name hosting #{name} discipline"
-    return true  # default to local
+    true  # default to local
   end
 
   def path

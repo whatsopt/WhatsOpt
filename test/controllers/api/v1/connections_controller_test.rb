@@ -192,11 +192,11 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should reconnect input variable as state variable properly" do
-    post api_v1_mda_disciplines_url(@mda), params: { discipline: {name: "test"} }, as: :json, headers: @auth_headers
+    post api_v1_mda_disciplines_url(@mda), params: { discipline: { name: "test" } }, as: :json, headers: @auth_headers
     disc_test = Discipline.last
     disc_geo = disciplines(:geometry)
-    post api_v1_mda_connections_url(@mda), params: { connection: {from: disc_test.id, to: disc_geo.id, names: ['x1']}} , as: :json, headers: @auth_headers
-    refute_includes @mda.parameter_variables.map(&:name), "x1"
+    post api_v1_mda_connections_url(@mda), params: { connection: { from: disc_test.id, to: disc_geo.id, names: ["x1"] } }, as: :json, headers: @auth_headers
+    assert_not_includes @mda.parameter_variables.map(&:name), "x1"
   end
 
   test "should remove related y1 connections in ancestor when removing driverish connection in sub-analysis1" do
@@ -271,5 +271,4 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
     assert_not conn_to_test.to.active
     assert_not conn_to_test.from.active
   end
-
 end

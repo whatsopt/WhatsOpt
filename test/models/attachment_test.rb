@@ -7,5 +7,4 @@ class AttachmentTest < ActiveSupport::TestCase
     attach = Attachment.new
     assert_not attach.valid?
   end
-
 end

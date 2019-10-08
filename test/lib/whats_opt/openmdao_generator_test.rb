@@ -7,7 +7,6 @@ require "mkmf" # for find_executable
 MakeMakefile::Logging.instance_variable_set(:@log, File.open(File::NULL, "w"))
 
 class OpenmdaoGeneratorTest < ActiveSupport::TestCase
-
   def thrift?
     @found ||= find_executable("thrift")
   end
@@ -48,12 +47,12 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
   test "should maintain a list of generated filepaths without server" do
     expected = ["__init__.py", "aerodynamics.py", "aerodynamics_base.py", "cicav.py",
                 "cicav_base.py", "geometry.py", "geometry_base.py", "propulsion.py", "propulsion_base.py",
-                "run_analysis.py", "run_doe.py", "run_optimization.py", "run_parameters_init.py", 
+                "run_analysis.py", "run_doe.py", "run_optimization.py", "run_parameters_init.py",
                 "run_screening.py"]
     _assert_file_generation expected, with_server: false
   end
   test "should maintain a list of generated filepaths without server and without optim" do
-    obj = disciplines(:geometry).output_variables.where(name: 'obj')
+    obj = disciplines(:geometry).output_variables.where(name: "obj")
     Connection.where(from: obj).update(role: WhatsOpt::Variable::RESPONSE_ROLE)
     expected = ["__init__.py", "aerodynamics.py", "aerodynamics_base.py", "cicav.py",
                 "cicav_base.py", "geometry.py", "geometry_base.py", "propulsion.py", "propulsion_base.py",
@@ -64,7 +63,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
   test "should maintain a list of generated filepaths with unittests" do
     expected = ["__init__.py", "aerodynamics.py", "aerodynamics_base.py", "cicav.py",
                 "cicav_base.py", "geometry.py", "geometry_base.py", "propulsion.py", "propulsion_base.py",
-                "run_analysis.py", "run_doe.py", "run_optimization.py", "run_parameters_init.py", "run_screening.py"] + 
+                "run_analysis.py", "run_doe.py", "run_optimization.py", "run_parameters_init.py", "run_screening.py"] +
                 ["test_aerodynamics.py", "test_geometry.py", "test_propulsion.py"]
     _assert_file_generation expected, with_server: false, with_unittests: true
   end
@@ -72,8 +71,8 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
   test "should maintain a list of generated filepaths with optimization" do
     expected = ["__init__.py", "aerodynamics.py", "aerodynamics_base.py", "cicav.py",
                 "cicav_base.py", "geometry.py", "geometry_base.py", "propulsion.py", "propulsion_base.py",
-                "run_analysis.py", "run_doe.py", "run_optimization.py", "run_parameters_init.py", 
-                "run_screening.py"] 
+                "run_analysis.py", "run_doe.py", "run_optimization.py", "run_parameters_init.py",
+                "run_screening.py"]
     _assert_file_generation expected, with_server: false
   end
 
@@ -191,7 +190,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
 
   test "should monitor remote mda" do
     skip_if_parallel
-    skip "Apache Thrift not installed" unless thrift? 
+    skip "Apache Thrift not installed" unless thrift?
     @ogen_remote = WhatsOpt::OpenmdaoGenerator.new(@mda, server_host: "localhost")
     lines = []
     status = @ogen_remote.monitor do |stdin, stdouterr, wait_thr|
@@ -245,7 +244,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     mda = analyses(:cicav_metamodel_analysis)
     ogen = WhatsOpt::OpenmdaoGenerator.new(mda)
     Dir.mktmpdir do |dir|
-      dir = '/tmp'
+      dir = "/tmp"
       ogen._generate_code dir
       dirpath = Pathname.new(dir)
       basenames = ogen.genfiles.map { |f| Pathname.new(f).relative_path_from(dirpath).to_s }.sort

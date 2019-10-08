@@ -57,10 +57,10 @@ class Api::V1::DisciplineControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update discipline with an endpoint" do
-    patch api_v1_discipline_url(@disc), params: { discipline: { endpoint_attributes: { host: "endymion", port: 40000} } }, as: :json, headers: @auth_headers
-    assert_response :success 
+    patch api_v1_discipline_url(@disc), params: { discipline: { endpoint_attributes: { host: "endymion", port: 40000 } } }, as: :json, headers: @auth_headers
+    assert_response :success
     endpoint = Endpoint.all.last
-    assert_equal "endymion", endpoint.host 
-    assert_equal 40000, endpoint.port 
+    assert_equal "endymion", endpoint.host
+    assert_equal 40000, endpoint.port
   end
 end

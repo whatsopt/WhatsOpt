@@ -18,7 +18,7 @@ class Operation < ApplicationRecord
   has_many :options, dependent: :destroy
   accepts_nested_attributes_for :options, reject_if: proc { |attr| attr["name"].blank? }, allow_destroy: true
 
-  has_many :cases, -> { joins(:variable).order('name ASC') }, dependent: :destroy
+  has_many :cases, -> { joins(:variable).order("name ASC") }, dependent: :destroy
   has_one :job, dependent: :destroy
 
   has_many :meta_models, dependent: :destroy
@@ -48,25 +48,25 @@ class Operation < ApplicationRecord
     operation
   end
 
-  def build_metamodel_varattrs(varnames=nil)
+  def build_metamodel_varattrs(varnames = nil)
     input_vars = analysis.design_variables
-    input_vars = input_vars.select{|v| varnames[:inputs].include?(v.name)} if (varnames && varnames[:inputs])
+    input_vars = input_vars.select { |v| varnames[:inputs].include?(v.name) } if varnames && varnames[:inputs]
     output_vars = analysis.response_variables
-    output_vars = output_vars.select{|v| varnames[:outputs].include?(v.name)} if (varnames && varnames[:outputs])
+    output_vars = output_vars.select { |v| varnames[:outputs].include?(v.name) } if varnames && varnames[:outputs]
     varattrs = {}
     cases.each do |c|
       varattr = ActiveModelSerializers::SerializableResource.new(c.variable).as_json
       if varattrs.keys.include?(c.variable.name)
         if varattr[:io_mode] == WhatsOpt::Variable::IN
           varattr[:parameter_attributes][:lower] = [c.values.min, varattr[:parameter_attributes][:lower].to_f].min.to_s
-          varattr[:parameter_attributes][:upper] = [c.values.max, varattr[:parameter_attributes][:lower].to_f].max.to_s 
+          varattr[:parameter_attributes][:upper] = [c.values.max, varattr[:parameter_attributes][:lower].to_f].max.to_s
         end
       else
         if input_vars.include?(c.variable)
           varattr[:io_mode] = WhatsOpt::Variable::IN
           varattr[:parameter_attributes] = {} unless varattr[:parameter_attributes]
           varattr[:parameter_attributes][:lower] = c.values.min.to_s if varattr[:parameter_attributes][:lower].blank?
-          varattr[:parameter_attributes][:upper] = c.values.max.to_s if varattr[:parameter_attributes][:upper].blank?  
+          varattr[:parameter_attributes][:upper] = c.values.max.to_s if varattr[:parameter_attributes][:upper].blank?
         elsif output_vars.include?(c.variable)
           varattr[:io_mode] = WhatsOpt::Variable::OUT
           varattr[:parameter_attributes] = {} unless varattr[:parameter_attributes]

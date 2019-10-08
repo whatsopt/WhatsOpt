@@ -11,7 +11,7 @@ module WhatsOpt
     class DisciplineNotFoundException < StandardError
     end
 
-    def initialize(mda, server_host: nil, driver_name: nil, driver_options: {}, 
+    def initialize(mda, server_host: nil, driver_name: nil, driver_options: {},
                    whatsopt_url: "", api_key: "", remote_ip: "")
       super(mda)
       @prefix = "openmdao"
@@ -33,7 +33,7 @@ module WhatsOpt
       ok, lines = false, []
       @mda.set_as_root_module
       Dir.mktmpdir("check_#{@mda.basename}_") do |dir|
-        dir='/tmp' # for debug
+        dir="/tmp" # for debug
         begin
           @check_only = true
           _generate_code(dir, with_server: false, with_runops: false)
@@ -68,7 +68,7 @@ module WhatsOpt
 
     def monitor(method = "analysis", sqlite_filename = nil, &block)
       Dir.mktmpdir("run_#{@mda.basename}_#{method}") do |dir|
-        dir='/tmp' # for debug
+        dir="/tmp" # for debug
         _generate_code dir, sqlite_filename: sqlite_filename
         _monitor_mda(dir, method, &block)
       end
@@ -118,7 +118,7 @@ module WhatsOpt
       @discipline = discipline  # @discipline used in template
       @dimpl = @discipline.openmdao_impl || OpenmdaoDisciplineImpl.new
       @with_server = options[:with_server]
-      if @discipline.type == 'metamodel'
+      if @discipline.type == "metamodel"
         _generate(discipline.py_filename, "openmdao_metamodel.py.erb", gendir)
       else
         _generate(discipline.py_filename, "openmdao_discipline.py.erb", gendir) unless options[:only_base]
@@ -151,7 +151,7 @@ module WhatsOpt
       if options[:with_run]
         _generate("run_parameters_init.py", "run_parameters_init.py.erb", gendir)
         _generate("run_analysis.py", "run_analysis.py.erb", gendir)
-      end    
+      end
       if @driver_name # coming from GUI running remote driver
         @driver = OpenmdaoDriverFactory.new(@driver_name, @driver_options).create_driver
         if @driver.optimization?

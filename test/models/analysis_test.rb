@@ -105,7 +105,7 @@ class AnalysisTest < ActiveSupport::TestCase
 
   test "should know if it is a metamodel" do
     mda = analyses(:outermda)
-    refute mda.is_metamodel_analysis?
+    assert_not mda.is_metamodel_analysis?
     mda = analyses(:cicav_metamodel_analysis)
     assert mda.is_metamodel_analysis?
   end

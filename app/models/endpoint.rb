@@ -5,8 +5,7 @@ class Endpoint < ApplicationRecord
   after_initialize :ensure_port
 
   private
-
-  def ensure_port
-    self.port = 31400 if self.port.blank?
-  end
+    def ensure_port
+      self.port = 31400 if self.port.blank?
+    end
 end

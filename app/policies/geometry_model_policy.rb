@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
 class GeometryModelPolicy < ApplicationPolicy
-
   def enable_geometry_models?
-    APP_CONFIG['enable_geometry_models']
+    APP_CONFIG["enable_geometry_models"]
   end
 
   def create?

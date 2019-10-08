@@ -1,5 +1,6 @@
 # frozen_string_literal: true
-require 'matrix'
+
+require "matrix"
 
 class MetaModel < ApplicationRecord
   belongs_to :discipline
@@ -11,7 +12,7 @@ class MetaModel < ApplicationRecord
 
   after_initialize :_set_defaults
 
-  MATRIX_FORMAT = 'matrix'
+  MATRIX_FORMAT = "matrix"
   FORMATS = [MATRIX_FORMAT]
 
   class PredictionError < StandardError; end
@@ -43,7 +44,7 @@ class MetaModel < ApplicationRecord
     sorted.each do |surr|
       yvals = surr.predict(values)
       if res.empty?
-        res = yvals.map{|y| [y]}
+        res = yvals.map { |y| [y] }
       else
         yvals.each_with_index do |y, i|
           res[i] << y
@@ -56,11 +57,11 @@ class MetaModel < ApplicationRecord
   end
 
   def training_input_values
-    @training_inputs ||= Matrix.columns(operation.input_cases.sort_by{|c| c.variable.name }.map(&:values)).to_a
+    @training_inputs ||= Matrix.columns(operation.input_cases.sort_by { |c| c.variable.name }.map(&:values)).to_a
   end
 
   def training_output_values(varname, coord_index)
-    operation.cases.where(coord_index: coord_index).joins(:variable).where(variables: {name: varname}).take.values
+    operation.cases.where(coord_index: coord_index).joins(:variable).where(variables: { name: varname }).take.values
   end
 
   def qualification
@@ -68,9 +69,7 @@ class MetaModel < ApplicationRecord
   end
 
 private
-
   def _set_defaults
-    self.default_surrogate_kind = Surrogate::SURROGATES[0] if self.default_surrogate_kind.blank? 
+    self.default_surrogate_kind = Surrogate::SURROGATES[0] if self.default_surrogate_kind.blank?
   end
-  
 end

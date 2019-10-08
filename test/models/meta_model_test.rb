@@ -1,7 +1,8 @@
-require 'test_helper'
+# frozen_string_literal: true
+
+require "test_helper"
 
 class MetaModelTest < ActiveSupport::TestCase
-
   setup do
     @mm = meta_models(:cicav_metamodel)
     @mm2 = meta_models(:cicav_metamodel2)
@@ -30,7 +31,7 @@ class MetaModelTest < ActiveSupport::TestCase
 
   test "should raise exception if x invalid" do
     x = [[1.0, 8], [8, 9, 10], [5, 4, 3]]
-    assert_raises MetaModel::PredictionError do 
+    assert_raises MetaModel::PredictionError do
       y = @mm.predict(x)
     end
   end
@@ -40,5 +41,4 @@ class MetaModelTest < ActiveSupport::TestCase
     assert_equal [:kind, :name, :r2, :xvalid, :ypred, :yvalid], @mm2.qualification[0].keys.sort
     assert_in_delta(1.0, @mm2.qualification[0][:r2])
   end
-
 end

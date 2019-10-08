@@ -16,7 +16,7 @@ class ActiveSupport::TestCase
   parallelize(workers: 1)
 
   def skip_if_parallel
-    skip "when run in parallel" if ENV['PARALLEL_WORKERS'].to_i > 1
+    skip "when run in parallel" if ENV["PARALLEL_WORKERS"].to_i > 1
   end
 end
 

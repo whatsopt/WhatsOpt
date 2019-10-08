@@ -58,11 +58,11 @@ class Analysis < ApplicationRecord
   end
 
   def is_metamodel_analysis?
-    !disciplines.nodes.detect {|d| !d.is_metamodel?}
+    !disciplines.nodes.detect { |d| !d.is_metamodel? }
   end
 
   def variables
-    @variables = Variable.of_analysis(id).active.order('name ASC')
+    @variables = Variable.of_analysis(id).active.order("name ASC")
   end
 
   def parameter_variables
@@ -89,7 +89,7 @@ class Analysis < ApplicationRecord
     @objs = variables.with_role(WhatsOpt::Variable::OBJECTIVE_ROLES)
   end
 
-  def has_objective? 
+  def has_objective?
     @has_obj = !objective_variables.empty?
   end
 
@@ -154,7 +154,7 @@ class Analysis < ApplicationRecord
   end
 
   def has_remote_discipline?(localhost)
-    @remote ||= all_plain_disciplines.detect {|d| !d.local?(localhost) }
+    @remote ||= all_plain_disciplines.detect { |d| !d.local?(localhost) }
   end
 
   def set_all_parameters_as_design_variables
@@ -167,6 +167,7 @@ class Analysis < ApplicationRecord
       id: id,
       name: name,
       note: note.blank? ? "":note.to_s,
+
       public: public,
       path: path.map { |a| { id: a.id, name: a.name } },
       nodes: build_nodes,
@@ -234,7 +235,7 @@ class Analysis < ApplicationRecord
   def build_metamodel_quality
     res = []
     if is_metamodel_analysis?
-      res = disciplines.inject([]) {|acc, d| acc + d.metamodel_qualification}
+      res = disciplines.inject([]) { |acc, d| acc + d.metamodel_qualification }
     end
     res
   end
@@ -251,9 +252,9 @@ class Analysis < ApplicationRecord
         existing_conn_proto = Connection.where(from_id: vout.id).take
         role = existing_conn_proto.role if existing_conn_proto
         # if existing_conn_proto
-        #   if (role == WhatsOpt::Variable::PARAMETER_ROLE && 
+        #   if (role == WhatsOpt::Variable::PARAMETER_ROLE &&
         #       existing_conn_proto.role == WhatsOpt::Variable::DESIGN_VAR_ROLE) ||
-        #      (role == WhatsOpt::Variable::RESPONSE_ROLE && 
+        #      (role == WhatsOpt::Variable::RESPONSE_ROLE &&
         #        WhatsOpt::Variable::INTEREST_OUTPUT_ROLES.include?(existing_conn_proto.role))
         #     role = existing_conn_proto.role
         #   end
@@ -384,7 +385,7 @@ class Analysis < ApplicationRecord
     driver_vars = metamodel_varattrs.map do |v|
       { name: v[:name],
         shape: v[:shape],
-        io_mode: Variable.reflect_io_mode(v[:io_mode]), 
+        io_mode: Variable.reflect_io_mode(v[:io_mode]),
         parameter_attributes: v[:parameter_attributes]
       }
     end
@@ -394,13 +395,13 @@ class Analysis < ApplicationRecord
         { name: "__DRIVER__", variables_attributes: driver_vars },
         { name: "#{ope.analysis.name.camelize}Model", type: WhatsOpt::Discipline::METAMODEL,
           variables_attributes: metamodel_varattrs }
-    ]}
+    ] }
     Analysis.new(analysis_attrs)
   end
 
   def parameterize(parameterization)
-    names = parameterization[:parameters].map {|p| p[:varname]}
-    values = parameterization[:parameters].inject({}) {|acc, elt| acc[elt[:varname]] = elt[:value]; acc}
+    names = parameterization[:parameters].map { |p| p[:varname] }
+    values = parameterization[:parameters].inject({}) { |acc, elt| acc[elt[:varname]] = elt[:value]; acc }
     vars = Variable.of_analysis(id).where(name: names, io_mode: WhatsOpt::Variable::OUT)
     vars.each do |v|
       v.set_init_value(values[v.name])

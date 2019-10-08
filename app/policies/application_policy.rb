@@ -10,7 +10,7 @@ class ApplicationPolicy
 
   class Scope < Struct.new(:user, :scope)
     def enable_geometry_models?
-      APP_CONFIG['enable_geometry_models']
+      APP_CONFIG["enable_geometry_models"]
     end
     def resolve
       scope.all

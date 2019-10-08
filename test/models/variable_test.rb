@@ -71,5 +71,4 @@ class VariableTest < ActiveSupport::TestCase
     end
     assert_not Variable.find_by_name(varin.name)
   end
-
 end

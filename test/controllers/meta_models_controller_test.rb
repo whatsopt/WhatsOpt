@@ -18,7 +18,7 @@ class MetaModelsControllerTest < ActionDispatch::IntegrationTest
     assert_difference("Analysis.count", 1) do
       assert_difference("MetaModel.count", 1) do
         assert_difference("Surrogate.count", 1) do
-          post operation_meta_models_url(@ope), params: {meta_model: {kind: Surrogate::SURROGATES[1]}}
+          post operation_meta_models_url(@ope), params: { meta_model: { kind: Surrogate::SURROGATES[1] } }
         end
       end
     end
@@ -47,11 +47,10 @@ class MetaModelsControllerTest < ActionDispatch::IntegrationTest
 
   test "should take into account variables selection" do
     post operation_meta_models_url(@ope), params: {
-      meta_model: {kind: Surrogate::SURROGATES[0], variables: {inputs: ['x1'], outputs: ['obj']} }
+      meta_model: { kind: Surrogate::SURROGATES[0], variables: { inputs: ["x1"], outputs: ["obj"] } }
     }
     mda = Analysis.last
     assert_equal 1, mda.design_variables.count
     assert_equal 1, mda.response_variables.count
   end
-
 end

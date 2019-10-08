@@ -3,7 +3,6 @@
 require "test_helper"
 
 class VariableTest < ActiveSupport::TestCase
-
   test "should get attributes from cases attributes" do
     cases = [{ "varname": "x1", "coord_index": -1, "values": [10, 20, 30] },
              { "varname": "obj", "coord_index": 0, "values": [40, 50, 60] },

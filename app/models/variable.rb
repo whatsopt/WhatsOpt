@@ -73,7 +73,7 @@ class Variable < ApplicationRecord
     if self.parameter
       self.parameter.update(init: val)
     else
-      self.update(parameter_attributes: {init: val})
+      self.update(parameter_attributes: { init: val })
     end
   end
 

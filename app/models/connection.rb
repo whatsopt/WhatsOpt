@@ -59,7 +59,7 @@ class Connection < ApplicationRecord
       conn = Connection.where(from_id: vout.id, to_id: vin.id).first_or_create!
       # downgrade the role if needed
       role = conn.role
-      if !conn.from.discipline.is_driver? and !conn.to.discipline.is_driver?
+      if !conn.from.discipline.is_driver? && !conn.to.discipline.is_driver?
         conn.update(role: WhatsOpt::Variable::STATE_VAR_ROLE)
       end
       conn

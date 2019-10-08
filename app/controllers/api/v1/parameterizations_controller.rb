@@ -13,7 +13,7 @@ class Api::V1::ParameterizationsController < Api::ApiController
     def set_analysis
       @mda = Analysis.find(params[:mda_id])
       authorize @mda
-      @mda.parameterize(parameterization_params) 
+      @mda.parameterize(parameterization_params)
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.

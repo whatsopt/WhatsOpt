@@ -25,9 +25,9 @@ class Api::V1::MetaModelsController < Api::ApiController
 
   # PATCH /api/v1/meta_models/1
   def update
-    if (params[:meta_model][:format] == MetaModel::MATRIX_FORMAT)
+    if params[:meta_model][:format] == MetaModel::MATRIX_FORMAT
       responses = @meta_model.predict params[:meta_model][:values]  # strong params do not work on nested arrays
-      json_response({ responses: responses })
+      json_response(responses: responses)
     else
       json_response({ message: "Format not valid. Should be in #{MetaModel::FORMATS}, "\
                                "but found #{params[:meta_model][:format]}" }, :bad_request)
@@ -42,6 +42,6 @@ class Api::V1::MetaModelsController < Api::ApiController
     end
 
     def metamodel_params
-      params.require(:meta_model).permit(:format, {:values => {}})
+      params.require(:meta_model).permit(:format, values: {})
     end
 end

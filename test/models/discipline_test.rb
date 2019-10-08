@@ -30,7 +30,7 @@ class DisciplineTest < ActiveSupport::TestCase
   test "can have an endpoint" do
     disc = Discipline.new(name: "NewDisc")
     assert_difference("Endpoint.count") do
-      disc.update!(endpoint_attributes: {host: "test", port: 30000})
+      disc.update!(endpoint_attributes: { host: "test", port: 30000 })
     end
   end
 end

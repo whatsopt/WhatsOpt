@@ -1,8 +1,9 @@
-require 'test_helper'
-require 'whats_opt/surrogate_server/surrogate_store_types'
+# frozen_string_literal: true
+
+require "test_helper"
+require "whats_opt/surrogate_server/surrogate_store_types"
 
 class SurrogateProxyTest < ActiveSupport::TestCase
-
   def setup
     @surr_proxy = WhatsOpt::SurrogateProxy.new
   end
@@ -19,8 +20,8 @@ class SurrogateProxyTest < ActiveSupport::TestCase
     surr_kind = WhatsOpt::SurrogateServer::SurrogateKind::KRIGING
     @surr_proxy.create_surrogate(surr_kind, xt, yt)
     values = @surr_proxy.predict_values([[1.0], [2.5]])
-    assert_in_delta(1.0, values[0]) 
-    assert_in_delta(0.983, values[1]) 
+    assert_in_delta(1.0, values[0])
+    assert_in_delta(0.983, values[1])
     @surr_proxy.destroy_surrogate
   end
 
@@ -34,29 +35,28 @@ class SurrogateProxyTest < ActiveSupport::TestCase
     @surr_proxy.create_surrogate(surr_kind, xt, yt)
     values = @surr_proxy.predict_values([[1.0], [2.5]])
     q = @surr_proxy.qualify(xv, yv)
-    assert_in_delta(1.0, q.r2) 
-    assert_in_delta(0.0, q.yp[0]) 
-    assert_in_delta(1.5, q.yp[1]) 
-    assert_in_delta(1.0, q.yp[2]) 
+    assert_in_delta(1.0, q.r2)
+    assert_in_delta(0.0, q.yp[0])
+    assert_in_delta(1.5, q.yp[1])
+    assert_in_delta(1.0, q.yp[2])
     @surr_proxy.destroy_surrogate
-  end 
+  end
 
   test "should check server presence" do
     skip_if_parallel
     assert @surr_proxy.server_available?
   end
 
-  test "should check server absence" do 
+  test "should check server absence" do
     skip_if_parallel
     teardown
-    refute @surr_proxy.server_available?
+    assert_not @surr_proxy.server_available?
   end
 
-  test "should not start server" do 
+  test "should not start server" do
     teardown
-    refute @surr_proxy.server_available?
+    assert_not @surr_proxy.server_available?
     @surr_proxy = WhatsOpt::SurrogateProxy.new(server_start: false)
-    refute @surr_proxy.server_available?
+    assert_not @surr_proxy.server_available?
   end
-
 end
