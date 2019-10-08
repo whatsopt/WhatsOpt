@@ -53,7 +53,7 @@ class MetaModel < ApplicationRecord
     end
     res
   rescue => e
-    raise PredictionError.new("Cannot make prediction for '#{values}'")
+    raise PredictionError.new("Cannot make prediction for #{values}, error: #{e}")
   end
 
   def training_input_values

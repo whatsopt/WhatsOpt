@@ -33,7 +33,7 @@ class SurrogateProxyTest < ActiveSupport::TestCase
     yv = [0.0, 1.5, 1.0]
     surr_kind = WhatsOpt::SurrogateServer::SurrogateKind::KRIGING
     @surr_proxy.create_surrogate(surr_kind, xt, yt)
-    values = @surr_proxy.predict_values([[1.0], [2.5]])
+    @surr_proxy.predict_values([[1.0], [2.5]])
     q = @surr_proxy.qualify(xv, yv)
     assert_in_delta(1.0, q.r2)
     assert_in_delta(0.0, q.yp[0])

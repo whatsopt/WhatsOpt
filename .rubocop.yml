@@ -2,5 +2,13 @@ inherit_gem:
   rubocop-rails_config:
     - config/rails.yml
 
+inherit_mode:
+  merge:
+    - Exclude
+
+AllCops:
+  Exclude:
+    - 'app/lib/whats_opt/surrogate_server/*.rb'
+
 Layout/IndentationConsistency:
   EnforcedStyle: indented_internal_methods

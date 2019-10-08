@@ -41,7 +41,7 @@ class MetaModelsControllerTest < ActionDispatch::IntegrationTest
     surr = Surrogate.last
     assert_equal surr, mm.surrogates.first
     assert_equal mm.default_surrogate_kind, surr.kind
-    assert_equal -1, surr.coord_index  # obj is a scalar
+    assert_equal(-1, surr.coord_index)  # obj is a scalar
     assert_equal @user, mm.discipline.analysis.owner
   end
 

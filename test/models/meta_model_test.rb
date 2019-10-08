@@ -32,7 +32,7 @@ class MetaModelTest < ActiveSupport::TestCase
   test "should raise exception if x invalid" do
     x = [[1.0, 8], [8, 9, 10], [5, 4, 3]]
     assert_raises MetaModel::PredictionError do
-      y = @mm.predict(x)
+      @mm.predict(x)
     end
   end
 
