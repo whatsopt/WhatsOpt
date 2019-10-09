@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <cmdows>
   <header>
-    <creator>rlafage</creator>
+    <creator>username</creator>
     <description>MDA_Example</description>
     <timestamp>2017-12-16T21:39:04+00:00</timestamp>
     <fileVersion>1.0</fileVersion>
@@ -16,7 +16,7 @@
         <version>undefined</version>
         <label>Disc1</label>
         <inputs>
-		  <input>
+          <input>
             <parameterUID>/cpacs/vehicles[@uID="AGILE_DC1_vehicleID"]/materials/material[@uID="aluminium2024"]/k11</parameterUID>
           </input>
           <input>

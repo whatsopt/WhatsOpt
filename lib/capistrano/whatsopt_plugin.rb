@@ -15,7 +15,7 @@ module Capistrano
             appname = fetch(:appname)
             dlvdir = fetch(:dlvdir)
             system("cd ~/workspace/WhatsOpt; rake whatsopt:delivery:pack[#{version}]")
-            system("scp #{dlvdir}/whatsopt-#{version}.tar.gz rlafage@ether:/home/rlafage/DELIVERY/")
+            system("scp #{dlvdir}/whatsopt-#{version}.tar.gz #{ENV['WHATSOPT_DEPLOY_USER']}@#{ENV['WHATSOPT_INTERNET_SERVER']}:#{ENV['WHATSOPT_INTERNET_DELIVERY_DIR']}")
             execute :mkdir, "-p", release_path
             execute :tar, "-xzpf", "#{dlvdir}/#{appname}.tar.gz", "-C", release_path
           end

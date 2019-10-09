@@ -14,7 +14,7 @@ namespace :whatsopt do
         puts "Packing WhatsOpt #{tag}..."
       end
       basename   = "whatsopt-#{tag}"
-      repository = "ssh://rlafage@endymion/d/designlab/gitrepos/WhatsOpt.git"
+      repository = "#{ENV['WHATSOPT_REPOSITORY']}"
       sh "rm -rf #{EXPORT}"
       sh "rm -f #{DLVDIR}/#{basename}.tar.gz"
       sh "git clone --recursive #{repository} #{EXPORT}/#{tag} --branch #{tag}"

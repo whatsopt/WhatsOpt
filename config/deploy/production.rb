@@ -4,18 +4,18 @@ if ENV['WHATSOPT_INTERNET']
   set :version, "master"
   set :appname, "whatsopt-#{fetch(:version)}"
   set :dlvdir, "~/DELIVERY"
-  set :repository, "/home/rlafage/DELIVERY/#{fetch(:appname)}"
-  set :server, "ether"
+  set :repository, "#{ENV['WHATSOPT_INTERNET_DELIVERY_DIR']}/#{fetch(:appname)}"
+  set :server, ENV['WHATSOPT_INTERNET_SERVER']
 else
-  set :server, "selene"
+  set :server, ENV['WHATSOPT_INTRANET_SERVER']
 end
 
-set :deploy_to, "/dtis-app/whatsopt"
+set :deploy_to, "#{ENV['WHATSOPT_DEPLOY_DIR']}"
 set :rvm_ruby_version, "ruby-2.5.3@whatsopt"
-server fetch(:server), user: 'rlafage', roles: %w{app web db}, primary: true
+server fetch(:server), user: "#{ENV['WHATSOPT_DEPLOY_USER']}", roles: %w{app web db}, primary: true
 
 set :passenger_restart_with_touch, true
 
-role :app, "rlafage@#{fetch(:server)}"
-role :web, "rlafage@#{fetch(:server)}"
-role :db,  "rlafage@#{fetch(:server)}"
+role :app, "#{ENV['WHATSOPT_DEPLOY_USER']}@#{fetch(:server)}"
+role :web, "#{ENV['WHATSOPT_DEPLOY_USER']}@#{fetch(:server)}"
+role :db,  "#{ENV['WHATSOPT_DEPLOY_USER']}@#{fetch(:server)}"
