@@ -84,7 +84,7 @@ gem "jquery-rails"
 gem "jquery-ui-rails"
 
 # Authentication/Authorization
-gem "devise"
+gem "devise", ">=4.7.1"
 gem "devise_ldap_authenticatable"
 gem "rolify"
 gem "pundit"

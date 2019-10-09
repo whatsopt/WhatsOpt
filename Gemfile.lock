@@ -121,7 +121,7 @@ GEM
     crass (1.0.4)
     data-confirm-modal (1.6.2)
       railties (>= 3.0)
-    devise (4.7.0)
+    devise (4.7.1)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
       railties (>= 4.1.0)
@@ -130,7 +130,7 @@ GEM
     devise_ldap_authenticatable (0.8.6)
       devise (>= 3.4.1)
       net-ldap (>= 0.16.0)
-    erubi (1.8.0)
+    erubi (1.9.0)
     execjs (2.7.0)
     faraday (0.15.4)
       multipart-post (>= 1.2, < 3)
@@ -157,7 +157,7 @@ GEM
       guard-compat (~> 1.2)
       minitest (>= 3.0)
     highline (2.0.2)
-    i18n (1.6.0)
+    i18n (1.7.0)
       concurrent-ruby (~> 1.0)
     image_processing (1.9.3)
       mini_magick (>= 4.9.5, < 5)
@@ -177,7 +177,7 @@ GEM
       rb-fsevent (~> 0.9, >= 0.9.4)
       rb-inotify (~> 0.9, >= 0.9.7)
       ruby_dep (~> 1.2)
-    loofah (2.2.3)
+    loofah (2.3.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
     lumberjack (1.0.13)
@@ -193,7 +193,7 @@ GEM
     mini_magick (4.9.5)
     mini_mime (1.0.2)
     mini_portile2 (2.4.0)
-    minitest (5.11.3)
+    minitest (5.12.2)
     msgpack (1.3.1)
     msgpack (1.3.1-java)
     msgpack (1.3.1-x64-mingw32)
@@ -278,8 +278,8 @@ GEM
     rails-dom-testing (2.0.3)
       activesupport (>= 4.2.0)
       nokogiri (>= 1.6)
-    rails-html-sanitizer (1.2.0)
-      loofah (~> 2.2, >= 2.2.2)
+    rails-html-sanitizer (1.3.0)
+      loofah (~> 2.3)
     railties (6.0.0)
       actionpack (= 6.0.0)
       activesupport (= 6.0.0)
@@ -408,7 +408,7 @@ GEM
     websocket-extensions (0.1.4)
     xpath (3.2.0)
       nokogiri (~> 1.8)
-    zeitwerk (2.1.10)
+    zeitwerk (2.2.0)
 
 PLATFORMS
   java
@@ -432,7 +432,7 @@ DEPENDENCIES
   capybara
   concurrent-ruby
   data-confirm-modal
-  devise
+  devise (>= 4.7.1)
   devise_ldap_authenticatable
   font_awesome5_rails
   guard
