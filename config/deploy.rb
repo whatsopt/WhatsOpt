@@ -2,7 +2,7 @@ lock '~>3.11.0'
 
 set :application, 'WhatsOpt' # config valid only for current version of Capistrano
 
-set :repo_url, 'ssh://rlafage@endymion/d/designlab/gitrepos/WhatsOpt.git'
+set :repo_url, "#{ENV['WHATSOPT_REPOSITORY']}"
 
 set :branch, :master
 set :keep_releases, 5
