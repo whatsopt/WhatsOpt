@@ -1,8 +1,9 @@
 # WhatsOpt
-WhatsOpt is a web application allowing to define and share multi-disciplinary analyses in terms of disciplines and data exchange. From that high-level definition, users can generate source code skeleton required to plug the actual implementation of their disciplines and get an actual executable model of the concept under study. WhatsOpt allows to generate code to run numerical methods such as sensitivity analysis, design of experiments, metamodel construction and optimizations.
+WhatsOpt is a Ruby on Rails web application allowing to define and share multi-disciplinary analyses in terms of disciplines and data exchange. It was developed to support overall vehicle design activities at ONERA. 
+
+From this high-level modeling, users can generate source code skeleton required to plug the actual implementation of their disciplines and get an actual executable model of the vehicle concept under study. Users can also generate code to run numerical methods such as sensitivity analysis, design of experiments, metamodel construction and optimizations.
 
 ## User resources
-
 * [WhatsOpt paper](https://www.researchgate.net/publication/333806928_WhatsOpt_a_web_application_for_multidisciplinary_design_analysis_and_optimization): WhatsOpt: a web application for multidisciplinary design analysis and optimization.
 * [WhatsOpt doc](https://github.com/OneraHub/WhatsOpt-Doc): Notebooks and examples
 * [WhatsOpt videos](https://www.youtube.com/playlist?list=PLhWP4LJdKyGcFZyvsNLU4s2_sdmTSGVeo): Tutorials
@@ -96,7 +97,6 @@ then the deployment is one command line away:
 </pre>
 
 ## Contributing
-
 > Disclaimer: WhatsOpt is still in an early stage as an open source project. Hopefully code and documentation will improve over time to help you get over the hurdles of development environment installation and allow proper contributions to the project.  
 
 Any feedback, questions, bug report or code contribution is welcome. 
