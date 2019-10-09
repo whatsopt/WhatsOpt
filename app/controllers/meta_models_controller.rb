@@ -4,8 +4,8 @@ class MetaModelsController < ApplicationController
   # POST /operations/{operation_id}/meta_models
   def create
     ope = Operation.find(params[:operation_id])
-    authorize ope
     mda = Analysis.build_metamodel_analysis(ope, meta_model_params[:variables])
+    authorize mda
     if mda.save
       mda.set_all_parameters_as_design_variables
       mda.set_owner(current_user)
