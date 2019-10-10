@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/OneraHub/WhatsOpt.svg?branch=master)](https://travis-ci.org/OneraHub/WhatsOpt)
 
-# WhatsOpt ![WhatsOpt](https://github.com/OneraHub/WhatsOpt/blob/master/app/assets/images/LogoWhatsOptv1.0_64x64.png) 
+# WhatsOpt [![WhatsOpt](https://github.com/OneraHub/WhatsOpt/blob/master/app/assets/images/favicon-32.png)](https://github.com/OneraHub/WhatsOpt)
 WhatsOpt is a Ruby on Rails web application allowing to define and share multi-disciplinary analyses in terms of disciplines and data exchange. It was developed to support overall vehicle design activities at ONERA. 
 
 From this high-level modeling, users can generate source code skeleton required to plug the actual implementation of their disciplines and get an actual executable model of the vehicle concept under study. Users can also generate code to run numerical methods such as sensitivity analysis, design of experiments, metamodel construction and optimizations.
