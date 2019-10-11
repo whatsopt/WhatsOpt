@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Solver < ActiveRecord::Base
-  has_many :openmdao_analysis_impl
+  has_one :openmdao_analysis_impl
 
   after_initialize :set_defaults
 
@@ -11,6 +11,10 @@ class Solver < ActiveRecord::Base
 
   def reckless?
     name == "RecklessNonlinearBlockGS"
+  end
+
+  def self.build_copy(solver)
+    solver.dup
   end
 
   private

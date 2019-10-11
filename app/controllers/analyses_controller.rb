@@ -28,9 +28,14 @@ class AnalysesController < ApplicationController
     if params[:cancel_button]
       redirect_to mdas_url, notice: "Analysis creation cancelled."
     else
-      @mda = Analysis.new(mda_params)
+      if params[:mda_id]
+        @orig_mda = Analysis.find(params[:mda_id])
+        @mda = Analysis.build_copy(@orig_mda)
+      else
+        @mda = Analysis.new(mda_params)
+      end
       authorize @mda
-      if @mda.save
+      if @mda.save(validate: !params[:mda_id])
         current_user.add_role(:owner, @mda)
         current_user.save
         if @mda.disciplines.nodes.empty?
@@ -38,6 +43,8 @@ class AnalysesController < ApplicationController
         else
           redirect_to mda_url(@mda), notice: "Analysis #{@mda.name} was successfully created."
         end
+      elsif params[:mda_id]
+        redirect_to mda_url(Analysis.find(params[:mda_id])), error: "Something went wrong while copying #{@orig_mda.name}."
       else
         @import = params[:import]
         render :new

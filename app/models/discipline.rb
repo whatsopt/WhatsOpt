@@ -118,6 +118,19 @@ class Discipline < ApplicationRecord
     new_sub_analysis
   end
 
+  def self.build_copy(disc)
+    disc_copy = disc.dup
+    disc.variables.each do |var|
+      disc_copy.variables << Variable.build_copy(var)
+    end
+    if disc.has_sub_analysis?
+      sub_analysis = Analysis.build_copy(disc.sub_analysis)
+      sub_analysis.save!(validate: false)
+      disc_copy.build_analysis_discipline(analysis: sub_analysis) 
+    end
+    disc_copy
+  end
+
   def metamodel_qualification
     meta_model&.qualification.nil? ? [] : meta_model.qualification
   end

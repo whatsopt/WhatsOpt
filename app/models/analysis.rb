@@ -251,14 +251,6 @@ class Analysis < ApplicationRecord
         role = WhatsOpt::Variable::RESPONSE_ROLE if vin.discipline.is_driver?
         existing_conn_proto = Connection.where(from_id: vout.id).take
         role = existing_conn_proto.role if existing_conn_proto
-        # if existing_conn_proto
-        #   if (role == WhatsOpt::Variable::PARAMETER_ROLE &&
-        #       existing_conn_proto.role == WhatsOpt::Variable::DESIGN_VAR_ROLE) ||
-        #      (role == WhatsOpt::Variable::RESPONSE_ROLE &&
-        #        WhatsOpt::Variable::INTEREST_OUTPUT_ROLES.include?(existing_conn_proto.role))
-        #     role = existing_conn_proto.role
-        #   end
-        # end
         Connection.where(from_id: vout.id, to_id: vin.id).first_or_create!(role: role)
       end
     end
@@ -377,6 +369,18 @@ class Analysis < ApplicationRecord
         { name: name + "Model", variables_attributes: disc_vars }
       ]
     )
+  end
+
+  def self.build_copy(mda)
+    mda_copy = mda.dup
+    mda_copy.parent = nil
+    mda.disciplines.each do |disc|
+      disc_copy = Discipline.build_copy(disc)
+      disc_copy.type = WhatsOpt::Discipline::DISCIPLINE if disc.type == WhatsOpt::Discipline::METAMODEL
+      mda_copy.disciplines << disc_copy
+    end
+    mda_copy.openmdao_impl = OpenmdaoAnalysisImpl.build_copy(mda.openmdao_impl)
+    mda_copy
   end
 
   def self.build_metamodel_analysis(ope, varnames)
