@@ -39,9 +39,8 @@ class Variable < ApplicationRecord
 
   validates :name, format: { with: /\A[a-zA-Z][\-:_a-zA-Z0-9]*\z/, message: "%{value} is not a valid variable name" }
   validates :name, :io_mode, :type, :shape, presence: true, allow_blank: false
-  validates :name, uniqueness: { scope: %i[discipline io_mode], message: "should be unique per discipline and io mode." }
-  validates :name, uniqueness: { scope: [:discipline], message: "should be unique per discipline." }
-  validate  :shape_is_well_formed
+  validates :name, uniqueness: { scope: [:discipline], message: "should be unique per discipline. #{}" }
+  validate :shape_is_well_formed
 
   scope :numeric, -> { where.not(type: STRING_T) }
   scope :active, -> { where(active: true) }
@@ -49,7 +48,7 @@ class Variable < ApplicationRecord
   scope :outputs, -> { where(io_mode: OUT) }
 
   scope :of_analysis, ->(analysis_id) { joins(discipline: :analysis).where(analyses: { id: analysis_id }) }
-  scope :of_discipline, ->(discipline_id) { joins(discipline: { id: discipline_id }) }
+  scope :of_discipline, ->(discipline_id) { where(discipline: discipline_id ) }
   scope :with_role, ->(role) { joins(:outgoing_connections).where(connections: { role: role }).uniq }
 
   after_initialize :set_defaults, unless: :persisted?
@@ -119,6 +118,10 @@ class Variable < ApplicationRecord
     newvar
   end
 
+  def self.build_copy(var)
+    var.copy
+  end
+
   private
     def set_defaults
       self.io_mode = DEFAULT_IOMODE if io_mode.blank?
@@ -132,6 +135,12 @@ class Variable < ApplicationRecord
       dim
     rescue BadShapeAttributeError => e
       errors.add(:shape, e.message)
+    end
+
+    def name_uniqueness
+      if Variable.where(discipline_id: discipline_id, name: name).count > 0
+        errors.add(:name, "should be unique per discipline")
+      end
     end
 
     def mark_dependents_for_removal

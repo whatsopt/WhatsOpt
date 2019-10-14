@@ -45,6 +45,13 @@ class OpenmdaoAnalysisImpl < ActiveRecord::Base
     end
   end
 
+  def self.build_copy(oimpl)
+    oimpl_copy = oimpl.dup
+    oimpl_copy.nonlinear_solver = Solver.build_copy(oimpl.nonlinear_solver)
+    oimpl_copy.linear_solver = Solver.build_copy(oimpl.linear_solver)
+    oimpl_copy
+  end
+
   private
     def _ensure_default_impl
       self.parallel_group = false if parallel_group.nil?

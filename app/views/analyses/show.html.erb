@@ -5,6 +5,12 @@
   List Operations
 <% end %> 
 <% end %>
+<% if policy(@mda).create? %>
+  <%= button_to mdas_path(mda_id: @mda), method: :post, class:"btn" do |b|%>
+    <span class="fa fa-copy"></span>
+      Copy
+  <% end %>
+<% end %>
 <% if policy(@mda).edit? %>
   <%= button_to edit_mda_path(@mda), method: :get, class:"btn" do |b|%>
     <span class="fa fa-edit"></span>

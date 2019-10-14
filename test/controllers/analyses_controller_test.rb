@@ -132,4 +132,14 @@ class AnalysesControllerTest < ActionDispatch::IntegrationTest
       delete mda_url(@outermda)
     end
   end
+
+  test "should make a copy of an analysis" do
+    sign_out users(:user1)
+    sign_in users(:user2)
+    assert_difference("Analysis.count") do
+      post mdas_url, params: { mda_id: @mda.id }
+      assert_redirected_to mda_url(Analysis.last)
+    end
+  end
+
 end

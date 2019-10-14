@@ -35,6 +35,13 @@
           <% end %>
         </td>
         <td>
+          <% if policy(mda).create? %>
+            <%= link_to mdas_path(mda_id: mda), method: :post, 
+              class: "btn btn-sm", title: "Copy" do %>
+              <i class="fas fa-copy"></i> 
+            <% end %>    
+          <% end %>
+
           <% if policy(mda).update? %>
             <%= link_to edit_mda_path(mda), 
               class: "btn btn-sm", title: "Edit" do %>
@@ -43,7 +50,7 @@
           <% end %>
           
           <% if policy(mda).operate? %>      
-              <%= link_to mda_operations_url(mda), method: :post, 
+              <%= link_to mda_operations_path(mda), method: :post, 
                 class: "btn btn-sm", title: "Operate" do %>
                 <i class="fas fa-rocket"></i> 
               <% end %>    

@@ -31,4 +31,11 @@ class AnalysisDiscipline < ApplicationRecord
       outermda.save!
     end
   end
+
+  def self.build_copy(ad)
+    ad_copy = ad.dup
+    ad_copy.analysis = Analysis.build_copy(ad.analysis)
+    ad_copy
+  end
+
 end
