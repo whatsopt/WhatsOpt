@@ -172,8 +172,11 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
       @ogen._generate_code dir
       pid = spawn("#{WhatsOpt::OpenmdaoGenerator::PYTHON} #{File.join(dir, 'run_server.py')}", [:out] => "/dev/null")
       @ogen_remote = WhatsOpt::OpenmdaoGenerator.new(@mda, server_host: "localhost", driver_name: "smt_doe_lhs")
+      File.delete('cicav_doe.sqlite') if File.exists?('cicav_doe.sqlite')
       ok, log = @ogen_remote.run :doe
       assert(ok, log)
+      assert File.exists?('cicav_doe.sqlite')
+      File.delete('cicav_doe.sqlite') if File.exists?('cicav_doe.sqlite')
       Process.kill("TERM", pid)
       Process.waitpid pid
     end
