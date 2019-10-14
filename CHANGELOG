@@ -3,9 +3,9 @@
 <h3>1.3.0 (14/09/2019)</h3>
 <ul>
   <li>The user can distribute disciplines on different hosts.</li>
-  <li>Parameter initializations are in separate file 'run_parameters_init.py' 
-  to let the user make perameters study without roud trip to WhatsOpt.
-  Manually set parameters can be uploaded to WhatsOpt application 
+  <li>Parameter initialization is in a separate file 'run_parameters_init.py' 
+  to let the user make parameters study without round trip to WhatsOpt.<br/>
+  Parameters in the end can be uploaded to WhatsOpt application 
   through the command: wop upload 'run_parameters_init.py'
   </li>
   <li>The user can copy an analysis.</li>
