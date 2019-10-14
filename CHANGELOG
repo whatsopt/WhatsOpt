@@ -1,8 +1,14 @@
 <h1>CHANGELOG</h1>
 
-<h3>1.3.0 (??/??/2019)</h3>
+<h3>1.3.0 (14/09/2019)</h3>
 <ul>
   <li>The user can distribute disciplines on different hosts.</li>
+  <li>Parameter initializations are in separate file 'run_parameters_init.py' 
+  to let the user make perameters study without roud trip to WhatsOpt.
+  Manually set parameters can be uploaded to WhatsOpt application 
+  through the command: wop upload 'run_parameters_init.py'
+  </li>
+  <li>The user can copy an analysis.</li>
   <li>fix bug to take into account solvers options in run scripts.</li>
 </ul>
 
