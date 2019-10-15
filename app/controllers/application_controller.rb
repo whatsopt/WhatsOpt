@@ -7,13 +7,13 @@ class ApplicationController < ActionController::Base
 
   # Authentication
   rescue_from DeviseLdapAuthenticatable::LdapException, with: :user_not_authenticated
-  before_action :authenticate_user!
+  before_action :authenticate_user!, unless: :api_docs_controller?
 
   # Authorization
   include Pundit
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
-  after_action :verify_authorized, except: [:index], unless: :devise_controller?
-  after_action :verify_policy_scoped, only: [:index], unless: :devise_controller?
+  after_action :verify_authorized, except: [:index], unless: :no_authorization_verify?
+  after_action :verify_policy_scoped, only: [:index], unless: :no_authorization_verify?
 
   private
     def user_not_authenticated
@@ -24,5 +24,13 @@ class ApplicationController < ActionController::Base
     def user_not_authorized
       flash[:error] = "You are not authorized to perform this action."
       redirect_to root_path
+    end
+
+    def api_docs_controller?
+      controller_name == 'api_docs'
+    end
+
+    def no_authorization_verify?
+      devise_controller? || api_docs_controller?
     end
 end

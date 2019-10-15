@@ -7,15 +7,15 @@ class Api::ApiController < ActionController::Base
   # Authorization
   include Pundit
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
-  after_action :verify_authorized, except: [:index]
-  after_action :verify_policy_scoped, only: [:index]
+  after_action :verify_authorized, except: [:index], unless: :api_docs_controller? 
+  after_action :verify_policy_scoped, only: [:index], unless: :api_docs_controller? 
 
   respond_to :json
 
   # API is protected through Api Key authentication not CSRF
   protect_from_forgery with: :null_session
 
-  before_action :authenticate
+  before_action :authenticate, unless: :api_docs_controller?
 
   attr_reader :current_user
 
@@ -30,12 +30,15 @@ class Api::ApiController < ActionController::Base
       end
     end
 
-  private
     def user_not_authenticated
       json_response({ message: "Unauthenticated" }, :unauthorized)
     end
 
     def user_not_authorized
       json_response({ message: "Unauthorized" }, :unauthorized)
+    end
+
+    def api_docs_controller?
+      controller_name == 'api_docs'
     end
 end

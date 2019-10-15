@@ -2,7 +2,8 @@ Rails.application.routes.draw do
 
   devise_for :users
   resources :users, only: [:show]
-  
+  resource :api_doc, only: [:show]
+
   resources :analyses, shallow: true, as: :mdas do
     resources :operations do
       resources :meta_models, only: [:create]        
@@ -15,6 +16,7 @@ Rails.application.routes.draw do
     
   namespace :api do
     namespace :v1, defaults: { format: :json } do
+      resource :api_doc, only: [:show]
       resources :analyses, shallow: true, as: :mdas, only: [:index, :show, :create, :update] do
         resource :analysis_discipline, as: :discipline, only: [:create]
         resources :disciplines, only: [:show, :create, :update, :destroy], shallow: true do
