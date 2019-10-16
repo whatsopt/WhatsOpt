@@ -4,9 +4,26 @@ import SwaggerUI from 'swagger-ui-react'
 
 class SwaggerApiDoc extends React.Component {
 
-  render() {
-    return (<SwaggerUI url={this.props.api.apiUrl("/api_doc")} />);
+  constructor(props) {
+    super(props)
+
+    this.preAuthorize = this.preAuthorize.bind(this);
+    this.ref = React.createRef();
   }
+
+  preAuthorize() {
+    if (this.props.api.apiKey) {
+      this.ref.current.system.preauthorizeApiKey('Token', 'Token ' + this.props.api.apiKey);
+    }
+  }
+
+  render() {
+    return (<SwaggerUI ref={this.ref}
+      url={this.props.api.apiUrl("/api_doc")}
+      onComplete={this.preAuthorize}
+    />);
+  }
+
 }
 
 SwaggerApiDoc.propTypes = {
