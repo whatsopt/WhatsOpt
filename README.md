@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.org/OneraHub/WhatsOpt.svg?branch=master)](https://travis-ci.org/OneraHub/WhatsOpt)
 [![Documentation Status](https://readthedocs.org/projects/whatsopt/badge/?version=latest)](https://whatsopt.readthedocs.io/en/latest/?badge=latest)
+[![Coverage Status](https://coveralls.io/repos/github/OneraHub/WhatsOpt/badge.svg?branch=master)](https://coveralls.io/github/OneraHub/WhatsOpt?branch=master)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 
 # WhatsOpt [![WhatsOpt](https://github.com/OneraHub/WhatsOpt/blob/master/app/assets/images/favicon-32.png)](https://github.com/OneraHub/WhatsOpt)
