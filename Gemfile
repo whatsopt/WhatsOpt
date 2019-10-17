@@ -125,4 +125,5 @@ gem "image_processing", "~> 1.2"
 # Document API
 gem "swagger-blocks"
 
-
+# Compute test coverage
+gem 'coveralls', require: false

@@ -1,5 +1,10 @@
 # frozen_string_literal: true
 
+if ENV['WHATSOPT_COVERALLS']
+  require 'coveralls'
+  Coveralls.wear!('rails')
+end
+
 ENV["RAILS_ENV"] ||= "test"
 require File.expand_path("../../config/environment", __FILE__)
 require "rails/test_help"
