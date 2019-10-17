@@ -211,6 +211,12 @@ class WhatsOptApi {
       .then(callback)
       .catch(onError);
   }
+
+  getApiDocs() {
+    const path = `/api/v1/docs`;
+    axios.post(this.apiUrl(path))
+      .catch((error) => console.log(error));
+  }
 };
 
 export default WhatsOptApi;

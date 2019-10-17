@@ -121,3 +121,8 @@ gem "thrift", "0.11.0"
 
 # Actiontext image processing
 gem "image_processing", "~> 1.2"
+
+# Document API
+gem "swagger-blocks"
+
+

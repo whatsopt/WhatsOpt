@@ -24,6 +24,7 @@
     "react-table": "6.10.0",
     "riek": "^1.1.0",
     "save-svg-as-png": "^1.4.14",
+    "swagger-ui-react": "^3.24.0",
     "trix": "^1.0.0",
     "x3dom": "^1.7.2"
   },

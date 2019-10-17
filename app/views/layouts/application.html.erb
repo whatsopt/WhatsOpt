@@ -20,27 +20,31 @@
 	  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
 	    <span class="navbar-toggler-icon"></span>
 	  </button>
-	
-    <% if user_signed_in? %>
-	    <div class="collapse navbar-collapse" id="navbarNavDropdown">
-        <ul class="navbar-nav mr-auto">
+
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+      <ul class="navbar-nav mr-auto">	
+      <% if user_signed_in? %>
 		    <li class="nav-item"><%= link_to "Analyses", mdas_path, class: "nav-link" %></li>
-      <% if enable_geometry_models? %>
-        <li class="nav-item"><%= link_to "Hangar", geometry_models_path, class: "nav-link" %></li>
+        <% if enable_geometry_models? %>
+          <li class="nav-item"><%= link_to "Hangar", geometry_models_path, class: "nav-link" %></li>
+        <% end %>
       <% end %>
-        </ul>
-          <ul class="navbar-nav">
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="dropdown02" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><%= current_user.login %></a>
-              <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdown02">
-                <%= link_to "My Profile", user_path(current_user), class: "dropdown-item" %>
-                <div class="dropdown-divider"></div>
-                <%= link_to "Log Out", destroy_user_session_path, method: :delete, class: "dropdown-item" %>
-              </div>
-            </li>
-        </ul>
-	    </div>
-    <% end %>	      
+        <li class="nav-item"><%= link_to "ApiDoc", api_doc_path, class: "nav-link" %></li>
+      </ul>
+      
+      <% if user_signed_in? %>
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="dropdown02" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><%= current_user.login %></a>
+          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdown02">
+            <%= link_to "My Profile", user_path(current_user), class: "dropdown-item" %>
+            <div class="dropdown-divider"></div>
+            <%= link_to "Log Out", destroy_user_session_path, method: :delete, class: "dropdown-item" %>
+          </div>
+        </li>
+      </ul>
+      <% end %>	      
+	  </div>
   </nav>
 
   <div class="container-fluid main-container">
@@ -56,11 +60,11 @@
     <small>
       WhatsOpt, version:
       <% if user_signed_in? %>
-        <%= link_to_unless_current version, changelog_path =%>, 
+        <%= link_to_unless_current whatsopt_version, changelog_path =%>, 
         <%= deployment_info %>,
         <%= mail_to "remi.lafage@onera.fr", "contact", :encode => "hex" %>
       <% else %>
-        <%= version %>, <%= deployment_info %>
+        <%= whatsopt_version %>, <%= deployment_info %>
       <% end %>
       </small>
   </footer>

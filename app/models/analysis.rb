@@ -6,6 +6,7 @@ require "whats_opt/cmdows_mda_importer"
 require "whats_opt/openmdao_module"
 
 class Analysis < ApplicationRecord
+
   include WhatsOpt::OpenmdaoModule
   include Ownable
 
