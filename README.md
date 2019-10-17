@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/OneraHub/WhatsOpt.svg?branch=master)](https://travis-ci.org/OneraHub/WhatsOpt)
+[![Documentation Status](https://readthedocs.org/projects/whatsopt/badge/?version=latest)](https://whatsopt.readthedocs.io/en/latest/?badge=latest)
 
 # WhatsOpt [![WhatsOpt](https://github.com/OneraHub/WhatsOpt/blob/master/app/assets/images/favicon-32.png)](https://github.com/OneraHub/WhatsOpt)
 WhatsOpt is a Ruby on Rails web application allowing to define and share multi-disciplinary analyses in terms of disciplines and data exchange. It was developed to support overall vehicle design activities at ONERA. 
@@ -53,6 +54,8 @@ Though not stricly required to run WhatsOpt, some features relies also on the fo
 <pre>
   pip install smt==0.3.4 salib==1.3.3 thrift==0.11.0
 </pre>
+
+To enable server code generation, you will have to install Apache Thrift compiler as well.
 
 ### Development setup
 This is the typical development mode of a Rails application, it is simpler to install than a typical production server (with a full-blown web server and database engine). It will allow you to get started with WhatsOpt in your local environment.    
