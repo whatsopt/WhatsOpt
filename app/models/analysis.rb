@@ -7,25 +7,6 @@ require "whats_opt/openmdao_module"
 
 class Analysis < ApplicationRecord
 
-  # include Swagger::Blocks
-
-  # swagger_schema :Analysis do
-  #   key :required, [:id, :name, :public, :created_at]
-  #   property :id do
-  #     key :type, :integer
-  #     key :format, :int64
-  #   end
-  #   property :name do
-  #     key :type, :string
-  #   end
-  #   property :public do
-  #     key :type, :boolean
-  #   end
-  #   property :created_at do
-  #     key :type, :date
-  #   end
-  # end
-
   include WhatsOpt::OpenmdaoModule
   include Ownable
 

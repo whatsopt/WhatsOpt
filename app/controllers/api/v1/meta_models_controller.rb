@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 class Api::V1::MetaModelsController < Api::ApiController
+
+  include Api::V1::Concerns::Docs::MetaModelsController
+
   before_action :set_meta_model, only: [:show, :update, :destroy]
 
   # GET /api/v1/meta_models/1

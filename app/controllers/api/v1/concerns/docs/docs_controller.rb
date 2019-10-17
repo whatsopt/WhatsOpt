@@ -24,12 +24,15 @@ module Api::V1::Concerns::Docs
 
       SWAGGERED_CLASSES = [
         Api::V1::AnalysesController,
+        Api::V1::MetaModelsController,
+        Api::V1::Concerns::Docs::ErrorResponses::ErrorModel,
         Analysis,
         self
       ].freeze
 
       def show
         result = Swagger::Blocks.build_root_json(SWAGGERED_CLASSES)
+        puts result
         render json: result
       end
 
