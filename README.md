@@ -1,6 +1,8 @@
 [![Build Status](https://travis-ci.org/OneraHub/WhatsOpt.svg?branch=master)](https://travis-ci.org/OneraHub/WhatsOpt)
 [![Documentation Status](https://readthedocs.org/projects/whatsopt/badge/?version=latest)](https://whatsopt.readthedocs.io/en/latest/?badge=latest)
 [![Coverage Status](https://coveralls.io/repos/github/OneraHub/WhatsOpt/badge.svg?branch=master)](https://coveralls.io/github/OneraHub/WhatsOpt?branch=master)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/e204026d4d924271b5857f8e11dcbb0c)](https://www.codacy.com/manual/relf/WhatsOpt?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=OneraHub/WhatsOpt&amp;utm_campaign=Badge_Grade)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 
 # WhatsOpt [![WhatsOpt](https://github.com/OneraHub/WhatsOpt/blob/master/app/assets/images/favicon-32.png)](https://github.com/OneraHub/WhatsOpt)
