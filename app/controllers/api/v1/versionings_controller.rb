@@ -3,6 +3,8 @@
 class Api::V1::VersioningsController < Api::ApiController
   before_action :set_versions
 
+  WOP_RECOMMENDED_VERSION = "1.3.4"
+
   def show
     authorize :info
     json_response(@version)
@@ -13,7 +15,7 @@ class Api::V1::VersioningsController < Api::ApiController
       @version = {}
       @version[:api] = "v1"
       @version[:whatsopt] = whatsopt_version
-      @version[:wop] = wop_version
+      @version[:wop] = WOP_MINIMAL_VERSION
     end
 
     def whatsopt_version
@@ -22,13 +24,6 @@ class Api::V1::VersioningsController < Api::ApiController
     end
 
     def wop_version
-      filepath = File.join(Rails.root, "wop", "whatsopt", "__init__.py")
-      File.open(filepath).each do |line|
-        line.chomp!
-        if line =~ /^__version__\s+=\s+"(.*)"$/
-          return $1
-        end
-      end
-      nil
+      WOP_RECOMMENDED_VERSION
     end
 end
