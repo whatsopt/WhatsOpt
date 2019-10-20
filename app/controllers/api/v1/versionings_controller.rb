@@ -15,7 +15,7 @@ class Api::V1::VersioningsController < Api::ApiController
       @version = {}
       @version[:api] = "v1"
       @version[:whatsopt] = whatsopt_version
-      @version[:wop] = WOP_MINIMAL_VERSION
+      @version[:wop] = WOP_RECOMMENDED_VERSION
     end
 
     def whatsopt_version
@@ -23,7 +23,4 @@ class Api::V1::VersioningsController < Api::ApiController
       File.read(filepath).chomp
     end
 
-    def wop_version
-      WOP_RECOMMENDED_VERSION
-    end
 end
