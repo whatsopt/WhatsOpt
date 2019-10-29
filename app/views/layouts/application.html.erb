@@ -29,21 +29,40 @@
           <li class="nav-item"><%= link_to "Hangar", geometry_models_path, class: "nav-link" %></li>
         <% end %>
       <% end %>
-        <li class="nav-item"><%= link_to "ApiDoc", api_doc_path, class: "nav-link" %></li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Help</a>
+          <div  class="dropdown-menu" aria-labelledby="dropdown01">
+            <%= link_to "Doc", "https://whatsopt.readthedocs.io/en/latest/", class: "dropdown-item" %>
+            <%= link_to "ApiDoc", api_doc_path, class: "dropdown-item" %>
+            <div class="dropdown-divider"></div>
+            <%= link_to "Issues", "https://github.com/OneraHub/WhatsOpt/issues", class: "dropdown-item" %>
+          </div>
+        </li>      
       </ul>
-      
-      <% if user_signed_in? %>
+
       <ul class="navbar-nav">
+      <% if user_signed_in? %>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="dropdown02" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><%= current_user.login %></a>
           <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdown02">
             <%= link_to "My Profile", user_path(current_user), class: "dropdown-item" %>
             <div class="dropdown-divider"></div>
-            <%= link_to "Log Out", destroy_user_session_path, method: :delete, class: "dropdown-item" %>
+            <%= link_to "Sign out", destroy_user_session_path, method: :delete, class: "dropdown-item" %>
           </div>
         </li>
-      </ul>
+      <% else %>
+        <li class="nav-item">
+          <% if current_page?(user_session_path) %>
+          <%= link_to "Sign in", user_session_path, class: "nav-link disabled" %>
+          <% else %>
+          <%= link_to "Sign in", user_session_path, class: "nav-link" %>
+          <% end %> 
+        </li> 
       <% end %>	      
+      </ul>
+      <% if !user_signed_in? %>
+  
+      <% end %>
 	  </div>
   </nav>
 
