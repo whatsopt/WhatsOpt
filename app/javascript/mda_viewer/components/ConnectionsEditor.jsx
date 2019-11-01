@@ -160,11 +160,16 @@ class ConnectionsForm extends React.Component {
       labelKey: 'name',
       selectHintOnEnter: true,
     };
+    this.typeaheadRef = React.createRef();
+  }
+
+  clear() {
+    this.typeaheadRef.current.clear();
   }
 
   render() {
     const isErroneous = (this.props.connectionErrors.length > 0);
-    const selected = this.props.newConnectionName;
+    const selected = this.props.selectedConnectionNames;
     // console.log("RENDER ", selected);
     const outvars = this.props.db.getOutputVariables(this.props.filter.fr);
     // console.log("OUTPUT VARS = " + JSON.stringify(outvars));
@@ -183,13 +188,16 @@ class ConnectionsForm extends React.Component {
             id="typeahead-vars"
             {...this.state}
             isInvalid={isErroneous}
-            minLength={0}
+            minLength={1}
             placeholder="Enter variable names..."
             onChange={(selected) => {
-              this.props.onConnectionNameChange(selected, this);
+              if (selected.length) {
+                this.props.onConnectionNameChange(selected);
+              }
             }}
             options={selectable}
             selected={selected}
+            ref={this.typeaheadRef}
           />
         </div>
         <div className="form-group">
@@ -204,7 +212,7 @@ ConnectionsForm.propTypes = {
   db: PropTypes.object.isRequired,
   filter: PropTypes.object.isRequired,
   edges: PropTypes.array.isRequired,
-  newConnectionName: PropTypes.array.isRequired,
+  selectedConnectionNames: PropTypes.array.isRequired,
   connectionErrors: PropTypes.array.isRequired,
   onConnectionCreate: PropTypes.func.isRequired,
   onConnectionNameChange: PropTypes.func.isRequired,
@@ -238,7 +246,7 @@ class ConnectionsEditor extends React.Component {
         <div className="col-12">
           <ConnectionsForm db={this.props.db}
             filter={this.props.filter}
-            newConnectionName={this.props.newConnectionName}
+            selectedConnectionNames={this.props.selectedConnectionNames}
             onConnectionCreate={this.props.onConnectionCreate}
             onConnectionNameChange={this.props.onConnectionNameChange}
             connectionErrors={this.props.connectionErrors}
@@ -276,7 +284,7 @@ class ConnectionsEditor extends React.Component {
 ConnectionsEditor.propTypes = {
   db: PropTypes.object.isRequired,
   filter: PropTypes.object.isRequired,
-  newConnectionName: PropTypes.array.isRequired,
+  selectedConnectionNames: PropTypes.array.isRequired,
   connectionErrors: PropTypes.array.isRequired,
   onFilterChange: PropTypes.func.isRequired,
   onConnectionCreate: PropTypes.func.isRequired,

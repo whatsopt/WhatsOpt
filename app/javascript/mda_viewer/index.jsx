@@ -41,7 +41,7 @@ class MdaViewer extends React.Component {
       newAnalysisName: this.props.mda.name,
       newDisciplineName: '',
       analysisNote: '',
-      newConnectionName: [],
+      selectedConnectionNames: [],
       errors: [],
       implEdited: false,
       useScaling: this.db.isScaled(),
@@ -81,6 +81,7 @@ class MdaViewer extends React.Component {
 
   _validateConnectionNames(names) {
     const errors = [];
+    console.log(names);
     names.forEach((name) => {
       if (!name.match(VAR_REGEXP)) {
         if (name !== '') {
@@ -93,10 +94,11 @@ class MdaViewer extends React.Component {
   }
 
   handleConnectionNameChange(selected) {
+    console.log(selected);
     const names = selected.map((e) => e.name);
     const errors = this._validateConnectionNames(names);
     const newState = update(this.state, {
-      newConnectionName: { $set: names },
+      selectedConnectionNames: { $set: selected },
       errors: { $set: errors },
     });
     this.setState(newState);
@@ -108,12 +110,13 @@ class MdaViewer extends React.Component {
     if (this.state.errors.length > 0) {
       return;
     }
-    const names = this.state.newConnectionName;
+    const names = this.state.selectedConnectionNames.map((e) => e.name);
     const data = { from: this.state.filter.fr, to: this.state.filter.to, names: names };
     this.api.createConnection(this.props.mda.id, data,
       () => {
-        const newState = update(this.state, { newConnectionName: { $set: [] } });
+        const newState = update(this.state, { selectedConnectionNames: { $set: [] } });
         this.setState(newState);
+        console.log("NEW CONNECTION RESET");
         this.renderXdsm();
       },
       (error) => {
@@ -459,7 +462,7 @@ class MdaViewer extends React.Component {
             <div className="tab-pane fade" id="connections" role="tabpanel" aria-labelledby="connections-tab">
               <ConnectionsEditor db={db}
                 filter={this.state.filter} onFilterChange={this.handleFilterChange}
-                newConnectionName={this.state.newConnectionName}
+                selectedConnectionNames={this.state.selectedConnectionNames}
                 connectionErrors={this.state.errors}
                 onConnectionNameChange={this.handleConnectionNameChange}
                 onConnectionCreate={this.handleConnectionCreate}
