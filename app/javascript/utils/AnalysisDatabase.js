@@ -10,7 +10,7 @@ class AnalysisDatabase {
     this.outputVariables = mda.vars[this.driver.id]['in'].sort();
     this.nodes = this.mda.nodes;
     this.edges = this.mda.edges.concat(this.mda.inactive_edges);
-    this.connections = this.computeConnections(this.edges);
+    this.connections = this.computeConnections();
   }
 
   isScaled() {
@@ -157,11 +157,15 @@ class AnalysisDatabase {
     }
   }
 
+  getOutputVariables(discId) {
+    return this.mda.vars[discId]['out'].sort();
+  }
+
   _findNode(id) {
     for (var i = 0; i < this.mda.nodes.length; i++) {
       const node = this.mda.nodes[i];
       if (node.id == id) { // weak equality to deal with 1522 == "1522" transparently
-        return (i == 0) ? {id: id, name: "Driver"} : {id: node.id, name: node.name};
+        return (i == 0) ? { id: id, name: "Driver" } : { id: node.id, name: node.name };
       }
     };
     throw Error("Node id (" + id + ") unknown: " + JSON.stringify(this.mda.nodes));

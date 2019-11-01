@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Typeahead } from 'react-bootstrap-typeahead';
 
 class DisciplineSelector extends React.Component {
   constructor(props) {
@@ -14,7 +15,7 @@ class DisciplineSelector extends React.Component {
 
   render() {
     const disciplines = this.props.nodes.map((node) => {
-      const name = node.id===this.props.nodes[0].id?this.props.ulabel:node.name;
+      const name = node.id === this.props.nodes[0].id ? this.props.ulabel : node.name;
       return (<option key={node.id} value={node.id}>{name}</option>);
     });
 
@@ -47,7 +48,7 @@ class ConnectionList extends React.Component {
     const varnames = this.props.names.split(',');
     const vars = varnames.map((varname, i) => {
       const id = this.props.conn_ids[i];
-      const btn = this.props.active?"btn":"btn text-inactive";
+      const btn = this.props.active ? "btn" : "btn text-inactive";
       return (<div key={varname} className="btn-group m-1" role="group">
         <button className={btn}>{varname}</button>
         <button className="btn text-danger" onClick={(e) => this.props.onConnectionDelete(id)}>
@@ -56,7 +57,7 @@ class ConnectionList extends React.Component {
       </div>);
     });
 
-    return (<span className="mb-3">{vars}</span> );
+    return (<span className="mb-3">{vars}</span>);
   }
 }
 
@@ -72,18 +73,18 @@ class VariableList extends React.Component {
     if (a.ioMode === b.ioMode) {
       return a.name.localeCompare(b.name);
     }
-    return (a.ioMode === "in")?-1:1;
+    return (a.ioMode === "in") ? -1 : 1;
   }
 
   render() {
     const sorted = this.props.vars.sort(this.compare);
     const vars = sorted.map((v, i) => {
-      const badgeKind = "badge " + ((v.ioMode==="in")?"badge-primary":"badge-secondary");
-      const klass = v.active?"btn m-1":"btn m-1 text-inactive";
+      const badgeKind = "badge " + ((v.ioMode === "in") ? "badge-primary" : "badge-secondary");
+      const klass = v.active ? "btn m-1" : "btn m-1 text-inactive";
       return <button key={v.name} className={klass}>{v.name} <span className={badgeKind}>{v.ioMode}</span></button>;
     });
 
-    return (<span className="mb-3">{vars}</span> );
+    return (<span className="mb-3">{vars}</span>);
   }
 }
 
@@ -108,14 +109,14 @@ class ConnectionsViewer extends React.Component {
       edges.forEach((edge, i) => {
         edge.name.split(',').forEach((name, j) => {
           if (!uniqNames.includes(name)) {
-            uniqEdges.push({name: name, ioMode: (edge.to === this.props.filter.to)?"in":"out", active: edge.active});
+            uniqEdges.push({ name: name, ioMode: (edge.to === this.props.filter.to) ? "in" : "out", active: edge.active });
             uniqNames.push(name);
           }
         }, this);
       }, this);
       edges = uniqEdges;
       count = edges.length;
-      connections = ( <VariableList vars={edges} /> );
+      connections = (<VariableList vars={edges} />);
     } else {
       // Edge selected => Display connection
       title = 'Connections';
@@ -125,8 +126,8 @@ class ConnectionsViewer extends React.Component {
       }, this);
       connections = edges.map((edge, i) => {
         count += edge.name.split(',').length;
-        return ( <ConnectionList key={i} names={edge.name} active={edge.active}
-          conn_ids={edge.conn_ids} onConnectionDelete={this.props.onConnectionDelete}/> );
+        return (<ConnectionList key={i} names={edge.name} active={edge.active}
+          conn_ids={edge.conn_ids} onConnectionDelete={this.props.onConnectionDelete} />);
       });
     }
 
@@ -150,19 +151,45 @@ ConnectionsViewer.propTypes = {
 };
 
 class ConnectionsForm extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      allowNew: true,
+      newSelectionPrefix: "New variable: ",
+      multiple: true,
+      labelKey: 'name',
+      selectHintOnEnter: true,
+    };
+  }
+
   render() {
     const isErroneous = (this.props.connectionErrors.length > 0);
-    let inputClass = "form-control ml-1";
-    if (this.props.newConnectionName.length>0) {
-      inputClass += isErroneous?" is-invalid":" is-valid";
-    }
+    const selected = this.props.newConnectionName;
+    // console.log("RENDER ", selected);
+    const outvars = this.props.db.getOutputVariables(this.props.filter.fr);
+    // console.log("OUTPUT VARS = " + JSON.stringify(outvars));
+    const edges = this.props.edges.filter((edge) => {
+      return (edge.from === this.props.filter.fr) && (edge.to === this.props.filter.to);
+    }, this) || [];
+    const current = edges.map((edge) => { return edge.name.split(','); })[0] || [];
+    // console.log("CURRENT = " + JSON.stringify(current));
+    const selectable = outvars.filter((e) => !current.includes(e.name));
+    // console.log("SELECTABLE", selectable);
     return (
       <form className="form" onSubmit={this.props.onConnectionCreate} noValidate>
         <div className="form-group">
           <label htmlFor="name" className="sr-only">Name</label>
-          <input type="text" value={this.props.newConnectionName}
-            placeholder='Enter name or comma separated names...'
-            className={inputClass} id="name" onChange={this.props.onConnectionNameChange}
+          <Typeahead
+            id="typeahead-vars"
+            {...this.state}
+            isInvalid={isErroneous}
+            minLength={0}
+            placeholder="Enter variable names..."
+            onChange={(selected) => {
+              this.props.onConnectionNameChange(selected, this);
+            }}
+            options={selectable}
+            selected={selected}
           />
         </div>
         <div className="form-group">
@@ -174,7 +201,10 @@ class ConnectionsForm extends React.Component {
 }
 
 ConnectionsForm.propTypes = {
-  newConnectionName: PropTypes.string.isRequired,
+  db: PropTypes.object.isRequired,
+  filter: PropTypes.object.isRequired,
+  edges: PropTypes.array.isRequired,
+  newConnectionName: PropTypes.array.isRequired,
   connectionErrors: PropTypes.array.isRequired,
   onConnectionCreate: PropTypes.func.isRequired,
   onConnectionNameChange: PropTypes.func.isRequired,
@@ -188,13 +218,17 @@ class ConnectionsEditor extends React.Component {
   }
 
   handleFromDisciplineSelected(nodeId) {
-    this.props.onFilterChange({fr: nodeId,
-      to: this.props.filter.to || this.props.db.driver.id});
+    this.props.onFilterChange({
+      fr: nodeId,
+      to: this.props.filter.to || this.props.db.driver.id
+    });
   }
 
   handleToDisciplineSelected(nodeId) {
-    this.props.onFilterChange({to: nodeId,
-      fr: this.props.filter.fr || this.props.db.driver.id});
+    this.props.onFilterChange({
+      to: nodeId,
+      fr: this.props.filter.fr || this.props.db.driver.id
+    });
   }
 
   render() {
@@ -202,12 +236,13 @@ class ConnectionsEditor extends React.Component {
     if (this.props.filter.fr !== this.props.filter.to) {
       form = (<div className="row editor-section">
         <div className="col-12">
-          <ConnectionsForm newConnectionName={this.props.newConnectionName}
+          <ConnectionsForm db={this.props.db}
+            filter={this.props.filter}
+            newConnectionName={this.props.newConnectionName}
             onConnectionCreate={this.props.onConnectionCreate}
             onConnectionNameChange={this.props.onConnectionNameChange}
             connectionErrors={this.props.connectionErrors}
-            filter={this.props.filter}
-            edges={this.props.db.edges}/>
+            edges={this.props.db.edges} />
         </div>
       </div>);
     }
@@ -218,18 +253,18 @@ class ConnectionsEditor extends React.Component {
           <div className="col-2">
             <DisciplineSelector label="From" ulabel="Driver" nodes={this.props.db.nodes}
               selected={this.props.filter.fr}
-              onSelection={this.handleFromDisciplineSelected}/>
+              onSelection={this.handleFromDisciplineSelected} />
           </div>
           <div className="col-2">
             <DisciplineSelector label="To" ulabel="Driver" nodes={this.props.db.nodes}
               selected={this.props.filter.to}
-              onSelection={this.handleToDisciplineSelected}/>
+              onSelection={this.handleToDisciplineSelected} />
           </div>
         </div>
         <div className="row editor-section">
           <div className="col-12">
             <ConnectionsViewer filter={this.props.filter} edges={this.props.db.edges}
-              onConnectionDelete={this.props.onConnectionDelete}/>
+              onConnectionDelete={this.props.onConnectionDelete} />
           </div>
         </div>
         {form}
@@ -241,7 +276,7 @@ class ConnectionsEditor extends React.Component {
 ConnectionsEditor.propTypes = {
   db: PropTypes.object.isRequired,
   filter: PropTypes.object.isRequired,
-  newConnectionName: PropTypes.string.isRequired,
+  newConnectionName: PropTypes.array.isRequired,
   connectionErrors: PropTypes.array.isRequired,
   onFilterChange: PropTypes.func.isRequired,
   onConnectionCreate: PropTypes.func.isRequired,
