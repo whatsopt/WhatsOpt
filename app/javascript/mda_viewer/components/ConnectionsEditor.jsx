@@ -155,16 +155,11 @@ class ConnectionsForm extends React.Component {
     super(props);
     this.state = {
       allowNew: true,
-      newSelectionPrefix: "New variable: ",
+      newSelectionPrefix: "New: ",
       multiple: true,
       labelKey: 'name',
       selectHintOnEnter: true,
     };
-    this.typeaheadRef = React.createRef();
-  }
-
-  clear() {
-    this.typeaheadRef.current.clear();
   }
 
   render() {
@@ -191,13 +186,10 @@ class ConnectionsForm extends React.Component {
             minLength={1}
             placeholder="Enter variable names..."
             onChange={(selected) => {
-              if (selected.length) {
-                this.props.onConnectionNameChange(selected);
-              }
+              this.props.onConnectionNameChange(selected);
             }}
             options={selectable}
             selected={selected}
-            ref={this.typeaheadRef}
           />
         </div>
         <div className="form-group">

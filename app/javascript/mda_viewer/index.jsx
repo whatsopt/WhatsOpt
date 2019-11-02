@@ -79,27 +79,35 @@ class MdaViewer extends React.Component {
 
   // *** Connections *********************************************************
 
-  _validateConnectionNames(names) {
+  _validateConnectionNames(selected) {
+    const names = selected.map((e) => e.name);
+    const newSelected = [];
     const errors = [];
-    console.log(names);
-    names.forEach((name) => {
-      if (!name.match(VAR_REGEXP)) {
-        if (name !== '') {
-          errors.push(`Variable name '${name}' is invalid`);
-          console.log("Error: " + errors);
+    // console.log("VALID: ", names);
+    names.forEach((n, i) => {
+      const vnames = n.split(',');  // allow "var1, var2" input
+      const varnames = vnames.map((name) => { return name.trim(); });
+      // console.log(varnames);
+      varnames.forEach((name, j) => {
+        if (!name.match(VAR_REGEXP)) {
+          if (name !== '') {
+            errors.push(`Variable name '${name}' is invalid`);
+            // console.log("Error: " + errors);
+          }
         }
-      }
+        newSelected.push({ name });
+      }, this);
     }, this);
-    return errors;
+    // console.log(JSON.stringify({ selected: newSelected, errors: errors }));
+    return { selected: newSelected, errors: errors };
   }
 
   handleConnectionNameChange(selected) {
-    console.log(selected);
-    const names = selected.map((e) => e.name);
-    const errors = this._validateConnectionNames(names);
+    // console.log(selected);
+    const selection = this._validateConnectionNames(selected);
     const newState = update(this.state, {
-      selectedConnectionNames: { $set: selected },
-      errors: { $set: errors },
+      selectedConnectionNames: { $set: selection.selected },
+      errors: { $set: selection.errors },
     });
     this.setState(newState);
   }
@@ -111,12 +119,13 @@ class MdaViewer extends React.Component {
       return;
     }
     const names = this.state.selectedConnectionNames.map((e) => e.name);
+    // console.log("CREATE", names);
     const data = { from: this.state.filter.fr, to: this.state.filter.to, names: names };
     this.api.createConnection(this.props.mda.id, data,
       () => {
         const newState = update(this.state, { selectedConnectionNames: { $set: [] } });
         this.setState(newState);
-        console.log("NEW CONNECTION RESET");
+        // console.log("NEW CONNECTION RESET");
         this.renderXdsm();
       },
       (error) => {
