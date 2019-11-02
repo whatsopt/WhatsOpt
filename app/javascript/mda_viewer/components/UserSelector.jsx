@@ -35,11 +35,10 @@ class UserSelector extends React.Component {
 
   handleSearch(query) {
     this.setState({ isLoading: true });
-    this.props.onMemberSearch(query,
-      (options) => {
-        // const opts = options.map((login, i) => { return { id: i, login: login }; });
-        this.setState({ isLoading: false, options: options });
-      });
+    this.props.onMemberSearch(query, (options) => {
+      // const opts = options.map((login, i) => { return { id: i, login: login }; });
+      this.setState({ isLoading: false, options: options });
+    });
   }
 
   handleChange(selected) {

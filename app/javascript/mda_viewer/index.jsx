@@ -14,7 +14,7 @@ import VariablesEditor from 'mda_viewer/components/VariablesEditor';
 import OpenmdaoImplEditor from 'mda_viewer/components/OpenmdaoImplEditor';
 import MetaModelQualification from 'mda_viewer/components/MetaModelQualification';
 import AnalysisDatabase from '../utils/AnalysisDatabase';
-import { deepIsEqual } from '../utils/compare';
+import {deepIsEqual} from '../utils/compare';
 
 const VAR_REGEXP = /^[a-zA-Z][_a-zA-Z0-9]*$/;
 
@@ -31,7 +31,7 @@ class MdaViewer extends React.Component {
     super(props);
     this.api = this.props.api;
     const isEditing = this.props.isEditing;
-    const filter = { fr: undefined, to: undefined };
+    const filter = {fr: undefined, to: undefined};
     this.db = new AnalysisDatabase(props.mda);
     this.state = {
       filter: filter,
@@ -72,7 +72,7 @@ class MdaViewer extends React.Component {
   }
 
   handleFilterChange(filter) {
-    const newState = update(this.state, { filter: { $set: filter } });
+    const newState = update(this.state, {filter: {$set: filter}});
     this.setState(newState);
     this.xdsmViewer.setSelection(filter);
   }
@@ -85,8 +85,8 @@ class MdaViewer extends React.Component {
     const errors = [];
     // console.log("VALID: ", names);
     names.forEach((n, i) => {
-      const vnames = n.split(',');  // allow "var1, var2" input
-      const varnames = vnames.map((name) => { return name.trim(); });
+      const vnames = n.split(','); // allow "var1, var2" input
+      const varnames = vnames.map((name) => {return name.trim();});
       // console.log(varnames);
       varnames.forEach((name, j) => {
         if (!name.match(VAR_REGEXP)) {
@@ -95,19 +95,19 @@ class MdaViewer extends React.Component {
             // console.log("Error: " + errors);
           }
         }
-        newSelected.push({ name });
+        newSelected.push({name});
       }, this);
     }, this);
     // console.log(JSON.stringify({ selected: newSelected, errors: errors }));
-    return { selected: newSelected, errors: errors };
+    return {selected: newSelected, errors: errors};
   }
 
   handleConnectionNameChange(selected) {
     // console.log(selected);
     const selection = this._validateConnectionNames(selected);
     const newState = update(this.state, {
-      selectedConnectionNames: { $set: selection.selected },
-      errors: { $set: selection.errors },
+      selectedConnectionNames: {$set: selection.selected},
+      errors: {$set: selection.errors},
     });
     this.setState(newState);
   }
@@ -120,94 +120,90 @@ class MdaViewer extends React.Component {
     }
     const names = this.state.selectedConnectionNames.map((e) => e.name);
     // console.log("CREATE", names);
-    const data = { from: this.state.filter.fr, to: this.state.filter.to, names: names };
-    this.api.createConnection(this.props.mda.id, data,
-      () => {
-        const newState = update(this.state, { selectedConnectionNames: { $set: [] } });
-        this.setState(newState);
-        // console.log("NEW CONNECTION RESET");
-        this.renderXdsm();
-      },
-      (error) => {
-        const message = error.response.data.message || "Error: Creation failed";
-        const newState = update(this.state, { errors: { $set: [message] } });
-        this.setState(newState);
-      });
+    const data = {from: this.state.filter.fr, to: this.state.filter.to, names: names};
+    this.api.createConnection(this.props.mda.id, data, () => {
+      const newState = update(this.state, {selectedConnectionNames: {$set: []}});
+      this.setState(newState);
+      // console.log("NEW CONNECTION RESET");
+      this.renderXdsm();
+    }, (error) => {
+      const message = error.response.data.message || "Error: Creation failed";
+      const newState = update(this.state, {errors: {$set: [message]}});
+      this.setState(newState);
+    });
   };
 
   handleConnectionChange(connId, connAttrs) {
     // console.log('Change variable connection '+connId+ ' with '+JSON.stringify(connAttrs));
     if (connAttrs.init || connAttrs.init === "") {
-      connAttrs['parameter_attributes'] = { init: connAttrs.init };
+      connAttrs['parameter_attributes'] = {init: connAttrs.init};
     }
     if (connAttrs.lower || connAttrs.lower === "") {
-      connAttrs['parameter_attributes'] = { lower: connAttrs.lower };
+      connAttrs['parameter_attributes'] = {lower: connAttrs.lower};
     }
     if (connAttrs.upper || connAttrs.upper === "") {
-      connAttrs['parameter_attributes'] = { upper: connAttrs.upper };
+      connAttrs['parameter_attributes'] = {upper: connAttrs.upper};
     }
     delete connAttrs['init'];
     delete connAttrs['lower'];
     delete connAttrs['upper'];
     if (connAttrs.ref || connAttrs.ref === "") {
-      connAttrs['scaling_attributes'] = { ref: connAttrs.ref };
+      connAttrs['scaling_attributes'] = {ref: connAttrs.ref};
     }
     if (connAttrs.ref0 || connAttrs.ref0 === "") {
-      connAttrs['scaling_attributes'] = { ref0: connAttrs.ref0 };
+      connAttrs['scaling_attributes'] = {ref0: connAttrs.ref0};
     }
     if (connAttrs.res_ref || connAttrs.res_ref === "") {
-      connAttrs['scaling_attributes'] = { res_ref: connAttrs.res_ref };
+      connAttrs['scaling_attributes'] = {res_ref: connAttrs.res_ref};
     }
     delete connAttrs['ref'];
     delete connAttrs['ref0'];
     delete connAttrs['res_ref'];
 
     if (Object.keys(connAttrs).length !== 0) {
-      this.api.updateConnection(
-        connId, connAttrs, () => { this.renderXdsm(); },
-        (error) => {
-          const message = error.response.data.message || "Error: Update failed";
-          const newState = update(this.state, { errors: { $set: [message] } });
-          this.setState(newState);
-        });
+      this.api.updateConnection(connId, connAttrs, () => {this.renderXdsm();}, (error) => {
+        const message = error.response.data.message || "Error: Update failed";
+        const newState = update(this.state, {errors: {$set: [message]}});
+        this.setState(newState);
+      });
     }
   }
 
   handleConnectionDelete(connId) {
-    this.api.deleteConnection(connId, () => { this.renderXdsm(); });
+    this.api.deleteConnection(connId, () => {this.renderXdsm();});
   }
 
   // *** Disciplines ************************************************************
 
   handleDisciplineCreate(event) {
     event.preventDefault();
-    this.api.createDiscipline(this.props.mda.id, { name: this.state.newDisciplineName, type: 'analysis' },
-      () => {
-        const newState = update(this.state, { newDisciplineName: { $set: '' } });
-        this.setState(newState);
-        this.renderXdsm();
-      });
+    this.api.createDiscipline(this.props.mda.id, {name: this.state.newDisciplineName, type: 'analysis'},
+        () => {
+          const newState = update(this.state, {newDisciplineName: {$set: ''}});
+          this.setState(newState);
+          this.renderXdsm();
+        });
   }
 
   handleDisciplineNameChange(event) {
     event.preventDefault();
-    const newState = update(this.state, { newDisciplineName: { $set: event.target.value } });
+    const newState = update(this.state, {newDisciplineName: {$set: event.target.value}});
     this.setState(newState);
   }
 
   handleDisciplineUpdate(node, discAttrs) {
     if ('position' in discAttrs) {
       const items = reorder(this.state.mda.nodes, this.state.mda.nodes.indexOf(node), discAttrs['position']);
-      const newState = update(this.state, { mda: { nodes: { $set: items } } });
+      const newState = update(this.state, {mda: {nodes: {$set: items}}});
       this.setState(newState);
     }
-    this.api.updateDiscipline(node.id, discAttrs, () => { this.renderXdsm(); });
+    this.api.updateDiscipline(node.id, discAttrs, () => {this.renderXdsm();});
   }
 
   handleDisciplineDelete(node) {
     this.api.deleteDiscipline(node.id, () => {
       if (this.state.filter.fr === node.id || this.state.filter.to === node.id) {
-        this.handleFilterChange({ fr: undefined, to: undefined });
+        this.handleFilterChange({fr: undefined, to: undefined});
       }
       this.renderXdsm();
     });
@@ -215,21 +211,21 @@ class MdaViewer extends React.Component {
 
   handleSubAnalysisSearch(callback) {
     this.api.getSubAnalysisCandidates(
-      (response) => {
-        const options = response.data
-          .filter((analysis) => (analysis.id !== this.props.mda.id))
-          .map((analysis) => { return { id: analysis.id, label: `#${analysis.id} ${analysis.name}` }; });
-        callback(options);
-      }
+        (response) => {
+          const options = response.data
+              .filter((analysis) => (analysis.id !== this.props.mda.id))
+              .map((analysis) => {return {id: analysis.id, label: `#${analysis.id} ${analysis.name}`};});
+          callback(options);
+        }
     );
   }
   handleSubAnalysisCreate(node, selected) {
     if (selected.length) {
       this.api.createSubAnalysisDiscipline(node.id, selected[0].id,
-        (response) => {
-          console.log(response.data);
-          this.renderXdsm();
-        }
+          (response) => {
+            console.log(response.data);
+            this.renderXdsm();
+          }
       );
     }
   }
@@ -238,8 +234,8 @@ class MdaViewer extends React.Component {
   handleAnalysisNameChange(event) {
     event.preventDefault();
     const newState = update(this.state, {
-      newAnalysisName: { $set: event.target.value },
-      errors: { $set: [] },
+      newAnalysisName: {$set: event.target.value},
+      errors: {$set: []},
     });
     this.setState(newState);
     return false;
@@ -248,19 +244,19 @@ class MdaViewer extends React.Component {
   handleAnalysisNoteChange(event) {
     event.preventDefault();
     const newState = update(this.state, {
-      mda: { note: { $set: event.target.innerHTML } },
+      mda: {note: {$set: event.target.innerHTML}},
     });
     this.setState(newState);
     return false;
   }
 
   handleAnalysisPublicChange() {
-    this.api.updateAnalysis(this.props.mda.id, { public: !this.state.mda.public },
-      () => {
-        const newState = update(this.state, { mda: { public: { $set: !this.state.mda.public } } });
-        this.setState(newState);
-      },
-      (error) => { console.log(error); }
+    this.api.updateAnalysis(this.props.mda.id, {public: !this.state.mda.public},
+        () => {
+          const newState = update(this.state, {mda: {public: {$set: !this.state.mda.public}}});
+          this.setState(newState);
+        },
+        (error) => {console.log(error);}
     );
     return false;
   }
@@ -268,72 +264,72 @@ class MdaViewer extends React.Component {
   handleAnalysisMemberSearch(query, callback) {
     // TODO: query could be used to filter user on server side
     this.api.getMemberCandidates(this.props.mda.id,
-      (response) => {
-        callback(response.data);
-      }
+        (response) => {
+          callback(response.data);
+        }
     );
   }
 
   handleAnalysisMemberCreate(selected) {
     if (selected.length) {
       this.api.addMember(selected[0].id, this.props.mda.id,
-        () => {
-          const newState = update(this.state, { analysisMembers: { $push: selected } });
-          this.setState(newState);
-        }
+          () => {
+            const newState = update(this.state, {analysisMembers: {$push: selected}});
+            this.setState(newState);
+          }
       );
     }
   }
   handleAnalysisMemberDelete(user) {
     this.api.removeMember(user.id, this.props.mda.id, () => {
       const idx = this.state.analysisMembers.indexOf(user);
-      const newState = update(this.state, { analysisMembers: { $splice: [[idx, 1]] } });
+      const newState = update(this.state, {analysisMembers: {$splice: [[idx, 1]]}});
       this.setState(newState);
     });
   }
 
   handleAnalysisUpdate(event) {
     event.preventDefault();
-    this.api.updateAnalysis(this.props.mda.id, { name: this.state.newAnalysisName, note: this.state.mda.note },
-      () => {
-        this.api.getAnalysis(this.props.mda.id, false,
-          () => {
-            const newState = update(this.state, {
-              mda: {
-                name: { $set: this.state.newAnalysisName },
-                note: { $set: this.state.mda.note },
-              }
-            });
-            this.setState(newState);
-          });
-      },
-      (error) => {
-        const message = error.response.data.message || "Error: Update failed";
-        const newState = update(this.state, { errors: { $set: [message] } });
-        this.setState(newState);
-      });
+    this.api.updateAnalysis(this.props.mda.id, {name: this.state.newAnalysisName, note: this.state.mda.note},
+        () => {
+          this.api.getAnalysis(this.props.mda.id, false,
+              () => {
+                const newState = update(this.state, {
+                  mda: {
+                    name: {$set: this.state.newAnalysisName},
+                    note: {$set: this.state.mda.note},
+                  },
+                });
+                this.setState(newState);
+              });
+        },
+        (error) => {
+          const message = error.response.data.message || "Error: Update failed";
+          const newState = update(this.state, {errors: {$set: [message]}});
+          this.setState(newState);
+        });
   }
 
   renderXdsm() {
     this.api.getAnalysis(this.props.mda.id, true,
-      (response) => {
-        const newState = update(this.state,
-          {
-            mda: {
-              nodes: { $set: response.data.nodes },
-              edges: { $set: response.data.edges },
-              inactive_edges: { $set: response.data.inactive_edges },
-              vars: { $set: response.data.vars },
-            },
-          });
-        this.setState(newState);
-        const mda = { nodes: response.data.nodes, edges: response.data.edges };
-        this.xdsmViewer.update(mda);
-      });
+        (response) => {
+          const newState = update(this.state,
+              {
+                mda: {
+                  nodes: {$set: response.data.nodes},
+                  edges: {$set: response.data.edges},
+                  inactive_edges: {$set: response.data.inactive_edges},
+                  vars: {$set: response.data.vars},
+                },
+              });
+          this.setState(newState);
+          const mda = {nodes: response.data.nodes, edges: response.data.edges};
+          this.xdsmViewer.update(mda);
+        });
   }
 
   handleErrorClose(index) {
-    const newState = update(this.state, { errors: { $splice: [[index, 1]] } });
+    const newState = update(this.state, {errors: {$splice: [[index, 1]]}});
     this.setState(newState);
   }
 
@@ -341,30 +337,30 @@ class MdaViewer extends React.Component {
   handleOpenmdaoImplUpdate(openmdaoImpl) {
     delete openmdaoImpl.components['use_scaling'];
     this.api.updateOpenmdaoImpl(this.props.mda.id, openmdaoImpl,
-      () => {
-        const newState = update(this.state, {
-          implEdited: { $set: false },
-          mda: { impl: { openmdao: { $set: openmdaoImpl } } }
-        });
-        this.setState(newState);
-      }
+        () => {
+          const newState = update(this.state, {
+            implEdited: {$set: false},
+            mda: {impl: {openmdao: {$set: openmdaoImpl}}},
+          });
+          this.setState(newState);
+        }
     );
   }
   handleOpenmdaoImplChange(openmdaoImpl) {
     let newState;
     if (deepIsEqual(this.state.mda.impl.openmdao, openmdaoImpl)) {
-      newState = update(this.state, { implEdited: { $set: false } });
+      newState = update(this.state, {implEdited: {$set: false}});
     } else {
       if (this.state.mda.impl.openmdao.components.use_scaling === openmdaoImpl.components.use_scaling) {
-        newState = update(this.state, { implEdited: { $set: openmdaoImpl } });
+        newState = update(this.state, {implEdited: {$set: openmdaoImpl}});
       } else {
-        newState = update(this.state, { useScaling: { $set: openmdaoImpl.components.use_scaling } });
+        newState = update(this.state, {useScaling: {$set: openmdaoImpl.components.use_scaling}});
       }
     }
     this.setState(newState);
   }
   handleOpenmdaoImplReset() {
-    const newState = update(this.state, { implEdited: { $set: false } });
+    const newState = update(this.state, {implEdited: {$set: false}});
     this.setState(newState);
   }
 
@@ -557,13 +553,14 @@ MdaViewer.propTypes = {
   mda: PropTypes.shape({
     name: PropTypes.string,
     public: PropTypes.bool,
+    note: PropTypes.string.required,
     id: PropTypes.number,
     path: PropTypes.array,
     impl: PropTypes.shape({
       openmdao: PropTypes.object.isRequired,
       metamodel: PropTypes.shape(
-        { quality: PropTypes.array.isRequired, }
-      )
+          {quality: PropTypes.array.isRequired}
+      ),
     }),
   }),
 };

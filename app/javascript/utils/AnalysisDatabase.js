@@ -165,7 +165,7 @@ class AnalysisDatabase {
     for (var i = 0; i < this.mda.nodes.length; i++) {
       const node = this.mda.nodes[i];
       if (node.id == id) { // weak equality to deal with 1522 == "1522" transparently
-        return (i == 0) ? { id: id, name: "Driver" } : { id: node.id, name: node.name };
+        return (i == 0) ? {id: id, name: "Driver"} : {id: node.id, name: node.name};
       }
     };
     throw Error("Node id (" + id + ") unknown: " + JSON.stringify(this.mda.nodes));
