@@ -30,11 +30,12 @@ class AnalysesController < ApplicationController
     else
       if params[:mda_id]
         @orig_mda = Analysis.find(params[:mda_id])
+        authorize @orig_mda
         @mda = Analysis.build_copy(@orig_mda)
       else
         @mda = Analysis.new(mda_params)
+        authorize @mda
       end
-      authorize @mda
       if @mda.save(validate: !params[:mda_id])
         current_user.add_role(:owner, @mda)
         current_user.save
