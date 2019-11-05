@@ -41,7 +41,7 @@ class MdaViewer extends React.Component {
       newAnalysisName: this.props.mda.name,
       newDisciplineName: '',
       analysisNote: '',
-      newConnectionName: '',
+      selectedConnectionNames: [],
       errors: [],
       implEdited: false,
       useScaling: this.db.isScaled(),
@@ -79,27 +79,35 @@ class MdaViewer extends React.Component {
 
   // *** Connections *********************************************************
 
-  _validateConnectionNames(namesStr) {
-    let names = namesStr.split(',');
-    names = names.map((name) => {return name.trim();});
+  _validateConnectionNames(selected) {
+    const names = selected.map((e) => e.name);
+    const newSelected = [];
     const errors = [];
-    names.forEach((name) => {
-      if (!name.match(VAR_REGEXP)) {
-        if (name !== '') {
-          errors.push(`Variable name '${name}' is invalid`);
-          console.log("Error: " + errors);
+    // console.log("VALID: ", names);
+    names.forEach((n, i) => {
+      const vnames = n.split(','); // allow "var1, var2" input
+      const varnames = vnames.map((name) => {return name.trim();});
+      // console.log(varnames);
+      varnames.forEach((name, j) => {
+        if (!name.match(VAR_REGEXP)) {
+          if (name !== '') {
+            errors.push(`Variable name '${name}' is invalid`);
+            // console.log("Error: " + errors);
+          }
         }
-      }
+        newSelected.push({name});
+      }, this);
     }, this);
-    return errors;
+    // console.log(JSON.stringify({ selected: newSelected, errors: errors }));
+    return {selected: newSelected, errors: errors};
   }
 
-  handleConnectionNameChange(event) {
-    event.preventDefault();
-    const errors = this._validateConnectionNames(event.target.value);
+  handleConnectionNameChange(selected) {
+    // console.log(selected);
+    const selection = this._validateConnectionNames(selected);
     const newState = update(this.state, {
-      newConnectionName: {$set: event.target.value},
-      errors: {$set: errors},
+      selectedConnectionNames: {$set: selection.selected},
+      errors: {$set: selection.errors},
     });
     this.setState(newState);
   }
@@ -110,22 +118,19 @@ class MdaViewer extends React.Component {
     if (this.state.errors.length > 0) {
       return;
     }
-    let names = this.state.newConnectionName.split(',');
-    names = names.map((name) => {return name.trim();});
-    names = names.filter((name) => name !== '');
-
+    const names = this.state.selectedConnectionNames.map((e) => e.name);
+    // console.log("CREATE", names);
     const data = {from: this.state.filter.fr, to: this.state.filter.to, names: names};
-    this.api.createConnection(this.props.mda.id, data,
-        () => {
-          const newState = update(this.state, {newConnectionName: {$set: ''}});
-          this.setState(newState);
-          this.renderXdsm();
-        },
-        (error) => {
-          const message = error.response.data.message || "Error: Creation failed";
-          const newState = update(this.state, {errors: {$set: [message]}});
-          this.setState(newState);
-        });
+    this.api.createConnection(this.props.mda.id, data, () => {
+      const newState = update(this.state, {selectedConnectionNames: {$set: []}});
+      this.setState(newState);
+      // console.log("NEW CONNECTION RESET");
+      this.renderXdsm();
+    }, (error) => {
+      const message = error.response.data.message || "Error: Creation failed";
+      const newState = update(this.state, {errors: {$set: [message]}});
+      this.setState(newState);
+    });
   };
 
   handleConnectionChange(connId, connAttrs) {
@@ -156,13 +161,11 @@ class MdaViewer extends React.Component {
     delete connAttrs['res_ref'];
 
     if (Object.keys(connAttrs).length !== 0) {
-      this.api.updateConnection(
-          connId, connAttrs, () => {this.renderXdsm();},
-          (error) => {
-            const message = error.response.data.message || "Error: Update failed";
-            const newState = update(this.state, {errors: {$set: [message]}});
-            this.setState(newState);
-          });
+      this.api.updateConnection(connId, connAttrs, () => {this.renderXdsm();}, (error) => {
+        const message = error.response.data.message || "Error: Update failed";
+        const newState = update(this.state, {errors: {$set: [message]}});
+        this.setState(newState);
+      });
     }
   }
 
@@ -249,11 +252,11 @@ class MdaViewer extends React.Component {
 
   handleAnalysisPublicChange() {
     this.api.updateAnalysis(this.props.mda.id, {public: !this.state.mda.public},
-      () => {
-        const newState = update(this.state, {mda: {public: {$set: !this.state.mda.public}}});
-        this.setState(newState);
-      },
-      (error) => {console.log(error);}
+        () => {
+          const newState = update(this.state, {mda: {public: {$set: !this.state.mda.public}}});
+          this.setState(newState);
+        },
+        (error) => {console.log(error);}
     );
     return false;
   }
@@ -261,9 +264,9 @@ class MdaViewer extends React.Component {
   handleAnalysisMemberSearch(query, callback) {
     // TODO: query could be used to filter user on server side
     this.api.getMemberCandidates(this.props.mda.id,
-      (response) => {
-        callback(response.data);
-      }
+        (response) => {
+          callback(response.data);
+        }
     );
   }
 
@@ -291,9 +294,12 @@ class MdaViewer extends React.Component {
         () => {
           this.api.getAnalysis(this.props.mda.id, false,
               () => {
-                const newState = update(this.state, {mda: {name: {$set: this.state.newAnalysisName},
-                                                           note: {$set: this.state.mda.note},
-                }});
+                const newState = update(this.state, {
+                  mda: {
+                    name: {$set: this.state.newAnalysisName},
+                    note: {$set: this.state.mda.note},
+                  },
+                });
                 this.setState(newState);
               });
         },
@@ -332,8 +338,10 @@ class MdaViewer extends React.Component {
     delete openmdaoImpl.components['use_scaling'];
     this.api.updateOpenmdaoImpl(this.props.mda.id, openmdaoImpl,
         () => {
-          const newState = update(this.state, {implEdited: {$set: false},
-            mda: {impl: {openmdao: {$set: openmdaoImpl}}}});
+          const newState = update(this.state, {
+            implEdited: {$set: false},
+            mda: {impl: {openmdao: {$set: openmdaoImpl}}},
+          });
           this.setState(newState);
         }
     );
@@ -459,7 +467,7 @@ class MdaViewer extends React.Component {
             <div className="tab-pane fade" id="connections" role="tabpanel" aria-labelledby="connections-tab">
               <ConnectionsEditor db={db}
                 filter={this.state.filter} onFilterChange={this.handleFilterChange}
-                newConnectionName={this.state.newConnectionName}
+                selectedConnectionNames={this.state.selectedConnectionNames}
                 connectionErrors={this.state.errors}
                 onConnectionNameChange={this.handleConnectionNameChange}
                 onConnectionCreate={this.handleConnectionCreate}
@@ -483,18 +491,18 @@ class MdaViewer extends React.Component {
 
     let noteItem; let notePanel;
     const note = this.props.mda.note;
-    if (note && note.length>0) {
+    if (note && note.length > 0) {
       noteItem = (
         <li className="nav-item">
           <a className="nav-link" id="note-tab" href="#note"
             role="tab" aria-controls="note" data-toggle="tab" aria-selected="false">Note</a>
         </li>);
-      notePanel = (<AnalysisNotePanel note={this.props.mda.note}/>);
+      notePanel = (<AnalysisNotePanel note={this.props.mda.note} />);
     }
 
     let metaModelItem; let metaModelPanel;
     const quality = this.props.mda.impl.metamodel.quality;
-    if (quality && quality.length>0) {
+    if (quality && quality.length > 0) {
       metaModelItem = (
         <li className="nav-item">
           <a className="nav-link" id="metamodel-tab" href="#metamodel"
@@ -504,7 +512,7 @@ class MdaViewer extends React.Component {
         <div className="tab-pane fade" id="metamodel" role="tabpanel" aria-labelledby="metamodel-tab">
           <MetaModelQualification quality={this.props.mda.impl.metamodel.quality} />
         </div>
-      ); 
+      );
     }
 
     return (
@@ -545,13 +553,14 @@ MdaViewer.propTypes = {
   mda: PropTypes.shape({
     name: PropTypes.string,
     public: PropTypes.bool,
+    note: PropTypes.string.required,
     id: PropTypes.number,
     path: PropTypes.array,
     impl: PropTypes.shape({
       openmdao: PropTypes.object.isRequired,
       metamodel: PropTypes.shape(
-        {quality: PropTypes.array.isRequired, }
-      )
+          {quality: PropTypes.array.isRequired}
+      ),
     }),
   }),
 };

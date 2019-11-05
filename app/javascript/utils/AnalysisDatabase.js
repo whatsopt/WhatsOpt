@@ -10,7 +10,7 @@ class AnalysisDatabase {
     this.outputVariables = mda.vars[this.driver.id]['in'].sort();
     this.nodes = this.mda.nodes;
     this.edges = this.mda.edges.concat(this.mda.inactive_edges);
-    this.connections = this.computeConnections(this.edges);
+    this.connections = this.computeConnections();
   }
 
   isScaled() {
@@ -155,6 +155,10 @@ class AnalysisDatabase {
       console.error(error);
       return "unknown_" + id;
     }
+  }
+
+  getOutputVariables(discId) {
+    return this.mda.vars[discId]['out'].sort();
   }
 
   _findNode(id) {
