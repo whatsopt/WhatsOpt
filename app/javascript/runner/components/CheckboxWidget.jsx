@@ -34,6 +34,7 @@ function CheckboxWidget(props) {
         checked={typeof value === 'undefined' ? false : value}
         required={required}
         disabled={disabled || readonly}
+        // eslint-disable-next-line jsx-a11y/no-autofocus
         autoFocus={autofocus}
         onChange={(event) => onChange(event.target.checked)}
       />
@@ -46,19 +47,20 @@ function CheckboxWidget(props) {
 
 CheckboxWidget.defaultProps = {
   autofocus: false,
+  rawErrors: [],
 };
 
 CheckboxWidget.propTypes = {
   schema: PropTypes.object.isRequired,
   id: PropTypes.string.isRequired,
-  value: PropTypes.bool,
-  required: PropTypes.bool,
-  disabled: PropTypes.bool,
-  label: PropTypes.string,
+  value: PropTypes.bool.isRequired,
+  required: PropTypes.bool.isRequired,
+  disabled: PropTypes.bool.isRequired,
+  label: PropTypes.string.isRequired,
   rawErrors: PropTypes.arrayOf(PropTypes.string),
-  readonly: PropTypes.bool,
+  readonly: PropTypes.bool.isRequired,
   autofocus: PropTypes.bool,
-  onChange: PropTypes.func,
+  onChange: PropTypes.func.isRequired,
 };
 
 export default CheckboxWidget;

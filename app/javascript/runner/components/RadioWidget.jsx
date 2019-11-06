@@ -1,3 +1,4 @@
+/* eslint-disable react/require-default-props */
 import React from 'react';
 import PropTypes from 'prop-types';
 
@@ -31,6 +32,7 @@ function RadioWidget(props) {
             required={required}
             value={option.value}
             disabled={disabled || readonly}
+            // eslint-disable-next-line jsx-a11y/no-autofocus
             autoFocus={autofocus && i === 0}
             onChange={(_) => onChange(option.value)}
           />
@@ -60,7 +62,6 @@ RadioWidget.defaultProps = {
 
 if (process.env.NODE_ENV !== 'production') {
   RadioWidget.propTypes = {
-    schema: PropTypes.object.isRequired,
     id: PropTypes.string.isRequired,
     options: PropTypes.shape({
       enumOptions: PropTypes.array,
