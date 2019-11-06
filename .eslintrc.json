@@ -26,6 +26,8 @@
         "no-console": "off",
         "global-require": "off",
         "react/forbid-prop-types": "off",
-        "no-restricted-syntax": "off"
+        "no-restricted-syntax": "off",
+        "linebreak-style": "off",
+        "max-classes-per-file": "off"
     }
 }

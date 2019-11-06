@@ -10,68 +10,71 @@ import ScreeningScatterPlot from 'plotter/components/ScreeningScatterPlot';
 import VariableSelector from 'plotter/components/VariableSelector';
 import MetaModelManager from 'plotter/components/MetaModelManager';
 import AnalysisDatabase from '../utils/AnalysisDatabase';
-import * as caseUtils from '../utils/cases.js';
+import * as caseUtils from '../utils/cases';
 
 const PLOTS_TAB = 'plots';
 const VARIABLES_TAB = 'variables';
 const SCREENING_TAB = 'screening';
 const METAMODEL_TAB = 'metamodel';
 
-class PlotPanel extends React.Component {
+class PlotPanel extends React.PureComponent {
   render() {
+    const {
+      db, optim, cases, success, title,
+    } = this.props;
     let plotoptim = (
       <ScatterPlotMatrix
-        db={this.props.db}
-        optim={this.props.optim}
-        cases={this.props.cases}
-        success={this.props.success}
-        title={this.props.title}
+        db={db}
+        optim={optim}
+        cases={cases}
+        success={success}
+        title={title}
       />
     );
-    if (this.props.optim) {
+    if (optim) {
       plotoptim = (
         <div>
           <IterationLinePlot
-            db={this.props.db}
-            optim={this.props.optim}
-            cases={this.props.cases}
-            title={this.props.title}
+            db={db}
+            optim={optim}
+            cases={cases}
+            title={title}
           />
           <IterationRadarPlot
-            db={this.props.db}
-            optim={this.props.optim}
-            cases={this.props.cases}
-            title={this.props.title}
+            db={db}
+            optim={optim}
+            cases={cases}
+            title={title}
           />
         </div>
       );
     }
     let plotparall = (
       <ParallelCoordinates
-        db={this.props.db}
-        optim={this.props.optim}
-        cases={this.props.cases}
-        success={this.props.success}
-        title={this.props.title}
+        db={db}
+        optim={optim}
+        cases={cases}
+        success={success}
+        title={title}
         width={1200}
       />
     );
-    const inputCases = [].concat(this.props.cases.i).concat(this.props.cases.c);
-    if (inputCases.length == 2 && this.props.cases.o.length == 1) {
+    const inputCases = [].concat(cases.i).concat(cases.c);
+    if (inputCases.length == 2 && cases.o.length == 1) {
       plotparall = (
         <span>
           <ScatterSurfacePlot
             casesx={inputCases[0]}
             casesy={inputCases[1]}
-            casesz={this.props.cases.o[0]}
-            success={this.props.success}
+            casesz={cases.o[0]}
+            success={success}
           />
           <ParallelCoordinates
-            db={this.props.db}
-            optim={this.props.optim}
-            cases={this.props.cases}
-            success={this.props.success}
-            title={this.props.title}
+            db={db}
+            optim={optim}
+            cases={cases}
+            success={success}
+            title={title}
             width={600}
           />
         </span>
@@ -89,24 +92,26 @@ class PlotPanel extends React.Component {
 
 PlotPanel.propTypes = {
   db: PropTypes.object.isRequired,
-  active: PropTypes.bool.isRequired,
   optim: PropTypes.bool.isRequired,
   cases: PropTypes.object.isRequired,
   title: PropTypes.string.isRequired,
   success: PropTypes.array.isRequired,
 };
 
-class VariablePanel extends React.Component {
+class VariablePanel extends React.PureComponent {
   render() {
+    const {
+      db, optim, cases, selCases, onSelectionChange,
+    } = this.props;
     const klass = 'tab-pane fade';
     return (
       <div className={klass} id={VARIABLES_TAB} role="tabpanel" aria-labelledby="variables-tab">
         <VariableSelector
-          db={this.props.db}
-          optim={this.props.optim}
-          cases={this.props.cases}
-          selCases={this.props.selCases}
-          onSelectionChange={this.props.onSelectionChange}
+          db={db}
+          optim={optim}
+          cases={cases}
+          selCases={selCases}
+          onSelectionChange={onSelectionChange}
         />
       </div>
     );
@@ -115,11 +120,9 @@ class VariablePanel extends React.Component {
 
 VariablePanel.propTypes = {
   db: PropTypes.object.isRequired,
-  active: PropTypes.bool.isRequired,
   optim: PropTypes.bool.isRequired,
   cases: PropTypes.object.isRequired,
   selCases: PropTypes.object.isRequired,
-  success: PropTypes.array,
   onSelectionChange: PropTypes.func.isRequired,
 };
 
@@ -127,32 +130,33 @@ class ScreeningPanel extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      loading: false,
-      statusOk: false,
       sensitivity: null,
-      error: '',
     };
   }
 
   componentDidMount() {
-    this.props.api.openmdaoScreening(
-      this.props.opeId,
+    const { api, opeId } = this.props;
+    api.openmdaoScreening(
+      opeId,
       (response) => {
         console.log(response.data);
-        this.setState({ loading: false, ...response.data });
+        this.setState({ ...response.data });
       },
     );
   }
 
   render() {
     let screenings;
-    if (this.state.sensitivity) {
-      const varnames = Object.keys(this.state.sensitivity).sort();
+    const { sensitivity } = this.state;
+    if (sensitivity) {
+      const varnames = Object.keys(sensitivity).sort();
       const outs = [];
       for (const output of varnames) {
-        outs.push([output, this.state.sensitivity[output]]);
+        outs.push([output, sensitivity[output]]);
       }
-      screenings = outs.map((o) => (<ScreeningScatterPlot key={o[0]} outVarName={o[0]} saData={o[1]} />));
+      screenings = outs.map(
+        (o) => (<ScreeningScatterPlot key={o[0]} outVarName={o[0]} saData={o[1]} />),
+      );
     }
     return (
       <div className="tab-pane fade" id={SCREENING_TAB} role="tabpanel" aria-labelledby="screening-tab">
@@ -165,17 +169,9 @@ class ScreeningPanel extends React.Component {
 ScreeningPanel.propTypes = {
   opeId: PropTypes.number.isRequired,
   api: PropTypes.object.isRequired,
-  active: PropTypes.bool.isRequired,
 };
 
-class MetaModelPanel extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
-  componentDidMount() {
-  }
-
+class MetaModelPanel extends React.PureComponent {
   render() {
     const metamodel = (<MetaModelManager {...this.props} />);
     return (
@@ -194,16 +190,17 @@ MetaModelPanel.propTypes = {
     i: PropTypes.array.isRequired,
     o: PropTypes.array.isRequired,
     c: PropTypes.array.isRequired,
-  }),
+  }).isRequired,
   onMetaModelCreate: PropTypes.func.isRequired,
 };
 
 class Plotter extends React.Component {
   constructor(props) {
     super(props);
-    this.api = this.props.api;
-    this.db = new AnalysisDatabase(this.props.mda);
-    this.cases = this.props.ope.cases.sort(caseUtils.compare);
+    const { api, mda, ope } = this.props;
+    this.api = api;
+    this.db = new AnalysisDatabase(mda);
+    this.cases = ope.cases.sort(caseUtils.compare);
 
     this.inputVarCases = this.cases.filter((c) => this.db.isDesignVarCases(c));
     this.outputVarCases = this.cases.filter((c) => this.db.isOutputVarCases(c));
@@ -215,6 +212,10 @@ class Plotter extends React.Component {
     this.handleSelectionChange = this.handleSelectionChange.bind(this);
     this.handleMetaModelCreate = this.handleMetaModelCreate.bind(this);
     this.activateTab = this.activateTab.bind(this);
+  }
+
+  componentDidMount() {
+    $('#plots').tab('show');
   }
 
   initializeSelection(inputs, outputs) {
@@ -238,24 +239,24 @@ class Plotter extends React.Component {
 
   handleSelectionChange(event) {
     const { target } = event;
+    const { selection } = this.state;
     let newSelection;
     if (target.checked) {
       const selected = this.cases.find((c) => caseUtils.label(c) === target.name);
-      newSelection = update(this.state.selection, { $push: [selected] });
+      newSelection = update(selection, { $push: [selected] });
     } else {
-      const index = this.state.selection.findIndex((c) => caseUtils.label(c) === target.name);
-      newSelection = update(this.state.selection, { $splice: [[index, 1]] });
+      const index = selection.findIndex((c) => caseUtils.label(c) === target.name);
+      newSelection = update(selection, { $splice: [[index, 1]] });
     }
     this.setState({ selection: newSelection });
   }
 
-  handleMetaModelCreate(event) {
+  handleMetaModelCreate() {
     console.log('Create MetaModel... ');
-    this.props.api.createMetaModel(
-      this.props.ope.id,
-      (response) => {
-        console.log(response.data);
-      },
+    const { api, ope } = this.props;
+    api.createMetaModel(
+      ope.id,
+      (response) => { console.log(response.data); },
     );
   }
 
@@ -264,14 +265,11 @@ class Plotter extends React.Component {
     this.setState(newState);
   }
 
-  componentDidMount() {
-    $('#plots').tab('show');
-  }
-
   render() {
-    const isOptim = (this.props.ope.category === 'optimization');
-    const isScreening = (this.props.ope.category === 'screening');
-    const isDoe = (this.props.ope.category === 'doe');
+    const { api, ope, mda } = this.props;
+    const isOptim = (ope.category === 'optimization');
+    const isScreening = (ope.category === 'screening');
+    const isDoe = (ope.category === 'doe');
     const { selection } = this.state;
     const cases = { i: this.inputVarCases, o: this.outputVarCases, c: this.couplingVarCases };
     const selCases = {
@@ -286,10 +284,10 @@ class Plotter extends React.Component {
       const extremization = this.db.getObjective().isMin ? 'minimization' : 'maximization';
       details = `${objname} ${extremization}`;
     }
-    const title = `${this.props.ope.name} on ${this.props.mda.name} - ${details}`;
-
+    const title = `${ope.name} on ${mda.name} - ${details}`;
 
     let screeningItem; let screeningPanel;
+    const { activeTab } = this.state;
     if (isScreening) {
       screeningItem = (
         <li className="nav-item">
@@ -303,21 +301,21 @@ class Plotter extends React.Component {
             aria-selected="false"
             onClick={(e) => this.activateTab(e, SCREENING_TAB)}
           >
-Screening
+            Screening
           </a>
         </li>
       );
+
       screeningPanel = (
         <ScreeningPanel
-          active={this.state.activeTab === SCREENING_TAB}
+          active={activeTab === SCREENING_TAB}
           api={this.api}
-          opeId={this.props.ope.id}
+          opeId={ope.id}
         />
       );
     }
     let metaModelItem; let metaModelPanel;
     if (isDoe) {
-      const varnames = [...new Set(selection.map((v) => v.varname))];
       metaModelItem = (
         <li className="nav-item">
           <a
@@ -330,30 +328,30 @@ Screening
             aria-selected="false"
             onClick={(e) => this.activateTab(e, METAMODEL_TAB)}
           >
-MetaModel
+            MetaModel
           </a>
         </li>
       );
       metaModelPanel = (
         <MetaModelPanel
-          active={this.state.activeTab === METAMODEL_TAB}
+          active={activeTab === METAMODEL_TAB}
           api={this.api}
-          opeId={this.props.ope.id}
+          opeId={ope.id}
           selCases={selCases}
           onMetaModelCreate={this.handleMetaModelCreate}
         />
       );
     }
 
-    const exportUrl = this.api.url(`/operations/${this.props.ope.id}/exports/new`);
+    const exportUrl = this.api.url(`/operations/${ope.id}/exports/new`);
     return (
       <div>
         <h1>
-          {this.props.ope.name}
+          {ope.name}
           {' '}
-on
+          on
           {' '}
-          {this.props.mda.name}
+          {mda.name}
         </h1>
 
         <div className="btn-group mr-2  float-right" role="group">
@@ -372,7 +370,7 @@ on
               aria-selected="true"
               onClick={(e) => this.activateTab(e, 'plots')}
             >
-Plots
+              Plots
             </a>
           </li>
           {screeningItem}
@@ -388,7 +386,7 @@ Plots
               aria-selected="false"
               onClick={(e) => this.activateTab(e, 'variables')}
             >
-Variables
+              Variables
             </a>
           </li>
         </ul>
@@ -398,8 +396,8 @@ Variables
             optim={isOptim}
             cases={selCases}
             title={title}
-            active={this.state.activeTab === PLOTS_TAB}
-            success={this.props.ope.success}
+            active={activeTab === PLOTS_TAB}
+            success={ope.success}
           />
           {screeningPanel}
           {metaModelPanel}
@@ -408,7 +406,7 @@ Variables
             optim={isOptim}
             cases={cases}
             selCases={selCases}
-            active={this.state.activeTab === VARIABLES_TAB}
+            active={activeTab === VARIABLES_TAB}
             onSelectionChange={this.handleSelectionChange}
           />
         </div>
@@ -421,7 +419,7 @@ Plotter.propTypes = {
   api: PropTypes.object.isRequired,
   mda: PropTypes.shape({
     name: PropTypes.string.isRequired,
-  }),
+  }).isRequired,
   ope: PropTypes.shape({
     id: PropTypes.number.isRequired,
     name: PropTypes.string.isRequired,
@@ -429,7 +427,7 @@ Plotter.propTypes = {
     category: PropTypes.string.isRequired,
     cases: PropTypes.array.isRequired,
     success: PropTypes.array.isRequired,
-  }),
+  }).isRequired,
 };
 
 export default Plotter;

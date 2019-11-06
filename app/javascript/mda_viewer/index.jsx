@@ -221,7 +221,7 @@ class MdaViewer extends React.Component {
     this.api.getSubAnalysisCandidates(
       (response) => {
         const options = response.data
-          .filter((analysis) => (analysis.id !== mda.id))
+          .filter((analysis) => analysis.id !== mda.id)
           .map((analysis) => ({ id: analysis.id, label: `#${analysis.id} ${analysis.name}` }));
         callback(options);
       },

@@ -1,11 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-class MetaModelManager extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
+class MetaModelManager extends React.PureComponent {
   render() {
     const metamodelUrl = this.props.api.url(`/operations/${this.props.opeId}/meta_models`);
     const outputs = [...new Set(this.props.selCases.o.map((c) => c.varname))].map((name) => (
@@ -73,8 +69,7 @@ MetaModelManager.propTypes = {
     i: PropTypes.array.isRequired,
     o: PropTypes.array.isRequired,
     c: PropTypes.array.isRequired,
-  }),
-  onMetaModelCreate: PropTypes.func.isRequired,
+  }).isRequired,
 };
 
 export default MetaModelManager;
