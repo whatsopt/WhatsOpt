@@ -1,16 +1,14 @@
+/* eslint-disable max-classes-per-file */
 import React from 'react';
 import PropTypes from 'prop-types';
 import update from 'immutability-helper';
 import Form from 'react-jsonschema-form-bs4';
-import { deepIsEqual } from '../utils/compare';
+import deepIsEqual from '../utils/compare';
 
-class LogLine extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
+class LogLine extends React.PureComponent {
   render() {
-    return (<div className="listing-line">{this.props.line}</div>);
+    const { line } = this.props;
+    return (<div className="listing-line">{line}</div>);
   }
 }
 
@@ -196,21 +194,59 @@ const SCHEMA = {
 const UI_SCHEMA = {
 };
 
+function _filterFormOptions(options) {
+  const filteredOptions = {};
+  const re = new RegExp(`^${options.driver}`);
+  // eslint-disable-next-line no-restricted-syntax
+  for (const opt in options) {
+    if ({}.hasOwnProperty.call(options, opt)) {
+      if (opt === 'name' || opt === 'host' || opt === 'driver') {
+        filteredOptions[opt] = options[opt];
+      } else if (opt.match(re)) {
+        filteredOptions[opt] = options[opt];
+      }
+    }
+  }
+}
+
+
+function _toFormOptions(driver, options) {
+  const formOptions = {};
+  formOptions[driver] = options.reduce((acc, val) => {
+    switch (OPTTYPES[val.name]) {
+      case 'boolean':
+        acc[val.name] = (val.value === 'true');
+        break;
+      case 'integer':
+        acc[val.name] = parseInt(val.value);
+        break;
+      case 'number':
+        acc[val.name] = parseFloat(val.value);
+        break;
+      default:
+        acc[val.name] = val.value;
+    }
+    return acc;
+  }, {});
+  return formOptions;
+}
+
 class Runner extends React.Component {
   constructor(props) {
     super(props);
-    this.api = this.props.api;
+    const { api, ope } = this.props;
+    this.api = api;
 
-    const status = (this.props.ope.job && this.props.ope.job.status) || 'PENDING';
-    const log = (this.props.ope.job && this.props.ope.job.log) || '';
-    const logCount = (this.props.ope.job && this.props.ope.job.log_count) || 0;
+    const status = (ope.job && ope.job.status) || 'PENDING';
+    const log = (ope.job && ope.job.log) || '';
+    const logCount = (ope.job && ope.job.log_count) || 0;
 
     const formData = {
-      host: this.props.ope.host,
-      name: this.props.ope.name,
-      driver: this.props.ope.driver || 'runonce',
+      host: ope.host,
+      name: ope.name,
+      driver: ope.driver || 'runonce',
     };
-    const formOptions = this._toFormOptions(this.props.ope.driver, this.props.ope.options);
+    const formOptions = _toFormOptions(ope.driver, ope.options);
     Object.assign(formData, formOptions);
     this.opeData = {};
     Object.assign(this.opeData, formData);
@@ -218,12 +254,12 @@ class Runner extends React.Component {
     this.state = {
       schema: SCHEMA,
       formData,
-      cases: this.props.ope.cases,
+      cases: ope.cases,
       status,
       log,
       log_count: logCount,
-      startInMs: this.props.ope.job && this.props.ope.job && this.props.ope.job.start_in_ms,
-      endInMs: this.props.ope.job && this.props.ope.job && this.props.ope.job.end_in_ms,
+      startInMs: ope.job && ope.job && ope.job.start_in_ms,
+      endInMs: ope.job && ope.job && ope.job.end_in_ms,
       // setSolverOptions: false,
     };
 
@@ -236,24 +272,26 @@ class Runner extends React.Component {
   }
 
   handleRun(data) {
-    const form = this._filterFormOptions(data.formData);
+    const form = _filterFormOptions(data.formData);
     console.log(`FORM DATA = ${JSON.stringify(form)}`);
     const opeAttrs = {
       name: form.name, host: form.host, driver: form.driver, options_attributes: [],
     };
-
-    this.api.getOperation(this.props.ope.id,
+    const { ope } = this.props;
+    this.api.getOperation(ope.id,
       (response) => {
         console.log(`resp=${JSON.stringify(response.data)}`);
         const ids = response.data.options.map((opt) => opt.id);
         for (const section in form) {
           if (section === form.driver) {
             for (const opt in form[section]) {
-              const optionAttrs = { name: opt, value: data.formData[section][opt] };
-              if (ids.length) {
-                optionAttrs.id = ids.shift();
+              if ({}.hasOwnProperty.call(form[section], opt)) {
+                const optionAttrs = { name: opt, value: data.formData[section][opt] };
+                if (ids.length) {
+                  optionAttrs.id = ids.shift();
+                }
+                opeAttrs.options_attributes.push(optionAttrs);
               }
-              opeAttrs.options_attributes.push(optionAttrs);
             }
           }
         }
@@ -263,15 +301,16 @@ class Runner extends React.Component {
         this.setState(newState);
         console.log(`opeAttrs=${JSON.stringify(opeAttrs)}`);
 
-        this.api.updateOperation(this.props.ope.id, opeAttrs,
-          (response) => { this._pollOperationJob(data.formData); });
+        this.api.updateOperation(ope.id, opeAttrs,
+          () => { this._pollOperationJob(data.formData); });
       },
       (error) => { console.log(error); });
   }
 
   handleAbort() {
     console.log('ABORT');
-    this.api.killOperationJob(this.props.ope.id);
+    const { ope } = this.props;
+    this.api.killOperationJob(ope.id);
     const newState = update(this.state, { status: { $set: 'ABORTED' } });
     this.setState(newState);
   }
@@ -290,35 +329,18 @@ class Runner extends React.Component {
   handleChange(data) {
     console.log(`FORMDATA= ${JSON.stringify(data.formData)}`);
     console.log(`OPEDATA= ${JSON.stringify(this.opeData)}`);
-    console.log(`FILTERDATA= ${JSON.stringify(this._filterFormOptions(data.formData))}`);
+    console.log(`FILTERDATA= ${JSON.stringify((data.formData))}`);
     const { formData } = data;
-    // let schema = {...this.state.schema}
-    // if (formData.setSolverOptions) {
-    //   schema.properties = Object.assign(schema.properties, {
-    //     ...(SCHEMA_NONLINEAR_SOLVER.properties),
-    //     ...(SCHEMA_LINEAR_SOLVER.properties),
-    //   })
-    //   // schema.properties.nonlinear_solver.properties = {...(this.props.mda.impl.openmdao.nonlinear_solver)};
-    //   // schema.properties.nonlinear_solver.properties = {...(this.props.mda.impl.openmdao.nonlinear_solver)};
-    // } else {
-    //   schema.properties = Object.assign({},schema.properties)
-    //   delete formData.nonlinear_solver
-    //   delete schema.properties.nonlinear_solver
-    //   delete formData.linear_solver
-    //   delete schema.properties.linear_solver
-    // }
 
     let newState;
     if (deepIsEqual(formData, this.opeData)) {
       console.log('NOT CHANGED');
       newState = update(this.state, {
-        // schema: {$set: schema},
         formData: { $set: formData },
         status: { $set: this.opeStatus },
       });
     } else {
       newState = update(this.state, {
-        // schema: {$set: schema},
         formData: { $set: formData },
         status: { $set: 'PENDING' },
       });
@@ -327,7 +349,8 @@ class Runner extends React.Component {
   }
 
   _pollOperationJob(formData) {
-    this.api.pollOperationJob(this.props.ope.id,
+    const { ope } = this.props;
+    this.api.pollOperationJob(ope.id,
       (job) => {
         console.log('CHECK');
         console.log(JSON.stringify(job.status));
@@ -344,40 +367,6 @@ class Runner extends React.Component {
       (error) => {
         console.log(error);
       });
-  }
-
-  _filterFormOptions(options) {
-    const filteredOptions = {};
-    const re = new RegExp(`^${options.driver}`);
-    for (const opt in options) {
-      if (opt === 'name' || opt === 'host' || opt === 'driver') {
-        filteredOptions[opt] = options[opt];
-      } else if (opt.match(re)) {
-        filteredOptions[opt] = options[opt];
-      }
-    }
-    return filteredOptions;
-  }
-
-  _toFormOptions(driver, options) {
-    const formOptions = {};
-    formOptions[driver] = options.reduce((acc, val) => {
-      switch (OPTTYPES[val.name]) {
-        case 'boolean':
-          acc[val.name] = (val.value === 'true');
-          break;
-        case 'integer':
-          acc[val.name] = parseInt(val.value);
-          break;
-        case 'number':
-          acc[val.name] = parseFloat(val.value);
-          break;
-        default:
-          acc[val.name] = val.value;
-      }
-      return acc;
-    }, {});
-    return formOptions;
   }
 
   render() {
@@ -425,12 +414,12 @@ class Runner extends React.Component {
           <button className="btn float-right" type="submit">
             <i className="fa fa-times-circle" />
             {' '}
-Close
+            Close
           </button>
         </form>
 
         <h1>
-Operation on
+          Operation on
           {' '}
           {this.props.mda.name}
         </h1>
@@ -451,7 +440,7 @@ Operation on
                 disabled={!active}
                 onClick={this.handleAbort}
               >
-Abort
+                Abort
 
               </button>
             </div>
@@ -476,16 +465,16 @@ Abort
           </div>
           <div className="btn-group ml-2" role="group">
             <strong>Started on</strong>
-:
+            :
             {' '}
             {startTime}
           </div>
           <div className="btn-group ml-2" role="group">
             <strong>{(this.state.status === 'RUNNING') ? 'Elapsed' : 'Ended after'}</strong>
-:
+            :
             {' '}
             {elapsed}
-s
+            s
           </div>
           <div className="collapse" id="collapseListing">
             <div className="card card-block">

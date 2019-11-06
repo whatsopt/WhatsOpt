@@ -14,7 +14,7 @@ import VariablesEditor from 'mda_viewer/components/VariablesEditor';
 import OpenmdaoImplEditor from 'mda_viewer/components/OpenmdaoImplEditor';
 import MetaModelQualification from 'mda_viewer/components/MetaModelQualification';
 import AnalysisDatabase from '../utils/AnalysisDatabase';
-import { deepIsEqual } from '../utils/compare';
+import deepIsEqual from '../utils/compare';
 
 const VAR_REGEXP = /^[a-zA-Z][_a-zA-Z0-9]*$/;
 
