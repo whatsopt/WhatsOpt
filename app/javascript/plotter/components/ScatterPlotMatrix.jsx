@@ -9,10 +9,11 @@ import { COLORSCALE } from './colorscale.js';
 
 const Plot = createPlotlyComponent(Plotly);
 
-class ScatterPlotMatrix extends React.Component {
+class ScatterPlotMatrix extends React.PureComponent {
   render() {
-    const inputs = this.props.cases.i.concat(this.props.cases.c);
-    const outputs = this.props.cases.c.concat(this.props.cases.o);
+    const { cases, success, title } = this.props;
+    const inputs = cases.i.concat(cases.c);
+    const outputs = cases.c.concat(cases.o);
 
     const data = [];
     const layout = {};
@@ -21,8 +22,8 @@ class ScatterPlotMatrix extends React.Component {
     const pdh = 1.0 / nDes;
     const pdv = 1.0 / nOut;
 
-    for (let i = 0; i < nOut; i++) {
-      for (let j = 0; j < nDes; j++) {
+    for (let i = 0; i < nOut; i += 1) {
+      for (let j = 0; j < nDes; j += 1) {
         const xlabel = caseUtils.label(inputs[j]);
         const ylabel = caseUtils.label(outputs[i]);
 
@@ -39,7 +40,7 @@ class ScatterPlotMatrix extends React.Component {
         trace.yaxis = yname;
         trace.name = `${ylabel} vs ${xlabel}`;
         trace.marker = {
-          color: this.props.success,
+          color: success,
           cmin: 0,
           cmax: 1,
           colorscale: COLORSCALE,
@@ -58,7 +59,7 @@ class ScatterPlotMatrix extends React.Component {
     }
     layout.width = nDes * 250 + 100;
     layout.height = nOut * 250 + 100;
-    layout.title = this.props.title;
+    layout.title = title;
 
     return (<Plot data={data} layout={layout} />);
   }
@@ -69,8 +70,8 @@ ScatterPlotMatrix.propTypes = {
     i: PropTypes.array.isRequired,
     o: PropTypes.array.isRequired,
     c: PropTypes.array.isRequired,
-  }),
-  title: PropTypes.string,
+  }).isRequired,
+  title: PropTypes.string.isRequired,
   success: PropTypes.array.isRequired,
 };
 

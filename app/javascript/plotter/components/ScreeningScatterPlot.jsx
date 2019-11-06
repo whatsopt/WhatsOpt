@@ -6,14 +6,15 @@ import Plotly from './custom-plotly';
 
 const Plot = createPlotlyComponent(Plotly);
 
-class ScreeningScatterPlot extends React.Component {
+class ScreeningScatterPlot extends React.PureComponent {
   render() {
+    const { saData, outVarName } = this.props;
     const trace = {
-      x: this.props.saData.mu_star,
-      y: this.props.saData.sigma,
+      x: saData.mu_star,
+      y: saData.sigma,
       type: 'scatter',
       mode: 'markers+text',
-      text: this.props.saData.names,
+      text: saData.names,
       textposition: 'top center',
       marker: { size: 10 },
       cliponaxis: false,
@@ -21,7 +22,7 @@ class ScreeningScatterPlot extends React.Component {
 
     const data = [trace];
     const layout = {
-      title: `${this.props.outVarName} sensitivity`,
+      title: `${outVarName} sensitivity`,
       width: 500,
       height: 500,
       xaxis: {
@@ -46,7 +47,7 @@ ScreeningScatterPlot.propTypes = {
     mu_star: PropTypes.array.isRequired,
     sigma: PropTypes.array.isRequired,
     names: PropTypes.array.isRequired,
-  }),
+  }).isRequired,
 };
 
 export default ScreeningScatterPlot;
