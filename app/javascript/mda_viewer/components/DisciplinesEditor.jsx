@@ -12,8 +12,10 @@ class Discipline extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      discName: '', discType: DISCIPLINE,
-      discHost: '', discPort: 31400,
+      discName: '',
+      discType: DISCIPLINE,
+      discHost: '',
+      discPort: 31400,
       isEditing: false,
     };
 
@@ -31,10 +33,11 @@ class Discipline extends React.Component {
   handleDiscNameChange(event) {
     this.setState({ discName: event.target.value });
   }
+
   handleDiscHostChange(event) {
     this.setState({ discHost: event.target.value });
-
   }
+
   handleDiscPortChange(event) {
     this.setState({ discPort: event.target.value });
   }
@@ -43,7 +46,7 @@ class Discipline extends React.Component {
     const newState = {
       discName: this.props.node.name,
       discType: this.props.node.type,
-      discHost: this.props.node.endpoint ? this.props.node.endpoint.host : "",
+      discHost: this.props.node.endpoint ? this.props.node.endpoint.host : '',
       discPort: this.props.node.endpoint ? this.props.node.endpoint.port : 31400,
       isEditing: true,
     };
@@ -55,17 +58,18 @@ class Discipline extends React.Component {
   }
 
   isLocalHost(host) {
-    return (host === "" || host === "localhost" || host === "127.0.0.1");
+    return (host === '' || host === 'localhost' || host === '127.0.0.1');
   }
 
   handleUpdate(event) {
     event.preventDefault();
     this.handleCancelEdit();
     const discattrs = {
-      name: this.state.discName, type: this.state.discType,
+      name: this.state.discName,
+      type: this.state.discType,
       endpoint_attributes: { host: this.state.discHost, port: this.state.discPort },
     };
-    const endpoint = this.props.node.endpoint;
+    const { endpoint } = this.props.node;
     if (endpoint && endpoint.id) {
       const endattrs = discattrs.endpoint_attributes;
       endattrs.id = endpoint.id;
@@ -87,8 +91,8 @@ class Discipline extends React.Component {
       text: 'Really do this?',
       commit: 'Yes',
       cancel: 'No, cancel',
-      onConfirm: function () { self.props.onDisciplineDelete(self.props.node); },
-      onCancel: function () { },
+      onConfirm() { self.props.onDisciplineDelete(self.props.node); },
+      onCancel() { },
     });
   }
 
@@ -102,7 +106,7 @@ class Discipline extends React.Component {
   }
 
   handleSubAnalysisSelected(selected) {
-    console.log("Select " + JSON.stringify(selected));
+    console.log(`Select ${JSON.stringify(selected)}`);
     this.setState({ selected });
   }
 
@@ -110,7 +114,7 @@ class Discipline extends React.Component {
     if (this.state.isEditing) {
       let deploymentOrSubAnalysis;
       let selected = [];
-      const link = this.props.node.link;
+      const { link } = this.props.node;
       if (link) {
         selected = [{ id: link.id, label: `#${link.id} ${link.name}` }];
       }
@@ -128,22 +132,42 @@ class Discipline extends React.Component {
         deploymentOrSubAnalysis = (
           <div className="form-group ml-2">
             <label>deployed on</label>
-            <input className="form-control ml-1" id="name" type="text" defaultValue={this.state.discHost}
-              placeholder='localhost' onChange={this.handleDiscHostChange} />
+            <input
+              className="form-control ml-1"
+              id="name"
+              type="text"
+              defaultValue={this.state.discHost}
+              placeholder="localhost"
+              onChange={this.handleDiscHostChange}
+            />
           </div>
         );
       }
       return (
         <Draggable draggableId={this.props.node.id} index={this.props.index}>
           {(provided, snapshot) => (
-            <li ref={provided.innerRef} {...provided.dragHandleProps} {...provided.draggableProps}
-              className="list-group-item editor-discipline" >
+            <li
+              ref={provided.innerRef}
+              {...provided.dragHandleProps}
+              {...provided.draggableProps}
+              className="list-group-item editor-discipline"
+            >
               <form className="form-inline" onSubmit={this.handleUpdate}>
                 <div className="form-group">
-                  <input className="form-control" id="name" type="text" defaultValue={this.state.discName}
-                    placeholder='Enter Name...' onChange={this.handleDiscNameChange} />
-                  <select className="form-control ml-2" id="type" value={this.state.discType}
-                    onChange={this.handleSelectChange}>
+                  <input
+                    className="form-control"
+                    id="name"
+                    type="text"
+                    defaultValue={this.state.discName}
+                    placeholder="Enter Name..."
+                    onChange={this.handleDiscNameChange}
+                  />
+                  <select
+                    className="form-control ml-2"
+                    id="type"
+                    value={this.state.discType}
+                    onChange={this.handleSelectChange}
+                  >
                     <option value={DISCIPLINE}>Discipline</option>
                     <option value={FUNCTION}>Function</option>
                     <option value={ANALYSIS}>Sub-Analysis</option>
@@ -153,33 +177,41 @@ class Discipline extends React.Component {
                 <button type="submit" className="btn btn-primary ml-3">Update</button>
                 <button type="button" onClick={this.handleCancelEdit} className="btn btn-secondary ml-1">Cancel</button>
               </form>
-            </li>)}
-        </Draggable>
-      );
-    } else {
-      let item = this.props.node.name;
-      const endpoint = this.props.node.endpoint;
-      if (endpoint && !this.isLocalHost(endpoint.host)) {
-        item += ` on ${endpoint.host}`;
-      }
-
-      return (
-        <Draggable draggableId={this.props.node.id} index={this.props.index}>
-          {(provided, snapshot) => (
-            <li ref={provided.innerRef} {...provided.dragHandleProps} {...provided.draggableProps}
-              className="list-group-item editor-discipline col-md-4">
-              <span className="align-bottom">{item}</span>
-              <button className="d-inline btn btn-light btn-inverse btn-sm float-right text-danger"
-                title="Delete" onClick={this.handleDelete}>
-                <i className="fa fa-times" />
-              </button>
-              <button className="d-inline btn btn-light btn-sm ml-2" title="Edit" onClick={this.handleEdit}>
-                <i className="fa fa-edit" />
-              </button>
-            </li>)}
+            </li>
+          )}
         </Draggable>
       );
     }
+    let item = this.props.node.name;
+    const { endpoint } = this.props.node;
+    if (endpoint && !this.isLocalHost(endpoint.host)) {
+      item += ` on ${endpoint.host}`;
+    }
+
+    return (
+      <Draggable draggableId={this.props.node.id} index={this.props.index}>
+        {(provided, snapshot) => (
+          <li
+            ref={provided.innerRef}
+            {...provided.dragHandleProps}
+            {...provided.draggableProps}
+            className="list-group-item editor-discipline col-md-4"
+          >
+            <span className="align-bottom">{item}</span>
+            <button
+              className="d-inline btn btn-light btn-inverse btn-sm float-right text-danger"
+              title="Delete"
+              onClick={this.handleDelete}
+            >
+              <i className="fa fa-times" />
+            </button>
+            <button className="d-inline btn btn-light btn-sm ml-2" title="Edit" onClick={this.handleEdit}>
+              <i className="fa fa-edit" />
+            </button>
+          </li>
+        )}
+      </Draggable>
+    );
   }
 }
 
@@ -216,9 +248,9 @@ class DisciplinesEditor extends React.Component {
     }
     this.props.onDisciplineUpdate(
       this.props.nodes[result.source.index + 1],
-      { position: result.destination.index + 1 }
+      { position: result.destination.index + 1 },
     );
-  };
+  }
 
   // Take into account in this.state of discipline changes coming
   // from Discipline components that should arrive through new props
@@ -227,30 +259,42 @@ class DisciplinesEditor extends React.Component {
   }
 
   render() {
-    let disciplines = this.state.nodes.map((node, i) => {
-      return (<Discipline key={node.id} pos={i + 1} index={i} node={node}
+    let disciplines = this.state.nodes.map((node, i) => (
+      <Discipline
+        key={node.id}
+        pos={i + 1}
+        index={i}
+        node={node}
         onDisciplineUpdate={this.props.onDisciplineUpdate}
         onDisciplineDelete={this.props.onDisciplineDelete}
         onSubAnalysisSearch={this.props.onSubAnalysisSearch}
-        onSubAnalysisSelected={this.props.onSubAnalysisSelected} />);
-    });
+        onSubAnalysisSelected={this.props.onSubAnalysisSelected}
+      />
+    ));
     const nbNodes = disciplines.length;
     if (nbNodes === 0) {
       disciplines = 'None';
     }
     return (
-      <div className='container-fluid'>
+      <div className="container-fluid">
         <div className="editor-section">
-          <label>Disciplines <span className="badge badge-info">{nbNodes}</span></label>
-          <DragDropContext onDragStart={this.onDragStart}
+          <label>
+Disciplines
+            <span className="badge badge-info">{nbNodes}</span>
+          </label>
+          <DragDropContext
+            onDragStart={this.onDragStart}
             onDragUpdate={this.onDragUpdate}
-            onDragEnd={this.onDragEnd}>
+            onDragEnd={this.onDragEnd}
+          >
             <Droppable droppableId="droppable">
               {(provided, snapshot) => (
-                (<ul ref={provided.innerRef} {...provided.droppableProps} className="list-group">
-                  {disciplines}
-                  {provided.placeholder}
-                </ul>)
+                (
+                  <ul ref={provided.innerRef} {...provided.droppableProps} className="list-group">
+                    {disciplines}
+                    {provided.placeholder}
+                  </ul>
+                )
               )}
             </Droppable>
           </DragDropContext>
@@ -258,9 +302,14 @@ class DisciplinesEditor extends React.Component {
         <div className="editor-section">
           <form className="form-inline" onSubmit={this.props.onDisciplineCreate}>
             <div className="form-group">
-              <input type="text" value={this.props.name}
-                placeholder='Enter Discipline Name...' className="form-control"
-                id="name" onChange={this.props.onDisciplineNameChange} />
+              <input
+                type="text"
+                value={this.props.name}
+                placeholder="Enter Discipline Name..."
+                className="form-control"
+                id="name"
+                onChange={this.props.onDisciplineNameChange}
+              />
             </div>
             <button type="submit" className="btn btn-primary ml-3">Add</button>
           </form>

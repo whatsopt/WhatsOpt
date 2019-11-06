@@ -1,11 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-//import Plot from 'react-plotly.js';
-import Plotly from './custom-plotly'
+// import Plot from 'react-plotly.js';
 import createPlotlyComponent from 'react-plotly.js/factory';
-const Plot = createPlotlyComponent(Plotly);
+import Plotly from './custom-plotly';
 
 import * as caseUtils from '../../utils/cases.js';
+
+const Plot = createPlotlyComponent(Plotly);
 
 class IterationRadarPlot extends React.Component {
   render() {
@@ -14,16 +15,16 @@ class IterationRadarPlot extends React.Component {
       throw Error('Input variables is empty');
     }
     const data = [];
-    for (let i=0; i<variables[0].values.length; i++) {
+    for (let i = 0; i < variables[0].values.length; i++) {
       const trace = {
         type: 'scatterpolar',
-        name: `Evaluation ${i+1}`,
+        name: `Evaluation ${i + 1}`,
         fill: 'none',
       };
 
       const theta = [];
       const r = [];
-      for (let j=0; j<variables.length; j++) {
+      for (let j = 0; j < variables.length; j++) {
         theta.push(caseUtils.label(variables[j]));
         r.push(variables[j].values[i]);
       }
@@ -33,8 +34,8 @@ class IterationRadarPlot extends React.Component {
       trace.r = r;
       data.push(trace);
     }
-    const title = this.props.title;
-    const layout = {width: 600, height: 500, title: title};
+    const { title } = this.props;
+    const layout = { width: 600, height: 500, title };
 
     return (<Plot data={data} layout={layout} />);
   }

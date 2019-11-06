@@ -1,20 +1,21 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-//import Plot from 'react-plotly.js';
-import Plotly from './custom-plotly'
+// import Plot from 'react-plotly.js';
 import createPlotlyComponent from 'react-plotly.js/factory';
+import Plotly from './custom-plotly';
+
 const Plot = createPlotlyComponent(Plotly);
 
 class ScreeningScatterPlot extends React.Component {
   render() {
     const trace = {
-      x: this.props.saData['mu_star'],
-      y: this.props.saData['sigma'],
+      x: this.props.saData.mu_star,
+      y: this.props.saData.sigma,
       type: 'scatter',
       mode: 'markers+text',
-      text: this.props.saData['names'],
+      text: this.props.saData.names,
       textposition: 'top center',
-      marker: {size: 10},
+      marker: { size: 10 },
       cliponaxis: false,
     };
 
@@ -24,14 +25,14 @@ class ScreeningScatterPlot extends React.Component {
       width: 500,
       height: 500,
       xaxis: {
-        rangemode: "tozero",
-        title: {text: '\u03BC*'},
-        layer: "below traces",
+        rangemode: 'tozero',
+        title: { text: '\u03BC*' },
+        layer: 'below traces',
       },
       yaxis: {
-        rangemode: "tozero",
-        title: {text: '\u03c3'},
-        layer: "below traces",
+        rangemode: 'tozero',
+        title: { text: '\u03c3' },
+        layer: 'below traces',
       },
     };
 

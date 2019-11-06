@@ -30,11 +30,19 @@
   },
   "devDependencies": {
     "babel-eslint": "^10.0.1",
-    "eslint": "^6.0.0",
+    "eslint": "^6.6.0",
+    "eslint-config-airbnb": "^18.0.1",
     "eslint-config-google": "0.13.0",
     "eslint-config-react": "^1.1.7",
+    "eslint-config-standard": "^14.1.0",
     "eslint-loader": "^3.0.0",
-    "eslint-plugin-react": "^7.11.1"
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-node": "^10.0.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-react": "^7.16.0",
+    "eslint-plugin-react-hooks": "^2.2.0",
+    "eslint-plugin-standard": "^4.0.1"
   },
   "scripts": {
     "lint": "yarn run eslint --ext .js --ext .jsx app/javascript",

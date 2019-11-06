@@ -7,10 +7,7 @@ class UserSelector extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      allowNew: false,
       isLoading: false,
-      multiple: false,
-      selectHintOnEnter: true,
       options: [],
     };
     this.typeaheadRef = React.createRef();
@@ -18,10 +15,32 @@ class UserSelector extends React.Component {
     this.handleChange = this.handleChange.bind(this);
   }
 
+  handleSearch(query) {
+    this.setState({ isLoading: true });
+    const { onMemberSearch } = this.props;
+    onMemberSearch(query, (options) => {
+      // const opts = options.map((login, i) => { return { id: i, login: login }; });
+      this.setState({ isLoading: false, options });
+    });
+  }
+
+  handleChange(selected) {
+    if (selected.length) {
+      const { onMemberSelected } = this.props;
+      onMemberSelected(selected);
+      this.typeaheadRef.current.getInstance().clear();
+    }
+  }
+
   render() {
+    const { isLoading, options } = this.state;
     return (
       <AsyncTypeahead
-        {...this.state}
+        allowNew={false}
+        isLoading={isLoading}
+        multiple={false}
+        selectHintOnEnter
+        options={options}
         id="typeahead-users"
         labelKey="login"
         minLength={1}
@@ -31,21 +50,6 @@ class UserSelector extends React.Component {
         ref={this.typeaheadRef}
       />
     );
-  }
-
-  handleSearch(query) {
-    this.setState({ isLoading: true });
-    this.props.onMemberSearch(query, (options) => {
-      // const opts = options.map((login, i) => { return { id: i, login: login }; });
-      this.setState({ isLoading: false, options: options });
-    });
-  }
-
-  handleChange(selected) {
-    if (selected.length) {
-      this.props.onMemberSelected(selected);
-      this.typeaheadRef.current.getInstance().clear();
-    }
   }
 }
 

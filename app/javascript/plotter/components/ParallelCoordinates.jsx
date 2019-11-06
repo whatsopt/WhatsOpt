@@ -1,12 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-//import Plot from 'react-plotly.js';
-import Plotly from './custom-plotly'
+// import Plot from 'react-plotly.js';
 import createPlotlyComponent from 'react-plotly.js/factory';
-const Plot = createPlotlyComponent(Plotly);
+import Plotly from './custom-plotly';
 
 import * as caseUtils from '../../utils/cases.js';
-import {COLORSCALE} from './colorscale.js';
+import { COLORSCALE } from './colorscale.js';
+
+const Plot = createPlotlyComponent(Plotly);
 
 class ParallelCoordinates extends React.Component {
   render() {
@@ -16,7 +17,7 @@ class ParallelCoordinates extends React.Component {
 
     const trace = {
       type: 'parcoords',
-      dimensions: dimensions,
+      dimensions,
     };
 
     trace.line = {
@@ -27,13 +28,13 @@ class ParallelCoordinates extends React.Component {
     };
 
     const data = [trace];
-    const title = this.props.title;
+    const { title } = this.props;
 
     return (
       <div>
         <Plot
           data={data}
-          layout={{width: this.props.width, height: 500, title: title}}
+          layout={{ width: this.props.width, height: 500, title }}
         />
       </div>
     );
@@ -47,13 +48,15 @@ class ParallelCoordinates extends React.Component {
       const maxim = Math.max(...c.values);
       const mini = Math.floor(minim);
       const maxi = Math.ceil(maxim);
-      const dim = {label: label,
+      const dim = {
+        label,
         values: c.values,
-        range: [mini, maxi]};
-      const obj = isMin?minim:maxim;
-      const crange = isMin?[obj, obj + 0.05*(maxi - mini)]:[obj - 0.05*(maxi - mini), obj];
+        range: [mini, maxi],
+      };
+      const obj = isMin ? minim : maxim;
+      const crange = isMin ? [obj, obj + 0.05 * (maxi - mini)] : [obj - 0.05 * (maxi - mini), obj];
       if (this.props.db.isObjective(c)) {
-        dim['constraintrange'] = crange;
+        dim.constraintrange = crange;
       }
       return dim;
     });

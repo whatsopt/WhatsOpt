@@ -1,12 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-//import Plot from 'react-plotly.js';
-import Plotly from './custom-plotly'
+// import Plot from 'react-plotly.js';
 import createPlotlyComponent from 'react-plotly.js/factory';
-const Plot = createPlotlyComponent(Plotly);
+import Plotly from './custom-plotly';
 
 import * as caseUtils from '../../utils/cases.js';
-import {COLORSCALE} from './colorscale.js';
+import { COLORSCALE } from './colorscale.js';
+
+const Plot = createPlotlyComponent(Plotly);
 
 class ScatterSurfacePlot extends React.Component {
   render() {
@@ -29,11 +30,13 @@ class ScatterSurfacePlot extends React.Component {
     layout.width = 600;
     layout.height = 500;
     layout.title = this.props.title;
-    layout.margin = {l: 0, r: 0, b: 0, t: 0};
+    layout.margin = {
+      l: 0, r: 0, b: 0, t: 0,
+    };
     layout.scene = {};
-    layout.scene.xaxis={title: caseUtils.label(this.props.casesx)};
-    layout.scene.yaxis={title: caseUtils.label(this.props.casesy)};
-    layout.scene.zaxis={title: caseUtils.label(this.props.casesz)};
+    layout.scene.xaxis = { title: caseUtils.label(this.props.casesx) };
+    layout.scene.yaxis = { title: caseUtils.label(this.props.casesy) };
+    layout.scene.zaxis = { title: caseUtils.label(this.props.casesz) };
 
     return (<Plot data={data} layout={layout} />);
   }

@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import WhatsOptApi from '../utils/WhatsOptApi';
 import Runner from 'runner';
+import WhatsOptApi from '../utils/WhatsOptApi';
 
 document.addEventListener('DOMContentLoaded', () => {
   const csrfToken = document.getElementsByName('csrf-token')[0].getAttribute('content');
@@ -15,6 +15,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const api = new WhatsOptApi(csrfToken, apiKey, relativeUrlRoot);
 
-  ReactDOM.render(<Runner mda={mda} ope={ope} api={api} wsServer={wsServer}/>, runnerElt[0]);
-}
-);
+  ReactDOM.render(<Runner mda={mda} ope={ope} api={api} wsServer={wsServer} />, runnerElt[0]);
+});

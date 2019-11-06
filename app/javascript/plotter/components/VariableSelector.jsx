@@ -7,11 +7,19 @@ class VariableList extends React.Component {
     const varnames = this.props.cases.map((c) => {
       const label = caseUtils.label(c);
       const selected = this.props.selection.includes(c);
-      return (<div key={label} className="form-check form-check-inline">
-        <input className="form-check-input" type="checkbox" name={label} checked={selected}
-          onChange={this.props.onSelectionChange}/>
-        <label className="form-check-label" htmlFor={label}>{label}</label>
-      </div>);});
+      return (
+        <div key={label} className="form-check form-check-inline">
+          <input
+            className="form-check-input"
+            type="checkbox"
+            name={label}
+            checked={selected}
+            onChange={this.props.onSelectionChange}
+          />
+          <label className="form-check-label" htmlFor={label}>{label}</label>
+        </div>
+      );
+    });
 
     return (
       <div className="editor-section">
@@ -20,7 +28,7 @@ class VariableList extends React.Component {
       </div>
     );
   }
-};
+}
 
 VariableList.propTypes = {
   cases: PropTypes.array.isRequired,
@@ -34,19 +42,33 @@ class VariableSelector extends React.Component {
     let stateVars;
     if (this.props.cases.c.length > 0) {
       stateVars = (
-        <VariableList cases={this.props.cases.c} title="State Variables"
-                      selection={this.props.selCases.c} onSelectionChange={this.props.onSelectionChange}/>
+        <VariableList
+          cases={this.props.cases.c}
+          title="State Variables"
+          selection={this.props.selCases.c}
+          onSelectionChange={this.props.onSelectionChange}
+        />
       );
     }
-    return (<div className='container-fluid'>
-      <VariableList cases={this.props.cases.i} title="Design Variables"
-        selection={this.props.selCases.i} onSelectionChange={this.props.onSelectionChange}/>
-      <VariableList cases={this.props.cases.o} title="Response Variables"
-        selection={this.props.selCases.o} onSelectionChange={this.props.onSelectionChange}/>
-      {stateVars}
-    </div>);
+    return (
+      <div className="container-fluid">
+        <VariableList
+          cases={this.props.cases.i}
+          title="Design Variables"
+          selection={this.props.selCases.i}
+          onSelectionChange={this.props.onSelectionChange}
+        />
+        <VariableList
+          cases={this.props.cases.o}
+          title="Response Variables"
+          selection={this.props.selCases.o}
+          onSelectionChange={this.props.onSelectionChange}
+        />
+        {stateVars}
+      </div>
+    );
   }
-};
+}
 
 VariableSelector.propTypes = {
   cases: PropTypes.shape({

@@ -14,13 +14,13 @@ class XdsmViewer extends React.Component {
         showLinkNbOnly: true,
       },
       layout: {
-        origin: {x: 50, y: 20},
-        cellsize: {w: 150, h: 50},
+        origin: { x: 50, y: 20 },
+        cellsize: { w: 150, h: 50 },
         padding: 10,
       },
       titleTooltip: true,
     };
-    this.graph = new Graph(this.props.mda, "", "noDefaultDriver");
+    this.graph = new Graph(this.props.mda, '', 'noDefaultDriver');
     this.graph.nodes[0].name = 'Driver';
     this.graph.nodes[0].type = 'driver';
     this.xdsm = new Xdsm(this.graph, 'root', config);
@@ -31,7 +31,7 @@ class XdsmViewer extends React.Component {
   }
 
   render() {
-    return ( <div id="xdsm" className="xdsm"></div> );
+    return (<div id="xdsm" className="xdsm" />);
   }
 
   shouldComponentUpdate() {
@@ -39,7 +39,7 @@ class XdsmViewer extends React.Component {
   }
 
   update(mda) {
-    this.xdsm.graph = new Graph(mda, "", "noDefaultDriver");
+    this.xdsm.graph = new Graph(mda, '', 'noDefaultDriver');
     this.xdsm.graph.nodes[0].name = 'Driver';
     this.xdsm.graph.nodes[0].type = 'driver';
     this._refresh();
@@ -52,7 +52,7 @@ class XdsmViewer extends React.Component {
   }
 
   updateDiscipline(index, discattrs) {
-    var newNode = Object.assign({}, this.xdsm.graph.nodes[index], discattrs);
+    const newNode = { ...this.xdsm.graph.nodes[index], ...discattrs };
     console.log(JSON.stringify(discattrs));
     this.xdsm.graph.nodes.splice(index, 1, newNode);
     this._refresh();
@@ -64,14 +64,12 @@ class XdsmViewer extends React.Component {
   }
 
   addConnection(connattrs) {
-    connattrs.names.map((name) =>
-      this.xdsm.graph.addEdgeVar(connattrs.from, connattrs.to, name));
+    connattrs.names.map((name) => this.xdsm.graph.addEdgeVar(connattrs.from, connattrs.to, name));
     this._refresh();
   }
 
   removeConnection(connattrs) {
-    connattrs.names.map((name) =>
-      this.xdsm.graph.removeEdgeVar(connattrs.from, connattrs.to, name));
+    connattrs.names.map((name) => this.xdsm.graph.removeEdgeVar(connattrs.from, connattrs.to, name));
     this._refresh();
   }
 
@@ -89,7 +87,7 @@ class XdsmViewer extends React.Component {
   }
 
   _refresh() {
-    $(".ellipsized").tooltip('dispose');
+    $('.ellipsized').tooltip('dispose');
     // remove and redraw xdsm
     this.xdsm.refresh();
     // links
@@ -104,16 +102,16 @@ class XdsmViewer extends React.Component {
 
   _setTooltips() {
     // bootstrap tooltip for connections
-    $(".ellipsized").attr("data-toggle", "tooltip");
-    $(() => {$('.ellipsized').tooltip({placement: 'right'});});
+    $('.ellipsized').attr('data-toggle', 'tooltip');
+    $(() => { $('.ellipsized').tooltip({ placement: 'right' }); });
   }
 
   _setLinks() {
     this.props.mda.nodes.forEach((node) => {
       if (node.link) {
-        const edit = this.props.isEditing?"/edit":"";
+        const edit = this.props.isEditing ? '/edit' : '';
         const link = `/analyses/${node.link.id}${edit}`;
-        const $label = $('.id'+node.id+' tspan');
+        const $label = $(`.id${node.id} tspan`);
         const label = $label.text();
         $label.html(`<a class='analysis-link' href="${this.props.api.url(link)}">${label}</a>`);
       }

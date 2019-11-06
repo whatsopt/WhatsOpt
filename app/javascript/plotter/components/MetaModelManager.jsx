@@ -8,16 +8,28 @@ class MetaModelManager extends React.Component {
 
   render() {
     const metamodelUrl = this.props.api.url(`/operations/${this.props.opeId}/meta_models`);
-    let outputs = [...new Set(this.props.selCases.o.map(c => c.varname))].map(name => {
-      return (<span className='ml-5'>{name}
-              <input type='hidden' id={`meta_model_variables_outputs_${name}`} 
-                     name="meta_model[variables][outputs][]" value={name}/></span>);
-    });
-    let inputs = [...new Set(this.props.selCases.i.map(c => c.varname))].map(name => {
-      return (<span className='ml-5'>{name}
-              <input type='hidden' id={`meta_model_variables_inputs_${name}`} 
-                name="meta_model[variables][inputs][]" value={name}/></span>);
-    });
+    const outputs = [...new Set(this.props.selCases.o.map((c) => c.varname))].map((name) => (
+      <span className="ml-5">
+        {name}
+        <input
+          type="hidden"
+          id={`meta_model_variables_outputs_${name}`}
+          name="meta_model[variables][outputs][]"
+          value={name}
+        />
+      </span>
+    ));
+    const inputs = [...new Set(this.props.selCases.i.map((c) => c.varname))].map((name) => (
+      <span className="ml-5">
+        {name}
+        <input
+          type="hidden"
+          id={`meta_model_variables_inputs_${name}`}
+          name="meta_model[variables][inputs][]"
+          value={name}
+        />
+      </span>
+    ));
 
     return (
       <div className="editor-section">
@@ -32,7 +44,7 @@ class MetaModelManager extends React.Component {
                   <option value="KPLS">KPLS</option>
                   <option value="KPLSK">KPLSK</option>
                   <option value="LS">LS</option>
-                  <option value="QP">QP</option> 
+                  <option value="QP">QP</option>
                 </select>
               </div>
               <div className="form-group">
@@ -60,7 +72,7 @@ MetaModelManager.propTypes = {
   selCases: PropTypes.shape({
     i: PropTypes.array.isRequired,
     o: PropTypes.array.isRequired,
-    c: PropTypes.array.isRequired,  
+    c: PropTypes.array.isRequired,
   }),
   onMetaModelCreate: PropTypes.func.isRequired,
 };

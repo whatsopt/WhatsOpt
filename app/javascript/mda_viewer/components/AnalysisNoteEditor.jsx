@@ -6,13 +6,13 @@ class AnalysisNoteEditor extends React.Component {
   constructor(props) {
     super(props);
     this.trixInput = React.createRef();
-  } 
+  }
 
   componentDidMount() {
-    this.trixInput.current.addEventListener("trix-change", event => {
-      this.props.onAnalysisNoteChange(event); //calling custom event
+    this.trixInput.current.addEventListener('trix-change', (event) => {
+      this.props.onAnalysisNoteChange(event); // calling custom event
     });
-    this.trixInput.current.addEventListener("trix-file-accept", event => {
+    this.trixInput.current.addEventListener('trix-file-accept', (event) => {
       event.preventDefault();
     });
   }
@@ -28,13 +28,12 @@ class AnalysisNoteEditor extends React.Component {
     // data-blob-url-template={dataBlobUrlTemplate}
 
     return (
-        <div>
-          <label htmlFor="note">Note</label>
-          <input type="hidden" name="analysis[note]" id={id} value={this.props.note} />
-          {/* <textarea name="analysis[note]" id={id} defaultValue={this.props.note} /> */}
-          <trix-editor id="analysis_note" input={id} class="trix-content form-control" ref={this.trixInput}>
-          </trix-editor>
-        </div>
+      <div>
+        <label htmlFor="note">Note</label>
+        <input type="hidden" name="analysis[note]" id={id} value={this.props.note} />
+        {/* <textarea name="analysis[note]" id={id} defaultValue={this.props.note} /> */}
+        <trix-editor id="analysis_note" input={id} class="trix-content form-control" ref={this.trixInput} />
+      </div>
     );
   }
 }
