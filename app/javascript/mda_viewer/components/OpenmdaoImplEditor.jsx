@@ -48,6 +48,30 @@ const SCHEMA_LINEAR_SOLVER = {
   },
 };
 
+
+function _getOpenmdaoImpl(formData) {
+  const openmdaoComps = formData.components;
+  const nodes = [];
+  for (const discId in openmdaoComps) {
+    if (!isNaN(parseInt(discId))) { // take only ids, discard use_scaling and parallel_group
+      nodes.push({
+        discipline_id: discId,
+        implicit_component: openmdaoComps[discId].implicit,
+        support_derivatives: openmdaoComps[discId].derivatives,
+      });
+    }
+  }
+  const openmdaoImpl = {
+    components: {
+      parallel_group: formData.components.parallel_group,
+      use_scaling: formData.components.use_scaling,
+      nodes,
+    },
+    nonlinear_solver: { ...formData.nonlinear_solver },
+    linear_solver: { ...formData.linear_solver },
+  };
+  return openmdaoImpl;
+}
 class OpenmdaoImplEditor extends React.Component {
   constructor(props) {
     super(props);
@@ -60,48 +84,28 @@ class OpenmdaoImplEditor extends React.Component {
   }
 
   handleChange(data) {
-    const openmdaoImpl = this._getOpenmdaoImpl(data.formData);
-    this.props.onOpenmdaoImplChange(openmdaoImpl);
+    const openmdaoImpl = _getOpenmdaoImpl(data.formData);
+    const { onOpenmdaoImplChange } = this.props;
+    onOpenmdaoImplChange(openmdaoImpl);
   }
 
   handleSubmit(data) {
     console.log('Data submitted: ', data.formData);
-    const openmdaoImpl = this._getOpenmdaoImpl(data.formData);
-    this.props.onOpenmdaoImplUpdate(openmdaoImpl);
-  }
-
-  _getOpenmdaoImpl(formData) {
-    const openmdaoComps = formData.components;
-    const nodes = [];
-    for (const discId in openmdaoComps) {
-      if (!isNaN(parseInt(discId))) { // take only ids, discard use_scaling and parallel_group
-        nodes.push({
-          discipline_id: discId,
-          implicit_component: openmdaoComps[discId].implicit,
-          support_derivatives: openmdaoComps[discId].derivatives,
-        });
-      }
-    }
-    const openmdaoImpl = {
-      components: {
-        parallel_group: formData.components.parallel_group,
-        use_scaling: formData.components.use_scaling,
-        nodes,
-      },
-      nonlinear_solver: { ...formData.nonlinear_solver },
-      linear_solver: { ...formData.linear_solver },
-    };
-    return openmdaoImpl;
+    const openmdaoImpl = _getOpenmdaoImpl(data.formData);
+    const { onOpenmdaoImplUpdate } = this.props;
+    onOpenmdaoImplUpdate(openmdaoImpl);
   }
 
   handleReset() {
     this.setState({ reset: Date.now() });
-    this.props.onOpenmdaoImplReset();
+    const { onOpenmdaoImplReset } = this.props;
+    onOpenmdaoImplReset();
   }
 
   render() {
     // console.log("BEFORE", this.props.formData);
-    const { nodes } = this.props.impl.components;
+    const { impl, db } = this.props;
+    const { nodes } = impl.components;
 
     // Schema and Form data for components
     // schema
@@ -120,7 +124,7 @@ class OpenmdaoImplEditor extends React.Component {
     };
     const compProps = schema.properties.components.properties;
     nodes.forEach((node) => {
-      const name = this.props.db.getNodeName(node.discipline_id);
+      const name = db.getNodeName(node.discipline_id);
       compProps[node.discipline_id] = {
         type: 'object',
         title: name,
@@ -134,17 +138,17 @@ class OpenmdaoImplEditor extends React.Component {
     const uiSchema = {
       components: { 'ui:order': ['parallel_group', 'use_scaling', '*'] },
     };
-    if (this.props.db.isScaled()) {
+    if (db.isScaled()) {
       uiSchema.components.use_scaling = { 'ui:disabled': true };
     }
 
     // formData: components.nodes -> components.disc1, components.disc2
-    const nonlinearSolver = this.props.impl.nonlinear_solver;
-    const linearSolver = this.props.impl.linear_solver;
+    const nonlinearSolver = impl.nonlinear_solver;
+    const linearSolver = impl.linear_solver;
     const formData = {
       components: {
-        parallel_group: this.props.impl.components.parallel_group,
-        use_scaling: this.props.impl.components.use_scaling,
+        parallel_group: impl.components.parallel_group,
+        use_scaling: impl.components.use_scaling,
       },
       nonlinear_solver: { ...nonlinearSolver },
       linear_solver: { ...linearSolver },
@@ -156,12 +160,13 @@ class OpenmdaoImplEditor extends React.Component {
       };
     });
 
+    const { reset } = this.state;
     return (
       <div className="editor-section">
         <div className="row">
           <div className="col-md-3">
             <Form
-              key={this.state.reset}
+              key={reset}
               schema={schema}
               formData={formData}
               uiSchema={uiSchema}
@@ -177,7 +182,7 @@ class OpenmdaoImplEditor extends React.Component {
           </div>
           <div className="col-md-3">
             <Form
-              key={this.state.reset}
+              key={reset}
               schema={SCHEMA_NONLINEAR_SOLVER}
               formData={formData}
               onChange={(data) => this.handleChange(data)}
@@ -191,7 +196,7 @@ class OpenmdaoImplEditor extends React.Component {
           </div>
           <div className="col-md-3">
             <Form
-              key={this.state.reset}
+              key={reset}
               schema={SCHEMA_LINEAR_SOLVER}
               formData={formData}
               onChange={(data) => this.handleChange(data)}
@@ -215,7 +220,7 @@ OpenmdaoImplEditor.propTypes = {
     components: PropTypes.object.isRequired,
     nonlinear_solver: PropTypes.object.isRequired,
     linear_solver: PropTypes.object.isRequired,
-  }),
+  }).isRequired,
   onOpenmdaoImplUpdate: PropTypes.func.isRequired,
   onOpenmdaoImplChange: PropTypes.func.isRequired,
   onOpenmdaoImplReset: PropTypes.func.isRequired,

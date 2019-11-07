@@ -4,8 +4,8 @@ import PropTypes from 'prop-types';
 import createPlotlyComponent from 'react-plotly.js/factory';
 import Plotly from './custom-plotly';
 
-import * as caseUtils from '../../utils/cases.js';
-import { COLORSCALE } from './colorscale.js';
+import * as caseUtils from '../../utils/cases';
+import { COLORSCALE } from './colorscale';
 
 const Plot = createPlotlyComponent(Plotly);
 
@@ -14,6 +14,11 @@ class ScatterPlotMatrix extends React.PureComponent {
     const { cases, success, title } = this.props;
     const inputs = cases.i.concat(cases.c);
     const outputs = cases.c.concat(cases.o);
+    let succ = success;
+    if (succ.length === 0) {
+      succ = new Array(cases.o[0].values.length);
+      succ.fill(1);
+    }
 
     const data = [];
     const layout = {};
@@ -40,7 +45,7 @@ class ScatterPlotMatrix extends React.PureComponent {
         trace.yaxis = yname;
         trace.name = `${ylabel} vs ${xlabel}`;
         trace.marker = {
-          color: success,
+          color: succ,
           cmin: 0,
           cmax: 1,
           colorscale: COLORSCALE,

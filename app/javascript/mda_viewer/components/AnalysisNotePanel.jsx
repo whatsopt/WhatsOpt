@@ -8,7 +8,8 @@ class AnalysisNotePanel extends React.Component {
   }
 
   componentDidMount() {
-    this.content.current.innerHTML = this.props.note;
+    const { note } = this.props;
+    this.content.current.innerHTML = note;
   }
 
   render() {

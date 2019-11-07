@@ -1,7 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-// import Plot from 'react-plotly.js';
-
 import createPlotlyComponent from 'react-plotly.js/factory';
 import Plotly from './custom-plotly';
 
@@ -15,12 +13,14 @@ class MetaModelQualification extends React.Component {
     this.handleQualityDisplay = this.handleQualityDisplay.bind(this);
   }
 
-  handleQualityDisplay(quality_index) {
-    this.setState({ selected: quality_index });
+  handleQualityDisplay(qualityIndex) {
+    this.setState({ selected: qualityIndex });
   }
 
   render() {
-    const qualities = this.props.quality.sort((a, b) => a.r2 > b.r2);
+    const { quality } = this.props;
+    const { selected } = this.state;
+    const qualities = quality.sort((a, b) => a.r2 > b.r2);
     // Quality Buttons
     const qualityButtons = qualities.map((q, i) => {
       let badgeKind = 'badge ';
@@ -29,7 +29,12 @@ class MetaModelQualification extends React.Component {
       badgeKind += ((q.r2 >= 0.95) ? 'badge-success' : '');
       const btnClass = 'btn m-1';
       return (
-        <button key={q.name} className={btnClass} onClick={(e) => this.handleQualityDisplay(i)}>
+        <button
+          type="button"
+          key={q.name}
+          className={btnClass}
+          onClick={() => this.handleQualityDisplay(i)}
+        >
           {q.name}
           {' '}
           <span className={badgeKind}>{q.r2.toPrecision(8)}</span>
@@ -39,14 +44,14 @@ class MetaModelQualification extends React.Component {
 
     // Plot
     let plot;
-    if (this.state.selected > -1) {
+    if (selected > -1) {
       const data = [];
 
-      const ylabel = 'Output predicted';
-      const selected = qualities[this.state.selected];
+      const ylabel = 'Output predicted vs true';
+      const qselected = qualities[selected];
 
-      const { yvalid } = selected;
-      const { ypred } = selected;
+      const { yvalid } = qselected;
+      const { ypred } = qselected;
       const trace1 = {
         x: yvalid,
         y: yvalid,
@@ -65,20 +70,20 @@ class MetaModelQualification extends React.Component {
       };
       data.push(trace2);
 
-      const title = `${selected.name} predicted with ${selected.kind} surrogate`;
+      const title = `${qselected.name} predicted vs true with ${qselected.kind} surrogate`;
       const layout = { width: 600, height: 500, title };
       plot = (<Plot data={data} layout={layout} />);
     }
 
     return (
       <div className="editor-section">
-        <label>
-Coefficients of determination R
+        <div>
+          Coefficients of determination R
           <sup>2</sup>
           {' '}
-for outputs computed from 10% of original DOE points used as validation set:
+          for outputs computed from 10% of original DOE points used as validation set:
           <em>the closer to one, the better</em>
-        </label>
+        </div>
         <div>
           <span className="mb-3">{qualityButtons}</span>
         </div>
