@@ -49,7 +49,7 @@ DisciplineSelector.propTypes = {
   label: PropTypes.string.isRequired,
   selected: PropTypes.string,
 };
-DisciplineSelector.defaultProps = { selected: undefined };
+DisciplineSelector.defaultProps = { selected: '' };
 class ConnectionList extends React.PureComponent {
   render() {
     const {
