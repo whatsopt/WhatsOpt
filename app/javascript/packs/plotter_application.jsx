@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const csrfToken = document.getElementsByName('csrf-token')[0].getAttribute('content');
   const relativeUrlRoot = document.getElementsByName('relative-url-root')[0].getAttribute('content');
 
+  // eslint-disable-next-line no-undef
   const plotterElt = $('#plotter');
   const mda = plotterElt.data('mda');
   const ope = plotterElt.data('ope');

@@ -218,7 +218,7 @@ function _toFormOptions(driver, options) {
         acc[val.name] = (val.value === 'true');
         break;
       case 'integer':
-        acc[val.name] = parseInt(val.value);
+        acc[val.name] = parseInt(val.value, 10);
         break;
       case 'number':
         acc[val.name] = parseFloat(val.value);
@@ -370,43 +370,46 @@ class Runner extends React.Component {
   }
 
   render() {
-    // console.log(this.state.log);
-    const lines = this.state.log.split('\n').map((l, i) => {
-      const count = Math.max(this.state.log_count - 100, 0) + i;
+    const { log, log_count: logCount } = this.state;
+    const lines = log.split('\n').map((l, i) => {
+      const count = Math.max(logCount - 100, 0) + i;
       const line = `#${count}  ${l}`;
       return (<LogLine key={count} line={line} />);
     });
 
-    let btnStatusClass = this.state.status === 'DONE' ? 'btn btn-success' : 'btn btn-danger';
+    const {
+      status, cases, startInMs, endInMs, schema, formData,
+    } = this.state;
+    let btnStatusClass = status === 'DONE' ? 'btn btn-success' : 'btn btn-danger';
     let btnIcon = <i className="fa fa-exclamation-triangle" />;
-    if (this.state.status === 'DONE') {
+    if (status === 'DONE') {
       btnIcon = <i className="fa fa-check" />;
     }
-    if (this.state.status === 'RUNNING' || this.state.status === 'STARTED') {
+    if (status === 'RUNNING' || status === 'STARTED') {
       btnStatusClass = 'btn btn-info';
       btnIcon = <i className="fa fa-cog fa-spin" />;
     }
-    if (this.state.status === 'PENDING') {
+    if (status === 'PENDING') {
       btnStatusClass = 'btn btn-info';
       btnIcon = <i className="fa fa-question" />;
     }
-    const active = (this.state.status === 'RUNNING' || this.state.status === 'STARTED');
+    const active = (status === 'RUNNING' || status === 'STARTED');
 
-    let urlOnClose = `/analyses/${this.props.mda.id}`;
-    if (this.state.cases.length > 0) {
-      urlOnClose = `/operations/${this.props.ope.id}`;
+    const { mda, ope } = this.props;
+    let urlOnClose = `/analyses/${mda.id}`;
+    if (cases.length > 0) {
+      urlOnClose = `/operations/${ope.id}`;
     }
 
     let startTime = '?';
-    if (this.state.startInMs) {
-      startTime = (new Date(this.state.startInMs)).toLocaleString('en-GB');
+    if (startInMs) {
+      startTime = (new Date(startInMs)).toLocaleString('en-GB');
     }
 
     let elapsed = '?';
-    if (this.state.startInMs && this.state.endInMs) {
-      elapsed = Math.ceil((this.state.endInMs - this.state.startInMs) / 1000);
+    if (startInMs && endInMs) {
+      elapsed = Math.ceil((endInMs - startInMs) / 1000);
     }
-    // console.log("START: "+this.state.startInMs+"    END: "+this.state.endInMs);
 
     return (
       <div>
@@ -421,13 +424,13 @@ class Runner extends React.Component {
         <h1>
           Operation on
           {' '}
-          {this.props.mda.name}
+          {mda.name}
         </h1>
         <h2>Specification</h2>
         <div className="editor-section col-4">
           <Form
-            schema={this.state.schema}
-            formData={this.state.formData}
+            schema={schema}
+            formData={formData}
             uiSchema={UI_SCHEMA}
             onSubmit={this.handleRun}
             onChange={this.handleChange}
@@ -460,7 +463,7 @@ class Runner extends React.Component {
               aria-expanded="false"
             >
               {btnIcon}
-              <span className="ml-1">{this.state.status}</span>
+              <span className="ml-1">{status}</span>
             </button>
           </div>
           <div className="btn-group ml-2" role="group">
@@ -470,7 +473,7 @@ class Runner extends React.Component {
             {startTime}
           </div>
           <div className="btn-group ml-2" role="group">
-            <strong>{(this.state.status === 'RUNNING') ? 'Elapsed' : 'Ended after'}</strong>
+            <strong>{(status === 'RUNNING') ? 'Elapsed' : 'Ended after'}</strong>
             :
             {' '}
             {elapsed}
@@ -497,7 +500,7 @@ Runner.propTypes = {
     impl: PropTypes.shape({
       openmdao: PropTypes.object.isRequired,
     }),
-  }),
+  }).isRequired,
   ope: PropTypes.shape({
     id: PropTypes.number.isRequired,
     name: PropTypes.string,
@@ -512,7 +515,7 @@ Runner.propTypes = {
       start_in_ms: PropTypes.number,
       end_in_ms: PropTypes.number,
     }),
-  }),
+  }).isRequired,
 };
 
 export default Runner;

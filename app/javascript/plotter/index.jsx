@@ -60,7 +60,7 @@ class PlotPanel extends React.PureComponent {
       />
     );
     const inputCases = [].concat(cases.i).concat(cases.c);
-    if (inputCases.length == 2 && cases.o.length == 1) {
+    if (inputCases.length === 2 && cases.o.length === 1) {
       plotparall = (
         <span>
           <ScatterSurfacePlot
@@ -173,7 +173,18 @@ ScreeningPanel.propTypes = {
 
 class MetaModelPanel extends React.PureComponent {
   render() {
-    const metamodel = (<MetaModelManager {...this.props} />);
+    const {
+      active, opeId, api, selCases, onMetaModelCreate,
+    } = this.props;
+    const metamodel = (
+      <MetaModelManager
+        active={active}
+        opeId={opeId}
+        api={api}
+        selCases={selCases}
+        onMetaModelCreate={onMetaModelCreate}
+      />
+    );
     return (
       <div className="tab-pane fade" id={METAMODEL_TAB} role="tabpanel" aria-labelledby="metamodel-tab">
         {metamodel}
@@ -215,6 +226,7 @@ class Plotter extends React.Component {
   }
 
   componentDidMount() {
+    // eslint-disable-next-line no-undef
     $('#plots').tab('show');
   }
 
@@ -266,7 +278,7 @@ class Plotter extends React.Component {
   }
 
   render() {
-    const { api, ope, mda } = this.props;
+    const { ope, mda } = this.props;
     const isOptim = (ope.category === 'optimization');
     const isScreening = (ope.category === 'screening');
     const isDoe = (ope.category === 'doe');

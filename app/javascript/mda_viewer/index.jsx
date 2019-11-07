@@ -85,11 +85,11 @@ class MdaViewer extends React.Component {
     const newSelected = [];
     const errors = [];
     // console.log("VALID: ", names);
-    names.forEach((n, i) => {
+    names.forEach((n) => {
       const vnames = n.split(','); // allow "var1, var2" input
       const varnames = vnames.map((name) => name.trim());
       // console.log(varnames);
-      varnames.forEach((name, j) => {
+      varnames.forEach((name) => {
         if (!name.match(VAR_REGEXP)) {
           if (name !== '') {
             errors.push(`Variable name '${name}' is invalid`);
@@ -328,12 +328,14 @@ class MdaViewer extends React.Component {
 
   // *** OpenmdaoImpl ************************************************************
   handleOpenmdaoImplUpdate(openmdaoImpl) {
-    delete openmdaoImpl.components.use_scaling;
-    this.api.updateOpenmdaoImpl(this.props.mda.id, openmdaoImpl,
+    const oImpl = JSON.parse(JSON.stringify(openmdaoImpl));
+    delete oImpl.components.use_scaling;
+    const { mda } = this.props;
+    this.api.updateOpenmdaoImpl(mda.id, oImpl,
       () => {
         const newState = update(this.state, {
           implEdited: { $set: false },
-          mda: { impl: { openmdao: { $set: openmdaoImpl } } },
+          mda: { impl: { openmdao: { $set: oImpl } } },
         });
         this.setState(newState);
       });
@@ -382,6 +384,7 @@ class MdaViewer extends React.Component {
       newAnalysisName, analysisMembers, selectedConnectionNames, newDisciplineName,
     } = this.state;
     const errs = errors.map(
+      // eslint-disable-next-line react/no-array-index-key
       (message, i) => (<Error key={i} msg={message} onClose={() => this.handleErrorClose(i)} />),
     );
     const db = new AnalysisDatabase(mda);
