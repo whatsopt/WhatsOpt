@@ -28,6 +28,7 @@
         "react/forbid-prop-types": "off",
         "no-restricted-syntax": "off",
         "linebreak-style": "off",
-        "max-classes-per-file": "off"
+        "max-classes-per-file": "off",
+        "import/no-unresolved": "off"
     }
 }

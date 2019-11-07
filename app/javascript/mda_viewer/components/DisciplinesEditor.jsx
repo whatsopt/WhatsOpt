@@ -254,8 +254,6 @@ class DisciplinesEditor extends React.Component {
     const { nodes } = this.props;
     this.state = { nodes: nodes.slice(1) };
 
-    this.onDragStart = this.onDragStart.bind(this);
-    this.onDragUpdate = this.onDragUpdate.bind(this);
     this.onDragEnd = this.onDragEnd.bind(this);
   }
 

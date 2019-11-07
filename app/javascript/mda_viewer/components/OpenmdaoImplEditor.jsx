@@ -53,7 +53,8 @@ function _getOpenmdaoImpl(formData) {
   const openmdaoComps = formData.components;
   const nodes = [];
   for (const discId in openmdaoComps) {
-    if (!isNaN(parseInt(discId))) { // take only ids, discard use_scaling and parallel_group
+    // eslint-disable-next-line no-restricted-globals
+    if (!isNaN(parseInt(discId, 10))) { // take only ids, discard use_scaling and parallel_group
       nodes.push({
         discipline_id: discId,
         implicit_component: openmdaoComps[discId].implicit,

@@ -30,7 +30,8 @@ function _convertVariablesToCsv(connections) {
   const rows = [];
   connections.forEach((conn) => {
     const row = [];
-    row.push(conn.active, conn.from, conn.to, conn.name, conn.desc, conn.role, conn.type, conn.shape);
+    row.push(conn.active, conn.from, conn.to, conn.name,
+      conn.desc, conn.role, conn.type, conn.shape);
     row.push(conn.units, conn.init, conn.lower, conn.upper);
     rows.push(row.join(';'));
   });
@@ -96,6 +97,7 @@ class ToolBar extends React.Component {
     const { mdaId } = this.props;
     const { log, statusOk, loading } = this.state;
 
+    // eslint-disable-next-line react/no-array-index-key
     const lines = log.map((l, i) => (<OpenMDAOLogLine key={i} line={l} />));
     let btnStatusClass = statusOk ? 'btn btn-success' : 'btn btn-warning';
     let btnIcon = statusOk ? <i className="fa fa-check" /> : <i className="fa fa-exclamation-triangle" />;

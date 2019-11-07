@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Trix from 'trix';
+// eslint-disable-next-line no-unused-vars
+import Trix from 'trix'; // needed so note is displayed correctly
 
 class AnalysisNoteEditor extends React.Component {
   constructor(props) {
@@ -23,7 +24,8 @@ class AnalysisNoteEditor extends React.Component {
     const id = `analysis_note_trix_input_analysis_${mdaId}`;
 
     // const dataDirectUploadUrl = this.props.api.url("rails/active_storage/direct_uploads");
-    // const dataBlobUrlTemplate = this.props.api.url("rails/active_storage/blobs/:signed_id/:filename");
+    // const dataBlobUrlTemplate =
+    // this.props.api.url("rails/active_storage/blobs/:signed_id/:filename");
     // const dataDirectUploadUrl = "http://endymion:3000/rails/active_storage/direct_uploads";
     // const dataBlobUrlTemplate = "http://endymion:3000/rails/active_storage/blobs/:signed_id/:filename";
     // data-direct-upload-url={dataDirectUploadUrl}

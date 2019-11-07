@@ -26,8 +26,8 @@ class DisciplineSelector extends React.Component {
 
     return (
       <div className="input-group">
-        <div className="input-group-prepend" htmlFor={this.props.label}>
-          <div className="input-group-text">{this.props.label}</div>
+        <div className="input-group-prepend" htmlFor={label}>
+          <div className="input-group-text">{label}</div>
         </div>
         <select
           id={label}
@@ -47,9 +47,9 @@ DisciplineSelector.propTypes = {
   nodes: PropTypes.array.isRequired,
   ulabel: PropTypes.string.isRequired,
   label: PropTypes.string.isRequired,
-  selected: PropTypes.string.isRequired,
+  selected: PropTypes.string,
 };
-
+DisciplineSelector.defaultProps = { selected: undefined };
 class ConnectionList extends React.PureComponent {
   render() {
     const {
@@ -96,7 +96,7 @@ class VariableList extends React.PureComponent {
   render() {
     let { vars } = this.props;
     const sorted = vars.sort(compare);
-    vars = sorted.map((v, i) => {
+    vars = sorted.map((v) => {
       const badgeKind = `badge ${(v.ioMode === 'in') ? 'badge-primary' : 'badge-secondary'}`;
       const klass = v.active ? 'btn m-1' : 'btn m-1 text-inactive';
       return (
@@ -129,8 +129,8 @@ class ConnectionsViewer extends React.PureComponent {
       edges = edges.filter((edge) => (edge.from === filter.fr) || (edge.to === filter.to), this);
       const uniqEdges = [];
       const uniqNames = [];
-      edges.forEach((edge, i) => {
-        edge.name.split(',').forEach((name, j) => {
+      edges.forEach((edge) => {
+        edge.name.split(',').forEach((name) => {
           if (!uniqNames.includes(name)) {
             uniqEdges.push({ name, ioMode: (edge.to === filter.to) ? 'in' : 'out', active: edge.active });
             uniqNames.push(name);
@@ -145,11 +145,11 @@ class ConnectionsViewer extends React.PureComponent {
       title = 'Connections';
 
       edges = edges.filter((edge) => (edge.from === filter.fr) && (edge.to === filter.to), this);
-      connections = edges.map((edge, i) => {
+      connections = edges.map((edge) => {
         count += edge.name.split(',').length;
         return (
           <ConnectionList
-            key={i}
+            key={edge.name}
             names={edge.name}
             active={edge.active}
             conn_ids={edge.conn_ids}
@@ -161,11 +161,11 @@ class ConnectionsViewer extends React.PureComponent {
 
     return (
       <div>
-        <label>
+        <div>
           {title}
           {' '}
           <span className="badge badge-info">{count}</span>
-        </label>
+        </div>
         <div>
           {connections}
         </div>
@@ -202,7 +202,10 @@ class ConnectionsForm extends React.Component {
     // console.log("RENDER ", selected);
     const outvars = db.getOutputVariables(filter.fr);
     // console.log("OUTPUT VARS = " + JSON.stringify(outvars));
-    edges = edges.filter((edge) => (edge.from === filter.fr) && (edge.to === filter.to), this) || [];
+    edges = edges.filter(
+      (edge) => (edge.from === filter.fr) && (edge.to === filter.to),
+      this,
+    ) || [];
     const current = edges.map((edge) => edge.name.split(','))[0] || [];
     // console.log("CURRENT = " + JSON.stringify(current));
     const selectable = outvars.filter((e) => !current.includes(e.name));

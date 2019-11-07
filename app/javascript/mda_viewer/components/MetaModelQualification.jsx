@@ -47,7 +47,6 @@ class MetaModelQualification extends React.Component {
     if (selected > -1) {
       const data = [];
 
-      const ylabel = 'Output predicted vs true';
       const qselected = qualities[selected];
 
       const { yvalid } = qselected;
