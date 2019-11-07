@@ -11,16 +11,18 @@ class SwaggerApiDoc extends React.Component {
   }
 
   preAuthorize() {
-    if (this.props.api.apiKey) {
-      this.ref.current.system.preauthorizeApiKey('Token', `Token ${this.props.api.apiKey}`);
+    const { api } = this.props;
+    if (api.apiKey) {
+      this.ref.current.system.preauthorizeApiKey('Token', `Token ${api.apiKey}`);
     }
   }
 
   render() {
+    const { api } = this.props;
     return (
       <SwaggerUI
         ref={this.ref}
-        url={this.props.api.apiUrl('/api_doc')}
+        url={api.apiUrl('/api_doc')}
         onComplete={this.preAuthorize}
       />
     );

@@ -139,7 +139,6 @@ class ScreeningPanel extends React.Component {
     api.openmdaoScreening(
       opeId,
       (response) => {
-        console.log(response.data);
         this.setState({ ...response.data });
       },
     );
