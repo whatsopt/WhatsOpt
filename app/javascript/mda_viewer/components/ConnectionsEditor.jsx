@@ -163,8 +163,7 @@ class ConnectionsViewer extends React.PureComponent {
       <div>
         <div>
           {title}
-          {' '}
-          <span className="badge badge-info">{count}</span>
+          <span className="badge badge-info ml-2">{count}</span>
         </div>
         <div>
           {connections}
@@ -199,37 +198,37 @@ class ConnectionsForm extends React.Component {
     let { edges } = this.props;
     const isErroneous = (connectionErrors.length > 0);
     const selected = selectedConnectionNames;
-    // console.log("RENDER ", selected);
+    // console.log('RENDER ', selected);
     const outvars = db.getOutputVariables(filter.fr);
-    // console.log("OUTPUT VARS = " + JSON.stringify(outvars));
+    // console.log(`OUTPUT VARS = ${JSON.stringify(outvars)}`);
     edges = edges.filter(
       (edge) => (edge.from === filter.fr) && (edge.to === filter.to),
       this,
     ) || [];
     const current = edges.map((edge) => edge.name.split(','))[0] || [];
-    // console.log("CURRENT = " + JSON.stringify(current));
+    // console.log(`CURRENT = ${JSON.stringify(current)}`);
     const selectable = outvars.filter((e) => !current.includes(e.name));
-    // console.log("SELECTABLE", selectable);
+    // console.log('SELECTABLE', selectable);
     return (
       <form className="form" onSubmit={onConnectionCreate} noValidate>
         <div className="form-group">
           <div htmlFor="typeahead-vars" className="sr-only">
             Name
-            <Typeahead
-              id="typeahead-vars"
-              allowNew
-              newSelectionPrefix="New: "
-              multiple
-              labelKey="name"
-              selectHintOnEnter
-              isInvalid={isErroneous}
-              minLength={1}
-              placeholder="Enter variable names..."
-              onChange={(sel) => { onConnectionNameChange(sel); }}
-              options={selectable}
-              selected={selected}
-            />
           </div>
+          <Typeahead
+            id="typeahead-vars"
+            allowNew
+            newSelectionPrefix="New: "
+            multiple
+            labelKey="name"
+            selectHintOnEnter
+            isInvalid={isErroneous}
+            minLength={1}
+            placeholder="Enter variable names..."
+            onChange={(sel) => { onConnectionNameChange(sel); }}
+            options={selectable}
+            selected={selected}
+          />
         </div>
         <div className="form-group">
           <button type="submit" className="btn btn-primary" disabled={isErroneous}>Add</button>

@@ -1,5 +1,11 @@
 <h1>CHANGELOG</h1>
 
+<h3>1.4.0 (14/09/2019)</h3>
+<ul>
+  <li>Refactor Help menu with WhatsOpt documentation et web services API documentation</li>
+  <li>Implementation: Javascript linting</li>
+</ul>
+
 <h3>1.3.0 (14/09/2019)</h3>
 <ul>
   <li>The user can distribute disciplines on different hosts.</li>

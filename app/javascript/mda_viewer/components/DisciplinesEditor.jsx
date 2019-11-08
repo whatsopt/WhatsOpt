@@ -303,7 +303,7 @@ class DisciplinesEditor extends React.Component {
         <div className="editor-section">
           <div>
             Disciplines
-            <span className="badge badge-info">{nbNodes}</span>
+            <span className="badge badge-info ml-2">{nbNodes}</span>
           </div>
           <DragDropContext
             onDragStart={this.onDragStart}

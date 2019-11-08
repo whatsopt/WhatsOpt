@@ -96,7 +96,7 @@ class VariablesEditor extends React.Component {
       return (
         <RIEInput
           className="react-table-cell"
-          value={this.connections[cellInfo.index][cellInfo.column.id]}
+          value={this.connections[cellInfo.index][cellInfo.column.id] || ''}
           change={(attr) => onConnectionChange(this.connections[cellInfo.index].id, attr)}
           propName={cellInfo.column.id}
           shouldBlockWhileLoading
