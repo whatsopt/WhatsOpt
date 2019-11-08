@@ -133,7 +133,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     ogen2 = WhatsOpt::OpenmdaoGenerator.new(mda)
     ok, log = ogen2.check_mda_setup
     assert_not ok  # check raises a runtime error
-    assert_match(/Error: Variable name .* already exists/, log.join(" "))
+    assert_match(/Variable name .* already exists/, log.join(" "))
     # assert_match /already been used/, log.join(' ')  # thrift error
   end
 
