@@ -109,7 +109,7 @@ class XdsmViewer extends React.Component {
     const { filter } = this.props;
     this.setSelection(filter);
     // reattach tooltips
-    this._setTooltips();
+    _setTooltips();
   }
 
   _setLinks() {
