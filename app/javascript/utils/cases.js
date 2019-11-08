@@ -6,9 +6,9 @@ function compare(casea, caseb) {
 }
 
 function label(c) {
-  let label = c.varname;
-  label += c.coord_index===-1?"":"["+c.coord_index+"]";
-  return label;
+  let lbl = c.varname;
+  lbl += c.coord_index === -1 ? '' : `[${c.coord_index}]`;
+  return lbl;
 }
 
-export {compare, label};
+export { compare, label };

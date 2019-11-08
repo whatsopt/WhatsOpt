@@ -5,6 +5,15 @@ import Graph from 'XDSMjs/src/graph';
 import Xdsm from 'XDSMjs/src/xdsm';
 import Selectable from 'XDSMjs/src/selectable';
 
+function _setTooltips() {
+  // bootstrap tooltip for connections
+
+  // eslint-disable-next-line no-undef
+  $('.ellipsized').attr('data-toggle', 'tooltip');
+  // eslint-disable-next-line no-undef
+  $(() => { $('.ellipsized').tooltip({ placement: 'right' }); });
+}
+
 class XdsmViewer extends React.Component {
   componentDidMount() {
     const config = {
@@ -14,35 +23,29 @@ class XdsmViewer extends React.Component {
         showLinkNbOnly: true,
       },
       layout: {
-        origin: {x: 50, y: 20},
-        cellsize: {w: 150, h: 50},
+        origin: { x: 50, y: 20 },
+        cellsize: { w: 150, h: 50 },
         padding: 10,
       },
       titleTooltip: true,
     };
-    this.graph = new Graph(this.props.mda, "", "noDefaultDriver");
+    const { mda, filter } = this.props;
+    this.graph = new Graph(mda, '', 'noDefaultDriver');
     this.graph.nodes[0].name = 'Driver';
     this.graph.nodes[0].type = 'driver';
     this.xdsm = new Xdsm(this.graph, 'root', config);
     this._draw();
     this.selectable = new Selectable(this.xdsm, this._onSelectionChange.bind(this));
-    this.setSelection(this.props.filter);
-    this._setTooltips();
-  }
-
-  render() {
-    return ( <div id="xdsm" className="xdsm"></div> );
+    this.setSelection(filter);
+    _setTooltips();
   }
 
   shouldComponentUpdate() {
     return false;
   }
 
-  update(mda) {
-    this.xdsm.graph = new Graph(mda, "", "noDefaultDriver");
-    this.xdsm.graph.nodes[0].name = 'Driver';
-    this.xdsm.graph.nodes[0].type = 'driver';
-    this._refresh();
+  setSelection(filter) {
+    this.selectable.setFilter(filter);
   }
 
   addDiscipline(discattrs) {
@@ -52,7 +55,7 @@ class XdsmViewer extends React.Component {
   }
 
   updateDiscipline(index, discattrs) {
-    var newNode = Object.assign({}, this.xdsm.graph.nodes[index], discattrs);
+    const newNode = { ...this.xdsm.graph.nodes[index], ...discattrs };
     console.log(JSON.stringify(discattrs));
     this.xdsm.graph.nodes.splice(index, 1, newNode);
     this._refresh();
@@ -64,19 +67,23 @@ class XdsmViewer extends React.Component {
   }
 
   addConnection(connattrs) {
-    connattrs.names.map((name) =>
-      this.xdsm.graph.addEdgeVar(connattrs.from, connattrs.to, name));
+    connattrs.names.map((name) => this.xdsm.graph.addEdgeVar(connattrs.from, connattrs.to, name));
     this._refresh();
   }
 
   removeConnection(connattrs) {
-    connattrs.names.map((name) =>
-      this.xdsm.graph.removeEdgeVar(connattrs.from, connattrs.to, name));
+    connattrs.names.map(
+      (name) => this.xdsm.graph.removeEdgeVar(connattrs.from, connattrs.to, name),
+    );
     this._refresh();
   }
 
-  setSelection(filter) {
-    this.selectable.setFilter(filter);
+
+  update(mda) {
+    this.xdsm.graph = new Graph(mda, '', 'noDefaultDriver');
+    this.xdsm.graph.nodes[0].name = 'Driver';
+    this.xdsm.graph.nodes[0].type = 'driver';
+    this._refresh();
   }
 
   _draw() {
@@ -85,11 +92,13 @@ class XdsmViewer extends React.Component {
   }
 
   _onSelectionChange(filter) {
-    this.props.onFilterChange(filter);
+    const { onFilterChange } = this.props;
+    onFilterChange(filter);
   }
 
   _refresh() {
-    $(".ellipsized").tooltip('dispose');
+    // eslint-disable-next-line no-undef
+    $('.ellipsized').tooltip('dispose');
     // remove and redraw xdsm
     this.xdsm.refresh();
     // links
@@ -97,28 +106,30 @@ class XdsmViewer extends React.Component {
     // reattach selection
     this.selectable.enable();
     // select current
-    this.setSelection(this.props.filter);
+    const { filter } = this.props;
+    this.setSelection(filter);
     // reattach tooltips
     this._setTooltips();
   }
 
-  _setTooltips() {
-    // bootstrap tooltip for connections
-    $(".ellipsized").attr("data-toggle", "tooltip");
-    $(() => {$('.ellipsized').tooltip({placement: 'right'});});
-  }
-
   _setLinks() {
-    this.props.mda.nodes.forEach((node) => {
+    const { mda, isEditing, api } = this.props;
+    mda.nodes.forEach((node) => {
       if (node.link) {
-        const edit = this.props.isEditing?"/edit":"";
+        const edit = isEditing ? '/edit' : '';
         const link = `/analyses/${node.link.id}${edit}`;
-        const $label = $('.id'+node.id+' tspan');
+        // eslint-disable-next-line no-undef
+        const $label = $(`.id${node.id} tspan`);
         const label = $label.text();
-        $label.html(`<a class='analysis-link' href="${this.props.api.url(link)}">${label}</a>`);
+        $label.html(`<a class='analysis-link' href="${api.url(link)}">${label}</a>`);
       }
     });
+    // eslint-disable-next-line no-undef
     $('.analysis-link').on('click', (e) => e.stopPropagation());
+  }
+
+  render() {
+    return (<div id="xdsm" className="xdsm" />);
   }
 }
 

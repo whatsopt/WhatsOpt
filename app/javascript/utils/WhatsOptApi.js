@@ -1,38 +1,62 @@
 import axios from 'axios';
 
-const API_URL = `/api/v1`;
+const API_URL = '/api/v1';
+
+
+function _pollStatus(fn, check, callback, timeout, interval) {
+  const endTime = Number(new Date()) + (timeout || 2000);
+  const interv = interval || 100;
+  const checkCondition = (resolve, reject) => {
+    const ajax = fn();
+    ajax.then((response) => {
+      if (check(response.data)) {
+        // If the condition is met, we're done!
+        resolve(response.data);
+      } else if (Number(new Date()) < endTime) {
+        // If the condition isn't met but the timeout hasn't elapsed, go again
+        callback(response.data);
+        setTimeout(checkCondition, interv, resolve, reject);
+      } else {
+        // Didn't match and too much time, reject!
+        reject(new Error(`timed out for ${fn}`));
+      }
+    });
+  };
+
+  return new Promise(checkCondition);
+}
 
 class WhatsOptApi {
   constructor(csrfToken, apiKey, relativeUrlRoot) {
     this.csrfToken = csrfToken;
     this.apiKey = apiKey;
     axios.defaults.headers.common['X-CSRF-Token'] = csrfToken;
-    axios.defaults.headers.common['Accept'] = 'application/json';
-    axios.defaults.headers.common['Authorization'] = 'Token ' + apiKey;
+    axios.defaults.headers.common.Accept = 'application/json';
+    axios.defaults.headers.common.Authorization = `Token ${apiKey}`;
     this.relativeUrlRoot = relativeUrlRoot;
   }
 
   url(path) {
     return `${this.relativeUrlRoot}${path}`;
-  };
+  }
 
   apiUrl(path) {
     return `${this.relativeUrlRoot}${API_URL}${path}`;
-  };
+  }
 
   openmdaoChecking(mdaId, callback) {
     const path = `/analyses/${mdaId}/openmdao_checking`;
     axios.post(this.apiUrl(path))
       .then(callback)
       .catch((error) => console.log(error));
-  };
+  }
 
   openmdaoScreening(opeId, callback) {
     const path = `/operations/${opeId}/openmdao_screenings/new`;
     axios.get(this.apiUrl(path))
       .then(callback)
       .catch((error) => console.log(error));
-  };
+  }
 
   getMemberCandidates(mdaId, callback) {
     const path = `/user_roles?query[analysis_id]=${mdaId}&query[select]=member_candidates`;
@@ -57,7 +81,7 @@ class WhatsOptApi {
 
   updateUserSettings(userId, settings, callback) {
     const path = `/users/${userId}`;
-    axios.put(this.apiUrl(path), { user: { settings: settings } })
+    axios.put(this.apiUrl(path), { user: { settings } })
       .then(callback)
       .catch((error) => console.log(error));
   }
@@ -70,11 +94,10 @@ class WhatsOptApi {
     axios.get(this.apiUrl(path))
       .then(callback)
       .catch((error) => console.log(error));
-  };
+  }
 
   updateAnalysis(mdaId, mdaAttrs, callback, onError) {
     const path = `/analyses/${mdaId}`;
-    console.log(mdaAttrs);
     axios.put(this.apiUrl(path), { analysis: mdaAttrs })
       .then(callback)
       .catch(onError);
@@ -103,7 +126,7 @@ class WhatsOptApi {
   }
 
   getSubAnalysisCandidates(callback) {
-    const path = `/analyses`;
+    const path = '/analyses';
     axios.get(this.apiUrl(path))
       .then(callback)
       .catch((error) => console.log(error));
@@ -144,11 +167,12 @@ class WhatsOptApi {
       .catch((error) => console.log(error));
   }
 
-  updateOperation(operationId, opeAttrs, callback, onError) {
+  updateOperation(operationId, opeAttrs, callback) {
     const path = `/operations/${operationId}`;
     const jobpath = `${path}/job`;
     axios.patch(this.apiUrl(path), { operation: opeAttrs })
-      .then(() => axios.post(this.apiUrl(jobpath)).then(callback).catch((error) => console.log(error)))
+      .then(() => axios.post(this.apiUrl(jobpath))
+        .then(callback).catch((error) => console.log(error)))
       .catch((error) => console.log(error));
   }
 
@@ -161,34 +185,9 @@ class WhatsOptApi {
 
   pollOperationJob(operationId, check, callback, onError) {
     const path = `/operations/${operationId}/job`;
-    this._pollStatus(() => axios.get(this.apiUrl(path)), check, callback, 300000, 2000)
+    _pollStatus(() => axios.get(this.apiUrl(path)), check, callback, 300000, 2000)
       .then(callback)
       .catch(onError);
-  }
-
-  _pollStatus(fn, check, callback, timeout, interval) {
-    const endTime = Number(new Date()) + (timeout || 2000);
-    interval = interval || 100;
-    const checkCondition = function (resolve, reject) {
-      var ajax = fn();
-      ajax.then(function (response) {
-        // If the condition is met, we're done!
-        if (check(response.data)) {
-          resolve(response.data);
-        }
-        // If the condition isn't met but the timeout hasn't elapsed, go again
-        else if (Number(new Date()) < endTime) {
-          callback(response.data);
-          setTimeout(checkCondition, interval, resolve, reject);
-        }
-        // Didn't match and too much time, reject!
-        else {
-          reject(new Error('timed out for ' + fn));
-        }
-      });
-    };
-
-    return new Promise(checkCondition);
   }
 
   getOpenmdaoImpl(mdaId, callback) {
@@ -213,10 +212,11 @@ class WhatsOptApi {
   }
 
   getApiDocs() {
-    const path = `/api/v1/docs`;
+    const path = '/api/v1/docs';
     axios.post(this.apiUrl(path))
       .catch((error) => console.log(error));
   }
-};
+}
+
 
 export default WhatsOptApi;
