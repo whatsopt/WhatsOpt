@@ -11,8 +11,9 @@ from thrift.server import TServer
 from whatsopt.surrogate_server import ttypes as SurrogateStoreTypes
 from whatsopt.surrogate_server import SurrogateStore as SurrogateStoreService
 from whatsopt.surrogate_store import SurrogateStore
-#from whatsopt.utils import r2_score
-from sklearn.metrics import mean_squared_error, r2_score
+
+# from whatsopt.utils import r2_score
+from sklearn.metrics import r2_score
 
 SURROGATES_MAP = {
     SurrogateStoreTypes.SurrogateKind.KRIGING: SurrogateStore.SURROGATE_NAMES[0],
@@ -23,6 +24,7 @@ SURROGATES_MAP = {
 }
 
 NULL_QUALIFICATION = SurrogateStoreTypes.SurrogateQualification(r2=0.0, yp=[])
+
 
 class SurrogateStoreHandler:
     def __init__(self, outdir="."):

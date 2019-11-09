@@ -5,14 +5,13 @@ from whatsopt.surrogate_store import SurrogateStore
 
 SMT_NOT_INSTALLED = False
 try:
-    from smt.surrogate_models import KRG
+    # from smt.surrogate_models import KRG
     from smt.extensions import MFK
 except:
     SMT_NOT_INSTALLED = True
 
 
 class TestSurrogateStore(unittest.TestCase):
-
     def setUp(self):
         self.store = SurrogateStore()
 
@@ -37,7 +36,7 @@ class TestSurrogateStore(unittest.TestCase):
         sm2 = self.store.get_surrogate("1")
         y2 = sm2.predict_values(x)
 
-        assert np.array_equal(y1, y2)
+        self.assertTrue(np.array_equal(y1, y2))
 
     def test_get_non_existing_surrogate(self):
 
@@ -65,8 +64,8 @@ class TestSurrogateStore(unittest.TestCase):
         Xt_e = np.linspace(0, 1, 4, endpoint=True).reshape(-1, ndim)
         Xt_c = np.linspace(0, 1, 11, endpoint=True).reshape(-1, ndim)
 
-        nt_exp = Xt_e.shape[0]
-        nt_cheap = Xt_c.shape[0]
+        # nt_exp = Xt_e.shape[0]
+        # nt_cheap = Xt_c.shape[0]
 
         # Evaluate the HF and LF functions
         yt_e = HF_function(Xt_e)
