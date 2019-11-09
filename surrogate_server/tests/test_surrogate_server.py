@@ -6,7 +6,8 @@ from whatsopt.surrogate_server import SurrogateStore
 SMT_NOT_INSTALLED = False
 try:
     from smt.surrogate_models import KRG
-    from smt.applications import MFK
+
+    # from smt.applications import MFK
 except:
     SMT_NOT_INSTALLED = True
 
