@@ -1,17 +1,15 @@
 import unittest
 import os
 import numpy as np
-from whatsopt.surrogate_store import SurrogateStore as SurrogateStoreImpl
 from whatsopt.surrogate_server import SurrogateStore
 
 SMT_NOT_INSTALLED = False
 try:
     from smt.surrogate_models import KRG
-    from smt.extensions import MFK
+    from smt.applications import MFK
 except:
     SMT_NOT_INSTALLED = True
 
-from thrift import Thrift
 from thrift.transport import TSocket
 from thrift.transport import TTransport
 from thrift.protocol import TBinaryProtocol
@@ -72,7 +70,9 @@ class TestSurrogateServer(unittest.TestCase):
         yt = np.array([0.0, 1.0, 1.5, 0.5, 1.0])
 
         self.store.create_surrogate("1", SurrogateStore.SurrogateKind.KRIGING, xt, yt)
-        q = self.store.qualify("1", np.array([[0.0, 2.0, 4.0]]).T, np.array([0.0, 1.5, 1.0]))
+        q = self.store.qualify(
+            "1", np.array([[0.0, 2.0, 4.0]]).T, np.array([0.0, 1.5, 1.0])
+        )
         self.assertAlmostEqual(1.0, q.r2)
         for i, v in enumerate([0.0, 1.5, 1.0]):
             self.assertAlmostEqual(v, q.yp[i])

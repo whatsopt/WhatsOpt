@@ -1,4 +1,3 @@
-from os import remove
 import numpy as np
 import os
 
@@ -10,7 +9,8 @@ except:
 SMT_NOT_INSTALLED = False
 try:
     from smt.surrogate_models import KRG, KPLS, KPLSK, LS, QP
-    from smt.extensions import MFK
+
+    # from smt.applications import MFK
 except:
     SMT_NOT_INSTALLED = True
 
