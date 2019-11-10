@@ -1,5 +1,4 @@
 FROM ubuntu:16.04
-MAINTAINER remi.lafage@onera.fr
 
 #ENV http_proxy=http://proxy.onecert.fr:80
 #ENV https_proxy=http://proxy.onecert.fr:80
@@ -164,10 +163,6 @@ RUN bundle install --jobs 20 --retry 5
 
 COPY . ./
 
-ENV WOP_ENV=development
-RUN pip install -e ./wop
-
 EXPOSE 3000
-EXPOSE 3035
 
 CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0"]
