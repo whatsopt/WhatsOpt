@@ -10,7 +10,7 @@ class Api::V1::OpenmdaoScreeningControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should run openmdao screening" do
-    get api_v1_operation_openmdao_screenings_new_url(@ope), as: :json, headers: @auth_headers
+    get api_v1_operation_openmdao_screening_url(@ope), as: :json, headers: @auth_headers
     assert_response :success
     sa = JSON.parse(response.body)
     expected = { "obj" => { "mu" => [0.65, 0.21000000000000005],
