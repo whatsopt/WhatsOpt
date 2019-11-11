@@ -10,6 +10,8 @@ cache:
   directories:
     - node_modules
 
+sudo: required
+
 install:
   # Ruby gems installation
   - bundle install --jobs=3 --retry=3 --deployment
@@ -44,6 +46,20 @@ install:
   - pip install thrift
   - python --version
   - pip list
+
+  # Apache Thrift
+  # Thrift
+  - export THRIFT_VERSION=0.11.0
+  - export buildDeps="automake bison curl flex g++ libboost-dev libboost-filesystem-dev libboost-program-options-dev libboost-system-dev libboost-test-dev  libevent-dev libssl-dev libtool make pkg-config"
+  - sudo apt-get install -y --no-install-recommends $buildDeps && sudo rm -rf /var/lib/apt/lists/*
+  - sudo curl -sSL "http://apache.mirrors.spacedump.net/thrift/$THRIFT_VERSION/thrift-$THRIFT_VERSION.tar.gz" -o $HOME/thrift.tar.gz
+  - mkdir -p $HOME/thrift
+  - tar zxf $HOME/thrift.tar.gz -C $HOME/thrift --strip-components=1
+  - pushd $HOME/thrift
+  - ./configure  --without-python --without-cpp --without-ruby --without-nodejs --without-py3 --without-go --without-php
+  - make
+  - sudo make install
+  - popd
 
 before_script:
   - cp config/configuration.yml.example config/configuration.yml
