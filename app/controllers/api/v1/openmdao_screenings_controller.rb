@@ -3,9 +3,10 @@
 require "whats_opt/sensitivity_analysis_generator"
 
 class Api::V1::OpenmdaoScreeningsController < Api::ApiController
-  # GET /api/v1/operations/{operation_id}/openmdao_screenings/new
-  def new
+  # GET /api/v1/operations/{operation_id}/openmdao_screening
+  def show
     ope = Operation.find(params[:operation_id])
+    Rails.logger.info ope
     authorize ope
     sagen = WhatsOpt::SensitivityAnalysisGenerator.new(ope)
     status, sa, err = sagen.analyze_sensitivity

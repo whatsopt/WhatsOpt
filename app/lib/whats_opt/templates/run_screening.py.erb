@@ -60,7 +60,7 @@ data['outputs']['<%= r.name %>'] = np.zeros((n,)+<%= r.shape=="1"?"(1,)":r.shape
 for i in range(len(cases)):
     case = reader.get_case(cases[i])
 <% @mda.design_variables.each do |dv| -%>
-    data['inputs']['<%= dv.name %>'][i,:] = case.inputs['<%= dv.name %>']
+    data['inputs']['<%= dv.name %>'][i,:] = case.outputs['<%= dv.name %>']
 <% end -%>
 <% @mda.responses_of_interest.each do |r| -%>
     data['outputs']['<%= r.name %>'][i,:] = case.outputs['<%= r.name %>']

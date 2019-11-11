@@ -52,7 +52,7 @@ class WhatsOptApi {
   }
 
   openmdaoScreening(opeId, callback) {
-    const path = `/operations/${opeId}/openmdao_screenings/new`;
+    const path = `/operations/${opeId}/openmdao_screening`;
     axios.get(this.apiUrl(path))
       .then(callback)
       .catch((error) => console.log(error));
