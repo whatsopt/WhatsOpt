@@ -110,6 +110,10 @@ class Analysis < ApplicationRecord
     @resps = variables.with_role(WhatsOpt::Variable::OUTPUT_ROLES)
   end
 
+  def inner_variables
+    @inners = variables.with_role(WhatsOpt::Variable::OUTPUT_ROLES+[WhatsOpt::Variable::STATE_VAR_ROLE])
+  end
+
   def response_dim
     response_variables.inject(0) { |s, v| s + v.dim }
   end
@@ -272,9 +276,11 @@ class Analysis < ApplicationRecord
       disciplines.each do |discId|
         disc = Discipline.find(discId)
         # check consistency
+        analysis_vars = inner_variables.pluck(:name)
         if disc && fromAnalysis.disciplines.where(id: discId)
-          varattrs = ActiveModelSerializers::SerializableResource.new(disc.variables,
-            each_serializer: VariableSerializer).as_json
+          vars = disc.variables.where.not(name: analysis_vars)
+          varattrs = ActiveModelSerializers::SerializableResource.new(vars,
+                each_serializer: VariableSerializer).as_json
           attrs = {disciplines_attributes: [{
             name: disc.name,
             variables_attributes: varattrs  #.map {|att| att.except(:parameter_attributes, :scaling)}

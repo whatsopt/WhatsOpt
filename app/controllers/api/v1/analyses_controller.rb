@@ -33,7 +33,6 @@ class Api::V1::AnalysesController < Api::ApiController
   # PUT/PATCH /api/v1/mdas/1
   def update
     import = mda_params[:import]
-    p import
     if import
       fromAnalysis = Analysis.find(import[:analysis])
       authorize(fromAnalysis, :show?)
