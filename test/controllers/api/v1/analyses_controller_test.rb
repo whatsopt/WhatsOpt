@@ -140,4 +140,15 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     assert_equal false, mdajson["impl"]["openmdao"]["components"]["parallel_group"]
     assert 3, mdajson["impl"]["openmdao"]["components"]["nodes"].size
   end
+
+  test "should import a discipline from another analysis" do
+    @mda2 = analyses(:innermda)
+    @disc = disciplines(:innermda_discipline)
+    put api_v1_mda_url(@mda), params: {analysis: {import: {analysis: @mda2.id, disciplines: [@disc.id]}}}, 
+        as: :json, headers: @auth_headers
+    @mda.reload
+    newDisc = @mda.disciplines.last
+    assert_equal @disc.name, newDisc.name
+  end
+
 end

@@ -32,7 +32,15 @@ class Api::V1::AnalysesController < Api::ApiController
 
   # PUT/PATCH /api/v1/mdas/1
   def update
-    @mda.update!(mda_params)
+    import = mda_params[:import]
+    p import
+    if import
+      fromAnalysis = Analysis.find(import[:analysis])
+      authorize(fromAnalysis, :show?)
+      @mda.import!(fromAnalysis, import[:disciplines])
+    else
+      @mda.update!(mda_params)
+    end
     head :no_content
   end
 
@@ -47,7 +55,8 @@ class Api::V1::AnalysesController < Api::ApiController
         :name,
         :note,
         :public,
-        disciplines_attributes:           [
+        import: [:analysis, disciplines: [] ],
+        disciplines_attributes: [
             :name,
             variables_attributes: [
               :name, :io_mode, :type, :shape, :units, :desc,

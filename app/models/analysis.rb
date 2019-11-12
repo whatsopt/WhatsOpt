@@ -266,6 +266,26 @@ class Analysis < ApplicationRecord
     end
   end
 
+  def import!(fromAnalysis, disciplines)
+    # do not import from self
+    if fromAnalysis.id != id  
+      disciplines.each do |discId|
+        disc = Discipline.find(discId)
+        # check consistency
+        if disc && fromAnalysis.disciplines.where(id: discId)
+          varattrs = ActiveModelSerializers::SerializableResource.new(disc.variables,
+            each_serializer: VariableSerializer).as_json
+          attrs = {disciplines_attributes: [{
+            name: disc.name,
+            variables_attributes: varattrs  #.map {|att| att.except(:parameter_attributes, :scaling)}
+          }]}
+          p attrs
+          self.update!(attrs)
+        end
+      end
+    end
+  end
+
   def create_connections!(from_disc, to_disc, names, sub_analysis_check: true)
     Analysis.transaction do
       names.each do |name|
