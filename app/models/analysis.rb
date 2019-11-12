@@ -279,7 +279,6 @@ class Analysis < ApplicationRecord
             name: disc.name,
             variables_attributes: varattrs  #.map {|att| att.except(:parameter_attributes, :scaling)}
           }]}
-          p attrs
           self.update!(attrs)
         end
       end
