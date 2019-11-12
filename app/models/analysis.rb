@@ -278,7 +278,7 @@ class Analysis < ApplicationRecord
         # check consistency
         analysis_vars = inner_variables.pluck(:name)
         if disc && fromAnalysis.disciplines.where(id: discId)
-          vars = disc.variables.where.not(name: analysis_vars)
+          vars = disc.output_variables.where.not(name: analysis_vars)  # check outvar already present
           varattrs = ActiveModelSerializers::SerializableResource.new(vars,
                 each_serializer: VariableSerializer).as_json
           attrs = {disciplines_attributes: [{
