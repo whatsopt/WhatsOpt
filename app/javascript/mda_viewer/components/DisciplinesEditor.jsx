@@ -133,6 +133,7 @@ class Discipline extends React.Component {
         deploymentOrSubAnalysis = (
           <div className="form-group ml-2">
             <AnalysisSelector
+              message="Search for sub-analysis..."
               selected={selected}
               onAnalysisSearch={onSubAnalysisSearch}
               onAnalysisSelected={this.handleSubAnalysisSelected}

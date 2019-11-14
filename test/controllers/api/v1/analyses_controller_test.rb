@@ -11,9 +11,18 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     @disc = @mda.disciplines.nodes.first
   end
 
-  test "should get mdas" do
+  test "should get only root authorized mdas" do
     get api_v1_mdas_url, as: :json, headers: @auth_headers
     assert_response :success
+    analyses = JSON.parse(response.body)
+    assert_equal 5, analyses.size 
+  end
+
+  test "should get all mdas even sub ones" do
+    get api_v1_mdas_url(with_sub_analyses: true), as: :json, headers: @auth_headers
+    assert_response :success 
+    analyses = JSON.parse(response.body)
+    assert_equal 6, analyses.size 
   end
 
   test "should create a mda" do
@@ -142,13 +151,24 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should import a discipline from another analysis" do
+    p Connection.of_analysis(@mda).size
     @mda2 = analyses(:innermda)
     @disc = disciplines(:innermda_discipline)
+    origVars = @disc.variables.map(&:name)
+    p origVars
+    existingVars = @mda.inner_variables.map(&:name).uniq
+    p existingVars
     put api_v1_mda_url(@mda), params: {analysis: {import: {analysis: @mda2.id, disciplines: [@disc.id]}}}, 
         as: :json, headers: @auth_headers
     @mda.reload
     newDisc = @mda.disciplines.last
     assert_equal @disc.name, newDisc.name
+    newVars = newDisc.variables.map(&:name)
+    p newVars
+    trueNewVars = origVars.reject{|name| existingVars.include?(name)}
+    p trueNewVars
+    assert_equal trueNewVars.size, newVars.size 
+    p Connection.of_analysis(@mda).size
   end
 
 end

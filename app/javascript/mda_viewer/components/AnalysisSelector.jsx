@@ -39,8 +39,10 @@ class AnalysisSelector extends React.Component {
 
   render() {
     const { defaultSelected, isLoading, options } = this.state;
+    const { message } = this.props;
     return (
       <AsyncTypeahead
+        id="analysis"
         defaultSelected={defaultSelected}
         isLoading={isLoading}
         options={options}
@@ -50,7 +52,7 @@ class AnalysisSelector extends React.Component {
         labelKey="label"
         minLength={2}
         onSearch={this.handleSearch}
-        placeholder="Search for sub-analysis..."
+        placeholder={message}
         onChange={this.handleChange}
         ref={(ref) => { this.typeahead = ref; }}
       />
@@ -59,6 +61,7 @@ class AnalysisSelector extends React.Component {
 }
 
 AnalysisSelector.propTypes = {
+  message: PropTypes.string.isRequired,
   selected: PropTypes.array.isRequired,
   onAnalysisSearch: PropTypes.func.isRequired,
   onAnalysisSelected: PropTypes.func.isRequired,

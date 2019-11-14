@@ -176,9 +176,9 @@ vary2_innermda_driver_in:
   name: y2
   io_mode: in
 
-vary_innermda_driver_in:
+vary3_innermda_driver_in:
   <<: *varinnermdadriver
-  name: y
+  name: y3
   io_mode: in
 
 # INNER DISCIPLINE ##################################################
@@ -203,9 +203,9 @@ vary2_innermda_disc_out:
   name: y2
   io_mode: out
 
-vary_innermda_disc_out:
+vary3_innermda_disc_out:
   <<: *varinnermdadisc
-  name: y
+  name: y3
   io_mode: out
 
 
@@ -238,7 +238,7 @@ vary2_outermda_driver_in:
   
 vary_outermda_driver_in:
   <<: *vardriverout
-  name: y
+  name: y3
   io_mode: in
 
 # OUTER DISCIPLINE ##################################################
@@ -287,9 +287,9 @@ vary2_outermda_innermda_disc_out:
   name: y2
   io_mode: out
 
-vary_outermda_innermda_disc_out:
+vary3_outermda_innermda_disc_out:
   <<: *varouter_innermdadriver
-  name: y
+  name: y3
   io_mode: out
 
 # METAMODEL ##################################################################

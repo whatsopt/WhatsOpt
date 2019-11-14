@@ -35,6 +35,14 @@ class AnalysisDatabase {
     this.connections = this.computeConnections();
   }
 
+  getAnalysisId() {
+    return this.mda.id;
+  }
+
+  getDisciplines() {
+    return this.nodes.slice(1);
+  }
+
   isScaled() {
     return !!this.varList.find((v) => v.scaling);
   }

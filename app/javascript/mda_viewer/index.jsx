@@ -646,7 +646,7 @@ class MdaViewer extends React.Component {
                 Variables
               </a>
             </li>
-            <li>
+            <li className="nav-item">
               <a
                 className="nav-link"
                 id="exports-tab"
@@ -685,7 +685,7 @@ class MdaViewer extends React.Component {
 MdaViewer.propTypes = {
   isEditing: PropTypes.bool.isRequired,
   api: PropTypes.object.isRequired,
-  members: PropTypes.array.isRequired,
+  members: PropTypes.array,
   mda: PropTypes.shape({
     name: PropTypes.string.isRequired,
     public: PropTypes.bool.isRequired,
@@ -699,6 +699,9 @@ MdaViewer.propTypes = {
       ),
     }),
   }).isRequired,
+};
+MdaViewer.defaultProps = {
+  members: [],
 };
 
 export default MdaViewer;

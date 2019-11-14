@@ -103,6 +103,20 @@ class WhatsOptApi {
       .catch(onError);
   }
 
+  importDiscipline(fromMdaId, discId, toMdaId) {
+    console.log(`export discipline ${discId} in analysis ${fromMdaId}`);
+    const path = `/analyses/${toMdaId}`;
+    axios.put(this.apiUrl(path), {
+      analysis: {
+        import: {
+          analysis: fromMdaId, disciplines: [discId],
+        },
+      },
+    })
+      .then(() => console.log(`Disc ${discId} exported`))
+      .catch((error) => console.log(error));
+  }
+
   createDiscipline(mdaId, disciplineAttributes, callback) {
     const path = `/analyses/${mdaId}/disciplines`;
     axios.post(this.apiUrl(path), { discipline: disciplineAttributes })
@@ -121,6 +135,13 @@ class WhatsOptApi {
   deleteDiscipline(discId, callback) {
     const path = `/disciplines/${discId}`;
     axios.delete(this.apiUrl(path))
+      .then(callback)
+      .catch((error) => console.log(error));
+  }
+
+  getAnalysisToExportTo(callback) {
+    const path = '/analyses?with_sub_analyses=true';
+    axios.get(this.apiUrl(path))
       .then(callback)
       .catch((error) => console.log(error));
   }

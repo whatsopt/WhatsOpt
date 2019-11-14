@@ -9,6 +9,14 @@ owner_cicav_meta_model_role:
   name: :owner
   resource: cicav_metamodel_analysis (Analysis)
 
+owner_cicav_meta_model2_role:
+  name: :owner
+  resource: cicav_metamodel2_analysis (Analysis)
+
+member_cicav_meta_model2_role:
+  name: :member
+  resource: cicav_metamodel2_analysis (Analysis)
+
 owner_outermda_role:
   name: :owner
   resource: outermda (Analysis)
