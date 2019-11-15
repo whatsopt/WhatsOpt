@@ -99,3 +99,15 @@ disc_cicav_metamodel2:
   type: metamodel
   analysis: cicav_metamodel2_analysis
   position: 1
+
+driver_singleton:
+  name: __DRIVER__
+  type: null_driver
+  analysis: singleton
+  position: 0
+
+disc_singleton:
+  name: SingletonDiscipline
+  type: analysis
+  analysis: singleton
+  position: 1

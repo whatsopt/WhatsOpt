@@ -45,3 +45,7 @@ users_roles10:
 users_roles11:
   user: user2
   role: owner_gm_two
+
+users_roles12:
+  user: user3
+  role: owner_singleton

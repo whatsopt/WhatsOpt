@@ -176,9 +176,9 @@ vary2_innermda_driver_in:
   name: y2
   io_mode: in
 
-vary3_innermda_driver_in:
+vary_innermda_driver_in:
   <<: *varinnermdadriver
-  name: y3
+  name: y
   io_mode: in
 
 # INNER DISCIPLINE ##################################################
@@ -203,9 +203,9 @@ vary2_innermda_disc_out:
   name: y2
   io_mode: out
 
-vary3_innermda_disc_out:
+vary_innermda_disc_out:
   <<: *varinnermdadisc
-  name: y3
+  name: y
   io_mode: out
 
 
@@ -238,7 +238,7 @@ vary2_outermda_driver_in:
   
 vary_outermda_driver_in:
   <<: *vardriverout
-  name: y3
+  name: y
   io_mode: in
 
 # OUTER DISCIPLINE ##################################################
@@ -287,9 +287,9 @@ vary2_outermda_innermda_disc_out:
   name: y2
   io_mode: out
 
-vary3_outermda_innermda_disc_out:
+vary_outermda_innermda_disc_out:
   <<: *varouter_innermdadriver
-  name: y3
+  name: y
   io_mode: out
 
 # METAMODEL ##################################################################
@@ -421,3 +421,24 @@ disc_metamodel2_varobj_objective_out:
   type: Float
   shape: 1  
   active: true
+
+# SINGLETON ##################################################################
+varu_driver_out: &varu_driver_out
+  name: u
+  discipline: driver_singleton
+  io_mode: out
+
+varu_disc_in: 
+  <<: *varu_driver_out
+  discipline: disc_singleton
+  io_mode: in
+
+varv_driver_out: &varu_driver_in
+  name: v
+  discipline: driver_singleton
+  io_mode: out
+
+varv_disc_in:
+  <<: *varu_driver_in
+  discipline: disc_singleton
+  io_mode: in
