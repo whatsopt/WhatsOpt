@@ -90,7 +90,7 @@ gem "rolify"
 gem "pundit"
 
 # support CORS
-gem "rack-cors"
+gem "rack-cors", ">=1.0.5"
 
 # Attachments
 gem "paperclip"
