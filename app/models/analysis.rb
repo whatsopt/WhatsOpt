@@ -49,7 +49,7 @@ class Analysis < ApplicationRecord
   validates :name, presence: true, allow_blank: false
 
   def driver
-    disciplines.driver
+    @driver ||= disciplines.driver.take
   end
 
   def is_sub_analysis?
@@ -260,15 +260,15 @@ class Analysis < ApplicationRecord
         role = WhatsOpt::Variable::RESPONSE_ROLE if vin.discipline.is_driver?
         existing_conn_proto = Connection.where(from_id: vout.id).take
         role = existing_conn_proto.role if existing_conn_proto
-        p "1 Connect #{vout.name} between #{vout.discipline.name} #{vin.discipline.name}"
+        # p "1 Connect #{vout.name} between #{vout.discipline.name} #{vin.discipline.name}"
         Connection.where(from_id: vout.id, to_id: vin.id).first_or_create!(role: role)
       end
-      if vins.empty?  # connect output to driver
+      if driver && vins.empty?  # connect output to driver if driver still there (analysis destroy case)
         vattrs = vout.attributes.except("id")
         vattrs[:io_mode] = WhatsOpt::Variable::IN
         newvar = driver.variables.create(vattrs)
-        p "2 Connect #{vout.name} betwee #{vout.discipline.name} #{newvar.discipline.name}"
-        Connection.create(from_id: vout.id, to_id: newvar.id, role: WhatsOpt::Variable::RESPONSE_ROLE)
+        # p "2 Connect #{vout.name} betwee #{vout.discipline.name} #{newvar.discipline.name}"
+        Connection.where(from_id: vout.id, to_id: newvar.id).first_or_create!(role: WhatsOpt::Variable::RESPONSE_ROLE)
       end
     end
     # check that each in variables is connected
@@ -280,15 +280,15 @@ class Analysis < ApplicationRecord
         role = WhatsOpt::Variable::PARAMETER_ROLE if vout.discipline.is_driver?
         existing_conn_proto = Connection.where(from_id: vout.id).take
         role = existing_conn_proto.role if existing_conn_proto
-        p "3 Connect #{vout.name} between #{vout.discipline.name} #{vin.discipline.name}"
+        # p "3 Connect #{vout.name} between #{vout.discipline.name} #{vin.discipline.name}"
         Connection.where(from_id: vout.id, to_id: vin.id).first_or_create!(role: role)
       end
-      if vouts.empty?  # connect input to driver
+      if driver && vouts.empty?  # connect input to driver if driver still there (analysis destroy case)
         vattrs = vin.attributes.except("id")
         vattrs[:io_mode] = WhatsOpt::Variable::OUT
         newvar = driver.variables.create(vattrs)
-        p "4 Connect #{vin.name} between #{newvar.discipline.name} #{vin.discipline.name}"
-        Connection.create(from_id: newvar.id, to_id: vin.id, role: WhatsOpt::Variable::PARAMETER_ROLE)
+        # p "4 Connect #{vin.name} between #{newvar.discipline.name} #{vin.discipline.name}"
+        Connection.where(from_id: newvar.id, to_id: vin.id).first_or_create!(role: WhatsOpt::Variable::PARAMETER_ROLE)
       end
     end
   end
@@ -311,7 +311,7 @@ class Analysis < ApplicationRecord
         analysis_vars = inner_variables.pluck(:name)
 
         if disc && fromAnalysis.disciplines.where(id: discId)
-          p "ALREADY VARS", analysis_vars
+          # p "ALREADY VARS", analysis_vars
           vars = disc.variables.where.not(name: analysis_vars)  # check outvar already present
           varattrs = ActiveModelSerializers::SerializableResource.new(vars,
                 each_serializer: VariableSerializer).as_json
@@ -319,7 +319,7 @@ class Analysis < ApplicationRecord
             name: disc.name,
             variables_attributes: varattrs  #.map {|att| att.except(:parameter_attributes, :scaling)}
           }]}
-          p "ATTRS", attrs
+          # p "ATTRS", attrs
           self.update!(attrs)
         end
       end

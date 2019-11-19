@@ -63,11 +63,29 @@ class VariableTest < ActiveSupport::TestCase
     assert var.incoming_connection
   end
 
-  test "should delete and deleted connected variables" do
+  test "should delete only one var if connected to another discipline" do
     varin = variables(:varyg_aero_in)
+    assert_difference("Variable.count", -1) do
+      varin.destroy!
+    end
+    vars = Variable.where(name: varin.name)
+    assert_equal 1, vars.size
+    assert_equal "Geometry", vars.first.discipline.name
+  end
+
+  test "should delete and delete connected if only connected from driver" do
+    varin = variables(:varx1_geo_in)
     assert_difference("Variable.count", -2) do
       varin.destroy!
     end
-    assert_not Variable.find_by_name(varin.name)
+    refute Variable.of_analysis(analyses(:cicav)).find_by_name(varin.name)
+  end
+
+  test "should delete and delete connected if only connected to driver" do
+    var = variables(:varobj_geo_out)
+    assert_difference("Variable.count", -2) do
+      var.destroy!
+    end
+    refute Variable.of_analysis(analyses(:cicav)).find_by_name(var.name)
   end
 end

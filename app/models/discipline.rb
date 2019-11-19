@@ -10,6 +10,10 @@ class Discipline < ApplicationRecord
 
   self.inheritance_column = :disable_inheritance
 
+  after_initialize :set_defaults, unless: :persisted?
+  before_destroy :_destroy_connections
+  after_destroy :_refresh_analysis_connections
+
   has_many :variables, -> { includes(:parameter).order("name ASC") }, dependent: :destroy
   # has_many :variables, :dependent => :destroy
   has_one :analysis_discipline, dependent: :destroy
@@ -28,11 +32,10 @@ class Discipline < ApplicationRecord
 
   validates :name, presence: true, allow_blank: false
 
-  scope :driver, -> { where(type: WhatsOpt::Discipline::NULL_DRIVER).take }
+  scope :driver, -> { where(type: WhatsOpt::Discipline::NULL_DRIVER) }
   scope :nodes, -> { where.not(type: WhatsOpt::Discipline::NULL_DRIVER) }
   scope :by_position, -> { order(position: :asc) }
-
-  after_initialize :set_defaults, unless: :persisted?
+  scope :of_analysis, -> (analysis_id) { where( analysis_id: analysis_id) }
 
   def input_variables
     variables.inputs
@@ -143,4 +146,14 @@ class Discipline < ApplicationRecord
       end
       self.openmdao_impl = OpenmdaoDisciplineImpl.new
     end
+
+    def _destroy_connections
+      conns = Connection.from_discipline(self.id) + Connection.to_discipline(self.id)
+      conns.map(&:destroy!)
+    end
+
+    def _refresh_analysis_connections
+      analysis.refresh_connections
+    end
+
 end

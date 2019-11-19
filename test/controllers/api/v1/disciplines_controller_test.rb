@@ -51,8 +51,9 @@ class Api::V1::DisciplineControllerTest < ActionDispatch::IntegrationTest
     assert_difference("Discipline.count", -1) do
       delete api_v1_discipline_url(@disc), as: :json, headers: @auth_headers
       assert_response :success
-      drivervar_count = @disc.analysis.driver.variables.reload.count
-      assert_equal initial_drivervar_count - 2, drivervar_count
+      vars = @disc.analysis.driver.variables.reload.map(&:name)
+      drivervar_count = vars.size
+      assert_equal initial_drivervar_count, drivervar_count
     end
   end
 

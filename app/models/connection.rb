@@ -1,6 +1,12 @@
 # frozen_string_literal: true
 
 class Connection < ApplicationRecord
+
+
+  before_validation :_ensure_role_presence
+  before_destroy :delete_related_variables!
+  # before_create :announce_creation
+
   belongs_to :from, -> { includes(:discipline) }, class_name: "Variable"
   belongs_to :to, -> { includes(:discipline) }, class_name: "Variable"
 
@@ -10,16 +16,19 @@ class Connection < ApplicationRecord
   scope :active, -> { joins(:from).where(variables: { active: true }) }
   scope :inactive, -> { joins(:from).where(variables: { active: false }) }
   scope :of_analysis, ->(analysis_id) { joins(from: :discipline).where(disciplines: { analysis_id: analysis_id }) }
+  scope :from_discipline, ->(discipline_id) { joins(from: :discipline).where(variables: {discipline_id: discipline_id}) }
+  scope :to_discipline, ->(discipline_id) { joins(to: :discipline).where(variables: {discipline_id: discipline_id}) }
   scope :with_role, ->(role) { where(role: role) }
-
-  before_validation :_ensure_role_presence
-  before_destroy :delete_related_variables!
 
   class SubAnalysisVariableNotFoundError < StandardError
   end
 
   class CannotRemoveConnectionError < StandardError
   end
+
+  # def announce_creation
+  #   p "CREATE #{self.from.name} #{self.from.discipline.name} #{self.to.discipline.name}"
+  # end
 
   def self.between(disc_from_id, disc_to_id)
     Connection.joins(:from).where(variables: { discipline_id: disc_from_id }) # .where.not(variables: {type: :String})
@@ -66,10 +75,21 @@ class Connection < ApplicationRecord
   end
 
   def delete_related_variables!
+    # p "BEFORE DESTROY #{self.from.name} #{self.from.discipline.name} #{self.to.discipline.name}"
     Connection.transaction do
-      conns_count = Connection.where(from_id: from_id).count
-      Variable.find_by_id(from_id)&.delete if conns_count == 1
-      Variable.find_by_id(to_id)&.delete
+      to = self.to
+      if to.discipline.is_driver?
+        # p "Connection to driver: supress #{to.name} driver var"
+        to.delete
+      end
+      conns = Connection.where(from_id: from_id)
+      if conns.size == 1 
+        from = conns.first.from
+        if from.discipline.is_driver?
+          # p "Connection only from driver: supress #{from.name} driver var"
+          from.delete
+        end
+      end
     end
   end
 
@@ -111,7 +131,7 @@ class Connection < ApplicationRecord
             from.update(discipline_id: from.discipline.analysis.driver.id)
           end
         else
-          destroy!
+          _delete
         end
       elsif sub_analysis_check && to.discipline.has_sub_analysis?
         if from.discipline.is_driver?
@@ -121,9 +141,16 @@ class Connection < ApplicationRecord
           from.update(discipline_id: from.discipline.analysis.driver.id)
         end
       else
-        destroy!
+        _delete
       end
     end
+  end
+
+  def _delete
+    delete
+    conns = Connection.where(from_id: from_id)
+    Variable.find_by_id(from_id).delete if conns.size == 0
+    Variable.find_by_id(to_id).delete
   end
 
   private

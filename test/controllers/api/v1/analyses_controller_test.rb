@@ -151,24 +151,25 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should import a discipline from another analysis" do
-    p Connection.of_analysis(@mda).size
+    beforeConnsNb = Connection.of_analysis(@mda).size
     @mda2 = analyses(:innermda)
     @disc = disciplines(:innermda_discipline)
     origVars = @disc.variables.map(&:name)
-    p origVars
+    # p origVars
     existingVars = @mda.inner_variables.map(&:name).uniq
-    p existingVars
+    # p existingVars
     put api_v1_mda_url(@mda), params: {analysis: {import: {analysis: @mda2.id, disciplines: [@disc.id]}}}, 
         as: :json, headers: @auth_headers
     @mda.reload
     newDisc = @mda.disciplines.last
     assert_equal @disc.name, newDisc.name
     newVars = newDisc.variables.map(&:name)
-    p newVars
+    # p newVars
     trueNewVars = origVars.reject{|name| existingVars.include?(name)}
-    p trueNewVars
+    # p trueNewVars
     assert_equal trueNewVars.size, newVars.size 
-    p Connection.of_analysis(@mda).size
+    afterConnsNb = Connection.of_analysis(@mda).size
+    assert_equal(newVars.size, afterConnsNb - beforeConnsNb)
   end
 
 end
