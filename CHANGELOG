@@ -2,8 +2,10 @@
 
 <h3>1.4.0 (30/11/2019)</h3>
 <ul>
+  <li>User can export a discipline from an analysis to another</li>
+  <li>Export toolbar moved in Export tab</li>
   <li>Refactor Help menu with WhatsOpt documentation et web services API documentation</li>
-  <li>Implementation: Javascript linting</li>
+  <li>Implementation: Javascript linting, automated review with Codacy</li>
 </ul>
 
 <h3>1.3.0 (14/10/2019)</h3>
