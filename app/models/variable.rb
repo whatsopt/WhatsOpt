@@ -37,9 +37,9 @@ class Variable < ApplicationRecord
                                                          attr["res_ref"].nil?
                                                      }, allow_destroy: true
 
-  validates :name, format: { with: /\A[a-zA-Z][\-:_a-zA-Z0-9]*\z/, message: "%{value} is not a valid variable name" }
+  validates :name, format: { with: /\A[a-zA-Z][\-:_a-zA-Z0-9]*\z/, message: "%{value} is not a valid variable name." }
   validates :name, :io_mode, :type, :shape, presence: true, allow_blank: false
-  validates :name, uniqueness: { scope: [:discipline], message: "should be unique per discipline. #{}" }
+  validates :name, uniqueness: { scope: [:discipline], message: "should be unique per discipline." }
   validate :shape_is_well_formed
 
   scope :numeric, -> { where.not(type: STRING_T) }

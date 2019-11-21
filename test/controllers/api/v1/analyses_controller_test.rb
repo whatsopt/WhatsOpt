@@ -152,24 +152,58 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
 
   test "should import a discipline from another analysis" do
     beforeConnsNb = Connection.of_analysis(@mda).size
-    @mda2 = analyses(:innermda)
-    @disc = disciplines(:innermda_discipline)
-    origVars = @disc.variables.map(&:name)
-    # p origVars
-    existingVars = @mda.inner_variables.map(&:name).uniq
-    # p existingVars
-    put api_v1_mda_url(@mda), params: {analysis: {import: {analysis: @mda2.id, disciplines: [@disc.id]}}}, 
+    mda2 = analyses(:innermda)
+    disc = disciplines(:innermda_discipline)
+    put api_v1_mda_url(@mda), params: {analysis: {import: {analysis: mda2.id, disciplines: [disc.id]}}}, 
         as: :json, headers: @auth_headers
     @mda.reload
     newDisc = @mda.disciplines.last
-    assert_equal @disc.name, newDisc.name
-    newVars = newDisc.variables.map(&:name)
-    # p newVars
-    trueNewVars = origVars.reject{|name| existingVars.include?(name)}
-    # p trueNewVars
-    assert_equal trueNewVars.size, newVars.size 
-    afterConnsNb = Connection.of_analysis(@mda).size
-    assert_equal(newVars.size, afterConnsNb - beforeConnsNb)
+    assert_equal disc.name, newDisc.name
+    assert_equal 11, Connection.of_analysis(@mda).count
+    # Connection.of_analysis(@mda).each do |conn|
+    #   puts "Connection #{conn.from.name} from #{conn.from.discipline.name} to #{conn.to.discipline.name}"
+    # end
+    #
+    # Connection z from __DRIVER__ to Aerodynamics
+    # Connection z from __DRIVER__ to Geometry
+    # Connection z from __DRIVER__ to PlainDiscipline
+    # Connection x1 from __DRIVER__ to Geometry
+    # Connection x2 from __DRIVER__ to PlainDiscipline
+    # Connection y1 from __DRIVER__ to PlainDiscipline
+    # Connection obj from Geometry to __DRIVER__
+    # Connection yg from Geometry to Aerodynamics
+    # Connection ya from Aerodynamics to Geometry
+    # Connection y2 from Aerodynamics to __DRIVER__
+    # Connection y from PlainDiscipline to __DRIVER__
+  end
+
+  test "should recreate analysis with imports" do
+    post api_v1_mdas_url, params: { analysis: { name: "Test" } }, as: :json, headers: @auth_headers
+    assert_response :success
+    mda = Analysis.last
+    ids = @mda.disciplines.nodes.map(&:id)
+    put api_v1_mda_url(mda), params: {analysis: {import: {analysis: @mda.id, disciplines: ids}}}, 
+        as: :json, headers: @auth_headers
+    assert_response :success
+    assert_equal @mda.disciplines.count, mda.disciplines.count
+    assert_equal @mda.disciplines.map(&:name), mda.disciplines.map(&:name)
+    @mda.disciplines.each_with_index do |disc, i|
+      assert_equal disc.variables.map(&:name), mda.disciplines[i].variables.map(&:name)
+    end
+  end
+
+  test "toto should create a discipline without output variables when imported twice" do
+    post api_v1_mdas_url, params: { analysis: { name: "Test" } }, as: :json, headers: @auth_headers
+    assert_response :success
+    mda = Analysis.last
+    disc = @mda.disciplines.nodes.first
+    put api_v1_mda_url(mda), params: {analysis: {import: {analysis: @mda.id, disciplines: [disc.id, disc.id, disc.id]}}}, 
+        as: :json, headers: @auth_headers
+    assert_response :success
+    assert_equal 4, mda.disciplines.count
+    assert_equal [disc.name, disc.name, disc.name], mda.disciplines.nodes.map(&:name)
+    assert_equal [], Discipline.last.output_variables
+    assert_equal disc.input_variables.map(&:name), Discipline.last.input_variables.map(&:name)
   end
 
 end

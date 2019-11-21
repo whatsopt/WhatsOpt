@@ -4,7 +4,7 @@ class Connection < ApplicationRecord
 
 
   before_validation :_ensure_role_presence
-  before_destroy :delete_related_variables!
+  before_destroy :delete_driver_variables!
   # before_create :announce_creation
 
   belongs_to :from, -> { includes(:discipline) }, class_name: "Variable"
@@ -74,8 +74,9 @@ class Connection < ApplicationRecord
     end
   end
 
-  def delete_related_variables!
-    # p "BEFORE DESTROY #{self.from.name} #{self.from.discipline.name} #{self.to.discipline.name}"
+  # manage exclusively Driver variables if deconnected should be removed
+  def delete_driver_variables!
+    #p "BEFORE DESTROY #{self.from.name} #{self.from.discipline.name} #{self.to.discipline.name}"
     Connection.transaction do
       to = self.to
       if to.discipline.is_driver?
