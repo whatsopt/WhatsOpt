@@ -371,6 +371,7 @@ class MdaViewer extends React.Component {
               edges: { $set: response.data.edges },
               inactive_edges: { $set: response.data.inactive_edges },
               vars: { $set: response.data.vars },
+              impl: { $set: response.data.impl },
             },
           });
         this.setState(newState);
