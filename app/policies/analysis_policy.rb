@@ -4,15 +4,24 @@ class AnalysisPolicy < ApplicationPolicy
   class Scope < Scope
     def resolve
       if user.admin?
-        scope.roots
+        scope
       else
-        scope.roots.select do |record|
-          if user.analyses_query == "mine"
-            user.has_role?(:owner, record)
-          else
-            record.public || user.has_role?(:owner, record) || user.has_role?(:member, record)
-          end
+        if user.analyses_query == "mine"
+          scope.with_role(:owner, user)
+        else
+          publicAnalyses = scope.where(public: true)
+          authorizedAnalyses = scope.with_role([:owner, :member], user)
+          analyses = ActiveRecord::Base.connection.execute("#{publicAnalyses.to_sql}\n UNION\n #{authorizedAnalyses.to_sql}")
+          scope.where(id: analyses.map{|a| a["id"]})  # to get relation
         end
+
+        # scope.select do |record|
+        #   if user.analyses_query == "mine"
+        #     user.has_role?(:owner, record)
+        #   else
+        #     record.public || user.has_role?(:owner, record) || user.has_role?(:member, record)
+        #   end
+        # end
       end
     end
   end

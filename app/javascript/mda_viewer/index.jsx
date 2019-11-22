@@ -13,6 +13,7 @@ import ConnectionsEditor from 'mda_viewer/components/ConnectionsEditor';
 import VariablesEditor from 'mda_viewer/components/VariablesEditor';
 import OpenmdaoImplEditor from 'mda_viewer/components/OpenmdaoImplEditor';
 import MetaModelQualification from 'mda_viewer/components/MetaModelQualification';
+import ExportPanel from 'mda_viewer/components/ExportPanel';
 import AnalysisDatabase from '../utils/AnalysisDatabase';
 import deepIsEqual from '../utils/compare';
 
@@ -370,6 +371,7 @@ class MdaViewer extends React.Component {
               edges: { $set: response.data.edges },
               inactive_edges: { $set: response.data.inactive_edges },
               vars: { $set: response.data.vars },
+              impl: { $set: response.data.impl },
             },
           });
         this.setState(newState);
@@ -463,7 +465,6 @@ class MdaViewer extends React.Component {
                 aria-selected="false"
               >
                 Analysis
-
               </a>
             </li>
             <li className="nav-item">
@@ -477,7 +478,6 @@ class MdaViewer extends React.Component {
                 aria-selected="false"
               >
                 Disciplines
-
               </a>
             </li>
             <li className="nav-item">
@@ -491,7 +491,6 @@ class MdaViewer extends React.Component {
                 aria-selected="false"
               >
                 Connections
-
               </a>
             </li>
             <li className="nav-item">
@@ -505,7 +504,6 @@ class MdaViewer extends React.Component {
                 aria-selected="true"
               >
                 Variables
-
               </a>
             </li>
             <li className="nav-item">
@@ -519,7 +517,6 @@ class MdaViewer extends React.Component {
                 aria-selected="false"
               >
                 OpenMDAO
-
               </a>
             </li>
           </ul>
@@ -584,7 +581,7 @@ class MdaViewer extends React.Component {
       );
     }
 
-    let noteItem; let notePanel;
+    let noteItem; let noteTab;
     if (mda.note && mda.note.length > 0) {
       noteItem = (
         <li className="nav-item">
@@ -597,15 +594,14 @@ class MdaViewer extends React.Component {
             data-toggle="tab"
             aria-selected="false"
           >
-            Note
-
+            Notes
           </a>
         </li>
       );
-      notePanel = (<AnalysisNotePanel note={mda.note} />);
+      noteTab = (<AnalysisNotePanel note={mda.note} />);
     }
 
-    let metaModelItem; let metaModelPanel;
+    let metaModelItem; let metaModelTab;
     const { quality } = mda.impl.metamodel;
     if (quality && quality.length > 0) {
       metaModelItem = (
@@ -620,11 +616,10 @@ class MdaViewer extends React.Component {
             aria-selected="false"
           >
             MetaModel
-
           </a>
         </li>
       );
-      metaModelPanel = (
+      metaModelTab = (
         <div className="tab-pane fade" id="metamodel" role="tabpanel" aria-labelledby="metamodel-tab">
           <MetaModelQualification quality={mda.impl.metamodel.quality} />
         </div>
@@ -633,9 +628,6 @@ class MdaViewer extends React.Component {
 
     return (
       <div>
-        <div className="mda-section">
-          <ToolBar mdaId={mda.id} api={this.api} db={db} />
-        </div>
         {breadcrumbs}
         <div className="mda-section">
           {xdsmViewer}
@@ -653,18 +645,37 @@ class MdaViewer extends React.Component {
                 aria-selected="true"
               >
                 Variables
-
               </a>
             </li>
             {noteItem}
             {metaModelItem}
+            <li className="nav-item">
+              <a
+                className="nav-link"
+                id="exports-tab"
+                data-toggle="tab"
+                href="#exports"
+                role="tab"
+                aria-controls="exports"
+                aria-selected="false"
+              >
+                Exports
+              </a>
+            </li>
           </ul>
           <div className="tab-content" id="myTabContent">
             <div className="tab-pane fade show active" id="variables" role="tabpanel" aria-labelledby="variables-tab">
               {varEditor}
             </div>
-            {notePanel}
-            {metaModelPanel}
+            {noteTab}
+            {metaModelTab}
+            <div className="tab-pane fade" id="exports" role="tabpanel" aria-labelledby="exports-tab">
+              <ExportPanel
+                mdaId={db.mda.id}
+                api={this.api}
+                db={db}
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -675,7 +686,7 @@ class MdaViewer extends React.Component {
 MdaViewer.propTypes = {
   isEditing: PropTypes.bool.isRequired,
   api: PropTypes.object.isRequired,
-  members: PropTypes.array.isRequired,
+  members: PropTypes.array,
   mda: PropTypes.shape({
     name: PropTypes.string.isRequired,
     public: PropTypes.bool.isRequired,
@@ -689,6 +700,9 @@ MdaViewer.propTypes = {
       ),
     }),
   }).isRequired,
+};
+MdaViewer.defaultProps = {
+  members: [],
 };
 
 export default MdaViewer;

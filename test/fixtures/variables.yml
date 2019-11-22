@@ -421,3 +421,24 @@ disc_metamodel2_varobj_objective_out:
   type: Float
   shape: 1  
   active: true
+
+# SINGLETON ##################################################################
+varu_driver_out: &varu_driver_out
+  name: u
+  discipline: driver_singleton
+  io_mode: out
+
+varu_disc_in: 
+  <<: *varu_driver_out
+  discipline: disc_singleton
+  io_mode: in
+
+varv_driver_out: &varu_driver_in
+  name: v
+  discipline: driver_singleton
+  io_mode: out
+
+varv_disc_in:
+  <<: *varu_driver_in
+  discipline: disc_singleton
+  io_mode: in

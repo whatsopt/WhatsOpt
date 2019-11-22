@@ -9,6 +9,14 @@ owner_cicav_meta_model_role:
   name: :owner
   resource: cicav_metamodel_analysis (Analysis)
 
+owner_cicav_meta_model2_role:
+  name: :owner
+  resource: cicav_metamodel2_analysis (Analysis)
+
+member_cicav_meta_model2_role:
+  name: :member
+  resource: cicav_metamodel2_analysis (Analysis)
+
 owner_outermda_role:
   name: :owner
   resource: outermda (Analysis)
@@ -29,6 +37,10 @@ member_cicav_mda_role:
   name: :member
   resource: cicav (Analysis)
 
+owner_singleton_role:
+  name: :owner
+  resource: singleton (Analysis)
+
 owner_gm_one:
   name: :owner
   resource: gm_one (GeometryModel)
@@ -36,3 +48,4 @@ owner_gm_one:
 owner_gm_two:
   name: :owner
   resource: gm_two (GeometryModel)
+

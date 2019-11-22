@@ -126,6 +126,13 @@ class AnalysesControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test "should destroy connections when destroying analysis" do
+    q = Connection.of_analysis(@mda.id)
+    assert_difference("Connection.count", -q.count) do
+      delete mda_url(@mda)
+    end
+  end
+
   test "should not destroy sub-analysis when destroying parent" do
     @outermda = analyses(:outermda)
     assert_difference("Analysis.count", -1) do

@@ -56,15 +56,13 @@ class Api::V1::AnalysisDisciplinesControllerTest < ActionDispatch::IntegrationTe
   end
 
   test "should delete and recreate analysis discipline without duplicating variables" do
-    assert_difference("Connection.count", -1) do # connection Disc.y2 innerMDA.y2 removed
-      assert_difference("Variable.count", -1) do # var Disc.y2 removed
+    assert_difference("Connection.count", 0) do 
+      assert_difference("Variable.count", 0) do
         param_count = @outermda.parameter_variables.count
         delete api_v1_discipline_url(@innermdadisc), as: :json, headers: @auth_headers
         post api_v1_mda_disciplines_url(@outermda), params: { discipline: { name: "TestDiscipline", type: "analysis" } }
-        @innermdadisc = Discipline.last
-        post api_v1_discipline_mda_url(@innermdadisc), params: { analysis_discipline: { analysis_id: @innermda.id } },
+        post api_v1_discipline_mda_url(@vacantdisc), params: { analysis_discipline: { analysis_id: @innermda.id } },
           as: :json, headers: @auth_headers
-        assert_equal param_count, @outermda.reload.parameter_variables.count
       end
     end
   end

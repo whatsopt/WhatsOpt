@@ -3,6 +3,7 @@ cicav:
 
 fast:
   name: FAST
+  public: false
   
 dummy:
   name: DUMMY
@@ -18,4 +19,9 @@ cicav_metamodel_analysis:
   name: CicavMetaModel
 
 cicav_metamodel2_analysis:
-  name: CicavMetaModel
+  name: CicavMetaModel2
+  public: false
+
+singleton:
+  name: singleton
+ 

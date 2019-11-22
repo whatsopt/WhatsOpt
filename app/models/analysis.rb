@@ -34,6 +34,8 @@ class Analysis < ApplicationRecord
 
   has_one :openmdao_impl, class_name: "OpenmdaoAnalysisImpl", dependent: :destroy
 
+  scope :mine, ->{ with_role(:owner, current_user) }
+
   before_validation(on: :create) do
     _create_from_attachment if attachment_exists?
   end
@@ -47,7 +49,7 @@ class Analysis < ApplicationRecord
   validates :name, presence: true, allow_blank: false
 
   def driver
-    disciplines.driver
+    @driver ||= disciplines.driver.take
   end
 
   def is_sub_analysis?
@@ -63,7 +65,7 @@ class Analysis < ApplicationRecord
   end
 
   def variables
-    @variables = Variable.of_analysis(id).active.order("name ASC")
+    @variables = Variable.of_analysis(id).active.order("variables.name ASC")
   end
 
   def parameter_variables
@@ -241,9 +243,12 @@ class Analysis < ApplicationRecord
     res
   end
 
-  def refresh_connections(default_role_for_inputs = WhatsOpt::Variable::PARAMETER_ROLE)
+  def refresh_connections(default_role_for_inputs = WhatsOpt::Variable::PARAMETER_ROLE,
+                          default_role_for_outputs = WhatsOpt::Variable::RESPONSE_ROLE)
+    # p "REFRESH CONNECTIONS"
     varouts = Variable.outputs.joins(discipline: :analysis).where(analyses: { id: id })
     varins = Variable.inputs.joins(discipline: :analysis).where(analyses: { id: id })
+    # check that each out variables is connected
     varouts.each do |vout|
       vins = varins.where(name: vout.name)
       vins.each do |vin|
@@ -252,7 +257,36 @@ class Analysis < ApplicationRecord
         role = WhatsOpt::Variable::RESPONSE_ROLE if vin.discipline.is_driver?
         existing_conn_proto = Connection.where(from_id: vout.id).take
         role = existing_conn_proto.role if existing_conn_proto
+        # p "1 Connect #{vout.name} between #{vout.discipline.name} #{vin.discipline.name}" unless Connection.where(from_id: vout.id, to_id: vin.id).first 
         Connection.where(from_id: vout.id, to_id: vin.id).first_or_create!(role: role)
+        # if Variable.where(name: vout.name, io_mode: WhatsOpt::Variable::OUT)
+      end
+      if driver && vins.empty?  # connect output to driver if driver still there (analysis destroy case)
+        vattrs = vout.attributes.except("id")
+        vattrs[:io_mode] = WhatsOpt::Variable::IN
+        newvar = driver.variables.create(vattrs)
+        # p "2 Connect #{vout.name} between #{vout.discipline.name} #{newvar.discipline.name}" unless Connection.where(from_id: vout.id, to_id: newvar.id).first
+        Connection.where(from_id: vout.id, to_id: newvar.id).first_or_create!(role: WhatsOpt::Variable::RESPONSE_ROLE) 
+      end
+    end
+    # check that each in variables is connected
+    varins.each do |vin|
+      vouts = varouts.where(name: vin.name)
+      vouts.each do |vout|
+        role = WhatsOpt::Variable::STATE_VAR_ROLE
+        role = default_role_for_outputs if vin.discipline.is_driver?
+        role = WhatsOpt::Variable::PARAMETER_ROLE if vout.discipline.is_driver?
+        existing_conn_proto = Connection.where(from_id: vout.id).take
+        role = existing_conn_proto.role if existing_conn_proto
+        # p "3 Connect #{vout.name} between #{vout.discipline.name} #{vin.discipline.name}" unless Connection.where(from_id: vout.id, to_id: vin.id).first
+        Connection.where(from_id: vout.id, to_id: vin.id).first_or_create!(role: role)
+      end
+      if driver && vouts.empty?  # connect input to driver if driver still there (analysis destroy case)
+        vattrs = vin.attributes.except("id")
+        vattrs[:io_mode] = WhatsOpt::Variable::OUT
+        newvar = driver.variables.create(vattrs)
+        # p "4 Connect #{vin.name} between #{newvar.discipline.name} #{vin.discipline.name}" unless Connection.where(from_id: newvar.id, to_id: vin.id).first
+        Connection.where(from_id: newvar.id, to_id: vin.id).first_or_create!(role: WhatsOpt::Variable::PARAMETER_ROLE)
       end
     end
   end
@@ -262,6 +296,47 @@ class Analysis < ApplicationRecord
     if mda_params.key? :public
       descendants.each do |inner|
         inner.update_column(:public, mda_params[:public])
+      end
+    end
+  end
+
+  def import!(fromAnalysis, disciplines)
+    # do not import from self
+    if fromAnalysis.id != id  
+      disciplines.each do |discId|
+        disc = Discipline.find(discId)
+        # p "***************************************** IMPORT #{disc.name}"
+
+        # check consistency
+        if disc && fromAnalysis.disciplines.where(id: discId)
+          # remove driver connections as new ones from or to new disc will take place
+          driver.variables.each do |driver_var|
+            if disc.variables.where(name: driver_var.name, io_mode: driver_var.io_mode).first
+              # p "Remove Driver #{driver_var.name} #{driver_var.io_mode} connection"
+              driver_var.destroy!
+            end
+          end
+
+          # new disc should not create outvars connected (hence the joins outgoing_connections)
+          outvars = variables.where.not(discipline_id: driver.id)
+            .where(io_mode: WhatsOpt::Variable::OUT)
+            .joins(:outgoing_connections).pluck(:name).uniq
+          # p "EXISTING OUTVARS", outvars
+          # p "NEW DISC VARS", disc.variables.pluck(:name).uniq
+          # remove from new discipline outvars already present in the analysis
+          vars = disc.variables
+            .where.not(io_mode: WhatsOpt::Variable::OUT)
+            .or(disc.variables.where.not(name: outvars)) 
+          # p "VARS", vars.map(&:name)
+          varattrs = ActiveModelSerializers::SerializableResource.new(vars,
+                each_serializer: VariableSerializer).as_json
+          attrs = {disciplines_attributes: [{
+            name: disc.name,
+            variables_attributes: varattrs  #.map {|att| att.except(:parameter_attributes, :scaling)}
+          }]}
+          # p "ATTRS", attrs
+          self.update!(attrs)
+        end
       end
     end
   end
