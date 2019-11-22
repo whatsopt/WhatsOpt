@@ -8,16 +8,34 @@ import numpy as np
 import matplotlib.pyplot as plt
 from openmdao.api import Problem, SqliteRecorder, CaseReader
 from openmdao_extensions.salib_doe_driver import SalibDOEDriver
-from SALib.analyze import morris as ma
+from SALib.analyze import morris
+from SALib.analyze import sobol
 from SALib.plotting import morris as mp
+from SALib.plotting.bar import plot as barplot
 <% if @remote -%>
 from <%= @server_module %>.<%= @mda.py_modulename %>_proxy import <%= @mda.py_classname %>Proxy as <%= @mda.py_classname %> 
 <% else -%>
 from <%= @mda.py_modulename %> import <%= @mda.py_classname %> 
 <% end %>
-<%= ERB.new(File.read(File.join(@template_dir, 'options_partial.py.erb')), nil, nil, eoutvar='_sub01').result(binding) %>
+
+from optparse import OptionParser
+parser = OptionParser()
+parser.add_option("-b", "--batch",
+                  action="store_true", dest="batch", default=False,
+                  help="do not plot anything")
+parser.add_option("-s", "--sobol",
+                  action="store_true", dest="sobol", default=False,
+                  help="do not plot anything")
+(options, args) = parser.parse_args()
+
+
 pb = Problem(<%= @mda.py_classname %>())
-pb.driver = SalibDOEDriver(sa_method_name='Morris', sa_doe_options={'n_trajs': 10, 'n_levels': 4})
+sa_method_name='Morris'
+sa_doe_options={'n_trajs': 10, 'n_levels': 4}
+if options.sobol:
+    sa_method_name='Sobol'
+    sa_doe_options={'n_samples': 500, 'calc_second_order': True}
+pb.driver = SalibDOEDriver(sa_method_name=sa_method_name, sa_doe_options=sa_doe_options)
 case_recorder_filename = '<%= @sqlite_filename %>'        
 recorder = SqliteRecorder(case_recorder_filename)
 pb.driver.add_recorder(recorder)
@@ -70,15 +88,30 @@ salib_pb = pb.driver.get_salib_problem()
 inputs = pb.driver.get_cases()
 
 <% @mda.responses_of_interest.each_with_index do |r, j| -%>
+print('')
 print('*** Output: <%= r.name %>')
 output = data['outputs']['<%= r.name %>'].reshape((-1,))
-Si = ma.analyze(salib_pb, inputs, output, print_to_console=True)
-fig, (ax1, ax2) = plt.subplots(1,2)
-fig.suptitle('<%= r.name %> '+'sensitivity')
-mp.horizontal_bar_plot(ax1, Si, {})
-mp.covariance_plot(ax2, Si, {})
+
+if options.sobol:  
+    Si = sobol.analyze(salib_pb, output, 
+                       calc_second_order=sa_doe_options['calc_second_order'], 
+                       print_to_console=True)
+    Si_df = Si.to_df()
+    fig, axes = plt.subplots(1, len(Si_df))
+    for idx, f in enumerate(Si_df):
+        axes[idx] = barplot(f, ax=axes[idx])
+    fig.suptitle('<%= r.name %> '+'sensitivity')
+
+else:
+    Si = morris.analyze(salib_pb, inputs, output, print_to_console=True)
+
+    fig, (ax1, ax2) = plt.subplots(1,2)
+    fig.suptitle('<%= r.name %> '+'sensitivity')
+
+    mp.horizontal_bar_plot(ax1, Si, {})
+    mp.covariance_plot(ax2, Si, {})
 
 <% end -%>
-
+  
 plt.show()
 <% end %>
