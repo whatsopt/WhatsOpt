@@ -28,21 +28,46 @@ class ExportPanel extends React.Component {
   }
 
   handleAnalysisSelected(selected) {
-    console.log(`Select ${JSON.stringify(selected)}`);
     this.setState({ selected });
   }
 
-  handleExport(discId) {
+  handleExport(disc) {
     const { selected } = this.state;
     const [selection] = selected;
-    this.api.importDiscipline(this.db.getAnalysisId(), discId, selection.id);
+
+    this.api.importDiscipline(this.db.getAnalysisId(), disc.id, selection.id,
+      () => {
+        /* global dataConfirmModal */
+        dataConfirmModal.confirm({
+          title: 'Export done!',
+          text: `Discipline ${disc.name} exported to ${selection.label}`,
+          commit: `Go to ${selection.label}`,
+          commitClass: 'btn-primary',
+          cancel: 'Continue',
+          cancelClass: 'btn-info',
+          onConfirm: () => { window.location.href = this.api.url(`/analyses/${selection.id}`); },
+          onCancel: () => { },
+        });
+      },
+      (error) => {
+        console.log(error);
+        dataConfirmModal.confirm({
+          title: 'Oups!',
+          text: 'Sorry something went wrong!',
+          commit: 'Ok',
+          commitClass: 'btn-primary',
+          cancelClass: 'd-none',
+          onConfirm: () => { },
+        });
+      });
   }
 
   render() {
     const mdaId = this.db.getAnalysisId();
+    const { selected } = this.state;
+    const disabled = (selected.length === 0);
 
     let disciplineExports = [];
-    console.log(this.db.getDisciplines());
     disciplineExports = this.db.getDisciplines().map((disc) => {
       const label = `Export ${disc.name}`;
       return (
@@ -50,7 +75,8 @@ class ExportPanel extends React.Component {
           <button
             className="btn btn-primary"
             type="button"
-            onClick={() => this.handleExport(disc.id)}
+            onClick={() => this.handleExport(disc)}
+            disabled={disabled}
           >
             {label}
           </button>
@@ -58,23 +84,25 @@ class ExportPanel extends React.Component {
       );
     });
 
-    const { selected } = this.state;
-
     return (
       <div className="container-fluid">
         <div className="editor-section">
-          <div>Analysis</div>
+          <div className="editor-section-label">Analysis export</div>
           <ToolBar mdaId={mdaId} api={this.api} db={this.db} />
         </div>
         <div className="editor-section">
-          <div>Disciplines</div>
-          <AnalysisSelector
-            message="Search analysis to export to..."
-            selected={selected}
-            onAnalysisSearch={this.handleAnalysisSearch}
-            onAnalysisSelected={this.handleAnalysisSelected}
-          />
-          <div className="btn-toolbar" role="toolbar">
+          <div className="editor-section-label">Discipline export</div>
+          <div className="row">
+            <div className="col-4">
+              <AnalysisSelector
+                message="Search analysis to export to..."
+                selected={selected}
+                onAnalysisSearch={this.handleAnalysisSearch}
+                onAnalysisSelected={this.handleAnalysisSelected}
+              />
+            </div>
+          </div>
+          <div className="btn-toolbar mt-2" role="toolbar">
             {disciplineExports}
           </div>
         </div>

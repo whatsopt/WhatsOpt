@@ -192,7 +192,7 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test "toto should create a discipline without output variables when imported twice" do
+  test "should create a discipline without output variables when imported twice" do
     post api_v1_mdas_url, params: { analysis: { name: "Test" } }, as: :json, headers: @auth_headers
     assert_response :success
     mda = Analysis.last

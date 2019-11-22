@@ -594,7 +594,7 @@ class MdaViewer extends React.Component {
             data-toggle="tab"
             aria-selected="false"
           >
-            Note
+            Notes
           </a>
         </li>
       );
@@ -647,6 +647,8 @@ class MdaViewer extends React.Component {
                 Variables
               </a>
             </li>
+            {noteItem}
+            {metaModelItem}
             <li className="nav-item">
               <a
                 className="nav-link"
@@ -660,13 +662,13 @@ class MdaViewer extends React.Component {
                 Exports
               </a>
             </li>
-            {noteItem}
-            {metaModelItem}
           </ul>
           <div className="tab-content" id="myTabContent">
             <div className="tab-pane fade show active" id="variables" role="tabpanel" aria-labelledby="variables-tab">
               {varEditor}
             </div>
+            {noteTab}
+            {metaModelTab}
             <div className="tab-pane fade" id="exports" role="tabpanel" aria-labelledby="exports-tab">
               <ExportPanel
                 mdaId={db.mda.id}
@@ -674,8 +676,6 @@ class MdaViewer extends React.Component {
                 db={db}
               />
             </div>
-            {noteTab}
-            {metaModelTab}
           </div>
         </div>
       </div>

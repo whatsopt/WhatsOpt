@@ -103,8 +103,7 @@ class WhatsOptApi {
       .catch(onError);
   }
 
-  importDiscipline(fromMdaId, discId, toMdaId) {
-    console.log(`export discipline ${discId} in analysis ${fromMdaId}`);
+  importDiscipline(fromMdaId, discId, toMdaId, callback, onError) {
     const path = `/analyses/${toMdaId}`;
     axios.put(this.apiUrl(path), {
       analysis: {
@@ -113,8 +112,8 @@ class WhatsOptApi {
         },
       },
     })
-      .then(() => console.log(`Disc ${discId} exported`))
-      .catch((error) => console.log(error));
+      .then(callback)
+      .catch(onError);
   }
 
   createDiscipline(mdaId, disciplineAttributes, callback) {

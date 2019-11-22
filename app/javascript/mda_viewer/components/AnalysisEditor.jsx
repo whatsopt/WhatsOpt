@@ -65,32 +65,37 @@ class AnalysisEditor extends React.PureComponent {
     return (
       <div className="container-fluid">
         <div className="editor-section">
-          <div>Information</div>
+          <div className="editor-section-label">Information</div>
           <form className="col-6" onSubmit={onAnalysisUpdate}>
             <div className="form-group">
-              <label htmlFor="name">
+              <div className="editor-section-label">
                 Name
-                <input
-                  type="text"
-                  value={newAnalysisName}
-                  className="form-control"
-                  id="name"
-                  onChange={onAnalysisNameChange}
-                />
-              </label>
+              </div>
+              <input
+                type="text"
+                value={newAnalysisName}
+                className="form-control"
+                id="name"
+                onChange={onAnalysisNameChange}
+              />
             </div>
             <div className="form-group">
-              <AnalysisNoteEditor
-                mdaId={mdaId}
-                note={note}
-                onAnalysisNoteChange={onAnalysisNoteChange}
-              />
+              <div className="editor-section-label">
+                Notes
+              </div>
+              <div className="editor-section-label">
+                <AnalysisNoteEditor
+                  mdaId={mdaId}
+                  note={note}
+                  onAnalysisNoteChange={onAnalysisNoteChange}
+                />
+              </div>
             </div>
             <button type="submit" className="btn btn-primary ml-3">Save</button>
           </form>
         </div>
         <div className="editor-section">
-          <div>Privacy</div>
+          <div className="editor-section-label">Privacy</div>
           <form className="form" onSubmit={onAnalysisUpdate}>
             <div className="form-group form-check">
               <label htmlFor="public" className="form-check-label">

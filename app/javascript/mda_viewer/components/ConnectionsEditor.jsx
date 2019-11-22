@@ -291,7 +291,7 @@ class ConnectionsEditor extends React.Component {
 
     return (
       <div className="container-fluid">
-        <div className="row editor-section">
+        <div className="row editor-section mt-3">
           <div className="col-2">
             <DisciplineSelector
               label="From"

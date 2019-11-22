@@ -33,12 +33,9 @@ class AnalysisNoteEditor extends React.Component {
 
     return (
       <div>
-        <label htmlFor="analysis_note">
-          Note
-          <input type="hidden" name="analysis[note]" id={id} value={note} />
-          {/* <textarea name="analysis[note]" id={id} defaultValue={this.props.note} /> */}
-          <trix-editor id="analysis_note" input={id} class="trix-content form-control" ref={this.trixInput} />
-        </label>
+        <input type="hidden" name="analysis[note]" id={id} value={note} />
+        {/* <textarea name="analysis[note]" id={id} defaultValue={this.props.note} /> */}
+        <trix-editor id="analysis_note" input={id} class="trix-content form-control" ref={this.trixInput} />
       </div>
     );
   }

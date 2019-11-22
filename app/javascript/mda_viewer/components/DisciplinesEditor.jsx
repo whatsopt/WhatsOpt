@@ -302,7 +302,7 @@ class DisciplinesEditor extends React.Component {
     return (
       <div className="container-fluid">
         <div className="editor-section">
-          <div>
+          <div className="editor-section-label">
             Disciplines
             <span className="badge badge-info ml-2">{nbNodes}</span>
           </div>
@@ -325,16 +325,20 @@ class DisciplinesEditor extends React.Component {
           </DragDropContext>
         </div>
         <div className="editor-section">
-          <form className="form-inline" onSubmit={onDisciplineCreate}>
+          <form className="form" onSubmit={onDisciplineCreate}>
             <div className="form-group">
-              <input
-                type="text"
-                value={name}
-                placeholder="Enter Discipline Name..."
-                className="form-control"
-                id="name"
-                onChange={onDisciplineNameChange}
-              />
+              <div className="row">
+                <div className="col-3">
+                  <input
+                    type="text"
+                    value={name}
+                    placeholder="Enter Discipline Name..."
+                    className="form-control"
+                    id="name"
+                    onChange={onDisciplineNameChange}
+                  />
+                </div>
+              </div>
             </div>
             <button type="submit" className="btn btn-primary ml-3">Add</button>
           </form>
