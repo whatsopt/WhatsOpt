@@ -4,7 +4,7 @@ set :application, 'WhatsOpt' # config valid only for current version of Capistra
 
 set :repo_url, "#{ENV['WHATSOPT_REPOSITORY']}"
 
-set :branch, :"ft-import-discipline"
+set :branch, :master
 set :keep_releases, 5
  
 set :log_level, :info
