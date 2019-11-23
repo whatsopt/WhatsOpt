@@ -30,36 +30,36 @@ class MetaModelManager extends React.PureComponent {
 
     return (
       <div className="editor-section">
-        <div className="row">
-          <div className="col-md-3">
-            <form acceptCharset="UTF-8" action={metamodelUrl} method="post" encType="multipart/form-data">
-              <input name="authenticity_token" type="hidden" value={api.csrfToken} />
-              <div className="form-group">
-                <label htmlFor="meta_model[kind]">
-                  MetaModel Kind
-                  <select className="form-control" name="meta_model[kind]" id="meta_model_kind">
-                    <option value="KRIGING">KRIGING</option>
-                    <option value="KPLS">KPLS</option>
-                    <option value="KPLSK">KPLSK</option>
-                    <option value="LS">LS</option>
-                    <option value="QP">QP</option>
-                  </select>
-                </label>
+        <form acceptCharset="UTF-8" action={metamodelUrl} method="post" encType="multipart/form-data">
+          <input name="authenticity_token" type="hidden" value={api.csrfToken} />
+          <div className="form-group">
+            <div className="row">
+              <div className="col-md-4">
+                <div className="editor-section-label">
+                  Surrogate used for modeling outputs
+                </div>
+                <select className="form-control" name="meta_model[kind]" id="meta_model_kind">
+                  <option value="KRIGING">Kriging</option>
+                  <option value="KPLS">KPLS</option>
+                  <option value="KPLSK">KPLSK</option>
+                  <option value="LS">Least-Squares Approximation</option>
+                  <option value="QP">Quadratic Polynomial Approximation</option>
+                </select>
               </div>
-              <div className="form-group">
-                <div>Inputs</div>
-                <div>{inputs}</div>
-              </div>
-              <div className="form-group">
-                <div>Outputs</div>
-                <div>{outputs}</div>
-              </div>
-              <div className="form-group">
-                <button type="submit" className="btn btn-primary">Create</button>
-              </div>
-            </form>
+            </div>
           </div>
-        </div>
+          <div className="form-group">
+            <div>Inputs</div>
+            <div>{inputs}</div>
+          </div>
+          <div className="form-group">
+            <div>Outputs</div>
+            <div>{outputs}</div>
+          </div>
+          <div className="form-group">
+            <button type="submit" className="btn btn-primary">Create</button>
+          </div>
+        </form>
       </div>
     );
   }
