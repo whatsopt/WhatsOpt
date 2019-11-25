@@ -11,8 +11,8 @@ class AnalysisPolicy < ApplicationPolicy
         else
           publicAnalyses = scope.where(public: true)
           authorizedAnalyses = scope.with_role([:owner, :member], user)
-          analyses = ActiveRecord::Base.connection.execute("#{publicAnalyses.to_sql}\n UNION\n #{authorizedAnalyses.to_sql}")
-          scope.where(id: analyses.map{|a| a["id"]})  # to get relation
+          analyses = (publicAnalyses + authorizedAnalyses).uniq
+          scope.where(id: analyses.map{|a| a[:id].to_i})
         end
 
         # scope.select do |record|
