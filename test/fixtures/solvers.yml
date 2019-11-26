@@ -3,7 +3,7 @@ nlbgs:
   atol: 1e-6
   rtol: 1e-10
   maxiter: 7
-  err_on_maxiter: true
+  err_on_non_converge: true
   iprint: 2
 
 scipy_krylov:
@@ -11,5 +11,5 @@ scipy_krylov:
   atol: 1e-8
   rtol: 1e-7
   maxiter: 10
-  err_on_maxiter: false
+  err_on_non_converge: false
   iprint: 1

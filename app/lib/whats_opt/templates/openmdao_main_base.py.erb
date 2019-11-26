@@ -9,7 +9,7 @@ from openmdao_extensions.reckless_nonlinear_block_gs import RecklessNonlinearBlo
 from openmdao.api import <%= @impl.nonlinear_solver.name %>
 <% end -%>
 from openmdao.api import <%= @impl.linear_solver.name %>
-from openmdao.api import view_model
+from openmdao import __version__ as OPENMDAO_VERSION
 
 <% @mda.sub_analyses.each do |a| -%>
 from <%= a.py_full_modulename %> import <%= a.py_classname %>
@@ -37,14 +37,20 @@ class <%= @mda.py_classname %>Base(<%= @impl.parallel_group ? "ParallelGroup" : 
         self.nonlinear_solver.options['atol'] = <%= @impl.nonlinear_solver.atol %>
         self.nonlinear_solver.options['rtol'] = <%= @impl.nonlinear_solver.rtol %>
         self.nonlinear_solver.options['maxiter'] = <%= @impl.nonlinear_solver.maxiter %>
-        self.nonlinear_solver.options['err_on_maxiter'] = <%= @impl.to_code(:nonlinear_solver, :err_on_maxiter) %>
+        if OPENMDAO_VERSION > "2.8":
+            self.nonlinear_solver.options['err_on_non_converge'] = <%= @impl.to_code(:nonlinear_solver, :err_on_non_converge) %>
+        else:
+            self.nonlinear_solver.options['err_on_maxiter'] = <%= @impl.to_code(:nonlinear_solver, :err_on_non_converge) %>
         self.nonlinear_solver.options['iprint'] = <%= @impl.nonlinear_solver.iprint %>
 
         self.linear_solver = <%= @impl.linear_solver.name %>()       
         self.linear_solver.options['atol'] = <%= @impl.linear_solver.atol %>
         self.linear_solver.options['rtol'] = <%= @impl.linear_solver.rtol %>
         self.linear_solver.options['maxiter'] = <%= @impl.linear_solver.maxiter %>
-        self.linear_solver.options['err_on_maxiter'] = <%= @impl.to_code(:linear_solver, :err_on_maxiter) %>
+        if OPENMDAO_VERSION > "2.8":
+            self.linear_solver.options['err_on_non_converge'] = <%= @impl.to_code(:linear_solver, :err_on_non_converge) %>
+        else:
+            self.linear_solver.options['err_on_maxiter'] = <%= @impl.to_code(:linear_solver, :err_on_non_converge) %>        
         self.linear_solver.options['iprint'] = <%= @impl.linear_solver.iprint %>
 <% if @remote %>
         self._thrift_client = thrift_client
