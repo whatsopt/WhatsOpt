@@ -9,6 +9,6 @@ class SolverTest < ActiveSupport::TestCase
     assert_equal 1e-10, solver.rtol
     assert_equal 10, solver.maxiter
     assert_equal 1, solver.iprint
-    assert_equal true, solver.err_on_maxiter
+    assert_equal true, solver.err_on_non_converge
   end
 end

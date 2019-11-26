@@ -23,6 +23,6 @@ class Solver < ActiveRecord::Base
       self.rtol ||= 1e-10
       self.maxiter ||= 10
       self.iprint  ||= 1
-      self.err_on_maxiter = true if err_on_maxiter.nil?
+      self.err_on_non_converge = true if err_on_non_converge.nil?
     end
 end

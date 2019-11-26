@@ -73,7 +73,7 @@ class Discipline extends React.Component {
       endpoint_attributes: { host: discHost, port: discPort },
     };
     const { node } = this.props;
-    const { endpoint } = node;
+    const { endpoint } = node; // an endpoint is already present
     if (endpoint && endpoint.id) {
       const endattrs = discattrs.endpoint_attributes;
       endattrs.id = endpoint.id;
@@ -81,11 +81,11 @@ class Discipline extends React.Component {
         endattrs._destroy = 1;
       }
     }
-    console.log(JSON.stringify(discattrs));
+    // console.log(JSON.stringify(discattrs));
     const { onDisciplineUpdate, onSubAnalysisSelected } = this.props;
-    onDisciplineUpdate(endpoint, discattrs);
+    onDisciplineUpdate(node, discattrs);
     if (selected) {
-      onSubAnalysisSelected(endpoint, selected);
+      onSubAnalysisSelected(node, selected);
     }
   }
 
