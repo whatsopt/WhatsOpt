@@ -302,40 +302,18 @@ class Analysis < ApplicationRecord
 
   def import!(fromAnalysis, disciplines)
     # do not import from self
-    if fromAnalysis.id != id  
-      disciplines.each do |discId|
-        disc = Discipline.find(discId)
-        # p "***************************************** IMPORT #{disc.name}"
-
-        # check consistency
-        if disc && fromAnalysis.disciplines.where(id: discId)
-          # remove driver connections as new ones from or to new disc will take place
-          driver.variables.each do |driver_var|
-            if disc.variables.where(name: driver_var.name, io_mode: driver_var.io_mode).first
-              # p "Remove Driver #{driver_var.name} #{driver_var.io_mode} connection"
-              driver_var.destroy!
-            end
+    if fromAnalysis.id != id 
+      Analysis.transaction do
+        disciplines.each do |discId|
+          disc = Discipline.find(discId)
+          # p "***************************************** IMPORT #{disc.name}"
+          # check consistency
+          if disc && fromAnalysis.disciplines.where(id: discId)
+            discattrs = disc.prepare_attributes_for_import!(variables, driver)
+            attrs = {disciplines_attributes: [discattrs]}
+            # p "ATTRS", attrs
+            self.update!(attrs)
           end
-
-          # new disc should not create outvars connected (hence the joins outgoing_connections)
-          outvars = variables.where.not(discipline_id: driver.id)
-            .where(io_mode: WhatsOpt::Variable::OUT)
-            .joins(:outgoing_connections).pluck(:name).uniq
-          # p "EXISTING OUTVARS", outvars
-          # p "NEW DISC VARS", disc.variables.pluck(:name).uniq
-          # remove from new discipline outvars already present in the analysis
-          vars = disc.variables
-            .where.not(io_mode: WhatsOpt::Variable::OUT)
-            .or(disc.variables.where.not(name: outvars)) 
-          # p "VARS", vars.map(&:name)
-          varattrs = ActiveModelSerializers::SerializableResource.new(vars,
-                each_serializer: VariableSerializer).as_json
-          attrs = {disciplines_attributes: [{
-            name: disc.name,
-            variables_attributes: varattrs  #.map {|att| att.except(:parameter_attributes, :scaling)}
-          }]}
-          # p "ATTRS", attrs
-          self.update!(attrs)
         end
       end
     end
