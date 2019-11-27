@@ -32,6 +32,9 @@ service SurrogateStore {
                         3: Matrix xt, 
                         4: Vector yt) throws (1: SurrogateException exc);
 
+  void copy_surrogate(1: string src_id, 
+                      2: string dst_id) throws (1: SurrogateException exc);
+
   SurrogateQualification qualify(1: string surrogate_id,
                                  2: Matrix xv, 
                                  3: Vector yv) throws (1: SurrogateException exc);

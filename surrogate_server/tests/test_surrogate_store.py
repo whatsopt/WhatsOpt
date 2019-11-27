@@ -3,17 +3,14 @@ import os
 import numpy as np
 from whatsopt.surrogate_store import SurrogateStore
 
-SMT_NOT_INSTALLED = False
-try:
-    # from smt.surrogate_models import KRG
-    from smt.extensions import MFK
-except:
-    SMT_NOT_INSTALLED = True
-
 
 class TestSurrogateStore(unittest.TestCase):
     def setUp(self):
         self.store = SurrogateStore()
+
+    def tearDown(self):
+        if os.path.exists(self.store._sm_filename("2")):
+            os.remove(self.store._sm_filename("2"))
 
     # @unittest.skip("skip")
     def test_create_surrogate(self):
@@ -39,51 +36,13 @@ class TestSurrogateStore(unittest.TestCase):
         self.assertTrue(np.array_equal(y1, y2))
 
     def test_get_non_existing_surrogate(self):
-
         with self.assertRaises(FileNotFoundError):
             self.store.get_surrogate("2")
 
-    @unittest.skip("skip")
-    def test_save_mfk(self):
-        def LF_function(x):
-            import numpy as np
-
-            return (
-                0.5 * ((x * 6 - 2) ** 2) * np.sin((x * 6 - 2) * 2)
-                + (x - 0.5) * 10.0
-                - 5
-            )
-
-        def HF_function(x):
-            import numpy as np
-
-            return ((x * 6 - 2) ** 2) * np.sin((x * 6 - 2) * 2)
-
-        # Problem set up
-        ndim = 1
-        Xt_e = np.linspace(0, 1, 4, endpoint=True).reshape(-1, ndim)
-        Xt_c = np.linspace(0, 1, 11, endpoint=True).reshape(-1, ndim)
-
-        # nt_exp = Xt_e.shape[0]
-        # nt_cheap = Xt_c.shape[0]
-
-        # Evaluate the HF and LF functions
-        yt_e = HF_function(Xt_e)
-        yt_c = LF_function(Xt_c)
-
-        sm = MFK(theta0=np.array(Xt_e.shape[1] * [1.0]))
-
-        # low-fidelity dataset names being integers from 0 to level-1
-        sm.set_training_values(Xt_c, yt_c, name=0)
-        # high-fidelity dataset without name
-        sm.set_training_values(Xt_e, yt_e)
-
-        # train the model
-        sm.train()
-        # sm.D_all = None
-        store = SurrogateStore()
-        store.save(sm, 1)
-        print(sm.predict_values(np.array([0.314])))
+    def test_copy_surrogate(self):
+        src_id = "1"
+        self.store.copy_surrogate(src_id, "2")
+        self.assertTrue(os.path.exists(self.store._sm_filename("2")))
 
 
 if __name__ == "__main__":

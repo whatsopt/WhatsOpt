@@ -27,6 +27,7 @@ if len(sys.argv) <= 1 or sys.argv[1] == '--help':
     print('  void ping()')
     print('  void shutdown()')
     print('  void create_surrogate(string surrogate_id, SurrogateKind kind, Matrix xt, Vector yt)')
+    print('  void copy_surrogate(string src_id, string dst_id)')
     print('  SurrogateQualification qualify(string surrogate_id, Matrix xv, Vector yv)')
     print('  Vector predict_values(string surrogate_id, Matrix x)')
     print('  void destroy_surrogate(string surrogate_id)')
@@ -126,6 +127,12 @@ elif cmd == 'create_surrogate':
         print('create_surrogate requires 4 args')
         sys.exit(1)
     pp.pprint(client.create_surrogate(args[0], eval(args[1]), eval(args[2]), eval(args[3]),))
+
+elif cmd == 'copy_surrogate':
+    if len(args) != 2:
+        print('copy_surrogate requires 2 args')
+        sys.exit(1)
+    pp.pprint(client.copy_surrogate(args[0], args[1],))
 
 elif cmd == 'qualify':
     if len(args) != 3:

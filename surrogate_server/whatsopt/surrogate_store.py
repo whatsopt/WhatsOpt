@@ -1,5 +1,6 @@
 import numpy as np
 import os
+from shutil import copyfile
 
 try:
     import cPickle as pickle
@@ -62,6 +63,11 @@ class SurrogateStore(object):
         filename = self._sm_filename(surrogate_id)
         if os.path.exists(filename):
             os.remove(filename)
+
+    def copy_surrogate(self, src_id, dst_id):
+        src = self._sm_filename(src_id)
+        dst = self._sm_filename(dst_id)
+        copyfile(src, dst)
 
     def _sm_filename(self, surrogate_id):
         return "%s/surrogate_%s.pkl" % (self.outdir, surrogate_id)
