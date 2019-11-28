@@ -29,10 +29,12 @@ class Surrogate < ApplicationRecord
   STATUS_DELETED = "failed"
   STATUSES = [STATUS_CREATED, STATUS_TRAINED, STATUS_FAILED, STATUS_DELETED]
 
-
-
   after_initialize :_set_defaults
+  after_save :_activate_copy, if: :copy_in_progress?
   before_destroy :_delete_surrogate
+
+  # transient attribute to manage surrogate copy
+  attr_accessor :copy_origin_id
 
   def proxy
     WhatsOpt::SurrogateProxy.new(surrogate_id: id.to_s)
@@ -44,6 +46,10 @@ class Surrogate < ApplicationRecord
 
   def trained?
     self.status == STATUS_TRAINED
+  end
+
+  def copy_in_progress?
+    !!self.copy_origin_id
   end
 
   def qualified?
@@ -96,6 +102,12 @@ class Surrogate < ApplicationRecord
     return xt, xv
   end
 
+  def build_copy
+    copy = self.dup
+    copy.copy_origin_id = self.id if self.trained? 
+    copy
+  end
+
   private
     def _set_defaults
       self.kind = SURROGATES[0] if self.kind.blank?
@@ -109,5 +121,13 @@ class Surrogate < ApplicationRecord
     def _delete_surrogate
       update(status: STATUS_DELETED)
       proxy.destroy_surrogate
+    end
+
+    def _activate_copy
+      # trigger actual copy of surrogate on the disk
+      if self.copy_origin_id && self.id != self.copy_origin_id
+        proxy.copy_surrogate(self.copy_origin_id.to_s)
+        self.copy_origin_id = nil
+      end
     end
 end

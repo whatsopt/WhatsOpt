@@ -4,7 +4,7 @@ class OpenmdaoAnalysisImpl < ActiveRecord::Base
   NONLINEAR_SOLVERS = %w[NonlinearBlockGS RecklessNonlinearBlockGS NonlinearBlockJac NonlinearRunOnce NewtonSolver BroydenSolver].freeze
   LINEAR_SOLVERS    = %w[LinearBlockGS LinearBlockJac LinearRunOnce DirectSolver PETScKrylov ScipyKrylov LinearUserDefined].freeze
 
-  belongs_to :analysis, dependent: :destroy
+  belongs_to :analysis
   belongs_to :nonlinear_solver, -> { where name: NONLINEAR_SOLVERS }, class_name: "Solver"
   belongs_to :linear_solver, -> { where name: LINEAR_SOLVERS }, class_name: "Solver"
 
@@ -45,10 +45,11 @@ class OpenmdaoAnalysisImpl < ActiveRecord::Base
     end
   end
 
-  def self.build_copy(oimpl)
-    oimpl_copy = oimpl.dup
-    oimpl_copy.nonlinear_solver = Solver.build_copy(oimpl.nonlinear_solver)
-    oimpl_copy.linear_solver = Solver.build_copy(oimpl.linear_solver)
+  def build_copy
+    oimpl_copy = self.dup
+    oimpl_copy.analysis_id = nil
+    oimpl_copy.nonlinear_solver = self.nonlinear_solver.build_copy
+    oimpl_copy.linear_solver = self.linear_solver.build_copy
     oimpl_copy
   end
 

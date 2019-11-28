@@ -125,12 +125,12 @@ driver_metamodel_z_out:
   to_id: <%= ActiveRecord::FixtureSet.identify(:disc_metamodel_varz_design_in) %>
   role: "design_var"
 driver_metamodel_y2_in:
-  from_id: <%= ActiveRecord::FixtureSet.identify(:driver_metamodel_vary2_out) %>
-  to_id: <%= ActiveRecord::FixtureSet.identify(:disc_metamodel_vary2_in) %>
+  from_id: <%= ActiveRecord::FixtureSet.identify(:disc_metamodel_vary2_out) %>
+  to_id: <%= ActiveRecord::FixtureSet.identify(:driver_metamodel_vary2_in) %>
   role: "response"
 driver_metamodel_obj_out:
-  from_id: <%= ActiveRecord::FixtureSet.identify(:driver_metamodel_varobj_objective_out) %>
-  to_id: <%= ActiveRecord::FixtureSet.identify(:disc_metamodel_varobj_objective_in) %>
+  from_id: <%= ActiveRecord::FixtureSet.identify(:disc_metamodel_varobj_objective_out) %>
+  to_id: <%= ActiveRecord::FixtureSet.identify(:driver_metamodel_varobj_objective_in) %>
   role: "objective"
 
 # SINGLETON ################################################################

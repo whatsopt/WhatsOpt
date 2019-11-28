@@ -109,4 +109,35 @@ class AnalysisTest < ActiveSupport::TestCase
     mda = analyses(:cicav_metamodel_analysis)
     assert mda.is_metamodel_analysis?
   end
+
+  test "should copy an analysis" do
+    mda = analyses(:cicav)
+    copy = mda.create_copy!
+    assert_equal Connection.of_analysis(mda).count, Connection.of_analysis(copy).count
+  end
+
+  test "should copy a metamodel" do
+    mda = analyses(:cicav_metamodel_analysis)
+    copy = mda.create_copy!
+    assert copy.is_metamodel_analysis?
+    orig_conns = Connection.of_analysis(mda)
+    copy_conns = Connection.of_analysis(copy)
+    # Connection.print(orig_conns)
+    # puts
+    # Connection.print(copy_conns)
+    assert_equal orig_conns.size, copy_conns.size
+  end
+
+  test "toto should copy a sub-analysis" do
+    mda = analyses(:outermda)
+    mda.disciplines.count
+    copy = mda.create_copy!
+    orig_conns = Connection.of_analysis(mda)
+    copy_conns = Connection.of_analysis(copy)
+    # Connection.print(orig_conns)
+    # puts
+    # Connection.print(copy_conns)
+    assert_equal orig_conns.size, copy_conns.size
+  end
+
 end

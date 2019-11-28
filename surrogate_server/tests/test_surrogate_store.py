@@ -40,8 +40,7 @@ class TestSurrogateStore(unittest.TestCase):
             self.store.get_surrogate("2")
 
     def test_copy_surrogate(self):
-        src_id = "1"
-        self.store.copy_surrogate(src_id, "2")
+        self.store.copy_surrogate("1", "2")
         self.assertTrue(os.path.exists(self.store._sm_filename("2")))
 
 

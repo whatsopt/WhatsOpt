@@ -69,6 +69,6 @@ class SurrogateServerHandler:
         self.sm_store.destroy_surrogate(surrogate_id)
 
     @throw_surrogate_exception
-    def copy_surrogate(self, surrogate_id, from_id):
-        print("COPY from surrogate {} to surrogate {}".format(from_id, surrogate_id))
-        self.sm_store.copy_surrogate(surrogate_id, from_id)
+    def copy_surrogate(self, src_id, dst_id):
+        print("COPY from surrogate {} to surrogate {}".format(src_id, dst_id))
+        self.sm_store.copy_surrogate(src_id, dst_id)

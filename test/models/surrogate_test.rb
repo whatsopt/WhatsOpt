@@ -23,6 +23,19 @@ class SurrogateTest < ActiveSupport::TestCase
     assert_in_delta(6.034, @surr.predict([[3.3, 2, 7], [5, 4, 3]]).second, 1)
   end
 
+  test "should be copied and prediction with copy get same results" do
+    skip_if_parallel
+    assert_equal Surrogate::STATUS_CREATED, @surr.status
+    @surr.train
+    @surr.reload
+    assert_equal Surrogate::STATUS_TRAINED, @surr.status
+    copy = @surr.build_copy
+    copy.save!
+    assert_equal Surrogate::STATUS_TRAINED, copy.status
+    assert_in_delta(2.502, copy.predict([[3.3, 2, 7]]).first, 1)
+    assert_in_delta(6.034, copy.predict([[3.3, 2, 7], [5, 4, 3]]).second, 1)
+  end
+
   test "extract at indices" do
     skip_if_parallel
     xt, xv = @surr._extract_at_indices([1, 2, 3, 4, 5], [1, 3])

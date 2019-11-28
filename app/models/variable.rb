@@ -112,14 +112,12 @@ class Variable < ApplicationRecord
     scaling&.res_ref.blank? ? super : scaling.res_ref
   end
 
-  def copy
+  def build_copy
     newvar = dup
+    newvar.discipline = nil
     newvar.parameter = parameter.dup if parameter
+    newvar.scaling = scaling.dup if scaling
     newvar
-  end
-
-  def self.build_copy(var)
-    var.copy
   end
 
   private

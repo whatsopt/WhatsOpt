@@ -16,7 +16,7 @@ class Discipline < ApplicationRecord
 
   has_many :variables, -> { includes(:parameter).order("name ASC") }, dependent: :destroy
   # has_many :variables, :dependent => :destroy
-  has_one :analysis_discipline, dependent: :destroy
+  has_one :analysis_discipline, dependent: :destroy, autosave: true
   has_one :sub_analysis, through: :analysis_discipline, source: :analysis
   has_one :meta_model, dependent: :destroy
 
@@ -47,6 +47,10 @@ class Discipline < ApplicationRecord
 
   def is_driver?
     type == WhatsOpt::Discipline::NULL_DRIVER
+  end
+
+  def is_pure_metamodel?
+    !!meta_model
   end
 
   def is_metamodel?
@@ -121,16 +125,21 @@ class Discipline < ApplicationRecord
     new_sub_analysis
   end
 
-  def self.build_copy(disc)
-    disc_copy = disc.dup
-    disc.variables.each do |var|
-      disc_copy.variables << Variable.build_copy(var)
+  def create_copy!(mda_id)
+    disc_copy = self.dup
+    disc_copy.analysis_id = mda_id
+    self.variables.each do |var|
+      disc_copy.variables << var.build_copy
     end
-    if disc.has_sub_analysis?
-      sub_analysis = Analysis.build_copy(disc.sub_analysis)
-      sub_analysis.save!(validate: false)
-      disc_copy.build_analysis_discipline(analysis: sub_analysis) 
+    if self.is_pure_metamodel?
+      meta_model = self.meta_model.build_copy
+      disc_copy.meta_model = meta_model
     end
+    if self.has_sub_analysis?
+      sub_analysis = self.sub_analysis.create_copy!(mda_id)
+      ad = disc_copy.build_analysis_discipline(analysis_id: sub_analysis)
+    end
+    disc_copy.openmdao_impl = self.openmdao_impl&.build_copy
     disc_copy
   end
 

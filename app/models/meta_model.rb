@@ -68,6 +68,15 @@ class MetaModel < ApplicationRecord
     surrogates.map(&:qualify)
   end
 
+  def build_copy
+    mm_copy = self.dup
+    self.surrogates.each do |surr|
+      surr_copy = surr.build_copy
+      mm_copy.surrogates << surr_copy
+    end
+    mm_copy
+  end
+
 private
   def _set_defaults
     self.default_surrogate_kind = Surrogate::SURROGATES[0] if self.default_surrogate_kind.blank?

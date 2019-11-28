@@ -53,6 +53,12 @@ class Connection < ApplicationRecord
     from.try(:discipline).try(:analysis)
   end
 
+  def self.print(conns)
+    conns.each do |conn|
+      puts "Connection #{conn.from.name} from #{conn.from.discipline.name} to #{conn.to.discipline.name}"
+    end
+  end
+
   def self.create_connection!(from_disc, to_disc, name, sub_analysis_check = true)
     Connection.transaction do
       if sub_analysis_check
