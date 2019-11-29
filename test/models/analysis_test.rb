@@ -128,7 +128,23 @@ class AnalysisTest < ActiveSupport::TestCase
     assert_equal orig_conns.size, copy_conns.size
   end
 
-  test "toto should copy a sub-analysis" do
+  test "should copy of a copy of a metamodel and predict with even middle copy removed" do
+    mda = analyses(:cicav_metamodel_analysis)
+    copy = mda.create_copy!
+    assert copy.is_metamodel_analysis?
+    x = [[1.0, 8, 5], [8, 9, 10], [5, 4, 3]]
+    mm = copy.disciplines.last.meta_model
+    y = mm.predict(x)
+    assert_in_delta 4, y[0][0]
+    assert_equal x.size, y.size
+    mda.destroy
+    mm.reload
+    y = mm.predict(x)
+    assert_in_delta 4, y[0][0]
+    assert_equal x.size, y.size
+  end
+
+  test "should copy a sub-analysis" do
     mda = analyses(:outermda)
     mda.disciplines.count
     copy = mda.create_copy!
@@ -138,6 +154,15 @@ class AnalysisTest < ActiveSupport::TestCase
     # puts
     # Connection.print(copy_conns)
     assert_equal orig_conns.size, copy_conns.size
+  end
+
+  test "should import a metamodel" do
+    mda = analyses(:singleton)
+    disc = disciplines(:disc_cicav_metamodel)
+    mda.import!(disc.analysis, [disc.id])
+    mda.reload
+    assert_equal 3, mda.disciplines.count
+    assert_equal WhatsOpt::Discipline::METAMODEL, mda.disciplines.last.type
   end
 
 end

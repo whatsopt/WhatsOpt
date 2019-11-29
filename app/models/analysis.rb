@@ -304,11 +304,11 @@ class Analysis < ApplicationRecord
     end
   end
 
-  def import!(fromAnalysis, disciplines)
+  def import!(fromAnalysis, discipline_ids)
     # do not import from self
     if fromAnalysis.id != id 
       Analysis.transaction do
-        disciplines.each do |discId|
+        discipline_ids.each do |discId|
           disc = Discipline.find(discId)
           # p "***************************************** IMPORT #{disc.name}"
           # check consistency
@@ -320,11 +320,11 @@ class Analysis < ApplicationRecord
 
             newDisc = self.disciplines.reload.last
             if disc.is_pure_metamodel?
-              newDisc.meta_model = disc.meta_model.build_copy
+              newDisc.meta_model = disc.meta_model.build_copy(disc)
             end
 
             if disc.has_sub_analysis?
-              newDisc.sub_analysis = disc.sub_analysis.create_copy!(id)
+              newDisc.sub_analysis = disc.sub_analysis.create_copy!(self)
             end
             newDisc.save!
           end
@@ -333,19 +333,20 @@ class Analysis < ApplicationRecord
     end
   end
 
-  def create_copy!(parent_id = nil)
+  def create_copy!(parent=nil, super_disc=nil)
     mda_copy = nil
     Analysis.transaction do  # metamodel and subanalysis are saved, rollback if problem
       mda_copy = Analysis.create!(name: name, public: public) do |mda_copy|
-        mda_copy.parent_id = parent_id
+        mda_copy.parent_id = parent.id if parent
         mda_copy.openmdao_impl = self.openmdao_impl.build_copy if self.openmdao_impl
       end
       mda_copy.disciplines.first.delete  # remove default driver
       self.disciplines.each do |disc|
-        disc_copy = disc.create_copy!(mda_copy.id)
-        mda_copy.disciplines << disc_copy
+        disc_copy = disc.create_copy!(mda_copy)
+        #mda_copy.disciplines << disc_copy
       end
       mda_copy.save!
+      super_disc.build_analysis_discipline(analysis: mda_copy) if super_disc
     end
     mda_copy
   end

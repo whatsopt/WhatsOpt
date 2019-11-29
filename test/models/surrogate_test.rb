@@ -31,9 +31,10 @@ class SurrogateTest < ActiveSupport::TestCase
     assert_equal Surrogate::STATUS_TRAINED, @surr.status
     copy = @surr.build_copy
     copy.save!
-    assert_equal Surrogate::STATUS_TRAINED, copy.status
+    assert_equal Surrogate::STATUS_CREATED, copy.status
     assert_in_delta(2.502, copy.predict([[3.3, 2, 7]]).first, 1)
     assert_in_delta(6.034, copy.predict([[3.3, 2, 7], [5, 4, 3]]).second, 1)
+    assert_equal Surrogate::STATUS_TRAINED, copy.reload.status
   end
 
   test "extract at indices" do
@@ -44,8 +45,8 @@ class SurrogateTest < ActiveSupport::TestCase
   end
 
   test "should compute qualification" do
-    @surr = surrogates(:surrogate_obj2)
     skip_if_parallel
+    @surr = surrogates(:surrogate_obj2)
     assert_equal Surrogate::STATUS_CREATED, @surr.status
     @surr.train # use one point for testing out of 10 points of the doe
     @surr.reload
@@ -62,5 +63,12 @@ class SurrogateTest < ActiveSupport::TestCase
     assert_equal (50-1)/15+1, @surr.xvalid.size
     assert_equal (50-1)/15+1, @surr.yvalid.size
     assert_equal (50-1)/15+1, @surr.ypred.size
+  end
+
+  test "should remove surrogate without deleting variables" do
+    skip_if_parallel
+    var = @surr.variable
+    @surr.destroy!
+    assert @surr.variable
   end
 end

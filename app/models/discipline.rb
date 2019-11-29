@@ -16,7 +16,7 @@ class Discipline < ApplicationRecord
 
   has_many :variables, -> { includes(:parameter).order("name ASC") }, dependent: :destroy
   # has_many :variables, :dependent => :destroy
-  has_one :analysis_discipline, dependent: :destroy, autosave: true
+  has_one :analysis_discipline, dependent: :destroy
   has_one :sub_analysis, through: :analysis_discipline, source: :analysis
   has_one :meta_model, dependent: :destroy
 
@@ -125,21 +125,21 @@ class Discipline < ApplicationRecord
     new_sub_analysis
   end
 
-  def create_copy!(mda_id)
+  def create_copy!(mda)
     disc_copy = self.dup
-    disc_copy.analysis_id = mda_id
     self.variables.each do |var|
       disc_copy.variables << var.build_copy
     end
     if self.is_pure_metamodel?
-      meta_model = self.meta_model.build_copy
-      disc_copy.meta_model = meta_model
+      meta_model = self.meta_model.build_copy(disc_copy)
+      #disc_copy.meta_model = meta_model
     end
     if self.has_sub_analysis?
-      sub_analysis = self.sub_analysis.create_copy!(mda_id)
-      ad = disc_copy.build_analysis_discipline(analysis_id: sub_analysis)
+      sub_analysis = self.sub_analysis.create_copy!(mda, disc_copy)
+      #ad = disc_copy.build_analysis_discipline(analysis_id: sub_analysis)
     end
     disc_copy.openmdao_impl = self.openmdao_impl&.build_copy
+    mda.disciplines << disc_copy
     disc_copy
   end
 
@@ -171,6 +171,7 @@ class Discipline < ApplicationRecord
           each_serializer: VariableSerializer).as_json
     attrs = {
       name: self.name,
+      type: self.type,
       variables_attributes: varattrs  #.map {|att| att.except(:parameter_attributes, :scaling)}
     }
   end

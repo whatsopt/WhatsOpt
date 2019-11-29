@@ -53,4 +53,5 @@ class MetaModelsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 1, mda.design_variables.count
     assert_equal 1, mda.response_variables.count
   end
+
 end

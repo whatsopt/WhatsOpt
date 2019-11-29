@@ -3,7 +3,7 @@
 class AnalysisDiscipline < ApplicationRecord
   before_save :report_connections!
 
-  belongs_to :discipline, autosave: true
+  belongs_to :discipline
   belongs_to :analysis
 
   def self.build_analysis_discipline(disc, innermda)

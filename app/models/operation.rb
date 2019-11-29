@@ -21,7 +21,7 @@ class Operation < ApplicationRecord
   has_many :cases, -> { joins(:variable).order("name ASC") }, dependent: :destroy
   has_one :job, dependent: :destroy
 
-  has_many :meta_models, dependent: :destroy
+  has_many :meta_models
 
   validates :name, presence: true, allow_blank: false
   validate :success_flags_consistent_with_cases

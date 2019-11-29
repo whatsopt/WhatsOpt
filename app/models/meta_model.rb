@@ -29,6 +29,16 @@ class MetaModel < ApplicationRecord
     end
   end
 
+  def build_copy(discipline=nil)
+    mm_copy = self.dup
+    mm_copy.discipline = discipline if discipline
+    self.surrogates.each do |surr|
+      var = discipline.variables.detect{|v| v.name == surr.variable.name} if discipline
+      surr_copy = surr.build_copy(mm_copy, var)
+    end
+    mm_copy
+  end
+
   def train(force: true)
     surrogates.each do |surr|
       surr.train if force || !surr.trained?
@@ -66,15 +76,6 @@ class MetaModel < ApplicationRecord
 
   def qualification
     surrogates.map(&:qualify)
-  end
-
-  def build_copy
-    mm_copy = self.dup
-    self.surrogates.each do |surr|
-      surr_copy = surr.build_copy
-      mm_copy.surrogates << surr_copy
-    end
-    mm_copy
   end
 
 private
