@@ -116,6 +116,10 @@ class Analysis < ApplicationRecord
     response_variables.inject(0) { |s, v| s + v.dim }
   end
 
+  def responses_of_interest_dim
+    responses_of_interest.inject(0) { |s, v| s + v.dim }
+  end
+
   def design_var_dim
     design_variables.inject(0) { |s, v| s + v.dim }
   end
