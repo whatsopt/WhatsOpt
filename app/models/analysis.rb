@@ -40,7 +40,7 @@ class Analysis < ApplicationRecord
     _create_from_attachment if attachment_exists?
   end
 
-  after_save :refresh_connections
+  after_save :refresh_connections, unless: Proc.new { self.disciplines.count < 2 }
   after_save :_ensure_ancestry
   after_save :_ensure_driver_presence
   after_save :_ensure_openmdao_impl_presence
@@ -249,7 +249,7 @@ class Analysis < ApplicationRecord
 
   def refresh_connections(default_role_for_inputs = WhatsOpt::Variable::PARAMETER_ROLE,
                           default_role_for_outputs = WhatsOpt::Variable::RESPONSE_ROLE)
-    # p "REFRESH CONNECTIONS"
+    # p "REFRESH CONNS #{self.name}"
     varouts = Variable.outputs.joins(discipline: :analysis).where(analyses: { id: id })
     varins = Variable.inputs.joins(discipline: :analysis).where(analyses: { id: id })
     # check that each out variables is connected
@@ -304,45 +304,51 @@ class Analysis < ApplicationRecord
     end
   end
 
-  def import!(fromAnalysis, disciplines)
+  def import!(fromAnalysis, discipline_ids)
     # do not import from self
-    if fromAnalysis.id != id  
-      disciplines.each do |discId|
-        disc = Discipline.find(discId)
-        # p "***************************************** IMPORT #{disc.name}"
+    if fromAnalysis.id != id 
+      Analysis.transaction do
+        discipline_ids.each do |discId|
+          disc = Discipline.find(discId)
+          # p "***************************************** IMPORT #{disc.name}"
+          # check consistency
+          if disc && fromAnalysis.disciplines.where(id: discId)
+            discattrs = disc.prepare_attributes_for_import!(variables, driver)
+            attrs = {disciplines_attributes: [discattrs]}
+            # p "ATTRS", attrs
+            self.update!(attrs)
 
-        # check consistency
-        if disc && fromAnalysis.disciplines.where(id: discId)
-          # remove driver connections as new ones from or to new disc will take place
-          driver.variables.each do |driver_var|
-            if disc.variables.where(name: driver_var.name, io_mode: driver_var.io_mode).first
-              # p "Remove Driver #{driver_var.name} #{driver_var.io_mode} connection"
-              driver_var.destroy!
+            newDisc = self.disciplines.reload.last
+            if disc.is_pure_metamodel?
+              newDisc.meta_model = disc.meta_model.build_copy(disc)
             end
-          end
 
-          # new disc should not create outvars connected (hence the joins outgoing_connections)
-          outvars = variables.where.not(discipline_id: driver.id)
-            .where(io_mode: WhatsOpt::Variable::OUT)
-            .joins(:outgoing_connections).pluck(:name).uniq
-          # p "EXISTING OUTVARS", outvars
-          # p "NEW DISC VARS", disc.variables.pluck(:name).uniq
-          # remove from new discipline outvars already present in the analysis
-          vars = disc.variables
-            .where.not(io_mode: WhatsOpt::Variable::OUT)
-            .or(disc.variables.where.not(name: outvars)) 
-          # p "VARS", vars.map(&:name)
-          varattrs = ActiveModelSerializers::SerializableResource.new(vars,
-                each_serializer: VariableSerializer).as_json
-          attrs = {disciplines_attributes: [{
-            name: disc.name,
-            variables_attributes: varattrs  #.map {|att| att.except(:parameter_attributes, :scaling)}
-          }]}
-          # p "ATTRS", attrs
-          self.update!(attrs)
+            if disc.has_sub_analysis?
+              newDisc.sub_analysis = disc.sub_analysis.create_copy!(self)
+            end
+            newDisc.save!
+          end
         end
       end
     end
+  end
+
+  def create_copy!(parent=nil, super_disc=nil)
+    mda_copy = nil
+    Analysis.transaction do  # metamodel and subanalysis are saved, rollback if problem
+      mda_copy = Analysis.create!(name: name, public: public) do |mda_copy|
+        mda_copy.parent_id = parent.id if parent
+        mda_copy.openmdao_impl = self.openmdao_impl.build_copy if self.openmdao_impl
+      end
+      mda_copy.disciplines.first.delete  # remove default driver
+      self.disciplines.each do |disc|
+        disc_copy = disc.create_copy!(mda_copy)
+        #mda_copy.disciplines << disc_copy
+      end
+      mda_copy.save!
+      super_disc.build_analysis_discipline(analysis: mda_copy) if super_disc
+    end
+    mda_copy
   end
 
   def create_connections!(from_disc, to_disc, names, sub_analysis_check: true)
@@ -451,18 +457,6 @@ class Analysis < ApplicationRecord
     )
   end
 
-  def self.build_copy(mda)
-    mda_copy = mda.dup
-    mda_copy.parent = nil
-    mda.disciplines.each do |disc|
-      disc_copy = Discipline.build_copy(disc)
-      disc_copy.type = WhatsOpt::Discipline::DISCIPLINE if disc.type == WhatsOpt::Discipline::METAMODEL
-      mda_copy.disciplines << disc_copy
-    end
-    mda_copy.openmdao_impl = OpenmdaoAnalysisImpl.build_copy(mda.openmdao_impl)
-    mda_copy
-  end
-
   def self.build_metamodel_analysis(ope, varnames)
     name = "#{ope.analysis.name.camelize}MetaModel"
     metamodel_varattrs = ope.build_metamodel_varattrs(varnames)
@@ -533,7 +527,7 @@ class Analysis < ApplicationRecord
     end
 
     def _ensure_driver_presence
-      if valid? && disciplines.where(name: WhatsOpt::Discipline::NULL_DRIVER_NAME).empty?
+      if self.disciplines.empty?
         disciplines.create!(name: WhatsOpt::Discipline::NULL_DRIVER_NAME, position: 0)
       end
     end
@@ -545,13 +539,6 @@ class Analysis < ApplicationRecord
     end
 
     def _ensure_openmdao_impl_presence
-      if valid? && self.openmdao_impl.nil?
-        self.openmdao_impl = OpenmdaoAnalysisImpl.new
-      end
-    end
-
-  private
-    def set_defaults
-      self.openmdo_impl = OpenmdaoAnalysisImpl.new
+      self.openmdao_impl ||= OpenmdaoAnalysisImpl.new
     end
 end

@@ -25,8 +25,9 @@ module WhatsOpt
       @surrogate_id = surrogate_id || SecureRandom.uuid
 
       if server_start && !server_available?
-        @pid = spawn("#{PYTHON} #{File.join(Rails.root, 'surrogate_server', 'run_surrogate_server.py')} --outdir #{OUTDIR}",
-                     [:out, :err] => File.join(Rails.root, "upload", "logs", "surrogate_server.log"))
+        cmd = "#{PYTHON} #{File.join(Rails.root, 'surrogate_server', 'run_surrogate_server.py')} --outdir #{OUTDIR}"
+        Rails.logger.info cmd
+        @pid = spawn(cmd, [:out, :err] => File.join(Rails.root, "upload", "logs", "surrogate_server.log"))
         retries = 0
         while retries < 5 && !server_available?  # wait for server start
           retries += 1
@@ -82,6 +83,10 @@ module WhatsOpt
 
     def destroy_surrogate
       _send { @client.destroy_surrogate(@surrogate_id) }
+    end
+
+    def copy_surrogate(src_id)
+      _send { @client.copy_surrogate(src_id, @surrogate_id) }
     end
 
     def _send

@@ -11,21 +11,6 @@ class Api::V1::MetaModelsController < Api::ApiController
     json_response @meta_model
   end
 
-  # # POST /api/v1/{operation_id}/meta_models
-  # def create
-  #   if params[:operation_id]
-  #     ope = Operation.find(params[:operation_id])
-  #     authorize ope
-  #     mda = Analysis.build_metamodel_analysis(ope)
-  #     mda.save!
-  #     mda.set_all_parameters_as_design_variables
-  #     mda.set_owner(current_user)
-  #     @meta_model = mda.disciplines.first.build_meta_model(operation: ope)  # just one discipline in the analysis
-  #     @meta_model.build_surrogates
-  #     @meta_model.save!
-  #   end
-  # end
-
   # PATCH /api/v1/meta_models/1
   def update
     if params[:meta_model][:format] == MetaModel::MATRIX_FORMAT

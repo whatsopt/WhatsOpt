@@ -147,6 +147,7 @@ class AnalysesControllerTest < ActionDispatch::IntegrationTest
       post mdas_url, params: { mda_id: @mda.id }
       assert_redirected_to mda_url(Analysis.last)
     end
+    assert_equal @mda.disciplines.count, Analysis.last.disciplines.count
   end
 
 end

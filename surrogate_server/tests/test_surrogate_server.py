@@ -14,6 +14,7 @@ except:
 from thrift.transport import TSocket
 from thrift.transport import TTransport
 from thrift.protocol import TBinaryProtocol
+from whatsopt.surrogate_server import ttypes as SurrogateStoreTypes
 
 
 class SurrogateStoreProxy(object):
@@ -32,6 +33,12 @@ class SurrogateStoreProxy(object):
 
     def qualify(self, surrogate_id, xv, yv):
         return self._thrift_client.qualify(surrogate_id, xv, yv)
+
+    def copy_surrogate(self, src_id, dst_id):
+        return self._thrift_client.copy_surrogate(src_id, dst_id)
+
+    def destroy_surrogate(self, surrogate_id):
+        return self._thrift_client.destroy_surrogate(surrogate_id)
 
     def close(self):
         self.transport.close()
@@ -64,7 +71,6 @@ class TestSurrogateServer(unittest.TestCase):
         y1 = self.store.predict_values("1", x)
 
         self.assertEqual(13, len(y1))
-        self.store.close()
 
     def test_qualification(self):
         xt = np.array([[0.0, 1.0, 2.0, 3.0, 4.0]]).T
@@ -77,6 +83,17 @@ class TestSurrogateServer(unittest.TestCase):
         self.assertAlmostEqual(1.0, q.r2)
         for i, v in enumerate([0.0, 1.5, 1.0]):
             self.assertAlmostEqual(v, q.yp[i])
+
+    def test_copy_predict_destroy(self):
+        self.store.copy_surrogate("1", "2")
+        num = 13
+        x = np.linspace(0.0, 4.0, num).reshape((1, -1)).T
+        y1 = self.store.predict_values("2", x)
+
+        self.assertEqual(13, len(y1))
+        self.store.destroy_surrogate("2")
+        with self.assertRaises(SurrogateStoreTypes.SurrogateException):
+            self.store.predict_values("2", x)
 
 
 if __name__ == "__main__":

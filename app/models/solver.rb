@@ -13,8 +13,8 @@ class Solver < ActiveRecord::Base
     name == "RecklessNonlinearBlockGS"
   end
 
-  def self.build_copy(solver)
-    solver.dup
+  def build_copy
+    self.dup
   end
 
   private

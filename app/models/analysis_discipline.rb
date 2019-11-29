@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class AnalysisDiscipline < ApplicationRecord
-  before_save :report_connections
+  before_save :report_connections!
 
   belongs_to :discipline
   belongs_to :analysis
@@ -20,8 +20,8 @@ class AnalysisDiscipline < ApplicationRecord
     discipline.save!
   end
 
-  def report_connections
-    unless analysis.new_record?
+  def report_connections!
+    unless analysis&.new_record?
       disc = discipline
       innermda = analysis
       outermda = discipline.analysis
@@ -30,12 +30,6 @@ class AnalysisDiscipline < ApplicationRecord
       outermda.driver.create_variables_from_sub_analysis(innermda)
       outermda.save!
     end
-  end
-
-  def self.build_copy(ad)
-    ad_copy = ad.dup
-    ad_copy.analysis = Analysis.build_copy(ad.analysis)
-    ad_copy
   end
 
 end

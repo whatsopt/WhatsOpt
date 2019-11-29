@@ -33,4 +33,12 @@ class DisciplineTest < ActiveSupport::TestCase
       disc.update!(endpoint_attributes: { host: "test", port: 30000 })
     end
   end
+
+  test "should copy and predict with metamodel" do
+    disc = disciplines(:disc_cicav_metamodel)
+    mda = analyses(:singleton)
+    copy = disc.create_copy!(mda)
+    assert :metamodel, copy.type
+    assert copy.is_pure_metamodel?
+  end
 end

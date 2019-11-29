@@ -5,6 +5,13 @@ class OpenmdaoDisciplineImpl < ActiveRecord::Base
 
   after_initialize :_ensure_default_impl
 
+  def build_copy
+    OpenmdaoDisciplineImpl.new(
+      implicit_component: implicit_component,
+      support_derivatives: support_derivatives
+    )
+  end
+
   private
     def _ensure_default_impl
       self.implicit_component = false if implicit_component.nil?

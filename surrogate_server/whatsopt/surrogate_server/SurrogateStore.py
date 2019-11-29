@@ -35,6 +35,14 @@ class Iface(object):
         """
         pass
 
+    def copy_surrogate(self, src_id, dst_id):
+        """
+        Parameters:
+         - src_id
+         - dst_id
+        """
+        pass
+
     def qualify(self, surrogate_id, xv, yv):
         """
         Parameters:
@@ -132,6 +140,39 @@ class Client(Iface):
             iprot.readMessageEnd()
             raise x
         result = create_surrogate_result()
+        result.read(iprot)
+        iprot.readMessageEnd()
+        if result.exc is not None:
+            raise result.exc
+        return
+
+    def copy_surrogate(self, src_id, dst_id):
+        """
+        Parameters:
+         - src_id
+         - dst_id
+        """
+        self.send_copy_surrogate(src_id, dst_id)
+        self.recv_copy_surrogate()
+
+    def send_copy_surrogate(self, src_id, dst_id):
+        self._oprot.writeMessageBegin('copy_surrogate', TMessageType.CALL, self._seqid)
+        args = copy_surrogate_args()
+        args.src_id = src_id
+        args.dst_id = dst_id
+        args.write(self._oprot)
+        self._oprot.writeMessageEnd()
+        self._oprot.trans.flush()
+
+    def recv_copy_surrogate(self):
+        iprot = self._iprot
+        (fname, mtype, rseqid) = iprot.readMessageBegin()
+        if mtype == TMessageType.EXCEPTION:
+            x = TApplicationException()
+            x.read(iprot)
+            iprot.readMessageEnd()
+            raise x
+        result = copy_surrogate_result()
         result.read(iprot)
         iprot.readMessageEnd()
         if result.exc is not None:
@@ -247,6 +288,7 @@ class Processor(Iface, TProcessor):
         self._processMap["ping"] = Processor.process_ping
         self._processMap["shutdown"] = Processor.process_shutdown
         self._processMap["create_surrogate"] = Processor.process_create_surrogate
+        self._processMap["copy_surrogate"] = Processor.process_copy_surrogate
         self._processMap["qualify"] = Processor.process_qualify
         self._processMap["predict_values"] = Processor.process_predict_values
         self._processMap["destroy_surrogate"] = Processor.process_destroy_surrogate
@@ -322,6 +364,32 @@ class Processor(Iface, TProcessor):
             msg_type = TMessageType.EXCEPTION
             result = TApplicationException(TApplicationException.INTERNAL_ERROR, 'Internal error')
         oprot.writeMessageBegin("create_surrogate", msg_type, seqid)
+        result.write(oprot)
+        oprot.writeMessageEnd()
+        oprot.trans.flush()
+
+    def process_copy_surrogate(self, seqid, iprot, oprot):
+        args = copy_surrogate_args()
+        args.read(iprot)
+        iprot.readMessageEnd()
+        result = copy_surrogate_result()
+        try:
+            self._handler.copy_surrogate(args.src_id, args.dst_id)
+            msg_type = TMessageType.REPLY
+        except TTransport.TTransportException:
+            raise
+        except SurrogateException as exc:
+            msg_type = TMessageType.REPLY
+            result.exc = exc
+        except TApplicationException as ex:
+            logging.exception('TApplication exception in handler')
+            msg_type = TMessageType.EXCEPTION
+            result = ex
+        except Exception:
+            logging.exception('Unexpected exception in handler')
+            msg_type = TMessageType.EXCEPTION
+            result = TApplicationException(TApplicationException.INTERNAL_ERROR, 'Internal error')
+        oprot.writeMessageBegin("copy_surrogate", msg_type, seqid)
         result.write(oprot)
         oprot.writeMessageEnd()
         oprot.trans.flush()
@@ -711,6 +779,141 @@ class create_surrogate_result(object):
         return not (self == other)
 all_structs.append(create_surrogate_result)
 create_surrogate_result.thrift_spec = (
+    None,  # 0
+    (1, TType.STRUCT, 'exc', [SurrogateException, None], None, ),  # 1
+)
+
+
+class copy_surrogate_args(object):
+    """
+    Attributes:
+     - src_id
+     - dst_id
+    """
+
+
+    def __init__(self, src_id=None, dst_id=None,):
+        self.src_id = src_id
+        self.dst_id = dst_id
+
+    def read(self, iprot):
+        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
+            return
+        iprot.readStructBegin()
+        while True:
+            (fname, ftype, fid) = iprot.readFieldBegin()
+            if ftype == TType.STOP:
+                break
+            if fid == 1:
+                if ftype == TType.STRING:
+                    self.src_id = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                else:
+                    iprot.skip(ftype)
+            elif fid == 2:
+                if ftype == TType.STRING:
+                    self.dst_id = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                else:
+                    iprot.skip(ftype)
+            else:
+                iprot.skip(ftype)
+            iprot.readFieldEnd()
+        iprot.readStructEnd()
+
+    def write(self, oprot):
+        if oprot._fast_encode is not None and self.thrift_spec is not None:
+            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
+            return
+        oprot.writeStructBegin('copy_surrogate_args')
+        if self.src_id is not None:
+            oprot.writeFieldBegin('src_id', TType.STRING, 1)
+            oprot.writeString(self.src_id.encode('utf-8') if sys.version_info[0] == 2 else self.src_id)
+            oprot.writeFieldEnd()
+        if self.dst_id is not None:
+            oprot.writeFieldBegin('dst_id', TType.STRING, 2)
+            oprot.writeString(self.dst_id.encode('utf-8') if sys.version_info[0] == 2 else self.dst_id)
+            oprot.writeFieldEnd()
+        oprot.writeFieldStop()
+        oprot.writeStructEnd()
+
+    def validate(self):
+        return
+
+    def __repr__(self):
+        L = ['%s=%r' % (key, value)
+             for key, value in self.__dict__.items()]
+        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+
+    def __eq__(self, other):
+        return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
+
+    def __ne__(self, other):
+        return not (self == other)
+all_structs.append(copy_surrogate_args)
+copy_surrogate_args.thrift_spec = (
+    None,  # 0
+    (1, TType.STRING, 'src_id', 'UTF8', None, ),  # 1
+    (2, TType.STRING, 'dst_id', 'UTF8', None, ),  # 2
+)
+
+
+class copy_surrogate_result(object):
+    """
+    Attributes:
+     - exc
+    """
+
+
+    def __init__(self, exc=None,):
+        self.exc = exc
+
+    def read(self, iprot):
+        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
+            return
+        iprot.readStructBegin()
+        while True:
+            (fname, ftype, fid) = iprot.readFieldBegin()
+            if ftype == TType.STOP:
+                break
+            if fid == 1:
+                if ftype == TType.STRUCT:
+                    self.exc = SurrogateException()
+                    self.exc.read(iprot)
+                else:
+                    iprot.skip(ftype)
+            else:
+                iprot.skip(ftype)
+            iprot.readFieldEnd()
+        iprot.readStructEnd()
+
+    def write(self, oprot):
+        if oprot._fast_encode is not None and self.thrift_spec is not None:
+            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
+            return
+        oprot.writeStructBegin('copy_surrogate_result')
+        if self.exc is not None:
+            oprot.writeFieldBegin('exc', TType.STRUCT, 1)
+            self.exc.write(oprot)
+            oprot.writeFieldEnd()
+        oprot.writeFieldStop()
+        oprot.writeStructEnd()
+
+    def validate(self):
+        return
+
+    def __repr__(self):
+        L = ['%s=%r' % (key, value)
+             for key, value in self.__dict__.items()]
+        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+
+    def __eq__(self, other):
+        return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
+
+    def __ne__(self, other):
+        return not (self == other)
+all_structs.append(copy_surrogate_result)
+copy_surrogate_result.thrift_spec = (
     None,  # 0
     (1, TType.STRUCT, 'exc', [SurrogateException, None], None, ),  # 1
 )

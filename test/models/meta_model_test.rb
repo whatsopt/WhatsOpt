@@ -29,6 +29,16 @@ class MetaModelTest < ActiveSupport::TestCase
     assert_equal x.size, y.size
   end
 
+  test "should predict with a copy" do
+    skip_if_parallel
+    x = [[1.0, 8, 5], [8, 9, 10], [5, 4, 3]]
+    mm = @mm.build_copy
+    mm.save!
+    y = mm.predict(x)
+    assert_in_delta 4, y[0][0]
+    assert_equal x.size, y.size
+  end
+
   test "should raise exception if x invalid" do
     x = [[1.0, 8], [8, 9, 10], [5, 4, 3]]
     assert_raises MetaModel::PredictionError do

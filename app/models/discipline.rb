@@ -49,6 +49,10 @@ class Discipline < ApplicationRecord
     type == WhatsOpt::Discipline::NULL_DRIVER
   end
 
+  def is_pure_metamodel?
+    !!meta_model
+  end
+
   def is_metamodel?
     !!(meta_model || (has_sub_analysis? && sub_analysis.is_metamodel_analysis?))
   end
@@ -121,21 +125,55 @@ class Discipline < ApplicationRecord
     new_sub_analysis
   end
 
-  def self.build_copy(disc)
-    disc_copy = disc.dup
-    disc.variables.each do |var|
-      disc_copy.variables << Variable.build_copy(var)
+  def create_copy!(mda)
+    disc_copy = self.dup
+    self.variables.each do |var|
+      disc_copy.variables << var.build_copy
     end
-    if disc.has_sub_analysis?
-      sub_analysis = Analysis.build_copy(disc.sub_analysis)
-      sub_analysis.save!(validate: false)
-      disc_copy.build_analysis_discipline(analysis: sub_analysis) 
+    if self.is_pure_metamodel?
+      meta_model = self.meta_model.build_copy(disc_copy)
+      #disc_copy.meta_model = meta_model
     end
+    if self.has_sub_analysis?
+      sub_analysis = self.sub_analysis.create_copy!(mda, disc_copy)
+      #ad = disc_copy.build_analysis_discipline(analysis_id: sub_analysis)
+    end
+    disc_copy.openmdao_impl = self.openmdao_impl&.build_copy
+    mda.disciplines << disc_copy
     disc_copy
   end
 
   def metamodel_qualification
     meta_model&.qualification.nil? ? [] : meta_model.qualification
+  end
+
+  def prepare_attributes_for_import!(analysis_variables, analysis_driver)
+    # remove driver connections as new ones from or to new disc will take place
+    analysis_driver.variables.each do |driver_var|
+      if self.variables.where(name: driver_var.name, io_mode: driver_var.io_mode).first
+        # p "Remove Driver #{driver_var.name} #{driver_var.io_mode} connection"
+        driver_var.destroy!
+      end
+    end
+
+    # new disc should not create outvars connected (hence the joins outgoing_connections)
+    outvars = analysis_variables.where.not(discipline_id: analysis_driver.id)
+      .where(io_mode: WhatsOpt::Variable::OUT)
+      .joins(:outgoing_connections).pluck(:name).uniq
+    # p "EXISTING OUTVARS", outvars
+    # p "NEW DISC VARS", self.variables.pluck(:name).uniq
+    # remove from new discipline outvars already present in the analysis
+    vars = self.variables
+      .where.not(io_mode: WhatsOpt::Variable::OUT)
+      .or(self.variables.where.not(name: outvars)) 
+    # p "VARS", vars.map(&:name)
+    varattrs = ActiveModelSerializers::SerializableResource.new(vars,
+          each_serializer: VariableSerializer).as_json
+    attrs = {
+      name: self.name,
+      type: self.type,
+      variables_attributes: varattrs  #.map {|att| att.except(:parameter_attributes, :scaling)}
+    }
   end
 
   private
