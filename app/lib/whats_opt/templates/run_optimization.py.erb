@@ -71,6 +71,9 @@ initialize(pb)
 
 pb.run_driver()      
 
+<%- @mda.design_variables.each do |dv| %>
+print("<%= dv.name %>= {}".format(pb['<%= dv.name %>']))<% end %>
+
 if options.batch:
     exit(0)  
 
