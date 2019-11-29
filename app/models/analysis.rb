@@ -329,6 +329,23 @@ class Analysis < ApplicationRecord
     end
   end
 
+  def create_copy!(parent_id = nil)
+    mda_copy = nil
+    Analysis.transaction do  # metamodel and subanalysis are saved, rollback if problem
+      mda_copy = Analysis.create!(name: name, public: public) do |mda_copy|
+        mda_copy.parent_id = parent_id
+        mda_copy.openmdao_impl = self.openmdao_impl.build_copy if self.openmdao_impl
+      end
+      mda_copy.disciplines.first.delete  # remove default driver
+      self.disciplines.each do |disc|
+        disc_copy = disc.create_copy!(mda_copy.id)
+        mda_copy.disciplines << disc_copy
+      end
+      mda_copy.save!
+    end
+    mda_copy
+  end
+
   def create_connections!(from_disc, to_disc, names, sub_analysis_check: true)
     Analysis.transaction do
       names.each do |name|
@@ -416,22 +433,6 @@ class Analysis < ApplicationRecord
     else
       var.outgoing_connections.map { |conn| destroy_connection!(conn, sub_analysis_check: false) }
     end
-  end
-
-  def create_copy!(parent_id = nil)
-    mda_copy = nil
-    Analysis.transaction do  # metamodel and subanalysis are saved, rollback if problem
-      mda_copy = Analysis.create!(name: name, public: public) do |mda_copy|
-        mda_copy.parent_id = parent_id
-        mda_copy.openmdao_impl = self.openmdao_impl.build_copy if self.openmdao_impl
-      end
-      self.disciplines.each do |disc|
-        disc_copy = disc.create_copy!(mda_copy.id)
-        mda_copy.disciplines << disc_copy
-      end
-      mda_copy.save!
-    end
-    mda_copy
   end
 
   def self.build_analysis(ope_attrs, outvar_count_hint = 1)
@@ -522,7 +523,7 @@ class Analysis < ApplicationRecord
 
     def _ensure_driver_presence
       if self.disciplines.empty?
-        disciplines.first_or_create!(name: WhatsOpt::Discipline::NULL_DRIVER_NAME, position: 0)
+        disciplines.create!(name: WhatsOpt::Discipline::NULL_DRIVER_NAME, position: 0)
       end
     end
 

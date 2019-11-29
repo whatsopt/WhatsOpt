@@ -36,7 +36,7 @@ class AnalysesController < ApplicationController
         @mda = Analysis.new(mda_params)
         authorize @mda
       end
-      if @mda.save(validate: !params[:mda_id])  # do not trigger validation when copy
+      if @mda.save
         current_user.add_role(:owner, @mda)
         current_user.save
         if @mda.disciplines.nodes.empty?
