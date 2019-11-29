@@ -12,9 +12,17 @@ from <%= @server_module %>.<%= @mda.py_modulename %>_proxy import <%= @mda.py_cl
 <% else -%>
 from <%= @mda.py_modulename %> import <%= @mda.py_classname %> 
 <% end %>
-<%= ERB.new(File.read(File.join(@template_dir, 'options_partial.py.erb')), nil, nil, eoutvar='_sub01').result(binding) %>
+from optparse import OptionParser
+parser = OptionParser()
+parser.add_option("-b", "--batch",
+                  action="store_true", dest="batch", default=False,
+                  help="do not plot anything")
+parser.add_option("-n", "--ncases", type="int",
+                  dest="n_cases", default=<%= @driver.options[:nbpts]%>,
+                  help="number of samples")
+(options, args) = parser.parse_args()
 pb = Problem(<%= @mda.py_classname %>())
-pb.driver = SmtDOEDriver(sampling_method_name='LHS', n_cases=<%= @driver.options[:nbpts]%>, sampling_method_options={'criterion': 'ese'})
+pb.driver = SmtDOEDriver(sampling_method_name='LHS', n_cases=options.n_cases, sampling_method_options={'criterion': 'ese'})
 case_recorder_filename = '<%= @sqlite_filename %>'        
 recorder = SqliteRecorder(case_recorder_filename)
 pb.driver.add_recorder(recorder)
@@ -66,7 +74,7 @@ output = data['outputs']['<%= r.name %>'].reshape(-1)
 
 input = data['inputs']['<%= dv.name %>'].reshape(-1)
 <% (0...dv.dim).each do |ki| -%>
-plt.subplot(<%= @mda.response_dim %>, <%= @mda.design_var_dim %>, <%= @mda.design_var_dim*row+col+1 %>)
+plt.subplot(<%= @mda.responses_of_interest_dim %>, <%= @mda.design_var_dim %>, <%= @mda.design_var_dim*row+col+1 %>)
 plt.plot(input[<%= ki %>::<%= dv.dim %>], output[<%= kj %>::<%= r.dim %>], '.')
 <% if col == 0 -%>
 plt.ylabel('<%= r.dim==1?"#{r.name}":"#{r.name} #{kj}" %>')
