@@ -207,6 +207,7 @@ function _filterFormOptions(options) {
       }
     }
   }
+  return filteredOptions;
 }
 
 
@@ -329,7 +330,7 @@ class Runner extends React.Component {
   handleChange(data) {
     console.log(`FORMDATA= ${JSON.stringify(data.formData)}`);
     console.log(`OPEDATA= ${JSON.stringify(this.opeData)}`);
-    console.log(`FILTERDATA= ${JSON.stringify((data.formData))}`);
+    console.log(`FILTERDATA= ${JSON.stringify(_filterFormOptions(data.formData))}`);
     const { formData } = data;
 
     let newState;
