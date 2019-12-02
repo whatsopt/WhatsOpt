@@ -59,10 +59,7 @@ class Surrogate < ApplicationRecord
   def train(test_part: 10)
     if meta_model.operation
       all_xt = meta_model.training_input_values
-      indices = []
-      if (test_part > 1) && (test_part < all_xt.size/2)
-        indices = (0...all_xt.size).step(test_part)
-      end
+      indices = (0...all_xt.size).step(test_part)
       xt, self.xvalid = _extract_at_indices(all_xt, indices)
       all_yt = meta_model.training_output_values(variable.name, coord_index)
       yt, self.yvalid = _extract_at_indices(all_yt, indices)
