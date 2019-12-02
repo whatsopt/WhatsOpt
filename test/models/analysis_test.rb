@@ -132,15 +132,15 @@ class AnalysisTest < ActiveSupport::TestCase
     mda = analyses(:cicav_metamodel_analysis)
     copy = mda.create_copy!
     assert copy.is_metamodel_analysis?
-    x = [[1.0, 8, 5], [8, 9, 10], [5, 4, 3]]
+    x = [[2.5, 3, 4], [8, 9, 10], [5, 4, 3]]
     mm = copy.disciplines.last.meta_model
     y = mm.predict(x)
-    assert_in_delta 4, y[0][0]
+    assert_in_delta 5, y[0][0]
     assert_equal x.size, y.size
     mda.destroy
     mm.reload
     y = mm.predict(x)
-    assert_in_delta 4, y[0][0]
+    assert_in_delta 5, y[0][0]
     assert_equal x.size, y.size
   end
 

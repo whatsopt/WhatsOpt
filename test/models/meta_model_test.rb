@@ -31,11 +31,11 @@ class MetaModelTest < ActiveSupport::TestCase
 
   test "should predict with a copy" do
     skip_if_parallel
-    x = [[1.0, 8, 5], [8, 9, 10], [5, 4, 3]]
+    x = [[2.5, 3, 4], [8, 9, 10], [5, 4, 3]]
     mm = @mm.build_copy
     mm.save!
     y = mm.predict(x)
-    assert_in_delta 4, y[0][0]
+    assert_in_delta 5, y[0][0]
     assert_equal x.size, y.size
   end
 
