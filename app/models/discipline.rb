@@ -16,7 +16,7 @@ class Discipline < ApplicationRecord
 
   has_many :variables, -> { includes(:parameter).order("name ASC") }, dependent: :destroy
   # has_many :variables, :dependent => :destroy
-  has_one :analysis_discipline, dependent: :destroy
+  has_one :analysis_discipline, dependent: :destroy, autosave: true
   has_one :sub_analysis, through: :analysis_discipline, source: :analysis
   has_one :meta_model, dependent: :destroy
 
@@ -136,7 +136,6 @@ class Discipline < ApplicationRecord
     end
     if self.has_sub_analysis?
       sub_analysis = self.sub_analysis.create_copy!(mda, disc_copy)
-      #ad = disc_copy.build_analysis_discipline(analysis_id: sub_analysis)
     end
     disc_copy.openmdao_impl = self.openmdao_impl&.build_copy
     mda.disciplines << disc_copy

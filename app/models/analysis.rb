@@ -343,10 +343,11 @@ class Analysis < ApplicationRecord
       mda_copy.disciplines.first.delete  # remove default driver
       self.disciplines.each do |disc|
         disc_copy = disc.create_copy!(mda_copy)
-        #mda_copy.disciplines << disc_copy
       end
       mda_copy.save!
-      super_disc.build_analysis_discipline(analysis: mda_copy) if super_disc
+      if super_disc
+        super_disc.build_analysis_discipline(analysis: mda_copy) 
+      end
     end
     mda_copy
   end

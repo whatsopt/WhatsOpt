@@ -150,4 +150,18 @@ class AnalysesControllerTest < ActionDispatch::IntegrationTest
     assert_equal @mda.disciplines.count, Analysis.last.disciplines.count
   end
 
+  test "should make a copy of a nested analysis" do
+    sign_out users(:user1)
+    sign_in users(:user2)
+    @outermda = analyses(:outermda)
+    assert_difference("AnalysisDiscipline.count", 1) do
+      assert_difference("Analysis.count", 2) do
+        post mdas_url, params: { mda_id: @outermda.id }
+        assert_redirected_to mda_url(Analysis.second_to_last)
+      end
+    end
+    assert Analysis.second_to_last.disciplines.third.has_sub_analysis?
+    assert_equal @outermda.disciplines.count, Analysis.second_to_last.disciplines.count
+  end
+
 end
