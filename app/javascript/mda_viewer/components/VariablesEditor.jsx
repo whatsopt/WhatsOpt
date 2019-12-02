@@ -7,6 +7,7 @@ function _computeRoleSelection(conn) {
   const options = [{ id: 'parameter', text: 'Parameter' },
     { id: 'design_var', text: 'Design Variable' },
     { id: 'response', text: 'Response' },
+    { id: 'response_of_interest', text: 'Response of interest' },
     { id: 'min_objective', text: 'Min Objective' },
     { id: 'max_objective', text: 'Max Objective' },
     { id: 'ineq_constraint', text: 'Neg Constraint' },
