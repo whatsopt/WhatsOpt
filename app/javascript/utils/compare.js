@@ -31,4 +31,4 @@ function deepIsEqual(first, second) {
   return true;
 }
 
-export default { deepIsEqual };
+export default deepIsEqual;
