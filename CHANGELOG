@@ -1,8 +1,9 @@
 <h1>CHANGELOG</h1>
 
-<h3>1.4.0 (30/11/2019)</h3>
+<h3>1.4.0 (03/12/2019)</h3>
 <ul>
-  <li>User can export a discipline from an analysis to another</li>
+  <li>User can export a discipline from an analysis to another.</li>
+  <li>User can copy an analysis.</li>
   <li>Export toolbar moved in Export tab</li>
   <li>Refactor Help menu with WhatsOpt documentation et web services API documentation</li>
   <li>Implementation: Javascript linting, automated review with Codacy</li>
