@@ -190,6 +190,11 @@ class Analysis < ApplicationRecord
     disciplines.by_position.map do |d|
       # node = { id: d.id.to_s, type: d.type, name: d.name, endpoint: d.endpoint }
       node = ActiveModelSerializers::SerializableResource.new(d).as_json
+      # TODO: if XDSM v2 accepted migrate database to take into account XDSM v2 new types
+      # mda -> group
+      node[:type] = 'group' if node[:type] == 'mda'
+      # not required as function and analysis are considered synonymous in XDSMjs for XDSM v2
+      # node[:type] = 'function' if node[:type] == 'analysis' 
       node[:id] = node[:id].to_s
       node[:link] = { id: parent.id, name: parent.name } if d.is_driver? && has_parent?
       node[:link] = { id: d.sub_analysis.id, name: d.sub_analysis.name } if d.has_sub_analysis?
