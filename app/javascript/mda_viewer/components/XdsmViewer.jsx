@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import Graph from 'XDSMjs/src/graph';
-import Xdsm from 'XDSMjs/src/xdsm';
+import Xdsm, { VERSION2 } from 'XDSMjs/src/xdsm';
 import Selectable from 'XDSMjs/src/selectable';
 
 function _setTooltips() {
@@ -14,8 +14,16 @@ function _setTooltips() {
   $(() => { $('.ellipsized').tooltip({ placement: 'right' }); });
 }
 
+const DEFAULT_XDSM_VERSION = VERSION2;
+
 class XdsmViewer extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { version: DEFAULT_XDSM_VERSION };
+  }
+
   componentDidMount() {
+    const { version } = this.state;
     const config = {
       labelizer: {
         ellipsis: 5,
@@ -28,6 +36,7 @@ class XdsmViewer extends React.Component {
         padding: 10,
       },
       titleTooltip: true,
+      version,
     };
     const { mda, filter } = this.props;
     this.graph = new Graph(mda, '', 'noDefaultDriver');
@@ -129,7 +138,8 @@ class XdsmViewer extends React.Component {
   }
 
   render() {
-    return (<div id="xdsm" className="xdsm" />);
+    const { version } = this.state;
+    return (<div className={version} />);
   }
 }
 
