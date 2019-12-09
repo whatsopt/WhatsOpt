@@ -6,6 +6,7 @@ import numpy as np
 # import matplotlib
 # matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+from openmdao import __version__ as OPENMDAO_VERSION
 from openmdao.api import Problem, SqliteRecorder, CaseReader
 from openmdao_extensions.smt_doe_driver import SmtDOEDriver
 <% if @remote -%>
@@ -14,6 +15,7 @@ from <%= @server_module %>.<%= @mda.py_modulename %>_proxy import <%= @mda.py_cl
 from <%= @mda.py_modulename %> import <%= @mda.py_classname %> 
 <% end %>
 from optparse import OptionParser
+
 parser = OptionParser()
 parser.add_option("-b", "--batch",
                   action="store_true", dest="batch", default=False,
@@ -22,6 +24,7 @@ parser.add_option("-n", "--ncases", type="int",
                   dest="n_cases", default=<%= @driver.options[:nbpts]%>,
                   help="number of samples")
 (options, args) = parser.parse_args()
+
 pb = Problem(<%= @mda.py_classname %>())
 pb.driver = SmtDOEDriver(sampling_method_name='LHS', n_cases=options.n_cases, sampling_method_options={'criterion': 'ese'})
 case_recorder_filename = '<%= @sqlite_filename %>'        
@@ -29,7 +32,10 @@ recorder = SqliteRecorder(case_recorder_filename)
 pb.driver.add_recorder(recorder)
 pb.model.add_recorder(recorder)
 pb.model.nonlinear_solver.add_recorder(recorder)
-pb.model.nonlinear_solver.options['err_on_non_converge'] = True
+if OPENMDAO_VERSION > "2.8.0":
+    pb.model.nonlinear_solver.options['err_on_non_converge'] = True
+else:
+    pb.model.nonlinear_solver.options['err_on_maxiter'] = True
 
 <%- @mda.design_variables.each do |dv| %>
 pb.model.add_design_var('<%= dv.name %>', lower=<%= dv.lower_py_value %>, upper=<%= dv.upper_py_value %>)<% end %>
