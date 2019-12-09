@@ -1,7 +1,7 @@
 <div class="btn-toolbar float-right">
 <%= button_to mda_operations_path(@ope.analysis_id), method: :get, class: "btn ml-2", title:"List" do %>
   <span class="fa fa-ellipsis-v"></span>
-  List
+  List Operations
 <% end %> 
 <% if policy(@ope).edit? %>
   <%= button_to edit_operation_path(@ope), method: :get, class: "btn ml-2", title:"Re-run" do %>

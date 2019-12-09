@@ -8,13 +8,13 @@ git_source(:github) do |repo_name|
 end
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem "rails", "~> 6.0.0"
+gem "rails", "~> 6.0.1"
 # Use sqlite3 as the database for Active Record
 gem "sqlite3", "~>1.4.0"
 # Use Puma as the app server
-gem "puma", "~> 3.11"
+gem "puma", "~> 4.1"
 # Use SCSS for stylesheets
-gem "sass-rails", "~> 5"
+gem "sass-rails", ">= 6"
 # Use Uglifier as compressor for JavaScript assets
 gem "uglifier", ">= 1.3.0"
 # Transpile app-like JavaScript. Read more: https://github.com/rails/webpacker
@@ -23,9 +23,9 @@ gem "webpacker", "~> 4.0"
 # gem 'therubyracer', platforms: :ruby
 
 # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
-gem "turbolinks"
+gem "turbolinks", "~> 5"
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
-gem "jbuilder", "~> 2.5"
+gem "jbuilder", "~> 2.7"
 
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", ">= 1.4.2", require: false
@@ -45,6 +45,8 @@ group :development, :test do
   # Adds support for Capybara system testing and selenium driver
   gem "capybara"
   gem "selenium-webdriver"
+  # Compute test coverage
+  gem "coveralls", require: false
 end
 
 group :development do
@@ -125,5 +127,3 @@ gem "image_processing", "~> 1.2"
 # Document API
 gem "swagger-blocks"
 
-# Compute test coverage
-gem 'coveralls', require: false
