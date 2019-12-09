@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-if ENV['WHATSOPT_COVERALLS']
-  require 'coveralls'
-  Coveralls.wear!('rails')
+if ENV["WHATSOPT_COVERALLS"]
+  require "coveralls"
+  Coveralls.wear!("rails")
 end
 
 ENV["RAILS_ENV"] ||= "test"
