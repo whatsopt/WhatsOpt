@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import ReactTable from 'react-table';
-import { RIEInput, RIESelect } from 'riek';
+import { RIEInput, RIESelect } from './riek/src';
 
 function _computeRoleSelection(conn) {
   const options = [{ id: 'parameter', text: 'Parameter' },
