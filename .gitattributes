@@ -1,3 +1,8 @@
-# Declare files that will always have LF line endings on checkout.
-*.erb text eol=lf
+* text=auto eol=lf
+*.png -text
+*.ico -text
+*.xlsx -text
+*.sqlite -text
+*.{cmd,[cC][mM][dD]} text eol=crlf
+*.{bat,[bB][aA][tT]} text eol=crlf
 
