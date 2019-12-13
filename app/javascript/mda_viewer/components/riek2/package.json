@@ -1,0 +1,46 @@
+{
+  "name": "riek",
+  "version": "1.1.0",
+  "description": "React Inline Edit Kit",
+  "author": "Kai Vik <kvi@ieee.org>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/kaivi/riek.git"
+  },
+  "main": "lib/index.js",
+  "keywords": [
+    "react",
+    "in-place",
+    "edit",
+    "editor",
+    "inplace",
+    "inline"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepublish": "npm run build",
+    "build-lib": "rm -rf lib/*; babel src --out-dir lib",
+    "build-demo": "rm demo/demo.js; webpack demo/demo.jsx demo/demo.js",
+    "build": "npm run build-lib && npm run build-demo"
+  },
+  "peerDependencies": {
+    "react": "^0.14.0 || ^15.5.4",
+    "react-dom": "^0.14.0 || ^15.5.4"
+  },
+  "dependencies": {
+    "debug": "^2.6.8",
+    "prop-types": "^15.5.10"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.4.0",
+    "babel-core": "^6.4.0",
+    "babel-loader": "^6.2.1",
+    "babel-preset-es2015": "^6.3.13",
+    "babel-preset-react": "^6.3.13",
+    "babel-preset-stage-1": "^6.3.13",
+    "highlight.js": "^9.1.0",
+    "react-highlight": "^0.6.1",
+    "webpack": "^1.12.11"
+  }
+}
