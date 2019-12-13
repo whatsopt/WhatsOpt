@@ -5,14 +5,14 @@ import { RIEInput, RIESelect } from './riek/src';
 
 function _computeRoleSelection(conn) {
   const options = [{ id: 'parameter', text: 'Parameter' },
-    { id: 'design_var', text: 'Design Variable' },
-    { id: 'response', text: 'Response' },
-    { id: 'response_of_interest', text: 'Response of interest' },
-    { id: 'min_objective', text: 'Min Objective' },
-    { id: 'max_objective', text: 'Max Objective' },
-    { id: 'ineq_constraint', text: 'Neg Constraint' },
-    { id: 'eq_constraint', text: 'Eq Constraint' },
-    { id: 'state_var', text: 'State Variable' }];
+  { id: 'design_var', text: 'Design Variable' },
+  { id: 'response', text: 'Response' },
+  { id: 'response_of_interest', text: 'Response of interest' },
+  { id: 'min_objective', text: 'Min Objective' },
+  { id: 'max_objective', text: 'Max Objective' },
+  { id: 'ineq_constraint', text: 'Neg Constraint' },
+  { id: 'eq_constraint', text: 'Eq Constraint' },
+  { id: 'state_var', text: 'State Variable' }];
   if (conn.role === 'parameter' || conn.role === 'design_var') {
     options.splice(2, 6);
     //      if (conn.type === "String") {
@@ -28,8 +28,8 @@ function _computeRoleSelection(conn) {
 // eslint-disable-next-line no-unused-vars
 function _computeTypeSelection(conn) {
   const options = [{ id: 'Float', text: 'Float' },
-    { id: 'Integer', text: 'Integer' },
-    { id: 'String', text: 'String' }];
+  { id: 'Integer', text: 'Integer' },
+  { id: 'String', text: 'String' }];
   //    if (driver !== conn.fromId) {
   //      options.splice(2, 1); // suppress String, String only as parameter
   //    }
