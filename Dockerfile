@@ -1,97 +1,64 @@
-FROM ubuntu:16.04
+# Use phusion/passenger-full as base image. To make your builds reproducible, make
+# sure you lock down to a specific version, not to `latest`!
+# See https://github.com/phusion/passenger-docker/blob/master/Changelog.md for
+# a list of version numbers.
+FROM phusion/passenger-customizable:1.0.9
+# Or, instead of the 'full' variant, use one of these:
+#FROM phusion/passenger-ruby23:<VERSION>
+#FROM phusion/passenger-ruby24:<VERSION>
+#FROM phusion/passenger-ruby25:<VERSION>
+#FROM phusion/passenger-ruby26:<VERSION>
+#FROM phusion/passenger-jruby92:<VERSION>
+#FROM phusion/passenger-nodejs:<VERSION>
+#FROM phusion/passenger-customizable:<VERSION>
 
-#ENV http_proxy=http://proxy.onecert.fr:80
-#ENV https_proxy=http://proxy.onecert.fr:80
+# Set correct environment variables.
+ENV HOME /root
 
-# adapted from drecom/ubuntu-base drecom/ubuntu-ruby
-RUN apt-get update \
-	&&  apt-get upgrade -y --force-yes \
-	&&  apt-get install -y --force-yes \
-	ca-certificates \
-	libssl-dev \
-	libreadline-dev \
-	zlib1g-dev \
-	wget \
-	curl \
-	git \
-	build-essential \
-	vim \
-	dtach \
-	imagemagick \
-	libmagick++-dev \
-	libqtwebkit-dev \
-	libffi-dev \
-	mysql-client \
-	libmysqlclient-dev \
-	libxslt1-dev \
-	redis-tools \
-	xvfb \
-	tzdata \
-	libyaml-dev \
-	libsqlite3-dev \
-	sqlite3 \
-	libxml2-dev \
-	libcurl4-openssl-dev \
-	&&  apt-get clean \
-	&&  rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/*
+# Use baseimage-docker's init process.
+CMD ["/sbin/my_init"]
 
-# node.js LTS install
-RUN curl --silent --location https://deb.nodesource.com/setup_10.x | bash - \
-	&& apt-get install -y nodejs \
-	&& npm -g up
+# If you're using the 'customizable' variant, you need to explicitly opt-in
+# for features.
+#
+# N.B. these images are based on https://github.com/phusion/baseimage-docker,
+# so anything it provides is also automatically on board in the images below
+# (e.g. older versions of Ruby, Node, Python).
+#
+# Uncomment the features you want:
+#
+#   Ruby support
+#RUN /pd_build/ruby-2.3.*.sh
+#RUN /pd_build/ruby-2.4.*.sh
+RUN /pd_build/ruby-2.5.*.sh \
+	&& bash -lc 'rvm install ruby-2.5.3' \
+	&& bash -lc 'rvm --default use ruby-2.5.3'
+#RUN /pd_build/ruby-2.6.*.sh
+#RUN /pd_build/jruby-9.2.*.sh
+#   Python support.
+RUN /pd_build/python.sh \
+	&& ln -sf /usr/bin/python3.6 /usr/bin/python
+RUN apt-get install -y python3.6-dev 
+
+#   Node.js and Meteor standalone support.
+#   (not needed if you already have the above Ruby support)
+RUN /pd_build/nodejs.sh
+
+# Clean up APT when done.
+RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # yarn install
 RUN curl -o- -L https://yarnpkg.com/install.sh | bash
 ENV PATH /root/.yarn/bin:$PATH
 
-# Ruby
-RUN git clone git://github.com/rbenv/rbenv.git /usr/local/rbenv \
-	&&  git clone git://github.com/rbenv/ruby-build.git /usr/local/rbenv/plugins/ruby-build \
-	&&  git clone git://github.com/jf/rbenv-gemset.git /usr/local/rbenv/plugins/rbenv-gemset \
-	&&  /usr/local/rbenv/plugins/ruby-build/install.sh
-ENV PATH /usr/local/rbenv/bin:$PATH
-ENV RBENV_ROOT /usr/local/rbenv
-
-RUN echo 'export RBENV_ROOT=/usr/local/rbenv' >> /etc/profile.d/rbenv.sh \
-	&&  echo 'export PATH=/usr/local/rbenv/bin:$PATH' >> /etc/profile.d/rbenv.sh \
-	&&  echo 'eval "$(rbenv init -)"' >> /etc/profile.d/rbenv.sh
-
-RUN echo 'export RBENV_ROOT=/usr/local/rbenv' >> /root/.bashrc \
-	&&  echo 'export PATH=/usr/local/rbenv/bin:$PATH' >> /root/.bashrc \
-	&&  echo 'eval "$(rbenv init -)"' >> /root/.bashrc
-
-ENV CONFIGURE_OPTS --disable-install-doc
-ENV PATH /usr/local/rbenv/bin:/usr/local/rbenv/shims:$PATH
-
-RUN eval "$(rbenv init -)"; rbenv install 2.5.3 \
-	&&  eval "$(rbenv init -)"; rbenv global 2.5.3 \
-	&&  eval "$(rbenv init -)"; gem update --system \
-	&& eval "$(rbenv init -)"; gem install bundler --force
-
-# Python
-ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
-ENV PATH /opt/conda/bin:$PATH
-
-RUN apt-get update --fix-missing && \
-	apt-get install -y wget bzip2 ca-certificates curl git && \
-	apt-get clean && \
-	rm -rf /var/lib/apt/lists/*
-
-RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-4.5.12-Linux-x86_64.sh -O ~/miniconda.sh && \
-	/bin/bash ~/miniconda.sh -b -p /opt/conda && \
-	rm ~/miniconda.sh && \
-	/opt/conda/bin/conda clean -tipsy && \
-	ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
-	echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
-	echo "conda activate base" >> ~/.bashrc
-
-RUN conda update conda
-RUN conda install --yes numpy scipy cython 
-
-RUN pip install --upgrade pip;
-
 # pip install
-RUN pip install matplotlib \
+RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py \
+	&& python3 get-pip.py
+
+RUN pip install numpy \
+	&& pip install scipy \
+	&& pip install cython \
+	&& pip install matplotlib \
 	&& pip install thrift==0.11.0 \
 	&& pip install Click \
 	&& pip install tabulate \
@@ -99,27 +66,6 @@ RUN pip install matplotlib \
 	&& pip install salib \
 	&& pip install git+https://github.com/SMTOrg/smt \
 	&& pip install wop
-
-# OpenVSP
-#RUN apt-get install -y git cmake libxml2-dev \
-#			g++ libcpptest-dev libeigen3-dev \
-#			libcminpack-dev swig \
-#  && apt-get update \
-#  && mkdir OpenVSP \
-#  && cd OpenVSP \
-#  && mkdir repo \
-#  && git clone https://github.com/OpenVSP/OpenVSP.git repo \
-#  && mkdir build \
-#  && cd build \
-#  && echo $PWD \
-#  && cmake -DCMAKE_BUILD_TYPE=Release \
-#	-DVSP_USE_SYSTEM_CPPTEST=false \
-#	-DVSP_USE_SYSTEM_LIBXML2=true \
-#	-DVSP_USE_SYSTEM_EIGEN=false \
-#	-DVSP_USE_SYSTEM_CMINPACK=true \
-#	-DCMAKE_INSTALL_PREFIX=/usr/local/bin \
-#	-DVSP_NO_GRAPHICS=1 ../repo/SuperProject \
-#  && make 
 
 # Thrift
 ENV THRIFT_VERSION 0.11.0
@@ -153,7 +99,8 @@ RUN buildDeps=" \
 	&& cd / \
 	&& rm -rf /thrift 
 
-RUN apt-get update && apt-get install -y iputils-ping
+# Clean up APT when done.
+RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 RUN mkdir -p /whatsopt 
 WORKDIR /whatsopt
@@ -166,3 +113,4 @@ COPY . ./
 EXPOSE 3000
 
 CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0"]
+
