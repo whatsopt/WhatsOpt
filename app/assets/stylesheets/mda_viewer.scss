@@ -2,6 +2,24 @@
 table.connections td {
 	padding: 2px;
 }
+table.connections {
+	table-layout: fixed;
+}
+
+/* React table cell: give clickable widthxheight when the cell is empty*/
+span.react-table-cell {
+	min-height: 24px;
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+input.react-table-cell {
+	width: 100%; 
+	box-sizing: border-box;
+	-webkit-box-sizing:border-box;
+	-moz-box-sizing: border-box;
+}
 
 /* Operation logs */
 .listing {
@@ -58,9 +76,3 @@ a.analysis-link {
 	font-size: 12px;
 }
 
-/* React table cell: give clickable widthxheight when the cell is empty*/
-span.react-table-cell {
-	display: block;
-	width: 100%;
-	min-height: 24px;
-}
