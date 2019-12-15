@@ -44,7 +44,7 @@ class AnalysisDatabase {
   }
 
   isScaled() {
-    return !!this.varList.find((v) => v.scaling);
+    return !!this.varList.find((v) => v.scaling_attributes);
   }
 
   isInputVarCases(c) {
