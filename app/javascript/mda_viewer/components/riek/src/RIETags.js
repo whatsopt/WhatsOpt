@@ -19,7 +19,7 @@ class RIETag extends React.Component {
     };
 
     render = () => {
-        return  <div key={this.props.text}>{this.props.text}<div onClick={this.remove} className={this.props.className || "remove"}> × </div></div>;
+        return <div key={this.props.text}>{this.props.text}<div onClick={this.remove} className={this.props.className || "remove"}> × </div></div>;
     };
 }
 
@@ -42,7 +42,7 @@ export default class RIETags extends RIEStatefulBase {
     };
 
     addTag = (tag) => {
-        if([...this.props.value].length < (this.props.maxTags || 65535)) {
+        if ([...this.props.value].length < (this.props.maxTags || 65535)) {
             this.commit(this.props.value.add(tag));
         }
     };
@@ -58,20 +58,20 @@ export default class RIETags extends RIEStatefulBase {
         }
     };
 
-    componentWillReceiveProps = (nextProps) => {
-        if ('value' in nextProps) this.setState({loading: false, invalid: false});
+    UNSAFE_componentWillReceiveProps = (nextProps) => {
+        if ('value' in nextProps) this.setState({ loading: false, invalid: false });
     };
 
     keyDown = (event) => {
         if (event.keyCode === 8) { // Backspace
-            if(event.target.value.length == 0){
+            if (event.target.value.length == 0) {
                 let tagToRemove = [...this.props.value].pop();
                 this.removeTag(tagToRemove);
             }
 
         } else if (event.keyCode === 13) { // Enter
             event.preventDefault();
-            if(event.target.value.length === 0) {
+            if (event.target.value.length === 0) {
                 this.cancelEditing();
             } else {
                 this.addTag(event.target.value);
@@ -83,11 +83,11 @@ export default class RIETags extends RIEStatefulBase {
     };
 
     cancelEditingDelayed = () => {
-        this.setState({blurTimer: setTimeout(this.cancelEditing, (this.props.blurDelay || 180))})
+        this.setState({ blurTimer: setTimeout(this.cancelEditing, (this.props.blurDelay || 180)) })
     };
 
     cancelEditing = () => {
-        this.setState({editing: false, invalid: false});
+        this.setState({ editing: false, invalid: false });
     };
 
     componentDidUpdate = (prevProps, prevState) => {

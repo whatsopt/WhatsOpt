@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 const debug = require('debug')('RIEBase');
 
 export default class RIEBase extends React.Component {
-    constructor(props){
+    constructor(props) {
         super(props);
 
         if (!this.props.propName) throw "RTFM: missing 'propName' prop";
@@ -44,12 +44,12 @@ export default class RIEBase extends React.Component {
     doValidations = (value) => {
         debug(`doValidations(${value})`)
         let isValid;
-        if(this.props.validate) {
+        if (this.props.validate) {
             isValid = this.props.validate(value);
         } else if (this.validate) {
             isValid = this.validate(value);
         } else return true
-        this.setState({invalid: !isValid});
+        this.setState({ invalid: !isValid });
         return isValid;
     };
 
@@ -62,19 +62,19 @@ export default class RIEBase extends React.Component {
         throw "RIEBase must be subclassed first: use a concrete class like RIEInput, RIEToggle et.c";
     };
 
-    componentWillReceiveProps = (nextProps) => {
+    UNSAFE_componentWillReceiveProps = (nextProps) => {
         debug(`componentWillReceiveProps(${nextProps})`)
         if ('value' in nextProps && !(nextProps.shouldRemainWhileInvalid && this.state.invalid)) {
-            this.setState({loading: false, editing: false, invalid: false, newValue: null});
+            this.setState({ loading: false, editing: false, invalid: false, newValue: null });
         }
     };
 
     commit = (value) => {
         debug(`commit(${value})`)
-        if(!this.state.invalid) {
+        if (!this.state.invalid) {
             let newProp = {};
             newProp[this.props.propName] = value;
-            this.setState({loading: true, newValue: value});
+            this.setState({ loading: true, newValue: value });
             this.props.change(newProp);
         }
     };
