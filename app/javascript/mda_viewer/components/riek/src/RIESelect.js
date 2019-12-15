@@ -13,7 +13,7 @@ export default class RIESelect extends RIEStatefulBase {
     finishEditing = () => {
         // get the object from options that matches user selected value
         const newValue = this.props.options.find(function (option) {
-            return option.id === ReactDOM.findDOMNode(this.refs.input).value;
+            return option.id === ReactDOM.findDOMNode(this.ref.current).value;
         }, this);
         this.doValidations(newValue);
         if (!this.state.invalid && this.props.value !== newValue) {
@@ -32,7 +32,7 @@ export default class RIESelect extends RIEStatefulBase {
             className={this.makeClassString()}
             onChange={this.finishEditing}
             onBlur={this.cancelEditing}
-            ref="input"
+            ref={this.ref}
             onKeyDown={this.keyDown}
             {...this.props.editProps}>{optionNodes}</select>
     };

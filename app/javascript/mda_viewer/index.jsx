@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import update from 'immutability-helper';
 
 import XdsmViewer from 'mda_viewer/components/XdsmViewer';
-import ToolBar from 'mda_viewer/components/ToolBar';
 import Error from 'mda_viewer/components/Error';
 import AnalysisEditor from 'mda_viewer/components/AnalysisEditor';
 import AnalysisNotePanel from 'mda_viewer/components/AnalysisNotePanel';
@@ -233,7 +232,7 @@ class MdaViewer extends React.Component {
     if (selected.length) {
       this.api.createSubAnalysisDiscipline(node.id, selected[0].id,
         (response) => {
-          console.log(response.data);
+          // console.log(response.data);
           this.renderXdsm();
         });
     }

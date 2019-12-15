@@ -1,23 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import ReactTable from 'react-table';
+import { useTable } from 'react-table';
 import { RIEInput, RIESelect } from './riek/src';
 
 function _computeRoleSelection(conn) {
   const options = [{ id: 'parameter', text: 'Parameter' },
-  { id: 'design_var', text: 'Design Variable' },
-  { id: 'response', text: 'Response' },
-  { id: 'response_of_interest', text: 'Response of interest' },
-  { id: 'min_objective', text: 'Min Objective' },
-  { id: 'max_objective', text: 'Max Objective' },
-  { id: 'ineq_constraint', text: 'Neg Constraint' },
-  { id: 'eq_constraint', text: 'Eq Constraint' },
-  { id: 'state_var', text: 'State Variable' }];
+    { id: 'design_var', text: 'Design Variable' },
+    { id: 'response', text: 'Response' },
+    { id: 'response_of_interest', text: 'Response of interest' },
+    { id: 'min_objective', text: 'Min Objective' },
+    { id: 'max_objective', text: 'Max Objective' },
+    { id: 'ineq_constraint', text: 'Neg Constraint' },
+    { id: 'eq_constraint', text: 'Eq Constraint' },
+    { id: 'state_var', text: 'State Variable' }];
   if (conn.role === 'parameter' || conn.role === 'design_var') {
     options.splice(2, 6);
-    //      if (conn.type === "String") {
-    //        options.splice(options.length-1, 1);
-    //      }
   } else if (conn.role !== 'state_var') {
     options.splice(options.length - 1, 1);
     options.splice(0, 2);
@@ -28,206 +25,300 @@ function _computeRoleSelection(conn) {
 // eslint-disable-next-line no-unused-vars
 function _computeTypeSelection(conn) {
   const options = [{ id: 'Float', text: 'Float' },
-  { id: 'Integer', text: 'Integer' },
-  { id: 'String', text: 'String' }];
-  //    if (driver !== conn.fromId) {
-  //      options.splice(2, 1); // suppress String, String only as parameter
-  //    }
+    { id: 'Integer', text: 'Integer' },
+    { id: 'String', text: 'String' },
+  ];
   return options;
 }
 
-function renderHeader(_cellInfo, title) {
-  return (<strong>{title}</strong>);
+function CheckButtonCell({
+  cell: { value },
+  row: { index },
+  column: { id },
+  data: connections,
+  onConnectionChange,
+}) {
+  const isChecked = connections[index].active;
+  return (
+    <input
+      type="checkbox"
+      value={value}
+      checked={isChecked}
+      onChange={() => onConnectionChange(connections[index].id,
+        { active: !isChecked })}
+    />
+  );
 }
-class VariablesEditor extends React.Component {
-  constructor(props) {
-    super(props);
 
-    this.renderEditable = this.renderEditable.bind(this);
-    this.renderReadonly = this.renderReadonly.bind(this);
-    this.renderCheckButton = this.renderCheckButton.bind(this);
+function ReadonlyCell({
+  cell: { value },
+  row: { index },
+  column: { id },
+  data: connections,
+}) {
+  let textStyle = connections[index].active ? '' : 'text-inactive';
+  let info = value;
+  if (id === 'role') {
+    const selectOptions = _computeRoleSelection(connections[index]);
+    for (let i = 0; i < selectOptions.length; i += 1) {
+      if (info === selectOptions[i].id) {
+        info = selectOptions[i].text;
+        break;
+      }
+    }
+  }
+  if (id === 'type') {
+    const selectOptions = _computeTypeSelection(connections[index]);
+    for (let i = 0; i < selectOptions.length; i += 1) {
+      if (info === selectOptions[i].id) {
+        info = selectOptions[i].text;
+        break;
+      }
+    }
+  }
+  if (id === 'name') {
+    const title = connections[index].desc;
+    textStyle += ' table-tooltip';
+    return (<span className={textStyle} title={title} data-original-title={title}>{info}</span>);
+  }
+  return (<span className={textStyle}>{info}</span>);
+}
+
+function EditableCell({
+  cell,
+  row,
+  column,
+  data: connections,
+  onConnectionChange,
+  isEditing,
+  cellToFocus,
+}) {
+  const { value } = cell;
+  const { index } = row;
+  const { id } = column;
+  if (isEditing && connections[index].active) {
+    let selectOptions;
+    if (id === 'role') {
+      selectOptions = _computeRoleSelection(connections[index]);
+    }
+    if (id === 'type') {
+      selectOptions = _computeTypeSelection(connections[index]);
+    }
+    if (selectOptions) {
+      const selected = selectOptions.filter((choice) => choice.id === value);
+      return (
+        <RIESelect
+          value={{ id: value, text: selected.length > 0 ? selected[0].text : 'undefined' }}
+          change={(attr) => {
+            const change = {};
+            change[id] = attr[id].id;
+            onConnectionChange(connections[index].id, change);
+          }}
+          propName={id}
+          shouldBlockWhileLoading
+          options={selectOptions}
+        />
+      );
+    }
+    const myRef = React.useRef(null);
+
+    React.useEffect(() => {
+      if (cellToFocus.current && cellToFocus.current.index === index && cellToFocus.current.id === id) {
+        myRef.current.ref.current.focus();
+      }
+    });
+
+    return (
+      <RIEInput
+        editProps={{ size: 10 }}
+        className="react-table-cell"
+        value={value || ''}
+        change={(attr) => onConnectionChange(connections[index].id, attr)}
+        propName={id}
+        afterFinish={() => {
+          // eslint-disable-next-line no-param-reassign
+          cellToFocus.current = null;
+        }}
+        afterStart={() => {
+          // eslint-disable-next-line no-param-reassign
+          cellToFocus.current = { index, id };
+        }}
+        ref={myRef}
+        shouldBlockWhileLoading
+      />
+    );
+  }
+  return ReadonlyCell({
+    cell, row, column, data: connections, onConnectionChange, isEditing,
+  });
+}
+
+// Set our editable cell renderer as the default Cell renderer
+const defaultColumn = {
+  Cell: EditableCell,
+};
+
+// Be sure to pass our updateMyData and the skipPageReset option
+function Table({
+  columns, data, onConnectionChange, isEditing,
+}) {
+  // For this example, we're using pagination to illustrate how to stop
+  // the current page from resetting when our data changes
+  // Otherwise, nothing is different here.
+  const cellToFocus = React.useRef({ index: null, id: null });
+
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    rows,
+    prepareRow,
+  } = useTable(
+    {
+      columns,
+      data,
+      defaultColumn,
+      onConnectionChange,
+      isEditing,
+      cellToFocus,
+    },
+  );
+
+  let colWidths = ['10', '15', '10', '10', '5', '5', '10', '10', '10', '5', '5', '5'];
+  if (isEditing) {
+    colWidths = ['1', '10', '15', '10', '10', '9', '5', '5', '10', '10', '10', '5', '5', '5'];
   }
 
-  componentDidMount() {
+  // Render the UI for your table
+  return (
+    <table className="connections table table-striped table-sm mt-3" {...getTableProps()}>
+      <thead>
+        {headerGroups.map((headerGroup) => (
+          <tr {...headerGroup.getHeaderGroupProps()}>
+            {headerGroup.headers.map((column, i) => {
+              const cprops = { width: `${colWidths[i]}%`, ...column.getHeaderProps() };
+              return (
+                <th {...cprops}>{column.render('Header')}</th>
+              );
+            })}
+          </tr>
+        ))}
+      </thead>
+      <tbody {...getTableBodyProps()}>
+        {rows.map(
+          (row, i) => {
+            prepareRow(row);
+            return (
+              <tr {...row.getRowProps()}>
+                {row.cells.map((cell) => <td {...cell.getCellProps()}>{cell.render('Cell')}</td>)}
+              </tr>
+            );
+          },
+        )}
+      </tbody>
+    </table>
+  );
+}
+
+function VariablesEditor(props) {
+  React.useEffect(() => {
     // eslint-disable-next-line no-undef
     $('.table-tooltip').attr('data-toggle', 'tooltip');
     // eslint-disable-next-line no-undef
     $(() => { $('.table-tooltip').tooltip({ placement: 'right' }); });
-  }
 
-  componentWillUnmount() {
-    // eslint-disable-next-line no-undef
-    $('.table-tooltip').tooltip('dispose');
-  }
+    return () => {
+      // eslint-disable-next-line no-undef
+      $('.table-tooltip').tooltip('dispose');
+    };
+  },
+  []);
 
-  renderCheckButton(cellInfo) {
-    const isChecked = this.connections[cellInfo.index].active;
-    const { onConnectionChange } = this.props;
-    return (
-      <input
-        type="checkbox"
-        value="true"
-        checked={isChecked}
-        onChange={() => onConnectionChange(this.connections[cellInfo.index].id,
-          { active: !isChecked })}
-      />
-    );
-  }
+  const {
+    db, filter, isEditing, useScaling, onConnectionChange,
+  } = props;
 
-  renderEditable(cellInfo, selectOptions) {
-    const { isEditing, onConnectionChange } = this.props;
-    if (isEditing && this.connections[cellInfo.index].active) {
-      if (selectOptions) {
-        const id = this.connections[cellInfo.index][cellInfo.column.id];
-        const selected = selectOptions.filter((choice) => choice.id === id);
-        return (
-          <RIESelect
-            value={{ id, text: selected.length > 0 ? selected[0].text : 'undefined' }}
-            change={(attr) => {
-              const change = {};
-              change[cellInfo.column.id] = attr[cellInfo.column.id].id;
-              onConnectionChange(this.connections[cellInfo.index].id, change);
-            }}
-            propName={cellInfo.column.id}
-            shouldBlockWhileLoading
-            options={selectOptions}
-          />
-        );
-      }
-      return (
-        <RIEInput
-          className="react-table-cell"
-          value={this.connections[cellInfo.index][cellInfo.column.id] || ''}
-          change={(attr) => onConnectionChange(this.connections[cellInfo.index].id, attr)}
-          propName={cellInfo.column.id}
-          shouldBlockWhileLoading
-        />
-      );
-    }
-    return this.renderReadonly(cellInfo, selectOptions);
-  }
+  const connections = db.computeConnections(filter);
 
-  renderReadonly(cellInfo, selectOptions) {
-    let textStyle = this.connections[cellInfo.index].active ? '' : 'text-inactive';
-    let info = this.connections[cellInfo.index][cellInfo.column.id];
-    if (selectOptions) {
-      for (let i = 0; i < selectOptions.length; i += 1) {
-        if (info === selectOptions[i].id) {
-          info = selectOptions[i].text;
-          break;
-        }
-      }
-    }
-    if (cellInfo.column.id === 'name') {
-      const title = this.connections[cellInfo.index].desc;
-      textStyle += ' table-tooltip';
-      return (<span className={textStyle} title={title} data-original-title={title}>{info}</span>);
-    }
-    return (<span className={textStyle}>{info}</span>);
-  }
-
-  render() {
-    const {
-      db, filter, isEditing, useScaling,
-    } = this.props;
-    this.connections = db.computeConnections(filter);
-
-    const columns = [
+  const columns = React.useMemo(
+    () => [
       {
-        Header: (cellInfo) => renderHeader(cellInfo, 'From'),
-        accessor: 'from',
-        Cell: (cellInfo) => this.renderReadonly(cellInfo),
-      },
-      {
-        Header: (cellInfo) => renderHeader(cellInfo, 'Name'),
-        accessor: 'name',
-        minWidth: 200,
-        Cell: (cellInfo) => this.renderEditable(cellInfo),
-      },
-      {
-        Header: (cellInfo) => renderHeader(cellInfo, 'Role'),
-        accessor: 'role',
-        minWidth: 150,
-        Cell: (cellInfo) => this.renderEditable(cellInfo,
-          _computeRoleSelection(this.connections[cellInfo.index])),
-      },
-      {
-        Header: (cellInfo) => renderHeader(cellInfo, 'Type'),
-        accessor: 'type',
-        Cell: (cellInfo) => this.renderEditable(cellInfo,
-          _computeTypeSelection(this.connections[cellInfo.index])),
-      },
-      {
-        Header: (cellInfo) => renderHeader(cellInfo, 'Shape'),
-        accessor: 'shape',
-        Cell: (cellInfo) => this.renderEditable(cellInfo),
-      },
-      {
-        Header: (cellInfo) => renderHeader(cellInfo, 'Units'),
-        accessor: 'units',
-        Cell: (cellInfo) => this.renderEditable(cellInfo),
-      },
-      {
-        Header: (cellInfo) => renderHeader(cellInfo, 'Init'),
-        accessor: 'init',
-        Cell: (cellInfo) => this.renderEditable(cellInfo),
-      },
-      {
-        Header: (cellInfo) => renderHeader(cellInfo, 'Lower'),
-        accessor: 'lower',
-        Cell: (cellInfo) => this.renderEditable(cellInfo),
-      },
-      {
-        Header: (cellInfo) => renderHeader(cellInfo, 'Upper'),
-        accessor: 'upper',
-        Cell: (cellInfo) => this.renderEditable(cellInfo),
-      },
-    ];
-    if (isEditing) {
-      columns.splice(0, 0, {
-        Header: (cellInfo) => renderHeader(cellInfo, '#'),
+        Header: '#',
         accessor: 'active',
-        maxWidth: 25,
-        Cell: this.renderCheckButton,
-      });
-      columns.splice(5, 0, {
-        Header: (cellInfo) => renderHeader(cellInfo, 'Description'),
+        isVisible: isEditing,
+        Cell: CheckButtonCell,
+      },
+      {
+        Header: 'From',
+        accessor: 'from',
+        Cell: ReadonlyCell,
+      },
+      {
+        Header: 'Name',
+        accessor: 'name',
+      },
+      {
+        Header: 'Role',
+        accessor: 'role',
+      },
+      {
+        Header: 'Description',
         accessor: 'desc',
-        Cell: (cellInfo) => this.renderEditable(cellInfo),
-      });
-    }
-    if (useScaling) {
-      columns.push(...[
-        {
-          Header: (cellInfo) => renderHeader(cellInfo, 'Ref'),
-          accessor: 'ref',
-          Cell: (cellInfo) => this.renderEditable(cellInfo),
-        },
-        {
-          Header: (cellInfo) => renderHeader(cellInfo, 'Ref0'),
-          accessor: 'ref0',
-          Cell: (cellInfo) => this.renderEditable(cellInfo),
-        },
-        {
-          Header: (cellInfo) => renderHeader(cellInfo, 'Res.Ref'),
-          accessor: 'res_ref',
-          Cell: (cellInfo) => this.renderEditable(cellInfo),
-        },
-      ]);
-    }
-    return (
-      <div className="mt-3">
-        <ReactTable
-          data={this.connections}
-          columns={columns}
-          className="-striped -highlight"
-          showPagination={false}
-          pageSize={this.connections.length}
-        />
-      </div>
-    );
-  }
+        isVisible: isEditing,
+      },
+      {
+        Header: 'Type',
+        accessor: 'type',
+      },
+      {
+        Header: 'Shape',
+        accessor: 'shape',
+      },
+      {
+        Header: 'Units',
+        accessor: 'units',
+      },
+      {
+        Header: 'Init',
+        accessor: 'init',
+      },
+      {
+        Header: 'Lower',
+        accessor: 'lower',
+      },
+      {
+        Header: 'Upper',
+        accessor: 'upper',
+      },
+      {
+        Header: 'Ref',
+        accessor: 'ref',
+        isVisible: useScaling,
+      },
+      {
+        Header: 'Ref0',
+        accessor: 'ref0',
+        isVisible: useScaling,
+      },
+      {
+        Header: 'Res.Ref',
+        accessor: 'res_ref',
+        isVisible: useScaling,
+      },
+    ],
+    [isEditing, useScaling],
+  );
+
+  return (
+    <Table
+      columns={columns}
+      data={connections}
+      onConnectionChange={onConnectionChange}
+      isEditing={isEditing}
+    />
+  );
 }
+
 
 VariablesEditor.propTypes = {
   isEditing: PropTypes.bool.isRequired,
