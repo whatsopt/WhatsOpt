@@ -111,9 +111,9 @@ class AnalysisTest < ActiveSupport::TestCase
   end
 
   test "should copy an analysis" do
-    mda = analyses(:cicav)
-    copy = mda.create_copy!
-    assert_equal Connection.of_analysis(mda).count, Connection.of_analysis(copy).count
+    copy = @mda.create_copy!
+    assert_equal Connection.of_analysis(@mda).count, Connection.of_analysis(copy).count
+    assert_equal @mda.owner, copy.owner
   end
 
   test "should copy a metamodel" do
@@ -154,6 +154,7 @@ class AnalysisTest < ActiveSupport::TestCase
     # puts
     # Connection.print(copy_conns)
     assert_equal orig_conns.size, copy_conns.size
+    assert_equal mda.owner, copy.children.first.owner
   end
 
   test "should import a metamodel" do

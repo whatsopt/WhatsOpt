@@ -349,6 +349,7 @@ class Analysis < ApplicationRecord
       self.disciplines.each do |disc|
         disc_copy = disc.create_copy!(mda_copy)
       end
+      mda_copy.set_owner(self.owner)
       mda_copy.save!
       if super_disc
         super_disc.build_analysis_discipline(analysis: mda_copy) 
