@@ -1,18 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { useTable } from 'react-table';
+import { useTable, useSortBy } from 'react-table';
 import { RIEInput, RIESelect } from './riek/src';
 
 function _computeRoleSelection(conn) {
   const options = [{ id: 'parameter', text: 'Parameter' },
-    { id: 'design_var', text: 'Design Variable' },
-    { id: 'response', text: 'Response' },
-    { id: 'response_of_interest', text: 'Response of interest' },
-    { id: 'min_objective', text: 'Min Objective' },
-    { id: 'max_objective', text: 'Max Objective' },
-    { id: 'ineq_constraint', text: 'Neg Constraint' },
-    { id: 'eq_constraint', text: 'Eq Constraint' },
-    { id: 'state_var', text: 'State Variable' }];
+  { id: 'design_var', text: 'Design Variable' },
+  { id: 'response', text: 'Response' },
+  { id: 'response_of_interest', text: 'Response of interest' },
+  { id: 'min_objective', text: 'Min Objective' },
+  { id: 'max_objective', text: 'Max Objective' },
+  { id: 'ineq_constraint', text: 'Neg Constraint' },
+  { id: 'eq_constraint', text: 'Eq Constraint' },
+  { id: 'state_var', text: 'State Variable' }];
   if (conn.role === 'parameter' || conn.role === 'design_var') {
     options.splice(2, 6);
   } else if (conn.role !== 'state_var') {
@@ -25,8 +25,8 @@ function _computeRoleSelection(conn) {
 // eslint-disable-next-line no-unused-vars
 function _computeTypeSelection(conn) {
   const options = [{ id: 'Float', text: 'Float' },
-    { id: 'Integer', text: 'Integer' },
-    { id: 'String', text: 'String' },
+  { id: 'Integer', text: 'Integer' },
+  { id: 'String', text: 'String' },
   ];
   return options;
 }
@@ -182,11 +182,12 @@ function Table({
       isEditing,
       cellToFocus,
     },
+    useSortBy
   );
 
   let colWidths = ['10', '15', '10', '10', '5', '5', '10', '10', '10', '5', '5', '5'];
   if (isEditing) {
-    colWidths = ['1', '10', '15', '10', '10', '9', '5', '5', '10', '10', '10', '5', '5', '5'];
+    colWidths = ['3', '10', '15', '10', '10', '7', '5', '5', '10', '10', '10', '5', '5', '5'];
   }
 
   // Render the UI for your table
@@ -196,9 +197,21 @@ function Table({
         {headerGroups.map((headerGroup) => (
           <tr {...headerGroup.getHeaderGroupProps()}>
             {headerGroup.headers.map((column, i) => {
-              const cprops = { width: `${colWidths[i]}%`, ...column.getHeaderProps() };
+              const cprops = {
+                width: `${colWidths[i]}%`,
+                ...column.getHeaderProps(column.getSortByToggleProps())
+              };
               return (
-                <th {...cprops}>{column.render('Header')}</th>
+                <th {...cprops}>
+                  {column.render('Header')}
+                  <span>
+                    {column.isSorted
+                      ? column.isSortedDesc
+                        ? ' 🔽'
+                        : ' 🔼'
+                      : ''}
+                  </span>
+                </th>
               );
             })}
           </tr>
@@ -232,7 +245,7 @@ function VariablesEditor(props) {
       $('.table-tooltip').tooltip('dispose');
     };
   },
-  []);
+    []);
 
   const {
     db, filter, isEditing, useScaling, onConnectionChange,
