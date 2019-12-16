@@ -192,7 +192,7 @@ function Table({
 
   // Render the UI for your table
   return (
-    <table className="connections table table-striped table-sm mt-3" {...getTableProps()}>
+    <table className="connections table table-striped table-sm table-hover mt-3" {...getTableProps()}>
       <thead>
         {headerGroups.map((headerGroup) => (
           <tr {...headerGroup.getHeaderGroupProps()}>
