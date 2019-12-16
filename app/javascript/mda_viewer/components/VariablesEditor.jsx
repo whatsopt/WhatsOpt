@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import { useTable, useSortBy } from 'react-table';
 import { RIEInput, RIESelect } from './riek/src';
 
+const CELL_CLASSNAME = "react-table-cell";
+
 function _computeRoleSelection(conn) {
   const options = [{ id: 'parameter', text: 'Parameter' },
   { id: 'design_var', text: 'Design Variable' },
@@ -56,7 +58,8 @@ function ReadonlyCell({
   column: { id },
   data: connections,
 }) {
-  let textStyle = connections[index].active ? '' : 'text-inactive';
+  let textStyle = CELL_CLASSNAME;
+  textStyle += connections[index].active ? '' : ' text-inactive';
   let info = value;
   if (id === 'role') {
     const selectOptions = _computeRoleSelection(connections[index]);
@@ -131,7 +134,7 @@ function EditableCell({
     return (
       <RIEInput
         editProps={{ size: 10 }}
-        className="react-table-cell"
+        className={CELL_CLASSNAME}
         value={value || ''}
         change={(attr) => onConnectionChange(connections[index].id, attr)}
         propName={id}
