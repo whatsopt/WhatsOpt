@@ -10,10 +10,14 @@ except:
 SMT_NOT_INSTALLED = False
 try:
     from smt.surrogate_models import KRG, KPLS, KPLSK, LS, QP
-
-    # from smt.applications import MFK
 except:
     SMT_NOT_INSTALLED = True
+
+OPENTURNS_NOT_INSTALLED = False
+try:
+    from .openturns_surrogates import PCE
+except:
+    OPENTURNS_NOT_INSTALLED = True
 
 
 class SurrogateStore(object):
@@ -21,7 +25,7 @@ class SurrogateStore(object):
     Object responsible for saving / loading / listing trained surrogates
     """
 
-    SURROGATE_NAMES = ["KRIGING", "KPLS", "KPLSK", "LS", "QP"]
+    SURROGATE_NAMES = ["KRIGING", "KPLS", "KPLSK", "LS", "QP", "OPENTURNS_PCE"]
 
     def __init__(self, outdir="."):
         self.outdir = outdir
@@ -31,6 +35,7 @@ class SurrogateStore(object):
             "KPLSK": KPLSK,
             "LS": LS,
             "QP": QP,
+            "OPENTURNS_PCE": PCE,
         }
         if not os.path.exists(outdir):
             os.makedirs(outdir)
