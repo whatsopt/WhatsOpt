@@ -6,11 +6,12 @@ typedef list<Float> Vector
 typedef list<Vector> Matrix
 
 enum SurrogateKind {
-  KRIGING,
-  KPLS,
-  KPLSK,
-  LS,
-  QP
+  SMT_KRIGING,
+  SMT_KPLS,
+  SMT_KPLSK,
+  SMT_LS,
+  SMT_QP,
+  OPENTURNS_PCE
 }
 
 exception SurrogateException {

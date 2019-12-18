@@ -1,14 +1,18 @@
 # -*- coding: utf-8 -*-
 #!/usr/bin/env python
+import sys
+import tempfile
+
 from thrift.transport import TSocket
 from thrift.transport import TTransport
 from thrift.protocol import TBinaryProtocol
 from thrift.server import TServer
 
-from whatsopt.surrogate_server_handler import SurrogateServerHandler
-from whatsopt.surrogate_server import SurrogateStore as SurrogateStoreService
+from whatsopt_services.surrogate_server_handler import SurrogateServerHandler
+from whatsopt_services.surrogate_server import SurrogateStore as SurrogateStoreService
 
-if __name__ == "__main__":
+
+def main(args=sys.argv[1:]):
     from optparse import OptionParser
 
     parser = OptionParser()
@@ -16,11 +20,11 @@ if __name__ == "__main__":
         "-o",
         "--outdir",
         dest="outdir",
-        default=".",
+        default=tempfile.gettempdir(),
         help="save trained surrogate to DIRECTORY",
         metavar="DIRECTORY",
     )
-    (options, args) = parser.parse_args()
+    (options, args) = parser.parse_args(args)
     outdir = options.outdir
     print("Surrogates saved to {}".format(outdir))
     handler = SurrogateServerHandler(outdir)
@@ -34,3 +38,7 @@ if __name__ == "__main__":
     print("Starting Surrogate server...")
     server.serve()
     print("done!")
+
+
+if __name__ == "__main__":
+    main(sys.argv[1:])

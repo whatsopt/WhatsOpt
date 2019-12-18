@@ -9,13 +9,14 @@ require 'thrift'
 module WhatsOpt
   module SurrogateServer
     module SurrogateKind
-      KRIGING = 0
-      KPLS = 1
-      KPLSK = 2
-      LS = 3
-      QP = 4
-      VALUE_MAP = {0 => "KRIGING", 1 => "KPLS", 2 => "KPLSK", 3 => "LS", 4 => "QP"}
-      VALID_VALUES = Set.new([KRIGING, KPLS, KPLSK, LS, QP]).freeze
+      SMT_KRIGING = 0
+      SMT_KPLS = 1
+      SMT_KPLSK = 2
+      SMT_LS = 3
+      SMT_QP = 4
+      OPENTURNS_PCE = 5
+      VALUE_MAP = {0 => "SMT_KRIGING", 1 => "SMT_KPLS", 2 => "SMT_KPLSK", 3 => "SMT_LS", 4 => "SMT_QP", 5 => "OPENTURNS_PCE"}
+      VALID_VALUES = Set.new([SMT_KRIGING, SMT_KPLS, SMT_KPLSK, SMT_LS, SMT_QP, OPENTURNS_PCE]).freeze
     end
 
     class SurrogateException < ::Thrift::Exception

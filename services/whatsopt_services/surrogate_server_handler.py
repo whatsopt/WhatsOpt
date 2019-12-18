@@ -3,15 +3,16 @@ import numpy as np
 # from whatsopt.utils import r2_score
 from sklearn.metrics import r2_score
 
-from whatsopt.surrogate_server import ttypes as SurrogateStoreTypes
+from whatsopt_services.surrogate_server import ttypes as SurrogateStoreTypes
 from .surrogate_store import SurrogateStore
 
 SURROGATES_MAP = {
-    SurrogateStoreTypes.SurrogateKind.KRIGING: SurrogateStore.SURROGATE_NAMES[0],
-    SurrogateStoreTypes.SurrogateKind.KPLS: SurrogateStore.SURROGATE_NAMES[1],
-    SurrogateStoreTypes.SurrogateKind.KPLSK: SurrogateStore.SURROGATE_NAMES[2],
-    SurrogateStoreTypes.SurrogateKind.LS: SurrogateStore.SURROGATE_NAMES[3],
-    SurrogateStoreTypes.SurrogateKind.QP: SurrogateStore.SURROGATE_NAMES[4],
+    SurrogateStoreTypes.SurrogateKind.SMT_KRIGING: SurrogateStore.SURROGATE_NAMES[0],
+    SurrogateStoreTypes.SurrogateKind.SMT_KPLS: SurrogateStore.SURROGATE_NAMES[1],
+    SurrogateStoreTypes.SurrogateKind.SMT_KPLSK: SurrogateStore.SURROGATE_NAMES[2],
+    SurrogateStoreTypes.SurrogateKind.SMT_LS: SurrogateStore.SURROGATE_NAMES[3],
+    SurrogateStoreTypes.SurrogateKind.SMT_QP: SurrogateStore.SURROGATE_NAMES[4],
+    SurrogateStoreTypes.SurrogateKind.OPENTURNS_PCE: SurrogateStore.SURROGATE_NAMES[5],
 }
 
 NULL_QUALIFICATION = SurrogateStoreTypes.SurrogateQualification(r2=0.0, yp=[])

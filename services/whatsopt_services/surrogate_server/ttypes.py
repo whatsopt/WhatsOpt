@@ -17,26 +17,29 @@ all_structs = []
 
 
 class SurrogateKind(object):
-    KRIGING = 0
-    KPLS = 1
-    KPLSK = 2
-    LS = 3
-    QP = 4
+    SMT_KRIGING = 0
+    SMT_KPLS = 1
+    SMT_KPLSK = 2
+    SMT_LS = 3
+    SMT_QP = 4
+    OPENTURNS_PCE = 5
 
     _VALUES_TO_NAMES = {
-        0: "KRIGING",
-        1: "KPLS",
-        2: "KPLSK",
-        3: "LS",
-        4: "QP",
+        0: "SMT_KRIGING",
+        1: "SMT_KPLS",
+        2: "SMT_KPLSK",
+        3: "SMT_LS",
+        4: "SMT_QP",
+        5: "OPENTURNS_PCE",
     }
 
     _NAMES_TO_VALUES = {
-        "KRIGING": 0,
-        "KPLS": 1,
-        "KPLSK": 2,
-        "LS": 3,
-        "QP": 4,
+        "SMT_KRIGING": 0,
+        "SMT_KPLS": 1,
+        "SMT_KPLSK": 2,
+        "SMT_LS": 3,
+        "SMT_QP": 4,
+        "OPENTURNS_PCE": 5,
     }
 
 

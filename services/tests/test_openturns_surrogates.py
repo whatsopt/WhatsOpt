@@ -1,7 +1,7 @@
 import unittest
 import os
 import numpy as np
-from whatsopt.openturns_surrogates import PCE
+from whatsopt_services.openturns_surrogates import PCE
 
 
 class TestOpenturnsSurrogates(unittest.TestCase):

@@ -1,7 +1,7 @@
 import unittest
 import os
 import numpy as np
-from whatsopt.surrogate_store import SurrogateStore
+from whatsopt_services.surrogate_store import SurrogateStore
 
 
 class TestSurrogateStore(unittest.TestCase):
@@ -16,13 +16,13 @@ class TestSurrogateStore(unittest.TestCase):
         xt = np.array([[0.0, 1.0, 2.0, 3.0, 4.0]]).T
         yt = np.array([0.0, 1.0, 1.5, 0.5, 1.0]).T
 
-        self.store.create_surrogate("1", "KRIGING", xt, yt)
+        self.store.create_surrogate("1", "SMT_KRIGING", xt, yt)
 
     def test_get_existing_surrogate(self):
         xt = np.array([[0.0, 1.0, 2.0, 3.0, 4.0]]).T
         yt = np.array([0.0, 1.0, 1.5, 0.5, 1.0]).T
 
-        sm = self.store.create_surrogate("1", "KRIGING", xt, yt)
+        sm = self.store.create_surrogate("1", "SMT_KRIGING", xt, yt)
 
         num = 13
         x = np.linspace(0.0, 4.0, num)

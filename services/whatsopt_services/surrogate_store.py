@@ -25,16 +25,23 @@ class SurrogateStore(object):
     Object responsible for saving / loading / listing trained surrogates
     """
 
-    SURROGATE_NAMES = ["KRIGING", "KPLS", "KPLSK", "LS", "QP", "OPENTURNS_PCE"]
+    SURROGATE_NAMES = [
+        "SMT_KRIGING",
+        "SMT_KPLS",
+        "SMT_KPLSK",
+        "SMT_LS",
+        "SMT_QP",
+        "OPENTURNS_PCE",
+    ]
 
     def __init__(self, outdir="."):
         self.outdir = outdir
         self.surrogate_classes = {
-            "KRIGING": KRG,
-            "KPLS": KPLS,
-            "KPLSK": KPLSK,
-            "LS": LS,
-            "QP": QP,
+            "SMT_KRIGING": KRG,
+            "SMT_KPLS": KPLS,
+            "SMT_KPLSK": KPLSK,
+            "SMT_LS": LS,
+            "SMT_QP": QP,
             "OPENTURNS_PCE": PCE,
         }
         if not os.path.exists(outdir):
