@@ -1,5 +1,12 @@
 <h1>CHANGELOG</h1>
 
+<h3>1.5.0 (??/01/2020)</h3>
+<ul>
+  <li>User can use run_screening with --sobol to get Sobol indices</li>
+  <li>User can create a metamodel using OpenTURNS polynomial chaos expension algorithm</li>
+  <li>Implementation: refactor whatsopt surrogate server</li>
+</ul>
+
 <h3>1.4.0 (03/12/2019)</h3>
 <ul>
   <li>User can export a discipline from an analysis to another.</li>

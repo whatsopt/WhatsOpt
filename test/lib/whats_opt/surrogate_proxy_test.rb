@@ -17,11 +17,23 @@ class SurrogateProxyTest < ActiveSupport::TestCase
     skip_if_parallel
     xt = [[0.0], [1.0], [2.0], [3.0], [4.0]]
     yt = [0.0, 1.0, 1.5, 0.5, 1.0]
-    surr_kind = WhatsOpt::SurrogateServer::SurrogateKind::KRIGING
+    surr_kind = WhatsOpt::SurrogateServer::SurrogateKind::SMT_KRIGING
     @surr_proxy.create_surrogate(surr_kind, xt, yt)
     values = @surr_proxy.predict_values([[1.0], [2.5]])
     assert_in_delta(1.0, values[0])
     assert_in_delta(0.983, values[1])
+    @surr_proxy.destroy_surrogate
+  end
+
+  test "should predict values with openturns surrogate" do
+    skip_if_parallel
+    xt = [[0.0], [1.0], [2.0], [3.0], [4.0]]
+    yt = [0.0, 1.0, 1.5, 0.5, 1.0]
+    surr_kind = WhatsOpt::SurrogateServer::SurrogateKind::OPENTURNS_PCE
+    @surr_proxy.create_surrogate(surr_kind, xt, yt)
+    values = @surr_proxy.predict_values([[1.0], [2.5]])
+
+    assert_equal(2, values.size)
     @surr_proxy.destroy_surrogate
   end
 
@@ -31,7 +43,7 @@ class SurrogateProxyTest < ActiveSupport::TestCase
     yt = [0.0, 1.0, 1.5, 0.5, 1.0]
     xv = [[0.0], [2.0], [4.0]]
     yv = [0.0, 1.5, 1.0]
-    surr_kind = WhatsOpt::SurrogateServer::SurrogateKind::KRIGING
+    surr_kind = WhatsOpt::SurrogateServer::SurrogateKind::SMT_KRIGING
     @surr_proxy.create_surrogate(surr_kind, xt, yt)
     @surr_proxy.predict_values([[1.0], [2.5]])
     q = @surr_proxy.qualify(xv, yv)

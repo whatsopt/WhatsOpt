@@ -39,11 +39,12 @@ class MetaModelManager extends React.PureComponent {
                   Surrogate used for modeling outputs
                 </div>
                 <select className="form-control" name="meta_model[kind]" id="meta_model_kind">
-                  <option value="KRIGING">Kriging</option>
-                  <option value="KPLS">KPLS</option>
-                  <option value="KPLSK">KPLSK</option>
-                  <option value="LS">Least-Squares Approximation</option>
-                  <option value="QP">Quadratic Polynomial Approximation</option>
+                  <option value="SMT_KRIGING">Kriging</option>
+                  <option value="SMT_KPLS">KPLS (Kriging+PLS)</option>
+                  <option value="SMT_KPLSK">KPLSK (Kriging+PLS+KPLS initial guess)</option>
+                  <option value="SMT_LS">Least-Squares Approximation</option>
+                  <option value="SMT_QP">Quadratic Polynomial Approximation</option>
+                  <option value="OPENTURNS_PCE">Polynomial Chaos Expension</option>
                 </select>
               </div>
             </div>

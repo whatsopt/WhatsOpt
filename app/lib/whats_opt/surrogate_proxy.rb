@@ -25,7 +25,7 @@ module WhatsOpt
       @surrogate_id = surrogate_id || SecureRandom.uuid
 
       if server_start && !server_available?
-        cmd = "#{PYTHON} #{File.join(Rails.root, 'surrogate_server', 'run_surrogate_server.py')} --outdir #{OUTDIR}"
+        cmd = "#{PYTHON} #{File.join(Rails.root, 'services', 'run_surrogate_server.py')} --outdir #{OUTDIR}"
         Rails.logger.info cmd
         @pid = spawn(cmd, [:out, :err] => File.join(Rails.root, "upload", "logs", "surrogate_server.log"))
         retries = 0

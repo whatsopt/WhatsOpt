@@ -4,11 +4,12 @@ require "whats_opt/surrogate_server/surrogate_store_types"
 
 class Surrogate < ApplicationRecord
   SURROGATE_MAP = {
-    KRIGING: WhatsOpt::SurrogateServer::SurrogateKind::KRIGING,
-    KPLS: WhatsOpt::SurrogateServer::SurrogateKind::KPLS,
-    KPLSK: WhatsOpt::SurrogateServer::SurrogateKind::KPLSK,
-    LS: WhatsOpt::SurrogateServer::SurrogateKind::LS,
-    QP: WhatsOpt::SurrogateServer::SurrogateKind::QP
+    SMT_KRIGING: WhatsOpt::SurrogateServer::SurrogateKind::SMT_KRIGING,
+    SMT_KPLS: WhatsOpt::SurrogateServer::SurrogateKind::SMT_KPLS,
+    SMT_KPLSK: WhatsOpt::SurrogateServer::SurrogateKind::SMT_KPLSK,
+    SMT_LS: WhatsOpt::SurrogateServer::SurrogateKind::SMT_LS,
+    SMT_QP: WhatsOpt::SurrogateServer::SurrogateKind::SMT_QP,
+    OPENTURNS_PCE: WhatsOpt::SurrogateServer::SurrogateKind::OPENTURNS_PCE
   }
 
   store :quality, accessors: [:r2, :xvalid, :yvalid, :ypred], coder: JSON
@@ -20,7 +21,7 @@ class Surrogate < ApplicationRecord
   validates :variable, presence: true
   validates :coord_index, presence: true
 
-  SURROGATES = %w(KRIGING KPLS KPLSK LS QP)
+  SURROGATES = %w(SMT_KRIGING SMT_KPLS SMT_KPLSK SMT_LS SMT_QP OPENTURNS_PCE)
   validates :kind, inclusion: { in: SURROGATES }
 
   STATUS_CREATED = "created"
@@ -30,11 +31,8 @@ class Surrogate < ApplicationRecord
   STATUSES = [STATUS_CREATED, STATUS_TRAINED, STATUS_FAILED, STATUS_DELETED]
 
   after_initialize :_set_defaults
-  #after_save :_activate_copy, if: :copy_in_progress?
   before_destroy :_delete_surrogate
 
-  # transient attribute to manage surrogate copy
-  #attr_accessor :copy_origin_id
 
   def proxy
     WhatsOpt::SurrogateProxy.new(surrogate_id: id.to_s)
@@ -47,10 +45,6 @@ class Surrogate < ApplicationRecord
   def trained?
     self.status == STATUS_TRAINED
   end
-
-  # def copy_in_progress?
-  #   !!self.copy_origin_id
-  # end
 
   def qualified?
     !self.xvalid.empty?
@@ -132,12 +126,4 @@ class Surrogate < ApplicationRecord
       proxy.destroy_surrogate
     end
 
-    # def _activate_copy
-    #   # trigger actual copy of surrogate on the disk
-    #   if self.copy_origin_id && self.id != self.copy_origin_id
-    #     p "ACTIVATE"
-    #     proxy.copy_surrogate(self.copy_origin_id.to_s)
-    #     self.copy_origin_id = nil
-    #   end
-    # end
 end
