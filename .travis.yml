@@ -44,6 +44,7 @@ install:
   - pip install smt
   - pip install salib
   - pip install thrift
+  - pip install openturns
   - python --version
   - pip list
 

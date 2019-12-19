@@ -56,15 +56,12 @@ RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py \
 	&& python3 get-pip.py
 
 RUN pip install numpy \
-	&& pip install scipy \
 	&& pip install cython \
-	&& pip install matplotlib \
-	&& pip install thrift==0.11.0 \
-	&& pip install Click \
-	&& pip install tabulate \
 	&& pip install openmdao \
 	&& pip install salib \
-	&& pip install git+https://github.com/SMTOrg/smt \
+	&& pip install smt \
+	&& pip install openturns \
+	&& pip install thrift==0.11.0 \
 	&& pip install wop
 
 # Thrift
