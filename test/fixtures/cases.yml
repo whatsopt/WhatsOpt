@@ -26,19 +26,19 @@ empty_case:
     values: []
 
 case_varx1_out:
-    operation: screening
+    operation: morris_screening
     variable: varx1_out
     values: [0, 0, 0.66666666, 0, 0.66666666, 0.66666666, 0.66666666, 0.66666666, 0,
              0.33333333, 1, 1, 0.33333333, 0.33333333, 1, 0.33333333, 0.33333333, 1]
 
 case_varz_out:
-    operation: screening
+    operation: morris_screening
     variable: varz_design_out
     values: [0.33333333, 1, 1, 0.33333333, 0.33333333, 1, 0, 0.66666666, 0.66666666, 
              1, 1, 0.33333333, 1, 0.33333333, 0.33333333, 0.66666666, 0, 0]
 
 case_objective_in:
-    operation: screening
+    operation: morris_screening
     variable: varobj_geo_out
     values: [0.97, 0.71, 2.39, 0.97, 2.30, 2.39, 1.87, 2.40, 
              0.87, 2.15, 1.71, 1.54, 2.15, 2.17, 1.54, 2.20, 1.87, 1.0]

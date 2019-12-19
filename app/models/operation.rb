@@ -9,7 +9,8 @@ class Operation < ApplicationRecord
   CAT_OPTIMISATION = :optimization
   CAT_SCREENING = :screening
   CAT_DOE = :doe
-  CATEGORIES = [CAT_RUNONCE, CAT_OPTIMISATION, CAT_DOE, CAT_SCREENING].freeze
+  CAT_METAMODEL = :metamodel
+  CATEGORIES = [CAT_RUNONCE, CAT_OPTIMISATION, CAT_DOE, CAT_SCREENING, CAT_METAMODEL].freeze
 
   BATCH_COUNT = 10 # nb of log lines processed together
   LOGDIR = File.join(Rails.root, "upload/logs")
@@ -87,18 +88,20 @@ class Operation < ApplicationRecord
   def category
     case driver
     when "runonce"
-      "analysis"
+      CAT_RUNONCE
     when /optimizer/, /slsqp/, /scipy/, /pyoptsparse/
-      "optimization"
-    when /morris/, /sobol/
-      "screening"
+      CAT_OPTIMISATION
+    when /metamodel/
+      CAT_METAMODEL
+    when /_doe_morris/, /doe_sobol/
+      CAT_SCREENING
     when /doe/, /lhs/
-      "doe"
+      CAT_DOE
     else
       if !analysis.objective_variables.empty?
-        "optimization"
+        CAT_OPTIMISATION
       else
-        "doe"
+        CAT_DOE
       end
     end
    end

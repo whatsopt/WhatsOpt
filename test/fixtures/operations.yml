@@ -16,7 +16,7 @@ doe:
     analysis: cicav
     success: [1, 0, 1]
     
-screening:
+morris_screening:
     name: screening
     driver: salib_doe_morris
     analysis: cicav

@@ -1,20 +1,20 @@
 # frozen_string_literal: true
 
 require "test_helper"
-require "whats_opt/sensitivity_analysis_generator"
+require "whats_opt/salib_sensitivity_analyser"
 require "tmpdir"
 require "pathname"
 
-class SensitivityAnalysisGeneratorTest < ActiveSupport::TestCase
+class SalibSensitivityAnalyserTest < ActiveSupport::TestCase
   def setup
-    @ope = operations(:screening)
-    @sagen = WhatsOpt::SensitivityAnalysisGenerator.new(@ope)
+    @ope = operations(:morris_screening)
+    @analyser = WhatsOpt::SalibSensitivityAnalyser.new(@ope)
   end
 
   test "should generate sa code for an analysis" do
     Dir.mktmpdir do |dir|
       # dir = "/tmp"
-      filepath = @sagen._generate_code dir
+      filepath = @analyser._generate_code dir
       assert File.exist?(filepath)
     end
   end

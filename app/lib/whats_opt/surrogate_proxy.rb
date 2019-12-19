@@ -29,7 +29,7 @@ module WhatsOpt
         Rails.logger.info cmd
         @pid = spawn(cmd, [:out, :err] => File.join(Rails.root, "upload", "logs", "surrogate_server.log"))
         retries = 0
-        while retries < 5 && !server_available?  # wait for server start
+        while retries < 10 && !server_available?  # wait for server start
           retries += 1
           sleep(1)
         end
