@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 70) do
+ActiveRecord::Schema.define(version: 71) do
 
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
@@ -156,6 +156,7 @@ ActiveRecord::Schema.define(version: 70) do
     t.string "host", default: ""
     t.string "driver", default: "runonce"
     t.text "success"
+    t.integer "base_operation_id"
   end
 
   create_table "options", force: :cascade do |t|

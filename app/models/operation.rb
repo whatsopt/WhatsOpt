@@ -5,12 +5,15 @@ require "whats_opt/openmdao_generator"
 require "whats_opt/sqlite_case_importer"
 
 class Operation < ApplicationRecord
-  CAT_RUNONCE = :analysis
-  CAT_OPTIMISATION = :optimization
-  CAT_SCREENING = :screening
-  CAT_DOE = :doe
-  CAT_METAMODEL = :metamodel
-  CATEGORIES = [CAT_RUNONCE, CAT_OPTIMISATION, CAT_DOE, CAT_SCREENING, CAT_METAMODEL].freeze
+  CAT_RUNONCE = "analysis"
+  CAT_OPTIMISATION = "optimization"
+  CAT_DOE = "doe"
+  CAT_SENSITIVITY_DOE = "sensitivity_doe"
+  CAT_SENSITIVITY = "sensitivity_analysis"
+  CAT_METAMODEL = "metamodel"
+  CATEGORIES = [CAT_RUNONCE, CAT_OPTIMISATION, 
+                CAT_DOE, CAT_SENSITIVITY_DOE,
+                CAT_SENSITIVITY, CAT_METAMODEL].freeze
 
   BATCH_COUNT = 10 # nb of log lines processed together
   LOGDIR = File.join(Rails.root, "upload/logs")
@@ -19,10 +22,15 @@ class Operation < ApplicationRecord
   has_many :options, dependent: :destroy
   accepts_nested_attributes_for :options, reject_if: proc { |attr| attr["name"].blank? }, allow_destroy: true
 
-  has_many :cases, -> { joins(:variable).order("name ASC") }, dependent: :destroy
   has_one :job, dependent: :destroy
 
+  # when optimization / doe
+  has_many :cases, -> { joins(:variable).order("name ASC") }, dependent: :destroy
+  # when meta models
   has_many :meta_models
+  # when derived from doe
+  has_many :derived_operations, class_name: 'Operation'
+  belongs_to :base_operation, class_name: 'Operation', foreign_key: 'base_operation_id' 
 
   validates :name, presence: true, allow_blank: false
   validate :success_flags_consistent_with_cases
@@ -43,10 +51,25 @@ class Operation < ApplicationRecord
     operation._build_cases(ope_attrs[:cases]) if ope_attrs[:cases]
     if ope_attrs[:cases]
       operation.build_job(status: "DONE", log: "")
+      operation.build_derived_operations
     else
       operation.build_job(status: "PENDING", log: "")
     end
     operation
+  end
+
+  def build_derived_operations
+    case self.category
+    when CAT_SENSITIVITY_DOE
+      if self.driver =~ /(\w+)_doe_(\w+)/
+        library = $1
+        algo = $2
+        self.build_derived_operation(name: "#{algo}", 
+                                     driver: "#{library}_sensitivity_#{algo}")
+      else
+        Rails.logger.warn('Unknown sensitivity method for sensitivity DOE driver #{self.driver}')
+      end
+    end
   end
 
   def build_metamodel_varattrs(varnames = nil)
@@ -85,6 +108,16 @@ class Operation < ApplicationRecord
     adapter.to_json
   end
 
+  def rerunnable?
+    # if started_at is nil, the operation was not run from WhatsOpt server 
+    # hence non runnable again.
+    self.job && self.job.started_at 
+  end
+
+  def sensitivity_analysis?
+    self.category == CAT_SENSITIVITY
+  end
+
   def category
     case driver
     when "runonce"
@@ -94,7 +127,9 @@ class Operation < ApplicationRecord
     when /metamodel/
       CAT_METAMODEL
     when /_doe_morris/, /doe_sobol/
-      CAT_SCREENING
+      CAT_SENSITIVITY_DOE
+    when /_sensitivity_morris/, /_sensitivity_sobol/
+      CAT_SENSITIVITY
     when /doe/, /lhs/
       CAT_DOE
     else
