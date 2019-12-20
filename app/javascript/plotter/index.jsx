@@ -6,7 +6,6 @@ import ScatterPlotMatrix from 'plotter/components/ScatterPlotMatrix';
 import IterationLinePlot from 'plotter/components/IterationLinePlot';
 import IterationRadarPlot from 'plotter/components/IterationRadarPlot';
 import ScatterSurfacePlot from 'plotter/components/ScatterSurfacePlot';
-import ScreeningScatterPlot from 'plotter/components/ScreeningScatterPlot';
 import VariableSelector from 'plotter/components/VariableSelector';
 import MetaModelManager from 'plotter/components/MetaModelManager';
 import AnalysisDatabase from '../utils/AnalysisDatabase';
@@ -14,7 +13,6 @@ import * as caseUtils from '../utils/cases';
 
 const PLOTS_TAB = 'plots';
 const VARIABLES_TAB = 'variables';
-const SCREENING_TAB = 'screening';
 const METAMODEL_TAB = 'metamodel';
 
 class PlotPanel extends React.PureComponent {
@@ -126,50 +124,6 @@ VariablePanel.propTypes = {
   onSelectionChange: PropTypes.func.isRequired,
 };
 
-class ScreeningPanel extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      sensitivity: null,
-    };
-  }
-
-  componentDidMount() {
-    const { api, opeId } = this.props;
-    api.openmdaoScreening(
-      opeId,
-      (response) => {
-        this.setState({ ...response.data });
-      },
-    );
-  }
-
-  render() {
-    let screenings;
-    const { sensitivity } = this.state;
-    if (sensitivity) {
-      const varnames = Object.keys(sensitivity).sort();
-      const outs = [];
-      for (const output of varnames) {
-        outs.push([output, sensitivity[output]]);
-      }
-      screenings = outs.map(
-        (o) => (<ScreeningScatterPlot key={o[0]} outVarName={o[0]} saData={o[1]} />),
-      );
-    }
-    return (
-      <div className="tab-pane fade" id={SCREENING_TAB} role="tabpanel" aria-labelledby="screening-tab">
-        {screenings}
-      </div>
-    );
-  }
-}
-
-ScreeningPanel.propTypes = {
-  opeId: PropTypes.number.isRequired,
-  api: PropTypes.object.isRequired,
-};
-
 class MetaModelPanel extends React.PureComponent {
   render() {
     const {
@@ -279,7 +233,6 @@ class Plotter extends React.Component {
   render() {
     const { ope, mda } = this.props;
     const isOptim = (ope.category === 'optimization');
-    const isScreening = (ope.category === 'screening');
     const isDoe = (ope.category === 'doe');
     const { selection } = this.state;
     const cases = { i: this.inputVarCases, o: this.outputVarCases, c: this.couplingVarCases };
@@ -297,34 +250,8 @@ class Plotter extends React.Component {
     }
     const title = `${ope.name} on ${mda.name} - ${details}`;
 
-    let screeningItem; let screeningPanel;
     const { activeTab } = this.state;
-    if (isScreening) {
-      screeningItem = (
-        <li className="nav-item">
-          <a
-            className="nav-link"
-            id="screening-tab"
-            href="#screening"
-            role="tab"
-            aria-controls="screening"
-            data-toggle="tab"
-            aria-selected="false"
-            onClick={(e) => this.activateTab(e, SCREENING_TAB)}
-          >
-            Screening
-          </a>
-        </li>
-      );
 
-      screeningPanel = (
-        <ScreeningPanel
-          active={activeTab === SCREENING_TAB}
-          api={this.api}
-          opeId={ope.id}
-        />
-      );
-    }
     let metaModelItem; let metaModelPanel;
     if (isDoe) {
       metaModelItem = (
@@ -384,7 +311,6 @@ class Plotter extends React.Component {
               Plots
             </a>
           </li>
-          {screeningItem}
           {metaModelItem}
           <li className="nav-item">
             <a
@@ -410,7 +336,6 @@ class Plotter extends React.Component {
             active={activeTab === PLOTS_TAB}
             success={ope.success}
           />
-          {screeningPanel}
           {metaModelPanel}
           <VariablePanel
             db={this.db}

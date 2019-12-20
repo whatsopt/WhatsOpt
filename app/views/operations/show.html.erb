@@ -3,7 +3,7 @@
   <span class="fa fa-ellipsis-v"></span>
   List Operations
 <% end %> 
-<% if policy(@ope).edit? %>
+<% if policy(@ope).edit? && @ope.rerunnable? %>
   <%= button_to edit_operation_path(@ope), method: :get, class: "btn ml-2", title:"Re-run" do %>
     <span class="fa fa-rocket"></span>
     Re-run
@@ -25,7 +25,10 @@
 <% end %>      
 </div>
 
-<div id="plotter" data-mda="<%= @mda.to_mda_viewer_json %>" data-ope="<%= @ope.to_plotter_json %>" data-api-key="<%=current_user.api_key%>"></div> 
-
-<%= javascript_pack_tag 'plotter_application' %>
-
+<% if @ope.sensitivity_analysis? %>
+  <div id="sensitivity_plotter" data-ope="<%= @ope.to_plotter_json %>" data-api-key="<%=current_user.api_key%>"></div> 
+  <%= javascript_pack_tag 'plotter_application' %>
+<% else %>
+  <div id="plotter" data-mda="<%= @mda.to_mda_viewer_json %>" data-ope="<%= @ope.to_plotter_json %>" data-api-key="<%=current_user.api_key%>"></div> 
+  <%= javascript_pack_tag 'plotter_application' %>
+<% end %>
