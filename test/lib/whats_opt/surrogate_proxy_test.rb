@@ -66,7 +66,7 @@ class SurrogateProxyTest < ActiveSupport::TestCase
   end
 
   test "should not start server" do
-    teardown
+    WhatsOpt::SurrogateProxy.shutdown_server
     assert_not @surr_proxy.server_available?
     @surr_proxy = WhatsOpt::SurrogateProxy.new(server_start: false)
     assert_not @surr_proxy.server_available?

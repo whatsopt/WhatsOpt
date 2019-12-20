@@ -49,10 +49,7 @@ module WhatsOpt
       client.shutdown
     rescue => e
       Rails.logger.warn e
-      false
     else
-      true
-    ensure
       transport.close()
     end
 
