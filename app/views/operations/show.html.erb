@@ -1,4 +1,12 @@
 <div class="btn-toolbar float-right">
+<%= button_to operation_path(@ope.analysis.prev_operation_id(@ope.id)), 
+    method: :get, class: "btn ml-2", title:"Previous Operation", disabled: @ope.analysis.prev_operation_id(@ope.id) < 0 do %>
+  <span class="fa fa-angle-left"></span>
+<% end %> 
+<%= button_to operation_path(@ope.analysis.next_operation_id(@ope.id)), 
+  method: :get, class: "btn ml-2", title:"Next Operation", disabled: @ope.analysis.next_operation_id(@ope.id) < 0 do %>
+  <span class="fa fa-angle-right"></span>
+<% end %> 
 <%= button_to mda_operations_path(@ope.analysis_id), method: :get, class: "btn ml-2", title:"List" do %>
   <span class="fa fa-ellipsis-v"></span>
   List Operations
@@ -26,8 +34,8 @@
 </div>
 
 <% if @ope.sensitivity_analysis? %>
-  <div id="sensitivity_plotter" data-ope="<%= @ope.to_plotter_json %>" data-api-key="<%=current_user.api_key%>"></div> 
-  <%= javascript_pack_tag 'plotter_application' %>
+  <div id="sensitivity_plotter" data-mda="<%= @mda.to_mda_viewer_json %>" data-ope="<%= @ope.to_plotter_json %>" data-api-key="<%=current_user.api_key%>"></div> 
+  <%= javascript_pack_tag 'sensitivity_plotter_application' %>
 <% else %>
   <div id="plotter" data-mda="<%= @mda.to_mda_viewer_json %>" data-ope="<%= @ope.to_plotter_json %>" data-api-key="<%=current_user.api_key%>"></div> 
   <%= javascript_pack_tag 'plotter_application' %>

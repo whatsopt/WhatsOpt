@@ -13,8 +13,6 @@ upper = []
 inputs = []
 <% @input_varcases.each do |vc| %>
 names.append("<%= vc.float_varname %>")
-#lower += np.array(<%= vc.variable.parameter.lower %>).reshape((-1,)).to_list()
-#upper += np.array(<%= vc.variable.parameter.upper %>).reshape((-1,)).to_list()
 inputs.append(np.array(<%= vc.values %>))
 <% end %>
 #bounds = zip(lower, upper)

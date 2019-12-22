@@ -3,3 +3,4 @@ doejob:
   pid: 666
   log: "this is a test job\n"
   log_count: 1
+  status: DONE_OFFLINE

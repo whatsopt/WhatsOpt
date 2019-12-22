@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import ScreeningScatterPlot from './ScreeningScatterPlot'
+import ScreeningScatterPlot from './components/ScreeningScatterPlot';
 
-class SensitivityAnalysisPlotter extends React.Component {
+class SensitivityPlotter extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -11,7 +11,7 @@ class SensitivityAnalysisPlotter extends React.Component {
   }
 
   componentDidMount() {
-    const { api, opeId } = this.props;
+    const { api, ope: { id: opeId } } = this.props;
     api.openmdaoScreening(
       opeId,
       (response) => {
@@ -33,15 +33,25 @@ class SensitivityAnalysisPlotter extends React.Component {
         (o) => (<ScreeningScatterPlot key={o[0]} outVarName={o[0]} saData={o[1]} />),
       );
     }
+
+    const { ope, mda } = this.props;
+    const title = `${ope.name} on ${mda.name}`;
     return (
       <div>
+        <h1>
+          {title}
+        </h1>
+
         {screenings}
       </div>
     );
   }
 }
 
-SensitivityAnalysisPlotter.propTypes = {
-  opeId: PropTypes.number.isRequired,
+SensitivityPlotter.propTypes = {
+  mda: PropTypes.object.isRequired,
+  ope: PropTypes.object.isRequired,
   api: PropTypes.object.isRequired,
 };
+
+export default SensitivityPlotter;

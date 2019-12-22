@@ -29,14 +29,16 @@ class Operation < ApplicationRecord
   # when meta models
   has_many :meta_models
   # when derived from doe
-  has_many :derived_operations, class_name: 'Operation'
-  belongs_to :base_operation, class_name: 'Operation', foreign_key: 'base_operation_id' 
+  has_many :derived_operations, class_name: 'Operation', foreign_key: 'base_operation_id', inverse_of: :base_operation,
+    dependent: :destroy
+  belongs_to :base_operation, class_name: 'Operation', foreign_key: 'base_operation_id', inverse_of: :derived_operations 
 
   validates :name, presence: true, allow_blank: false
   validate :success_flags_consistent_with_cases
 
   scope :in_progress, ->(analysis) { where(analysis: analysis).left_outer_joins(:cases).where(cases: { operation_id: nil }) }
-  scope :done, ->(analysis) { where(analysis: analysis).left_outer_joins(:cases).where.not(cases: { operation_id: nil }).uniq }
+  scope :successful, ->() { joins(:job).where(jobs: {status: Job::SUCCESS_STATUSES}) }
+  scope :done, ->(analysis) { where(analysis: analysis).successful }
 
   serialize :success, Array
 
@@ -50,7 +52,7 @@ class Operation < ApplicationRecord
     operation = mda.operations.build(ope_attrs.except(:cases))
     operation._build_cases(ope_attrs[:cases]) if ope_attrs[:cases]
     if ope_attrs[:cases]
-      operation.build_job(status: "DONE", log: "")
+      operation.build_job(status: "DONE_OFFLINE", log: "")
       operation.build_derived_operations
     else
       operation.build_job(status: "PENDING", log: "")
@@ -64,8 +66,11 @@ class Operation < ApplicationRecord
       if self.driver =~ /(\w+)_doe_(\w+)/
         library = $1
         algo = $2
-        self.build_derived_operation(name: "#{algo}", 
-                                     driver: "#{library}_sensitivity_#{algo}")
+        derived = self.derived_operations.build(name: "#{library}_sensitivity_#{algo}", 
+                                      driver: "#{library}_sensitivity_#{algo}",
+                                      analysis_id: self.analysis_id,
+                                     )
+        derived.build_job(status: "ASSUME_DONE")
       else
         Rails.logger.warn('Unknown sensitivity method for sensitivity DOE driver #{self.driver}')
       end
@@ -114,6 +119,10 @@ class Operation < ApplicationRecord
     self.job && self.job.started_at 
   end
 
+  def success?
+    self.job && self.job.success? 
+  end
+
   def sensitivity_analysis?
     self.category == CAT_SENSITIVITY
   end
@@ -160,12 +169,16 @@ class Operation < ApplicationRecord
     end
   end
 
+  def ope_cases
+    base_operation ? base_operation.cases : cases
+  end
+
   def input_cases
-    cases.select { |c| c.variable.is_connected_as_input_of_interest? }
+    ope_cases.select { |c| c.variable.is_connected_as_input_of_interest? }
   end
 
   def output_cases
-    cases.select { |c| c.variable.is_connected_as_output_of_interest? }
+    ope_cases.select { |c| c.variable.is_connected_as_output_of_interest? }
   end
 
   def sorted_cases
@@ -252,9 +265,14 @@ class Operation < ApplicationRecord
 
   def _set_upload_job_done
     if job
-      job.update(status: "DONE", pid: -1, log: job.log << "Data uploaded\n", log_count: job.log_count + 1, ended_at: Time.now)
-    else # wop upload
-      create_job(status: "DONE", pid: -1, log: "Data uploaded\n", log_count: 1, started_at: Time.now, ended_at: Time.now)
+      job.update(pid: -1, log: job.log << "Data uploaded\n", log_count: job.log_count + 1, ended_at: Time.now)
+      if job.started?
+        job.update(status: :DONE) 
+      else
+        job.update(status: :DONE_OFFLINE) 
+      end
+    else # wop upload first time
+      create_job(status: :DONE_OFFLINE, pid: -1, log: "Data uploaded\n", log_count: 1, started_at: Time.now, ended_at: Time.now)
     end
   end
 

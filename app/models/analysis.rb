@@ -169,6 +169,18 @@ class Analysis < ApplicationRecord
     conns.map { |c| c.update!(role: WhatsOpt::Variable::DESIGN_VAR_ROLE) }
   end
 
+  def next_operation_id(opeId)
+    @opeIds ||= operations.successful.pluck(:id)
+    idx = @opeIds.index(opeId)
+    @next ||= (idx == (@opeIds.size - 1)) ? -1 : @opeIds[idx+1]
+  end
+
+  def prev_operation_id(opeId)
+    @opeIds ||= operations.successful.pluck(:id)
+    idx = @opeIds.index(opeId)
+    @prev ||= (idx == 0) ? -1 : @opeIds[idx-1]
+  end
+
   def to_mda_viewer_json
     {
       id: id,

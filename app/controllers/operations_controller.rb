@@ -11,7 +11,7 @@ class OperationsController < ApplicationController
 
   # GET /operations/1
   def show
-    if @ope.cases.empty?
+    unless @ope.success?
       redirect_to edit_operation_url(@ope)
     end
     @mda = @ope.analysis

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "test_helper"
+require "matrix"
 
 class Api::V1::OperationsControllerTest < ActionDispatch::IntegrationTest
   setup do
@@ -31,7 +32,7 @@ class Api::V1::OperationsControllerTest < ActionDispatch::IntegrationTest
     assert_equal ["obj", "x1"], resp["cases"].map { |c| c["varname"] }.sort
     assert_equal [0, 0], resp["cases"].map { |c| c["coord_index"] }.sort
     assert_equal [10, 20, 30, 40, 50, 60], resp["cases"].map { |c| c["values"] }.flatten.sort
-    assert_equal({ "status" => "DONE", "log" => "", "log_count" => 0, "start_in_ms" => 0.0, "end_in_ms" => 0.0 }, resp["job"])
+    assert_equal({ "status" => "DONE_OFFLINE", "log" => "", "log_count" => 0, "start_in_ms" => 0.0, "end_in_ms" => 0.0 }, resp["job"])
   end
 
   test "should create an operation with LHS options" do
@@ -68,7 +69,7 @@ class Api::V1::OperationsControllerTest < ActionDispatch::IntegrationTest
     assert_equal ["x1", "y2"], resp["cases"].map { |c| c["varname"] }.sort
     assert_equal [0, 0], resp["cases"].map { |c| c["coord_index"] }.sort
     assert_equal [1, 2, 4, 5], resp["cases"].map { |c| c["values"] }.flatten.sort
-    assert_equal "DONE", resp["job"]["status"]
+    assert_equal "DONE_OFFLINE", resp["job"]["status"]
     assert_equal "this is a test job\nData uploaded\n", resp["job"]["log"]
   end
 
@@ -158,5 +159,42 @@ class Api::V1::OperationsControllerTest < ActionDispatch::IntegrationTest
     mda = Analysis.last
     assert_equal 1, mda.design_variables.count
     assert_equal 2, mda.response_variables.count
+  end
+
+  test "should create a DOE morris with sensitivity analysis operation" do
+    inputs = Matrix[[0, 1.0 / 3], [0, 1], [2.0 / 3, 1],
+      [0, 1.0 / 3], [2.0 / 3, 1.0 / 3], [2.0 / 3, 1],
+      [2.0 / 3, 0], [2.0 / 3, 2.0 / 3], [0, 2.0 / 3],
+      [1.0 / 3, 1], [1, 1], [1, 1.0 / 3],
+      [1.0 / 3, 1], [1.0 / 3, 1.0 / 3], [1, 1.0 / 3],
+      [1.0 / 3, 2.0 / 3], [1.0 / 3, 0], [1, 0]]
+    output = [0.97, 0.71, 2.39, 0.97, 2.30, 2.39,
+      1.87, 2.40, 0.87, 2.15, 1.71, 1.54,
+      2.15, 2.17, 1.54, 2.20, 1.87, 1.0]
+    assert_difference('Operation.count', 2) do
+      post api_v1_operations_url(),
+        params: {
+          operation: { name: "DOE morris",
+            driver: "salib_doe_morris",
+            host: "localhost",
+            cases: [{ varname: "x1", coord_index: -1, values: inputs.column(0).to_a },
+                    { varname: "x2", coord_index: -1, values: inputs.column(0).to_a },
+                    { varname: "y", coord_index: -1, values: output }],
+            success: [1]*output.size
+          },
+          outvar_count_hint: 1
+        },
+        as: :json, headers: @auth_headers
+      assert_response :success  
+      derived = Operation.last
+      base = Operation.second_to_last
+      assert_equal "salib_doe_morris", base.driver 
+      assert_equal "salib_sensitivity_morris", derived.driver
+      assert_equal derived, base.derived_operations.first
+      assert derived.success? 
+
+      get api_v1_operation_openmdao_screening_url(derived), as: :json, headers: @auth_headers
+      assert_response :success
+    end
   end
 end
