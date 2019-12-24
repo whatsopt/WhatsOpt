@@ -34,7 +34,7 @@ sa_method_name='Morris'
 sa_doe_options={'n_trajs': 10, 'n_levels': 4}
 if options.sobol:
     sa_method_name='Sobol'
-    sa_doe_options={'n_samples': 500, 'calc_second_order': True}
+    sa_doe_options={'n_samples': 500, 'calc_second_order': False}
 pb.driver = SalibDOEDriver(sa_method_name=sa_method_name, sa_doe_options=sa_doe_options)
 case_recorder_filename = '<%= @sqlite_filename %>'        
 recorder = SqliteRecorder(case_recorder_filename)

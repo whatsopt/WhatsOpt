@@ -1,29 +1,29 @@
 # frozen_string_literal: true
 
 require "whats_opt/salib_sensitivity_analyser"
-require "whats_opt/openturns_sensitivity_analyser"
+#require "whats_opt/openturns_sensitivity_analyser"
 
 class Api::V1::SensitivityAnalysesController < Api::ApiController
-  # GET /api/v1/{operation_id}/sensitivity_analyses
+  # GET /api/v1/{operation_id}/sensitivity_analysis
   def show
     ope = Operation.find(params[:operation_id])
-    Rails.logger.info ope
+    Rails.logger.info ope.inspect
     authorize ope
-    sensitivity_infos = _get_sensitivity_analyses_infos(analysis)
+    sensitivity_infos = _get_sensitivity_analysis_infos(ope)
     render json: sensitivity_infos, status: :ok
   end
 
   private
 
-  def _get_sensitivity_analyses_infos(ope)
+  def _get_sensitivity_analysis_infos(ope)
     case ope.category
-    when Operation::CAT_SCREENING:
-      if ope.driver =~ /salib_doe_morris/   # TODO: add salib_doe_sobol
-        analyser = WhatsOpt::SalibSensitivityAnalyser.new(ope)
-        status, sa, err = analyser.run(kind: morris)
+    when Operation::CAT_SENSITIVITY
+      if ope.driver =~ /salib_sensitivity_(sobol|morris)/ 
+        analyser = WhatsOpt::SalibSensitivityAnalyser.new(ope, kind: $1.to_sym)
+        status, sa, err = analyser.run
         return { statusOk: status, sensitivity: sa, error: err }
       end
-    when Operation::CAT_METAMODEL:
+    when Operation::CAT_METAMODEL
       if ope.driver =~ /openturns_metamodel_pce/
         analyser = WhatsOpt::OpenturnsSensitivityAnalyser.new(ope)
         status, sa, err = analyser.run

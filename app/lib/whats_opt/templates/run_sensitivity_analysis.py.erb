@@ -5,7 +5,11 @@ import sys
 import numpy as np
 import json
 
-from SALib.analyze import morris as ma
+<% if @sobol %>
+from SALib.analyze import sobol as analyser
+<% else %>
+from SALib.analyze import morris as analyser
+<% end %>
 
 names = []
 lower = []
@@ -32,9 +36,16 @@ result = {}
 outname = '<%= vc.float_varname %>'
 result[outname] = {}
 output = np.array(<%= vc.values %>)
-Si = ma.analyze(salib_pb, inputs, output, print_to_console=False)
-result[outname] = {k:v.tolist() for k, v in Si.items() if isinstance(v, np.ndarray)}
-result[outname]['names'] = Si['names']
+<% if @sobol %>
+Si = analyser.analyze(salib_pb, output, calc_second_order=False, print_to_console=False)
+<% else %>
+Si = analyser.analyze(salib_pb, inputs, output, print_to_console=False)
+<% end%>
+result_tmp = {k:v for k, v in Si.items() if k is not 'names'}
+result[outname] = {k:v.tolist() for k, v in result_tmp.items() if isinstance(v, np.ndarray)}
+result[outname]['parameter_names'] = names
 <% end %>
 
-print(json.dumps(result))
+sa_result = {'saMethod': "<%= @sobol ? "sobol" : "morris" %>", 'saResult': result}
+
+print(json.dumps(sa_result))

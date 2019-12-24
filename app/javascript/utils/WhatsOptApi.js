@@ -58,6 +58,13 @@ class WhatsOptApi {
       .catch((error) => console.log(error));
   }
 
+  analyseSensitivity(opeId, callback) {
+    const path = `/operations/${opeId}/sensitivity_analysis`;
+    axios.get(this.apiUrl(path))
+      .then(callback)
+      .catch((error) => console.log(error));
+  }
+
   getMemberCandidates(mdaId, callback) {
     const path = `/user_roles?query[analysis_id]=${mdaId}&query[select]=member_candidates`;
     axios.get(this.apiUrl(path))

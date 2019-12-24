@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import ScreeningScatterPlot from './components/ScreeningScatterPlot';
+import MorrisScatterPlot from './components/MorrisScatterPlot';
+import SobolScatterPlot from './components/SobolScatterPlot';
 
 class SensitivityPlotter extends React.Component {
   constructor(props) {
@@ -12,7 +13,7 @@ class SensitivityPlotter extends React.Component {
 
   componentDidMount() {
     const { api, ope: { id: opeId } } = this.props;
-    api.openmdaoScreening(
+    api.analyseSensitivity(
       opeId,
       (response) => {
         this.setState({ ...response.data });
@@ -24,14 +25,24 @@ class SensitivityPlotter extends React.Component {
     let screenings;
     const { sensitivity } = this.state;
     if (sensitivity) {
-      const varnames = Object.keys(sensitivity).sort();
+      const { saMethod, saResult } = sensitivity;
+      const varnames = Object.keys(saResult).sort();
       const outs = [];
       for (const output of varnames) {
-        outs.push([output, sensitivity[output]]);
+        outs.push([output, saResult[output]]);
       }
-      screenings = outs.map(
-        (o) => (<ScreeningScatterPlot key={o[0]} outVarName={o[0]} saData={o[1]} />),
-      );
+      console.log(`samethod ${saMethod}`);
+      if (saMethod === 'morris') {
+        screenings = outs.map(
+          (o) => (<MorrisScatterPlot key={o[0]} outVarName={o[0]} saData={o[1]} />),
+        );
+      } else if (saMethod === 'sobol') {
+        screenings = outs.map(
+          (o) => (<SobolScatterPlot key={o[0]} outVarName={o[0]} saData={o[1]} />),
+        );
+      } else {
+        console.log(`Error: sensitivity analysis method ${saMethod} unknown`);
+      }
     }
 
     const { ope, mda } = this.props;

@@ -5,7 +5,7 @@ import Plotly from './custom-plotly';
 
 const Plot = createPlotlyComponent(Plotly);
 
-class ScreeningScatterPlot extends React.PureComponent {
+class MorrisScatterPlot extends React.PureComponent {
   render() {
     const { saData, outVarName } = this.props;
     const trace = {
@@ -13,7 +13,7 @@ class ScreeningScatterPlot extends React.PureComponent {
       y: saData.sigma,
       type: 'scatter',
       mode: 'markers+text',
-      text: saData.names,
+      text: saData.parameter_names,
       textposition: 'top center',
       marker: { size: 10 },
       cliponaxis: false,
@@ -40,13 +40,13 @@ class ScreeningScatterPlot extends React.PureComponent {
   }
 }
 
-ScreeningScatterPlot.propTypes = {
+MorrisScatterPlot.propTypes = {
   outVarName: PropTypes.string.isRequired,
   saData: PropTypes.shape({
     mu_star: PropTypes.array.isRequired,
     sigma: PropTypes.array.isRequired,
-    names: PropTypes.array.isRequired,
+    parameter_names: PropTypes.array.isRequired,
   }).isRequired,
 };
 
-export default ScreeningScatterPlot;
+export default MorrisScatterPlot;
