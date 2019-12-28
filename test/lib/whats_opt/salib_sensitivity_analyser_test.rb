@@ -7,7 +7,7 @@ require "pathname"
 
 class SalibSensitivityAnalyserTest < ActiveSupport::TestCase
   def setup
-    @ope = operations(:morris_screening)
+    @ope = operations(:morris_doe)
     @analyser = WhatsOpt::SalibSensitivityAnalyser.new(@ope)
   end
 

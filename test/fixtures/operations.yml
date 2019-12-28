@@ -16,11 +16,18 @@ doe:
     analysis: cicav
     success: [1, 0, 1]
     
-morris_screening:
+morris_doe:
     name: screening
     driver: salib_doe_morris
     analysis: cicav
     success: []
+
+morris_sensitivity:
+    name: screening
+    driver: salib_sensitivity_morris
+    base_operation: morris_doe
+    analysis: cicav
+    success: []    
 
 doe_metamodel2:
     name: LHS
