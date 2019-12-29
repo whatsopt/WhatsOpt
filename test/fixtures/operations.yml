@@ -17,18 +17,31 @@ doe:
     success: [1, 0, 1]
     
 morris_doe:
-    name: screening
+    name: "morris doe"
     driver: salib_doe_morris
     analysis: cicav
     success: []
 
 morris_sensitivity:
-    name: screening
+    name: "morris sensitivity"
     driver: salib_sensitivity_morris
     base_operation: morris_doe
     analysis: cicav
     success: []    
 
+sobol_doe:
+    name: "sobol doe"
+    driver: salib_doe_sobol
+    analysis: cicav
+    success: []
+    
+sobol_sensitivity:
+    name: "sobol sensitivity"
+    driver: salib_sensitivity_sobol
+    base_operation: sobol_doe
+    analysis: cicav
+    success: []    
+    
 doe_metamodel2:
     name: LHS
     driver: smt_doe_lhs

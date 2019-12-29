@@ -8,9 +8,7 @@ module WhatsOpt
       super(ope.analysis)
       @prefix = "sensitivity_analysis"
       @kind = kind
-      p kind
       @sobol = (kind == :sobol) 
-      p @sobol
       @input_varcases = ope.input_cases
       @output_varcases = ope.output_cases
       Rails.logger.info @input_varcases.map(&:float_varname)

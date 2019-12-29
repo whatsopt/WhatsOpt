@@ -10,7 +10,11 @@ class Api::V1::SensitivityAnalysesController < Api::ApiController
     Rails.logger.info ope.inspect
     authorize ope
     sensitivity_infos = _get_sensitivity_analysis_infos(ope)
-    render json: sensitivity_infos, status: :ok
+    if sensitivity_infos[:statusOk]
+      render json: sensitivity_infos, status: :ok
+    else
+      render json: sensitivity_infos, status: :unprocessable_entity
+    end
   end
 
   private
