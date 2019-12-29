@@ -9,8 +9,12 @@ class TestSurrogateStore(unittest.TestCase):
         self.store = SurrogateStore()
 
     def tearDown(self):
+        if os.path.exists(self.store._sm_filename("1")):
+            os.remove(self.store._sm_filename("1"))
         if os.path.exists(self.store._sm_filename("2")):
             os.remove(self.store._sm_filename("2"))
+        if os.path.exists(self.store._sm_filename("3")):
+            os.remove(self.store._sm_filename("3"))
 
     def test_create_surrogate(self):
         xt = np.array([[0.0, 1.0, 2.0, 3.0, 4.0]]).T
@@ -37,6 +41,7 @@ class TestSurrogateStore(unittest.TestCase):
         with self.assertRaises(FileNotFoundError):
             self.store.get_surrogate("2")
 
+    @unittest.skip("for now copy_surrogate not used")
     def test_copy_surrogate(self):
         self.store.copy_surrogate("1", "2")
         self.assertTrue(os.path.exists(self.store._sm_filename("2")))
@@ -51,6 +56,15 @@ class TestSurrogateStore(unittest.TestCase):
         y = sm.predict_values(x)
 
         self.assertTrue((13, 1), y.shape)
+
+    def test_get_openturns_pce_sensibility_analysis(self):
+        xt = np.array([[0.0, 1.0, 2.0, 3.0, 4.0]]).T
+        yt = np.array([0.0, 1.0, 1.5, 0.5, 1.0]).T
+
+        self.store.create_surrogate("3", "OPENTURNS_PCE", xt, yt)
+        sa = self.store.get_sobol_pce_sensitivity_analysis("3")
+        self.assertEqual([1.0], sa["first_order_indices"])
+        self.assertEqual([0.0], sa["total_order_indexes"])
 
 
 if __name__ == "__main__":

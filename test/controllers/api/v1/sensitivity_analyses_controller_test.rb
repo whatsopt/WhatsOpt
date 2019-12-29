@@ -40,4 +40,9 @@ class Api::V1::SensitivityAnalysisControllerTest < ActionDispatch::IntegrationTe
     assert_equal expected_obj["parameter_names"], sa_obj["parameter_names"]
   end
 
+  test "should run pce sensitivity analysis" do
+    
+  end
+
+
 end

@@ -81,6 +81,13 @@ class SurrogateStore(object):
         dst = self._sm_filename(dst_id)
         copyfile(src, dst)
 
+    def get_sobol_pce_sensitivity_analysis(self, pce_surrogate_id):
+        sm = self.get_surrogate(pce_surrogate_id)
+        sa = sm.get_sobol_indices()
+        first_order = [sa.getSobolIndex(i) for i in range(sm.input_dim)]
+        total_order = [sa.getSobolTotalIndex(i) for i in range(sm.input_dim)]
+        return {"first_order_indices": first_order, "total_order_indexes": total_order}
+
     def _sm_filename(self, surrogate_id):
         return "%s/surrogate_%s.pkl" % (self.outdir, surrogate_id)
 

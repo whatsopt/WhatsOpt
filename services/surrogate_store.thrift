@@ -23,6 +23,11 @@ struct SurrogateQualification {
   2: Vector yp
 }
 
+struct SobolIndices {
+  1: Vector first_order_indices,
+  2: Vector total_order_indexes
+}
+
 service SurrogateStore {
 
   void ping();
@@ -44,5 +49,6 @@ service SurrogateStore {
                         2: Matrix x) throws (1: SurrogateException exc);
 
   void destroy_surrogate(1: string surrogate_id);
-  
+
+  SobolIndices get_sobol_pce_sensitivity_analysis(1: string surrogate_id);
 }

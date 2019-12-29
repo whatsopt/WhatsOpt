@@ -24,7 +24,7 @@ class PCE(SurrogateModel):
         )
 
     def train(self):
-        input_dim = self.training_points[None][0][0].shape[1]
+        self.input_dim = self.training_points[None][0][0].shape[1]
         x_train = ot.Sample(self.training_points[None][0][0])
         y_train = ot.Sample(self.training_points[None][0][1])
 
@@ -32,18 +32,18 @@ class PCE(SurrogateModel):
         distributions = []
         dist_specs = self.options["distribution_specs"]
         if dist_specs:
-            if len(dist_specs) != input_dim:
+            if len(dist_specs) != self.input_dim:
                 raise SurrogateOpenturnsException(
                     "Number of distributions should be equal to input \
                         dimensions. Should be {}, got {}".format(
-                        input_dim, len(dist_specs)
+                        self.input_dim, len(dist_specs)
                     )
                 )
             for ds in dist_specs:
                 dist_klass = getattr(sys.modules[__name__], ds["name"])
                 distributions.append(dist_klass(**ds["kwargs"]))
         else:
-            for i in range(input_dim):
+            for i in range(self.input_dim):
                 mean = np.mean(x_train[:, i])
                 distributions.append(ot.Uniform(0.95 * mean, 1.05 * mean))
 
@@ -53,12 +53,12 @@ class PCE(SurrogateModel):
         # step 1 - Construction of the multivariate orthonormal basis:
         # Build orthonormal or orthogonal univariate polynomial families
         # (associated to associated input distribution)
-        polynoms = [0.0] * input_dim
+        polynoms = [0.0] * self.input_dim
         for i in range(distribution.getDimension()):
             polynoms[i] = ot.StandardDistributionPolynomialFactory(
                 distribution.getMarginal(i)
             )
-        enumerateFunction = ot.LinearEnumerateFunction(input_dim)
+        enumerateFunction = ot.LinearEnumerateFunction(self.input_dim)
         productBasis = ot.OrthogonalProductPolynomialFactory(
             polynoms, enumerateFunction
         )
@@ -91,4 +91,7 @@ class PCE(SurrogateModel):
     def predict_values(self, x):
         mm = self._pce_result.getMetaModel()
         return np.array(mm(x))
+
+    def get_sobol_indices(self):
+        return ot.FunctionalChaosSobolIndices(self._pce_result)
 

@@ -60,5 +60,23 @@ module WhatsOpt
       ::Thrift::Struct.generate_accessors self
     end
 
+    class SobolIndices
+      include ::Thrift::Struct, ::Thrift::Struct_Union
+      FIRST_ORDER_INDICES = 1
+      TOTAL_ORDER_INDEXES = 2
+
+      FIELDS = {
+        FIRST_ORDER_INDICES => {:type => ::Thrift::Types::LIST, :name => 'first_order_indices', :element => {:type => ::Thrift::Types::DOUBLE}},
+        TOTAL_ORDER_INDEXES => {:type => ::Thrift::Types::LIST, :name => 'total_order_indexes', :element => {:type => ::Thrift::Types::DOUBLE}}
+      }
+
+      def struct_fields; FIELDS; end
+
+      def validate
+      end
+
+      ::Thrift::Struct.generate_accessors self
+    end
+
   end
 end
