@@ -8,7 +8,7 @@ class MetaModelsController < ApplicationController
     authorize mda
     if mda.save
       driver = get_driver_from_metamodel_kind(meta_model_params[:kind])
-      mm_ope = Operation.build_operation(ope.analysis, driver: driver)
+      mm_ope = Operation.build_operation(ope.analysis, driver: driver, base_operation_id: ope.id)
       mm_ope.save
       mda.set_all_parameters_as_design_variables
       mda.set_owner(current_user)

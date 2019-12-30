@@ -39,6 +39,7 @@ class Operation < ApplicationRecord
 
   scope :in_progress, ->(analysis) { where(analysis: analysis).joins(:job).where(jobs: {status: Job::WIP_STATUSES}) } 
   scope :successful, ->() { joins(:job).where(jobs: {status: Job::SUCCESS_STATUSES}) }
+  scope :final, ->() { where.not(id: pluck(:base_operation_id).compact) }
   scope :done, ->(analysis) { where(analysis: analysis).successful }
 
   serialize :success, Array

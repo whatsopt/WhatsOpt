@@ -26,7 +26,7 @@
         </td>
         <td><%= time_ago_in_words(mda.created_at)%> ago</td>
         <td>
-          <%= link_to_operations_if_authorized(mda, current_user) %>
+          <%= link_to_final_operations_if_authorized(mda, current_user) %>
           <% unless Operation.done(mda).empty? %>
             <%= link_to mda_operations_path(mda), 
               class: "btn btn-sm", title: "List Operations" do %>

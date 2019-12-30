@@ -21,9 +21,9 @@ module AnalysesHelper
     end
   end
 
-  def link_to_operations_if_authorized(analysis, user)
+  def link_to_final_operations_if_authorized(analysis, user)
     res = ""
-    Operation.done(analysis).each do |ope|
+    Operation.final.done(analysis).each do |ope|
       res += '<span style="margin: 0px 5px">'
       if policy(analysis).show?
         res += link_to ope.name, operation_path(ope)
