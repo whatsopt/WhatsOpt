@@ -16,9 +16,11 @@ class MetaModelsControllerTest < ActionDispatch::IntegrationTest
 
   test "should create a metamodel" do
     assert_difference("Analysis.count", 1) do
-      assert_difference("MetaModel.count", 1) do
-        assert_difference("Surrogate.count", 1) do
-          post operation_meta_models_url(@ope), params: { meta_model: { kind: Surrogate::SURROGATES[1] } }
+      assert_difference("Operation.count", 1) do
+        assert_difference("MetaModel.count", 1) do
+          assert_difference("Surrogate.count", 1) do
+            post operation_meta_models_url(@ope), params: { meta_model: { kind: Surrogate::SMT_KPLS } }
+          end
         end
       end
     end
@@ -36,7 +38,7 @@ class MetaModelsControllerTest < ActionDispatch::IntegrationTest
     mm = MetaModel.last
     assert_equal @ope, mm.operation
     assert_equal mda.disciplines.last, mm.discipline
-    assert_equal Surrogate::SURROGATES[1], mm.default_surrogate_kind
+    assert_equal Surrogate::SMT_KPLS, mm.default_surrogate_kind
     assert_equal 1, mm.surrogates.count
     surr = Surrogate.last
     assert_equal surr, mm.surrogates.first
@@ -47,7 +49,7 @@ class MetaModelsControllerTest < ActionDispatch::IntegrationTest
 
   test "should take into account variables selection" do
     post operation_meta_models_url(@ope), params: {
-      meta_model: { kind: Surrogate::SURROGATES[0], variables: { inputs: ["x1"], outputs: ["obj"] } }
+      meta_model: { kind: Surrogate::SMT_KRIGING, variables: { inputs: ["x1"], outputs: ["obj"] } }
     }
     mda = Analysis.last
     assert_equal 1, mda.design_variables.count

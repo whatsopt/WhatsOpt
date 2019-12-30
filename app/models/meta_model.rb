@@ -71,7 +71,8 @@ class MetaModel < ApplicationRecord
   end
 
   def training_output_values(varname, coord_index)
-    operation.cases.where(coord_index: coord_index).joins(:variable).where(variables: { name: varname }).take.values
+    @training_outputs ||= operation.output_cases
+                            .select {|c| c.coord_index == coord_index && c.variable.name == varname}.first.values
   end
 
   def qualification
@@ -80,6 +81,6 @@ class MetaModel < ApplicationRecord
 
 private
   def _set_defaults
-    self.default_surrogate_kind = Surrogate::SURROGATES[0] if self.default_surrogate_kind.blank?
+    self.default_surrogate_kind = Surrogate::SMT_KRIGING if self.default_surrogate_kind.blank?
   end
 end

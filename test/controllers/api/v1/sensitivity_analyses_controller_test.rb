@@ -21,7 +21,7 @@ class Api::V1::SensitivityAnalysisControllerTest < ActionDispatch::IntegrationTe
     assert_equal expected, sa["sensitivity"]
   end
 
-  test "should run sobol sensitivity analysis" do
+  test "should run salib sobol sensitivity analysis" do
     @ope = operations(:sobol_sensitivity)
     get api_v1_operation_sensitivity_analysis_url(@ope), as: :json, headers: @auth_headers
     assert_response :success
@@ -39,10 +39,5 @@ class Api::V1::SensitivityAnalysisControllerTest < ActionDispatch::IntegrationTe
     assert_equal expected_obj["ST"], sa_obj["ST"]
     assert_equal expected_obj["parameter_names"], sa_obj["parameter_names"]
   end
-
-  test "should run pce sensitivity analysis" do
-    
-  end
-
 
 end

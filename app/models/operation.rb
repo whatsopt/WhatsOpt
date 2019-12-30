@@ -34,9 +34,10 @@ class Operation < ApplicationRecord
   belongs_to :base_operation, class_name: 'Operation', foreign_key: 'base_operation_id', inverse_of: :derived_operations 
 
   validates :name, presence: true, allow_blank: false
+  validates :driver, presence: true, allow_blank: false
   validate :success_flags_consistent_with_cases
 
-  scope :in_progress, ->(analysis) { where(analysis: analysis).left_outer_joins(:cases).where(cases: { operation_id: nil }) }
+  scope :in_progress, ->(analysis) { where(analysis: analysis).joins(:job).where(jobs: {status: Job::WIP_STATUSES}) } 
   scope :successful, ->() { joins(:job).where(jobs: {status: Job::SUCCESS_STATUSES}) }
   scope :done, ->(analysis) { where(analysis: analysis).successful }
 
@@ -50,12 +51,18 @@ class Operation < ApplicationRecord
 
   def self.build_operation(mda, ope_attrs)
     operation = mda.operations.build(ope_attrs.except(:cases))
+    operation.name = ope_attrs[:driver] unless ope_attrs[:name]
     operation._build_cases(ope_attrs[:cases]) if ope_attrs[:cases]
-    if ope_attrs[:cases]
-      operation.build_job(status: "DONE_OFFLINE", log: "")
+    opecat = operation.category
+    case opecat
+    when CAT_DOE, CAT_SENSITIVITY_DOE, CAT_OPTIMISATION
+      operation.build_job(status: :DONE_OFFLINE)
+      operation.build_derived_operations
+    when CAT_METAMODEL
+      operation.build_job(status: :ASSUME_DONE)
       operation.build_derived_operations
     else
-      operation.build_job(status: "PENDING", log: "")
+      operation.build_job(status: :PENDING)
     end
     operation
   end
@@ -67,12 +74,20 @@ class Operation < ApplicationRecord
         library = $1
         algo = $2
         derived = self.derived_operations.build(name: "#{library}_sensitivity_#{algo}", 
-                                      driver: "#{library}_sensitivity_#{algo}",
-                                      analysis_id: self.analysis_id,
-                                     )
+                                                driver: "#{library}_sensitivity_#{algo}",
+                                                analysis_id: self.analysis_id)
         derived.build_job(status: "ASSUME_DONE")
       else
         Rails.logger.warn('Unknown sensitivity method for sensitivity DOE driver #{self.driver}')
+      end
+    when CAT_METAMODEL
+      if self.driver =~ /(openturns)_metamodel_(pce)/
+        library = $1
+        algo = $2
+        derived = self.derived_operations.build(name: "#{library}_sensitivity_#{algo}", 
+                                                driver: "#{library}_sensitivity_#{algo}",
+                                                analysis_id: self.analysis_id)
+        derived.build_job(status: "ASSUME_DONE")
       end
     end
   end
@@ -128,26 +143,27 @@ class Operation < ApplicationRecord
   end
 
   def category
-    case driver
-    when "runonce"
-      CAT_RUNONCE
-    when /optimizer/, /slsqp/, /scipy/, /pyoptsparse/
-      CAT_OPTIMISATION
-    when /metamodel/
-      CAT_METAMODEL
-    when /_doe_morris/, /doe_sobol/
-      CAT_SENSITIVITY_DOE
-    when /_sensitivity_morris/, /_sensitivity_sobol/
-      CAT_SENSITIVITY
-    when /doe/, /lhs/
-      CAT_DOE
-    else
-      if !analysis.objective_variables.empty?
+    @category ||=
+      case driver
+      when "runonce"
+        CAT_RUNONCE
+      when /optimizer/, /slsqp/, /scipy/, /pyoptsparse/
         CAT_OPTIMISATION
-      else
+      when /_metamodel_/
+        CAT_METAMODEL
+      when /_doe_morris/, /doe_sobol/
+        CAT_SENSITIVITY_DOE
+      when /_sensitivity_morris/, /_sensitivity_sobol/
+        CAT_SENSITIVITY
+      when /doe/, /lhs/
         CAT_DOE
+      else
+        if !analysis.objective_variables.empty?
+          CAT_OPTIMISATION
+        else
+          CAT_DOE
+        end
       end
-    end
    end
 
   def nb_of_points

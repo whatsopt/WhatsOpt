@@ -7,6 +7,9 @@ class MetaModelsController < ApplicationController
     mda = Analysis.build_metamodel_analysis(ope, meta_model_params[:variables])
     authorize mda
     if mda.save
+      driver = get_driver_from_metamodel_kind(meta_model_params[:kind])
+      mm_ope = Operation.build_operation(ope.analysis, driver: driver)
+      mm_ope.save
       mda.set_all_parameters_as_design_variables
       mda.set_owner(current_user)
       @meta_model = mda.disciplines.last.build_meta_model( # just one plain discipline in the analysis
@@ -26,5 +29,12 @@ class MetaModelsController < ApplicationController
   private
     def meta_model_params
       params.require(:meta_model).permit(:kind, variables: { inputs: [], outputs: [] })
+    end
+
+    def get_driver_from_metamodel_kind(kind)
+      kind = kind.downcase
+      kind =~ /(\w+)_(\w+)/
+      library, algo = $1, $2
+      "#{library}_metamodel_#{algo}"
     end
 end
