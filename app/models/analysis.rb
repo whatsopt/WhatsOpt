@@ -45,6 +45,8 @@ class Analysis < ApplicationRecord
   after_save :_ensure_driver_presence
   after_save :_ensure_openmdao_impl_presence
 
+  before_destroy :_check_allowed_destruction
+
   validate :_check_mda_import_error, on: :create, if: :attachment_exists?
   validates :name, presence: true, allow_blank: false
 
@@ -559,5 +561,9 @@ class Analysis < ApplicationRecord
 
     def _ensure_openmdao_impl_presence
       self.openmdao_impl ||= OpenmdaoAnalysisImpl.new
+    end
+
+    def _check_allowed_destruction
+      # to do check ancestry: forbid if parent
     end
 end

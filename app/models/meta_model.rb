@@ -11,6 +11,7 @@ class MetaModel < ApplicationRecord
   validates :discipline, presence: true
 
   after_initialize :_set_defaults
+  before_destroy :_destroy_related_operation
 
   MATRIX_FORMAT = "matrix"
   FORMATS = [MATRIX_FORMAT]
@@ -82,5 +83,9 @@ class MetaModel < ApplicationRecord
 private
   def _set_defaults
     self.default_surrogate_kind = Surrogate::SMT_KRIGING if self.default_surrogate_kind.blank?
+  end
+
+  def _destroy_related_operation
+    self.operation.destroy! if operation
   end
 end

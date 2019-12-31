@@ -65,7 +65,9 @@ class AnalysesController < ApplicationController
   # DELETE /mdas/1
   def destroy
     @mda.destroy
-    redirect_to mdas_url, notice: "MDA was successfully destroyed."
+    redirect_to mdas_url, notice: "MDA was successfully deleted."
+  rescue Operation::ForbiddenRemovalException => exc
+    redirect_to mdas_url, alert: "Can not delete analysis #{@mda.name} for following reason: "+exc.message
   end
 
   private

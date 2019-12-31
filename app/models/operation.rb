@@ -4,6 +4,7 @@ require "socket"
 require "whats_opt/openmdao_generator"
 require "whats_opt/sqlite_case_importer"
 
+
 class Operation < ApplicationRecord
   CAT_RUNONCE = "analysis"
   CAT_OPTIMISATION = "optimization"
@@ -18,6 +19,8 @@ class Operation < ApplicationRecord
   BATCH_COUNT = 10 # nb of log lines processed together
   LOGDIR = File.join(Rails.root, "upload/logs")
 
+  class ForbiddenRemovalException < Exception; end
+
   belongs_to :analysis
   has_many :options, dependent: :destroy
   accepts_nested_attributes_for :options, reject_if: proc { |attr| attr["name"].blank? }, allow_destroy: true
@@ -29,9 +32,10 @@ class Operation < ApplicationRecord
   # when meta models
   has_many :meta_models
   # when derived from doe
-  has_many :derived_operations, class_name: 'Operation', foreign_key: 'base_operation_id', inverse_of: :base_operation,
-    dependent: :destroy
+  has_many :derived_operations, class_name: 'Operation', foreign_key: 'base_operation_id', inverse_of: :base_operation
   belongs_to :base_operation, class_name: 'Operation', foreign_key: 'base_operation_id', inverse_of: :derived_operations 
+
+  before_destroy :_check_allowed_destruction
 
   validates :name, presence: true, allow_blank: false
   validates :driver, presence: true, allow_blank: false
@@ -141,6 +145,10 @@ class Operation < ApplicationRecord
 
   def sensitivity_analysis?
     self.category == CAT_SENSITIVITY
+  end
+
+  def meta_model?
+    self.category == CAT_METAMODEL
   end
 
   def category
@@ -309,5 +317,17 @@ class Operation < ApplicationRecord
     cases.map(&:destroy)
     cases.reload
     _build_cases(case_attrs)
+  end
+
+  def _check_allowed_destruction
+    unless self.meta_models.empty?
+      mdas = self.meta_models.map(&:analysis)
+      msg = mdas.map {|a| "##{a.id} #{a.name}"}.join(', ')
+      raise ForbiddenRemovalException.new("Can not delete operation '#{self.name}' as meta_models are in use: #{msg} (to be deleted first)")
+    end
+    unless self.derived_operations.empty?
+      msg = self.derived_operations.map(&:name).join(', ')
+      raise ForbiddenRemovalException.new("Can not delete operation '#{self.name}' as another operation depends on it: #{msg} (to be deleted first)")
+    end
   end
 end

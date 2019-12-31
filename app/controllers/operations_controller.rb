@@ -11,8 +11,11 @@ class OperationsController < ApplicationController
 
   # GET /operations/1
   def show
-    unless @ope.success?
+    unless @ope.success? # ope in progress, goto edit page
       redirect_to edit_operation_url(@ope)
+    end
+    if @ope.meta_model?  # goto containing first metamodel
+      redirect_to mda_url(@ope.meta_models.first.analysis)
     end
     @mda = @ope.analysis
   end
@@ -42,8 +45,12 @@ class OperationsController < ApplicationController
   # DELETE /operations/1
   def destroy
     authorize @ope
-    @ope.destroy
-    redirect_to mdas_url, notice: "Operation was successfully destroyed."
+    begin
+      @ope.destroy
+      redirect_to mdas_url, notice: "Operation was successfully destroyed."
+    rescue Operation::ForbiddenRemovalException => exc
+      redirect_to mdas_url, alert: exc.message
+    end
   end
 
   private
