@@ -36,7 +36,7 @@ class MetaModelsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "10", z.parameter.upper
     assert_equal 1, mda.response_variables.count
     mm = MetaModel.last
-    assert_equal @ope, mm.operation
+    assert_equal @ope, mm.operation.base_operation
     assert_equal mda.disciplines.last, mm.discipline
     assert_equal Surrogate::SMT_KPLS, mm.default_surrogate_kind
     assert_equal 1, mm.surrogates.count

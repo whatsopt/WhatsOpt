@@ -35,7 +35,7 @@ sobol_sensitivity_job:
   <<: *default_assume_done
   operation: sobol_sensitivity
     
-doe_metamodel2_job:
+doe2_job:
   <<: *default_assume_done
   status: DONE
-  operation: doe_metamodel2
+  operation: doe2

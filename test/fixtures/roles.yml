@@ -41,11 +41,11 @@ owner_singleton_role:
   name: :owner
   resource: singleton (Analysis)
 
-owner_gm_one:
+owner_gm_one_role:
   name: :owner
   resource: gm_one (GeometryModel)
 
-owner_gm_two:
+owner_gm_two_role:
   name: :owner
   resource: gm_two (GeometryModel)
 

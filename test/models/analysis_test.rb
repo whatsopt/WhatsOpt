@@ -122,13 +122,11 @@ class AnalysisTest < ActiveSupport::TestCase
     assert copy.is_metamodel_analysis?
     orig_conns = Connection.of_analysis(mda)
     copy_conns = Connection.of_analysis(copy)
-    # Connection.print(orig_conns)
-    # puts
-    # Connection.print(copy_conns)
     assert_equal orig_conns.size, copy_conns.size
   end
 
   test "should copy of a copy of a metamodel and predict with even middle copy removed" do
+    skip "doe copy not yet implemented"
     mda = analyses(:cicav_metamodel_analysis)
     copy = mda.create_copy!
     assert copy.is_metamodel_analysis?
@@ -137,6 +135,8 @@ class AnalysisTest < ActiveSupport::TestCase
     y = mm.predict(x)
     assert_in_delta 5, y[0][0]
     assert_equal x.size, y.size
+    p mda.disciplines.second.meta_model.operation
+    mda.operations.map(&:destroy)
     mda.destroy
     mm.reload
     y = mm.predict(x)
