@@ -132,10 +132,7 @@ class Discipline < ApplicationRecord
     end
     mda.disciplines << disc_copy
     if self.is_pure_metamodel?
-      mm_ope = self.meta_model.operation.build_copy(mda)
-      mm_ope.save!
-      meta_model = self.meta_model.build_copy(disc_copy, mm_ope)
-      #disc_copy.meta_model = meta_model
+      meta_model = self.meta_model.build_copy(disc_copy)
     end
     if self.has_sub_analysis?
       sub_analysis = self.sub_analysis.create_copy!(mda, disc_copy)

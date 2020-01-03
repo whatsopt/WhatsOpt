@@ -30,10 +30,12 @@ class MetaModel < ApplicationRecord
     end
   end
 
-  def build_copy(discipline=nil, operation=nil)
+  def build_copy(discipline=nil)
     mm_copy = self.dup
-    mm_copy.discipline = discipline if discipline
-    mm_copy.operation = operation if operation
+    if discipline
+      mm_copy.discipline = discipline 
+      mm_copy.operation = self.operation.build_copy(discipline.analysis)
+    end
     self.surrogates.each do |surr|
       var = discipline.variables.detect{|v| v.name == surr.variable.name} if discipline
       surr_copy = surr.build_copy(mm_copy, var)

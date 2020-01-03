@@ -333,19 +333,17 @@ class Analysis < ApplicationRecord
           # p "***************************************** IMPORT #{disc.name}"
           # check consistency
           if disc && fromAnalysis.disciplines.where(id: discId)
+            discattrs = disc.prepare_attributes_for_import!(variables, driver)
+            attrs = {disciplines_attributes: [discattrs]}
+            # p "ATTRS", attrs
+            self.update!(attrs)
+            newDisc = self.disciplines.reload.last
             if disc.is_pure_metamodel?
-              newDisc =  disc.create_copy!(self)
-              newDisc.move_to_bottom
-            else
-              discattrs = disc.prepare_attributes_for_import!(variables, driver)
-              attrs = {disciplines_attributes: [discattrs]}
-              # p "ATTRS", attrs
-              self.update!(attrs)
-              newDisc = self.disciplines.reload.last
+              newDisc.meta_model = disc.meta_model.build_copy(newDisc)
+            end
 
-              if disc.has_sub_analysis?
-                newDisc.sub_analysis = disc.sub_analysis.create_copy!(self)
-              end
+            if disc.has_sub_analysis?
+              newDisc.sub_analysis = disc.sub_analysis.create_copy!(self)
             end
 
             newDisc.save!
