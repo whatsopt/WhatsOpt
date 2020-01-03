@@ -34,8 +34,21 @@ sobol_doe_job:
 sobol_sensitivity_job:
   <<: *default_assume_done
   operation: sobol_sensitivity
-    
+
+doe_copy_job:
+  <<: *default_assume_done
+  operation: doe_copy
+
+mm_doe_job:
+  <<: *default_assume_done
+  operation: mm_from_doe
+
 doe2_job:
   <<: *default_assume_done
   status: DONE
   operation: doe2
+
+mm_doe2_job:
+  <<: *default_assume_done
+  operation: mm_from_doe2
+  

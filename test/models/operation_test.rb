@@ -27,4 +27,14 @@ class OperationTest < ActiveSupport::TestCase
     expected = [{ name: "obj", io_mode: :out, shape: "1", type: "Float", active: true, parameter_attributes: {}}, { name: "x1", io_mode: :in, shape: "1", type: "Float", active: true, parameter_attributes: { init: "3.14", lower: "1", upper: "10" } }, { name: "z", io_mode: :in, shape: "(2,)", type: "Float", active: true, parameter_attributes: { init: "3.14", lower: "1", upper: "10" }}]
     assert_equal expected, varattrs
   end
+
+  test "should create a ope doe copy using given destination analysis and variable names" do
+    ope = operations(:doe)
+    copy_mda = ope.analysis.create_copy!
+    varnames = ['x1', 'obj']
+    copy_ope = ope.build_copy(copy_mda, varnames)
+    # z is of shape (2,), hence 2 cases z[0] z[1] are removed
+    assert_equal ope.cases.size - 2, copy_ope.cases.size
+    assert_equal varnames.sort, (ope.cases.map{|c| c.variable.name } - ["z", "z"]).sort
+  end
 end

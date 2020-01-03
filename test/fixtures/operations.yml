@@ -14,11 +14,18 @@ doe:
     name: LHS
     driver: smt_doe_lhs
     analysis: cicav
-    success: [1, 0, 1]
+    success: [1, 0, 1, 1, 1]
+    
+doe_copy:
+    name: LHS
+    driver: smt_doe_lhs
+    analysis: cicav_metamodel_analysis
+    success: [1, 0, 1, 1, 1]
 
 mm_from_doe:
-    base_operation: doe
+    base_operation: doe_copy
     name: mm
+    analysis: cicav_metamodel_analysis
     driver: smt_metamodel_kriging
 
 morris_doe:
@@ -50,15 +57,16 @@ sobol_sensitivity:
 doe2:
     name: LHS
     driver: smt_doe_lhs
-    analysis: cicav
+    analysis: cicav_metamodel2_analysis
     success: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-              1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-              1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-              1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-              1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+                1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                1, 1, 1, 1, 1, 1, 1, 1, 1, 1]               
 
 mm_from_doe2:
     base_operation: doe2
     name: mm2
     driver: smt_metamodel_kriging
+    analysis: cicav_metamodel2_analysis
             

@@ -18,6 +18,10 @@ class Job < ApplicationRecord
     SUCCESS_STATUSES.include?(status)
   end
 
+  def build_copy
+    self.dup
+  end
+
   def ensure_defaults
     self.status ||= "PENDING"
     self.pid ||= -1

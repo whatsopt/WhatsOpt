@@ -195,7 +195,7 @@ class Operation < ApplicationRecord
   end
 
   def ope_cases
-    base_operation ? base_operation.cases : cases
+    base_operation ? base_operation.ope_cases : cases
   end
 
   def input_cases
@@ -208,6 +208,26 @@ class Operation < ApplicationRecord
 
   def sorted_cases
     input_cases + output_cases
+  end
+
+  def build_copy(analysis, varnames=[]) 
+    ope_copy = analysis.operations.build(self.attributes.except("id"))
+    ope_copy.job = self.job.build_copy
+    self.cases.each do |c|
+      vname = c.variable.name
+      if varnames.empty? || varnames.include?(vname)
+
+        dest_variable = Variable.of_analysis(analysis)
+                          .where(name: vname, io_mode: WhatsOpt::Variable::OUT)
+                          .take
+        c_copy =  c.build_copy(ope_copy, dest_variable)
+        ope_copy.cases << c_copy
+      end
+    end
+    if base_operation
+      ope_copy.base_operation = base_operation.build_copy(analysis, varnames)
+    end
+    ope_copy
   end
 
   def perform
@@ -320,11 +340,11 @@ class Operation < ApplicationRecord
   end
 
   def _check_allowed_destruction
-    unless self.meta_models.empty?
-      mdas = self.meta_models.map(&:analysis)
-      msg = mdas.map {|a| "##{a.id} #{a.name}"}.join(', ')
-      raise ForbiddenRemovalException.new("Can not delete operation '#{self.name}' as meta_models are in use: #{msg} (to be deleted first)")
-    end
+    # unless self.meta_models.empty?
+    #   mdas = self.meta_models.map(&:analysis)
+    #   msg = mdas.map {|a| "##{a.id} #{a.name}"}.join(', ')
+    #   raise ForbiddenRemovalException.new("Can not delete operation '#{self.name}' as meta_models are in use: #{msg} (to be deleted first)")
+    # end
     unless self.derived_operations.empty?
       msg = self.derived_operations.map(&:name).join(', ')
       raise ForbiddenRemovalException.new("Can not delete operation '#{self.name}' as another operation depends on it: #{msg} (to be deleted first)")

@@ -130,15 +130,19 @@ class Discipline < ApplicationRecord
     self.variables.each do |var|
       disc_copy.variables << var.build_copy
     end
+    mda.disciplines << disc_copy
     if self.is_pure_metamodel?
-      meta_model = self.meta_model.build_copy(disc_copy)
+      mm_ope = self.meta_model.operation.build_copy(mda)
+      mm_ope.save!
+      meta_model = self.meta_model.build_copy(disc_copy, mm_ope)
       #disc_copy.meta_model = meta_model
     end
     if self.has_sub_analysis?
       sub_analysis = self.sub_analysis.create_copy!(mda, disc_copy)
     end
     disc_copy.openmdao_impl = self.openmdao_impl&.build_copy
-    mda.disciplines << disc_copy
+
+    disc_copy.save!
     disc_copy
   end
 

@@ -314,7 +314,7 @@ driver_metamodel_varz_design_out:
   discipline: driver_cicav_metamodel
   io_mode: out
   type: Float
-  shape: 1
+  shape: (2,)
   active: true
   
 driver_metamodel_varobj_objective_in:
@@ -346,7 +346,7 @@ disc_metamodel_varz_design_in:
   discipline: disc_cicav_metamodel
   io_mode: in
   type: Float
-  shape: 1
+  shape: (2,)
   active: true
   
 disc_metamodel_varobj_objective_out:

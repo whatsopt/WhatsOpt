@@ -16,7 +16,7 @@ class MetaModelsControllerTest < ActionDispatch::IntegrationTest
 
   test "should create a metamodel" do
     assert_difference("Analysis.count", 1) do
-      assert_difference("Operation.count", 1) do
+      assert_difference("Operation.count", 2) do # doe + metamodel
         assert_difference("MetaModel.count", 1) do
           assert_difference("Surrogate.count", 1) do
             post operation_meta_models_url(@ope), params: { meta_model: { kind: Surrogate::SMT_KPLS } }
@@ -36,7 +36,8 @@ class MetaModelsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "10", z.parameter.upper
     assert_equal 1, mda.response_variables.count
     mm = MetaModel.last
-    assert_equal @ope, mm.operation.base_operation
+    assert_equal @ope.attributes.except("id", "analysis_id"), 
+                 mm.operation.base_operation.attributes.except("id", "analysis_id")
     assert_equal mda.disciplines.last, mm.discipline
     assert_equal Surrogate::SMT_KPLS, mm.default_surrogate_kind
     assert_equal 1, mm.surrogates.count

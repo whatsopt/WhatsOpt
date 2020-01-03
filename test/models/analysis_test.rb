@@ -126,21 +126,21 @@ class AnalysisTest < ActiveSupport::TestCase
   end
 
   test "should copy of a copy of a metamodel and predict with even middle copy removed" do
-    skip "doe copy not yet implemented"
+    # skip "doe copy not yet implemented"
     mda = analyses(:cicav_metamodel_analysis)
     copy = mda.create_copy!
     assert copy.is_metamodel_analysis?
-    x = [[2.5, 3, 4], [8, 9, 10], [5, 4, 3]]
+    x = [[1, 3, 4], [8, 9, 10], [5, 4, 3]]
     mm = copy.disciplines.last.meta_model
+    assert_not_equal mda.disciplines.last, mm
     y = mm.predict(x)
-    assert_in_delta 5, y[0][0]
+    assert_in_delta 4.925, y[0][0]
     assert_equal x.size, y.size
-    p mda.disciplines.second.meta_model.operation
-    mda.operations.map(&:destroy)
+    mda.operations.reverse.map(&:destroy)
     mda.destroy
     mm.reload
     y = mm.predict(x)
-    assert_in_delta 5, y[0][0]
+    assert_in_delta 4.925, y[0][0]
     assert_equal x.size, y.size
   end
 

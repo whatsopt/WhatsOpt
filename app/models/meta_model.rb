@@ -30,9 +30,10 @@ class MetaModel < ApplicationRecord
     end
   end
 
-  def build_copy(discipline=nil)
+  def build_copy(discipline=nil, operation=nil)
     mm_copy = self.dup
     mm_copy.discipline = discipline if discipline
+    mm_copy.operation = operation if operation
     self.surrogates.each do |surr|
       var = discipline.variables.detect{|v| v.name == surr.variable.name} if discipline
       surr_copy = surr.build_copy(mm_copy, var)
@@ -68,12 +69,12 @@ class MetaModel < ApplicationRecord
   end
 
   def training_input_values
-    @training_inputs ||= Matrix.columns(operation.input_cases.sort_by { |c| c.variable.name }.map(&:values)).to_a
+    @training_inputs ||= Matrix.columns(operation.input_cases.sort_by { |c| c.label }.map(&:values)).to_a
   end
 
   def training_output_values(varname, coord_index)
     @training_outputs ||= operation.output_cases
-                            .select {|c| c.coord_index == coord_index && c.variable.name == varname}.first.values
+                            .detect {|c| c.variable.name == varname && c.coord_index == coord_index}.values
   end
 
   def qualification

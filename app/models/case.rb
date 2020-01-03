@@ -17,4 +17,19 @@ class Case < ApplicationRecord
   def float_varname
     variable.name + (coord_index < 0 ? "" : "[#{coord_index}]")
   end
+
+  def label
+    @label ||= Case.labelOf(variable.name, coord_index) 
+  end
+
+  def self.labelOf(name, coord)
+    "#{name}[#{coord}]" 
+  end
+
+  def build_copy(operation, variable)
+    copy = self.dup
+    copy.variable = variable
+    copy.operation = operation
+    copy
+  end
 end

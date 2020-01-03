@@ -55,7 +55,7 @@ class Api::V1::OperationsControllerTest < ActionDispatch::IntegrationTest
     get api_v1_operation_url(@ope), as: :json, headers: @auth_headers
     assert_response :success
     resp = JSON.parse(response.body)
-    assert_equal 3, resp["success"].size
+    assert_equal 5, resp["success"].size
   end
 
   test "should update an operation with cases" do

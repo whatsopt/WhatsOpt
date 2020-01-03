@@ -20,6 +20,28 @@ case4:
     coord_index: 1
     values: [5, 4, 3, 2, 1]
 
+case1_copy:
+    operation: doe_copy
+    variable: driver_metamodel_varx1_out
+    values: [1.0, 2.5, 5, 7.5, 9.8]
+    
+case2_copy:
+    operation: doe_copy
+    variable: disc_metamodel_varobj_objective_out
+    values: [4, 5, 6, 7, 8]
+
+case3_copy:
+    operation: doe_copy
+    variable: driver_metamodel_varz_design_out
+    coord_index: 0
+    values: [8, 3, 6, 9, 10]
+
+case4_copy:
+    operation: doe_copy
+    variable: driver_metamodel_varz_design_out
+    coord_index: 1
+    values: [5, 4, 3, 2, 1]
+
 empty_case:
     operation: inprogress2
     variable: varx_fastdisc_in

@@ -280,6 +280,7 @@ class Analysis < ApplicationRecord
         role = WhatsOpt::Variable::RESPONSE_ROLE if vin.discipline.is_driver?
         existing_conn_proto = Connection.where(from_id: vout.id).take
         role = existing_conn_proto.role if existing_conn_proto
+        # p "ROLE #{role}"
         # p "1 Connect #{vout.name} between #{vout.discipline.name} #{vin.discipline.name}" unless Connection.where(from_id: vout.id, to_id: vin.id).first 
         Connection.where(from_id: vout.id, to_id: vin.id).first_or_create!(role: role)
         # if Variable.where(name: vout.name, io_mode: WhatsOpt::Variable::OUT)
@@ -332,19 +333,21 @@ class Analysis < ApplicationRecord
           # p "***************************************** IMPORT #{disc.name}"
           # check consistency
           if disc && fromAnalysis.disciplines.where(id: discId)
-            discattrs = disc.prepare_attributes_for_import!(variables, driver)
-            attrs = {disciplines_attributes: [discattrs]}
-            # p "ATTRS", attrs
-            self.update!(attrs)
-
-            newDisc = self.disciplines.reload.last
             if disc.is_pure_metamodel?
-              newDisc.meta_model = disc.meta_model.build_copy(disc)
+              newDisc =  disc.create_copy!(self)
+              newDisc.move_to_bottom
+            else
+              discattrs = disc.prepare_attributes_for_import!(variables, driver)
+              attrs = {disciplines_attributes: [discattrs]}
+              # p "ATTRS", attrs
+              self.update!(attrs)
+              newDisc = self.disciplines.reload.last
+
+              if disc.has_sub_analysis?
+                newDisc.sub_analysis = disc.sub_analysis.create_copy!(self)
+              end
             end
 
-            if disc.has_sub_analysis?
-              newDisc.sub_analysis = disc.sub_analysis.create_copy!(self)
-            end
             newDisc.save!
           end
         end

@@ -131,7 +131,7 @@ driver_metamodel_y2_in:
 driver_metamodel_obj_out:
   from_id: <%= ActiveRecord::FixtureSet.identify(:disc_metamodel_varobj_objective_out) %>
   to_id: <%= ActiveRecord::FixtureSet.identify(:driver_metamodel_varobj_objective_in) %>
-  role: "objective"
+  role: "min_objective"
 
 # SINGLETON ################################################################
 driver_disc_u:

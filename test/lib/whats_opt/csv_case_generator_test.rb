@@ -8,7 +8,7 @@ class CsvCaseGeneratorTest < ActiveSupport::TestCase
     @ope = operations(:doe)
   end
 
-  CSV_DATA = "success;x1;z[0];z[1];obj\n1;1.0;8;5;4\n0;2.5;3;4;5\n1;5;6;3;6\n"
+  CSV_DATA = "success;x1;z[0];z[1];obj\n1;1.0;8;5;4\n0;2.5;3;4;5\n1;5;6;3;6\n1;7.5;9;2;7\n1;9.8;10;1;8\n"
 
   test "should generate csv file from given operation cases" do
     @csvgen = WhatsOpt::CsvCaseGenerator.new

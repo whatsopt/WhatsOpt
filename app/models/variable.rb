@@ -78,17 +78,17 @@ class Variable < ApplicationRecord
 
   def is_connected_as_input_of_interest?
     if is_in?
-      WhatsOpt::Variable::INTEREST_INPUT_ROLES.include?(incoming_connection.role)
+      WhatsOpt::Variable::INPUT_ROLES.include?(incoming_connection.role)
     else
-      !outgoing_connections.where(connections: { role: WhatsOpt::Variable::INTEREST_INPUT_ROLES }).blank?
+      !outgoing_connections.where(connections: { role: WhatsOpt::Variable::INPUT_ROLES }).blank?
     end
   end
 
   def is_connected_as_output_of_interest?
     if is_in?
-      WhatsOpt::Variable::INTEREST_OUTPUT_ROLES.include?(incoming_connection.role)
+      WhatsOpt::Variable::OUTPUT_ROLES.include?(incoming_connection.role)
     else
-      !outgoing_connections.where(connections: { role: WhatsOpt::Variable::INTEREST_OUTPUT_ROLES }).blank?
+      !outgoing_connections.where(connections: { role: WhatsOpt::Variable::OUTPUT_ROLES }).blank?
     end
   end
 
