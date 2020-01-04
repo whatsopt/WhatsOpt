@@ -22,23 +22,37 @@ class SensitivityPlotter extends React.Component {
   }
 
   render() {
-    let screenings;
+    let plots;
+    let desc;
     const { sensitivity } = this.state;
     if (sensitivity) {
       const { saMethod, saResult } = sensitivity;
       const varnames = Object.keys(saResult).sort();
       const outs = [];
       for (const output of varnames) {
-        outs.push([output, saResult[output]]);
+        outs.push({ outname: output, sensitivity: saResult[output] });
       }
-      console.log(`samethod ${saMethod}`);
       if (saMethod === 'morris') {
-        screenings = outs.map(
-          (o) => (<MorrisScatterPlot key={o[0]} outVarName={o[0]} saData={o[1]} />),
+        desc = 'For each output, plot of standard deviation (\u03c3) vs mean (\u03bc*) of the effect of a given input (the closer to (0,0), the lesser influent the input is)';
+        plots = outs.map(
+          (o) => (
+            <MorrisScatterPlot
+              key={o.outname}
+              outVarName={o.outname}
+              saData={o.sensitivity}
+            />
+          ),
         );
       } else if (saMethod === 'sobol') {
-        screenings = outs.map(
-          (o) => (<SobolScatterPlot key={o[0]} outVarName={o[0]} saData={o[1]} />),
+        desc = 'For each output, Sobol first order (S1) and total order (ST) indices (share of the variance of the output that is due ti a given input: the greater, the more influent the input is)';
+        plots = outs.map(
+          (o) => (
+            <SobolScatterPlot
+              key={o.outname}
+              outVarName={o.outname}
+              saData={o.sensitivity}
+            />
+          ),
         );
       } else {
         console.log(`Error: sensitivity analysis method ${saMethod} unknown`);
@@ -46,14 +60,16 @@ class SensitivityPlotter extends React.Component {
     }
 
     const { ope, mda } = this.props;
-    const title = `${ope.name} on ${mda.name}`;
+    const title = `Sensitivity analysis on ${mda.name} (${ope.name})`;
     return (
       <div>
         <h1>
           {title}
         </h1>
-
-        {screenings}
+        <p>
+          {desc}
+        </p>
+        {plots}
       </div>
     );
   }
