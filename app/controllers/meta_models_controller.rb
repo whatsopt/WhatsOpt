@@ -8,12 +8,13 @@ class MetaModelsController < ApplicationController
     authorize mda
     if mda.save
       driver = get_driver_from_metamodel_kind(meta_model_params[:kind])
+      name = get_name_from_metamodel_kind(meta_model_params[:kind])
       vars = []
       unless meta_model_params[:variables].blank?
         vars = meta_model_params[:variables][:inputs] + meta_model_params[:variables][:outputs]
       end
       mm_doe = ope.build_copy(mda, vars)
-      mm_ope = Operation.build_operation(mda, name: "metamodel", driver: driver)
+      mm_ope = Operation.build_operation(mda, name: name, driver: driver)
       mm_ope.base_operation = mm_doe
       mm_ope.save!
       mda.set_all_parameters_as_design_variables
@@ -38,9 +39,18 @@ class MetaModelsController < ApplicationController
     end
 
     def get_driver_from_metamodel_kind(kind)
+      library, algo = get_infos_from_metamodel_kind(kind)
+      "#{library}_metamodel_#{algo}"
+    end
+
+    def get_name_from_metamodel_kind(kind)
+      library, algo = get_infos_from_metamodel_kind(kind)
+      "Metamodel #{algo}"
+    end
+
+    def get_infos_from_metamodel_kind(kind)
       kind = kind.downcase
       kind =~ /(\w+)_(\w+)/
-      library, algo = $1, $2
-      "#{library}_metamodel_#{algo}"
+      return $1, $2
     end
 end
