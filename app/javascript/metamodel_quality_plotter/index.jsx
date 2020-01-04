@@ -8,9 +8,11 @@ class MetaModelQualityPlotter extends React.PureComponent {
     return (
       <div>
         <h1>
-          Quality of metamodel '
+          Quality of surrogates of
+          {' '}
           {mdaName}
-          '
+          {' '}
+          analysis
         </h1>
         <MetaModelQualification quality={quality} />
       </div>
