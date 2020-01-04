@@ -75,8 +75,8 @@ class MetaModel < ApplicationRecord
   end
 
   def training_output_values(varname, coord_index)
-    @training_outputs ||= operation.output_cases
-                            .detect {|c| c.variable.name == varname && c.coord_index == coord_index}.values
+    @training_outputs = operation.output_cases
+                          .detect {|c| c.variable.name == varname && c.coord_index == coord_index}.values
   end
 
   def qualification
