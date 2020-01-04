@@ -14,9 +14,6 @@ class OperationsController < ApplicationController
     unless @ope.success? # ope in progress, goto edit page
       redirect_to edit_operation_url(@ope)
     end
-    if @ope.meta_model?  # goto containing first metamodel
-      redirect_to mda_url(@ope.meta_models.first.analysis)
-    end
     @mda = @ope.analysis
   end
 
