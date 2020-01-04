@@ -12,14 +12,18 @@ class Api::V1::SensitivityAnalysisControllerTest < ActionDispatch::IntegrationTe
     @ope = operations(:morris_sensitivity)
     get api_v1_operation_sensitivity_analysis_url(@ope), as: :json, headers: @auth_headers
     assert_response :success
-    sa = JSON.parse(response.body)
+    sa = JSON.parse(response.body)["sensitivity"]
     expected = {"saMethod"=>"morris", "saResult"=>{
                   "obj"=>{"mu"=>[0.65, 0.21000000000000005], 
                   "mu_star"=>[1.62, 0.3500000000000001], 
                   "sigma"=>[1.794107020219251, 0.41199514560246936], 
-                  "mu_star_conf"=>[0.5504062503123504, 0.20417881215842676], 
                   "parameter_names"=>["x1", "z[0]"]}}}
-    assert_equal expected, sa["sensitivity"]
+    sa_obj = sa["saResult"]["obj"]
+    expected_obj = expected["saResult"]["obj"]
+    assert_not_nil sa_obj["mu_star_conf"]  
+    assert_equal(expected_obj["mu_star"], sa_obj["mu_star"])
+    assert_equal(expected_obj["sigma"], sa_obj["sigma"])
+    assert_equal(expected_obj["parameter_names"], sa_obj["parameter_names"])
   end
 
   test "should run salib sobol sensitivity analysis" do
@@ -36,9 +40,9 @@ class Api::V1::SensitivityAnalysisControllerTest < ActionDispatch::IntegrationTe
     assert_equal expected["saMethod"], sa["saMethod"]
     sa_obj = sa["saResult"]["obj"]
     expected_obj = expected["saResult"]["obj"]
-    assert_equal expected_obj["S1"], sa_obj["S1"]
-    assert_equal expected_obj["ST"], sa_obj["ST"]
-    assert_equal expected_obj["parameter_names"], sa_obj["parameter_names"]
+    assert_equal(expected_obj["S1"], sa_obj["S1"])
+    assert_equal(expected_obj["ST"], sa_obj["ST"])
+    assert_equal(expected_obj["parameter_names"], sa_obj["parameter_names"])
   end
 
 end
