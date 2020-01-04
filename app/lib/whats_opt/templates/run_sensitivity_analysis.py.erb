@@ -41,7 +41,7 @@ Si = analyser.analyze(salib_pb, output, calc_second_order=False, print_to_consol
 <% else %>
 Si = analyser.analyze(salib_pb, inputs, output, print_to_console=False)
 <% end%>
-result_tmp = {k:v for k, v in Si.items() if k is not 'names'}
+result_tmp = {k:np.array(v) for k, v in Si.items() if k is not 'names'}
 result[outname] = {k:v.tolist() for k, v in result_tmp.items() if isinstance(v, np.ndarray)}
 result[outname]['parameter_names'] = names
 <% end %>

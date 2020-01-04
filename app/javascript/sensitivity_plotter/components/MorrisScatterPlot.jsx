@@ -8,12 +8,16 @@ const Plot = createPlotlyComponent(Plotly);
 class MorrisScatterPlot extends React.PureComponent {
   render() {
     const { saData, outVarName } = this.props;
+    const {
+      mu_star: muStar, sigma, mu_star_conf: muStarConf, parameter_names: paramNames,
+    } = saData;
     const trace = {
-      x: saData.mu_star,
-      y: saData.sigma,
+      x: muStar,
+      error_x: { type: 'data', array: muStarConf, symmetric: true },
+      y: sigma,
       type: 'scatter',
       mode: 'markers+text',
-      text: saData.parameter_names,
+      text: paramNames,
       textposition: 'top center',
       marker: { size: 10 },
       cliponaxis: false,
@@ -44,6 +48,7 @@ MorrisScatterPlot.propTypes = {
   outVarName: PropTypes.string.isRequired,
   saData: PropTypes.shape({
     mu_star: PropTypes.array.isRequired,
+    mu_star_conf: PropTypes.array.isRequired,
     sigma: PropTypes.array.isRequired,
     parameter_names: PropTypes.array.isRequired,
   }).isRequired,
