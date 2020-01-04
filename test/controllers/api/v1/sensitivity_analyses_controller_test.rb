@@ -17,6 +17,7 @@ class Api::V1::SensitivityAnalysisControllerTest < ActionDispatch::IntegrationTe
                   "obj"=>{"mu"=>[0.65, 0.21000000000000005], 
                   "mu_star"=>[1.62, 0.3500000000000001], 
                   "sigma"=>[1.794107020219251, 0.41199514560246936], 
+                  "mu_star_conf"=>[0.5504062503123504, 0.20417881215842676], 
                   "parameter_names"=>["x1", "z[0]"]}}}
     assert_equal expected, sa["sensitivity"]
   end
