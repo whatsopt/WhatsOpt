@@ -78,7 +78,7 @@ class Operation < ApplicationRecord
       if self.driver =~ /(\w+)_doe_(\w+)/
         library = $1
         algo = $2
-        derived = self.derived_operations.build(name: "Sensitivity(#{algo})", 
+        derived = self.derived_operations.build(name: "Sensitivity #{algo}", 
                                                 driver: "#{library}_sensitivity_#{algo}",
                                                 analysis_id: self.analysis_id)
         derived.build_job(status: "ASSUME_DONE")
@@ -89,7 +89,7 @@ class Operation < ApplicationRecord
       if self.driver =~ /(openturns)_metamodel_(pce)/
         library = $1
         algo = $2
-        derived = self.derived_operations.build(name: "Sensitivity(#{algo})", 
+        derived = self.derived_operations.build(name: "Sensitivity #{algo}", 
                                                 driver: "#{library}_sensitivity_#{algo}",
                                                 analysis_id: self.analysis_id)
         derived.build_job(status: "ASSUME_DONE")
