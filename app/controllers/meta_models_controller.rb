@@ -24,7 +24,8 @@ class MetaModelsController < ApplicationController
         default_surrogate_kind: meta_model_params[:kind])
       @meta_model.build_surrogates
       if @meta_model.save
-        redirect_to mda_url(mda), notice: "Metamodel was successfully created."
+        redirect_to operation_url(mm_ope), notice: "Metamodel was successfully created."
+        # redirect_to mda_url(mda), notice: "Metamodel was successfully created."
       else
         redirect_to operation_url(ope), notice: "Something went wrong. Can not create metamodel from current operation data."
       end
