@@ -36,7 +36,7 @@ class Api::V1::SensitivityAnalysisControllerTest < ActionDispatch::IntegrationTe
       "S1_conf"=>[0.20703489110937862, 0.918324574201029, 0.19034180520043809], 
       "ST"=>[0.34703517959317715, 0.4068909153159429, 0.026851974301575657], 
       "ST_conf"=>[0.6297755534433752, 0.8538655815339021, 0.02195163588501736], 
-      "parameter_names"=>["x1", "z[0]", "z[1]"  ]}}}
+      "parameter_names"=>["x1", "z[0]", "z[1]"]}}}
     assert_equal expected["saMethod"], sa["saMethod"]
     sa_obj = sa["saResult"]["obj"]
     expected_obj = expected["saResult"]["obj"]

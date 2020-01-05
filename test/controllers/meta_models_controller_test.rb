@@ -59,7 +59,7 @@ class MetaModelsControllerTest < ActionDispatch::IntegrationTest
 
   test "should show error if bad metamodel kind" do
     post operation_meta_models_url(@ope), params: {
-      meta_model: { kind: "BAD KIND", variables: { inputs: ["x1"], outputs: ["obj"] } }
+      meta_model: { kind: "BAD KIND" }
     }
     assert_redirected_to operation_url(@ope)
     assert_match /Unknown metamodel/, flash[:alert]

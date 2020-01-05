@@ -2,18 +2,21 @@ require 'test_helper'
 
 class OpenturnsSobolPceTest < ActionDispatch::IntegrationTest
 
+  setup do
+    @user1 = users(:user1)
+    @auth_headers = { "Authorization" => "Token " + TEST_API_KEY }
+  end
+
   test "doe creation then metamodel creation and sobol analysis" do
-    # post api_v1_operations_url(),
-    # params: {
-    #   operation: { name: "MyData",
-    #     driver: "user_doe_algo",
-    #     host: "localhost",
-    #     cases: cases
-    #     ],
-    #     success: [1, 0, 1]
-    #   }
-    # },
-    # as: :json, headers: @auth_headers
+    # sign_in(users("user1"))
+    # post "/api/v1/operations", params: {
+    #   operation: {'name': "doe test",
+    #               'driver': "smt_doe_lhs",
+    #               'host': "localhost",
+    #               'cases': ,
+    #               'success': },
+    #   },
+    #   as: :json, headers: @auth_headers
 
   end
 

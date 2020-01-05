@@ -32,11 +32,22 @@ class SurrogateProxyTest < ActiveSupport::TestCase
     surr_kind = WhatsOpt::SurrogateServer::SurrogateKind::OPENTURNS_PCE
     @surr_proxy.create_surrogate(surr_kind, xt, yt)
     values = @surr_proxy.predict_values([[1.0], [2.5]])
-
     assert_equal(2, values.size)
     @surr_proxy.destroy_surrogate
   end
 
+  test "should get sobol indices with openturns surrogate" do
+    skip_if_parallel
+    xt = [[0.0], [1.0], [2.0], [3.0], [4.0]]
+    yt = [0.0, 1.0, 1.5, 0.5, 1.0]
+    surr_kind = WhatsOpt::SurrogateServer::SurrogateKind::OPENTURNS_PCE
+    @surr_proxy.create_surrogate(surr_kind, xt, yt)
+    sobols = @surr_proxy.get_sobol_pce_sensitivity_analysis
+    assert_equal([1.0], sobols.S1)
+    assert_equal([0.0], sobols.ST)
+    @surr_proxy.destroy_surrogate
+  end
+  
   test "should qualify surrogate" do
     skip_if_parallel
     xt = [[0.0], [1.0], [2.0], [3.0], [4.0]]

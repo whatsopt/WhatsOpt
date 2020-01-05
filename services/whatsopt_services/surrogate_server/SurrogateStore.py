@@ -67,6 +67,13 @@ class Iface(object):
         """
         pass
 
+    def get_sobol_pce_sensitivity_analysis(self, surrogate_id):
+        """
+        Parameters:
+         - surrogate_id
+        """
+        pass
+
 
 class Client(Iface):
     def __init__(self, iprot, oprot=None):
@@ -280,6 +287,37 @@ class Client(Iface):
         iprot.readMessageEnd()
         return
 
+    def get_sobol_pce_sensitivity_analysis(self, surrogate_id):
+        """
+        Parameters:
+         - surrogate_id
+        """
+        self.send_get_sobol_pce_sensitivity_analysis(surrogate_id)
+        return self.recv_get_sobol_pce_sensitivity_analysis()
+
+    def send_get_sobol_pce_sensitivity_analysis(self, surrogate_id):
+        self._oprot.writeMessageBegin('get_sobol_pce_sensitivity_analysis', TMessageType.CALL, self._seqid)
+        args = get_sobol_pce_sensitivity_analysis_args()
+        args.surrogate_id = surrogate_id
+        args.write(self._oprot)
+        self._oprot.writeMessageEnd()
+        self._oprot.trans.flush()
+
+    def recv_get_sobol_pce_sensitivity_analysis(self):
+        iprot = self._iprot
+        (fname, mtype, rseqid) = iprot.readMessageBegin()
+        if mtype == TMessageType.EXCEPTION:
+            x = TApplicationException()
+            x.read(iprot)
+            iprot.readMessageEnd()
+            raise x
+        result = get_sobol_pce_sensitivity_analysis_result()
+        result.read(iprot)
+        iprot.readMessageEnd()
+        if result.success is not None:
+            return result.success
+        raise TApplicationException(TApplicationException.MISSING_RESULT, "get_sobol_pce_sensitivity_analysis failed: unknown result")
+
 
 class Processor(Iface, TProcessor):
     def __init__(self, handler):
@@ -292,6 +330,7 @@ class Processor(Iface, TProcessor):
         self._processMap["qualify"] = Processor.process_qualify
         self._processMap["predict_values"] = Processor.process_predict_values
         self._processMap["destroy_surrogate"] = Processor.process_destroy_surrogate
+        self._processMap["get_sobol_pce_sensitivity_analysis"] = Processor.process_get_sobol_pce_sensitivity_analysis
 
     def process(self, iprot, oprot):
         (name, type, seqid) = iprot.readMessageBegin()
@@ -469,6 +508,29 @@ class Processor(Iface, TProcessor):
         oprot.writeMessageEnd()
         oprot.trans.flush()
 
+    def process_get_sobol_pce_sensitivity_analysis(self, seqid, iprot, oprot):
+        args = get_sobol_pce_sensitivity_analysis_args()
+        args.read(iprot)
+        iprot.readMessageEnd()
+        result = get_sobol_pce_sensitivity_analysis_result()
+        try:
+            result.success = self._handler.get_sobol_pce_sensitivity_analysis(args.surrogate_id)
+            msg_type = TMessageType.REPLY
+        except TTransport.TTransportException:
+            raise
+        except TApplicationException as ex:
+            logging.exception('TApplication exception in handler')
+            msg_type = TMessageType.EXCEPTION
+            result = ex
+        except Exception:
+            logging.exception('Unexpected exception in handler')
+            msg_type = TMessageType.EXCEPTION
+            result = TApplicationException(TApplicationException.INTERNAL_ERROR, 'Internal error')
+        oprot.writeMessageBegin("get_sobol_pce_sensitivity_analysis", msg_type, seqid)
+        result.write(oprot)
+        oprot.writeMessageEnd()
+        oprot.trans.flush()
+
 # HELPER FUNCTIONS AND STRUCTURES
 
 
@@ -639,25 +701,25 @@ class create_surrogate_args(object):
             elif fid == 3:
                 if ftype == TType.LIST:
                     self.xt = []
-                    (_etype10, _size7) = iprot.readListBegin()
-                    for _i11 in range(_size7):
-                        _elem12 = []
-                        (_etype16, _size13) = iprot.readListBegin()
-                        for _i17 in range(_size13):
-                            _elem18 = iprot.readDouble()
-                            _elem12.append(_elem18)
+                    (_etype24, _size21) = iprot.readListBegin()
+                    for _i25 in range(_size21):
+                        _elem26 = []
+                        (_etype30, _size27) = iprot.readListBegin()
+                        for _i31 in range(_size27):
+                            _elem32 = iprot.readDouble()
+                            _elem26.append(_elem32)
                         iprot.readListEnd()
-                        self.xt.append(_elem12)
+                        self.xt.append(_elem26)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
             elif fid == 4:
                 if ftype == TType.LIST:
                     self.yt = []
-                    (_etype22, _size19) = iprot.readListBegin()
-                    for _i23 in range(_size19):
-                        _elem24 = iprot.readDouble()
-                        self.yt.append(_elem24)
+                    (_etype36, _size33) = iprot.readListBegin()
+                    for _i37 in range(_size33):
+                        _elem38 = iprot.readDouble()
+                        self.yt.append(_elem38)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
@@ -682,18 +744,18 @@ class create_surrogate_args(object):
         if self.xt is not None:
             oprot.writeFieldBegin('xt', TType.LIST, 3)
             oprot.writeListBegin(TType.LIST, len(self.xt))
-            for iter25 in self.xt:
-                oprot.writeListBegin(TType.DOUBLE, len(iter25))
-                for iter26 in iter25:
-                    oprot.writeDouble(iter26)
+            for iter39 in self.xt:
+                oprot.writeListBegin(TType.DOUBLE, len(iter39))
+                for iter40 in iter39:
+                    oprot.writeDouble(iter40)
                 oprot.writeListEnd()
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         if self.yt is not None:
             oprot.writeFieldBegin('yt', TType.LIST, 4)
             oprot.writeListBegin(TType.DOUBLE, len(self.yt))
-            for iter27 in self.yt:
-                oprot.writeDouble(iter27)
+            for iter41 in self.yt:
+                oprot.writeDouble(iter41)
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
@@ -950,25 +1012,25 @@ class qualify_args(object):
             elif fid == 2:
                 if ftype == TType.LIST:
                     self.xv = []
-                    (_etype31, _size28) = iprot.readListBegin()
-                    for _i32 in range(_size28):
-                        _elem33 = []
-                        (_etype37, _size34) = iprot.readListBegin()
-                        for _i38 in range(_size34):
-                            _elem39 = iprot.readDouble()
-                            _elem33.append(_elem39)
+                    (_etype45, _size42) = iprot.readListBegin()
+                    for _i46 in range(_size42):
+                        _elem47 = []
+                        (_etype51, _size48) = iprot.readListBegin()
+                        for _i52 in range(_size48):
+                            _elem53 = iprot.readDouble()
+                            _elem47.append(_elem53)
                         iprot.readListEnd()
-                        self.xv.append(_elem33)
+                        self.xv.append(_elem47)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
             elif fid == 3:
                 if ftype == TType.LIST:
                     self.yv = []
-                    (_etype43, _size40) = iprot.readListBegin()
-                    for _i44 in range(_size40):
-                        _elem45 = iprot.readDouble()
-                        self.yv.append(_elem45)
+                    (_etype57, _size54) = iprot.readListBegin()
+                    for _i58 in range(_size54):
+                        _elem59 = iprot.readDouble()
+                        self.yv.append(_elem59)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
@@ -989,18 +1051,18 @@ class qualify_args(object):
         if self.xv is not None:
             oprot.writeFieldBegin('xv', TType.LIST, 2)
             oprot.writeListBegin(TType.LIST, len(self.xv))
-            for iter46 in self.xv:
-                oprot.writeListBegin(TType.DOUBLE, len(iter46))
-                for iter47 in iter46:
-                    oprot.writeDouble(iter47)
+            for iter60 in self.xv:
+                oprot.writeListBegin(TType.DOUBLE, len(iter60))
+                for iter61 in iter60:
+                    oprot.writeDouble(iter61)
                 oprot.writeListEnd()
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         if self.yv is not None:
             oprot.writeFieldBegin('yv', TType.LIST, 3)
             oprot.writeListBegin(TType.DOUBLE, len(self.yv))
-            for iter48 in self.yv:
-                oprot.writeDouble(iter48)
+            for iter62 in self.yv:
+                oprot.writeDouble(iter62)
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
@@ -1131,15 +1193,15 @@ class predict_values_args(object):
             elif fid == 2:
                 if ftype == TType.LIST:
                     self.x = []
-                    (_etype52, _size49) = iprot.readListBegin()
-                    for _i53 in range(_size49):
-                        _elem54 = []
-                        (_etype58, _size55) = iprot.readListBegin()
-                        for _i59 in range(_size55):
-                            _elem60 = iprot.readDouble()
-                            _elem54.append(_elem60)
+                    (_etype66, _size63) = iprot.readListBegin()
+                    for _i67 in range(_size63):
+                        _elem68 = []
+                        (_etype72, _size69) = iprot.readListBegin()
+                        for _i73 in range(_size69):
+                            _elem74 = iprot.readDouble()
+                            _elem68.append(_elem74)
                         iprot.readListEnd()
-                        self.x.append(_elem54)
+                        self.x.append(_elem68)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
@@ -1160,10 +1222,10 @@ class predict_values_args(object):
         if self.x is not None:
             oprot.writeFieldBegin('x', TType.LIST, 2)
             oprot.writeListBegin(TType.LIST, len(self.x))
-            for iter61 in self.x:
-                oprot.writeListBegin(TType.DOUBLE, len(iter61))
-                for iter62 in iter61:
-                    oprot.writeDouble(iter62)
+            for iter75 in self.x:
+                oprot.writeListBegin(TType.DOUBLE, len(iter75))
+                for iter76 in iter75:
+                    oprot.writeDouble(iter76)
                 oprot.writeListEnd()
             oprot.writeListEnd()
             oprot.writeFieldEnd()
@@ -1215,10 +1277,10 @@ class predict_values_result(object):
             if fid == 0:
                 if ftype == TType.LIST:
                     self.success = []
-                    (_etype66, _size63) = iprot.readListBegin()
-                    for _i67 in range(_size63):
-                        _elem68 = iprot.readDouble()
-                        self.success.append(_elem68)
+                    (_etype80, _size77) = iprot.readListBegin()
+                    for _i81 in range(_size77):
+                        _elem82 = iprot.readDouble()
+                        self.success.append(_elem82)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
@@ -1241,8 +1303,8 @@ class predict_values_result(object):
         if self.success is not None:
             oprot.writeFieldBegin('success', TType.LIST, 0)
             oprot.writeListBegin(TType.DOUBLE, len(self.success))
-            for iter69 in self.success:
-                oprot.writeDouble(iter69)
+            for iter83 in self.success:
+                oprot.writeDouble(iter83)
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         if self.exc is not None:
@@ -1373,6 +1435,128 @@ class destroy_surrogate_result(object):
         return not (self == other)
 all_structs.append(destroy_surrogate_result)
 destroy_surrogate_result.thrift_spec = (
+)
+
+
+class get_sobol_pce_sensitivity_analysis_args(object):
+    """
+    Attributes:
+     - surrogate_id
+    """
+
+
+    def __init__(self, surrogate_id=None,):
+        self.surrogate_id = surrogate_id
+
+    def read(self, iprot):
+        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
+            return
+        iprot.readStructBegin()
+        while True:
+            (fname, ftype, fid) = iprot.readFieldBegin()
+            if ftype == TType.STOP:
+                break
+            if fid == 1:
+                if ftype == TType.STRING:
+                    self.surrogate_id = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                else:
+                    iprot.skip(ftype)
+            else:
+                iprot.skip(ftype)
+            iprot.readFieldEnd()
+        iprot.readStructEnd()
+
+    def write(self, oprot):
+        if oprot._fast_encode is not None and self.thrift_spec is not None:
+            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
+            return
+        oprot.writeStructBegin('get_sobol_pce_sensitivity_analysis_args')
+        if self.surrogate_id is not None:
+            oprot.writeFieldBegin('surrogate_id', TType.STRING, 1)
+            oprot.writeString(self.surrogate_id.encode('utf-8') if sys.version_info[0] == 2 else self.surrogate_id)
+            oprot.writeFieldEnd()
+        oprot.writeFieldStop()
+        oprot.writeStructEnd()
+
+    def validate(self):
+        return
+
+    def __repr__(self):
+        L = ['%s=%r' % (key, value)
+             for key, value in self.__dict__.items()]
+        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+
+    def __eq__(self, other):
+        return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
+
+    def __ne__(self, other):
+        return not (self == other)
+all_structs.append(get_sobol_pce_sensitivity_analysis_args)
+get_sobol_pce_sensitivity_analysis_args.thrift_spec = (
+    None,  # 0
+    (1, TType.STRING, 'surrogate_id', 'UTF8', None, ),  # 1
+)
+
+
+class get_sobol_pce_sensitivity_analysis_result(object):
+    """
+    Attributes:
+     - success
+    """
+
+
+    def __init__(self, success=None,):
+        self.success = success
+
+    def read(self, iprot):
+        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
+            return
+        iprot.readStructBegin()
+        while True:
+            (fname, ftype, fid) = iprot.readFieldBegin()
+            if ftype == TType.STOP:
+                break
+            if fid == 0:
+                if ftype == TType.STRUCT:
+                    self.success = SobolIndices()
+                    self.success.read(iprot)
+                else:
+                    iprot.skip(ftype)
+            else:
+                iprot.skip(ftype)
+            iprot.readFieldEnd()
+        iprot.readStructEnd()
+
+    def write(self, oprot):
+        if oprot._fast_encode is not None and self.thrift_spec is not None:
+            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
+            return
+        oprot.writeStructBegin('get_sobol_pce_sensitivity_analysis_result')
+        if self.success is not None:
+            oprot.writeFieldBegin('success', TType.STRUCT, 0)
+            self.success.write(oprot)
+            oprot.writeFieldEnd()
+        oprot.writeFieldStop()
+        oprot.writeStructEnd()
+
+    def validate(self):
+        return
+
+    def __repr__(self):
+        L = ['%s=%r' % (key, value)
+             for key, value in self.__dict__.items()]
+        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+
+    def __eq__(self, other):
+        return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
+
+    def __ne__(self, other):
+        return not (self == other)
+all_structs.append(get_sobol_pce_sensitivity_analysis_result)
+get_sobol_pce_sensitivity_analysis_result.thrift_spec = (
+    (0, TType.STRUCT, 'success', [SobolIndices, None], None, ),  # 0
 )
 fix_spec(all_structs)
 del all_structs

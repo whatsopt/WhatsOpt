@@ -38,6 +38,9 @@ class SurrogateStoreProxy(object):
     def destroy_surrogate(self, surrogate_id):
         return self._thrift_client.destroy_surrogate(surrogate_id)
 
+    def get_sobol_pce_sensitivity_analysis(self, surrogate_id):
+        return self._thrift_client.get_sobol_pce_sensitivity_analysis(surrogate_id)
+
     def close(self):
         self.transport.close()
 
@@ -88,6 +91,16 @@ class TestSurrogateServer(unittest.TestCase):
         y1 = self.store.predict_values("1", x)
 
         self.assertEqual(13, len(y1))
+
+    def test_sobol_pce(self):
+        xt = np.array([[0.0, 1.0, 2.0, 3.0, 4.0]]).T
+        yt = np.array([0.0, 1.0, 1.5, 0.5, 1.0])
+
+        self.store.create_surrogate(
+            "1", SurrogateStore.SurrogateKind.OPENTURNS_PCE, xt, yt
+        )
+        sobol = self.store.get_sobol_pce_sensitivity_analysis("1")
+        print(sobol)
 
     def test_qualification(self):
         xt = np.array([[0.0, 1.0, 2.0, 3.0, 4.0]]).T

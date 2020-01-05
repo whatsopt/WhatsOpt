@@ -90,6 +90,10 @@ class MetaModel < ApplicationRecord
     raise PredictionError.new("Cannot make prediction for #{values}, error: #{e}")
   end
 
+  def training_input_names
+    @training_input_names ||= operation.input_cases.map { |c| c.label }
+  end
+
   def training_input_values
     @training_inputs ||= Matrix.columns(operation.input_cases.sort_by { |c| c.label }.map(&:values)).to_a
   end

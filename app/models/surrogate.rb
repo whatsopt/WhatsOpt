@@ -107,6 +107,21 @@ class Surrogate < ApplicationRecord
     y
   end
 
+  def get_sobol_pce_sensitivity_analysis
+    if kind == OPENTURNS_PCE
+      infos = proxy.get_sobol_pce_sensitivity_analysis
+      {
+        "#{variable.name}" => {
+          "S1" => infos.S1, 
+          "ST" => infos.ST, 
+          "parameter_names" => self.meta_model.training_input_names
+        } 
+      }
+    else
+      {}
+    end
+  end
+
   def _extract_at_indices(vals, indices)
     xt = vals.select.with_index { |v, i| !indices.include?(i) }
     xv = indices.map { |i| vals[i] }

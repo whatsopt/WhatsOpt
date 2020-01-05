@@ -23,6 +23,9 @@ class TestOpenturnsSurrogates(unittest.TestCase):
 
         self.assertEqual((13, 1), y.shape)
 
+        sa = self.surr.get_sobol_indices()
+        self.assertEqual(1.0, sa.getSobolIndex(0))
+
 
 if __name__ == "__main__":
     unittest.main()

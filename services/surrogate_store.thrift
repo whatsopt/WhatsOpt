@@ -1,4 +1,4 @@
-namespace py whatsopt.surrogate_server
+namespace py whatsopt_services.surrogate_server
 namespace rb WhatsOpt.SurrogateServer
  
 typedef double Float
@@ -24,8 +24,8 @@ struct SurrogateQualification {
 }
 
 struct SobolIndices {
-  1: Vector first_order_indices,
-  2: Vector total_order_indexes
+  1: Vector S1,
+  2: Vector ST
 }
 
 service SurrogateStore {

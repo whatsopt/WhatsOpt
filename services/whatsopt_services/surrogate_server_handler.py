@@ -73,3 +73,9 @@ class SurrogateServerHandler:
     def copy_surrogate(self, src_id, dst_id):
         print("COPY from surrogate {} to surrogate {}".format(src_id, dst_id))
         self.sm_store.copy_surrogate(src_id, dst_id)
+
+    @throw_surrogate_exception
+    def get_sobol_pce_sensitivity_analysis(self, surrogate_id):
+        print("GET SOBOL INDICES from surrogate {}".format(surrogate_id))
+        sobols = self.sm_store.get_sobol_pce_sensitivity_analysis(surrogate_id)
+        return SurrogateStoreTypes.SobolIndices(S1=sobols["S1"], ST=sobols["ST"])

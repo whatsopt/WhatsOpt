@@ -86,7 +86,7 @@ class SurrogateStore(object):
         sa = sm.get_sobol_indices()
         first_order = [sa.getSobolIndex(i) for i in range(sm.input_dim)]
         total_order = [sa.getSobolTotalIndex(i) for i in range(sm.input_dim)]
-        return {"first_order_indices": first_order, "total_order_indexes": total_order}
+        return {"S1": first_order, "ST": total_order}
 
     def _sm_filename(self, surrogate_id):
         return "%s/surrogate_%s.pkl" % (self.outdir, surrogate_id)

@@ -86,6 +86,12 @@ module WhatsOpt
       _send { @client.copy_surrogate(src_id, @surrogate_id) }
     end
 
+    def get_sobol_pce_sensitivity_analysis
+      sobol_indices = nil
+      _send { sobol_indices = @client.get_sobol_pce_sensitivity_analysis(@surrogate_id) }
+      sobol_indices
+    end
+
     def _send
       @transport.open()
       yield
