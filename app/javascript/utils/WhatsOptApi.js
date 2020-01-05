@@ -51,12 +51,12 @@ class WhatsOptApi {
       .catch((error) => console.log(error));
   }
 
-  openmdaoScreening(opeId, callback) {
-    const path = `/operations/${opeId}/openmdao_screening`;
-    axios.get(this.apiUrl(path))
-      .then(callback)
-      .catch((error) => console.log(error));
-  }
+  // openmdaoScreening(opeId, callback) {
+  //   const path = `/operations/${opeId}/openmdao_screening`;
+  //   axios.get(this.apiUrl(path))
+  //     .then(callback)
+  //     .catch((error) => console.log(error));
+  // }
 
   analyseSensitivity(opeId, callback) {
     const path = `/operations/${opeId}/sensitivity_analysis`;
