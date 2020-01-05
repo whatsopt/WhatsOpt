@@ -7,8 +7,8 @@ class MetaModelsController < ApplicationController
     mda = Analysis.build_metamodel_analysis(ope, meta_model_params[:variables])
     authorize mda
     if mda.save
-      driver = get_driver_from_metamodel_kind(meta_model_params[:kind])
-      name = get_name_from_metamodel_kind(meta_model_params[:kind])
+      driver = MetaModel.get_driver_from_metamodel_kind(meta_model_params[:kind])
+      name = MetaModel.get_name_from_metamodel_kind(meta_model_params[:kind])
       vars = []
       unless meta_model_params[:variables].blank?
         vars = meta_model_params[:variables][:inputs] + meta_model_params[:variables][:outputs]
@@ -27,31 +27,17 @@ class MetaModelsController < ApplicationController
         redirect_to operation_url(mm_ope), notice: "Metamodel was successfully created."
         # redirect_to mda_url(mda), notice: "Metamodel was successfully created."
       else
-        redirect_to operation_url(ope), notice: "Something went wrong. Can not create metamodel from current operation data."
+        redirect_to operation_url(ope), alert: "Something went wrong. Can not create metamodel from current operation data."
       end
     else
-      redirect_to operation_url(ope), notice: "Something went wrong. Can not create analysis from current operation data."
+      redirect_to operation_url(ope), alert: "Something went wrong. Can not create analysis from current operation data."
     end
+  rescue MetaModel::BadKindError => err
+    redirect_to operation_url(ope), alert: err.message
   end
 
   private
     def meta_model_params
       params.require(:meta_model).permit(:kind, variables: { inputs: [], outputs: [] })
-    end
-
-    def get_driver_from_metamodel_kind(kind)
-      library, algo = get_infos_from_metamodel_kind(kind)
-      "#{library}_metamodel_#{algo}"
-    end
-
-    def get_name_from_metamodel_kind(kind)
-      library, algo = get_infos_from_metamodel_kind(kind)
-      "Metamodel #{algo}"
-    end
-
-    def get_infos_from_metamodel_kind(kind)
-      kind = kind.downcase
-      kind =~ /(\w+)_(\w+)/
-      return $1, $2
     end
 end

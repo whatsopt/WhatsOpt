@@ -17,6 +17,26 @@ class MetaModel < ApplicationRecord
   FORMATS = [MATRIX_FORMAT]
 
   class PredictionError < StandardError; end
+  class BadKindError < StandardError; end
+
+  def self.get_driver_from_metamodel_kind(kind)
+    library, algo = get_infos_from_metamodel_kind(kind)
+    "#{library}_metamodel_#{algo}"
+  end
+
+  def self.get_name_from_metamodel_kind(kind)
+    library, algo = get_infos_from_metamodel_kind(kind)
+    "Metamodel #{algo}"
+  end
+
+  def self.get_infos_from_metamodel_kind(kind)
+    kind = kind.downcase
+    if Surrogate::SURROGATES.include?(kind.upcase) && kind =~ /(\w+)_(\w+)/
+      return $1, $2
+    else
+      raise BadKindError.new("Unknown metamodel kind #{kind}")
+    end
+  end
 
   def analysis
     discipline.analysis  # a metamodel a no existence out of analysis context
