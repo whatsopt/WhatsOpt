@@ -29,8 +29,8 @@ class Operation < ApplicationRecord
 
   # when optimization / doe
   has_many :cases, -> { joins(:variable).order("name ASC") }, dependent: :destroy
-  # when meta models
-  has_many :meta_models
+  # when meta model building operation
+  has_one :meta_model
   # when derived from doe
   has_many :derived_operations, class_name: 'Operation', foreign_key: 'base_operation_id', inverse_of: :base_operation
   belongs_to :base_operation, class_name: 'Operation', foreign_key: 'base_operation_id', inverse_of: :derived_operations 

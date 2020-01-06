@@ -26,14 +26,14 @@ class Api::V1::SensitivityAnalysesController < Api::ApiController
         analyser = WhatsOpt::SalibSensitivityAnalyser.new(ope, kind: $1.to_sym)
         status, sa, err = analyser.run
         return { statusOk: status, sensitivity: sa, error: err }
-      elsif ope.driver =~ /openturns_metamodel_pce/
+      elsif ope.driver =~ /openturns_sensitivity_pce/
         analyser = WhatsOpt::OpenturnsSensitivityAnalyser.new(ope)
         status, sa, err = analyser.run
         return { statusOk: status, sensitivity: sa, error: err }
       end
     end 
     return { statusOk: false, sensitivity: sa, 
-             error: "Bad operation category: Shoul be #{Operation::CAT_SENSITIVITY} (got #{ope.category})" }
+             error: "Bad operation category: Should be #{Operation::CAT_SENSITIVITY} (got #{ope.category})" }
   end
 
 end
