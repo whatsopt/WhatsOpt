@@ -7,8 +7,7 @@ class Api::V1::SensitivityAnalysesController < Api::ApiController
   # GET /api/v1/{operation_id}/sensitivity_analysis
   def show
     ope = Operation.find(params[:operation_id])
-    Rails.logger.info ope.inspect
-    authorize ope
+    authorize ope.analysis
     sensitivity_infos = _get_sensitivity_analysis_infos(ope)
     if sensitivity_infos[:statusOk]
       render json: sensitivity_infos, status: :ok

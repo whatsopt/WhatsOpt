@@ -1,5 +1,4 @@
 import unittest
-import os
 import numpy as np
 from whatsopt_services.openturns_surrogates import PCE
 
