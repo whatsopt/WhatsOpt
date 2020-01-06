@@ -66,9 +66,9 @@ SobolScatterPlot.propTypes = {
   outVarName: PropTypes.string.isRequired,
   saData: PropTypes.shape({
     S1: PropTypes.array.isRequired,
-    S1_conf: PropTypes.array.isRequired,
+    S1_conf: PropTypes.array,
     ST: PropTypes.array.isRequired,
-    ST_conf: PropTypes.array.isRequired,
+    ST_conf: PropTypes.array,
     parameter_names: PropTypes.array.isRequired,
   }).isRequired,
 };
