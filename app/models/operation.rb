@@ -162,7 +162,7 @@ class Operation < ApplicationRecord
         CAT_METAMODEL
       when /_doe_morris/, /doe_sobol/
         CAT_SENSITIVITY_DOE
-      when /_sensitivity_morris/, /_sensitivity_sobol/
+      when /_sensitivity_morris/, /_sensitivity_sobol/, /_sensitivity_pce/
         CAT_SENSITIVITY
       when /doe/, /lhs/
         CAT_DOE

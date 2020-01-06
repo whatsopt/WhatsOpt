@@ -16,7 +16,7 @@ class MetaModelsControllerTest < ActionDispatch::IntegrationTest
 
   test "should create a metamodel" do
     assert_difference("Analysis.count", 1) do
-      assert_difference("Operation.count", 2) do # doe + metamodel
+      assert_difference("Operation.count", 2) do # doe copy + metamodel
         assert_difference("MetaModel.count", 1) do
           assert_difference("Surrogate.count", 1) do
             post operation_meta_models_url(@ope), params: { meta_model: { kind: Surrogate::SMT_KPLS } }
@@ -24,7 +24,8 @@ class MetaModelsControllerTest < ActionDispatch::IntegrationTest
         end
       end
     end
-
+    ope = Operation.last
+    assert_redirected_to operation_url(ope)
     mda = Analysis.last
     assert_equal 2, mda.design_variables.count
     assert_equal 1, mda.response_variables.count
@@ -52,9 +53,23 @@ class MetaModelsControllerTest < ActionDispatch::IntegrationTest
     post operation_meta_models_url(@ope), params: {
       meta_model: { kind: Surrogate::SMT_KRIGING, variables: { inputs: ["x1"], outputs: ["obj"] } }
     }
+    ope = Operation.last
+    assert_redirected_to operation_url(ope)
     mda = Analysis.last
     assert_equal 1, mda.design_variables.count
     assert_equal 1, mda.response_variables.count
+  end
+
+
+  test "should create a sensitivity operation with openturns pce metamodel" do
+    post operation_meta_models_url(@ope), params: {
+      meta_model: { kind: Surrogate::OPENTURNS_PCE, variables: { inputs: ["x1"], outputs: ["obj"] } }
+    }
+    ope_mm = Operation.second_to_last
+    assert_equal Operation::CAT_METAMODEL, ope_mm.category
+    assert_redirected_to operation_url(ope_mm)
+    ope_sa = Operation.last
+    assert_equal Operation::CAT_SENSITIVITY, ope_sa.category
   end
 
   test "should show error if bad metamodel kind" do
