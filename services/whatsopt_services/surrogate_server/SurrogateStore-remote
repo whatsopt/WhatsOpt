@@ -16,8 +16,8 @@ else:
 from thrift.transport import TTransport, TSocket, TSSLSocket, THttpClient
 from thrift.protocol.TBinaryProtocol import TBinaryProtocol
 
-from whatsopt.surrogate_server import SurrogateStore
-from whatsopt.surrogate_server.ttypes import *
+from whatsopt_services.surrogate_server import SurrogateStore
+from whatsopt_services.surrogate_server.ttypes import *
 
 if len(sys.argv) <= 1 or sys.argv[1] == '--help':
     print('')
@@ -31,6 +31,7 @@ if len(sys.argv) <= 1 or sys.argv[1] == '--help':
     print('  SurrogateQualification qualify(string surrogate_id, Matrix xv, Vector yv)')
     print('  Vector predict_values(string surrogate_id, Matrix x)')
     print('  void destroy_surrogate(string surrogate_id)')
+    print('  SobolIndices get_sobol_pce_sensitivity_analysis(string surrogate_id)')
     print('')
     sys.exit(0)
 
@@ -151,6 +152,12 @@ elif cmd == 'destroy_surrogate':
         print('destroy_surrogate requires 1 args')
         sys.exit(1)
     pp.pprint(client.destroy_surrogate(args[0],))
+
+elif cmd == 'get_sobol_pce_sensitivity_analysis':
+    if len(args) != 1:
+        print('get_sobol_pce_sensitivity_analysis requires 1 args')
+        sys.exit(1)
+    pp.pprint(client.get_sobol_pce_sensitivity_analysis(args[0],))
 
 else:
     print('Unrecognized method %s' % cmd)

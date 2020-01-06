@@ -1,5 +1,54 @@
+inprogress_job: &default_inprogress
+  operation: inprogress
+  pid: -1
+  log: ""
+  log_count: 0
+  status: PENDING
+
+inprogress2_job:
+  <<: *default_inprogress
+  operation: inprogress2
+
 doejob:
   operation: doe
   pid: 666
   log: "this is a test job\n"
   log_count: 1
+  status: DONE_OFFLINE
+
+morris_doe_job: &default_assume_done
+  operation: morris_doe
+  pid: -1
+  log: "Sensibility analysis done"
+  log_count: 1
+  status: ASSUME_DONE
+
+morris_sensitivity_job:
+  <<: *default_assume_done
+  operation: morris_sensitivity
+
+sobol_doe_job:
+  <<: *default_assume_done
+  operation: sobol_doe
+    
+sobol_sensitivity_job:
+  <<: *default_assume_done
+  operation: sobol_sensitivity
+
+doe_copy_job:
+  <<: *default_assume_done
+  operation: doe_copy
+
+mm_doe_job:
+  <<: *default_assume_done
+  operation: mm_from_doe
+
+doe2_job:
+  <<: *default_assume_done
+  status: DONE
+  operation: doe2
+
+mm_doe2_job:
+  <<: *default_assume_done
+  operation: mm_from_doe2
+  

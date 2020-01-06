@@ -3,13 +3,30 @@
 require "whats_opt/surrogate_server/surrogate_store_types"
 
 class Surrogate < ApplicationRecord
+  SMT_KRIGING = "SMT_KRIGING"
+  SMT_KPLS = "SMT_KPLS"
+  SMT_KPLSK = "SMT_KPLSK"
+  SMT_LS = "SMT_LS"
+  SMT_QP = "SMT_QP"
+  OPENTURNS_PCE = "OPENTURNS_PCE"
+
+  SURROGATES = [SMT_KRIGING, SMT_KPLS, SMT_KPLSK, 
+                SMT_LS, SMT_QP, OPENTURNS_PCE]
+  
   SURROGATE_MAP = {
-    KRIGING: WhatsOpt::SurrogateServer::SurrogateKind::KRIGING,
-    KPLS: WhatsOpt::SurrogateServer::SurrogateKind::KPLS,
-    KPLSK: WhatsOpt::SurrogateServer::SurrogateKind::KPLSK,
-    LS: WhatsOpt::SurrogateServer::SurrogateKind::LS,
-    QP: WhatsOpt::SurrogateServer::SurrogateKind::QP
+    "SMT_KRIGING" => WhatsOpt::SurrogateServer::SurrogateKind::SMT_KRIGING,
+    "SMT_KPLS" => WhatsOpt::SurrogateServer::SurrogateKind::SMT_KPLS,
+    "SMT_KPLSK" => WhatsOpt::SurrogateServer::SurrogateKind::SMT_KPLSK,
+    "SMT_LS" => WhatsOpt::SurrogateServer::SurrogateKind::SMT_LS,
+    "SMT_QP" => WhatsOpt::SurrogateServer::SurrogateKind::SMT_QP,
+    "OPENTURNS_PCE" => WhatsOpt::SurrogateServer::SurrogateKind::OPENTURNS_PCE
   }
+
+  STATUS_CREATED = "created"
+  STATUS_TRAINED = "trained"
+  STATUS_FAILED = "failed"
+  STATUS_DELETED = "deleted"
+  STATUSES = [STATUS_CREATED, STATUS_TRAINED, STATUS_FAILED, STATUS_DELETED]
 
   store :quality, accessors: [:r2, :xvalid, :yvalid, :ypred], coder: JSON
 
@@ -20,21 +37,10 @@ class Surrogate < ApplicationRecord
   validates :variable, presence: true
   validates :coord_index, presence: true
 
-  SURROGATES = %w(KRIGING KPLS KPLSK LS QP)
   validates :kind, inclusion: { in: SURROGATES }
 
-  STATUS_CREATED = "created"
-  STATUS_TRAINED = "trained"
-  STATUS_FAILED = "failed"
-  STATUS_DELETED = "failed"
-  STATUSES = [STATUS_CREATED, STATUS_TRAINED, STATUS_FAILED, STATUS_DELETED]
-
   after_initialize :_set_defaults
-  #after_save :_activate_copy, if: :copy_in_progress?
   before_destroy :_delete_surrogate
-
-  # transient attribute to manage surrogate copy
-  #attr_accessor :copy_origin_id
 
   def proxy
     WhatsOpt::SurrogateProxy.new(surrogate_id: id.to_s)
@@ -48,10 +54,6 @@ class Surrogate < ApplicationRecord
     self.status == STATUS_TRAINED
   end
 
-  # def copy_in_progress?
-  #   !!self.copy_origin_id
-  # end
-
   def qualified?
     !self.xvalid.empty?
   end
@@ -63,7 +65,11 @@ class Surrogate < ApplicationRecord
       xt, self.xvalid = _extract_at_indices(all_xt, indices)
       all_yt = meta_model.training_output_values(variable.name, coord_index)
       yt, self.yvalid = _extract_at_indices(all_yt, indices)
-      surr_kind = SURROGATE_MAP[kind.to_sym]
+      surr_kind = SURROGATE_MAP[kind]
+      unless surr_kind
+        Rails.logger.warn "Surrogate kind '#{kind}' unkonwn: use SMT Kriging as default"
+        surr_kind = SURROGATE_MAP[SMT_KRIGING]
+      end
       proxy.create_surrogate(surr_kind, xt, yt)
       unless indices.to_a.empty?
         quality = proxy.qualify(self.xvalid, self.yvalid)
@@ -75,7 +81,7 @@ class Surrogate < ApplicationRecord
       self.status = STATUS_FAILED
     end
   rescue WhatsOpt::SurrogateServer::SurrogateException => exc
-    Rails.logger.warn "SURROGATE TRAIN: #{exception} on surrogate #{id}: #{exc}"
+    Rails.logger.warn "SURROGATE TRAIN: Errror on surrogate #{id}: #{exc.msg}"
     self.status = STATUS_FAILED
   ensure
     save!
@@ -90,7 +96,7 @@ class Surrogate < ApplicationRecord
     train unless trained?
     y = proxy.predict_values(x)
   rescue WhatsOpt::SurrogateServer::SurrogateException => exc
-    Rails.logger.warn "SURROGATE TRAIN: #{exception} on surrogate #{id}: #{exc.msg}"
+    Rails.logger.warn "SURROGATE TRAIN: #{exc} on surrogate #{id}: #{exc.msg}"
     self.status = STATUS_FAILED
   rescue => exception
     # puts "#{exception} on surrogate #{id}"
@@ -99,6 +105,21 @@ class Surrogate < ApplicationRecord
     raise
   else
     y
+  end
+
+  def get_sobol_pce_sensitivity_analysis
+    if kind == OPENTURNS_PCE
+      infos = proxy.get_sobol_pce_sensitivity_analysis
+      {
+        "#{variable.name}" => {
+          "S1" => infos.S1, 
+          "ST" => infos.ST, 
+          "parameter_names" => self.meta_model.training_input_names
+        } 
+      }
+    else
+      {}
+    end
   end
 
   def _extract_at_indices(vals, indices)
@@ -119,7 +140,7 @@ class Surrogate < ApplicationRecord
 
   private
     def _set_defaults
-      self.kind = SURROGATES[0] if self.kind.blank?
+      self.kind = SMT_KRIGING if self.kind.blank?
       self.status = STATUS_CREATED if self.status.blank?
       self.r2 = -1.0 if self.r2.blank?
       self.xvalid = [] if self.xvalid.blank?
@@ -132,12 +153,4 @@ class Surrogate < ApplicationRecord
       proxy.destroy_surrogate
     end
 
-    # def _activate_copy
-    #   # trigger actual copy of surrogate on the disk
-    #   if self.copy_origin_id && self.id != self.copy_origin_id
-    #     p "ACTIVATE"
-    #     proxy.copy_surrogate(self.copy_origin_id.to_s)
-    #     self.copy_origin_id = nil
-    #   end
-    # end
 end

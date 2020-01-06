@@ -8,8 +8,9 @@ const Plot = createPlotlyComponent(Plotly);
 class MetaModelQualification extends React.Component {
   constructor(props) {
     super(props);
-
-    this.state = { selected: -1 };
+    const { quality } = this.props;
+    this.state = { selected: quality.length > 0 ? 0 : -1 }; // select first elt (eg worst r2)
+    // this.setInitialButton = this.setInitialButton.bind(this);
     this.handleQualityDisplay = this.handleQualityDisplay.bind(this);
   }
 
@@ -27,7 +28,8 @@ class MetaModelQualification extends React.Component {
       badgeKind += ((q.r2 < 0.5) ? 'badge-danger' : '');
       badgeKind += ((q.r2 >= 0.5 && q.r2 < 0.95) ? 'badge-warning' : '');
       badgeKind += ((q.r2 >= 0.95) ? 'badge-success' : '');
-      const btnClass = 'btn m-1';
+      let btnClass = 'btn btn-light m-1';
+      btnClass += selected === i ? ' active' : '';
       return (
         <button
           type="button"
@@ -80,11 +82,12 @@ class MetaModelQualification extends React.Component {
           Coefficients of determination R
           <sup>2</sup>
           {' '}
-          for outputs computed from 10% of original DOE points used as validation set:
-          <em>the closer to one, the better</em>
+          for outputs computed from 10% of original DOE points used as validation set (the closer to one, the better).
         </div>
         <div>
-          <span className="mb-3">{qualityButtons}</span>
+          <span className="mb-3">
+            {qualityButtons}
+          </span>
         </div>
         {plot}
       </div>

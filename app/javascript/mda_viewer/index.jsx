@@ -11,8 +11,8 @@ import DisciplinesEditor from 'mda_viewer/components/DisciplinesEditor';
 import ConnectionsEditor from 'mda_viewer/components/ConnectionsEditor';
 import VariablesEditor from 'mda_viewer/components/VariablesEditor';
 import OpenmdaoImplEditor from 'mda_viewer/components/OpenmdaoImplEditor';
-import MetaModelQualification from 'mda_viewer/components/MetaModelQualification';
 import ExportPanel from 'mda_viewer/components/ExportPanel';
+import MetaModelQualification from '../utils/components/MetaModelQualification';
 import AnalysisDatabase from '../utils/AnalysisDatabase';
 import deepIsEqual from '../utils/compare';
 

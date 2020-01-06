@@ -3,22 +3,23 @@
 require "whats_opt/code_generator"
 
 module WhatsOpt
-  class SensitivityAnalysisGenerator < CodeGenerator
-    def initialize(ope, input_cases: nil, output_cases: nil, options: {})
+  class SalibSensitivityAnalyser < CodeGenerator
+    def initialize(ope, kind: :morris)
       super(ope.analysis)
-      @prefix = "sensitivity_analysis"
-      @input_varcases = input_cases || ope.input_cases
-      @output_varcases = output_cases || ope.output_cases
+      @kind = kind
+      @sobol = (kind == :sobol) 
+      @input_varcases = ope.input_cases
+      @output_varcases = ope.output_cases
       Rails.logger.info @input_varcases.map(&:float_varname)
       Rails.logger.info @output_varcases.map(&:float_varname)
     end
 
-    def analyze_sensitivity
+    def run
       ok, out, err = false, "{}", ""
-      Dir.mktmpdir("run_#{@mda.basename}_screening") do |dir|
+      Dir.mktmpdir("run_#{@mda.basename}_salib_sensitivity_analysis") do |dir|
         dir = "/tmp" # for debug
         _generate_code(dir)
-        ok, out, err = _run_screening(dir)
+        ok, out, err = _run_sensitivity_analysis(dir)
       end
       Rails.logger.info out
       out = "nil" if out == ""
@@ -36,7 +37,7 @@ module WhatsOpt
       _generate("run_sensitivity_analysis.py", "run_sensitivity_analysis.py.erb", gendir)
     end
 
-    def _run_screening(dir)
+    def _run_sensitivity_analysis(dir)
       script = File.join(dir, "run_sensitivity_analysis.py")
       Rails.logger.info "#{PYTHON} #{script}"
       stdout, stderr, status = Open3.capture3(PYTHON, script)

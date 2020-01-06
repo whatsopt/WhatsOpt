@@ -10,10 +10,14 @@ except:
 SMT_NOT_INSTALLED = False
 try:
     from smt.surrogate_models import KRG, KPLS, KPLSK, LS, QP
-
-    # from smt.applications import MFK
 except:
     SMT_NOT_INSTALLED = True
+
+OPENTURNS_NOT_INSTALLED = False
+try:
+    from .openturns_surrogates import PCE
+except:
+    OPENTURNS_NOT_INSTALLED = True
 
 
 class SurrogateStore(object):
@@ -21,16 +25,24 @@ class SurrogateStore(object):
     Object responsible for saving / loading / listing trained surrogates
     """
 
-    SURROGATE_NAMES = ["KRIGING", "KPLS", "KPLSK", "LS", "QP"]
+    SURROGATE_NAMES = [
+        "SMT_KRIGING",
+        "SMT_KPLS",
+        "SMT_KPLSK",
+        "SMT_LS",
+        "SMT_QP",
+        "OPENTURNS_PCE",
+    ]
 
     def __init__(self, outdir="."):
         self.outdir = outdir
         self.surrogate_classes = {
-            "KRIGING": KRG,
-            "KPLS": KPLS,
-            "KPLSK": KPLSK,
-            "LS": LS,
-            "QP": QP,
+            "SMT_KRIGING": KRG,
+            "SMT_KPLS": KPLS,
+            "SMT_KPLSK": KPLSK,
+            "SMT_LS": LS,
+            "SMT_QP": QP,
+            "OPENTURNS_PCE": PCE,
         }
         if not os.path.exists(outdir):
             os.makedirs(outdir)
@@ -68,6 +80,13 @@ class SurrogateStore(object):
         src = self._sm_filename(src_id)
         dst = self._sm_filename(dst_id)
         copyfile(src, dst)
+
+    def get_sobol_pce_sensitivity_analysis(self, pce_surrogate_id):
+        sm = self.get_surrogate(pce_surrogate_id)
+        sa = sm.get_sobol_indices()
+        first_order = [sa.getSobolIndex(i) for i in range(sm.input_dim)]
+        total_order = [sa.getSobolTotalIndex(i) for i in range(sm.input_dim)]
+        return {"S1": first_order, "ST": total_order}
 
     def _sm_filename(self, surrogate_id):
         return "%s/surrogate_%s.pkl" % (self.outdir, surrogate_id)

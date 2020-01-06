@@ -18,7 +18,7 @@
       <th class="col-md-3">Name</th>
       <th class="col-md-1">Category</th>
       <th class="col-md-2">Driver</th>
-      <th class="col-md-2">Created</th>
+      <th class="col-md-2">Date</th>
       <th class="col-md-2">Duration</th>
 		  <th class="col-md-2">Action(s)</th>
 		</tr>
@@ -37,10 +37,12 @@
             <a href='#' name="edit-name" class="d-inline btn btn-light btn-inverse btn-sm" title="Edit name" data-api-key="<%=current_user.api_key%>" data-ope-id="<%= ope.id %>" data-ope-name="<%= ope.name %>" data-toggle="modal" data-target="#editModal">
               <i class="fa fa-edit"></i> 
             </a> 
-	          <%= link_to edit_operation_path(ope), 
-	            class: "d-inline btn btn-light btn-inverse btn-sm ml-2", title: "Re-run" do %>
-	            <i class="fa fa-undo"></i> 
-	          <% end %>    
+            <% if ope.rerunnable? %>
+              <%= link_to edit_operation_path(ope), 
+                class: "d-inline btn btn-light btn-inverse btn-sm ml-2", title: "Re-run" do %>
+                <i class="fa fa-undo"></i> 
+              <% end %>  
+            <% end %>  
 	          <%= link_to operation_path(ope), method: :delete, data: { title: 'Are you sure?', 
 	                                                                    confirm: "Remove #{ope.name} operation?",
 	                                                                    commit: 'Yes',

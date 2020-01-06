@@ -26,7 +26,9 @@ Rails.application.routes.draw do
         resources :operations, only: [:show, :create, :update, :destroy] do
           resource :job, only: [:show, :create, :update]        
           resources :meta_models, only: [:create, :update]        
-          resource :openmdao_screening, only: [:show]
+          # TODO: to be removed
+          # resource :openmdao_screening, only: [:show]
+          resource :sensitivity_analysis, only: [:show]
         end
         resource :openmdao_impl, only: [:show, :update]
         resource :parameterization, only: [:update]

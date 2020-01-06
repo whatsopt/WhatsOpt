@@ -110,6 +110,21 @@ module WhatsOpt
           return
         end
 
+        def get_sobol_pce_sensitivity_analysis(surrogate_id)
+          send_get_sobol_pce_sensitivity_analysis(surrogate_id)
+          return recv_get_sobol_pce_sensitivity_analysis()
+        end
+
+        def send_get_sobol_pce_sensitivity_analysis(surrogate_id)
+          send_message('get_sobol_pce_sensitivity_analysis', Get_sobol_pce_sensitivity_analysis_args, :surrogate_id => surrogate_id)
+        end
+
+        def recv_get_sobol_pce_sensitivity_analysis()
+          result = receive_message(Get_sobol_pce_sensitivity_analysis_result)
+          return result.success unless result.success.nil?
+          raise ::Thrift::ApplicationException.new(::Thrift::ApplicationException::MISSING_RESULT, 'get_sobol_pce_sensitivity_analysis failed: unknown result')
+        end
+
       end
 
       class Processor
@@ -177,6 +192,13 @@ module WhatsOpt
           result = Destroy_surrogate_result.new()
           @handler.destroy_surrogate(args.surrogate_id)
           write_result(result, oprot, 'destroy_surrogate', seqid)
+        end
+
+        def process_get_sobol_pce_sensitivity_analysis(seqid, iprot, oprot)
+          args = read_args(iprot, Get_sobol_pce_sensitivity_analysis_args)
+          result = Get_sobol_pce_sensitivity_analysis_result.new()
+          result.success = @handler.get_sobol_pce_sensitivity_analysis(args.surrogate_id)
+          write_result(result, oprot, 'get_sobol_pce_sensitivity_analysis', seqid)
         end
 
       end
@@ -413,6 +435,38 @@ module WhatsOpt
 
         FIELDS = {
 
+        }
+
+        def struct_fields; FIELDS; end
+
+        def validate
+        end
+
+        ::Thrift::Struct.generate_accessors self
+      end
+
+      class Get_sobol_pce_sensitivity_analysis_args
+        include ::Thrift::Struct, ::Thrift::Struct_Union
+        SURROGATE_ID = 1
+
+        FIELDS = {
+          SURROGATE_ID => {:type => ::Thrift::Types::STRING, :name => 'surrogate_id'}
+        }
+
+        def struct_fields; FIELDS; end
+
+        def validate
+        end
+
+        ::Thrift::Struct.generate_accessors self
+      end
+
+      class Get_sobol_pce_sensitivity_analysis_result
+        include ::Thrift::Struct, ::Thrift::Struct_Union
+        SUCCESS = 0
+
+        FIELDS = {
+          SUCCESS => {:type => ::Thrift::Types::STRUCT, :name => 'success', :class => ::WhatsOpt::SurrogateServer::SobolIndices}
         }
 
         def struct_fields; FIELDS; end

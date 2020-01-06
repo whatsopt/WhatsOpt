@@ -10,7 +10,6 @@
 # Ignore the default SQLite database.
 /db/*.sqlite3
 /db/*.sqlite3-journal
-/python/demos/**/*.sqlite
 
 # Ignore all logfiles and tempfiles.
 /log/*
@@ -30,10 +29,12 @@
 
 # Python compiled
 **/*.pyc
-python/whatsopt.egg-info/
-python/wop.egg-info/
-python/dist
-python/build
+**/*.egg-info/
+dist/*
+build/*
+
+# Python test
+.pytest_cache/*
 
 # Uploaded files
 /upload/public/packs
@@ -56,11 +57,6 @@ python/build
 /node_modules
 yarn-debug.log*
 .yarn-integrity
-/public/packs
-/public/packs-test
-/node_modules
-yarn-debug.log*
-.yarn-integrity
 
 # Ignore master key for decrypting credentials and more.
 /config/master.key
@@ -76,11 +72,3 @@ config/configuration.yml
 config/database.yml
 config/ldap.yml
 
-
-
-/public/packs
-/public/packs-test
-/node_modules
-/yarn-error.log
-yarn-debug.log*
-.yarn-integrity

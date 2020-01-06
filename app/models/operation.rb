@@ -4,30 +4,47 @@ require "socket"
 require "whats_opt/openmdao_generator"
 require "whats_opt/sqlite_case_importer"
 
+
 class Operation < ApplicationRecord
-  CAT_RUNONCE = :analysis
-  CAT_OPTIMISATION = :optimization
-  CAT_SCREENING = :screening
-  CAT_DOE = :doe
-  CATEGORIES = [CAT_RUNONCE, CAT_OPTIMISATION, CAT_DOE, CAT_SCREENING].freeze
+  CAT_RUNONCE = "analysis"
+  CAT_OPTIMISATION = "optimization"
+  CAT_DOE = "doe"
+  CAT_SENSITIVITY_DOE = "sensitivity_doe"
+  CAT_SENSITIVITY = "sensitivity_analysis"
+  CAT_METAMODEL = "metamodel"
+  CATEGORIES = [CAT_RUNONCE, CAT_OPTIMISATION, 
+                CAT_DOE, CAT_SENSITIVITY_DOE,
+                CAT_SENSITIVITY, CAT_METAMODEL].freeze
 
   BATCH_COUNT = 10 # nb of log lines processed together
   LOGDIR = File.join(Rails.root, "upload/logs")
+
+  class ForbiddenRemovalException < Exception; end
 
   belongs_to :analysis
   has_many :options, dependent: :destroy
   accepts_nested_attributes_for :options, reject_if: proc { |attr| attr["name"].blank? }, allow_destroy: true
 
-  has_many :cases, -> { joins(:variable).order("name ASC") }, dependent: :destroy
   has_one :job, dependent: :destroy
 
-  has_many :meta_models
+  # when optimization / doe
+  has_many :cases, -> { joins(:variable).order("name ASC") }, dependent: :destroy
+  # when meta model building operation
+  has_one :meta_model
+  # when derived from doe
+  has_many :derived_operations, class_name: 'Operation', foreign_key: 'base_operation_id', inverse_of: :base_operation
+  belongs_to :base_operation, class_name: 'Operation', foreign_key: 'base_operation_id', inverse_of: :derived_operations 
+
+  before_destroy :_check_allowed_destruction
 
   validates :name, presence: true, allow_blank: false
+  validates :driver, presence: true, allow_blank: false
   validate :success_flags_consistent_with_cases
 
-  scope :in_progress, ->(analysis) { where(analysis: analysis).left_outer_joins(:cases).where(cases: { operation_id: nil }) }
-  scope :done, ->(analysis) { where(analysis: analysis).left_outer_joins(:cases).where.not(cases: { operation_id: nil }).uniq }
+  scope :in_progress, ->(analysis) { where(analysis: analysis).joins(:job).where(jobs: {status: Job::WIP_STATUSES}) } 
+  scope :successful, ->() { joins(:job).where(jobs: {status: Job::SUCCESS_STATUSES}) }
+  scope :final, ->() { where.not(id: pluck(:base_operation_id).compact) }
+  scope :done, ->(analysis) { where(analysis: analysis).successful }
 
   serialize :success, Array
 
@@ -39,13 +56,45 @@ class Operation < ApplicationRecord
 
   def self.build_operation(mda, ope_attrs)
     operation = mda.operations.build(ope_attrs.except(:cases))
+    operation.name = ope_attrs[:driver] unless ope_attrs[:name]
     operation._build_cases(ope_attrs[:cases]) if ope_attrs[:cases]
-    if ope_attrs[:cases]
-      operation.build_job(status: "DONE", log: "")
+    opecat = operation.category
+    case opecat
+    when CAT_DOE, CAT_SENSITIVITY_DOE, CAT_OPTIMISATION
+      operation.build_job(status: :DONE_OFFLINE)
+      operation.build_derived_operations
+    when CAT_METAMODEL
+      operation.build_job(status: :ASSUME_DONE)
+      operation.build_derived_operations
     else
-      operation.build_job(status: "PENDING", log: "")
+      operation.build_job(status: :PENDING)
     end
     operation
+  end
+
+  def build_derived_operations
+    case self.category
+    when CAT_SENSITIVITY_DOE
+      if self.driver =~ /(\w+)_doe_(\w+)/
+        library = $1
+        algo = $2
+        derived = self.derived_operations.build(name: "Sensitivity #{algo}", 
+                                                driver: "#{library}_sensitivity_#{algo}",
+                                                analysis_id: self.analysis_id)
+        derived.build_job(status: "ASSUME_DONE")
+      else
+        Rails.logger.warn('Unknown sensitivity method for sensitivity DOE driver #{self.driver}')
+      end
+    when CAT_METAMODEL
+      if self.driver =~ /(openturns)_metamodel_(pce)/
+        library = $1
+        algo = $2
+        derived = self.derived_operations.build(name: "Sensitivity #{algo}", 
+                                                driver: "#{library}_sensitivity_#{algo}",
+                                                analysis_id: self.analysis_id)
+        derived.build_job(status: "ASSUME_DONE")
+      end
+    end
   end
 
   def build_metamodel_varattrs(varnames = nil)
@@ -84,23 +133,46 @@ class Operation < ApplicationRecord
     adapter.to_json
   end
 
+  def rerunnable?
+    # if started_at is nil, the operation was not run from WhatsOpt server 
+    # hence non runnable again.
+    self.job && self.job.started_at 
+  end
+
+  def success?
+    self.job && self.job.success? 
+  end
+
+  def sensitivity_analysis?
+    self.category == CAT_SENSITIVITY
+  end
+
+  def meta_model?
+    self.category == CAT_METAMODEL
+  end
+
   def category
-    case driver
-    when "runonce"
-      "analysis"
-    when /optimizer/, /slsqp/, /scipy/, /pyoptsparse/
-      "optimization"
-    when /morris/, /sobol/
-      "screening"
-    when /doe/, /lhs/
-      "doe"
-    else
-      if !analysis.objective_variables.empty?
-        "optimization"
+    @category ||=
+      case driver
+      when "runonce"
+        CAT_RUNONCE
+      when /optimizer/, /slsqp/, /scipy/, /pyoptsparse/
+        CAT_OPTIMISATION
+      when /_metamodel_/
+        CAT_METAMODEL
+      when /_doe_morris/, /doe_sobol/
+        CAT_SENSITIVITY_DOE
+      when /_sensitivity_morris/, /_sensitivity_sobol/, /_sensitivity_pce/
+        CAT_SENSITIVITY
+      when /doe/, /lhs/
+        CAT_DOE
       else
-        "doe"
+        if !analysis.objective_variables.empty?
+          CAT_OPTIMISATION
+        else
+          CAT_DOE
+        end
       end
-    end
    end
 
   def nb_of_points
@@ -122,16 +194,40 @@ class Operation < ApplicationRecord
     end
   end
 
+  def ope_cases
+    base_operation ? base_operation.ope_cases : cases.sort_by{|c| c.label}
+  end
+
   def input_cases
-    cases.select { |c| c.variable.is_connected_as_input_of_interest? }
+    ope_cases.select { |c| c.variable.is_connected_as_input_of_interest? }
   end
 
   def output_cases
-    cases.select { |c| c.variable.is_connected_as_output_of_interest? }
+    ope_cases.select { |c| c.variable.is_connected_as_output_of_interest? }
   end
 
   def sorted_cases
     input_cases + output_cases
+  end
+
+  def build_copy(analysis, varnames=[]) 
+    ope_copy = analysis.operations.build(self.attributes.except("id"))
+    ope_copy.job = self.job.build_copy
+    self.cases.each do |c|
+      vname = c.variable.name
+      if varnames.empty? || varnames.include?(vname)
+
+        dest_variable = Variable.of_analysis(analysis)
+                          .where(name: vname, io_mode: WhatsOpt::Variable::OUT)
+                          .take
+        c_copy =  c.build_copy(ope_copy, dest_variable)
+        ope_copy.cases << c_copy
+      end
+    end
+    if base_operation
+      ope_copy.base_operation = base_operation.build_copy(analysis, varnames)
+    end
+    ope_copy
   end
 
   def perform
@@ -214,9 +310,14 @@ class Operation < ApplicationRecord
 
   def _set_upload_job_done
     if job
-      job.update(status: "DONE", pid: -1, log: job.log << "Data uploaded\n", log_count: job.log_count + 1, ended_at: Time.now)
-    else # wop upload
-      create_job(status: "DONE", pid: -1, log: "Data uploaded\n", log_count: 1, started_at: Time.now, ended_at: Time.now)
+      job.update(pid: -1, log: job.log << "Data uploaded\n", log_count: job.log_count + 1, ended_at: Time.now)
+      if job.started?
+        job.update(status: :DONE) 
+      else
+        job.update(status: :DONE_OFFLINE) 
+      end
+    else # wop upload first time
+      create_job(status: :DONE_OFFLINE, pid: -1, log: "Data uploaded\n", log_count: 1, started_at: Time.now, ended_at: Time.now)
     end
   end
 
@@ -236,5 +337,17 @@ class Operation < ApplicationRecord
     cases.map(&:destroy)
     cases.reload
     _build_cases(case_attrs)
+  end
+
+  def _check_allowed_destruction
+    # unless self.meta_models.empty?
+    #   mdas = self.meta_models.map(&:analysis)
+    #   msg = mdas.map {|a| "##{a.id} #{a.name}"}.join(', ')
+    #   raise ForbiddenRemovalException.new("Can not delete operation '#{self.name}' as meta_models are in use: #{msg} (to be deleted first)")
+    # end
+    unless self.derived_operations.empty?
+      msg = self.derived_operations.map(&:name).join(', ')
+      raise ForbiddenRemovalException.new("Can not delete operation '#{self.name}' as another operation depends on it: #{msg} (to be deleted first)")
+    end
   end
 end

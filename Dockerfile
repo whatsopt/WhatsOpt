@@ -18,6 +18,42 @@ ENV HOME /root
 # Use baseimage-docker's init process.
 CMD ["/sbin/my_init"]
 
+# for Openturns
+RUN apt-get update -y \
+	&& apt-get install -y libsm6 libxext6
+
+# Thrift
+ENV THRIFT_VERSION 0.11.0
+
+RUN buildDeps=" \
+	automake \
+	bison \
+	curl \
+	flex \
+	g++ \
+	libboost-dev \
+	libboost-filesystem-dev \
+	libboost-program-options-dev \
+	libboost-system-dev \
+	libboost-test-dev \
+	libevent-dev \
+	libssl-dev \
+	libtool \
+	make \
+	pkg-config \
+	"; \
+	apt-get update && apt-get install -y --no-install-recommends $buildDeps && rm -rf /var/lib/apt/lists/* \
+	&& curl -sSL "http://apache.mirrors.spacedump.net/thrift/$THRIFT_VERSION/thrift-$THRIFT_VERSION.tar.gz" -o thrift.tar.gz \
+	&& mkdir -p /thrift \
+	&& tar zxf thrift.tar.gz -C /thrift --strip-components=1 \
+	&& rm thrift.tar.gz \
+	&& cd /thrift \
+	&& ./configure  --without-python --without-cpp --without-ruby --without-nodejs --without-py3 \
+	&& make \
+	&& make install \
+	&& cd / \
+	&& rm -rf /thrift 
+
 # If you're using the 'customizable' variant, you need to explicitly opt-in
 # for features.
 #
@@ -56,48 +92,13 @@ RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py \
 	&& python3 get-pip.py
 
 RUN pip install numpy \
-	&& pip install scipy \
 	&& pip install cython \
-	&& pip install matplotlib \
-	&& pip install thrift==0.11.0 \
-	&& pip install Click \
-	&& pip install tabulate \
 	&& pip install openmdao \
 	&& pip install salib \
-	&& pip install git+https://github.com/SMTOrg/smt \
+	&& pip install smt \
+	&& pip install openturns \
+	&& pip install thrift==0.11.0 \
 	&& pip install wop
-
-# Thrift
-ENV THRIFT_VERSION 0.11.0
-
-RUN buildDeps=" \
-	automake \
-	bison \
-	curl \
-	flex \
-	g++ \
-	libboost-dev \
-	libboost-filesystem-dev \
-	libboost-program-options-dev \
-	libboost-system-dev \
-	libboost-test-dev \
-	libevent-dev \
-	libssl-dev \
-	libtool \
-	make \
-	pkg-config \
-	"; \
-	apt-get update && apt-get install -y --no-install-recommends $buildDeps && rm -rf /var/lib/apt/lists/* \
-	&& curl -sSL "http://apache.mirrors.spacedump.net/thrift/$THRIFT_VERSION/thrift-$THRIFT_VERSION.tar.gz" -o thrift.tar.gz \
-	&& mkdir -p /thrift \
-	&& tar zxf thrift.tar.gz -C /thrift --strip-components=1 \
-	&& rm thrift.tar.gz \
-	&& cd /thrift \
-	&& ./configure  --without-python --without-cpp --without-ruby --without-nodejs --without-py3 \
-	&& make \
-	&& make install \
-	&& cd / \
-	&& rm -rf /thrift 
 
 # Clean up APT when done.
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*

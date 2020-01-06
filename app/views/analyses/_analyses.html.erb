@@ -3,13 +3,13 @@
 
   <thead>
     <tr>
-      <th style='width=10 px;'>#</th>
-      <th class="col-md-3">Name</th>
-      <th class="col-md-1">Owner</th>
-      <th class="col-md-1">Private</th>
-      <th class="col-md-2">Created</th>
-      <th class="col-md-3">Operations</th>
-      <th class="col-md-2">Action(s)</th>
+      <th width="5%">#</th>
+      <th width="20%">Name</th>
+      <th class="10%">Owner</th>
+      <th class="5%">Private</th>
+      <th class="5%">Created</th>
+      <th class="30%">Operations</th>
+      <th class="20%">Action(s)</th>
     </tr>
   </thead>
   
@@ -26,7 +26,7 @@
         </td>
         <td><%= time_ago_in_words(mda.created_at)%> ago</td>
         <td>
-          <%= link_to_operations_if_authorized(mda, current_user) %>
+          <%= link_to_final_operations_if_authorized(mda, current_user) %>
           <% unless Operation.done(mda).empty? %>
             <%= link_to mda_operations_path(mda), 
               class: "btn btn-sm", title: "List Operations" do %>

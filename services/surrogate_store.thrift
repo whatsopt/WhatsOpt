@@ -1,4 +1,4 @@
-namespace py whatsopt.surrogate_server
+namespace py whatsopt_services.surrogate_server
 namespace rb WhatsOpt.SurrogateServer
  
 typedef double Float
@@ -6,11 +6,12 @@ typedef list<Float> Vector
 typedef list<Vector> Matrix
 
 enum SurrogateKind {
-  KRIGING,
-  KPLS,
-  KPLSK,
-  LS,
-  QP
+  SMT_KRIGING,
+  SMT_KPLS,
+  SMT_KPLSK,
+  SMT_LS,
+  SMT_QP,
+  OPENTURNS_PCE
 }
 
 exception SurrogateException {
@@ -20,6 +21,11 @@ exception SurrogateException {
 struct SurrogateQualification {
   1: Float r2,
   2: Vector yp
+}
+
+struct SobolIndices {
+  1: Vector S1,
+  2: Vector ST
 }
 
 service SurrogateStore {
@@ -43,5 +49,6 @@ service SurrogateStore {
                         2: Matrix x) throws (1: SurrogateException exc);
 
   void destroy_surrogate(1: string surrogate_id);
-  
+
+  SobolIndices get_sobol_pce_sensitivity_analysis(1: string surrogate_id);
 }

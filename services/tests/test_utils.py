@@ -1,8 +1,8 @@
 import unittest
-from whatsopt.utils import r2_score
+from whatsopt_services.utils import r2_score
+
 
 class TestUtils(unittest.TestCase):
-
     def test_qualify_one(self):
         yv = [1, 2, 3]
         yp = [1, 2, 3]

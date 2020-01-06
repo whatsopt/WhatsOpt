@@ -56,7 +56,7 @@ class AnalysesController < ApplicationController
   # PATCH/PUT /mdas/1
   def update
     if @mda.update(mda_params)
-      redirect_to mda_url(@mda), notice: "MDA was successfully updated."
+      redirect_to mda_url(@mda), notice: "Analysis #{@mda.name} was successfully updated."
     else
       render :edit
     end
@@ -64,8 +64,15 @@ class AnalysesController < ApplicationController
 
   # DELETE /mdas/1
   def destroy
-    @mda.destroy
-    redirect_to mdas_url, notice: "MDA was successfully destroyed."
+    if @mda.parent
+      redirect_to mdas_url, alert: "Can not delete nested analysis (you should delete parent first)."
+    else
+      @mda.destroy!
+      redirect_to mdas_url, notice: "Analysis #{@mda.name} was successfully deleted."
+    end
+  rescue Operation::ForbiddenRemovalException => exc
+    # p "Can not delete analysis #{@mda.name} for following reason: "+exc.message
+    redirect_to mdas_url, alert: "Can not delete analysis #{@mda.name} for following reason: "+exc.message
   end
 
   private

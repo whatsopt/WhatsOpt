@@ -45,6 +45,8 @@ class Analysis < ApplicationRecord
   after_save :_ensure_driver_presence
   after_save :_ensure_openmdao_impl_presence
 
+  before_destroy :_check_allowed_destruction
+
   validate :_check_mda_import_error, on: :create, if: :attachment_exists?
   validates :name, presence: true, allow_blank: false
 
@@ -169,6 +171,18 @@ class Analysis < ApplicationRecord
     conns.map { |c| c.update!(role: WhatsOpt::Variable::DESIGN_VAR_ROLE) }
   end
 
+  def next_operation_id(opeId)
+    @opeIds ||= operations.successful.pluck(:id)
+    idx = @opeIds.index(opeId)
+    @next ||= (idx == (@opeIds.size - 1)) ? -1 : @opeIds[idx+1]
+  end
+
+  def prev_operation_id(opeId)
+    @opeIds ||= operations.successful.pluck(:id)
+    idx = @opeIds.index(opeId)
+    @prev ||= (idx == 0) ? -1 : @opeIds[idx-1]
+  end
+
   def to_mda_viewer_json
     {
       id: id,
@@ -266,6 +280,7 @@ class Analysis < ApplicationRecord
         role = WhatsOpt::Variable::RESPONSE_ROLE if vin.discipline.is_driver?
         existing_conn_proto = Connection.where(from_id: vout.id).take
         role = existing_conn_proto.role if existing_conn_proto
+        # p "ROLE #{role}"
         # p "1 Connect #{vout.name} between #{vout.discipline.name} #{vin.discipline.name}" unless Connection.where(from_id: vout.id, to_id: vin.id).first 
         Connection.where(from_id: vout.id, to_id: vin.id).first_or_create!(role: role)
         # if Variable.where(name: vout.name, io_mode: WhatsOpt::Variable::OUT)
@@ -322,15 +337,15 @@ class Analysis < ApplicationRecord
             attrs = {disciplines_attributes: [discattrs]}
             # p "ATTRS", attrs
             self.update!(attrs)
-
             newDisc = self.disciplines.reload.last
             if disc.is_pure_metamodel?
-              newDisc.meta_model = disc.meta_model.build_copy(disc)
+              newDisc.meta_model = disc.meta_model.build_copy(newDisc)
             end
 
             if disc.has_sub_analysis?
               newDisc.sub_analysis = disc.sub_analysis.create_copy!(self)
             end
+
             newDisc.save!
           end
         end
@@ -547,5 +562,9 @@ class Analysis < ApplicationRecord
 
     def _ensure_openmdao_impl_presence
       self.openmdao_impl ||= OpenmdaoAnalysisImpl.new
+    end
+
+    def _check_allowed_destruction
+      # to do check ancestry: forbid if parent
     end
 end

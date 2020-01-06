@@ -25,11 +25,11 @@ module WhatsOpt
       @surrogate_id = surrogate_id || SecureRandom.uuid
 
       if server_start && !server_available?
-        cmd = "#{PYTHON} #{File.join(Rails.root, 'surrogate_server', 'run_surrogate_server.py')} --outdir #{OUTDIR}"
+        cmd = "#{PYTHON} #{File.join(Rails.root, 'services', 'run_surrogate_server.py')} --outdir #{OUTDIR}"
         Rails.logger.info cmd
         @pid = spawn(cmd, [:out, :err] => File.join(Rails.root, "upload", "logs", "surrogate_server.log"))
         retries = 0
-        while retries < 5 && !server_available?  # wait for server start
+        while retries < 10 && !server_available?  # wait for server start
           retries += 1
           sleep(1)
         end
@@ -49,10 +49,7 @@ module WhatsOpt
       client.shutdown
     rescue => e
       Rails.logger.warn e
-      false
     else
-      true
-    ensure
       transport.close()
     end
 
@@ -87,6 +84,12 @@ module WhatsOpt
 
     def copy_surrogate(src_id)
       _send { @client.copy_surrogate(src_id, @surrogate_id) }
+    end
+
+    def get_sobol_pce_sensitivity_analysis
+      sobol_indices = nil
+      _send { sobol_indices = @client.get_sobol_pce_sensitivity_analysis(@surrogate_id) }
+      sobol_indices
     end
 
     def _send

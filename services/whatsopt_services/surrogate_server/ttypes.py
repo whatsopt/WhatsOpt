@@ -17,26 +17,29 @@ all_structs = []
 
 
 class SurrogateKind(object):
-    KRIGING = 0
-    KPLS = 1
-    KPLSK = 2
-    LS = 3
-    QP = 4
+    SMT_KRIGING = 0
+    SMT_KPLS = 1
+    SMT_KPLSK = 2
+    SMT_LS = 3
+    SMT_QP = 4
+    OPENTURNS_PCE = 5
 
     _VALUES_TO_NAMES = {
-        0: "KRIGING",
-        1: "KPLS",
-        2: "KPLSK",
-        3: "LS",
-        4: "QP",
+        0: "SMT_KRIGING",
+        1: "SMT_KPLS",
+        2: "SMT_KPLSK",
+        3: "SMT_LS",
+        4: "SMT_QP",
+        5: "OPENTURNS_PCE",
     }
 
     _NAMES_TO_VALUES = {
-        "KRIGING": 0,
-        "KPLS": 1,
-        "KPLSK": 2,
-        "LS": 3,
-        "QP": 4,
+        "SMT_KRIGING": 0,
+        "SMT_KPLS": 1,
+        "SMT_KPLSK": 2,
+        "SMT_LS": 3,
+        "SMT_QP": 4,
+        "OPENTURNS_PCE": 5,
     }
 
 
@@ -172,6 +175,89 @@ class SurrogateQualification(object):
 
     def __ne__(self, other):
         return not (self == other)
+
+
+class SobolIndices(object):
+    """
+    Attributes:
+     - S1
+     - ST
+    """
+
+
+    def __init__(self, S1=None, ST=None,):
+        self.S1 = S1
+        self.ST = ST
+
+    def read(self, iprot):
+        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
+            return
+        iprot.readStructBegin()
+        while True:
+            (fname, ftype, fid) = iprot.readFieldBegin()
+            if ftype == TType.STOP:
+                break
+            if fid == 1:
+                if ftype == TType.LIST:
+                    self.S1 = []
+                    (_etype10, _size7) = iprot.readListBegin()
+                    for _i11 in range(_size7):
+                        _elem12 = iprot.readDouble()
+                        self.S1.append(_elem12)
+                    iprot.readListEnd()
+                else:
+                    iprot.skip(ftype)
+            elif fid == 2:
+                if ftype == TType.LIST:
+                    self.ST = []
+                    (_etype16, _size13) = iprot.readListBegin()
+                    for _i17 in range(_size13):
+                        _elem18 = iprot.readDouble()
+                        self.ST.append(_elem18)
+                    iprot.readListEnd()
+                else:
+                    iprot.skip(ftype)
+            else:
+                iprot.skip(ftype)
+            iprot.readFieldEnd()
+        iprot.readStructEnd()
+
+    def write(self, oprot):
+        if oprot._fast_encode is not None and self.thrift_spec is not None:
+            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
+            return
+        oprot.writeStructBegin('SobolIndices')
+        if self.S1 is not None:
+            oprot.writeFieldBegin('S1', TType.LIST, 1)
+            oprot.writeListBegin(TType.DOUBLE, len(self.S1))
+            for iter19 in self.S1:
+                oprot.writeDouble(iter19)
+            oprot.writeListEnd()
+            oprot.writeFieldEnd()
+        if self.ST is not None:
+            oprot.writeFieldBegin('ST', TType.LIST, 2)
+            oprot.writeListBegin(TType.DOUBLE, len(self.ST))
+            for iter20 in self.ST:
+                oprot.writeDouble(iter20)
+            oprot.writeListEnd()
+            oprot.writeFieldEnd()
+        oprot.writeFieldStop()
+        oprot.writeStructEnd()
+
+    def validate(self):
+        return
+
+    def __repr__(self):
+        L = ['%s=%r' % (key, value)
+             for key, value in self.__dict__.items()]
+        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+
+    def __eq__(self, other):
+        return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
+
+    def __ne__(self, other):
+        return not (self == other)
 all_structs.append(SurrogateException)
 SurrogateException.thrift_spec = (
     None,  # 0
@@ -182,6 +268,12 @@ SurrogateQualification.thrift_spec = (
     None,  # 0
     (1, TType.DOUBLE, 'r2', None, None, ),  # 1
     (2, TType.LIST, 'yp', (TType.DOUBLE, None, False), None, ),  # 2
+)
+all_structs.append(SobolIndices)
+SobolIndices.thrift_spec = (
+    None,  # 0
+    (1, TType.LIST, 'S1', (TType.DOUBLE, None, False), None, ),  # 1
+    (2, TType.LIST, 'ST', (TType.DOUBLE, None, False), None, ),  # 2
 )
 fix_spec(all_structs)
 del all_structs
