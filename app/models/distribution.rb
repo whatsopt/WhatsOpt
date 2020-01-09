@@ -1,0 +1,2 @@
+class Distribution < ApplicationRecord
+end
