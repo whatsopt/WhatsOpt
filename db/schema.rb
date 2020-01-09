@@ -109,6 +109,8 @@ ActiveRecord::Schema.define(version: 74) do
 
   create_table "distributions", force: :cascade do |t|
     t.string "kind", null: false
+    t.integer "variable_id"
+    t.index ["variable_id"], name: "index_distributions_on_variable_id"
   end
 
   create_table "endpoints", force: :cascade do |t|
