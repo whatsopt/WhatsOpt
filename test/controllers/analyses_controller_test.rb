@@ -113,12 +113,14 @@ class AnalysesControllerTest < ActionDispatch::IntegrationTest
     assert_match /Can not delete nested analysis/, flash[:alert]
   end
 
-  test "tata should not destroy analysis due to operation" do
-    assert_difference("Analysis.count", 0) do
-      delete mda_url(@cicav)
+  test "should destroy analysis and operation" do
+    nb_ops = @cicav.operations.count
+    assert_difference("Analysis.count", -1) do
+      assert_difference("Operation.count", -nb_ops) do
+        delete mda_url(@cicav)
+      end
     end
     assert_redirected_to mdas_url
-    assert_match /Can not delete analysis/, flash[:alert]
   end
 
   test "should not destroy analysis, if not owner" do
