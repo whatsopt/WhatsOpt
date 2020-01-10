@@ -108,7 +108,8 @@ class Surrogate < ApplicationRecord
   end
 
   def get_sobol_pce_sensitivity_analysis
-    if kind == OPENTURNS_PCE
+    train unless trained?
+    if kind == OPENTURNS_PCE && trained?
       infos = proxy.get_sobol_pce_sensitivity_analysis
       {
         "#{variable.name}" => {
@@ -118,6 +119,10 @@ class Surrogate < ApplicationRecord
         } 
       }
     else
+      Rails.logger.warn "Can not get sensitivity analysis as surrogate"\
+                         " for #{self.variable.name} has #{self.status} status" unless trained?
+      Rails.logger.warn "Can not get sensitivity analysis as surrogate"\
+                         " for #{self.variable.name} is of kind #{kind}" unless kind == OPENTURNS_PCE
       {}
     end
   end

@@ -35,7 +35,7 @@ class Api::V1::OperationsController < Api::ApiController
 
   # DELETE /api/v1/operations/1
   def destroy
-    @operation.destroy
+    @operation.destroy!
     head :no_content
   end
 

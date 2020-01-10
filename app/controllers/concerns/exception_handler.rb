@@ -14,5 +14,11 @@ module ExceptionHandler
       Rails.logger.error "Record invalid : " + e.message
       json_response({ message: e.message }, :unprocessable_entity)
     end
+
+    rescue_from Operation::ForbiddenRemovalException do |e|
+      Rails.logger.error "Operation forbidden removal: " + e.message
+      json_response({ message: e.message }, :forbidden)
+    end
+
   end
 end

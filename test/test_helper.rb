@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require 'csv'
 
 if ENV["WHATSOPT_COVERALLS"]
   require "coveralls"
@@ -23,6 +24,18 @@ class ActiveSupport::TestCase
   def skip_if_parallel
     skip "when run in parallel" if ENV["PARALLEL_WORKERS"].to_i > 1
   end
+
+  def csv2hash(filename)
+    res = {}
+    CSV.foreach("test/fixtures/#{filename}", headers: true, col_sep: ';', converters: :float).with_index(1) do |row, ln|
+      if ln == 1
+        row.headers.each {|h| res[h] = []}
+      end
+      row.each {|h, elt| res[h] << elt}
+    end
+    res
+  end
+
 end
 
 class ActionDispatch::IntegrationTest
