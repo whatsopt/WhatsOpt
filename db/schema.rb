@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 71) do
+ActiveRecord::Schema.define(version: 74) do
 
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
@@ -80,6 +80,15 @@ ActiveRecord::Schema.define(version: 71) do
     t.text "values"
   end
 
+  create_table "components", force: :cascade do |t|
+    t.integer "discipline_id"
+    t.boolean "has_derivatives", default: false
+    t.boolean "is_implicit", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["discipline_id"], name: "index_components_on_discipline_id"
+  end
+
   create_table "connections", force: :cascade do |t|
     t.integer "from_id"
     t.integer "to_id"
@@ -96,6 +105,12 @@ ActiveRecord::Schema.define(version: 71) do
     t.string "type"
     t.integer "position"
     t.index ["analysis_id"], name: "index_disciplines_on_analysis_id"
+  end
+
+  create_table "distributions", force: :cascade do |t|
+    t.string "kind", null: false
+    t.integer "variable_id"
+    t.index ["variable_id"], name: "index_distributions_on_variable_id"
   end
 
   create_table "endpoints", force: :cascade do |t|
@@ -157,19 +172,24 @@ ActiveRecord::Schema.define(version: 71) do
     t.string "driver", default: "runonce"
     t.text "success"
     t.integer "base_operation_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "options", force: :cascade do |t|
     t.string "name"
     t.string "value"
     t.integer "operation_id"
+    t.string "optionizable_type"
+    t.integer "optionizable_id"
     t.index ["operation_id"], name: "index_options_on_operation_id"
+    t.index ["optionizable_type", "optionizable_id"], name: "index_options_on_optionizable_type_and_optionizable_id"
   end
 
   create_table "parameters", force: :cascade do |t|
-    t.text "init"
-    t.text "lower"
-    t.text "upper"
+    t.string "init", default: ""
+    t.string "lower", default: ""
+    t.string "upper", default: ""
     t.integer "variable_id"
   end
 
