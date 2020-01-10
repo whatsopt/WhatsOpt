@@ -45,7 +45,10 @@ class PCE(SurrogateModel):
         else:
             for i in range(self.input_dim):
                 mean = np.mean(x_train[:, i])
-                distributions.append(ot.Uniform(0.95 * mean, 1.05 * mean))
+                lower, upper = 0.95 * mean, 1.05 * mean
+                if mean < 0:
+                    lower, upper = upper, lower
+                distributions.append(ot.Uniform())
 
         distribution = ot.ComposedDistribution(distributions)
 
