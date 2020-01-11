@@ -22,7 +22,7 @@ class Operation < ApplicationRecord
   class ForbiddenRemovalException < Exception; end
 
   belongs_to :analysis
-  has_many :options, dependent: :destroy
+  has_many :options, as: :optionizable, dependent: :destroy
   accepts_nested_attributes_for :options, reject_if: proc { |attr| attr["name"].blank? }, allow_destroy: true
 
   has_one :job, dependent: :destroy
