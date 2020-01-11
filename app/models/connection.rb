@@ -117,10 +117,13 @@ class Connection < ApplicationRecord
       if from.scaling && params[:scaling_attributes]
         params[:scaling_attributes][:id] = from.scaling.id
       end
+      if from.distribution && params[:distributions_attributes]
+        params[:distribution_attributes][:id] = from.distribution.id
+      end
       from.update!(params)
 
       # update to related variables
-      params = params.except(:parameter_attributes, :scaling_attributes)
+      params = params.except(:parameter_attributes, :scaling_attributes, :distributions_attributes)
       Connection.where(from_id: from.id).each do |conn|
         conn.to.update!(params)
       end
