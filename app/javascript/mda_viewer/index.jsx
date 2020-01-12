@@ -12,6 +12,8 @@ import ConnectionsEditor from 'mda_viewer/components/ConnectionsEditor';
 import VariablesEditor from 'mda_viewer/components/VariablesEditor';
 import OpenmdaoImplEditor from 'mda_viewer/components/OpenmdaoImplEditor';
 import ExportPanel from 'mda_viewer/components/ExportPanel';
+import DistributionModals from 'mda_viewer/components/DistributionModals';
+
 import MetaModelQualification from '../utils/components/MetaModelQualification';
 import AnalysisDatabase from '../utils/AnalysisDatabase';
 import deepIsEqual from '../utils/compare';
@@ -564,6 +566,7 @@ class MdaViewer extends React.Component {
             </div>
             <div className="tab-pane fade show active" id="variables" role="tabpanel" aria-labelledby="variables-tab">
               {varEditor}
+              <DistributionModals db={db} onConnectionChange={this.handleConnectionChange} />
             </div>
             <div className="tab-pane fade" id="openmdao-impl" role="tabpanel" aria-labelledby="openmdao-impl-tab">
               {openmdaoImplMsg}

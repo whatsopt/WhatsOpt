@@ -187,6 +187,7 @@ class AnalysisDatabase {
         role: conn.role,
         fromId: conn.fr,
         toIds: conn.to,
+        uq: infos.uq,
       };
       return val;
     });
@@ -205,6 +206,10 @@ class AnalysisDatabase {
 
   getOutputVariables(discId) {
     return this.mda.vars[discId].out.sort();
+  }
+
+  getAnalysisInputVariables() {
+    return this.inputVariables;
   }
 
   _findNode(id) {
@@ -231,6 +236,7 @@ class AnalysisDatabase {
     let ref = '';
     let ref0 = '';
     let resRef = '';
+    let uq = null;
     const { active } = vfr;
 
     if (vfr.parameter_attributes) {
@@ -242,6 +248,9 @@ class AnalysisDatabase {
       ref = vfr.scaling_attributes.ref;
       ref0 = vfr.scaling_attributes.ref0;
       resRef = vfr.scaling_attributes.res_ref;
+    }
+    if (vfr.distribution_attributes) {
+      uq = { ...vfr.distribution_attributes };
     }
     const infos = {
       id: conn.connId,
@@ -260,6 +269,7 @@ class AnalysisDatabase {
       res_ref: resRef,
       units,
       active,
+      uq,
     };
     return infos;
   }

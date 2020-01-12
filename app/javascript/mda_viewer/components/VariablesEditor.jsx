@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { useTable, useSortBy } from 'react-table';
 import { RIEInput, RIESelect } from './riek/src';
 
-const CELL_CLASSNAME = "react-table-cell";
+const CELL_CLASSNAME = 'react-table-cell';
 
 function _computeRoleSelection(conn) {
   const options = [{ id: 'parameter', text: 'Parameter' },
@@ -87,6 +87,38 @@ function ReadonlyCell({
   return (<span className={textStyle}>{info}</span>);
 }
 
+function ButtonCell({
+  cell,
+  row,
+  column,
+  data: connections,
+  onConnectionChange,
+  isEditing,
+}) {
+  const { index } = row;
+  const label = connections[index].uq ? connections[index].uq.kind : '';
+  if (isEditing) {
+    const isInput = (connections[index].role === 'design_var')
+      || (connections[index].role === 'parameter');
+    if (isInput) {
+      return (
+        <button
+          type="button"
+          className="btn btn-light btn-sm"
+          style={{ paddingTop: 0, paddingBottom: 0 }}
+          onClick={() => $(`#distributionModal-${connections[index].name}`).modal('show')}
+        >
+          {label || 'No'}
+        </button>
+      );
+    }
+  }
+  return ReadonlyCell({
+    cell, row, column, data: connections, onConnectionChange, isEditing,
+  });
+}
+
+
 function EditableCell({
   cell,
   row,
@@ -131,25 +163,29 @@ function EditableCell({
       }
     });
 
-    return (
-      <RIEInput
-        editProps={{ size: 10 }}
-        className={CELL_CLASSNAME}
-        value={value || ''}
-        change={(attr) => onConnectionChange(connections[index].id, attr)}
-        propName={id}
-        afterFinish={() => {
-          // eslint-disable-next-line no-param-reassign
-          cellToFocus.current = null;
-        }}
-        afterStart={() => {
-          // eslint-disable-next-line no-param-reassign
-          cellToFocus.current = { index, id };
-        }}
-        ref={myRef}
-        shouldBlockWhileLoading
-      />
-    );
+    const isInput = (connections[index].role === 'design_var')
+      || (connections[index].role === 'parameter');
+    if (isInput || id === 'name' || id === 'desc' || id === 'shape' || id === 'units') {
+      return (
+        <RIEInput
+          editProps={{ size: 8 }}
+          className={CELL_CLASSNAME}
+          value={value || ''}
+          change={(attr) => onConnectionChange(connections[index].id, attr)}
+          propName={id}
+          afterFinish={() => {
+            // eslint-disable-next-line no-param-reassign
+            cellToFocus.current = null;
+          }}
+          afterStart={() => {
+            // eslint-disable-next-line no-param-reassign
+            cellToFocus.current = { index, id };
+          }}
+          ref={myRef}
+          shouldBlockWhileLoading
+        />
+      );
+    }
   }
   return ReadonlyCell({
     cell, row, column, data: connections, onConnectionChange, isEditing,
@@ -185,12 +221,12 @@ function Table({
       isEditing,
       cellToFocus,
     },
-    useSortBy
+    useSortBy,
   );
 
-  let colWidths = ['10', '15', '10', '10', '5', '5', '10', '10', '10', '5', '5', '5'];
+  let colWidths = ['10', '15', '10', '10', '5', '10', '10', '10', '5', '5', '5'];
   if (isEditing) {
-    colWidths = ['3', '10', '15', '10', '10', '7', '5', '5', '10', '10', '10', '5', '5', '5'];
+    colWidths = ['3', '10', '15', '10', '10', '7', '5', '5', '10', '10', '10', '5', '5', '5', '5'];
   }
 
   // Render the UI for your table
@@ -202,7 +238,7 @@ function Table({
             {headerGroup.headers.map((column, i) => {
               const cprops = {
                 width: `${colWidths[i]}%`,
-                ...column.getHeaderProps(column.getSortByToggleProps())
+                ...column.getHeaderProps(column.getSortByToggleProps()),
               };
               return (
                 <th {...cprops}>
@@ -285,6 +321,7 @@ function VariablesEditor(props) {
       {
         Header: 'Type',
         accessor: 'type',
+        isVisible: isEditing,
       },
       {
         Header: 'Shape',
@@ -305,6 +342,11 @@ function VariablesEditor(props) {
       {
         Header: 'Upper',
         accessor: 'upper',
+      },
+      {
+        Header: 'UQ',
+        accessor: 'uq',
+        Cell: ButtonCell,
       },
       {
         Header: 'Ref',
@@ -334,7 +376,6 @@ function VariablesEditor(props) {
     />
   );
 }
-
 
 VariablesEditor.propTypes = {
   isEditing: PropTypes.bool.isRequired,
