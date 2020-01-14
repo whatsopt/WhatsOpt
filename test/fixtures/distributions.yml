@@ -1,7 +1,3 @@
-# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
-
-one:
-  kind: MyString
-
-two:
-  kind: MyString
+singleton_u_uq:
+  variable: varu_driver_out
+  kind: Normal

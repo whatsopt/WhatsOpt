@@ -9,3 +9,17 @@ slsqp_maxiter:
   value: 5
   optionizable: inprogress2
   optionizable_type: Operation
+
+singleton_u_uq_mu:
+  name: "mu"
+  value: "2.0"
+  optionizable: singleton_u_uq
+  optionizable_type: Distribution
+    
+singleton_u_uq_sigma:
+  name: "sigma"
+  value: "0.5"
+  optionizable: singleton_u_uq
+  optionizable_type: Distribution
+      
+      
