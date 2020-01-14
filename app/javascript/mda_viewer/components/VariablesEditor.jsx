@@ -96,17 +96,17 @@ function ButtonCell({
   isEditing,
 }) {
   const { index } = row;
-  const label = connections[index].uq ? connections[index].uq.kind : '';
+  const { name, role, uq: { kind } } = connections[index];
+  const label = kind !== "none" ? kind : '';
   if (isEditing) {
-    const isInput = (connections[index].role === 'design_var')
-      || (connections[index].role === 'parameter');
+    const isInput = (role === 'design_var') || (role === 'parameter');
     if (isInput) {
       return (
         <button
           type="button"
           className="btn btn-light btn-sm"
           style={{ paddingTop: 0, paddingBottom: 0 }}
-          onClick={() => $(`#distributionModal-${connections[index].name}`).modal('show')}
+          onClick={() => $(`#distributionModal-${name}`).modal('show')}
         >
           {label || 'No'}
         </button>
@@ -114,7 +114,7 @@ function ButtonCell({
     }
   }
   return ReadonlyCell({
-    cell, row, column, data: connections, onConnectionChange, isEditing,
+    cell: { value: label }, row, column, data: connections, onConnectionChange, isEditing,
   });
 }
 
@@ -345,7 +345,7 @@ function VariablesEditor(props) {
       },
       {
         Header: 'UQ',
-        accessor: 'uq',
+        accessor: row => row.uq.kind,
         Cell: ButtonCell,
       },
       {

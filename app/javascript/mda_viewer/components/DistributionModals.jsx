@@ -1,5 +1,6 @@
 import React from 'react';
 import Form from 'react-jsonschema-form-bs4';
+import update from 'immutability-helper';
 
 import PropTypes from 'prop-types';
 
@@ -32,7 +33,8 @@ const SCHEMA = {
         {
           properties: {
             kind: { enum: [NORMAL] },
-            options: {
+            normal_options: {
+              title: `${NORMAL} options`,
               type: 'object',
               properties: {
                 mu: { title: 'mu - mean', type: 'number', default: 0.0 },
@@ -44,7 +46,8 @@ const SCHEMA = {
         {
           properties: {
             kind: { enum: [BETA] },
-            options: {
+            beta_options: {
+              title: `${BETA} options`,
               type: 'object',
               properties: {
                 alpha: { title: 'alpha - shape', type: 'number', default: 2.0 },
@@ -58,7 +61,8 @@ const SCHEMA = {
         {
           properties: {
             kind: { enum: [GAMMA] },
-            options: {
+            gamma_options: {
+              title: `${GAMMA} options`,
               type: 'object',
               properties: {
                 k: { title: 'k - shape', type: 'number', default: 2.0 },
@@ -71,7 +75,8 @@ const SCHEMA = {
         {
           properties: {
             kind: { enum: [UNIFORM] },
-            options: {
+            uniform_options: {
+              title: `${UNIFORM} options`,
               type: 'object',
               properties: {
                 a: { title: 'a - lower bound', type: 'number', default: -1.0 },
@@ -85,77 +90,98 @@ const SCHEMA = {
   },
 };
 
+function _uqToState(uq) {
+  let state = { kind: DETERMINIST, options_attributes: [] };
+  const { kind, options_attributes } = uq;
+  state = { kind, options_attributes: [] };
+  for (let i = 0; i < options_attributes.length; i += 1) {
+    const opt = options_attributes[i];
+    state.options_attributes.push({ ...opt });
+  }
+  return state;
+}
+
+function _notEqualOptions(opt1, opt2) {
+  if (opt1.length != opt2.length) {
+    return true;
+  }
+  for (let i = 0; i < opt1.length; i += 1) {
+    let found = false;
+    for (let j = 0; j < opt2.length; j += 1) {
+      found = found || (opt1[i].name == opt2[j].name && opt1[i].value == opt2[j].value)
+    }
+    if (!found) {
+      return true;
+    }
+  }
+  return false;
+}
+
 class DistributionModal extends React.PureComponent {
   constructor(props) {
     super(props);
-    const { conn } = this.props;
-    this.conn = conn;
-    this.resetFormData = this.resetFormData.bind(this);
-    const formData = this.resetFormData();
-    this.state = {
-      formData,
-    };
-    this.ref = React.createRef();
+    const { conn: { uq } } = this.props;
+    this.state = _uqToState(uq);
+
+    this.getFormData = this.getFormData.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleSave = this.handleSave.bind(this);
   }
 
-  componentDidMount() {
-    const { conn: { name } } = this.props;
-    $(`#distributionModal-${name}`).on('hidden.bs.modal', () => {
-      console.log(`Before reset FORMDATA= ${JSON.stringify(this.state.formData)}`);
-      const formData = this.resetFormData();
-      console.log(`resetting FORMDATA= ${JSON.stringify(formData)}`);
-      this.setState({ formData });
-      console.log(`After FORMDATA= ${JSON.stringify(formData)}`);
-    });
-  }
-
-  resetFormData() {
-    let formData = { kind: DETERMINIST };
-    const { uq } = this.conn;
-    if (uq) {
-      const { kind, options_attributes } = uq;
-      formData = { kind };
-      if (options_attributes) {
-        for (let i = 0; i < options_attributes.length; i += 1) {
-          const opt = options_attributes[i];
-          formData.options[opt.name] = opt.value;
-        }
-      }
+  getFormData() {
+    // console.log(this.state);
+    const { kind, options_attributes } = this.state;
+    let formData = { kind };
+    if (options_attributes) {
+      formData[`${kind.toLowerCase()}_options`] = {};
     }
+    for (let i = 0; i < options_attributes.length; i += 1) {
+      const opt = options_attributes[i];
+      formData[`${kind.toLowerCase()}_options`][opt.name] = opt.value;
+    }
+    // console.log(`get FORMDATA= ${JSON.stringify(formData)}`);
     return formData;
   }
 
   handleChange(data) {
     const { formData } = data;
-    console.log(`Change FORMDATA= ${JSON.stringify(formData)}`);
-    this.setState({ ...formData });
+    // console.log(`Change FORMDATA= ${JSON.stringify(formData)}`);
+    const { kind } = formData
+    const newState = { kind, options_attributes: [] };
+    for (let k in formData) {
+      if (k.startsWith(kind.toLowerCase())) {
+        for (let name in formData[k]) {
+          newState.options_attributes.push({ name, value: formData[k][name] });
+        }
+      }
+    }
+    // console.log(`SETSTATE ${JSON.stringify(newState)}`)
+    this.setState(newState);
   }
 
   handleSave() {
-    const { onConnectionChange } = this.props;
-    const { formData } = this.state;
-    console.log(`Save FORMDATA= ${JSON.stringify(formData)}`);
+    const { conn: { id, name }, onConnectionChange } = this.props;
+    // console.log(`SAVE state= ${JSON.stringify(this.state)}`);
+    onConnectionChange(id, { distribution_attributes: this.state });
+    $(`#distributionModal-${name}`).modal('hide');
+  }
 
-    const distribution = { kind: formData.kind, options_attributes: [] };
-    if (formData.options) {
-      for (const k in formData.options) {
-        if (Object.prototype.hasOwnProperty.call(formData.options, k)) {
-          distribution.options_attributes.push({ name: k, value: formData.options[k] });
-        }
+  componentDidMount() {
+    const { conn: { name } } = this.props;
+    $(`#distributionModal-${name}`).on('shown.bs.modal',
+      () => {
+        const { conn: { uq } } = this.props;
+        console.log("GET from props " + JSON.stringify(this.props));
+        this.setState(_uqToState(uq));
       }
-    } else {
-      distribution._destroy = true;
-    }
-    onConnectionChange(this.conn.id, { distribution_attributes: distribution });
+    );
   }
 
   render() {
     const { conn: { name } } = this.props;
-    const { formData } = this.state;
+    const formData = this.getFormData();
 
-    console.log(`render FORMDATA= ${JSON.stringify(formData)}`);
+    // console.log(`render FORMDATA= ${JSON.stringify(formData)}`);
 
     return (
       <div className="modal fade" id={`distributionModal-${name}`} tabIndex="-1" role="dialog" aria-labelledby={`distributionModalLabel-${name}`} aria-hidden="true">

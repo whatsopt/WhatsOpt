@@ -140,6 +140,8 @@ class MdaViewer extends React.Component {
 
   handleConnectionChange(connId, connAttrs) {
     // console.log('Change variable connection '+connId+ ' with '+JSON.stringify(connAttrs));
+
+    // parameter
     const cAttrs = JSON.parse(JSON.stringify(connAttrs));
     if (connAttrs.init || connAttrs.init === '') {
       cAttrs.parameter_attributes = { init: connAttrs.init };
@@ -153,6 +155,8 @@ class MdaViewer extends React.Component {
     delete cAttrs.init;
     delete cAttrs.lower;
     delete cAttrs.upper;
+
+    // scaling
     if (connAttrs.ref || connAttrs.ref === '') {
       cAttrs.scaling_attributes = { ref: connAttrs.ref };
     }
@@ -166,12 +170,38 @@ class MdaViewer extends React.Component {
     delete cAttrs.ref0;
     delete cAttrs.res_ref;
 
+    // distribution: check for updating/removing options
+    if (connAttrs.distribution_attributes) {
+      const { options_attributes: newOptAttrs } = connAttrs.distribution_attributes;
+      // console.log(`NEWOPTATTRS = ${JSON.stringify(newOptAttrs)}`);
+      let conn = this.db.connections.find((conn) => conn.id === connId);
+      // console.log(`OLDCONNATTRS = ${JSON.stringify(newOptAttrs)}`);
+      const { uq: { options_attributes: prevOptAttrs } } = conn;
+      const optIds = prevOptAttrs.map(opt => opt.id);
+      // console.log(optIds);
+      for (let optAttr of newOptAttrs) {
+        if (optIds.length) {
+          // console.log(optAttr);
+          optAttr.id = optIds.shift();
+        }
+      }
+      if (connAttrs.options_attributes) {  // needed in case, normally should be at least []
+        optIds.forEach((id) => connAttrs.options_attributes.push({ id, _destroy: '1' }));
+      }
+    }
+
+    // console.log(`CONATTRS = ${JSON.stringify(connAttrs)}`);
+
     if (Object.keys(cAttrs).length !== 0) {
-      this.api.updateConnection(connId, cAttrs, () => { this.renderXdsm(); }, (error) => {
-        const message = error.response.data.message || 'Error: Update failed';
-        const newState = update(this.state, { errors: { $set: [message] } });
-        this.setState(newState);
-      });
+      this.api.updateConnection(connId, cAttrs,
+        () => {
+          this.renderXdsm();
+        },
+        (error) => {
+          const message = error.response.data.message || 'Error: Update failed';
+          const newState = update(this.state, { errors: { $set: [message] } });
+          this.setState(newState);
+        });
     }
   }
 

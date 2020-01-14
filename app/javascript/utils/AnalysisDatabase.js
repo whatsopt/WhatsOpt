@@ -250,7 +250,9 @@ class AnalysisDatabase {
       resRef = vfr.scaling_attributes.res_ref;
     }
     if (vfr.distribution_attributes) {
-      uq = { ...vfr.distribution_attributes };
+      uq = vfr.distribution_attributes;
+    } else {
+      uq = { kind: "none", options_attributes: [] };
     }
     const infos = {
       id: conn.connId,
