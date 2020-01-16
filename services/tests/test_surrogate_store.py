@@ -22,6 +22,12 @@ class TestSurrogateStore(unittest.TestCase):
 
         self.store.create_surrogate("1", "SMT_KRIGING", xt, yt)
 
+    def test_create_surrogate_with_options(self):
+        xt = np.array([[0.0, 1.0, 2.0, 3.0, 4.0]]).T
+        yt = np.array([0.0, 1.0, 1.5, 0.5, 1.0]).T
+
+        self.store.create_surrogate("1", "SMT_KRIGING", xt, yt, {"theta0": [0.2]})
+
     def test_get_existing_surrogate(self):
         xt = np.array([[0.0, 1.0, 2.0, 3.0, 4.0]]).T
         yt = np.array([0.0, 1.0, 1.5, 0.5, 1.0]).T
@@ -63,9 +69,17 @@ class TestSurrogateStore(unittest.TestCase):
 
         self.store.create_surrogate("3", "OPENTURNS_PCE", xt, yt)
         sa = self.store.get_sobol_pce_sensitivity_analysis("3")
-        self.assertEqual([1.0], sa["first_order_indices"])
-        self.assertEqual([0.0], sa["total_order_indexes"])
+        self.assertEqual([1.0], sa["S1"])
+        self.assertEqual([0.0], sa["ST"])
 
+    def test_get_openturns_pce_sensibility_analysi_with_uncertainties(self):
+        xt = np.array([[0.0, 1.0, 2.0, 3.0, 4.0]]).T
+        yt = np.array([0.0, 1.0, 1.5, 0.5, 1.0]).T
+
+        self.store.create_surrogate("3", "OPENTURNS_PCE", xt, yt, {}, [{"name": "Uniform", "kwargs": {"a": 1.9, "b": 2.3}}])
+        sa = self.store.get_sobol_pce_sensitivity_analysis("3")
+        self.assertEqual([1.0], sa["S1"])
+        self.assertEqual([0.0], sa["ST"])
 
 if __name__ == "__main__":
     unittest.main()

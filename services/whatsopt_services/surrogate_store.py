@@ -47,14 +47,18 @@ class SurrogateStore(object):
         if not os.path.exists(outdir):
             os.makedirs(outdir)
 
-    def create_surrogate(self, surrogate_id, surrogate_kind, xt, yt):
+    def create_surrogate(self, surrogate_id, surrogate_kind, xt, yt, surrogate_options={}, uncertainty_specs=[]):
         if surrogate_kind not in SurrogateStore.SURROGATE_NAMES:
             raise Exception(
                 "Unknown surrogate {} not in {}".format(
                     surrogate_kind, SurrogateStore.SURROGATE_NAMES
                 )
             )
-        sm = self.surrogate_classes[surrogate_kind]()
+        print("options = {}".format(surrogate_options))
+        sm = self.surrogate_classes[surrogate_kind](**surrogate_options)
+        if "uncertainties" in sm.supports:
+            sm.set_uncertainties(uncertainty_specs)
+            print("uncertainties = {}".format(uncertainty_specs))
         sm.set_training_values(np.array(xt), np.array(yt))
         sm.train()
 

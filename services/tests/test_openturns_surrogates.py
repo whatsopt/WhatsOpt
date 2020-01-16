@@ -25,6 +25,19 @@ class TestOpenturnsSurrogates(unittest.TestCase):
         sa = self.surr.get_sobol_indices()
         self.assertEqual(1.0, sa.getSobolIndex(0))
 
+    def test_train_and_predict_with_uncertainties(self):
+        self.surr.set_uncertainties([{"name": "Uniform", "kwargs": {"a": 1.9, "b": 2.3}}])
+        self.surr.train()
+
+        num = 13
+        x = np.linspace(0.0, 4.0, num).reshape(-1, 1)
+        y = self.surr.predict_values(x)
+
+        self.assertEqual((13, 1), y.shape)
+
+        sa = self.surr.get_sobol_indices()
+        print(sa.getSobolIndex(0))
+        self.assertEqual(1.0, sa.getSobolIndex(0))
 
 if __name__ == "__main__":
     unittest.main()

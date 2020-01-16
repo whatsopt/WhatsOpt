@@ -23,8 +23,8 @@ class SurrogateStoreProxy(object):
     def ping(self):
         return self._thrift_client.ping()
 
-    def create_surrogate(self, surrogate_id, surrogate_kind, xt, yt):
-        self._thrift_client.create_surrogate(surrogate_id, surrogate_kind, xt, yt)
+    def create_surrogate(self, surrogate_id, surrogate_kind, xt, yt, options={}, uncertainties=[]):
+        self._thrift_client.create_surrogate(surrogate_id, surrogate_kind, xt, yt, options, uncertainties)
 
     def predict_values(self, surrogate_id, xe):
         return self._thrift_client.predict_values(surrogate_id, xe)
@@ -77,6 +77,16 @@ class TestSurrogateServer(unittest.TestCase):
         )
 
     # @unittest.skip("skip")
+    def test_create_surrogate_with_options(self):
+        xt = np.array([[0.0, 1.0, 2.0, 3.0, 4.0]]).T
+        yt = np.array([0.0, 1.0, 1.5, 0.5, 1.0])
+
+        self.store.create_surrogate(
+            "1", SurrogateStore.SurrogateKind.SMT_KRIGING, xt, yt, 
+            {"theta0": SurrogateStore.OptionValue(vector=[0.2])}
+        )
+
+    # @unittest.skip("skip")
     def test_predict(self):
 
         xt = np.array([[0.0, 1.0, 2.0, 3.0, 4.0]]).T
@@ -92,6 +102,7 @@ class TestSurrogateServer(unittest.TestCase):
 
         self.assertEqual(13, len(y1))
 
+    # @unittest.skip("skip")
     def test_sobol_pce(self):
         xt = np.array([[0.0, 1.0, 2.0, 3.0, 4.0]]).T
         yt = np.array([0.0, 1.0, 1.5, 0.5, 1.0])
@@ -102,6 +113,19 @@ class TestSurrogateServer(unittest.TestCase):
         sobol = self.store.get_sobol_pce_sensitivity_analysis("1")
         print(sobol)
 
+    # @unittest.skip("skip")
+    def test_sobol_pce_with_uncertainties(self):
+        xt = np.array([[0.0, 1.0, 2.0, 3.0, 4.0]]).T
+        yt = np.array([0.0, 1.0, 1.5, 0.5, 1.0])
+
+        self.store.create_surrogate(
+            "1", SurrogateStore.SurrogateKind.OPENTURNS_PCE, xt, yt,
+            uncertainties=[SurrogateStore.Distribution(name="Uniform", kwargs={"a": 1.9, "b": 2.1})]
+        )
+        sobol = self.store.get_sobol_pce_sensitivity_analysis("1")
+        print(sobol)
+
+    # @unittest.skip("skip")
     def test_qualification(self):
         xt = np.array([[0.0, 1.0, 2.0, 3.0, 4.0]]).T
         yt = np.array([0.0, 1.0, 1.5, 0.5, 1.0])
@@ -116,6 +140,7 @@ class TestSurrogateServer(unittest.TestCase):
         for i, v in enumerate([0.0, 1.5, 1.0]):
             self.assertAlmostEqual(v, q.yp[i])
 
+    # @unittest.skip("skip")
     def test_copy_predict_destroy(self):
         self.store.copy_surrogate("1", "2")
         num = 13
