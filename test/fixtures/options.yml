@@ -21,5 +21,15 @@ singleton_u_uq_sigma:
   value: "0.5"
   optionizable: singleton_u_uq
   optionizable_type: Distribution
-      
-      
+
+cicav_metamodel_obj_theta0:
+  name: "theta0"
+  value: "[0.1]"
+  optionizable: cicav_metamodel
+  optionizable_type: MetaModel    
+
+surrogate_obj_theta0:
+  name: "theta0"
+  value: "[0.2]"
+  optionizable: surrogate_obj
+  optionizable_type: Surrogate  

@@ -32,6 +32,9 @@ class Surrogate < ApplicationRecord
 
   belongs_to :meta_model
   belongs_to :variable
+  
+  has_many :options, as: :optionizable, dependent: :destroy
+  accepts_nested_attributes_for :options, reject_if: proc { |attr| attr["name"].blank? }, allow_destroy: true 
 
   validates :meta_model, presence: true
   validates :variable, presence: true
@@ -138,7 +141,9 @@ class Surrogate < ApplicationRecord
     copy.quality = nil
     copy.status = STATUS_CREATED
     copy.variable = var || self.variable
-    #copy.copy_origin_id = self.id if self.trained? 
+    self.options.each do |opt|
+      copy.options << opt.build_copy
+    end
     mm.surrogates << copy if mm
     copy
   end
