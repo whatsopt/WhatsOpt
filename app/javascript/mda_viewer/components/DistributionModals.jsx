@@ -1,8 +1,6 @@
 import React from 'react';
-import Form from 'react-jsonschema-form-bs4';
-import update from 'immutability-helper';
-
 import PropTypes from 'prop-types';
+import Form from 'react-jsonschema-form-bs4';
 
 const DETERMINIST = 'none';
 const NORMAL = 'Normal';
