@@ -66,6 +66,10 @@ class Analysis < ApplicationRecord
     !disciplines.nodes.detect { |d| !d.is_metamodel? }
   end
 
+  def has_uncertain_input_variables?
+    @has_uncertains ||= Variable.of_analysis(id).active.uncertain.count > 0
+  end
+
   def variables
     @variables = Variable.of_analysis(id).active.order("variables.name ASC")
   end

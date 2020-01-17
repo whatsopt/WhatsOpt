@@ -70,3 +70,8 @@ mm_from_doe2:
     driver: smt_metamodel_kriging
     analysis: cicav_metamodel2_analysis
             
+doe_singleton:
+    name: LHS
+    driver: smt_doe_random
+    analysis: :doe_singleton
+    success: [1, 1, 1, 1, 1]

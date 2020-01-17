@@ -199,7 +199,11 @@ class Operation < ApplicationRecord
   end
 
   def input_cases
-    ope_cases.select { |c| c.variable.is_connected_as_input_of_interest? }
+    if analysis.has_uncertain_input_variables?
+      ope_cases.uncertains.select { |c| c.variable.is_connected_as_input_of_interest? }
+    else
+      ope_cases.select { |c| c.variable.is_connected_as_input_of_interest? }
+    end
   end
 
   def output_cases

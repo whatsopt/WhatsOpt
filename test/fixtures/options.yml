@@ -24,12 +24,12 @@ singleton_u_uq_sigma:
 
 cicav_metamodel_obj_theta0:
   name: "theta0"
-  value: "[0.1]"
+  value: "[0.01]"
   optionizable: cicav_metamodel
   optionizable_type: MetaModel    
 
 surrogate_obj_theta0:
   name: "theta0"
-  value: "[0.2]"
+  value: "[0.01]"
   optionizable: surrogate_obj
   optionizable_type: Surrogate  

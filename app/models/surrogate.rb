@@ -73,7 +73,8 @@ class Surrogate < ApplicationRecord
         Rails.logger.warn "Surrogate kind '#{kind}' unkonwn: use SMT Kriging as default"
         surr_kind = SURROGATE_MAP[SMT_KRIGING]
       end
-      proxy.create_surrogate(surr_kind, xt, yt)
+      opts = options.inject({}){|acc, o| acc.update({o.name => o.value})}
+      proxy.create_surrogate(surr_kind, xt, yt, opts)
       unless indices.to_a.empty?
         quality = proxy.qualify(self.xvalid, self.yvalid)
         self.r2, self.ypred = quality.r2, quality.yp
