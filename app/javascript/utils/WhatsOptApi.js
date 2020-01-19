@@ -231,9 +231,9 @@ class WhatsOptApi {
       .catch((error) => console.log(error));
   }
 
-  createMetaModel(opeId, callback, onError) {
+  createMetaModel(opeId, mmAttrs, callback, onError) {
     const path = `/operations/${opeId}/meta_models`;
-    axios.post(this.apiUrl(path))
+    axios.post(this.apiUrl(path), { meta_model: mmAttrs })
       .then(callback)
       .catch(onError);
   }

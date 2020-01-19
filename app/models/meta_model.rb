@@ -46,10 +46,10 @@ class MetaModel < ApplicationRecord
   end
 
   def build_surrogates
-    default_opts = default_options.empty? ? [] : default_options
+    opts = default_options.map {|o| {name: o[:name], value: o[:value]}}
     analysis.response_variables.each do |v|
       (0...v.dim).each do |index|
-        surrogates.build(variable: v, coord_index: index-1, kind: default_surrogate_kind, options_attributes: default_opts)
+        surrogates.build(variable: v, coord_index: index-1, kind: default_surrogate_kind, options_attributes: opts)
       end
     end
   end

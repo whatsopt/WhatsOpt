@@ -2,199 +2,121 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Form from 'react-jsonschema-form-bs4';
 
-const SMT_KRIGING = "SMT_KRIGING";
-const SMT_KPLS = "SMT_KPLS";
-const SMT_KPLSK = "SMT_KPLSK";
-const SMT_LS = "SMT_LS";
-const SMT_QP = "SMT_QP";
-const OPENTURNS_PCE = "OPENTURNS_PCE";
+const SMT_KRIGING = 'SMT_KRIGING';
+const SMT_KPLS = 'SMT_KPLS';
+const SMT_KPLSK = 'SMT_KPLSK';
+const SMT_LS = 'SMT_LS';
+const SMT_QP = 'SMT_QP';
+const OPENTURNS_PCE = 'OPENTURNS_PCE';
 
 const SCHEMA = {
   type: 'object',
   properties: {
-    meta_model: {
-      title: 'Metamodel',
-      type: 'object',
-      properties: {
-        kind: {
-          type: 'string',
-          title: 'Distribution Kind',
-          enum: [SMT_KRIGING, SMT_KPLS, SMT_KPLSK, SMT_LS, SMT_QP, OPENTURNS_PCE],
-          enumNames: ["Kriging", "KPLS (Kriging+PLS)", "KPLSK (Kriging+PLS+KPLS initial guess)",
-            "Least-Squares Approximation", "Quadratic Polynomial Approximation",
-            "Polynomial Chaos Expension"],
-          default: SMT_KRIGING,
-        },
-        variables: {
-          type: 'object',
+    kind: {
+      type: 'string',
+      title: 'Distribution Kind',
+      enum: [SMT_KRIGING, SMT_KPLS, SMT_KPLSK, SMT_LS, SMT_QP, OPENTURNS_PCE],
+      enumNames: ['Kriging', 'KPLS (Kriging+PLS)', 'KPLSK (Kriging+PLS+KPLS initial guess)',
+        'Least-Squares Approximation', 'Quadratic Polynomial Approximation',
+        'Polynomial Chaos Expension'],
+      default: SMT_KRIGING,
+    },
+  },
+  required: ['kind'],
+  dependencies: {
+    kind: {
+      oneOf: [
+        {
           properties: {
-            inputs: {
-              type: 'array',
-              items: {
-                type: 'string',
-              }
-            },
-            outputs: {
-              type: 'array',
-              items: {
-                type: 'string',
-              }
-            },
+            kind: { enum: [SMT_KRIGING, SMT_KPLS, SMT_KPLSK, SMT_LS, SMT_QP] },
           },
         },
-      },
-      required: ['kind'],
-      dependencies: {
-        kind: {
-          oneOf: [
-            {
+        {
+          properties: {
+            kind: { enum: [OPENTURNS_PCE] },
+            openturns_pce_options: {
+              title: 'Options',
+              type: 'object',
               properties: {
-                kind: { enum: [SMT_KRIGING, SMT_KPLS, SMT_KPLSK, SMT_LS, SMT_QP] },
-              },
-            },
-            {
-              properties: {
-                kind: { enum: [OPENTURNS_PCE] },
-                openturns_pce_options: {
-                  title: `PCE options`,
-                  type: 'object',
-                  properties: {
-                    pce_degree: {
-                      title: 'p - Degree of polynoms',
-                      type: 'integer',
-                      default: 3
-                    },
-                  },
+                pce_degree: {
+                  title: 'p - Degree of polynoms',
+                  type: 'integer',
+                  default: 3,
                 },
               },
             },
-          ],
+          },
         },
-      },
+      ],
     },
   },
 };
 
-// const InputWidget = (props) => {
-//   const { value } = props;
-//   return (
-//     <input type="text"
-//       type="hidden"
-//       id={`meta_model_variables_inputs_${value}`}
-//       name="meta_model[variables][inputs][]"
-//       value={value}
-//     />
-//   );
-// }
-
-// const OutputWidget = (props) => {
-//   const { value } = props;
-//   return (
-//     <input
-//       type="hidden"
-//       id={`meta_model_variables_inputs_${value}`}
-//       name="meta_model[variables][outputs][]"
-//       value={value}
-//     />
-//   );
-// }
-
-// const SelectKindWidget = (props) => {
-//   const { children, className } = props;
-//   return (
-//     <select
-//       id="meta_model_kind"
-//       name="meta_model[kind]"
-//       className={className}>
-//       {children}
-//     </select>
-//   );
-// }
-
 const UISCHEMA = {
-  meta_model: {
-    //kind: { "ui:widget": SelectKindWidget, },
-    variables: {
-      classNames: "d-none",
-      inputs: {
-        items: {
-          "ui:widget": "hidden",
-          // "ui:widget": InputWidget,
-        },
-        "ui:options": {
-          orderable: false,
-          addable: false,
-          removable: false
-        }
-      },
-      outputs: {
-        items: {
-          "ui:widget": "hidden",
-          // "ui:widget": OutputWidget,
-        },
-        "ui:options": {
-          orderable: false,
-          addable: false,
-          removable: false
-        }
-      },
-    },
-  },
 };
 
 class MetaModelManager extends React.Component {
-
   constructor(props) {
-    super(props)
+    super(props);
 
     this.state = {
       formData: {
-        meta_model: {
-          kind: SMT_KRIGING,
-        }
-      }
-    }
+        kind: SMT_KRIGING,
+      },
+    };
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  handleChange() {
-    console.log("change");
+  handleChange(data) {
+    // console.log(`CHANGE ${JSON.stringify(data.formData)}`);
+    const { formData } = data;
+    this.setState({ formData });
   }
 
-  handleSubmit() {
-    console.log("submit");
+  handleSubmit(data) {
+    console.log(`SUBMIT ${JSON.stringify(data.formData)}`);
+    const { api, opeId } = this.props;
+    const { formData } = data;
+    const { kind, variables } = formData;
+    const mmAttrs = { kind, variables, options: [] };
+    for (const k in formData) {
+      if (Object.prototype.hasOwnProperty.call(formData, k)
+        && (k !== 'kind' || k !== 'variables')
+        && k.startsWith(`${kind.toLowerCase()}_`)) {
+        for (const opt in formData[k]) {
+          if (Object.prototype.hasOwnProperty.call(formData[k], opt)) {
+            mmAttrs.options.push({ name: opt, value: formData[k][opt] });
+          }
+        }
+      }
+    }
+    console.log(`CREATE with ${JSON.stringify(mmAttrs)}`);
+    api.createMetaModel(opeId, mmAttrs,
+      (response) => {
+        console.log(`Metamodel created ${JSON.stringify(response.data)}`);
+        const { data: { id } } = response;
+        window.location.replace(api.url(`/operations/${id}`));
+      },
+      (error) => console.log(error));
   }
 
   render() {
-    const { api, opeId, selCases } = this.props;
-    const metamodelUrl = api.url(`/operations/${opeId}/meta_models`);
+    const { selCases } = this.props;
     const outputs = [...new Set(selCases.o.map((c) => c.varname))].map((name) => (
-      <span className="ml-5">
+      <span key={name} className="ml-5">
         {name}
-        <input
-          type="hidden"
-          id={`meta_model_variables_outputs_${name}`}
-          name="meta_model[variables][outputs][]"
-          value={name}
-        />
       </span>
     ));
     const inputs = [...new Set(selCases.i.map((c) => c.varname))].map((name) => (
-      <span className="ml-5">
+      <span key={name} className="ml-5">
         {name}
-        <input
-          type="hidden"
-          id={`meta_model_variables_inputs_${name}`}
-          name="meta_model[variables][inputs][]"
-          value={name}
-        />
       </span>
     ));
 
     const { formData } = this.state;
-    formData.meta_model.variables = {
+    formData.variables = {
       inputs: [...new Set(selCases.i.map((c) => c.varname))],
       outputs: [...new Set(selCases.o.map((c) => c.varname))],
     };
@@ -202,26 +124,24 @@ class MetaModelManager extends React.Component {
     console.log(formData);
 
     return (
-      <div className="editor-section">
-        <div>
-          <legend>Inputs</legend>
+      <div className="editor-section col-4">
+        <legend>MetaModel</legend>
+        <div className="editor-section">
+          <div>Inputs</div>
           <div>{inputs}</div>
         </div>
-        <div>
-          <legend>Outputs</legend>
+        <div className="editor-section">
+          <div>Outputs</div>
           <div>{outputs}</div>
         </div>
-        <div>
+        <div className="editor-section">
           <Form
-            acceptCharset="UTF-8"
-            action={metamodelUrl}
-            method="post"
             schema={SCHEMA}
             uiSchema={UISCHEMA}
             formData={formData}
-            onChange={({ formData }) => this.setState({ formData })}
-            onSubmit={this.handleSubmit}>
-          </Form>
+            onChange={this.handleChange}
+            onSubmit={this.handleSubmit}
+          />
         </div>
       </div>
     );
