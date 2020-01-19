@@ -1,6 +1,11 @@
 # frozen_string_literal: true
 
 class MetaModelPolicy < ApplicationPolicy
+
+  def show?
+    @record.analysis.public || @user.admin? || @user.has_role?(:owner, @record.analysis) || @user.has_role?(:member, @record.analysis)
+  end
+
   def create?
     @user.admin? || @record.analysis.public || @user.has_role?(:owner, @record.analysis) || @user.has_role?(:member, @record.analysis)
   end

@@ -5,6 +5,10 @@ class OperationPolicy < ApplicationPolicy
     APP_CONFIG["enable_remote_operations"]
   end
 
+  def show?
+    @record.analysis.public || @user.admin? || @user.has_role?(:owner, @record.analysis) || @user.has_role?(:member, @record.analysis)
+  end
+
   def create?
     enable_remote_operations? && (@user.admin? || @record.analysis.public ||
                            @user.has_role?(:owner, @record.analysis) ||

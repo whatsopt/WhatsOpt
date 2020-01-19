@@ -14,6 +14,15 @@ class MetaModelQualification extends React.Component {
     this.handleQualityDisplay = this.handleQualityDisplay.bind(this);
   }
 
+  static getDerivedStateFromProps(props, state) {
+    const { quality } = props;
+    const { selected } = state;
+    if (selected < 0 && quality.length > 0) {
+      return { selected: 0 };
+    }
+    return null;
+  }
+
   handleQualityDisplay(qualityIndex) {
     this.setState({ selected: qualityIndex });
   }

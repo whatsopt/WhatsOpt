@@ -37,7 +37,7 @@ class Api::V1::MetaModelsController < Api::ApiController
       )
       @meta_model.build_surrogates
       if @meta_model.save
-        json_response mm_ope
+        json_response @meta_model
       else
         json_response({ message: "Something went wrong. Can not create metamodel from current operation data." }, :bad_request)
       end

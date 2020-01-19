@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Form from 'react-jsonschema-form-bs4';
+import { usePromiseTracker } from 'react-promise-tracker';
+
 
 const SMT_KRIGING = 'SMT_KRIGING';
 const SMT_KPLS = 'SMT_KPLS';
@@ -97,7 +99,7 @@ class MetaModelManager extends React.Component {
       (response) => {
         console.log(`Metamodel created ${JSON.stringify(response.data)}`);
         const { data: { id } } = response;
-        window.location.replace(api.url(`/operations/${id}`));
+        window.location.replace(api.url(`/meta_models/${id}`));
       },
       (error) => console.log(error));
   }

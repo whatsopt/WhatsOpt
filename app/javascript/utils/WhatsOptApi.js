@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { trackPromise } from 'react-promise-tracker';
 
 const API_URL = '/api/v1';
 
@@ -233,9 +234,20 @@ class WhatsOptApi {
 
   createMetaModel(opeId, mmAttrs, callback, onError) {
     const path = `/operations/${opeId}/meta_models`;
-    axios.post(this.apiUrl(path), { meta_model: mmAttrs })
-      .then(callback)
-      .catch(onError);
+    trackPromise(
+      axios.post(this.apiUrl(path), { meta_model: mmAttrs })
+        .then(callback)
+        .catch(onError),
+    );
+  }
+
+  getMetaModelPredictionQuality(metaModelId, callback, onError) {
+    const path = `/meta_models/${metaModelId}/prediction_quality`;
+    trackPromise(
+      axios.get(this.apiUrl(path))
+        .then(callback)
+        .catch(onError),
+    );
   }
 
   getApiDocs() {

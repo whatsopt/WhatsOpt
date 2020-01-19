@@ -1,6 +1,13 @@
 # frozen_string_literal: true
 
 class MetaModelsController < ApplicationController
+
+  def show
+    @mm = MetaModel.find(params[:id])
+    @ope = @mm.operation
+    authorize @mm
+  end
+
   # POST /operations/{operation_id}/meta_models
   def create
     ope = Operation.find(params[:operation_id])

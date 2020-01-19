@@ -10,6 +10,7 @@ import VariableSelector from 'plotter/components/VariableSelector';
 import MetaModelManager from 'plotter/components/MetaModelManager';
 import AnalysisDatabase from '../utils/AnalysisDatabase';
 import * as caseUtils from '../utils/cases';
+import LoadingIndicator from '../utils/components/LoadingIndicator';
 
 const PLOTS_TAB = 'plots';
 const VARIABLES_TAB = 'variables';
@@ -295,6 +296,8 @@ class Plotter extends React.Component {
         <div className="btn-group mr-2  float-right" role="group">
           <a className="btn btn-primary" href={exportUrl}>Export Csv</a>
         </div>
+
+        <LoadingIndicator />
 
         <ul className="nav nav-tabs" id="myTab" role="tablist">
           <li className="nav-item">
