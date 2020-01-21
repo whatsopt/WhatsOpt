@@ -427,6 +427,9 @@ varu_driver_out: &varu_driver_out
   name: u
   discipline: driver_singleton
   io_mode: out
+  type: Float
+  shape: 1
+  active: true
 
 varu_disc_in: 
   <<: *varu_driver_out

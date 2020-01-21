@@ -32,6 +32,9 @@ class Surrogate < ApplicationRecord
 
   belongs_to :meta_model
   belongs_to :variable
+  
+  has_many :options, as: :optionizable, dependent: :destroy
+  accepts_nested_attributes_for :options, reject_if: proc { |attr| attr["name"].blank? }, allow_destroy: true 
 
   validates :meta_model, presence: true
   validates :variable, presence: true
@@ -70,7 +73,8 @@ class Surrogate < ApplicationRecord
         Rails.logger.warn "Surrogate kind '#{kind}' unkonwn: use SMT Kriging as default"
         surr_kind = SURROGATE_MAP[SMT_KRIGING]
       end
-      proxy.create_surrogate(surr_kind, xt, yt)
+      opts = options.inject({}){|acc, o| acc.update({o.name => o.value})}
+      proxy.create_surrogate(surr_kind, xt, yt, opts)
       unless indices.to_a.empty?
         quality = proxy.qualify(self.xvalid, self.yvalid)
         self.r2, self.ypred = quality.r2, quality.yp
@@ -138,7 +142,9 @@ class Surrogate < ApplicationRecord
     copy.quality = nil
     copy.status = STATUS_CREATED
     copy.variable = var || self.variable
-    #copy.copy_origin_id = self.id if self.trained? 
+    self.options.each do |opt|
+      copy.options << opt.build_copy
+    end
     mm.surrogates << copy if mm
     copy
   end

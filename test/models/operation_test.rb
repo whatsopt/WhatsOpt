@@ -16,6 +16,11 @@ class OperationTest < ActiveSupport::TestCase
     assert_equal operations(:inprogress).id, ope.id
   end
 
+  test "operation may have options" do
+    ope = operations(:doe)
+    assert_equal 'smt_doe_lhs_nbpts', ope.options.first.name
+  end
+
   test "operations has success infos" do
     ope = operations(:doe)
     assert ope.success

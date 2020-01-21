@@ -6,6 +6,9 @@ class MetaModel < ApplicationRecord
   belongs_to :discipline
   belongs_to :operation
 
+  has_many :default_options, class_name: 'Option', as: :optionizable, dependent: :destroy
+  accepts_nested_attributes_for :default_options, reject_if: proc { |attr| attr["name"].blank? }, allow_destroy: true 
+
   has_many :surrogates, dependent: :destroy
 
   validates :discipline, presence: true
@@ -43,9 +46,10 @@ class MetaModel < ApplicationRecord
   end
 
   def build_surrogates
+    opts = default_options.map {|o| {name: o[:name], value: o[:value]}}
     analysis.response_variables.each do |v|
       (0...v.dim).each do |index|
-        surrogates.build(variable: v, coord_index: index-1, kind: default_surrogate_kind)
+        surrogates.build(variable: v, coord_index: index-1, kind: default_surrogate_kind, options_attributes: opts)
       end
     end
   end
@@ -59,6 +63,9 @@ class MetaModel < ApplicationRecord
     self.surrogates.each do |surr|
       var = discipline.variables.detect{|v| v.name == surr.variable.name} if discipline
       surr_copy = surr.build_copy(mm_copy, var)
+    end
+    self.default_options.each do |opt|
+      mm_copy.default_options << opt.build_copy
     end
     mm_copy
   end

@@ -66,6 +66,10 @@ class Analysis < ApplicationRecord
     !disciplines.nodes.detect { |d| !d.is_metamodel? }
   end
 
+  def has_uncertain_input_variables?
+    @has_uncertains ||= Variable.of_analysis(id).active.uncertain.count > 0
+  end
+
   def variables
     @variables = Variable.of_analysis(id).active.order("variables.name ASC")
   end
@@ -483,11 +487,9 @@ class Analysis < ApplicationRecord
     name = "#{ope.analysis.name.camelize}MetaModel"
     metamodel_varattrs = ope.build_metamodel_varattrs(varnames)
     driver_vars = metamodel_varattrs.map do |v|
-      { name: v[:name],
-        shape: v[:shape],
-        io_mode: Variable.reflect_io_mode(v[:io_mode]),
-        parameter_attributes: v[:parameter_attributes]
-      }
+      vcopy = v.clone
+      vcopy[:io_mode] = Variable.reflect_io_mode(v[:io_mode])
+      vcopy
     end
     analysis_attrs= {
       name: name,

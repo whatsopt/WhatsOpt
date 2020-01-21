@@ -15,4 +15,14 @@ class CaseTest < ActiveSupport::TestCase
     assert_equal [cases(:case1), cases(:case3), cases(:case4)], ope.input_cases
     assert_equal [cases(:case2)], ope.output_cases
   end
+
+  def test_no_uncertains
+    ope = operations(:doe)
+    assert ope.cases.uncertains.blank?
+  end
+
+  def test_uncertains
+    ope = operations(:doe_singleton)
+    assert_not ope.cases.uncertains.blank?
+  end
 end

@@ -1,6 +1,13 @@
 # frozen_string_literal: true
 
 class MetaModelsController < ApplicationController
+
+  def show
+    @mm = MetaModel.find(params[:id])
+    @ope = @mm.operation
+    authorize @mm
+  end
+
   # POST /operations/{operation_id}/meta_models
   def create
     ope = Operation.find(params[:operation_id])
@@ -21,7 +28,9 @@ class MetaModelsController < ApplicationController
       mda.set_owner(current_user)
       @meta_model = mda.disciplines.last.build_meta_model( # just one plain discipline in the analysis
         operation: mm_ope,
-        default_surrogate_kind: meta_model_params[:kind])
+        default_surrogate_kind: meta_model_params[:kind],
+        default_options_attributes: meta_model_params[:options] || []
+      )
       @meta_model.build_surrogates
       if @meta_model.save
         redirect_to operation_url(mm_ope), notice: "Metamodel was successfully created."
@@ -38,6 +47,6 @@ class MetaModelsController < ApplicationController
 
   private
     def meta_model_params
-      params.require(:meta_model).permit(:kind, variables: { inputs: [], outputs: [] })
+      params.require(:meta_model).permit(:kind, options: [ :name, :value ], variables: [ inputs: [], outputs: [] ])
     end
 end

@@ -18,8 +18,11 @@ class Variable < ApplicationRecord
 
   self.inheritance_column = :disable_inheritance
   belongs_to :discipline
+
   has_one :parameter, dependent: :destroy
   has_one :scaling, dependent: :destroy
+  has_one :distribution, dependent: :destroy
+
   has_one  :incoming_connection, -> { includes :from }, class_name: "Connection", foreign_key: "to_id", dependent: :destroy
   has_many :outgoing_connections, -> { includes :to }, class_name: "Connection", foreign_key: "from_id", dependent: :destroy
   has_many :cases
@@ -37,6 +40,8 @@ class Variable < ApplicationRecord
                                                          attr["res_ref"].nil?
                                                      }, allow_destroy: true
 
+  accepts_nested_attributes_for :distribution, reject_if: proc { |attr| attr["kind"].nil? }, allow_destroy: true
+
   validates :name, format: { with: /\A[a-zA-Z][\-:_a-zA-Z0-9]*\z/, message: "%{value} is not a valid variable name." }
   validates :name, :io_mode, :type, :shape, presence: true, allow_blank: false
   validates :name, uniqueness: { scope: [:discipline], message: "should be unique per discipline." }
@@ -46,6 +51,7 @@ class Variable < ApplicationRecord
   scope :active, -> { where(active: true) }
   scope :inputs, -> { where(io_mode: IN) }
   scope :outputs, -> { where(io_mode: OUT) }
+  scope :uncertain, -> { joins(:distribution).distinct }
 
   scope :of_analysis, ->(analysis_id) { joins(discipline: :analysis).where(analyses: { id: analysis_id }) }
   scope :of_discipline, ->(discipline_id) { where(discipline: discipline_id ) }
@@ -53,6 +59,10 @@ class Variable < ApplicationRecord
 
   after_initialize :set_defaults, unless: :persisted?
   before_save :mark_dependents_for_removal
+
+  def is_uncertain?
+    !distribution.nil?
+  end
 
   def init_py_value
     if self.parameter&.init.blank?
@@ -144,5 +154,6 @@ class Variable < ApplicationRecord
     def mark_dependents_for_removal
       parameter.mark_for_destruction if parameter&.nullified?
       scaling.mark_for_destruction if scaling&.nullified?
+      distribution.mark_for_destruction if distribution&.nullified?
     end
 end

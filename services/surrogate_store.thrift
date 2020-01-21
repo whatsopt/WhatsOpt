@@ -1,9 +1,20 @@
 namespace py whatsopt_services.surrogate_server
 namespace rb WhatsOpt.SurrogateServer
  
+typedef i64 Integer
 typedef double Float
 typedef list<Float> Vector
 typedef list<Vector> Matrix
+
+typedef string OptionName;
+struct OptionValue {
+  1: optional Integer integer,
+  2: optional Float number,
+  3: optional Vector vector,
+  4: optional string str
+}
+typedef map<OptionName, OptionValue> Options;
+typedef map<OptionName, double> Kwargs;
 
 enum SurrogateKind {
   SMT_KRIGING,
@@ -28,6 +39,12 @@ struct SobolIndices {
   2: Vector ST
 }
 
+struct Distribution {
+  1: string name,
+  2: Kwargs kwargs
+}
+typedef list<Distribution> Distributions;
+
 service SurrogateStore {
 
   void ping();
@@ -36,7 +53,9 @@ service SurrogateStore {
   void create_surrogate(1: string surrogate_id,
                         2: SurrogateKind kind, 
                         3: Matrix xt, 
-                        4: Vector yt) throws (1: SurrogateException exc);
+                        4: Vector yt,
+                        5: Options options,
+                        6: Distributions uncertainties) throws (1: SurrogateException exc);
 
   void copy_surrogate(1: string src_id, 
                       2: string dst_id) throws (1: SurrogateException exc);

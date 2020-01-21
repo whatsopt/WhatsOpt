@@ -1,9 +1,35 @@
 lhs_nbpts:
   name: smt_doe_lhs_nbpts
   value: 13
-  operation: doe
+  optionizable: doe
+  optionizable_type: Operation
 
 slsqp_maxiter:
   name: scipy_optimizer_slsqp_maxiter 
   value: 5
-  operation: inprogress2
+  optionizable: inprogress2
+  optionizable_type: Operation
+
+singleton_u_uq_mu:
+  name: "mu"
+  value: "2.0"
+  optionizable: singleton_u_uq
+  optionizable_type: Distribution
+    
+singleton_u_uq_sigma:
+  name: "sigma"
+  value: "0.5"
+  optionizable: singleton_u_uq
+  optionizable_type: Distribution
+
+cicav_metamodel_obj_theta0:
+  name: "theta0"
+  value: "[0.01]"
+  optionizable: cicav_metamodel
+  optionizable_type: MetaModel    
+
+surrogate_obj_theta0:
+  name: "theta0"
+  value: "[0.01]"
+  optionizable: surrogate_obj
+  optionizable_type: Surrogate  

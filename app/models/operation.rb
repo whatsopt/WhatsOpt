@@ -22,7 +22,7 @@ class Operation < ApplicationRecord
   class ForbiddenRemovalException < Exception; end
 
   belongs_to :analysis
-  has_many :options, dependent: :destroy
+  has_many :options, as: :optionizable, dependent: :destroy
   accepts_nested_attributes_for :options, reject_if: proc { |attr| attr["name"].blank? }, allow_destroy: true
 
   has_one :job, dependent: :destroy
@@ -105,6 +105,9 @@ class Operation < ApplicationRecord
     varattrs = {}
     cases.each do |c|
       varattr = ActiveModelSerializers::SerializableResource.new(c.variable).as_json
+      if varattr[:distribution_attributes] && varattr[:distribution_attributes][:options_attributes]
+        varattr[:distribution_attributes][:options_attributes].map{|optAttr| optAttr.update(id: nil)}
+      end
       if varattrs.keys.include?(c.variable.name)
         if varattr[:io_mode] == WhatsOpt::Variable::IN
           varattr[:parameter_attributes][:lower] = [c.values.min, varattr[:parameter_attributes][:lower].to_f].min.to_s
@@ -199,7 +202,11 @@ class Operation < ApplicationRecord
   end
 
   def input_cases
-    ope_cases.select { |c| c.variable.is_connected_as_input_of_interest? }
+    if analysis.has_uncertain_input_variables?
+      ope_cases.select { |c| c.variable.is_uncertain? && c.variable.is_connected_as_input_of_interest? }
+    else
+      ope_cases.select { |c| c.variable.is_connected_as_input_of_interest? }
+    end
   end
 
   def output_cases

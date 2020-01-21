@@ -10,6 +10,7 @@ import VariableSelector from 'plotter/components/VariableSelector';
 import MetaModelManager from 'plotter/components/MetaModelManager';
 import AnalysisDatabase from '../utils/AnalysisDatabase';
 import * as caseUtils from '../utils/cases';
+import LoadingIndicator from '../utils/components/LoadingIndicator';
 
 const PLOTS_TAB = 'plots';
 const VARIABLES_TAB = 'variables';

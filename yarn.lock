@@ -9426,6 +9426,11 @@ react-popper@^1.0.0:
     typed-styles "^0.0.7"
     warning "^4.0.2"
 
+react-promise-tracker@^2.0.5:
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/react-promise-tracker/-/react-promise-tracker-2.0.5.tgz#01b7cb2819f530ed829232e717c78bf77d39e4bb"
+  integrity sha512-86k2vXybbBFMRpSCaQUCd4JVL7jXUhmqFer0X4zv6P8Bht4+xfqPOTU/brr5IzbbKQrNCr0EEJ8RuYTqH0sj8A==
+
 react-redux@^4.x.x:
   version "4.4.10"
   resolved "https://registry.yarnpkg.com/react-redux/-/react-redux-4.4.10.tgz#ad57bd1db00c2d0aa7db992b360ce63dd0b80ec5"

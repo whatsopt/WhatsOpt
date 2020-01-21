@@ -23,18 +23,32 @@ class SurrogateTest < ActiveSupport::TestCase
     assert_in_delta(6.034, @surr.predict([[3.3, 2, 7], [5, 4, 3]]).second, 1)
   end
 
+  test "should be train and predict with options" do
+    skip_if_parallel
+    assert_equal Surrogate::STATUS_CREATED, @surr.status
+    @surr.train
+    assert File.exist?(@surr_file)
+    @surr.reload
+    assert_equal Surrogate::STATUS_TRAINED, @surr.status
+    assert_in_delta(2.502, @surr.predict([[3.3, 2, 7]]).first, 1)
+    assert_in_delta(6.034, @surr.predict([[3.3, 2, 7], [5, 4, 3]]).second, 1)
+  end
+
   test "should be copied and prediction with copy get same results" do
     skip_if_parallel
     assert_equal Surrogate::STATUS_CREATED, @surr.status
     @surr.train
     @surr.reload
     assert_equal Surrogate::STATUS_TRAINED, @surr.status
-    copy = @surr.build_copy
-    copy.save!
-    assert_equal Surrogate::STATUS_CREATED, copy.status
-    assert_in_delta(2.502, copy.predict([[3.3, 2, 7]]).first, 1)
-    assert_in_delta(6.034, copy.predict([[3.3, 2, 7], [5, 4, 3]]).second, 1)
-    assert_equal Surrogate::STATUS_TRAINED, copy.reload.status
+    assert_difference('Option.count', 1) do
+      copy = @surr.build_copy
+      copy.save!
+      assert_equal copy.options.count, @surr.options.count
+      assert_equal Surrogate::STATUS_CREATED, copy.status
+      assert_in_delta(2.502, copy.predict([[3.3, 2, 7]]).first, 1)
+      assert_in_delta(6.034, copy.predict([[3.3, 2, 7], [5, 4, 3]]).second, 1)
+      assert_equal Surrogate::STATUS_TRAINED, copy.reload.status
+    end
   end
 
   test "extract at indices" do

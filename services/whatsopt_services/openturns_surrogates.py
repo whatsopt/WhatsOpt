@@ -7,6 +7,13 @@ import openturns as ot
 class SurrogateOpenturnsException(Exception):
     pass
 
+DISTRIBUTION_SIGNATURES = {
+    "Normal": ["mu", "sigma"],
+    "Beta": ["alpha", "beta", "a", "b"],
+    "Gamma": ["k", "lambda", "gamma"],
+    "Uniform": ["a", "b"]
+}
+
 
 class PCE(SurrogateModel):
     def _initialize(self):
@@ -17,11 +24,16 @@ class PCE(SurrogateModel):
         declare("pce_degree", default=3, types=int, desc="Degree of chaos polynoms")
 
         declare(
-            "distribution_specs",
+            "uncertainty_specs",
             default=None,
             types=list,
-            desc="list of Openturns Dsitribution spec {name: ClassName, kwargs: **kwargs}",
+            desc="list of Openturns distribution specs {name: ClassName, kwargs: **kwargs}. "\
+                "List length should be equal to input dim.",
         )
+        self.supports["uncertainties"] = True
+
+    def set_uncertainties(self, specs):
+        self.options["uncertainty_specs"] = specs
 
     def train(self):
         self.input_dim = self.training_points[None][0][0].shape[1]
@@ -30,7 +42,7 @@ class PCE(SurrogateModel):
 
         # Distribution choice of the inputs to Create the input distribution
         distributions = []
-        dist_specs = self.options["distribution_specs"]
+        dist_specs = self.options["uncertainty_specs"]
         if dist_specs:
             if len(dist_specs) != self.input_dim:
                 raise SurrogateOpenturnsException(
@@ -40,15 +52,16 @@ class PCE(SurrogateModel):
                     )
                 )
             for ds in dist_specs:
-                dist_klass = getattr(sys.modules[__name__], ds["name"])
-                distributions.append(dist_klass(**ds["kwargs"]))
+                dist_klass = getattr(sys.modules["openturns"], ds["name"])
+                args = [ds["kwargs"][name] for name in DISTRIBUTION_SIGNATURES[ds["name"]]]
+                distributions.append(dist_klass(*args))
         else:
             for i in range(self.input_dim):
                 mean = np.mean(x_train[:, i])
                 lower, upper = 0.95 * mean, 1.05 * mean
                 if mean < 0:
                     lower, upper = upper, lower
-                distributions.append(ot.Uniform())
+                distributions.append(ot.Uniform(lower, upper))
 
         distribution = ot.ComposedDistribution(distributions)
 

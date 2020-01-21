@@ -19,6 +19,28 @@ module WhatsOpt
       VALID_VALUES = Set.new([SMT_KRIGING, SMT_KPLS, SMT_KPLSK, SMT_LS, SMT_QP, OPENTURNS_PCE]).freeze
     end
 
+    class OptionValue
+      include ::Thrift::Struct, ::Thrift::Struct_Union
+      INTEGER = 1
+      NUMBER = 2
+      VECTOR = 3
+      STR = 4
+
+      FIELDS = {
+        INTEGER => {:type => ::Thrift::Types::I64, :name => 'integer', :optional => true},
+        NUMBER => {:type => ::Thrift::Types::DOUBLE, :name => 'number', :optional => true},
+        VECTOR => {:type => ::Thrift::Types::LIST, :name => 'vector', :element => {:type => ::Thrift::Types::DOUBLE}, :optional => true},
+        STR => {:type => ::Thrift::Types::STRING, :name => 'str', :optional => true}
+      }
+
+      def struct_fields; FIELDS; end
+
+      def validate
+      end
+
+      ::Thrift::Struct.generate_accessors self
+    end
+
     class SurrogateException < ::Thrift::Exception
       include ::Thrift::Struct, ::Thrift::Struct_Union
       def initialize(message=nil)
@@ -68,6 +90,24 @@ module WhatsOpt
       FIELDS = {
         S1 => {:type => ::Thrift::Types::LIST, :name => 'S1', :element => {:type => ::Thrift::Types::DOUBLE}},
         ST => {:type => ::Thrift::Types::LIST, :name => 'ST', :element => {:type => ::Thrift::Types::DOUBLE}}
+      }
+
+      def struct_fields; FIELDS; end
+
+      def validate
+      end
+
+      ::Thrift::Struct.generate_accessors self
+    end
+
+    class Distribution
+      include ::Thrift::Struct, ::Thrift::Struct_Union
+      NAME = 1
+      KWARGS = 2
+
+      FIELDS = {
+        NAME => {:type => ::Thrift::Types::STRING, :name => 'name'},
+        KWARGS => {:type => ::Thrift::Types::MAP, :name => 'kwargs', :key => {:type => ::Thrift::Types::STRING}, :value => {:type => ::Thrift::Types::DOUBLE}}
       }
 
       def struct_fields; FIELDS; end

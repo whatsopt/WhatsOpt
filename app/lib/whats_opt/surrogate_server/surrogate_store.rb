@@ -34,13 +34,13 @@ module WhatsOpt
         def send_shutdown()
           send_oneway_message('shutdown', Shutdown_args)
         end
-        def create_surrogate(surrogate_id, kind, xt, yt)
-          send_create_surrogate(surrogate_id, kind, xt, yt)
+        def create_surrogate(surrogate_id, kind, xt, yt, options, uncertainties)
+          send_create_surrogate(surrogate_id, kind, xt, yt, options, uncertainties)
           recv_create_surrogate()
         end
 
-        def send_create_surrogate(surrogate_id, kind, xt, yt)
-          send_message('create_surrogate', Create_surrogate_args, :surrogate_id => surrogate_id, :kind => kind, :xt => xt, :yt => yt)
+        def send_create_surrogate(surrogate_id, kind, xt, yt, options, uncertainties)
+          send_message('create_surrogate', Create_surrogate_args, :surrogate_id => surrogate_id, :kind => kind, :xt => xt, :yt => yt, :options => options, :uncertainties => uncertainties)
         end
 
         def recv_create_surrogate()
@@ -147,7 +147,7 @@ module WhatsOpt
           args = read_args(iprot, Create_surrogate_args)
           result = Create_surrogate_result.new()
           begin
-            @handler.create_surrogate(args.surrogate_id, args.kind, args.xt, args.yt)
+            @handler.create_surrogate(args.surrogate_id, args.kind, args.xt, args.yt, args.options, args.uncertainties)
           rescue ::WhatsOpt::SurrogateServer::SurrogateException => exc
             result.exc = exc
           end
@@ -271,12 +271,16 @@ module WhatsOpt
         KIND = 2
         XT = 3
         YT = 4
+        OPTIONS = 5
+        UNCERTAINTIES = 6
 
         FIELDS = {
           SURROGATE_ID => {:type => ::Thrift::Types::STRING, :name => 'surrogate_id'},
           KIND => {:type => ::Thrift::Types::I32, :name => 'kind', :enum_class => ::WhatsOpt::SurrogateServer::SurrogateKind},
           XT => {:type => ::Thrift::Types::LIST, :name => 'xt', :element => {:type => ::Thrift::Types::LIST, :element => {:type => ::Thrift::Types::DOUBLE}}},
-          YT => {:type => ::Thrift::Types::LIST, :name => 'yt', :element => {:type => ::Thrift::Types::DOUBLE}}
+          YT => {:type => ::Thrift::Types::LIST, :name => 'yt', :element => {:type => ::Thrift::Types::DOUBLE}},
+          OPTIONS => {:type => ::Thrift::Types::MAP, :name => 'options', :key => {:type => ::Thrift::Types::STRING}, :value => {:type => ::Thrift::Types::STRUCT, :class => ::WhatsOpt::SurrogateServer::OptionValue}},
+          UNCERTAINTIES => {:type => ::Thrift::Types::LIST, :name => 'uncertainties', :element => {:type => ::Thrift::Types::STRUCT, :class => ::WhatsOpt::SurrogateServer::Distribution}}
         }
 
         def struct_fields; FIELDS; end

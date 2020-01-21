@@ -41,10 +41,21 @@ class SurrogateServerHandler:
         exit(0)
 
     @throw_surrogate_exception
-    def create_surrogate(self, surrogate_id, surrogate_kind, xt, yt):
-        print("CREATE ", surrogate_id, surrogate_kind, SURROGATES_MAP[surrogate_kind])
+    def create_surrogate(self, surrogate_id, surrogate_kind, xt, yt, surrogate_options={}, uncertainties=[]):
+        print("CREATE ", surrogate_id, surrogate_kind, SURROGATES_MAP[surrogate_kind], surrogate_options)
+        surrogate_opts = {}
+        for k, v in surrogate_options.items():
+            if v.integer is not None:
+                surrogate_opts[k] = v.integer 
+            if v.number is not None:
+                surrogate_opts[k] = v.number 
+            if v.vector is not None:
+                surrogate_opts[k] = v.vector
+            if v.str is not None:
+                surrogate_opts[k] = v.str
+        uncertains = [{"name": dist.name, "kwargs": dist.kwargs} for dist in uncertainties]
         self.sm_store.create_surrogate(
-            surrogate_id, SURROGATES_MAP[surrogate_kind], xt, yt
+            surrogate_id, SURROGATES_MAP[surrogate_kind], xt, yt, surrogate_opts, uncertains
         )
 
     @throw_surrogate_exception

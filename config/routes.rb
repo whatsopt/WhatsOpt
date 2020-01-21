@@ -6,7 +6,7 @@ Rails.application.routes.draw do
 
   resources :analyses, shallow: true, as: :mdas do
     resources :operations do
-      resources :meta_models, only: [:create]        
+      resources :meta_models, only: [:show, :create]        
       get 'exports/new', to: 'operation_exports#new'
     end
     get 'exports/new', to: 'analysis_exports#new'
@@ -25,7 +25,9 @@ Rails.application.routes.draw do
         resources :connections, only: [:create, :update, :destroy]
         resources :operations, only: [:show, :create, :update, :destroy] do
           resource :job, only: [:show, :create, :update]        
-          resources :meta_models, only: [:create, :update]        
+          resources :meta_models, only: [:create, :update] do
+            resource :prediction_quality, only: [:show]
+          end       
           resource :sensitivity_analysis, only: [:show]
         end
         resource :openmdao_impl, only: [:show, :update]

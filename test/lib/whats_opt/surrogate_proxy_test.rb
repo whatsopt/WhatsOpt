@@ -41,7 +41,8 @@ class SurrogateProxyTest < ActiveSupport::TestCase
     xt = [[0.0], [1.0], [2.0], [3.0], [4.0]]
     yt = [0.0, 1.0, 1.5, 0.5, 1.0]
     surr_kind = WhatsOpt::SurrogateServer::SurrogateKind::OPENTURNS_PCE
-    @surr_proxy.create_surrogate(surr_kind, xt, yt)
+    @surr_proxy.create_surrogate(surr_kind, xt, yt, {pce_degree: "3"}, 
+                                 [{name: "Uniform", kwargs: {a: "1.9", b: "2.1"}}])
     sobols = @surr_proxy.get_sobol_pce_sensitivity_analysis
     assert_equal([1.0], sobols.S1)
     assert_equal([0.0], sobols.ST)
@@ -67,19 +68,23 @@ class SurrogateProxyTest < ActiveSupport::TestCase
 
   test "should check server presence" do
     skip_if_parallel
+    sleep 1
     assert @surr_proxy.server_available?
   end
 
   test "should check server absence" do
     skip_if_parallel
     teardown
+    sleep 1
     assert_not @surr_proxy.server_available?
   end
 
   test "should not start server" do
     WhatsOpt::SurrogateProxy.shutdown_server
+    sleep 1
     assert_not @surr_proxy.server_available?
     @surr_proxy = WhatsOpt::SurrogateProxy.new(server_start: false)
+    sleep 1
     assert_not @surr_proxy.server_available?
   end
 end

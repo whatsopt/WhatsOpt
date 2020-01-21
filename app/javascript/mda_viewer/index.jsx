@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import update from 'immutability-helper';
 
 import XdsmViewer from 'mda_viewer/components/XdsmViewer';
-import Error from 'mda_viewer/components/Error';
 import AnalysisEditor from 'mda_viewer/components/AnalysisEditor';
 import AnalysisNotePanel from 'mda_viewer/components/AnalysisNotePanel';
 import AnalysisBreadCrumbs from 'mda_viewer/components/AnalysisBreadCrumbs';
@@ -12,6 +11,9 @@ import ConnectionsEditor from 'mda_viewer/components/ConnectionsEditor';
 import VariablesEditor from 'mda_viewer/components/VariablesEditor';
 import OpenmdaoImplEditor from 'mda_viewer/components/OpenmdaoImplEditor';
 import ExportPanel from 'mda_viewer/components/ExportPanel';
+import DistributionModals from 'mda_viewer/components/DistributionModals';
+
+import Error from '../utils/components/Error';
 import MetaModelQualification from '../utils/components/MetaModelQualification';
 import AnalysisDatabase from '../utils/AnalysisDatabase';
 import deepIsEqual from '../utils/compare';
@@ -138,6 +140,8 @@ class MdaViewer extends React.Component {
 
   handleConnectionChange(connId, connAttrs) {
     // console.log('Change variable connection '+connId+ ' with '+JSON.stringify(connAttrs));
+
+    // parameter
     const cAttrs = JSON.parse(JSON.stringify(connAttrs));
     if (connAttrs.init || connAttrs.init === '') {
       cAttrs.parameter_attributes = { init: connAttrs.init };
@@ -151,6 +155,8 @@ class MdaViewer extends React.Component {
     delete cAttrs.init;
     delete cAttrs.lower;
     delete cAttrs.upper;
+
+    // scaling
     if (connAttrs.ref || connAttrs.ref === '') {
       cAttrs.scaling_attributes = { ref: connAttrs.ref };
     }
@@ -164,12 +170,38 @@ class MdaViewer extends React.Component {
     delete cAttrs.ref0;
     delete cAttrs.res_ref;
 
+    // distribution: check for updating/removing options
+    if (connAttrs.distribution_attributes) {
+      const { options_attributes: newOptAttrs } = connAttrs.distribution_attributes;
+      // console.log(`NEWOPTATTRS = ${JSON.stringify(newOptAttrs)}`);
+      let conn = this.db.connections.find((conn) => conn.id === connId);
+      // console.log(`OLDCONNATTRS = ${JSON.stringify(newOptAttrs)}`);
+      const { uq: { options_attributes: prevOptAttrs } } = conn;
+      const optIds = prevOptAttrs.map(opt => opt.id);
+      // console.log(optIds);
+      for (let optAttr of newOptAttrs) {
+        if (optIds.length) {
+          // console.log(optAttr);
+          optAttr.id = optIds.shift();
+        }
+      }
+      if (connAttrs.options_attributes) {  // needed in case, normally should be at least []
+        optIds.forEach((id) => connAttrs.options_attributes.push({ id, _destroy: '1' }));
+      }
+    }
+
+    // console.log(`CONATTRS = ${JSON.stringify(connAttrs)}`);
+
     if (Object.keys(cAttrs).length !== 0) {
-      this.api.updateConnection(connId, cAttrs, () => { this.renderXdsm(); }, (error) => {
-        const message = error.response.data.message || 'Error: Update failed';
-        const newState = update(this.state, { errors: { $set: [message] } });
-        this.setState(newState);
-      });
+      this.api.updateConnection(connId, cAttrs,
+        () => {
+          this.renderXdsm();
+        },
+        (error) => {
+          const message = error.response.data.message || 'Error: Update failed';
+          const newState = update(this.state, { errors: { $set: [message] } });
+          this.setState(newState);
+        });
     }
   }
 
@@ -564,6 +596,7 @@ class MdaViewer extends React.Component {
             </div>
             <div className="tab-pane fade show active" id="variables" role="tabpanel" aria-labelledby="variables-tab">
               {varEditor}
+              <DistributionModals db={db} onConnectionChange={this.handleConnectionChange} />
             </div>
             <div className="tab-pane fade" id="openmdao-impl" role="tabpanel" aria-labelledby="openmdao-impl-tab">
               {openmdaoImplMsg}
