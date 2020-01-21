@@ -487,11 +487,9 @@ class Analysis < ApplicationRecord
     name = "#{ope.analysis.name.camelize}MetaModel"
     metamodel_varattrs = ope.build_metamodel_varattrs(varnames)
     driver_vars = metamodel_varattrs.map do |v|
-      { name: v[:name],
-        shape: v[:shape],
-        io_mode: Variable.reflect_io_mode(v[:io_mode]),
-        parameter_attributes: v[:parameter_attributes]
-      }
+      vcopy = v.clone
+      vcopy[:io_mode] = Variable.reflect_io_mode(v[:io_mode])
+      vcopy
     end
     analysis_attrs= {
       name: name,

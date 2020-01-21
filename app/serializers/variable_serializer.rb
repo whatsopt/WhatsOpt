@@ -8,7 +8,7 @@ class VariableSerializer < ActiveModel::Serializer
   has_one :distribution, key: :distribution_attributes
 
   def serializable_hash(adapter_options = nil, options = {}, adapter_instance = self.class.serialization_adapter_instance)
-    hash = super
+    hash = super(adapter_options, options, adapter_instance)
     hash.each { |key, value| hash.delete(key) if value.nil? }
     hash
   end

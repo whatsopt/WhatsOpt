@@ -60,6 +60,10 @@ class Variable < ApplicationRecord
   after_initialize :set_defaults, unless: :persisted?
   before_save :mark_dependents_for_removal
 
+  def is_uncertain?
+    !distribution.nil?
+  end
+
   def init_py_value
     if self.parameter&.init.blank?
       if is_in? # retrieve init value from connected uniq 'out' variable

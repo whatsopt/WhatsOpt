@@ -127,6 +127,11 @@ class Connection < ApplicationRecord
       Connection.where(from_id: from.id).each do |conn|
         conn.to.update!(params)
       end
+
+      # edge case: remove distribution if variable has become a non scalar
+      unless from.distribution.blank? || from.dim == 1
+        from.distribution.destroy!
+      end
     end
   end
 

@@ -105,6 +105,9 @@ class Operation < ApplicationRecord
     varattrs = {}
     cases.each do |c|
       varattr = ActiveModelSerializers::SerializableResource.new(c.variable).as_json
+      if varattr[:distribution_attributes] && varattr[:distribution_attributes][:options_attributes]
+        varattr[:distribution_attributes][:options_attributes].map{|optAttr| optAttr.update(id: nil)}
+      end
       if varattrs.keys.include?(c.variable.name)
         if varattr[:io_mode] == WhatsOpt::Variable::IN
           varattr[:parameter_attributes][:lower] = [c.values.min, varattr[:parameter_attributes][:lower].to_f].min.to_s
@@ -200,7 +203,7 @@ class Operation < ApplicationRecord
 
   def input_cases
     if analysis.has_uncertain_input_variables?
-      ope_cases.uncertains.select { |c| c.variable.is_connected_as_input_of_interest? }
+      ope_cases.select { |c| c.variable.is_uncertain? && c.variable.is_connected_as_input_of_interest? }
     else
       ope_cases.select { |c| c.variable.is_connected_as_input_of_interest? }
     end
