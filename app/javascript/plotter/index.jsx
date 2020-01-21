@@ -297,8 +297,6 @@ class Plotter extends React.Component {
           <a className="btn btn-primary" href={exportUrl}>Export Csv</a>
         </div>
 
-        <LoadingIndicator />
-
         <ul className="nav nav-tabs" id="myTab" role="tablist">
           <li className="nav-item">
             <a

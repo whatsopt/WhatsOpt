@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import update from 'immutability-helper';
 
 import XdsmViewer from 'mda_viewer/components/XdsmViewer';
-import Error from 'mda_viewer/components/Error';
 import AnalysisEditor from 'mda_viewer/components/AnalysisEditor';
 import AnalysisNotePanel from 'mda_viewer/components/AnalysisNotePanel';
 import AnalysisBreadCrumbs from 'mda_viewer/components/AnalysisBreadCrumbs';
@@ -14,6 +13,7 @@ import OpenmdaoImplEditor from 'mda_viewer/components/OpenmdaoImplEditor';
 import ExportPanel from 'mda_viewer/components/ExportPanel';
 import DistributionModals from 'mda_viewer/components/DistributionModals';
 
+import Error from '../utils/components/Error';
 import MetaModelQualification from '../utils/components/MetaModelQualification';
 import AnalysisDatabase from '../utils/AnalysisDatabase';
 import deepIsEqual from '../utils/compare';

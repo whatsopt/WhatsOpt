@@ -10,7 +10,6 @@ class MetaModelQualification extends React.Component {
     super(props);
     const { quality } = this.props;
     this.state = { selected: quality.length > 0 ? 0 : -1 }; // select first elt (eg worst r2)
-    // this.setInitialButton = this.setInitialButton.bind(this);
     this.handleQualityDisplay = this.handleQualityDisplay.bind(this);
   }
 

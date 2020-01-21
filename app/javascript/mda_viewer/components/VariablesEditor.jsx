@@ -96,11 +96,12 @@ function ButtonCell({
   isEditing,
 }) {
   const { index } = row;
-  const { name, role, uq: { kind } } = connections[index];
+  const { name, role, shape, uq: { kind } } = connections[index];
   const label = kind !== "none" ? kind : '';
   if (isEditing) {
-    const isInput = (role === 'design_var') || (role === 'parameter');
-    if (isInput) {
+    const isScalarInput = ((role === 'design_var') || (role === 'parameter'))
+      && (shape === '1' || shape === '(1,)');
+    if (isScalarInput) {
       return (
         <button
           type="button"
@@ -150,6 +151,15 @@ function EditableCell({
             onConnectionChange(connections[index].id, change);
           }}
           propName={id}
+          afterFinish={() => {
+            // eslint-disable-next-line no-param-reassign
+            cellToFocus.current = null;
+          }}
+          afterStart={() => {
+            // eslint-disable-next-line no-param-reassign
+            cellToFocus.current = { index, id };
+          }}
+          ref={myRef}
           shouldBlockWhileLoading
           options={selectOptions}
         />
@@ -159,7 +169,9 @@ function EditableCell({
 
     React.useEffect(() => {
       if (cellToFocus.current && cellToFocus.current.index === index && cellToFocus.current.id === id) {
-        myRef.current.ref.current.focus();
+        if (myRef.current.ref.current) { // defensive programming
+          myRef.current.ref.current.focus();
+        }
       }
     });
 

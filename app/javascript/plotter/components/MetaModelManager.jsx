@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Form from 'react-jsonschema-form-bs4';
-import { usePromiseTracker } from 'react-promise-tracker';
 
+import Error from '../../utils/components/Error';
+import LoadingIndicator from '../../utils/components/LoadingIndicator';
 
 const SMT_KRIGING = 'SMT_KRIGING';
 const SMT_KPLS = 'SMT_KPLS';
@@ -65,10 +66,19 @@ class MetaModelManager extends React.Component {
       formData: {
         kind: SMT_KRIGING,
       },
+      errors: [],
     };
 
+    this.btnSubmit = React.createRef();
+
+    this.handleErrorClose = this.handleErrorClose.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  handleErrorClose(index) {
+    const newState = update(this.state, { errors: { $splice: [[index, 1]] } });
+    this.setState(newState);
   }
 
   handleChange(data) {
@@ -79,6 +89,8 @@ class MetaModelManager extends React.Component {
 
   handleSubmit(data) {
     console.log(`SUBMIT ${JSON.stringify(data.formData)}`);
+    this.btnSubmit.setAttribute("disabled", "disabled");
+
     const { api, opeId } = this.props;
     const { formData } = data;
     const { kind, variables } = formData;
@@ -101,7 +113,14 @@ class MetaModelManager extends React.Component {
         const { data: { id } } = response;
         window.location.replace(api.url(`/meta_models/${id}`));
       },
-      (error) => console.log(error));
+      (error) => {
+        console.log(error);
+        const message = error.response.data.message || 'Error: Creation failed';
+        const newState = update(this.state, { errors: { $set: [message] } });
+        this.setState(newState);
+        this.btnSubmit.removeAttribute("disabled");
+      }
+    );
   }
 
   render() {
@@ -123,11 +142,17 @@ class MetaModelManager extends React.Component {
       outputs: [...new Set(selCases.o.map((c) => c.varname))],
     };
 
+    const { errors } = this.state;
+    const errs = errors.map(
+      // eslint-disable-next-line react/no-array-index-key
+      (message, i) => (<Error key={i} msg={message} onClose={() => this.handleErrorClose(i)} />),
+    );
     console.log(formData);
 
     return (
       <div className="editor-section col-4">
         <legend>MetaModel</legend>
+        {errs}
         <div className="editor-section">
           <div>Inputs</div>
           <div>{inputs}</div>
@@ -143,8 +168,14 @@ class MetaModelManager extends React.Component {
             formData={formData}
             onChange={this.handleChange}
             onSubmit={this.handleSubmit}
-          />
+          >
+            <div>
+              <button className="btn btn-primary" type="submit" ref={btn => { this.btnSubmit = btn; }} >Submit</button>
+            </div>
+          </Form>
+          <LoadingIndicator />
         </div>
+
       </div>
     );
   }
