@@ -245,7 +245,7 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
 
   def _assert_connection_update(conn, conn_to_test)
     attrs = [:name, :type, :shape, :units, :desc, :active]
-    values = ["test", "Integer", "(1, 2)", "m", "test description", false]
+    values = ["test", "Integer", "(1,)", "m", "test description", false]
     update_attrs = attrs.zip(values).to_h
     update_attrs[:parameter_attributes] = { init: "[[1,2]]", lower: "0", upper: "10" }
     update_attrs[:scaling_attributes] = { ref: "[[1,2]]", ref0: "100", res_ref: "1e-6" }
