@@ -74,7 +74,8 @@ class Surrogate < ApplicationRecord
         surr_kind = SURROGATE_MAP[SMT_KRIGING]
       end
       opts = options.inject({}){|acc, o| acc.update({o.name => o.value})}
-      proxy.create_surrogate(surr_kind, xt, yt, opts)
+      uncs = meta_model.training_input_uncertainties
+      proxy.create_surrogate(surr_kind, xt, yt, opts, uncs)
       unless indices.to_a.empty?
         quality = proxy.qualify(self.xvalid, self.yvalid)
         self.r2, self.ypred = quality.r2, quality.yp

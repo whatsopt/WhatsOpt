@@ -162,3 +162,8 @@ singleton_case1:
     operation: doe_singleton
     variable: varu_driver_out
     values: [1, 2, 3, 4, 5]
+
+singleton_mm_case1:
+    operation: doe_singleton_mm
+    variable: varu_driver_out_mm
+    values: [1, 2, 3, 4, 5]

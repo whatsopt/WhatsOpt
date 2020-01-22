@@ -445,3 +445,27 @@ varv_disc_in:
   <<: *varu_driver_in
   discipline: disc_singleton
   io_mode: in
+
+# SINGLETON MM ##################################################################
+varu_driver_out_mm: &varu_driver_out_mm
+  name: u
+  discipline: driver_singleton_mm
+  io_mode: out
+  type: Float
+  shape: 1
+  active: true
+
+varu_disc_in_mm: 
+  <<: *varu_driver_out
+  discipline: disc_singleton_mm
+  io_mode: in
+
+varv_driver_out_mm: &varu_driver_in
+  name: v
+  discipline: driver_singleton_mm
+  io_mode: out
+
+varv_disc_in_mm:
+  <<: *varu_driver_in
+  discipline: disc_singleton_mm
+  io_mode: in

@@ -22,6 +22,18 @@ singleton_u_uq_sigma:
   optionizable: singleton_u_uq
   optionizable_type: Distribution
 
+singleton_mm_u_uq_mu:
+  name: "mu"
+  value: "1.0"
+  optionizable: singleton_mm_u_uq
+  optionizable_type: Distribution
+    
+singleton_mm_u_uq_sigma:
+  name: "sigma"
+  value: "2.5"
+  optionizable: singleton_mm_u_uq
+  optionizable_type: Distribution
+    
 cicav_metamodel_obj_theta0:
   name: "theta0"
   value: "[0.01]"

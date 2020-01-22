@@ -24,4 +24,7 @@ cicav_metamodel2_analysis:
 
 singleton:
   name: singleton
- 
+
+singleton_mm:
+  name: singleton_mm
+   

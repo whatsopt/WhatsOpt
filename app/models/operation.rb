@@ -197,20 +197,20 @@ class Operation < ApplicationRecord
     end
   end
 
-  def ope_cases
-    base_operation ? base_operation.ope_cases : cases.sort_by{|c| c.label}
+  def _ope_cases
+    @ope_cases ||= base_operation ? base_operation._ope_cases : cases.sort_by{|c| c.label}
   end
 
   def input_cases
     if analysis.has_uncertain_input_variables?
-      ope_cases.select { |c| c.variable.is_uncertain? && c.variable.is_connected_as_input_of_interest? }
+      @input_cases ||= _ope_cases.select { |c| c.variable.is_uncertain? && c.variable.is_connected_as_input_of_interest? }
     else
-      ope_cases.select { |c| c.variable.is_connected_as_input_of_interest? }
+      @input_cases ||= _ope_cases.select { |c| c.variable.is_connected_as_input_of_interest? }
     end
   end
 
   def output_cases
-    ope_cases.select { |c| c.variable.is_connected_as_output_of_interest? }
+    _ope_cases.select { |c| c.variable.is_connected_as_output_of_interest? }
   end
 
   def sorted_cases

@@ -1,3 +1,7 @@
 singleton_u_uq:
   variable: varu_driver_out
   kind: Normal
+
+singleton_mm_u_uq:
+  variable: varu_driver_out_mm
+  kind: Normal

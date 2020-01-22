@@ -53,4 +53,9 @@ class MetaModelTest < ActiveSupport::TestCase
     assert_equal [:kind, :name, :r2, :xvalid, :ypred, :yvalid], @mm2.qualification[0].keys.sort
     assert_in_delta(1.0, @mm2.qualification[0][:r2])
   end
+
+  test "should have uncertainty on inputs" do
+    mm = meta_models(:singleton_mm_metamodel)
+    assert_equal [{:name=>"Normal", :kwargs=>{"sigma"=>"2.5", "mu"=>"1.0"}}], mm.training_input_uncertainties
+  end
 end

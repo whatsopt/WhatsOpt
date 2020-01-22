@@ -7,3 +7,8 @@ cicav_metamodel2:
   discipline: disc_cicav_metamodel2
   operation: mm_from_doe2
   default_surrogate_kind: SMT_KRIGING
+
+singleton_mm_metamodel:
+  discipline: disc_singleton_mm
+  operation: doe_singleton_mm
+  default_surrogate_kind: OPENTURNS_PCE

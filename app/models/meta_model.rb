@@ -101,6 +101,13 @@ class MetaModel < ApplicationRecord
     @training_input_names ||= operation.input_cases.map { |c| c.label }
   end
 
+  def training_input_uncertainties
+    @distributions ||= operation.input_cases.map { |c| c.variable.distribution }.compact
+    @uncertainties ||= @distributions.map do |d| 
+      {name: d.kind, kwargs: d.options.inject({}) {|acc, opt| acc.update([[opt.name, opt.value]].to_h) }} 
+    end
+  end
+
   def training_input_values
     @training_inputs ||= Matrix.columns(operation.input_cases.sort_by { |c| c.label }.map(&:values)).to_a
   end
