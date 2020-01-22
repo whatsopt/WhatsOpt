@@ -87,6 +87,12 @@ function ReadonlyCell({
   return (<span className={textStyle}>{info}</span>);
 }
 
+function _uqLabelOf(uq) {
+  const { kind, options_attributes } = uq;
+  let options = options_attributes.map((opt) => opt.value);
+  return `${kind[0]}(${options.join(', ')})`;
+}
+
 function ButtonCell({
   cell,
   row,
@@ -97,7 +103,7 @@ function ButtonCell({
 }) {
   const { index } = row;
   const { name, role, shape, uq: { kind } } = connections[index];
-  const label = kind !== "none" ? kind : '';
+  const label = kind !== "none" ? _uqLabelOf(connections[index].uq) : '';
   if (isEditing) {
     const isScalarInput = ((role === 'design_var') || (role === 'parameter'))
       && (shape === '1' || shape === '(1,)');
@@ -211,7 +217,7 @@ const defaultColumn = {
 
 // Be sure to pass our updateMyData and the skipPageReset option
 function Table({
-  columns, data, onConnectionChange, isEditing,
+  columns, data, onConnectionChange, isEditing, useScaling
 }) {
   // For this example, we're using pagination to illustrate how to stop
   // the current page from resetting when our data changes
@@ -231,14 +237,21 @@ function Table({
       defaultColumn,
       onConnectionChange,
       isEditing,
+      useScaling,
       cellToFocus,
     },
     useSortBy,
   );
 
-  let colWidths = ['10', '15', '10', '10', '5', '10', '10', '10', '5', '5', '5'];
+  //            From,	Name, Role, Shape,	Units,	Init,	Lower, Upper,	UQ
+  let colWidths = ['10', '20', '10', '5', '5', '10', '10', '10', '20'];
   if (isEditing) {
-    colWidths = ['3', '10', '15', '10', '10', '7', '5', '5', '10', '10', '10', '5', '5', '5', '5'];
+    //         #	From	Name	Role	Description	Type	Shape	Units	Init	Lower	Upper	UQ
+    colWidths = ['2', '5', '15', '10', '13', '5', '5', '5', '10', '10', '10', '10'];
+  }
+  if (isEditing && useScaling) {
+    //         #	From	Name	Role	Description	Type	Shape	Units	Init	Lower	Upper	UQ, Ref, Ref0, Res.Ref
+    colWidths = ['2', '5', '15', '10', '13', '5', '5', '5', '5', '5', '5', '10', '5', '5', '5'];
   }
 
   // Render the UI for your table
@@ -249,7 +262,7 @@ function Table({
           <tr {...headerGroup.getHeaderGroupProps()}>
             {headerGroup.headers.map((column, i) => {
               const cprops = {
-                width: `${colWidths[i]}%`,
+                width: `${colWidths[i]}% `,
                 ...column.getHeaderProps(column.getSortByToggleProps()),
               };
               return (
