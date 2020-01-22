@@ -167,17 +167,21 @@ class AnalysesControllerTest < ActionDispatch::IntegrationTest
 
   test "should make a copy of an analysis" do
     sign_out users(:user1)
-    sign_in users(:user2)
+    user2 = users(:user2)
+    sign_in user2
     assert_difference("Analysis.count") do
       post mdas_url, params: { mda_id: @cicav.id }
       assert_redirected_to mda_url(Analysis.last)
     end
-    assert_equal @cicav.disciplines.count, Analysis.last.disciplines.count
+    copy =  Analysis.last
+    assert_equal @cicav.disciplines.count, copy.disciplines.count
+    assert_equal user2, copy.owner
   end
 
   test "should make a copy of a nested analysis" do
     sign_out users(:user1)
-    sign_in users(:user2)
+    user2 = users(:user2)
+    sign_in user2
     @outermda = analyses(:outermda)
     assert_difference("AnalysisDiscipline.count", 1) do
       assert_difference("Analysis.count", 2) do
@@ -185,8 +189,12 @@ class AnalysesControllerTest < ActionDispatch::IntegrationTest
         assert_redirected_to mda_url(Analysis.second_to_last)
       end
     end
-    assert Analysis.second_to_last.disciplines.third.has_sub_analysis?
-    assert_equal @outermda.disciplines.count, Analysis.second_to_last.disciplines.count
+    copy_outer = Analysis.second_to_last
+    copy_inner = Analysis.last
+    assert copy_outer.disciplines.third.has_sub_analysis?
+    assert_equal @outermda.disciplines.count, copy_outer.disciplines.count
+    assert_equal user2, copy_outer.owner
+    assert_equal user2, copy_inner.owner
   end
 
 end

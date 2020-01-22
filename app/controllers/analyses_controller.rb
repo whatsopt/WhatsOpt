@@ -37,8 +37,7 @@ class AnalysesController < ApplicationController
         authorize @mda
       end
       if @mda.save
-        current_user.add_role(:owner, @mda)
-        current_user.save
+        @mda.set_owner(current_user)
         if @mda.disciplines.nodes.empty?
           redirect_to edit_mda_url(@mda)
         else
