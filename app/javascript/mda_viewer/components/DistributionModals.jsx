@@ -169,7 +169,7 @@ class DistributionModal extends React.PureComponent {
     $(`#distributionModal-${name}`).on('shown.bs.modal',
       () => {
         const { conn: { uq } } = this.props;
-        console.log("GET from props " + JSON.stringify(this.props));
+        // console.log("GET from props " + JSON.stringify(this.props));
         this.setState(_uqToState(uq));
       }
     );
