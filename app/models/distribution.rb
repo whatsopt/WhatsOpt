@@ -12,4 +12,19 @@ class Distribution < ApplicationRecord
   def nullified?
     kind=="none" || kind.blank?
   end
+
+  def self.uniform_attrs(a, b)
+    { 
+      kind: "Uniform", 
+      options_attributes: [{name: "a", value: a.to_s}, {name: "b", value: a.to_s}]
+    }
+  end
+
+  def self.normal_attrs(mu, sigma)
+    {
+      kind: "Uniform", 
+      options_attributes: [{name: "mu", value: mu.to_s}, {name: "sigma", value: sigma.to_s}]
+    }
+  end
+
 end
