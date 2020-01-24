@@ -139,9 +139,7 @@ class Connection < ApplicationRecord
         end 
         # p params
         init = params[:parameter_attributes] && params[:parameter_attributes][:init]
-        p init
         init = from.parameter.init if init.nil? && from.parameter
-        p init
         params.merge!(parameter_attributes: {init: init || "", lower: "", upper: "" })
         unless from.dim == 1
           params.merge!(shape: "1")
@@ -159,7 +157,7 @@ class Connection < ApplicationRecord
         params.merge!(distribution_attributes: params[:distribution_attributes].merge!(id: from.distribution.id))
       end
       # params.permit!  # ensure all params transform are permitted
-      p params
+      # p params
       from.update!(params)
 
       # Note: update only primary attributes, secondary attrs are not propagated to "to" variables
