@@ -55,6 +55,10 @@ class AnalysisDatabase {
     return this.connections.find((conn) => conn.role === 'design_var' && conn.name === c.varname);
   }
 
+  isUncertainVarCases(c) {
+    return this.connections.find((conn) => conn.role === 'uncertain_var' && conn.name === c.varname);
+  }
+
   isOutputVarCases(c) {
     return this.outputVariables.find((v) => v.name === c.varname);
   }

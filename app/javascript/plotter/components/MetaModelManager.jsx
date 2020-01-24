@@ -12,6 +12,18 @@ const SMT_LS = 'SMT_LS';
 const SMT_QP = 'SMT_QP';
 const OPENTURNS_PCE = 'OPENTURNS_PCE';
 
+const MODE_OPTIMISATION = 'MODE_OPTIMISATION'
+const MODE_UQ = 'MODE_UQ'
+
+const MODES = {
+  SMT_KRIGING: MODE_OPTIMISATION,
+  SMT_KPLS: MODE_OPTIMISATION,
+  SMT_KPLSK: MODE_OPTIMISATION,
+  SMT_LS: MODE_OPTIMISATION,
+  SMT_QP: MODE_OPTIMISATION,
+  OPENTURNS_PCE: MODE_UQ,
+};
+
 const SCHEMA = {
   type: 'object',
   properties: {
@@ -84,7 +96,13 @@ class MetaModelManager extends React.Component {
   handleChange(data) {
     // console.log(`CHANGE ${JSON.stringify(data.formData)}`);
     const { formData } = data;
+    const { kind } = this.state;
+    let varMode = MODES[kind];
     this.setState({ formData });
+    if (MODES[formData.kind] !== varMode) {
+      const { onUqModeActive } = this.props;
+      onUqModeActive(MODES[formData.kind] === MODE_UQ);
+    }
   }
 
   handleSubmit(data) {
@@ -189,6 +207,7 @@ MetaModelManager.propTypes = {
     o: PropTypes.array.isRequired,
     c: PropTypes.array.isRequired,
   }).isRequired,
+  onUqModeActive: PropTypes.func.isRequired,
 };
 
 export default MetaModelManager;

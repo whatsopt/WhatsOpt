@@ -128,7 +128,7 @@ VariablePanel.propTypes = {
 class MetaModelPanel extends React.PureComponent {
   render() {
     const {
-      active, opeId, api, selCases, onMetaModelCreate,
+      active, opeId, api, selCases, onMetaModelCreate, onUqModeActive
     } = this.props;
     const metamodel = (
       <MetaModelManager
@@ -137,6 +137,7 @@ class MetaModelPanel extends React.PureComponent {
         api={api}
         selCases={selCases}
         onMetaModelCreate={onMetaModelCreate}
+        onUqModeActive={onUqModeActive}
       />
     );
     return (
@@ -156,25 +157,27 @@ MetaModelPanel.propTypes = {
     o: PropTypes.array.isRequired,
     c: PropTypes.array.isRequired,
   }).isRequired,
+  onUqModeActive: PropTypes.func.isRequired,
   onMetaModelCreate: PropTypes.func.isRequired,
 };
 
 class Plotter extends React.Component {
   constructor(props) {
     super(props);
-    const { api, mda, ope } = this.props;
+    const { api, mda, uqMode, ope } = this.props;
     this.api = api;
     this.db = new AnalysisDatabase(mda);
     this.cases = ope.cases.sort(caseUtils.compare);
 
-    this.inputVarCases = this.cases.filter((c) => this.db.isDesignVarCases(c));
     this.outputVarCases = this.cases.filter((c) => this.db.isOutputVarCases(c));
     this.couplingVarCases = this.cases.filter((c) => this.db.isCouplingVarCases(c));
 
-    const selection = this.initializeSelection(this.inputVarCases, this.outputVarCases);
-    this.state = { selection, activeTab: true };
+    const inputVarCases = this.cases.filter((c) => this.db.isDesignVarCases(c));
+    const selection = this.initializeSelection(inputVarCases, this.outputVarCases);
+    this.state = { inputVarCases, uqMode: false, selection, activeTab: PLOTS_TAB };
 
     this.handleSelectionChange = this.handleSelectionChange.bind(this);
+    this.handleUqModeActive = this.handleUqModeActive.bind(this);
     this.handleMetaModelCreate = this.handleMetaModelCreate.bind(this);
     this.activateTab = this.activateTab.bind(this);
   }
@@ -190,14 +193,14 @@ class Plotter extends React.Component {
 
     const sel = [];
     if (i + o < 10 && i * o < 50) {
-      sel.push(...this.inputVarCases, ...this.outputVarCases);
+      sel.push(...inputs, ...outputs);
     } else {
-      const obj = this.outputVarCases.find((c) => this.db.isObjective(c));
-      const cstrs = this.outputVarCases.filter((c) => this.db.isConstraint(c));
+      const obj = inputs.find((c) => this.db.isObjective(c));
+      const cstrs = outputs.filter((c) => this.db.isConstraint(c));
       if (obj) {
-        sel.push(...this.inputVarCases.slice(0, 5), obj, ...cstrs.slice(0, 4));
+        sel.push(...inputs.slice(0, 5), obj, ...cstrs.slice(0, 4));
       } else {
-        sel.push(...this.inputVarCases.slice(0, 5), ...this.outputVarCases.slice(0, 5));
+        sel.push(...inputs.slice(0, 5), ...this.outputVarCases.slice(0, 5));
       }
     }
     return sel;
@@ -215,6 +218,27 @@ class Plotter extends React.Component {
       newSelection = update(selection, { $splice: [[index, 1]] });
     }
     this.setState({ selection: newSelection });
+  }
+
+  handleUqModeActive(uqModeActivation) {
+    const { uqMode, selection } = this.state;
+    console.log('Select Uq Mode active: ' + uqModeActivation + " " + uqMode);
+    if (uqModeActivation !== uqMode) {
+      const selectedOutputs = selection.filter((c) => this.db.isOutputVarCases(c));
+      let inputVarCases;
+      if (uqModeActivation) {
+        inputVarCases = this.cases.filter((c) => this.db.isUncertainVarCases(c));
+      } else {
+        inputVarCases = this.cases.filter((c) => this.db.isDesignVarCases(c));
+      }
+      console.log(inputVarCases);
+      const newSelection = this.initializeSelection(inputVarCases, selectedOutputs)
+      this.setState({
+        uqMode: uqModeActivation,
+        selection: newSelection,
+        inputVarCases
+      });
+    }
   }
 
   handleMetaModelCreate() {
@@ -235,8 +259,8 @@ class Plotter extends React.Component {
     const { ope, mda } = this.props;
     const isOptim = (ope.category === 'optimization');
     const isDoe = (ope.category === 'doe');
-    const { selection } = this.state;
-    const cases = { i: this.inputVarCases, o: this.outputVarCases, c: this.couplingVarCases };
+    const { selection, inputVarCases } = this.state;
+    const cases = { i: inputVarCases, o: this.outputVarCases, c: this.couplingVarCases };
     const selCases = {
       i: cases.i.filter((c) => selection.includes(c)),
       o: cases.o.filter((c) => selection.includes(c)),
@@ -277,6 +301,7 @@ class Plotter extends React.Component {
           api={this.api}
           opeId={ope.id}
           selCases={selCases}
+          onUqModeActive={this.handleUqModeActive}
           onMetaModelCreate={this.handleMetaModelCreate}
         />
       );
