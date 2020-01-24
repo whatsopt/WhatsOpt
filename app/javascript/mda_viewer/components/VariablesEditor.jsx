@@ -4,10 +4,14 @@ import { useTable, useSortBy } from 'react-table';
 import { RIEInput, RIESelect } from './riek/src';
 
 const CELL_CLASSNAME = 'react-table-cell';
+// const EDITABLE_CELL_CLASSNAME = 'bg-light';
+const EDITABLE_CELL_CLASSNAME = 'editable-react-table-cell';
 
 function _computeRoleSelection(conn) {
   const options = [{ id: 'parameter', text: 'Parameter' },
   { id: 'design_var', text: 'Design Variable' },
+  { id: 'uncertain_var', text: 'Uncertain Variable' },
+
   { id: 'response', text: 'Response' },
   { id: 'response_of_interest', text: 'Response of interest' },
   { id: 'min_objective', text: 'Min Objective' },
@@ -15,11 +19,11 @@ function _computeRoleSelection(conn) {
   { id: 'ineq_constraint', text: 'Neg Constraint' },
   { id: 'eq_constraint', text: 'Eq Constraint' },
   { id: 'state_var', text: 'State Variable' }];
-  if (conn.role === 'parameter' || conn.role === 'design_var') {
-    options.splice(2, 6);
+  if (conn.role === 'parameter' || conn.role === 'design_var' || conn.role === 'uncertain_var') {
+    options.splice(3);  // remove outpuyts and state vars
   } else if (conn.role !== 'state_var') {
-    options.splice(options.length - 1, 1);
-    options.splice(0, 2);
+    options.splice(options.length - 1, 1);  // remove state_var
+    options.splice(0, 3);                   // remove inputs
   }
   return options;
 }
@@ -105,13 +109,13 @@ function ButtonCell({
   const { name, role, shape, uq: { kind } } = connections[index];
   const label = kind !== "none" ? _uqLabelOf(connections[index].uq) : '';
   if (isEditing) {
-    const isScalarInput = ((role === 'design_var') || (role === 'parameter'))
+    const isEditable = (role === 'uncertain_var')
       && (shape === '1' || shape === '(1,)');
-    if (isScalarInput) {
+    if (isEditable) {
       return (
         <button
           type="button"
-          className="btn btn-light btn-sm"
+          className={`btn btn-sm ${CELL_CLASSNAME} ${EDITABLE_CELL_CLASSNAME}`}
           style={{ paddingTop: 0, paddingBottom: 0 }}
           onClick={() => $(`#distributionModal-${name}`).modal('show')}
         >
@@ -124,7 +128,6 @@ function ButtonCell({
     cell: { value: label }, row, column, data: connections, onConnectionChange, isEditing,
   });
 }
-
 
 function EditableCell({
   cell,
@@ -150,6 +153,7 @@ function EditableCell({
       const selected = selectOptions.filter((choice) => choice.id === value);
       return (
         <RIESelect
+          className={`${CELL_CLASSNAME} ${EDITABLE_CELL_CLASSNAME}`}
           value={{ id: value, text: selected.length > 0 ? selected[0].text : 'undefined' }}
           change={(attr) => {
             const change = {};
@@ -160,10 +164,12 @@ function EditableCell({
           afterFinish={() => {
             // eslint-disable-next-line no-param-reassign
             cellToFocus.current = null;
+            // console.log(cellToFocus.current);
           }}
           afterStart={() => {
             // eslint-disable-next-line no-param-reassign
             cellToFocus.current = { index, id };
+            // console.log(cellToFocus.current);
           }}
           ref={myRef}
           shouldBlockWhileLoading
@@ -175,29 +181,37 @@ function EditableCell({
 
     React.useEffect(() => {
       if (cellToFocus.current && cellToFocus.current.index === index && cellToFocus.current.id === id) {
-        if (myRef.current.ref.current) { // defensive programming
-          myRef.current.ref.current.focus();
+        console.log(myRef.current);
+        if (myRef.current.myRef.current) { // defensive programming
+          console.log("FOCUS");
+          myRef.current.myRef.current.click();
         }
       }
     });
 
-    const isInput = (connections[index].role === 'design_var')
-      || (connections[index].role === 'parameter');
-    if (isInput || id === 'name' || id === 'desc' || id === 'shape' || id === 'units') {
+    // Editable fields regarding variable role
+    const role = connections[index].role;
+    const isEditable = (id === 'name' || id === 'desc' || id === 'shape' || id === 'units')
+      || (role === 'parameter' && id === 'init')
+      || (role === 'design_var' && (id === 'init' || id === 'lower' || id === 'upper'))
+      || (role === 'uncertain_var' && (id === 'init' || id === 'uq'));
+    if (isEditable) {
       return (
         <RIEInput
           editProps={{ size: 8 }}
-          className={CELL_CLASSNAME}
+          className={`${CELL_CLASSNAME} ${EDITABLE_CELL_CLASSNAME}`}
           value={value || ''}
           change={(attr) => onConnectionChange(connections[index].id, attr)}
           propName={id}
           afterFinish={() => {
             // eslint-disable-next-line no-param-reassign
             cellToFocus.current = null;
+            // console.log(cellToFocus.current);
           }}
           afterStart={() => {
             // eslint-disable-next-line no-param-reassign
             cellToFocus.current = { index, id };
+            // console.log(cellToFocus.current);
           }}
           ref={myRef}
           shouldBlockWhileLoading

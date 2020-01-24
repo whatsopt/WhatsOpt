@@ -8,7 +8,7 @@ export default class RIEStatefulBase extends RIEBase {
     constructor(props) {
         super(props);
 
-        this.ref = React.createRef();
+        this.myRef = React.createRef();
     }
 
     startEditing = () => {
@@ -22,7 +22,7 @@ export default class RIEStatefulBase extends RIEBase {
     finishEditing = () => {
         debug('finishEditing')
         this.props.beforeFinish ? this.props.beforeFinish() : null;
-        let inputElem = ReactDOM.findDOMNode(this.ref.current);
+        let inputElem = ReactDOM.findDOMNode(this.myRef.current);
         let newValue = inputElem.value;
         const result = this.doValidations(newValue);
         if (result && this.props.value !== newValue) {
@@ -54,7 +54,7 @@ export default class RIEStatefulBase extends RIEBase {
 
     componentDidUpdate = (prevProps, prevState) => {
         debug(`componentDidUpdate(${JSON.stringify(prevProps)}, ${JSON.stringify(prevState)})`)
-        var inputElem = ReactDOM.findDOMNode(this.ref.current);
+        var inputElem = ReactDOM.findDOMNode(this.myRef.current);
         if (this.state.editing && !prevState.editing) {
             debug('entering edit mode')
             inputElem.focus();
@@ -73,7 +73,7 @@ export default class RIEStatefulBase extends RIEBase {
             defaultValue={this.props.value}
             onInput={this.textChanged}
             onBlur={this.elementBlur}
-            ref={this.ref}
+            ref={this.myRef}
             onKeyDown={this.keyDown}
             {...this.props.editProps} />;
     };
@@ -85,6 +85,7 @@ export default class RIEStatefulBase extends RIEBase {
             className={this.makeClassString()}
             onFocus={this.startEditing}
             onClick={this.startEditing}
+            ref={this.myRef}
             {...this.props.defaultProps}>{this.state.newValue || this.props.value}</span>;
     };
 

@@ -74,8 +74,8 @@ class Analysis < ApplicationRecord
     @variables = Variable.of_analysis(id).active.order("variables.name ASC")
   end
 
-  def parameter_variables
-    @params = variables.with_role(WhatsOpt::Variable::PARAMETER_ROLE) + design_variables
+  def input_variables
+    @params = variables.with_role(WhatsOpt::Variable::INPUT_ROLES)
   end
 
   def design_variables
@@ -131,11 +131,11 @@ class Analysis < ApplicationRecord
   end
 
   def parameter_dim
-    parameter_variables.inject(0) { |s, v| s + v.dim }
+    input_variables.inject(0) { |s, v| s + v.dim }
   end
 
   def input_dim
-    parameter_variables.inject(0) { |s, v| s + v.dim }
+    input_variables.inject(0) { |s, v| s + v.dim }
   end
 
   def plain_disciplines

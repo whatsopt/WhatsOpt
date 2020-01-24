@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Form from 'react-jsonschema-form-bs4';
 
-const DETERMINIST = 'none';
 const NORMAL = 'Normal';
 const BETA = 'Beta';
 const GAMMA = 'Gamma';
@@ -14,20 +13,15 @@ const SCHEMA = {
     kind: {
       type: 'string',
       title: 'Distribution Kind',
-      enum: [DETERMINIST, NORMAL, BETA, GAMMA, UNIFORM],
-      enumNames: ['Determinist', NORMAL, BETA, GAMMA, UNIFORM],
-      default: DETERMINIST,
+      enum: [NORMAL, BETA, GAMMA, UNIFORM],
+      enumNames: [NORMAL, BETA, GAMMA, UNIFORM],
+      default: NORMAL,
     },
   },
   required: ['kind'],
   dependencies: {
     kind: {
       oneOf: [
-        {
-          properties: {
-            kind: { enum: [DETERMINIST] },
-          },
-        },
         {
           properties: {
             kind: { enum: [NORMAL] },
@@ -89,9 +83,8 @@ const SCHEMA = {
 };
 
 function _uqToState(uq) {
-  let state = { kind: DETERMINIST, options_attributes: [] };
   const { kind, options_attributes } = uq;
-  state = { kind, options_attributes: [] };
+  let state = { kind, options_attributes: [] };
   for (let i = 0; i < options_attributes.length; i += 1) {
     const opt = options_attributes[i];
     state.options_attributes.push({ ...opt });
@@ -216,16 +209,27 @@ class DistributionModal extends React.PureComponent {
 }
 
 DistributionModal.propTypes = {
-  conn: PropTypes.object.isRequired,
+  conn: PropTypes.shape({
+    uq: PropTypes.shape({
+      kind: PropTypes.string.isRequired,
+      options_attributes: PropTypes.array.isRequired,
+    })
+  }).isRequired,
   onConnectionChange: PropTypes.func.isRequired,
 };
 
 class DistributionModals extends React.PureComponent {
   render() {
     const { db, onConnectionChange } = this.props;
-    const connections = db.computeConnections().filter((c) => c.role === 'design_var' || c.role === 'parameter');
+    const connections = db.computeConnections().filter((c) => c.role === 'design_var' || c.role === 'parameter' || c.role === 'uncertain_var');
     const modals = connections.map(
-      (conn) => (<DistributionModal key={conn.id} conn={conn} onConnectionChange={onConnectionChange} />),
+      (conn) => {
+        const { uq: { kind } } = conn;
+        if (kind != "none") {
+          return (<DistributionModal key={conn.id} conn={conn} onConnectionChange={onConnectionChange} />);
+        }
+        return null;
+      },
     );
     return modals;
   }

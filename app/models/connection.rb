@@ -101,6 +101,7 @@ class Connection < ApplicationRecord
   end
 
   def update_connections!(params)
+    params = params.to_h  # accept string parameters
     Connection.transaction do
       role = nil
       if params[:role]
@@ -114,6 +115,7 @@ class Connection < ApplicationRecord
       role ||= Connection.where(from_id: from_id).first.role
 
       # update logic with regard to variable role
+      #p "ROLE", role, from, from.distribution
       case role
       when WhatsOpt::Variable::PARAMETER_ROLE
         if from.parameter
@@ -126,15 +128,16 @@ class Connection < ApplicationRecord
 
       when WhatsOpt::Variable::UNCERTAIN_VAR_ROLE
         if from.distribution.blank?
-          if from.parameter && (from.parameter.lower || from.parameter.upper)
+          if from.parameter && (!from.parameter.lower.blank? && !from.parameter.upper.blank?)
             params.merge!(distribution_attributes: 
                             Distribution.uniform_attrs(from.parameter.lower, from.parameter.upper))
-          elsif from.parameter && from.init
+          elsif from.parameter && !from.parameter.init.blank?
             params.merge!(distribution_attributes: Distribution.normal_attrs(from.parameter.init, "1.0"))
           else
             params.merge!(distribution_attributes: Distribution.normal_attrs("0.0", "1.0"))
           end
         end 
+        p params
         if from.parameter
           params.merge!(parameter_attributes: { init: from.parameter.init, lower: "", upper: "" })
         end  
@@ -153,7 +156,7 @@ class Connection < ApplicationRecord
       if from.distribution && !params[:distribution_attributes].blank?
         params.merge!(distribution_attributes: params[:distribution_attributes].merge!(id: from.distribution.id))
       end
-      params.permit!  # ensure all params transform are permitted
+      # params.permit!  # ensure all params transform are permitted
       from.update!(params)
 
       # Note: update only primary attributes, secondary attrs are not propagated to "to" variables

@@ -19,7 +19,7 @@ class AnalysisTest < ActiveSupport::TestCase
     mda = Analysis.create!(attachment_attributes: { data: attach })
     assert mda.to_mda_viewer_json
     assert mda.valid?
-    assert_equal 4, mda.parameter_variables.count
+    assert_equal 4, mda.input_variables.count
     assert_equal 1, mda.response_variables.count
   end
 
@@ -76,7 +76,7 @@ class AnalysisTest < ActiveSupport::TestCase
     assert_equal ["x1", "z"], @mda.design_variables.map(&:name).sort
   end
   test "should get parameters" do
-    assert_equal ["x1", "z"], @mda.parameter_variables.map(&:name).sort
+    assert_equal ["x1", "z"], @mda.input_variables.map(&:name).sort
   end
   test "should get objectives" do
     assert_equal ["obj"], @mda.min_objective_variables.map(&:name).sort

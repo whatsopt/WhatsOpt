@@ -7,6 +7,10 @@ table.connections {
 }
 
 /* React table cell: give clickable widthxheight when the cell is empty*/
+.editable-react-table-cell {
+	background-color: #f0f8e0;
+}
+
 span.react-table-cell {
 	min-height: 24px;
   display: block;

@@ -1,9 +1,9 @@
 import numpy as np
 
 def initialize(mda):
-<%- @mda.parameter_variables.each do |param| %>
+<%- @mda.input_variables.each do |param| %>
     mda['<%= param.name %>'] = <%= param.init_py_value %><%- end %>
-<%- if @mda.parameter_variables.empty? %>
+<%- if @mda.input_variables.empty? %>
     pass
 <%- end %>
 

@@ -57,9 +57,9 @@ class <%= @mda.py_classname %>Base(<%= @impl.parallel_group ? "ParallelGroup" : 
 <% end -%>
 
     def setup(self): 
-<% if @mda.is_root_analysis? && @mda.parameter_variables.size > 0 -%>
+<% if @mda.is_root_analysis? && @mda.input_variables.size > 0 -%>
         indeps = self.add_subsystem('indeps', IndepVarComp(), promotes=['*'])
-<% @mda.parameter_variables.each do |dv| %>
+<% @mda.input_variables.each do |dv| %>
         indeps.add_output('<%= dv.name %>', <%= dv.init_py_value %>)<% end -%>
 <% end -%>
 <% @mda.sub_analyses.each do |d| %>
