@@ -171,26 +171,28 @@ class MdaViewer extends React.Component {
     delete cAttrs.res_ref;
 
     // distribution: check for updating/removing options
-    if (connAttrs.distribution_attributes) {
-      const { options_attributes: newOptAttrs } = connAttrs.distribution_attributes;
+    if (cAttrs.distribution_attributes) {
+      const { options_attributes: newOptAttrs } = cAttrs.distribution_attributes;
       // console.log(`NEWOPTATTRS = ${JSON.stringify(newOptAttrs)}`);
       let conn = this.db.connections.find((conn) => conn.id === connId);
-      // console.log(`OLDCONNATTRS = ${JSON.stringify(newOptAttrs)}`);
       const { uq: { options_attributes: prevOptAttrs } } = conn;
+      // console.log(`OLDCONNATTRS = ${JSON.stringify(prevOptAttrs)}`);
       const optIds = prevOptAttrs.map(opt => opt.id);
       // console.log(optIds);
       for (let optAttr of newOptAttrs) {
         if (optIds.length) {
-          // console.log(optAttr);
           optAttr.id = optIds.shift();
+          console.log("NEW OPT ATT", optAttr);
         }
       }
-      if (connAttrs.options_attributes) {  // needed in case, normally should be at least []
-        optIds.forEach((id) => connAttrs.options_attributes.push({ id, _destroy: '1' }));
-      }
+      // console.log(`BEFORE CONATTRS = ${JSON.stringify(cAttrs)}`);
+      // console.log("OPTIDS", optIds);
+      //if (connAttrs.options_attributes) {  // needed in case, normally should be at least []
+      optIds.forEach((id) => cAttrs.distribution_attributes.options_attributes.push({ id, _destroy: '1' }));
+      //}
     }
 
-    // console.log(`CONATTRS = ${JSON.stringify(connAttrs)}`);
+    // console.log(`CONATTRS = ${JSON.stringify(cAttrs)}`);
 
     if (Object.keys(cAttrs).length !== 0) {
       this.api.updateConnection(connId, cAttrs,

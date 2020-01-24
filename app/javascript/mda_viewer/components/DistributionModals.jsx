@@ -152,7 +152,7 @@ class DistributionModal extends React.PureComponent {
 
   handleSave() {
     const { conn: { id, name }, onConnectionChange } = this.props;
-    // console.log(`SAVE state= ${JSON.stringify(this.state)}`);
+    console.log(`SAVE state= ${JSON.stringify(this.state)}`);
     onConnectionChange(id, { distribution_attributes: this.state });
     $(`#distributionModal-${name}`).modal('hide');
   }

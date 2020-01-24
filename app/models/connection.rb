@@ -115,7 +115,7 @@ class Connection < ApplicationRecord
       role ||= Connection.where(from_id: from_id).first.role
 
       # update logic with regard to variable role
-      #p "ROLE", role, from, from.distribution
+      # p "ROLE", role, from, from.distribution
       case role
       when WhatsOpt::Variable::PARAMETER_ROLE
         if from.parameter
@@ -128,19 +128,21 @@ class Connection < ApplicationRecord
 
       when WhatsOpt::Variable::UNCERTAIN_VAR_ROLE
         if from.distribution.blank?
-          if from.parameter && (!from.parameter.lower.blank? && !from.parameter.upper.blank?)
+          if from.dim == 1 && from.parameter && (!from.parameter.lower.blank? && !from.parameter.upper.blank?)
             params.merge!(distribution_attributes: 
                             Distribution.uniform_attrs(from.parameter.lower, from.parameter.upper))
-          elsif from.parameter && !from.parameter.init.blank?
+          elsif from.dim == 1 && from.parameter && !from.parameter.init.blank?
             params.merge!(distribution_attributes: Distribution.normal_attrs(from.parameter.init, "1.0"))
           else
             params.merge!(distribution_attributes: Distribution.normal_attrs("0.0", "1.0"))
           end
         end 
-        p params
-        if from.parameter
-          params.merge!(parameter_attributes: { init: from.parameter.init, lower: "", upper: "" })
-        end  
+        # p params
+        init = params[:parameter_attributes] && params[:parameter_attributes][:init]
+        p init
+        init = from.parameter.init if init.nil? && from.parameter
+        p init
+        params.merge!(parameter_attributes: {init: init || "", lower: "", upper: "" })
         unless from.dim == 1
           params.merge!(shape: "1")
         end
@@ -157,6 +159,7 @@ class Connection < ApplicationRecord
         params.merge!(distribution_attributes: params[:distribution_attributes].merge!(id: from.distribution.id))
       end
       # params.permit!  # ensure all params transform are permitted
+      p params
       from.update!(params)
 
       # Note: update only primary attributes, secondary attrs are not propagated to "to" variables
