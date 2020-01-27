@@ -98,7 +98,7 @@ class Operation < ApplicationRecord
   end
 
   def build_metamodel_varattrs(varnames = nil)
-    input_vars = analysis.design_variables
+    input_vars = analysis.uq_mode? ? analysis.uncertain_input_variables : analysis.design_variables
     input_vars = input_vars.select { |v| varnames[:inputs].include?(v.name) } if varnames && varnames[:inputs]
     output_vars = analysis.response_variables
     output_vars = output_vars.select { |v| varnames[:outputs].include?(v.name) } if varnames && varnames[:outputs]

@@ -86,7 +86,7 @@ class Surrogate < ApplicationRecord
       self.status = STATUS_FAILED
     end
   rescue WhatsOpt::SurrogateServer::SurrogateException => exc
-    Rails.logger.warn "SURROGATE TRAIN: Errror on surrogate #{id}: #{exc.msg}"
+    Rails.logger.warn "SURROGATE TRAIN: Error on surrogate #{id}: #{exc.msg}"
     self.status = STATUS_FAILED
   ensure
     save!

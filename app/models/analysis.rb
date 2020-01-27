@@ -66,10 +66,6 @@ class Analysis < ApplicationRecord
     !disciplines.nodes.detect { |d| !d.is_metamodel? }
   end
 
-  def has_uncertain_input_variables?
-    @has_uncertains ||= Variable.of_analysis(id).active.uncertain.count > 0
-  end
-
   def uq_mode?
     !has_design_variables? && has_uncertain_input_variables?
   end
@@ -88,6 +84,18 @@ class Analysis < ApplicationRecord
 
   def has_design_variables?
     @has_desvars = !design_variables.empty?
+  end
+
+  def uncertain_input_variables
+    @uncertains ||= variables.with_role(WhatsOpt::Variable::UNCERTAIN_VAR_ROLE)
+  end
+
+  def has_uncertain_input_variables?
+    @has_uncertains ||= uncertain_input_variables.size > 0
+  end
+
+  def input_variables
+    @params = variables.with_role(WhatsOpt::Variable::INPUT_ROLES)
   end
 
   def min_objective_variables

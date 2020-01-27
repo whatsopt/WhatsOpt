@@ -106,8 +106,8 @@ class VariablePanel extends React.PureComponent {
       <div className={klass} id={VARIABLES_TAB} role="tabpanel" aria-labelledby="variables-tab">
         <VariableSelector
           db={db}
-          optim
-          uqMode
+          optim={optim}
+          uqMode={uqMode}
           cases={cases}
           selCases={selCases}
           onSelectionChange={onSelectionChange}
@@ -136,7 +136,7 @@ class MetaModelPanel extends React.PureComponent {
         active={active}
         opeId={opeId}
         api={api}
-        uqMode
+        uqMode={uqMode}
         selCases={selCases}
         onMetaModelCreate={onMetaModelCreate}
       />
@@ -153,6 +153,7 @@ MetaModelPanel.propTypes = {
   active: PropTypes.bool.isRequired,
   opeId: PropTypes.number.isRequired,
   api: PropTypes.object.isRequired,
+  uqMode: PropTypes.bool.isRequired,
   selCases: PropTypes.shape({
     i: PropTypes.array.isRequired,
     o: PropTypes.array.isRequired,
@@ -283,7 +284,7 @@ class Plotter extends React.Component {
           active={activeTab === METAMODEL_TAB}
           api={this.api}
           opeId={ope.id}
-          uqMode
+          uqMode={uqMode}
           selCases={selCases}
           onMetaModelCreate={this.handleMetaModelCreate}
         />
@@ -349,7 +350,7 @@ class Plotter extends React.Component {
           <VariablePanel
             db={this.db}
             optim={isOptim}
-            uqMode
+            uqMode={uqMode}
             cases={cases}
             selCases={selCases}
             active={activeTab === VARIABLES_TAB}
