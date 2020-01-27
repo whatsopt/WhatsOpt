@@ -94,6 +94,10 @@ class Analysis < ApplicationRecord
     @has_uncertains ||= uncertain_input_variables.size > 0
   end
 
+  def decision_role
+    uq_mode? ? WhatsOpt::Variable::UNCERTAIN_VAR_ROLE : WhatsOpt::Variable::DESIGN_VAR_ROLE
+  end
+
   def input_variables
     @params = variables.with_role(WhatsOpt::Variable::INPUT_ROLES)
   end
@@ -182,9 +186,11 @@ class Analysis < ApplicationRecord
     @remote ||= all_plain_disciplines.detect { |d| !d.local?(localhost) }
   end
 
-  def set_all_parameters_as_design_variables
+  def set_all_parameters_as_decision_variables(role=WhatsOpt::Variable::DESIGN_VAR_ROLE)
     conns = Connection.of_analysis(self).with_role(WhatsOpt::Variable::PARAMETER_ROLE)
-    conns.map { |c| c.update!(role: WhatsOpt::Variable::DESIGN_VAR_ROLE) }
+    conns.map { |c| 
+      c.update_connections!(role: role)
+    }
   end
 
   def next_operation_id(opeId)

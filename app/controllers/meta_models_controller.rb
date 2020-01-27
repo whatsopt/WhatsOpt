@@ -24,7 +24,7 @@ class MetaModelsController < ApplicationController
       mm_ope = Operation.build_operation(mda, name: name, driver: driver)
       mm_ope.base_operation = mm_doe
       mm_ope.save!
-      mda.set_all_parameters_as_design_variables
+      mda.set_all_parameters_as_decision_variables(ope.analysis.decision_role)
       mda.set_owner(current_user)
       @meta_model = mda.disciplines.last.build_meta_model( # just one plain discipline in the analysis
         operation: mm_ope,

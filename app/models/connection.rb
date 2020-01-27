@@ -2,10 +2,8 @@
 
 class Connection < ApplicationRecord
 
-
   before_validation :_ensure_role_presence
   before_destroy :delete_driver_variables!
-  # before_create :announce_creation
 
   belongs_to :from, -> { includes(:discipline) }, class_name: "Variable"
   belongs_to :to, -> { includes(:discipline) }, class_name: "Variable"
@@ -25,10 +23,6 @@ class Connection < ApplicationRecord
 
   class CannotRemoveConnectionError < StandardError
   end
-
-  # def announce_creation
-  #   p "CREATE #{self.from.name} #{self.from.discipline.name} #{self.to.discipline.name}"
-  # end
 
   def self.between(disc_from_id, disc_to_id)
     Connection.joins(:from).where(variables: { discipline_id: disc_from_id }) # .where.not(variables: {type: :String})

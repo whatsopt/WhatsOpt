@@ -107,6 +107,7 @@ class Operation < ApplicationRecord
       varattr = ActiveModelSerializers::SerializableResource.new(c.variable).as_json
       if varattr[:distribution_attributes] && varattr[:distribution_attributes][:options_attributes]
         varattr[:distribution_attributes][:options_attributes].map{|optAttr| optAttr.update(id: nil)}
+        varattr[:parameter_attributes].merge!(lower: "", upper: "")
       end
       if varattrs.keys.include?(c.variable.name)
         if varattr[:io_mode] == WhatsOpt::Variable::IN
