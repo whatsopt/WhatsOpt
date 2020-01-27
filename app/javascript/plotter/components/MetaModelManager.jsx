@@ -12,28 +12,15 @@ const SMT_LS = 'SMT_LS';
 const SMT_QP = 'SMT_QP';
 const OPENTURNS_PCE = 'OPENTURNS_PCE';
 
-const MODE_OPTIMISATION = 'MODE_OPTIMISATION'
-const MODE_UQ = 'MODE_UQ'
 
-const MODES = {
-  SMT_KRIGING: MODE_OPTIMISATION,
-  SMT_KPLS: MODE_OPTIMISATION,
-  SMT_KPLSK: MODE_OPTIMISATION,
-  SMT_LS: MODE_OPTIMISATION,
-  SMT_QP: MODE_OPTIMISATION,
-  OPENTURNS_PCE: MODE_UQ,
-};
-
-const SCHEMA = {
+const UQ_SCHEMA = {
   type: 'object',
   properties: {
     kind: {
       type: 'string',
       title: 'Distribution Kind',
-      enum: [SMT_KRIGING, SMT_KPLS, SMT_KPLSK, SMT_LS, SMT_QP, OPENTURNS_PCE],
-      enumNames: ['Kriging', 'KPLS (Kriging+PLS)', 'KPLSK (Kriging+PLS+KPLS initial guess)',
-        'Least-Squares Approximation', 'Quadratic Polynomial Approximation',
-        'Polynomial Chaos Expension'],
+      enum: [OPENTURNS_PCE],
+      enumNames: ['Polynomial Chaos Expension'],
       default: SMT_KRIGING,
     },
   },
@@ -41,11 +28,6 @@ const SCHEMA = {
   dependencies: {
     kind: {
       oneOf: [
-        {
-          properties: {
-            kind: { enum: [SMT_KRIGING, SMT_KPLS, SMT_KPLSK, SMT_LS, SMT_QP] },
-          },
-        },
         {
           properties: {
             kind: { enum: [OPENTURNS_PCE] },
@@ -67,16 +49,40 @@ const SCHEMA = {
   },
 };
 
-const UISCHEMA = {
+const OPTIM_SCHEMA = {
+  type: 'object',
+  properties: {
+    kind: {
+      type: 'string',
+      title: 'Distribution Kind',
+      enum: [SMT_KRIGING, SMT_KPLS, SMT_KPLSK, SMT_LS, SMT_QP, OPENTURNS_PCE],
+      enumNames: ['Kriging', 'KPLS (Kriging+PLS)', 'KPLSK (Kriging+PLS+KPLS initial guess)',
+        'Least-Squares Approximation', 'Quadratic Polynomial Approximation'],
+      default: SMT_KRIGING,
+    },
+  },
+  required: ['kind'],
+  dependencies: {
+    kind: {
+      oneOf: [
+        {
+          properties: {
+            kind: { enum: [SMT_KRIGING, SMT_KPLS, SMT_KPLSK, SMT_LS, SMT_QP] },
+          },
+        },
+      ],
+    },
+  },
 };
 
 class MetaModelManager extends React.Component {
   constructor(props) {
     super(props);
 
+    const { uqMode } = this.props;
     this.state = {
       formData: {
-        kind: SMT_KRIGING,
+        kind: uqMode ? OPENTURNS_PCE : SMT_KRIGING,
       },
       errors: [],
     };
@@ -94,15 +100,9 @@ class MetaModelManager extends React.Component {
   }
 
   handleChange(data) {
-    // console.log(`CHANGE ${JSON.stringify(data.formData)}`);
     const { formData } = data;
-    const { kind } = this.state;
-    let varMode = MODES[kind];
+
     this.setState({ formData });
-    if (MODES[formData.kind] !== varMode) {
-      const { onUqModeActive } = this.props;
-      onUqModeActive(MODES[formData.kind] === MODE_UQ);
-    }
   }
 
   handleSubmit(data) {
@@ -142,7 +142,7 @@ class MetaModelManager extends React.Component {
   }
 
   render() {
-    const { selCases } = this.props;
+    const { selCases, uqMode } = this.props;
     const outputs = [...new Set(selCases.o.map((c) => c.varname))].map((name) => (
       <span key={name} className="ml-5">
         {name}
@@ -165,6 +165,8 @@ class MetaModelManager extends React.Component {
       // eslint-disable-next-line react/no-array-index-key
       (message, i) => (<Error key={i} msg={message} onClose={() => this.handleErrorClose(i)} />),
     );
+
+    const schema = uqMode ? UQ_SCHEMA : OPTIM_SCHEMA
     console.log(formData);
 
     return (
@@ -181,8 +183,7 @@ class MetaModelManager extends React.Component {
         </div>
         <div className="editor-section">
           <Form
-            schema={SCHEMA}
-            uiSchema={UISCHEMA}
+            schema={schema}
             formData={formData}
             onChange={this.handleChange}
             onSubmit={this.handleSubmit}
@@ -202,12 +203,12 @@ class MetaModelManager extends React.Component {
 MetaModelManager.propTypes = {
   api: PropTypes.object.isRequired,
   opeId: PropTypes.number.isRequired,
+  uqMode: PropTypes.bool.isRequired,
   selCases: PropTypes.shape({
     i: PropTypes.array.isRequired,
     o: PropTypes.array.isRequired,
     c: PropTypes.array.isRequired,
   }).isRequired,
-  onUqModeActive: PropTypes.func.isRequired,
 };
 
 export default MetaModelManager;

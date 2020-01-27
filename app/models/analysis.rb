@@ -70,6 +70,10 @@ class Analysis < ApplicationRecord
     @has_uncertains ||= Variable.of_analysis(id).active.uncertain.count > 0
   end
 
+  def uq_mode?
+    !has_design_variables? && has_uncertain_input_variables?
+  end
+
   def variables
     @variables = Variable.of_analysis(id).active.order("variables.name ASC")
   end

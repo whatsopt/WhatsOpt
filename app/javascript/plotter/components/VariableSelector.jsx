@@ -44,7 +44,7 @@ class VariableSelector extends React.PureComponent {
   render() {
     let stateVars;
     const {
-      cases, selCases, onSelectionChange,
+      uqMode, cases, selCases, onSelectionChange,
     } = this.props;
     if (cases.c.length > 0) {
       stateVars = (
@@ -56,11 +56,12 @@ class VariableSelector extends React.PureComponent {
         />
       );
     }
+
     return (
       <div className="container-fluid">
         <VariableList
           cases={cases.i}
-          title="Design Variables"
+          title={uqMode ? "Uncertain Variables" : "Design Variables"}
           selection={selCases.i}
           onSelectionChange={onSelectionChange}
         />
@@ -77,6 +78,7 @@ class VariableSelector extends React.PureComponent {
 }
 
 VariableSelector.propTypes = {
+  uqMode: PropTypes.bool.isRequired,
   cases: PropTypes.shape({
     i: PropTypes.array.isRequired,
     o: PropTypes.array.isRequired,

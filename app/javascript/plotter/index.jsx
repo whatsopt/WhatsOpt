@@ -10,7 +10,6 @@ import VariableSelector from 'plotter/components/VariableSelector';
 import MetaModelManager from 'plotter/components/MetaModelManager';
 import AnalysisDatabase from '../utils/AnalysisDatabase';
 import * as caseUtils from '../utils/cases';
-import LoadingIndicator from '../utils/components/LoadingIndicator';
 
 const PLOTS_TAB = 'plots';
 const VARIABLES_TAB = 'variables';
@@ -24,7 +23,7 @@ class PlotPanel extends React.PureComponent {
     let plotoptim = (
       <ScatterPlotMatrix
         db={db}
-        optim={optim}
+        optim
         cases={cases}
         success={success}
         title={title}
@@ -35,13 +34,13 @@ class PlotPanel extends React.PureComponent {
         <div>
           <IterationLinePlot
             db={db}
-            optim={optim}
+            optim
             cases={cases}
             title={title}
           />
           <IterationRadarPlot
             db={db}
-            optim={optim}
+            optim
             cases={cases}
             title={title}
           />
@@ -51,7 +50,7 @@ class PlotPanel extends React.PureComponent {
     let plotparall = (
       <ParallelCoordinates
         db={db}
-        optim={optim}
+        optim
         cases={cases}
         success={success}
         title={title}
@@ -70,7 +69,7 @@ class PlotPanel extends React.PureComponent {
           />
           <ParallelCoordinates
             db={db}
-            optim={optim}
+            optim
             cases={cases}
             success={success}
             title={title}
@@ -100,14 +99,15 @@ PlotPanel.propTypes = {
 class VariablePanel extends React.PureComponent {
   render() {
     const {
-      db, optim, cases, selCases, onSelectionChange,
+      db, optim, uqMode, cases, selCases, onSelectionChange,
     } = this.props;
     const klass = 'tab-pane fade';
     return (
       <div className={klass} id={VARIABLES_TAB} role="tabpanel" aria-labelledby="variables-tab">
         <VariableSelector
           db={db}
-          optim={optim}
+          optim
+          uqMode
           cases={cases}
           selCases={selCases}
           onSelectionChange={onSelectionChange}
@@ -120,6 +120,7 @@ class VariablePanel extends React.PureComponent {
 VariablePanel.propTypes = {
   db: PropTypes.object.isRequired,
   optim: PropTypes.bool.isRequired,
+  uqMode: PropTypes.bool.isRequired,
   cases: PropTypes.object.isRequired,
   selCases: PropTypes.object.isRequired,
   onSelectionChange: PropTypes.func.isRequired,
@@ -128,16 +129,16 @@ VariablePanel.propTypes = {
 class MetaModelPanel extends React.PureComponent {
   render() {
     const {
-      active, opeId, api, selCases, onMetaModelCreate, onUqModeActive
+      active, opeId, api, selCases, onMetaModelCreate, uqMode
     } = this.props;
     const metamodel = (
       <MetaModelManager
         active={active}
         opeId={opeId}
         api={api}
+        uqMode
         selCases={selCases}
         onMetaModelCreate={onMetaModelCreate}
-        onUqModeActive={onUqModeActive}
       />
     );
     return (
@@ -157,7 +158,6 @@ MetaModelPanel.propTypes = {
     o: PropTypes.array.isRequired,
     c: PropTypes.array.isRequired,
   }).isRequired,
-  onUqModeActive: PropTypes.func.isRequired,
   onMetaModelCreate: PropTypes.func.isRequired,
 };
 
@@ -172,12 +172,16 @@ class Plotter extends React.Component {
     this.outputVarCases = this.cases.filter((c) => this.db.isOutputVarCases(c));
     this.couplingVarCases = this.cases.filter((c) => this.db.isCouplingVarCases(c));
 
-    const inputVarCases = this.cases.filter((c) => this.db.isDesignVarCases(c));
+    let inputVarCases = [];
+    if (uqMode) {
+      inputVarCases = this.cases.filter((c) => this.db.isUncertainVarCases(c));
+    } else {
+      inputVarCases = this.cases.filter((c) => this.db.isDesignVarCases(c));
+    }
     const selection = this.initializeSelection(inputVarCases, this.outputVarCases);
-    this.state = { inputVarCases, uqMode: false, selection, activeTab: PLOTS_TAB };
+    this.state = { inputVarCases, selection, activeTab: PLOTS_TAB };
 
     this.handleSelectionChange = this.handleSelectionChange.bind(this);
-    this.handleUqModeActive = this.handleUqModeActive.bind(this);
     this.handleMetaModelCreate = this.handleMetaModelCreate.bind(this);
     this.activateTab = this.activateTab.bind(this);
   }
@@ -220,27 +224,6 @@ class Plotter extends React.Component {
     this.setState({ selection: newSelection });
   }
 
-  handleUqModeActive(uqModeActivation) {
-    const { uqMode, selection } = this.state;
-    console.log('Select Uq Mode active: ' + uqModeActivation + " " + uqMode);
-    if (uqModeActivation !== uqMode) {
-      const selectedOutputs = selection.filter((c) => this.db.isOutputVarCases(c));
-      let inputVarCases;
-      if (uqModeActivation) {
-        inputVarCases = this.cases.filter((c) => this.db.isUncertainVarCases(c));
-      } else {
-        inputVarCases = this.cases.filter((c) => this.db.isDesignVarCases(c));
-      }
-      console.log(inputVarCases);
-      const newSelection = this.initializeSelection(inputVarCases, selectedOutputs)
-      this.setState({
-        uqMode: uqModeActivation,
-        selection: newSelection,
-        inputVarCases
-      });
-    }
-  }
-
   handleMetaModelCreate() {
     console.log('Create MetaModel... ');
     const { api, ope } = this.props;
@@ -256,7 +239,7 @@ class Plotter extends React.Component {
   }
 
   render() {
-    const { ope, mda } = this.props;
+    const { ope, mda, uqMode } = this.props;
     const isOptim = (ope.category === 'optimization');
     const isDoe = (ope.category === 'doe');
     const { selection, inputVarCases } = this.state;
@@ -300,8 +283,8 @@ class Plotter extends React.Component {
           active={activeTab === METAMODEL_TAB}
           api={this.api}
           opeId={ope.id}
+          uqMode
           selCases={selCases}
-          onUqModeActive={this.handleUqModeActive}
           onMetaModelCreate={this.handleMetaModelCreate}
         />
       );
@@ -366,6 +349,7 @@ class Plotter extends React.Component {
           <VariablePanel
             db={this.db}
             optim={isOptim}
+            uqMode
             cases={cases}
             selCases={selCases}
             active={activeTab === VARIABLES_TAB}
@@ -390,6 +374,7 @@ Plotter.propTypes = {
     cases: PropTypes.array.isRequired,
     success: PropTypes.array.isRequired,
   }).isRequired,
+  uqMode: PropTypes.bool.isRequired,
 };
 
 export default Plotter;
