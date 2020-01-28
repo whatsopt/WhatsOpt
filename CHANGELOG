@@ -1,9 +1,11 @@
 <h1>CHANGELOG</h1>
 
-<h3>1.5.0 (??/01/2020)</h3>
+<h3>1.5.0 (27/01/2020)</h3>
 <ul>
   <li>User can use run_screening with --sobol to get Sobol indices</li>
   <li>User can create a metamodel using OpenTURNS polynomial chaos expension algorithm</li>
+  <li>User can define uncertain variables to use with OpenTURNS backed methods</li>
+  <li>UI: improve analysis edition mode</li>
   <li>Implementation: refactor whatsopt surrogate server</li>
 </ul>
 
