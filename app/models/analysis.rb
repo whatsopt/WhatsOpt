@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 require "whats_opt/discipline"
-require "whats_opt/excel_mda_importer"
-require "whats_opt/cmdows_mda_importer"
 require "whats_opt/openmdao_module"
 
 class Analysis < ApplicationRecord
@@ -19,10 +17,6 @@ class Analysis < ApplicationRecord
   class AncestorUpdateError < StandardError
   end
 
-  has_one :attachment, as: :container, dependent: :destroy
-  accepts_nested_attributes_for :attachment, allow_destroy: true
-  validates_associated :attachment
-
   has_many :disciplines, -> { includes(:variables).order(position: :asc) }, dependent: :destroy
   accepts_nested_attributes_for :disciplines,
                                 reject_if: proc { |attr| attr["name"].blank? }, allow_destroy: true
@@ -36,10 +30,6 @@ class Analysis < ApplicationRecord
 
   scope :mine, ->{ with_role(:owner, current_user) }
 
-  before_validation(on: :create) do
-    _create_from_attachment if attachment_exists?
-  end
-
   after_save :refresh_connections, unless: Proc.new { self.disciplines.count < 2 }
   after_save :_ensure_ancestry
   after_save :_ensure_driver_presence
@@ -47,7 +37,6 @@ class Analysis < ApplicationRecord
 
   before_destroy :_check_allowed_destruction
 
-  validate :_check_mda_import_error, on: :create, if: :attachment_exists?
   validates :name, presence: true, allow_blank: false
 
   def driver
@@ -172,10 +161,6 @@ class Analysis < ApplicationRecord
 
   def all_disciplines
     @alldiscs ||= children.inject(disciplines.nodes) { |ary, elt| ary + elt.all_disciplines }
-  end
-
-  def attachment_exists?
-    attachment&.exists?
   end
 
   def root_analysis
@@ -528,44 +513,6 @@ class Analysis < ApplicationRecord
   end
 
   private
-    def _check_mda_import_error
-      if attachment.mda_excel?
-        WhatsOpt::ExcelMdaImporter.new(attachment.path)
-      elsif attachment.mda_cmdows?
-        mda_name = File.basename(attachment.original_filename, ".*").camelcase
-        WhatsOpt::CmdowsMdaImporter.new(attachment.path, mda_name)
-      else
-        errors.add(:attachment, "Bad file format")
-      end
-    rescue StandardError
-      errors.add(:attachment, "Import error")
-    end
-
-    def _create_from_attachment
-      if attachment.exists?
-        if attachment.mda_excel?
-          self.name = File.basename(attachment.original_filename, ".xlsx").camelcase
-          importer = WhatsOpt::ExcelMdaImporter.new(attachment.path, name)
-        elsif attachment.mda_cmdows?
-          self.name = File.basename(attachment.original_filename, ".*").camelcase
-          importer = WhatsOpt::CmdowsMdaImporter.new(attachment.path, name)
-        else
-          raise WhatsOpt::MdaImporter::MdaImportError, "bad format, can not be imported as an MDA"
-        end
-        self.name = importer.get_mda_attributes[:name]
-        vars = importer.get_variables_attributes
-        importer.get_disciplines_attributes.each do |dattr|
-          id = dattr[:id]
-          dattr.delete(:id)
-          disc = disciplines.build(dattr)
-          disc.variables.build(vars[id]) if vars[id]
-        end
-      else
-        raise WhatsOpt::MdaImporter::MdaImportError, "does not exist"
-      end
-    rescue WhatsOpt::MdaImporter::MdaImportError => e
-      errors.add(:attachment, e.message)
-    end
 
     def _ensure_driver_presence
       if self.disciplines.empty?

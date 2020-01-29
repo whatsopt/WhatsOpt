@@ -57,18 +57,6 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     assert_equal "TestNewName", resp["name"]
   end
 
-  test "should update a mda with attachment" do
-    @mda.build_attachment()
-    @mda.attachment.data = sample_file("excel_mda_dummy.xlsx")
-    @mda.save!
-    put api_v1_mda_url(@mda), params: { analysis: { name: "TestNewName" } }, as: :json, headers: @auth_headers
-    assert_response :success
-    get api_v1_mda_url(@mda), as: :json, headers: @auth_headers
-    assert_response :success
-    resp = JSON.parse(response.body)
-    assert_equal "TestNewName", resp["name"]
-  end
-
   test "should get xdsm format" do
     get api_v1_mda_url(@mda, format: "xdsm"), as: :json, headers: @auth_headers
     assert_response :success

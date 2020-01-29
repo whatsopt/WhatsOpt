@@ -14,15 +14,6 @@ class AnalysisTest < ActiveSupport::TestCase
     assert_equal WhatsOpt::Discipline::NULL_DRIVER_NAME, mda.disciplines.first.name
   end
 
-  test "should create an mda from a mda template excel file" do
-    attach = sample_file("excel_mda_dummy.xlsx")
-    mda = Analysis.create!(attachment_attributes: { data: attach })
-    assert mda.to_mda_viewer_json
-    assert mda.valid?
-    assert_equal 4, mda.input_variables.count
-    assert_equal 1, mda.response_variables.count
-  end
-
   test "should create new connections if needed" do
     @mda.disciplines.first.variables.create(name: "newvar", io_mode: "out")
     @mda.disciplines.second.variables.create(name: "newvar", io_mode: "in")

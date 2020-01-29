@@ -55,31 +55,6 @@ class AnalysesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test "should import analysis from excel" do
-    assert_difference("Analysis.count") do
-      post mdas_url, params: {
-        analysis: { attachment_attributes: { data: fixture_file_upload("excel_mda_dummy.xlsx") } } }
-    end
-    assert_redirected_to mda_url(Analysis.last)
-  end
-
-  test "should import analysis from cmdows" do
-    assert_difference("Analysis.count") do
-      post mdas_url, params: {
-        analysis: { attachment_attributes: { data: fixture_file_upload("cmdows_mda_sample.cmdows") } } }
-    end
-    assert_redirected_to mda_url(Analysis.last)
-  end
-
-  test "should import glider analysis from excel and export cmdows" do
-    assert_difference("Analysis.count") do
-      post mdas_url, params: {
-        analysis: { attachment_attributes: { data: fixture_file_upload("excel_glider.xlsx") } } }
-    end
-    assert_redirected_to mda_url(Analysis.last)
-    get mda_exports_new_url(Analysis.last, format: "cmdows")
-  end
-
   test "should show analysis" do
     get mda_url(@cicav)
     assert_response :success

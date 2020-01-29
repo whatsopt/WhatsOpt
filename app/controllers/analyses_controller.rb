@@ -14,7 +14,6 @@ class AnalysesController < ApplicationController
 
   # GET /mdas/new
   def new
-    @import = !!params[:import]
     @mda = Analysis.new
     authorize @mda
   end
@@ -84,6 +83,6 @@ class AnalysesController < ApplicationController
 
     def mda_params
       params.require(:analysis)
-        .permit(:name, :public, attachment_attributes: [:id, :data, :_destroy])
+        .permit(:name, :public)
     end
 end
