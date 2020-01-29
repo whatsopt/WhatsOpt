@@ -11,8 +11,6 @@ Rails.application.routes.draw do
     end
     get 'exports/new', to: 'analysis_exports#new'
   end
-  resources :geometry_models
-  resources :attachments, only: [:show, :index]
     
   namespace :api do
     namespace :v1, defaults: { format: :json } do
@@ -42,15 +40,11 @@ Rails.application.routes.draw do
     end
   end
 
-  get '/toolbox' => redirect('http://dcps.onera/redmine/projects/oneramdao/files')
-  get '/issues' => redirect('http://dcps.onera/redmine/projects/whatsopt/issues')
-  get '/wiki' => redirect('http://dcps.onera/redmine/projects/whatsopt/wiki')
   get '/changelog' => 'infos#changelog'
   
   authenticated :user do
     root to: 'analyses#index', as: :authenticated_root
   end
   root to: redirect('users/sign_in')
-  
-  #mount ActionCable.server => '/cable'
+
 end

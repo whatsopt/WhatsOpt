@@ -25,9 +25,6 @@
       <ul class="navbar-nav mr-auto">	
       <% if user_signed_in? %>
 		    <li class="nav-item"><%= link_to "Analyses", mdas_path, class: "nav-link" %></li>
-        <% if enable_geometry_models? %>
-          <li class="nav-item"><%= link_to "Hangar", geometry_models_path, class: "nav-link" %></li>
-        <% end %>
       <% end %>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Help</a>

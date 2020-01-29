@@ -94,12 +94,6 @@ gem "pundit"
 # support CORS
 gem "rack-cors", ">=1.0.5"
 
-# Attachments
-gem "paperclip"
-
-# Import Excel
-gem "rubyXL"
-
 # Analysis as a tree
 gem "ancestry"
 
@@ -111,6 +105,9 @@ gem "active_model_serializers", "~> 0.10.7"
 
 # Background jobs
 gem "sucker_punch"
+
+# Zip
+gem "rubyzip"
 
 # UI
 gem "popper" # bootstrap dependency
