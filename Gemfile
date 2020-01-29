@@ -94,12 +94,6 @@ gem "pundit"
 # support CORS
 gem "rack-cors", ">=1.0.5"
 
-# Attachments
-gem "paperclip"
-
-# Import Excel
-gem "rubyXL"
-
 # Analysis as a tree
 gem "ancestry"
 
