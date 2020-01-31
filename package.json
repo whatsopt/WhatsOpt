@@ -28,7 +28,7 @@
     "react-promise-tracker": "^2.0.5",
     "react-table": "^7.0.0-rc.10",
     "save-svg-as-png": "^1.4.14",
-    "swagger-ui-react": "^3.25.0",
+    "swagger-ui-react": "3.24.0",
     "trix": "^1.0.0",
     "x3dom": "^1.7.2"
   },
