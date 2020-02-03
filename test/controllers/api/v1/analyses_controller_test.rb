@@ -169,10 +169,24 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     orig_count = @mda.disciplines.count
     mda2 = analyses(:cicav_metamodel_analysis)
     disc = disciplines(:disc_cicav_metamodel)
+    p disc.meta_model.operation.base_operation
+    p @mda.disciplines
     put api_v1_mda_url(@mda), params: {analysis: {import: {analysis: mda2.id, disciplines: [disc.id]}}}, 
       as: :json, headers: @auth_headers
     @mda.reload
     assert_equal orig_count + 1, @mda.disciplines.count
+
+    mm = @mda.disciplines.last.meta_model
+    p mm
+    p mm.surrogates
+    p mm.operation.base_operation
+    p mm.operation.cases
+    p mm.operation.input_cases
+    put api_v1_meta_model_url(mm), params: { meta_model: {
+        format: "matrix", values: [[3, 5, 7], [6, 10, 1]]
+      } }, as: :json, headers: @auth_headers
+    assert_response :success
+    p response.body
   end
 
   test "should import a sub-analysis" do
