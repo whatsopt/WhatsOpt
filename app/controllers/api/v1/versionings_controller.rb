@@ -3,7 +3,7 @@
 class Api::V1::VersioningsController < Api::ApiController
   before_action :set_versions
 
-  WOP_RECOMMENDED_VERSION = "~> 1.3.4"
+  WOP_RECOMMENDED_VERSION = "~> 1.3.5"
 
   def show
     authorize :info
