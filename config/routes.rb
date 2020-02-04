@@ -6,7 +6,6 @@ Rails.application.routes.draw do
 
   resources :analyses, shallow: true, as: :mdas do
     resources :operations do
-      resources :meta_models, only: [:show, :create]        
       get 'exports/new', to: 'operation_exports#new'
     end
     get 'exports/new', to: 'analysis_exports#new'

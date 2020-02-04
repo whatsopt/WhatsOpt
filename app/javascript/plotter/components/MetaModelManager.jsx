@@ -128,8 +128,8 @@ class MetaModelManager extends React.Component {
     api.createMetaModel(opeId, mmAttrs,
       (response) => {
         console.log(`Metamodel created ${JSON.stringify(response.data)}`);
-        const { data: { id } } = response;
-        window.location.replace(api.url(`/meta_models/${id}`));
+        const { data: { operation_id } } = response;
+        window.location.replace(api.url(`/operations/${operation_id}`));
       },
       (error) => {
         console.log(error);
