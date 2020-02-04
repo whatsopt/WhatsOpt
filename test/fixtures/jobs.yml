@@ -51,4 +51,16 @@ doe2_job:
 mm_doe2_job:
   <<: *default_assume_done
   operation: mm_from_doe2
-  
+
+doe_singleton_job:
+  <<: *default_assume_done
+  operation: doe_singleton
+
+doe_singleton_mm_job:
+  <<: *default_assume_done
+  operation: doe_singleton_mm
+
+doe_singleton_build_mm_job:
+  <<: *default_assume_done
+  operation: doe_singleton_build_mm
+      

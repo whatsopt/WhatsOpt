@@ -41,14 +41,14 @@ class OpenturnsSobolPceTest < ActionDispatch::IntegrationTest
     assert_equal Operation::CAT_DOE, ope.category
 
     # Create an OpenTURNS PCE metamodel from previous DOE
-    post "/operations/#{ope.id}/meta_models", params: { meta_model: {kind: Surrogate::OPENTURNS_PCE }},
+    post "/api/v1/operations/#{ope.id}/meta_models", params: { meta_model: {kind: Surrogate::OPENTURNS_PCE }},
     as: :json, headers: @auth_headers
+    assert_response :success
 
     ope_mm = Operation.second_to_last
     assert_equal "Metamodel pce", ope_mm.name
     assert_equal Operation::CAT_METAMODEL, ope_mm.category
     assert_equal Operation::CAT_METAMODEL, ope_mm.category
-    assert_redirected_to operation_url(ope_mm)
 
     ope_sa = Operation.last
     assert_equal "Sensitivity pce", ope_sa.name

@@ -27,9 +27,9 @@ class Case < ApplicationRecord
     name + (coord < 0 ? "" : "[#{coord}]")
   end
 
-  def build_copy(operation, variable)
+  def build_copy(operation, variable = nil)
     copy = self.dup
-    copy.variable = variable
+    copy.variable = variable unless variable.nil? 
     copy.operation = operation
     copy
   end

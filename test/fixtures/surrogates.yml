@@ -11,3 +11,10 @@ surrogate_obj2:
   variable: disc_metamodel2_varobj_objective_out
   coord_index: -1
   status: created
+
+surrogate_v:
+  kind: SMT_KRIGING
+  meta_model: singleton_mm_metamodel
+  variable: varv_disc_out_mm
+  coord_index: -1
+  status: created

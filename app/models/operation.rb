@@ -50,7 +50,7 @@ class Operation < ApplicationRecord
 
   def success_flags_consistent_with_cases
     if (cases.blank? && !success.blank?) || (!cases.blank? && (cases[0].values.size != success.size))
-      errors.add(:success, "size (#{success.size}) can not be different from cases values size (#{cases.blank? ? 0 : cases[0].values.size})")
+      errors.add(:success, "success size (#{success.size}) can not be different from cases values size (#{cases.blank? ? 0 : cases[0].values.size})")
     end
   end
 
@@ -218,23 +218,22 @@ class Operation < ApplicationRecord
     input_cases + output_cases
   end
 
-  def build_copy(analysis, varnames=[]) 
-    ope_copy = analysis.operations.build(self.attributes.except("id"))
+  # suppose analysis is already saved in database
+  def create_copy!(destAnalysis, varnames=[]) 
+    ope_copy = destAnalysis.operations.build(self.attributes.except("id"))
     ope_copy.job = self.job.build_copy
-    self.cases.each do |c|
+    self.cases.each_with_index do |c, i|
       vname = c.variable.name
       if varnames.empty? || varnames.include?(vname)
-
-        dest_variable = Variable.of_analysis(analysis)
-                          .where(name: vname, io_mode: WhatsOpt::Variable::OUT)
-                          .take
-        c_copy =  c.build_copy(ope_copy, dest_variable)
+        c_copy = c.build_copy(ope_copy)
         ope_copy.cases << c_copy
       end
     end
+    ope_copy.success = [] if ope_copy.cases.blank?
     if base_operation
-      ope_copy.base_operation = base_operation.build_copy(analysis, varnames)
+      ope_copy.base_operation = base_operation.create_copy!(destAnalysis, varnames)
     end
+    ope_copy.save!
     ope_copy
   end
 

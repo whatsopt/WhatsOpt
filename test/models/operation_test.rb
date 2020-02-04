@@ -37,7 +37,7 @@ class OperationTest < ActiveSupport::TestCase
     ope = operations(:doe)
     copy_mda = ope.analysis.create_copy!
     varnames = ['x1', 'obj']
-    copy_ope = ope.build_copy(copy_mda, varnames)
+    copy_ope = ope.create_copy!(copy_mda, varnames)
     # z is of shape (2,), hence 2 cases z[0] z[1] are removed
     assert_equal ope.cases.size - 2, copy_ope.cases.size
     assert_equal varnames.sort, (ope.cases.map{|c| c.variable.name } - ["z", "z"]).sort

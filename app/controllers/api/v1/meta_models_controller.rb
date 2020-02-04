@@ -23,7 +23,7 @@ class Api::V1::MetaModelsController < Api::ApiController
       unless meta_model_params[:variables].blank?
         vars = meta_model_params[:variables][:inputs] + meta_model_params[:variables][:outputs]
       end
-      mm_doe = ope.build_copy(mda, vars)
+      mm_doe = ope.create_copy!(mda, vars)
       mm_ope = Operation.build_operation(mda, name: name, driver: driver)
       mm_ope.base_operation = mm_doe
       mm_ope.save!

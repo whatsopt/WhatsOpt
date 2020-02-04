@@ -33,7 +33,7 @@ class MetaModelTest < ActiveSupport::TestCase
     skip_if_parallel
     x = [[2.5, 3, 4], [8, 9, 10], [5, 4, 3]]
     assert_difference("Option.count", 2) do  # one copy for mm.default_options + one for surrogate
-      mm = @mm.build_copy
+      mm = @mm.create_copy!
       mm.save!
       y = mm.predict(x)
       assert_in_delta 5, y[0][0]

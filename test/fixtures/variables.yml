@@ -463,9 +463,9 @@ varu_disc_in_mm:
 varv_driver_out_mm: &varu_driver_in
   name: v
   discipline: driver_singleton_mm
-  io_mode: out
+  io_mode: in
 
-varv_disc_in_mm:
+varv_disc_out_mm:
   <<: *varu_driver_in
   discipline: disc_singleton_mm
-  io_mode: in
+  io_mode: out

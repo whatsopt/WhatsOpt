@@ -54,11 +54,13 @@ class MetaModel < ApplicationRecord
     end
   end
 
-  def build_copy(discipline=nil)
+  def create_copy!(discipline=nil)
     mm_copy = self.dup
     if discipline
       mm_copy.discipline = discipline 
-      mm_copy.operation = self.operation.build_copy(discipline.analysis)
+      ope_copy = self.operation.create_copy!(discipline.analysis)
+      mm_copy.operation = ope_copy
+      ope_copy.save!
     end
     self.surrogates.each do |surr|
       var = discipline.variables.detect{|v| v.name == surr.variable.name} if discipline

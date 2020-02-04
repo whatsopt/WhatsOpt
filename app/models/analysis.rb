@@ -31,6 +31,7 @@ class Analysis < ApplicationRecord
   scope :mine, ->{ with_role(:owner, current_user) }
 
   after_save :refresh_connections, unless: Proc.new { self.disciplines.count < 2 }
+  # after_save :_ensure_meta_models
   after_save :_ensure_ancestry
   after_save :_ensure_driver_presence
   after_save :_ensure_openmdao_impl_presence
@@ -346,7 +347,7 @@ class Analysis < ApplicationRecord
             self.update!(attrs)
             newDisc = self.disciplines.reload.last
             if disc.is_pure_metamodel?
-              newDisc.meta_model = disc.meta_model.build_copy(newDisc)
+              newDisc.meta_model = disc.meta_model.create_copy!(newDisc)
             end
 
             if disc.has_sub_analysis?
@@ -529,6 +530,15 @@ class Analysis < ApplicationRecord
     def _ensure_openmdao_impl_presence
       self.openmdao_impl ||= OpenmdaoAnalysisImpl.new
     end
+
+    # def _ensure_meta_models
+    #   disciplines.each do |disc|
+    #     if disc.is_pure_metamodel? && disc.meta_model.nil?
+    #       newDisc.meta_model = disc.meta_model.build_copy(newDisc)
+    #       newDisc.meta_model.save!
+    #     end
+    #   end
+    # end
 
     def _check_allowed_destruction
       # to do check ancestry: forbid if parent
