@@ -12,7 +12,7 @@ class Analysis < ApplicationRecord
 
   has_rich_text :note
 
-  has_ancestry orphan_strategy: :rootify
+  has_ancestry
 
   class AncestorUpdateError < StandardError
   end
@@ -149,7 +149,7 @@ class Analysis < ApplicationRecord
   end
 
   def sub_analyses
-    children
+    children.joins(:analysis_discipline)
   end
 
   def all_plain_disciplines
@@ -157,7 +157,7 @@ class Analysis < ApplicationRecord
   end
 
   def all_sub_analyses
-    descendants
+    descendants.joins(:analysis_discipline)
   end
 
   def all_disciplines
@@ -486,8 +486,8 @@ class Analysis < ApplicationRecord
     )
   end
 
-  def self.build_metamodel_analysis(ope, varnames)
-    name = "#{ope.analysis.name.camelize}MetaModel"
+  def self.build_metamodel_analysis(ope, varnames=nil, name=nil)
+    name = name || "#{ope.analysis.name.camelize}MetaModel"
     metamodel_varattrs = ope.build_metamodel_varattrs(varnames)
     driver_vars = metamodel_varattrs.map do |v|
       vcopy = v.clone
