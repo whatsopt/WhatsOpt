@@ -27,8 +27,4 @@ singleton:
 
 singleton_mm:
   name: singleton_mm
-
-singleton_mm_spec:
-  name: <%= Analysis::METAMODEL_PROTOTYPE %>
-  ancestry: <%= ActiveRecord::FixtureSet.identify(:singleton_mm) %>
   

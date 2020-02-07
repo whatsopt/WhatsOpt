@@ -6,7 +6,7 @@ class MetaModel < ApplicationRecord
   belongs_to :discipline
   belongs_to :operation
 
-  has_one :meta_model_prototype
+  has_one :meta_model_prototype, dependent: :destroy
   has_one :prototype, through: :meta_model_prototype, source: :prototype, class_name: :Analysis
   accepts_nested_attributes_for :meta_model_prototype
 
@@ -60,13 +60,13 @@ class MetaModel < ApplicationRecord
 
   def create_copy!(mda=nil, discipline=nil)
     mm_copy = self.dup
-    mm_copy.prototype = prototype&.create_copy!(mda)
+    mm_copy.prototype = prototype || analysis
     if discipline
       mm_copy.discipline = discipline 
-      variables = Variable.of_analysis(mm_copy.prototype).outs
-      ope_copy = self.operation.create_copy!(discipline.analysis, varnames=[], variables)
-      mm_copy.operation = ope_copy
-      ope_copy.save!
+      # variables = Variable.of_analysis(mm_copy.prototype).outs
+      # ope_copy = self.operation.create_copy!(discipline.analysis, varnames=[], variables)
+      # mm_copy.operation = ope_copy
+      # ope_copy.save!
     end
     self.surrogates.each do |surr|
       var = discipline.variables.where(name: surr.variable.name).take if discipline

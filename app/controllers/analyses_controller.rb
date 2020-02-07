@@ -64,6 +64,8 @@ class AnalysesController < ApplicationController
   def destroy
     if @mda.parent
       redirect_to mdas_url, alert: "Can not delete nested analysis (you should delete parent first)."
+    elsif @mda.is_metamodel_prototype?
+      redirect_to mdas_url, alert: "Can not delete analysis (metamodel is in use)."
     else
       unless @mda.operations.blank? # remove operations in reverse order first
         @mda.operations.reverse.each { |ope| ope.destroy! }

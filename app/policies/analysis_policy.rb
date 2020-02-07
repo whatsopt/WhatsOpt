@@ -35,7 +35,7 @@ class AnalysisPolicy < ApplicationPolicy
   end
 
   def update?
-    (@user.admin? || @user.has_role?(:owner, @record)) && @record.name != Analysis::METAMODEL_PROTOTYPE
+    (@user.admin? || @user.has_role?(:owner, @record))
   end
 
   def destroy?

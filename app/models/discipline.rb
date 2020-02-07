@@ -53,8 +53,12 @@ class Discipline < ApplicationRecord
     !!meta_model
   end
 
+  def is_metamodel_prototype?
+    is_pure_metamodel? && !meta_model.prototype
+  end
+
   def is_metamodel?
-    !!(meta_model || (has_sub_analysis? && sub_analysis.is_metamodel_analysis?))
+    !!(meta_model || (has_sub_analysis? && sub_analysis.is_metamodel?))
   end
 
   def has_sub_analysis?

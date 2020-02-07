@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class OpenturnsSobolPceTest < ActionDispatch::IntegrationTest
+class CreatePCESensitivityAnalysis < ActionDispatch::IntegrationTest
 
   setup do
     @user1 = users(:user1)
@@ -46,17 +46,13 @@ class OpenturnsSobolPceTest < ActionDispatch::IntegrationTest
     as: :json, headers: @auth_headers
     assert_response :success
 
-    mm_mda = Analysis.second_to_last
-    proto_mm = Analysis.last
-    assert_equal 1, mm_mda.meta_model_prototypes.count
-    assert_equal proto_mm, mm_mda.meta_model_prototypes.first
+    mm_mda = Analysis.last
 
     ope_doe = Operation.third_to_last
-    assert_equal proto_mm, ope_doe.cases.first.variable.discipline.analysis
+    assert_equal Operation::CAT_DOE, ope_doe.category
 
     ope_mm = Operation.second_to_last
     assert_equal "Metamodel pce", ope_mm.name
-    assert_equal Operation::CAT_METAMODEL, ope_mm.category
     assert_equal Operation::CAT_METAMODEL, ope_mm.category
 
     ope_sa = Operation.last
@@ -73,7 +69,7 @@ class OpenturnsSobolPceTest < ActionDispatch::IntegrationTest
     delete "/operations/#{ope_mm.id}"
     assert_redirected_to mdas_url
 
-    assert_difference('Analysis.count', -2) do
+    assert_difference('Analysis.count', -1) do
       assert_difference('Operation.count', -3) do
         delete "/analyses/#{ope_mm.analysis.id}"
       end

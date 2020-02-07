@@ -5,8 +5,6 @@ require "whats_opt/openmdao_module"
 
 class Analysis < ApplicationRecord
 
-  METAMODEL_PROTOTYPE = "__METAMODEL_PROTOTYPE__"
-
   include WhatsOpt::OpenmdaoModule
   include Ownable
 
@@ -57,8 +55,12 @@ class Analysis < ApplicationRecord
     !has_parent?
   end
 
-  def is_metamodel_analysis?
+  def is_metamodel?
     !disciplines.nodes.detect { |d| !d.is_metamodel? }
+  end
+
+  def is_metamodel_prototype?
+    Analysis.where(id: self).joins(:meta_model_prototype).count > 0
   end
 
   def uq_mode?
@@ -155,10 +157,6 @@ class Analysis < ApplicationRecord
 
   def sub_analyses
     children.joins(:analysis_discipline)
-  end
-
-  def meta_model_prototypes
-    children.joins(:meta_model)
   end
 
   def all_plain_disciplines
@@ -277,7 +275,7 @@ class Analysis < ApplicationRecord
 
   def build_metamodel_quality
     res = []
-    if is_metamodel_analysis?
+    if is_metamodel?
       res = disciplines.inject([]) { |acc, d| acc + d.metamodel_qualification }
     end
     res
@@ -478,7 +476,7 @@ class Analysis < ApplicationRecord
   end
 
   def self.build_analysis(ope_attrs, outvar_count_hint = 1)
-    name = "#{ope_attrs[:name].camelize}Analysis"
+    name = "#{ope_attrs[:name].camelize}"
     disc_vars = Variable.get_varattrs_from_caseattrs(ope_attrs[:cases], outvar_count_hint)
     driver_vars = disc_vars.map do |v|
       { name: v[:name],
@@ -506,7 +504,7 @@ class Analysis < ApplicationRecord
       name: name,
       disciplines_attributes: [
         { name: "__DRIVER__", variables_attributes: driver_vars },
-        { name: "#{ope.analysis.name.camelize}Model", type: WhatsOpt::Discipline::METAMODEL,
+        { name: "#{ope.analysis.name.camelize}", type: WhatsOpt::Discipline::METAMODEL,
           variables_attributes: metamodel_varattrs }
     ] }
     Analysis.new(analysis_attrs)

@@ -17,16 +17,13 @@ class Api::V1::MetaModelsController < Api::ApiController
     mda = Analysis.build_metamodel_analysis(ope, meta_model_params[:variables])
     authorize mda
     if mda.save
-      proto = Analysis.build_metamodel_analysis(ope, meta_model_params[:variables], name=Analysis::METAMODEL_PROTOTYPE)
-      proto.parent = mda
-      proto.save!
       driver = MetaModel.get_driver_from_metamodel_kind(meta_model_params[:kind])
       name = MetaModel.get_name_from_metamodel_kind(meta_model_params[:kind])
       varnames = []
       unless meta_model_params[:variables].blank?
         varnames = meta_model_params[:variables][:inputs] + meta_model_params[:variables][:outputs]
       end
-      mm_doe = ope.create_copy!(mda, varnames, Variable.of_analysis(proto).outs)
+      mm_doe = ope.create_copy!(mda, varnames)
       mm_ope = Operation.build_operation(mda, name: name, driver: driver)
       mm_ope.base_operation = mm_doe
       mm_ope.save!
@@ -36,8 +33,7 @@ class Api::V1::MetaModelsController < Api::ApiController
       @meta_model = mda.disciplines.last.build_meta_model( # just one plain discipline in the analysis
         operation: mm_ope,
         default_surrogate_kind: meta_model_params[:kind],
-        default_options_attributes: meta_model_params[:options] || [],
-        meta_model_prototype_attributes: { prototype_id: proto.id } 
+        default_options_attributes: meta_model_params[:options] || [] 
       )
       @meta_model.build_surrogates
       if @meta_model.save

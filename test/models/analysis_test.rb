@@ -96,9 +96,9 @@ class AnalysisTest < ActiveSupport::TestCase
 
   test "should know if it is a metamodel" do
     mda = analyses(:outermda)
-    assert_not mda.is_metamodel_analysis?
+    assert_not mda.is_metamodel?
     mda = analyses(:cicav_metamodel_analysis)
-    assert mda.is_metamodel_analysis?
+    assert mda.is_metamodel?
   end
 
   test "should copy an analysis" do
@@ -109,7 +109,7 @@ class AnalysisTest < ActiveSupport::TestCase
   test "should copy a metamodel" do
     mda = analyses(:cicav_metamodel_analysis)
     copy = mda.create_copy!
-    assert copy.is_metamodel_analysis?
+    assert copy.is_metamodel?
     orig_conns = Connection.of_analysis(mda)
     copy_conns = Connection.of_analysis(copy)
     assert_equal orig_conns.size, copy_conns.size
@@ -119,7 +119,7 @@ class AnalysisTest < ActiveSupport::TestCase
     # skip "doe copy not yet implemented"
     mda = analyses(:cicav_metamodel_analysis)
     copy = mda.create_copy!
-    assert copy.is_metamodel_analysis?
+    assert copy.is_metamodel?
     x = [[1, 3, 4], [8, 9, 10], [5, 4, 3]]
     mm = copy.disciplines.last.meta_model
     assert_not_equal mda.disciplines.last, mm
