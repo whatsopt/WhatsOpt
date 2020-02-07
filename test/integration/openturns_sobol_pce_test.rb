@@ -34,9 +34,10 @@ class OpenturnsSobolPceTest < ActionDispatch::IntegrationTest
       as: :json, headers: @auth_headers
     assert_response :success
     
-    mda = Analysis.last
+    doe_mda = Analysis.last
 
     ope = Operation.last
+
     assert_equal "DOE LHS", ope.name
     assert_equal Operation::CAT_DOE, ope.category
 
@@ -44,6 +45,14 @@ class OpenturnsSobolPceTest < ActionDispatch::IntegrationTest
     post "/api/v1/operations/#{ope.id}/meta_models", params: { meta_model: {kind: Surrogate::OPENTURNS_PCE }},
     as: :json, headers: @auth_headers
     assert_response :success
+
+    mm_mda = Analysis.second_to_last
+    proto_mm = Analysis.last
+    assert_equal 1, mm_mda.meta_model_prototypes.count
+    assert_equal proto_mm, mm_mda.meta_model_prototypes.first
+
+    ope_doe = Operation.third_to_last
+    assert_equal proto_mm, ope_doe.cases.first.variable.discipline.analysis
 
     ope_mm = Operation.second_to_last
     assert_equal "Metamodel pce", ope_mm.name
@@ -64,7 +73,7 @@ class OpenturnsSobolPceTest < ActionDispatch::IntegrationTest
     delete "/operations/#{ope_mm.id}"
     assert_redirected_to mdas_url
 
-    assert_difference('Analysis.count', -1) do
+    assert_difference('Analysis.count', -2) do
       assert_difference('Operation.count', -3) do
         delete "/analyses/#{ope_mm.analysis.id}"
       end

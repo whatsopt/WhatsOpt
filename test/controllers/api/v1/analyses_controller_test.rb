@@ -15,7 +15,7 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     get api_v1_mdas_url, as: :json, headers: @auth_headers
     assert_response :success
     analyses = JSON.parse(response.body)
-    assert_equal Analysis.count-2, analyses.size # ALL - {one user3 private, one sub-analysis}
+    assert_equal Analysis.count-3, analyses.size # ALL - {one user3 private, one sub-analysis, one spec}
   end
 
   test "should get all mdas even sub ones" do
@@ -220,4 +220,11 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     assert_equal disc.input_variables.map(&:name), Discipline.last.input_variables.map(&:name)
   end
 
+  test "analysis spec are immutable" do
+    @user3 = users(:user3)
+    @auth_headers = { "Authorization" => "Token " + @user3.api_key }
+    @spec = analyses(:singleton_mm_spec)
+    put api_v1_mda_url(@spec), params: { analysis: { name: "TestNewName" } }, as: :json, headers: @auth_headers
+    assert_response :unauthorized 
+  end
 end

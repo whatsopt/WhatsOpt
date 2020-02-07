@@ -16,7 +16,7 @@ class Api::V1::MetaModelsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should create a metamodel" do
-    assert_difference("Analysis.count", 1) do
+    assert_difference("Analysis.count", 2) do
       assert_difference("Operation.count", 2) do # doe copy + metamodel
         assert_difference("MetaModel.count", 1) do
           assert_difference("Surrogate.count", 1) do
@@ -29,7 +29,8 @@ class Api::V1::MetaModelsControllerTest < ActionDispatch::IntegrationTest
     end
     ope = Operation.last
     assert_response :success
-    mda = Analysis.last
+    mda = Analysis.second_to_last
+    spec = Analysis.last
     assert_equal 2, mda.design_variables.count
     assert_equal 1, mda.response_variables.count
     x1 = mda.design_variables.first
@@ -58,7 +59,7 @@ class Api::V1::MetaModelsControllerTest < ActionDispatch::IntegrationTest
     }, as: :json, headers: @auth_headers
     ope = Operation.last
     assert_response :success
-    mda = Analysis.last
+    mda = Analysis.second_to_last
     assert_equal 1, mda.design_variables.count
     assert_equal 1, mda.response_variables.count
   end

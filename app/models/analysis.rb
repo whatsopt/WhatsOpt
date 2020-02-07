@@ -5,6 +5,8 @@ require "whats_opt/openmdao_module"
 
 class Analysis < ApplicationRecord
 
+  METAMODEL_PROTOTYPE = "__METAMODEL_PROTOTYPE__"
+
   include WhatsOpt::OpenmdaoModule
   include Ownable
 
@@ -24,6 +26,9 @@ class Analysis < ApplicationRecord
   has_one :analysis_discipline, dependent: :destroy
   has_one :super_discipline, through: :analysis_discipline, source: :discipline
 
+  has_one :meta_model_prototype, foreign_key: :prototype_id
+  has_one :meta_model, through: :meta_model_prototype, inverse_of: :prototype
+
   has_many :operations, dependent: :destroy
 
   has_one :openmdao_impl, class_name: "OpenmdaoAnalysisImpl", dependent: :destroy
@@ -32,7 +37,7 @@ class Analysis < ApplicationRecord
 
   after_save :refresh_connections, unless: Proc.new { self.disciplines.count < 2 }
   # after_save :_ensure_meta_models
-  after_save :_ensure_ancestry
+  after_save :_ensure_ancestry_for_sub_analyses
   after_save :_ensure_driver_presence
   after_save :_ensure_openmdao_impl_presence
 
@@ -152,8 +157,12 @@ class Analysis < ApplicationRecord
     children.joins(:analysis_discipline)
   end
 
+  def meta_model_prototypes
+    children.joins(:meta_model)
+  end
+
   def all_plain_disciplines
-    @allplain ||= children.inject(plain_disciplines) { |ary, elt| ary + elt.all_plain_disciplines }
+    @allplain ||= sub_analyses.inject(plain_disciplines) { |ary, elt| ary + elt.all_plain_disciplines }
   end
 
   def all_sub_analyses
@@ -161,7 +170,7 @@ class Analysis < ApplicationRecord
   end
 
   def all_disciplines
-    @alldiscs ||= children.inject(disciplines.nodes) { |ary, elt| ary + elt.all_disciplines }
+    @alldiscs ||= sub_analyses.inject(disciplines.nodes) { |ary, elt| ary + elt.all_disciplines }
   end
 
   def root_analysis
@@ -277,8 +286,8 @@ class Analysis < ApplicationRecord
   def refresh_connections(default_role_for_inputs = WhatsOpt::Variable::PARAMETER_ROLE,
                           default_role_for_outputs = WhatsOpt::Variable::RESPONSE_ROLE)
     # p "REFRESH CONNS #{self.name}"
-    varouts = Variable.outputs.joins(discipline: :analysis).where(analyses: { id: id })
-    varins = Variable.inputs.joins(discipline: :analysis).where(analyses: { id: id })
+    varouts = Variable.outs.joins(discipline: :analysis).where(analyses: { id: id })
+    varins = Variable.ins.joins(discipline: :analysis).where(analyses: { id: id })
     # check that each out variables is connected
     varouts.each do |vout|
       vins = varins.where(name: vout.name)
@@ -347,9 +356,8 @@ class Analysis < ApplicationRecord
             self.update!(attrs)
             newDisc = self.disciplines.reload.last
             if disc.is_pure_metamodel?
-              newDisc.meta_model = disc.meta_model.create_copy!(newDisc)
+              newDisc.meta_model = disc.meta_model.create_copy!(self, newDisc)
             end
-
             if disc.has_sub_analysis?
               newDisc.sub_analysis = disc.sub_analysis.create_copy!(self)
             end
@@ -521,7 +529,7 @@ class Analysis < ApplicationRecord
       end
     end
 
-    def _ensure_ancestry
+    def _ensure_ancestry_for_sub_analyses
       disciplines.nodes
                  .select { |d| d.has_sub_analysis? && d.sub_analysis.parent != self }
                  .each { |d| d.sub_analysis.update(parent_id: id) unless new_record? }

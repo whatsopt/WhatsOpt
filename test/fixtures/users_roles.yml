@@ -38,14 +38,14 @@ users_roles8:
   user: user3 
   role: member_cicav_mda_role
 
-users_roles10:
-  user: user1
-  role: owner_gm_one_role
-
-users_roles11:
-  user: user2
-  role: owner_gm_two_role
-
 users_roles12:
   user: user3
   role: owner_singleton_role
+
+users_roles13:
+  user: user3
+  role: owner_singleton_mm_role
+
+users_roles14:
+  user: user3
+  role: owner_singleton_mm_spec_role

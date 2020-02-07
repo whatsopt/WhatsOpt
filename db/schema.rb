@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 74) do
+ActiveRecord::Schema.define(version: 75) do
 
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
@@ -127,6 +127,13 @@ ActiveRecord::Schema.define(version: 74) do
     t.datetime "ended_at"
     t.string "sqlite_filename"
     t.integer "log_count", default: 0
+  end
+
+  create_table "meta_model_prototypes", force: :cascade do |t|
+    t.integer "meta_model_id"
+    t.integer "prototype_id"
+    t.index ["meta_model_id"], name: "index_meta_model_prototypes_on_meta_model_id"
+    t.index ["prototype_id"], name: "index_meta_model_prototypes_on_prototype_id"
   end
 
   create_table "meta_models", force: :cascade do |t|
