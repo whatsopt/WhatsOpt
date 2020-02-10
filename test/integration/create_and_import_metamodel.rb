@@ -46,6 +46,9 @@ class CreateAndImportMetamodel < ActionDispatch::IntegrationTest
     assert_response :success
 
     mm_mda = Analysis.last
+    assert 3, mm_mda.response_variables.count
+    assert 2, mm_mda.design_variables.count
+
     mm_disc = mm_mda.disciplines.last
 
     # ope_doe = Operation.second_to_last
