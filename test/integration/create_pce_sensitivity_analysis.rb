@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class OpenturnsSobolPceTest < ActionDispatch::IntegrationTest
+class CreatePCESensitivityAnalysis < ActionDispatch::IntegrationTest
 
   setup do
     @user1 = users(:user1)
@@ -34,9 +34,10 @@ class OpenturnsSobolPceTest < ActionDispatch::IntegrationTest
       as: :json, headers: @auth_headers
     assert_response :success
     
-    mda = Analysis.last
+    doe_mda = Analysis.last
 
     ope = Operation.last
+
     assert_equal "DOE LHS", ope.name
     assert_equal Operation::CAT_DOE, ope.category
 
@@ -45,9 +46,13 @@ class OpenturnsSobolPceTest < ActionDispatch::IntegrationTest
     as: :json, headers: @auth_headers
     assert_response :success
 
+    mm_mda = Analysis.last
+
+    ope_doe = Operation.third_to_last
+    assert_equal Operation::CAT_DOE, ope_doe.category
+
     ope_mm = Operation.second_to_last
     assert_equal "Metamodel pce", ope_mm.name
-    assert_equal Operation::CAT_METAMODEL, ope_mm.category
     assert_equal Operation::CAT_METAMODEL, ope_mm.category
 
     ope_sa = Operation.last

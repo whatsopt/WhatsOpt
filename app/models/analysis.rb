@@ -12,7 +12,7 @@ class Analysis < ApplicationRecord
 
   has_rich_text :note
 
-  has_ancestry orphan_strategy: :rootify
+  has_ancestry
 
   class AncestorUpdateError < StandardError
   end
@@ -24,6 +24,9 @@ class Analysis < ApplicationRecord
   has_one :analysis_discipline, dependent: :destroy
   has_one :super_discipline, through: :analysis_discipline, source: :discipline
 
+  has_one :meta_model_prototype, foreign_key: :prototype_id
+  has_one :meta_model, through: :meta_model_prototype, inverse_of: :prototype
+
   has_many :operations, dependent: :destroy
 
   has_one :openmdao_impl, class_name: "OpenmdaoAnalysisImpl", dependent: :destroy
@@ -32,7 +35,7 @@ class Analysis < ApplicationRecord
 
   after_save :refresh_connections, unless: Proc.new { self.disciplines.count < 2 }
   # after_save :_ensure_meta_models
-  after_save :_ensure_ancestry
+  after_save :_ensure_ancestry_for_sub_analyses
   after_save :_ensure_driver_presence
   after_save :_ensure_openmdao_impl_presence
 
@@ -52,8 +55,12 @@ class Analysis < ApplicationRecord
     !has_parent?
   end
 
-  def is_metamodel_analysis?
+  def is_metamodel?
     !disciplines.nodes.detect { |d| !d.is_metamodel? }
+  end
+
+  def is_metamodel_prototype?
+    Analysis.where(id: self).joins(:meta_model_prototype).count > 0
   end
 
   def uq_mode?
@@ -149,19 +156,19 @@ class Analysis < ApplicationRecord
   end
 
   def sub_analyses
-    children
+    children.joins(:analysis_discipline)
   end
 
   def all_plain_disciplines
-    @allplain ||= children.inject(plain_disciplines) { |ary, elt| ary + elt.all_plain_disciplines }
+    @allplain ||= sub_analyses.inject(plain_disciplines) { |ary, elt| ary + elt.all_plain_disciplines }
   end
 
   def all_sub_analyses
-    descendants
+    descendants.joins(:analysis_discipline)
   end
 
   def all_disciplines
-    @alldiscs ||= children.inject(disciplines.nodes) { |ary, elt| ary + elt.all_disciplines }
+    @alldiscs ||= sub_analyses.inject(disciplines.nodes) { |ary, elt| ary + elt.all_disciplines }
   end
 
   def root_analysis
@@ -268,7 +275,7 @@ class Analysis < ApplicationRecord
 
   def build_metamodel_quality
     res = []
-    if is_metamodel_analysis?
+    if is_metamodel?
       res = disciplines.inject([]) { |acc, d| acc + d.metamodel_qualification }
     end
     res
@@ -277,8 +284,8 @@ class Analysis < ApplicationRecord
   def refresh_connections(default_role_for_inputs = WhatsOpt::Variable::PARAMETER_ROLE,
                           default_role_for_outputs = WhatsOpt::Variable::RESPONSE_ROLE)
     # p "REFRESH CONNS #{self.name}"
-    varouts = Variable.outputs.joins(discipline: :analysis).where(analyses: { id: id })
-    varins = Variable.inputs.joins(discipline: :analysis).where(analyses: { id: id })
+    varouts = Variable.outs.joins(discipline: :analysis).where(analyses: { id: id })
+    varins = Variable.ins.joins(discipline: :analysis).where(analyses: { id: id })
     # check that each out variables is connected
     varouts.each do |vout|
       vins = varins.where(name: vout.name)
@@ -347,9 +354,8 @@ class Analysis < ApplicationRecord
             self.update!(attrs)
             newDisc = self.disciplines.reload.last
             if disc.is_pure_metamodel?
-              newDisc.meta_model = disc.meta_model.create_copy!(newDisc)
+              newDisc.meta_model = disc.meta_model.create_copy!(self, newDisc)
             end
-
             if disc.has_sub_analysis?
               newDisc.sub_analysis = disc.sub_analysis.create_copy!(self)
             end
@@ -470,7 +476,7 @@ class Analysis < ApplicationRecord
   end
 
   def self.build_analysis(ope_attrs, outvar_count_hint = 1)
-    name = "#{ope_attrs[:name].camelize}Analysis"
+    name = "#{ope_attrs[:name].camelize}"
     disc_vars = Variable.get_varattrs_from_caseattrs(ope_attrs[:cases], outvar_count_hint)
     driver_vars = disc_vars.map do |v|
       { name: v[:name],
@@ -486,8 +492,8 @@ class Analysis < ApplicationRecord
     )
   end
 
-  def self.build_metamodel_analysis(ope, varnames)
-    name = "#{ope.analysis.name.camelize}MetaModel"
+  def self.build_metamodel_analysis(ope, varnames=nil, name=nil)
+    name = name || "#{ope.analysis.name.camelize}MetaModel"
     metamodel_varattrs = ope.build_metamodel_varattrs(varnames)
     driver_vars = metamodel_varattrs.map do |v|
       vcopy = v.clone
@@ -498,7 +504,7 @@ class Analysis < ApplicationRecord
       name: name,
       disciplines_attributes: [
         { name: "__DRIVER__", variables_attributes: driver_vars },
-        { name: "#{ope.analysis.name.camelize}Model", type: WhatsOpt::Discipline::METAMODEL,
+        { name: "#{ope.analysis.name.camelize}", type: WhatsOpt::Discipline::METAMODEL,
           variables_attributes: metamodel_varattrs }
     ] }
     Analysis.new(analysis_attrs)
@@ -521,7 +527,7 @@ class Analysis < ApplicationRecord
       end
     end
 
-    def _ensure_ancestry
+    def _ensure_ancestry_for_sub_analyses
       disciplines.nodes
                  .select { |d| d.has_sub_analysis? && d.sub_analysis.parent != self }
                  .each { |d| d.sub_analysis.update(parent_id: id) unless new_record? }

@@ -38,11 +38,11 @@ class Discipline < ApplicationRecord
   scope :of_analysis, -> (analysis_id) { where( analysis_id: analysis_id) }
 
   def input_variables
-    variables.inputs
+    variables.ins
   end
 
   def output_variables
-    variables.outputs
+    variables.outs
   end
 
   def is_driver?
@@ -53,8 +53,12 @@ class Discipline < ApplicationRecord
     !!meta_model
   end
 
+  def is_metamodel_prototype?
+    is_pure_metamodel? && !meta_model.prototype
+  end
+
   def is_metamodel?
-    !!(meta_model || (has_sub_analysis? && sub_analysis.is_metamodel_analysis?))
+    !!(meta_model || (has_sub_analysis? && sub_analysis.is_metamodel?))
   end
 
   def has_sub_analysis?
@@ -132,7 +136,7 @@ class Discipline < ApplicationRecord
     end
     mda.disciplines << disc_copy
     if self.is_pure_metamodel?
-      meta_model = self.meta_model.create_copy!(disc_copy)
+      meta_model = self.meta_model.create_copy!(mda, disc_copy)
     end
     if self.has_sub_analysis?
       sub_analysis = self.sub_analysis.create_copy!(mda, disc_copy)

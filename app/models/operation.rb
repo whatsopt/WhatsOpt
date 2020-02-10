@@ -219,19 +219,20 @@ class Operation < ApplicationRecord
   end
 
   # suppose analysis is already saved in database
-  def create_copy!(destAnalysis, varnames=[]) 
-    ope_copy = destAnalysis.operations.build(self.attributes.except("id"))
+  def create_copy!(dest_analysis, varnames=[], prototypes_variables=Variable.none) 
+    ope_copy = dest_analysis.operations.build(self.attributes.except("id"))
     ope_copy.job = self.job.build_copy
-    self.cases.each_with_index do |c, i|
+    self.cases.each_with_index do |c|
       vname = c.variable.name
       if varnames.empty? || varnames.include?(vname)
-        c_copy = c.build_copy(ope_copy)
+        dest_variable = prototypes_variables.where(name: vname).take unless prototypes_variables.blank?
+        c_copy =  c.build_copy(ope_copy, dest_variable)
         ope_copy.cases << c_copy
       end
     end
     ope_copy.success = [] if ope_copy.cases.blank?
     if base_operation
-      ope_copy.base_operation = base_operation.create_copy!(destAnalysis, varnames)
+      ope_copy.base_operation = base_operation.create_copy!(dest_analysis, varnames, prototypes_variables)
     end
     ope_copy.save!
     ope_copy

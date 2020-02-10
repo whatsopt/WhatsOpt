@@ -58,7 +58,7 @@ class Api::V1::MetaModelsControllerTest < ActionDispatch::IntegrationTest
     }, as: :json, headers: @auth_headers
     ope = Operation.last
     assert_response :success
-    mda = Analysis.last
+    mda = Analysis.second_to_last
     assert_equal 1, mda.design_variables.count
     assert_equal 1, mda.response_variables.count
   end

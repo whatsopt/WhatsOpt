@@ -6,6 +6,10 @@ class MetaModel < ApplicationRecord
   belongs_to :discipline
   belongs_to :operation
 
+  has_one :meta_model_prototype, dependent: :destroy
+  has_one :prototype, through: :meta_model_prototype, source: :prototype, class_name: :Analysis
+  accepts_nested_attributes_for :meta_model_prototype
+
   has_many :default_options, class_name: 'Option', as: :optionizable, dependent: :destroy
   accepts_nested_attributes_for :default_options, reject_if: proc { |attr| attr["name"].blank? }, allow_destroy: true 
 
@@ -54,16 +58,18 @@ class MetaModel < ApplicationRecord
     end
   end
 
-  def create_copy!(discipline=nil)
+  def create_copy!(mda=nil, discipline=nil)
     mm_copy = self.dup
+    mm_copy.prototype = prototype || analysis
     if discipline
       mm_copy.discipline = discipline 
-      ope_copy = self.operation.create_copy!(discipline.analysis)
-      mm_copy.operation = ope_copy
-      ope_copy.save!
+      # variables = Variable.of_analysis(mm_copy.prototype).outs
+      # ope_copy = self.operation.create_copy!(discipline.analysis, varnames=[], variables)
+      # mm_copy.operation = ope_copy
+      # ope_copy.save!
     end
     self.surrogates.each do |surr|
-      var = discipline.variables.detect{|v| v.name == surr.variable.name} if discipline
+      var = discipline.variables.where(name: surr.variable.name).take if discipline
       surr_copy = surr.build_copy(mm_copy, var)
     end
     self.default_options.each do |opt|

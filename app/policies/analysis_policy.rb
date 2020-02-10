@@ -14,14 +14,6 @@ class AnalysisPolicy < ApplicationPolicy
           analyses = (publicAnalyses + authorizedAnalyses).uniq
           scope.where(id: analyses.map{|a| a[:id].to_i})
         end
-
-        # scope.select do |record|
-        #   if user.analyses_query == "mine"
-        #     user.has_role?(:owner, record)
-        #   else
-        #     record.public || user.has_role?(:owner, record) || user.has_role?(:member, record)
-        #   end
-        # end
       end
     end
   end
@@ -43,7 +35,7 @@ class AnalysisPolicy < ApplicationPolicy
   end
 
   def update?
-    @user.admin? || @user.has_role?(:owner, @record)
+    (@user.admin? || @user.has_role?(:owner, @record))
   end
 
   def destroy?

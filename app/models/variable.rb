@@ -49,8 +49,8 @@ class Variable < ApplicationRecord
 
   scope :numeric, -> { where.not(type: STRING_T) }
   scope :active, -> { where(active: true) }
-  scope :inputs, -> { where(io_mode: IN) }
-  scope :outputs, -> { where(io_mode: OUT) }
+  scope :ins, -> { where(io_mode: IN) }
+  scope :outs, -> { where(io_mode: OUT) }
   scope :uncertain, -> { joins(:distribution).distinct }
 
   scope :of_analysis, ->(analysis_id) { joins(discipline: :analysis).where(analyses: { id: analysis_id }) }

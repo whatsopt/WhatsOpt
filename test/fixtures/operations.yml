@@ -23,10 +23,11 @@ doe_copy:
     success: [1, 0, 1, 1, 1]
 
 mm_from_doe:
-    base_operation: doe_copy
     name: mm
     analysis: cicav_metamodel_analysis
     driver: smt_metamodel_kriging
+    base_operation: doe_copy
+
 
 morris_doe:
     name: "morris doe"
@@ -69,7 +70,9 @@ mm_from_doe2:
     name: mm2
     driver: smt_metamodel_kriging
     analysis: cicav_metamodel2_analysis
-            
+    base_operation: doe2
+
+
 doe_singleton:
     name: LHS
     driver: smt_doe_random

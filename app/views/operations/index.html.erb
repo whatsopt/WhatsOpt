@@ -19,7 +19,6 @@
       <th class="col-md-1">Category</th>
       <th class="col-md-2">Driver</th>
       <th class="col-md-2">Date</th>
-      <th class="col-md-2">Duration</th>
 		  <th class="col-md-2">Action(s)</th>
 		</tr>
 	</thead>
@@ -30,8 +29,7 @@
 	      <td><%= link_to_operation_if_authorized(ope, current_user) %></td>
         <td><%= ope.category.humanize %></td>
         <td><%= ope.driver.humanize(capitalize: false) %></td>
-	      <td><%= (ope.job && ope.job.started_at) ? time_ago_in_words(ope.job.started_at):"?"%> ago</td>
-	      <td><%= (ope.job && ope.job.started_at && ope.job.ended_at) ? distance_of_time_in_words(ope.job.started_at, ope.job.ended_at, include_seconds: true):"?"%></td>
+	      <td title="<%= (ope.job && ope.job.started_at && ope.job.ended_at) ? 'Duration: '+distance_of_time_in_words(ope.job.started_at, ope.job.ended_at, include_seconds: true):""%>"><%= time_ago_in_words(ope.created_at) %> ago</td>
 	      <td>
           <% if policy(ope).update? %>
             <a href='#' name="edit-name" class="d-inline btn btn-light btn-inverse btn-sm" title="Edit name" data-api-key="<%=current_user.api_key%>" data-ope-id="<%= ope.id %>" data-ope-name="<%= ope.name %>" data-toggle="modal" data-target="#editModal">
