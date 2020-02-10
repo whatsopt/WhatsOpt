@@ -122,6 +122,12 @@ class Variable < ApplicationRecord
     scaling&.res_ref.blank? ? super : scaling.res_ref
   end
 
+  def distribution_py
+    if distribution
+      "#{distribution.kind}(#{distribution.options.map(&:value).join(", ")})"
+    end
+  end
+
   def build_copy
     newvar = dup
     newvar.discipline = nil

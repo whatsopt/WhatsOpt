@@ -95,6 +95,10 @@ class Analysis < ApplicationRecord
     uq_mode? ? WhatsOpt::Variable::UNCERTAIN_VAR_ROLE : WhatsOpt::Variable::DESIGN_VAR_ROLE
   end
 
+  def has_decision_variables?
+    has_uncertain_input_variables? || has_design_variables?
+  end
+
   def input_variables
     @params = variables.with_role(WhatsOpt::Variable::INPUT_ROLES)
   end
