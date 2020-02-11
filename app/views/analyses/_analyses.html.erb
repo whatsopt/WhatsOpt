@@ -3,13 +3,14 @@
 
   <thead>
     <tr>
-      <th width="5%">#</th>
-      <th width="20%">Name</th>
-      <th class="10%">Owner</th>
-      <th class="5%">Private</th>
-      <th class="5%">Created</th>
-      <th class="30%">Operations</th>
-      <th class="20%">Action(s)</th>
+      <th style="width: 5%">#</th>
+      <th style="width: 20%">Name</th>
+      <th style="width: 10%">Owner</th>
+      <th style="width: 5%">Private</th>
+      <th style="width: 5%">Tag</th>
+      <th style="width: 5%">Created</th>
+      <th style="width: 25%">Operations</th>
+      <th style="width: 25%">Action(s)</th>
     </tr>
   </thead>
   
@@ -24,6 +25,7 @@
             <i class="fas fa-lock"></i>
           <% end %>    
         </td>
+        <td><%= badges(mda) %></td>
         <td><%= time_ago_in_words(mda.created_at)%> ago</td>
         <td>
           <%= link_to_final_operations_if_authorized(mda, current_user) %>
