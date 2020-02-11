@@ -491,7 +491,7 @@ class Analysis < ApplicationRecord
       name: name,
       disciplines_attributes: [
         { name: "__DRIVER__", variables_attributes: driver_vars },
-        { name: name + "Model", variables_attributes: disc_vars }
+        { name: name, variables_attributes: disc_vars }
       ]
     )
   end
