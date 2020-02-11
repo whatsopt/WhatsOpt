@@ -168,17 +168,21 @@ module WhatsOpt
         else
           # TODO: generate run_doe.py with error message
         end
-      elsif options[:with_runops] || (@mda.is_root_analysis? && @mda.has_design_variables?)
+      elsif (options[:with_runops] || @mda.is_root_analysis?) && @mda.has_decision_variables?
         @driver = OpenmdaoDriverFactory.new(DEFAULT_DOE_DRIVER).create_driver
         @sqlite_filename = options[:sqlite_filename] || "#{@mda.basename}_doe.sqlite"
-        _generate("run_doe.py", "run_doe.py.erb", gendir)
-        if @mda.is_root_analysis? && @mda.has_objective?
-          @driver = OpenmdaoDriverFactory.new(DEFAULT_OPTIMIZATION_DRIVER).create_driver
-          @sqlite_filename = options[:sqlite_filename] || "#{@mda.basename}_optimization.sqlite"
-          _generate("run_optimization.py", "run_optimization.py.erb", gendir)
+        if @mda.uq_mode?
+          _generate("run_doe.py", "run_uq_doe.py.erb", gendir)
+        else
+          _generate("run_doe.py", "run_doe.py.erb", gendir)
+          if @mda.is_root_analysis? && @mda.has_objective?
+            @driver = OpenmdaoDriverFactory.new(DEFAULT_OPTIMIZATION_DRIVER).create_driver
+            @sqlite_filename = options[:sqlite_filename] || "#{@mda.basename}_optimization.sqlite"
+            _generate("run_optimization.py", "run_optimization.py.erb", gendir)
+          end
         end
       end
-      if options[:with_runops] || (@mda.is_root_analysis? && @mda.has_design_variables?)
+      if (options[:with_runops] || @mda.is_root_analysis?) && @mda.has_design_variables?
         @sqlite_filename = options[:sqlite_filename] || "#{@mda.basename}_screening.sqlite"
         _generate("run_screening.py", "run_screening.py.erb", gendir)
       end

@@ -1,0 +1,97 @@
+# DO NOT EDIT unless you know what you are doing
+# analysis_id: <%= @mda.id %>
+
+import sys
+import numpy as np
+# import matplotlib
+# matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+from openmdao import __version__ as OPENMDAO_VERSION
+from openmdao.api import Problem, SqliteRecorder, CaseReader
+from openmdao_extensions.openturns_doe_driver import OpenturnsDOEDriver
+import openturns as ot
+<% if @remote -%>
+from <%= @server_module %>.<%= @mda.py_modulename %>_proxy import <%= @mda.py_classname %>Proxy as <%= @mda.py_classname %> 
+<% else -%>
+from <%= @mda.py_modulename %> import <%= @mda.py_classname %> 
+<% end %>
+from optparse import OptionParser
+
+parser = OptionParser()
+parser.add_option("-b", "--batch",
+                  action="store_true", dest="batch", default=False,
+                  help="do not plot anything")
+parser.add_option("-n", "--ncases", type="int",
+                  dest="n_cases", default=<%= @driver.options[:nbpts]%>,
+                  help="number of samples")
+(options, args) = parser.parse_args()
+
+pb = Problem(<%= @mda.py_classname %>())
+dists = []
+<%- @mda.uncertain_input_variables.each do |uv| %>
+dists.append(ot.<%= uv.distribution_py %>)<% end %>
+
+pb.driver = OpenturnsDOEDriver(n_samples=options.n_cases, distribution=ot.ComposedDistribution(dists))
+case_recorder_filename = '<%= @sqlite_filename %>'        
+recorder = SqliteRecorder(case_recorder_filename)
+pb.driver.add_recorder(recorder)
+pb.model.add_recorder(recorder)
+pb.model.nonlinear_solver.add_recorder(recorder)
+if OPENMDAO_VERSION > "2.8.0":
+    pb.model.nonlinear_solver.options['err_on_non_converge'] = True
+else:
+    pb.model.nonlinear_solver.options['err_on_maxiter'] = True
+
+<%- @mda.uncertain_input_variables.each do |dv| %>
+pb.model.add_design_var('<%= dv.name %>', lower=<%= dv.lower_py_value %>, upper=<%= dv.upper_py_value %>)<% end %>
+pb.setup()  
+pb.run_driver()        
+
+<% if @mda.responses_of_interest.size < 10 %>
+if options.batch:
+    exit(0)
+reader = CaseReader(case_recorder_filename)
+cases = reader.list_cases('root')
+n = len(cases)
+data = {'inputs': {}, 'outputs': {} }
+<% @mda.uncertain_input_variables.each do |dv| %>
+data['inputs']['<%= dv.name %>'] = np.zeros((n,)+<%= dv.shape=="1"?"(1,)":dv.shape %>)<% end %>
+<% @mda.responses_of_interest.each do |r| %>
+data['outputs']['<%= r.name %>'] = np.zeros((n,)+<%= r.shape=="1"?"(1,)":r.shape %>)<% end %>
+
+for i in range(len(cases)):
+    case = reader.get_case(cases[i])
+<% @mda.design_variables.each do |dv| -%>
+    data['inputs']['<%= dv.name %>'][i,:] = case.outputs['<%= dv.name %>']
+<% end -%>
+<% @mda.responses_of_interest.each do |r| -%>
+    data['outputs']['<%= r.name %>'][i,:] = case.outputs['<%= r.name %>']
+<% end -%>
+      
+<% row = 0 -%>
+<% @mda.responses_of_interest.each_with_index do |r, j| -%>
+
+output = data['outputs']['<%= r.name %>'].reshape(-1)
+<% (0...r.dim).each do |kj| -%>
+<% col = 0 -%>
+<% @mda.design_variables.each_with_index do |dv, i| -%>
+
+input = data['inputs']['<%= dv.name %>'].reshape(-1)
+<% (0...dv.dim).each do |ki| -%>
+plt.subplot(<%= @mda.responses_of_interest_dim %>, <%= @mda.design_var_dim %>, <%= @mda.design_var_dim*row+col+1 %>)
+plt.plot(input[<%= ki %>::<%= dv.dim %>], output[<%= kj %>::<%= r.dim %>], '.')
+<% if col == 0 -%>
+plt.ylabel('<%= r.dim==1?"#{r.name}":"#{r.name} #{kj}" %>')
+<% end -%>
+<% if true or row == @mda.output_dim-1 -%>
+plt.xlabel('<%= dv.dim==1?"#{dv.name}":"#{dv.name} #{ki}" %>')
+<% end -%>
+<% col += 1 -%>
+<% end -%>
+<% end -%>
+<% row += 1 -%>
+<% end -%>
+
+<% end -%>
+plt.show()
+<% end -%>
