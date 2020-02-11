@@ -11,7 +11,7 @@ module Api::V1::Concerns::Docs
         info version: VERSION do
           key :title, 'WhatsOpt'
         end
-        key :basePath, '/api/v1'
+        key :basePath, "#{Rails.application.config.relative_url_root}/api/v1"
         key :schemes, ['https', 'http']
         key :consumes, ['application/json']
         key :produces, ['application/json']
