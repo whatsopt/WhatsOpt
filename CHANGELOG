@@ -1,5 +1,13 @@
 <h1>CHANGELOG</h1>
 
+<h3>1.5.1 (11/02/2020)</h3>
+<ul>
+  <li>User can run montecarlo doe with regards to uncertain variables distributions</li>
+  <li>Remove OpenVSP geometry model visualisation (Hangar)</li>
+  <li>Remove import from Excel or CMDOWS files</li>
+  <li>Fix metamodel import bug</li>
+</ul>
+
 <h3>1.5.0 (27/01/2020)</h3>
 <ul>
   <li>User can use run_screening with --sobol to get Sobol indices</li>
