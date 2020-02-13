@@ -1,9 +1,0 @@
-void main()
-{
-    Print( string( "--->Reading VSP model from <%= @input_filename %> \n" ) );
-    ReadVSPFile( "<%= @input_filename %>" );
-
-    Print( string( "--->Saving X3D model to <%= @output_filename %>\n" ) );
-    string fname = "<%= @output_filename %>";
-    ExportFile( fname, SET_ALL, EXPORT_X3D );
-}
