@@ -44,7 +44,17 @@ class <%= @discipline.py_classname %>(<%= @discipline.py_classname %>Base):
                     }
                  })
         if resp.ok:
-            <%= @discipline.py_classname %>._from_json_responses(resp.json()["responses"], outputs)
+            meta_outputs = {}
+            # depend on how OpenMDAO component is initialized 
+            if self._static_var_rel_names['output']:  # used in server with distant problem (init as standalone)
+                outnames = self._static_var_rel_names['output']
+                meta = self._static_var_rel2meta
+            else: # else locally in local problem (normal init with group)
+                outnames = self._var_rel_names['output']
+                meta = self._var_rel2meta
+            for name in outnames:
+                meta_outputs[name] = meta[name]
+            <%= @discipline.py_classname %>._from_json_responses(meta_outputs, resp.json()["responses"], outputs)
         else:
             resp.raise_for_status()
 
@@ -57,12 +67,12 @@ class <%= @discipline.py_classname %>(<%= @discipline.py_classname %>Base):
         return [list(sample)]
 
     @staticmethod
-    def _from_json_responses(responses, outputs):
+    def _from_json_responses(meta_outputs, responses, outputs):
         index = 0
-        for k in sorted(outputs):
-            shp = outputs[k].shape
-            if isinstance(outputs[k], np.ndarray):
-                size = outputs[k].size
+        for k in sorted(meta_outputs):
+            shp = meta_outputs[k]['shape']
+            if isinstance(meta_outputs[k], np.ndarray):
+                size = meta_outputs[k]['size']
             else:
                 size = 1
             outputs[k] = np.array(responses[0][index:index+size]).reshape(shp)

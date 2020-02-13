@@ -17,6 +17,7 @@ class <%= @mda.camelname %>Handler:
         factory = Factory()
         <% @mda.all_plain_disciplines.each do |disc| %>
         self.<%= disc.snake_modulename %> = factory.create_<%= disc.snake_modulename %>()
+        self.<%= disc.snake_modulename %>.setup()
         <% end %>
 
     # Admin interface
