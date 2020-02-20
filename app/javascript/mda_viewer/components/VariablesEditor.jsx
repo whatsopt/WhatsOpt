@@ -20,10 +20,10 @@ function _computeRoleSelection(conn) {
   { id: 'eq_constraint', text: 'Eq Constraint' },
   { id: 'state_var', text: 'State Variable' }];
   if (conn.role === 'parameter' || conn.role === 'design_var' || conn.role === 'uncertain_var') {
-    options.splice(3);  // remove outpuyts and state vars
+    options.splice(3); // remove outpuyts and state vars
   } else if (conn.role !== 'state_var') {
-    options.splice(options.length - 1, 1);  // remove state_var
-    options.splice(0, 3);                   // remove inputs
+    options.splice(options.length - 1, 1); // remove state_var
+    options.splice(0, 3); // remove inputs
   }
   return options;
 }
@@ -91,9 +91,16 @@ function ReadonlyCell({
   return (<span className={textStyle}>{info}</span>);
 }
 
+ReadonlyCell.propTypes = {
+  cell: PropTypes.object.isRequired,
+  row: PropTypes.object.isRequired,
+  column: PropTypes.object.isRequired,
+  data: PropTypes.array.isRequired,
+};
+
 function _uqLabelOf(uq) {
-  const { kind, options_attributes } = uq;
-  let options = options_attributes.map((opt) => opt.value);
+  const { kind, optionsAttributes } = uq;
+  const options = optionsAttributes.map((opt) => opt.value);
   return `${kind[0]}(${options.join(', ')})`;
 }
 
@@ -106,8 +113,10 @@ function ButtonCell({
   isEditing,
 }) {
   const { index } = row;
-  const { name, role, shape, uq: { kind } } = connections[index];
-  const label = kind !== "none" ? _uqLabelOf(connections[index].uq) : '';
+  const {
+    name, role, shape, uq: { kind },
+  } = connections[index];
+  const label = kind !== 'none' ? _uqLabelOf(connections[index].uq) : '';
   if (isEditing) {
     const isEditable = (role === 'uncertain_var')
       && (shape === '1' || shape === '(1,)');
@@ -180,18 +189,20 @@ function EditableCell({
     const myRef = React.useRef(null);
 
     React.useEffect(() => {
-      if (cellToFocus.current && cellToFocus.current.index === index && cellToFocus.current.id === id) {
+      if (cellToFocus.current
+        && cellToFocus.current.index === index
+        && cellToFocus.current.id === id) {
         console.log(myRef.current);
         if (myRef.current.myRef.current) { // defensive programming
-          console.log("FOCUS");
           myRef.current.myRef.current.click();
         }
       }
     });
 
     // Editable fields regarding variable role
-    const role = connections[index].role;
+    const { role } = connections[index];
     const isEditable = (id === 'name' || id === 'desc' || id === 'shape' || id === 'units')
+      || (role === 'state_variable' && id === 'init')
       || (role === 'parameter' && id === 'init')
       || (role === 'design_var' && (id === 'init' || id === 'lower' || id === 'upper'))
       || (role === 'uncertain_var' && (id === 'init' || id === 'uq'));
@@ -231,7 +242,7 @@ const defaultColumn = {
 
 // Be sure to pass our updateMyData and the skipPageReset option
 function Table({
-  columns, data, onConnectionChange, isEditing, useScaling
+  columns, data, onConnectionChange, isEditing, useScaling,
 }) {
   // For this example, we're using pagination to illustrate how to stop
   // the current page from resetting when our data changes
@@ -257,14 +268,14 @@ function Table({
     useSortBy,
   );
 
-  //            From,	Name, Role, Shape,	Units,	Init,	Lower, Upper,	UQ
+  //            From, Name, Role, Shape, Units, Init, Lower, Upper, UQ
   let colWidths = ['10', '20', '10', '5', '5', '10', '10', '10', '20'];
   if (isEditing) {
-    //         #	From	Name	Role	Description	Type	Shape	Units	Init	Lower	Upper	UQ
+    //         # From Name Role Description Type Shape Units Init Lower Upper UQ
     colWidths = ['2', '5', '15', '10', '13', '5', '5', '5', '10', '10', '10', '10'];
   }
   if (isEditing && useScaling) {
-    //         #	From	Name	Role	Description	Type	Shape	Units	Init	Lower	Upper	UQ, Ref, Ref0, Res.Ref
+    //   #  From Name Role Description Type  Shape  Units  Init  Lower  Upper UQ, Ref, Ref0, Res.Ref
     colWidths = ['2', '5', '15', '10', '13', '5', '5', '5', '5', '5', '5', '10', '5', '5', '5'];
   }
 
@@ -279,14 +290,13 @@ function Table({
                 width: `${colWidths[i]}% `,
                 ...column.getHeaderProps(column.getSortByToggleProps()),
               };
+              const sortSymbol = (column.isSortedDesc ? ' 🔽' : ' 🔼');
               return (
                 <th {...cprops}>
                   {column.render('Header')}
                   <span>
                     {column.isSorted
-                      ? column.isSortedDesc
-                        ? ' 🔽'
-                        : ' 🔼'
+                      ? sortSymbol
                       : ''}
                   </span>
                 </th>
@@ -311,6 +321,14 @@ function Table({
   );
 }
 
+Table.propTypes = {
+  columns: PropTypes.array.isRequired,
+  data: PropTypes.array.isRequired,
+  onConnectionChange: PropTypes.func.isRequired,
+  isEditing: PropTypes.bool.isRequired,
+  useScaling: PropTypes.bool.isRequired,
+};
+
 function VariablesEditor(props) {
   React.useEffect(() => {
     // eslint-disable-next-line no-undef
@@ -322,8 +340,7 @@ function VariablesEditor(props) {
       // eslint-disable-next-line no-undef
       $('.table-tooltip').tooltip('dispose');
     };
-  },
-    []);
+  }, []);
 
   const {
     db, filter, isEditing, useScaling, onConnectionChange,
@@ -384,7 +401,7 @@ function VariablesEditor(props) {
       },
       {
         Header: 'UQ',
-        accessor: row => row.uq.kind,
+        accessor: (row) => row.uq.kind,
         Cell: ButtonCell,
       },
       {
@@ -412,6 +429,7 @@ function VariablesEditor(props) {
       data={connections}
       onConnectionChange={onConnectionChange}
       isEditing={isEditing}
+      useScaling={useScaling}
     />
   );
 }
