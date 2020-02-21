@@ -152,9 +152,9 @@ class Discipline < ApplicationRecord
   end
 
   def prepare_attributes_for_import!(analysis_variables, analysis_driver)
-    # remove driver connections as new ones from or to new disc will take place
-    analysis_driver.variables.each do |driver_var|
-      if self.variables.where(name: driver_var.name, io_mode: driver_var.io_mode).first
+    # remove driver connections as new ones from new disc will take place
+    analysis_driver.variables.outs.each do |driver_var|
+      if self.variables.outs.where(name: driver_var.name).take
         # p "Remove Driver #{driver_var.name} #{driver_var.io_mode} connection"
         driver_var.destroy!
       end

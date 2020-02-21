@@ -202,7 +202,10 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     assert_equal @mda.disciplines.count, mda.disciplines.count
     assert_equal @mda.disciplines.map(&:name), mda.disciplines.map(&:name)
     @mda.disciplines.each_with_index do |disc, i|
-      assert_equal disc.variables.map(&:name), mda.disciplines[i].variables.map(&:name)
+      varsInNewDisc = mda.disciplines[i].variables.map(&:name)
+      disc.variables.map(&:name).each do |name|
+        assert_includes varsInNewDisc, name
+      end
     end
   end
 
