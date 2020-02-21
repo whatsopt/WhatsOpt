@@ -52,6 +52,7 @@ class Variable < ApplicationRecord
   scope :ins, -> { where(io_mode: IN) }
   scope :outs, -> { where(io_mode: OUT) }
   scope :uncertain, -> { joins(:distribution).distinct }
+  scope :disconnected, -> { where.not(id: joins(:incoming_connection) + joins(:outgoing_connections)) }
 
   scope :of_analysis, ->(analysis_id) { joins(discipline: :analysis).where(analyses: { id: analysis_id }) }
   scope :of_discipline, ->(discipline_id) { where(discipline: discipline_id ) }
