@@ -79,14 +79,14 @@ class Connection < ApplicationRecord
     #p "BEFORE DESTROY #{self.from.name} #{self.from.discipline.name} #{self.to.discipline.name}"
     Connection.transaction do
       to = self.to
-      if to.discipline.is_driver?
+      if to&.discipline&.is_driver?
         # p "Connection to driver: supress #{to.name} driver var"
         to.delete
       end
       conns = Connection.where(from_id: from_id)
       if conns.size == 1 
         from = conns.first.from
-        if from.discipline.is_driver?
+        if from&.discipline&.is_driver?
           # p "Connection only from driver: supress #{from.name} driver var"
           from.delete
         end
@@ -192,8 +192,15 @@ class Connection < ApplicationRecord
   def _delete
     delete
     conns = Connection.where(from_id: from_id)
-    Variable.find_by_id(from_id).delete if conns.size == 0
-    Variable.find_by_id(to_id).delete
+    fromVar = Variable.find_by_id(from_id)
+    toVar = Variable.find_by_id(to_id)
+    # special case: as connection to driver is removed role switch to state var for others
+    if toVar.discipline.is_driver?
+      Connection.where(from: fromVar).map { |conn| conn.update!(role: WhatsOpt::Variable::STATE_VAR_ROLE) }
+    end
+    # delete from only if it was the last connection from
+    fromVar.delete if conns.size == 0
+    toVar.delete
   end
 
   private
