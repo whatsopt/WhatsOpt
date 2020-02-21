@@ -23,7 +23,8 @@ class Api::V1::MetaModelsController < Api::ApiController
       unless meta_model_params[:variables].blank?
         varnames = meta_model_params[:variables][:inputs] + meta_model_params[:variables][:outputs]
       end
-      mm_doe = ope.create_copy!(mda, varnames)
+      # copy with prototype_variables (3rd arg) to attach cases to new variables in the new analysis mda
+      mm_doe = ope.create_copy!(mda, varnames, Variable.of_analysis(mda))
       mm_ope = Operation.build_operation(mda, name: name, driver: driver)
       mm_ope.base_operation = mm_doe
       mm_ope.save!
