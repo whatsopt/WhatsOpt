@@ -99,8 +99,8 @@ ReadonlyCell.propTypes = {
 };
 
 function _uqLabelOf(uq) {
-  const { kind, optionsAttributes } = uq;
-  const options = optionsAttributes.map((opt) => opt.value);
+  const { kind, options_attributes } = uq;
+  const options = options_attributes.map((opt) => opt.value);
   return `${kind[0]}(${options.join(', ')})`;
 }
 
