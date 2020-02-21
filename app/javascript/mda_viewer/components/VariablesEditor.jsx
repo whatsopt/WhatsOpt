@@ -202,8 +202,8 @@ function EditableCell({
     // Editable fields regarding variable role
     const { role } = connections[index];
     const isEditable = (id === 'name' || id === 'desc' || id === 'shape' || id === 'units')
-      || (role === 'state_variable' && id === 'init')
-      || (role === 'parameter' && id === 'init')
+      || (role === 'state_var' && id === 'init')
+      || (role === 'parameter' && (id === 'init' || id === 'lower' || id === 'upper'))
       || (role === 'design_var' && (id === 'init' || id === 'lower' || id === 'upper'))
       || (role === 'uncertain_var' && (id === 'init' || id === 'uq'));
     if (isEditable) {
