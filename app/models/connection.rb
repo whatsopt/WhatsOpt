@@ -112,9 +112,9 @@ class Connection < ApplicationRecord
       # p "ROLE", role, from, from.distribution
       case role
       when WhatsOpt::Variable::PARAMETER_ROLE
-        if from.parameter
-          params.merge!(parameter_attributes: {lower: "", upper: ""})
-        end
+        # if from.parameter
+        #   params.merge!(parameter_attributes: {lower: "", upper: ""})
+        # end
         params.merge!(distribution_attributes: {_destroy: 1}) if from.distribution
 
       when WhatsOpt::Variable::DESIGN_VAR_ROLE
