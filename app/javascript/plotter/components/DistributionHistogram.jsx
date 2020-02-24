@@ -55,17 +55,19 @@ class DistributionHistograms extends React.PureComponent {
     return (
       <div>
         <div className="editor-section">
-          Input Distributions (
+          Input Distributions -
+          {' '}
           {nb}
           {' '}
-          cases)
+          cases
         </div>
         {inputDists}
         <div className="editor-section">
-          Output Distributions (
+          Output Distributions -
+          {' '}
           {nb}
           {' '}
-          cases)
+          cases
         </div>
         {outputDists}
       </div>
