@@ -10,6 +10,7 @@ import VariableSelector from 'plotter/components/VariableSelector';
 import MetaModelManager from 'plotter/components/MetaModelManager';
 import AnalysisDatabase from '../utils/AnalysisDatabase';
 import * as caseUtils from '../utils/cases';
+import DistributionHistogram from './components/DistributionHistogram';
 
 const PLOTS_TAB = 'plots';
 const VARIABLES_TAB = 'variables';
@@ -22,8 +23,22 @@ class PlotPanel extends React.Component {
 
   render() {
     const {
-      db, optim, cases, success, title,
+      db, optim, cases, success, title, uqMode,
     } = this.props;
+
+    let plotdist;
+    if (uqMode) {
+      plotdist = (
+        <DistributionHistogram
+          db={db}
+          optim
+          cases={cases}
+          success={success}
+          title={title}
+        />
+      );
+    }
+
     let plotoptim = (
       <ScatterPlotMatrix
         db={db}
@@ -86,6 +101,7 @@ class PlotPanel extends React.Component {
 
     return (
       <div className="tab-pane fade" id={PLOTS_TAB} role="tabpanel" aria-labelledby="plots-tab">
+        {plotdist}
         {plotparall}
         {plotoptim}
       </div>
@@ -99,6 +115,7 @@ PlotPanel.propTypes = {
   cases: PropTypes.object.isRequired,
   title: PropTypes.string.isRequired,
   success: PropTypes.array.isRequired,
+  uqMode: PropTypes.bool.isRequired,
 };
 
 class VariablePanel extends React.PureComponent {
@@ -352,6 +369,7 @@ class Plotter extends React.Component {
           <PlotPanel
             db={this.db}
             optim={isOptim}
+            uqMode={uqMode}
             cases={selCases}
             title={title}
             active={activeTab === PLOTS_TAB}

@@ -13,7 +13,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const ope = plotterElt.data('ope');
   const apiKey = plotterElt.data('api-key');
   const uqMode = plotterElt.data('uq-mode');
-  console.log(uqMode);
 
   const api = new WhatsOptApi(csrfToken, apiKey, relativeUrlRoot);
   ReactDOM.render(<Plotter mda={mda} ope={ope} api={api} uqMode={uqMode} />, plotterElt[0]);
