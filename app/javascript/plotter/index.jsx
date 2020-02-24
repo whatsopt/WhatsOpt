@@ -15,7 +15,11 @@ const PLOTS_TAB = 'plots';
 const VARIABLES_TAB = 'variables';
 const METAMODEL_TAB = 'metamodel';
 
-class PlotPanel extends React.PureComponent {
+class PlotPanel extends React.Component {
+  shouldComponentUpdate(nextProps, nextState) {
+    return nextProps.active;
+  }
+
   render() {
     const {
       db, optim, cases, success, title,
@@ -60,12 +64,13 @@ class PlotPanel extends React.PureComponent {
     const inputCases = [].concat(cases.i).concat(cases.c);
     if (inputCases.length === 2 && cases.o.length === 1) {
       plotparall = (
-        <span>
+        <div>
           <ScatterSurfacePlot
             casesx={inputCases[0]}
             casesy={inputCases[1]}
             casesz={cases.o[0]}
             success={success}
+            title={title}
           />
           <ParallelCoordinates
             db={db}
@@ -75,7 +80,7 @@ class PlotPanel extends React.PureComponent {
             title={title}
             width={600}
           />
-        </span>
+        </div>
       );
     }
 
@@ -126,10 +131,14 @@ VariablePanel.propTypes = {
   onSelectionChange: PropTypes.func.isRequired,
 };
 
-class MetaModelPanel extends React.PureComponent {
+class MetaModelPanel extends React.Component {
+  shouldComponentUpdate(nextProps, nextState) {
+    return nextProps.active;
+  }
+
   render() {
     const {
-      active, opeId, api, selCases, onMetaModelCreate, uqMode
+      active, opeId, api, selCases, onMetaModelCreate, uqMode,
     } = this.props;
     const metamodel = (
       <MetaModelManager
@@ -165,7 +174,9 @@ MetaModelPanel.propTypes = {
 class Plotter extends React.Component {
   constructor(props) {
     super(props);
-    const { api, mda, uqMode, ope } = this.props;
+    const {
+      api, mda, uqMode, ope,
+    } = this.props;
     this.api = api;
     this.db = new AnalysisDatabase(mda);
     this.cases = ope.cases.sort(caseUtils.compare);
