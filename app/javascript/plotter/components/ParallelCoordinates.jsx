@@ -54,12 +54,10 @@ class ParallelCoordinates extends React.PureComponent {
     const data = [trace];
     const { width } = this.props;
     return (
-      <div>
-        <Plot
-          data={data}
-          layout={{ width, height: 500, title }}
-        />
-      </div>
+      <Plot
+        data={data}
+        layout={{ width, height: 500, title }}
+      />
     );
   }
 }
