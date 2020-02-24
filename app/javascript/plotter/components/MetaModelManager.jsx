@@ -107,7 +107,7 @@ class MetaModelManager extends React.Component {
 
   handleSubmit(data) {
     console.log(`SUBMIT ${JSON.stringify(data.formData)}`);
-    this.btnSubmit.setAttribute("disabled", "disabled");
+    this.btnSubmit.setAttribute('disabled', 'disabled');
 
     const { api, opeId } = this.props;
     const { formData } = data;
@@ -136,9 +136,8 @@ class MetaModelManager extends React.Component {
         const message = error.response.data.message || 'Error: Creation failed';
         const newState = update(this.state, { errors: { $set: [message] } });
         this.setState(newState);
-        this.btnSubmit.removeAttribute("disabled");
-      }
-    );
+        this.btnSubmit.removeAttribute('disabled');
+      });
   }
 
   render() {
@@ -166,8 +165,7 @@ class MetaModelManager extends React.Component {
       (message, i) => (<Error key={i} msg={message} onClose={() => this.handleErrorClose(i)} />),
     );
 
-    const schema = uqMode ? UQ_SCHEMA : OPTIM_SCHEMA
-    console.log(formData);
+    const schema = uqMode ? UQ_SCHEMA : OPTIM_SCHEMA;
 
     return (
       <div className="editor-section col-4">
@@ -189,7 +187,7 @@ class MetaModelManager extends React.Component {
             onSubmit={this.handleSubmit}
           >
             <div>
-              <button className="btn btn-primary" type="submit" ref={btn => { this.btnSubmit = btn; }} >Submit</button>
+              <button className="btn btn-primary" type="submit" ref={(btn) => { this.btnSubmit = btn; }}>Submit</button>
             </div>
           </Form>
           <LoadingIndicator />
