@@ -20,7 +20,7 @@ module ExceptionHandler
       json_response({ message: e.message }, :forbidden)
     end
 
-    rescue_from Version::WopVersionMismatchException do |e|
+    rescue_from WhatsOpt::Version::WopVersionMismatchException do |e|
       Rails.logger.error "Version: " + e.message
       json_response({ message: e.message }, :forbidden)
     end
