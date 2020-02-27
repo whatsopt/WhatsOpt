@@ -2,7 +2,7 @@ module WhatsOpt::Version
 
   VERSION = File.read(File.expand_path("VERSION", Rails.root)).chomp
 
-  WOP_MINIMAL_VERSION = "1.5.0"
+  WOP_MINIMAL_VERSION = "1.4.0"
 
   class WopVersionMismatchException < Exception; end
 
