@@ -48,11 +48,7 @@ class Api::ApiController < ActionController::Base
       $1 if request.headers['User-Agent'] =~ /^wop\/(.*)/
     end
 
-    def wop_agent_version?
-      !!wop_agent_version
-    end
-
     def check_wop_version
-      check_wop_minimal_version(wop_agent_version)
+      check_wop_minimal_version(wop_agent_version) unless wop_agent_version.blank?
     end
 end
