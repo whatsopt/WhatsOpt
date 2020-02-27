@@ -9,9 +9,9 @@ class Api::V1::AnalysesController < Api::ApiController
   # GET /api/v1/mdas[?with_sub_analyses=true]
   def index
     if params[:with_sub_analyses]
-      @mdas = policy_scope(Analysis)
+      @mdas = Analysis.all
     else
-      @mdas = policy_scope(Analysis).roots
+      @mdas = Analysis.roots
     end
     json_response @mdas
   end
