@@ -49,12 +49,10 @@ class Api::ApiController < ActionController::Base
     end
 
     def wop_agent_version?
-      p wop_agent_version
       !!wop_agent_version
     end
 
     def check_wop_version
-      p "COUCOU"
-      check_minimal_wop_version(wop_agent_version)
+      check_wop_minimal_version(wop_agent_version)
     end
 end

@@ -40,7 +40,8 @@ module WhatsOpt::Version
     def check_wop_minimal_version(wop_version)
       if Gem::Version.new(WOP_MINIMAL_VERSION) > Gem::Version.new(wop_version)
         raise WopVersionMismatchException.new(
-          "Minimal wop version required #{WOP_MINIMAL_VERSION}. Please upgrade wop with 'pip install -U wop'")
+          "Minimal wop version required #{WOP_MINIMAL_VERSION}, yours is #{wop_version}. " + 
+          "Please upgrade wop with 'pip install -U wop'.")
       end
     end
 
