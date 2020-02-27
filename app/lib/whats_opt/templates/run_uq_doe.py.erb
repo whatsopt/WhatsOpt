@@ -24,6 +24,9 @@ parser.add_option("-b", "--batch",
 parser.add_option("-n", "--ncases", type="int",
                   dest="n_cases", default=<%= @driver.options[:nbpts]%>,
                   help="number of samples")
+parser.add_option("-p", "--parallel", 
+                  action="store_true", default=False,
+                  help="run doe in paralell")
 (options, args) = parser.parse_args()
 
 pb = Problem(<%= @mda.py_classname %>())
@@ -32,31 +35,34 @@ dists = []
 dists.append(ot.<%= uv.distribution_py %>)<% end %>
 
 pb.driver = OpenturnsDOEDriver(n_samples=options.n_cases, distribution=ot.ComposedDistribution(dists))
+pb.driver.options['run_parallel'] = options.parallel
+
 case_recorder_filename = '<%= @sqlite_filename %>'        
 recorder = SqliteRecorder(case_recorder_filename)
 pb.driver.add_recorder(recorder)
-pb.model.add_recorder(recorder)
-pb.model.nonlinear_solver.add_recorder(recorder)
 if OPENMDAO_VERSION > "2.8.0":
     pb.model.nonlinear_solver.options['err_on_non_converge'] = True
 else:
     pb.model.nonlinear_solver.options['err_on_maxiter'] = True
 
 <%- @mda.uncertain_input_variables.each do |dv| %>
-pb.model.add_design_var('<%= dv.name %>', lower=<%= dv.lower_py_value %>, upper=<%= dv.upper_py_value %>)<% end %>
+pb.driver.add_design_var('<%= dv.name %>', lower=<%= dv.lower_py_value %>, upper=<%= dv.upper_py_value %>)<% end %>
+<%- @mda.response_variables.each do |dv| %>
+pb.driver.add_objective('<%= dv.name %>', lower=<%= dv.lower_py_value %>, upper=<%= dv.upper_py_value %>)<% end %>
+
 pb.setup()  
 pb.run_driver()        
 
-<% if @mda.responses_of_interest.size < 10 %>
-if options.batch:
+<% if @mda.response_variables.size < 10 %>
+if options.batch or options.parallel:
     exit(0)
 reader = CaseReader(case_recorder_filename)
-cases = reader.list_cases('root')
+cases = reader.list_cases('driver')
 n = len(cases)
-data = {'inputs': {}, 'outputs': {} }
+data = { 'inputs': {}, 'outputs': {} }
 <% @mda.uncertain_input_variables.each do |dv| %>
 data['inputs']['<%= dv.name %>'] = np.zeros((n,)+<%= dv.shape=="1"?"(1,)":dv.shape %>)<% end %>
-<% @mda.responses_of_interest.each do |r| %>
+<% @mda.response_variables.each do |r| %>
 data['outputs']['<%= r.name %>'] = np.zeros((n,)+<%= r.shape=="1"?"(1,)":r.shape %>)<% end %>
 
 for i in range(len(cases)):
@@ -64,12 +70,13 @@ for i in range(len(cases)):
 <% @mda.design_variables.each do |dv| -%>
     data['inputs']['<%= dv.name %>'][i,:] = case.outputs['<%= dv.name %>']
 <% end -%>
-<% @mda.responses_of_interest.each do |r| -%>
+print(case)
+<% @mda.response_variables.each do |r| -%>
     data['outputs']['<%= r.name %>'][i,:] = case.outputs['<%= r.name %>']
 <% end -%>
       
 <% row = 0 -%>
-<% @mda.responses_of_interest.each_with_index do |r, j| -%>
+<% @mda.response_variables.each_with_index do |r, j| -%>
 
 output = data['outputs']['<%= r.name %>'].reshape(-1)
 <% (0...r.dim).each do |kj| -%>
@@ -78,7 +85,7 @@ output = data['outputs']['<%= r.name %>'].reshape(-1)
 
 input = data['inputs']['<%= dv.name %>'].reshape(-1)
 <% (0...dv.dim).each do |ki| -%>
-plt.subplot(<%= @mda.responses_of_interest_dim %>, <%= @mda.design_var_dim %>, <%= @mda.design_var_dim*row+col+1 %>)
+plt.subplot(<%= @mda.response_dim %>, <%= @mda.design_var_dim %>, <%= @mda.design_var_dim*row+col+1 %>)
 plt.plot(input[<%= ki %>::<%= dv.dim %>], output[<%= kj %>::<%= r.dim %>], '.')
 <% if col == 0 -%>
 plt.ylabel('<%= r.dim==1?"#{r.name}":"#{r.name} #{kj}" %>')
