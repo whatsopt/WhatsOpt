@@ -25,7 +25,7 @@ parser.add_option("-n", "--ncases", type="int",
                   help="number of samples")
 parser.add_option("-p", "--parallel", 
                   action="store_true", default=False,
-                  help="run doe in paralell")
+                  help="run doe in parallel")
 (options, args) = parser.parse_args()
 
 pb = Problem(<%= @mda.py_classname %>())
@@ -42,7 +42,7 @@ else:
 
 <%- @mda.design_variables.each do |dv| %>
 pb.model.add_design_var('<%= dv.name %>', lower=<%= dv.lower_py_value %>, upper=<%= dv.upper_py_value %>)<% end %>
-<% if @mda.objective_variables.size > 0 %>
+<% if @mda.objective_variables.size > 0 || @mda.responses_of_interest.size > 0 %>
 <% @mda.min_objective_variables.each do |voi| %>
 pb.model.add_objective('<%= voi.name %>')<% end %>
 <% @mda.max_objective_variables.each do |voi| %>

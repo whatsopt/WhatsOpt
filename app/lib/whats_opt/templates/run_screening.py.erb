@@ -26,8 +26,10 @@ parser.add_option("-b", "--batch",
 parser.add_option("-s", "--sobol",
                   action="store_true", dest="sobol", default=False,
                   help="do not plot anything")
+parser.add_option("-p", "--parallel", 
+                  action="store_true", default=False,
+                  help="run doe in parallel")
 (options, args) = parser.parse_args()
-
 
 pb = Problem(<%= @mda.py_classname %>())
 sa_method_name='Morris'
@@ -35,43 +37,50 @@ sa_doe_options={'n_trajs': 10, 'n_levels': 4}
 if options.sobol:
     sa_method_name='Sobol'
     sa_doe_options={'n_samples': 500, 'calc_second_order': False}
+
 pb.driver = SalibDOEDriver(sa_method_name=sa_method_name, sa_doe_options=sa_doe_options)
+pb.driver.options['run_parallel'] = options.parallel
+
 case_recorder_filename = '<%= @sqlite_filename %>'        
 recorder = SqliteRecorder(case_recorder_filename)
 pb.driver.add_recorder(recorder)
-pb.model.add_recorder(recorder)
-pb.model.nonlinear_solver.add_recorder(recorder)
-pb.model.nonlinear_solver.options['err_on_non_converge'] = True
 
-<% @mda.design_variables.each do |dv| -%>
-pb.model.add_design_var('<%= dv.name %>', lower=<%= dv.lower_py_value %>, upper=<%= dv.upper_py_value %>)
-<% end -%>
-<% @mda.min_objective_variables.each do |voi| -%>
-pb.model.add_objective('<%= voi.name %>')
-<% end -%>
-<% @mda.max_objective_variables.each do |voi| -%>
-pb.model.add_objective('<%= voi.name %>')
-<% end -%>
-<% @mda.ineq_constraint_variables.each do |voi| -%>
-pb.model.add_constraint('<%= voi.name %>', upper=0.)
-<% end -%>
+if OPENMDAO_VERSION > "2.8.0":
+    pb.model.nonlinear_solver.options['err_on_non_converge'] = True
+else:
+    pb.model.nonlinear_solver.options['err_on_maxiter'] = True
+
+<%- @mda.design_variables.each do |dv| %>
+pb.model.add_design_var('<%= dv.name %>', lower=<%= dv.lower_py_value %>, upper=<%= dv.upper_py_value %>)<% end %>
+<% if @mda.objective_variables.size > 0 || @mda.responses_of_interest.size > 0 %>
+<% @mda.min_objective_variables.each do |voi| %>
+pb.model.add_objective('<%= voi.name %>')<% end %>
+<% @mda.max_objective_variables.each do |voi| %>
+pb.model.add_objective('<%= voi.name %>', scaler=-1.)<% end %>
+<% @mda.ineq_constraint_variables.each do |voi| %>
+pb.model.add_constraint('<%= voi.name %>', upper=0.)<% end %>
 <% @mda.eq_constraint_variables.each do |voi| %>
-pb.model.add_constraint('<%= voi.name %>', equals=0.)
-<% end -%>
+pb.model.add_constraint('<%= voi.name %>', equals=0.)<% end %>
+<% @mda.responses_of_interest.each do |voi| %>
+pb.model.add_objective('<%= voi.name %>')<% end %>
+<% else %>
+<% @mda.response_variables.each do |voi| %>
+pb.model.add_objective('<%= voi.name %>')<% end %>
+<% end %>
 pb.setup()  
 pb.run_driver()        
 
-<% if @mda.responses_of_interest.size < 10 %>
-if options.batch:
+<% if @mda.response_variables.size < 10 %>
+if options.batch  or options.parallel:
     exit(0)
 reader = CaseReader(case_recorder_filename)
-cases = reader.list_cases('root', recurse=False)
+cases = reader.list_cases('driver', recurse=False)
 n = len(cases)
 data = {'inputs': {}, 'outputs': {} }
 <% @mda.design_variables.each do |dv| -%>
 data['inputs']['<%= dv.name %>'] = np.zeros((n,)+<%= dv.shape=="1"?"(1,)":dv.shape %>)
 <% end -%>
-<% @mda.responses_of_interest.each do |r| -%>
+<% @mda.response_variables.each do |r| -%>
 data['outputs']['<%= r.name %>'] = np.zeros((n,)+<%= r.shape=="1"?"(1,)":r.shape %>)
 <% end -%>
 
@@ -80,14 +89,14 @@ for i in range(len(cases)):
 <% @mda.design_variables.each do |dv| -%>
     data['inputs']['<%= dv.name %>'][i,:] = case.outputs['<%= dv.name %>']
 <% end -%>
-<% @mda.responses_of_interest.each do |r| -%>
+<% @mda.response_variables.each do |r| -%>
     data['outputs']['<%= r.name %>'][i,:] = case.outputs['<%= r.name %>']
 <% end -%>
 
 salib_pb = pb.driver.get_salib_problem()
 inputs = pb.driver.get_cases()
 
-<% @mda.responses_of_interest.each_with_index do |r, j| -%>
+<% @mda.response_variables.each_with_index do |r, j| -%>
 print('')
 print('*** Output: <%= r.name %>')
 output = data['outputs']['<%= r.name %>'].reshape((-1,))
