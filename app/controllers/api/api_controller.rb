@@ -3,6 +3,7 @@
 class Api::ApiController < ActionController::Base
   include Response
   include ExceptionHandler
+  include WhatsOpt::Version
 
   # Authorization
   include Pundit
@@ -16,6 +17,7 @@ class Api::ApiController < ActionController::Base
   protect_from_forgery with: :null_session
 
   before_action :authenticate, unless: :api_docs_controller?
+  before_action :check_wop_version 
 
   attr_reader :current_user
 
@@ -40,5 +42,13 @@ class Api::ApiController < ActionController::Base
 
     def api_docs_controller?
       controller_name == 'api_docs'
+    end
+
+    def wop_agent_version
+      $1 if request.headers['User-Agent'] =~ /^wop\/(.*)/
+    end
+
+    def check_wop_version
+      check_wop_minimal_version(wop_agent_version) unless wop_agent_version.blank?
     end
 end

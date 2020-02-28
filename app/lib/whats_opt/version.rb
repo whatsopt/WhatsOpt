@@ -2,6 +2,10 @@ module WhatsOpt::Version
 
   VERSION = File.read(File.expand_path("VERSION", Rails.root)).chomp
 
+  WOP_MINIMAL_VERSION = "1.4.0"
+
+  class WopVersionMismatchException < Exception; end
+
   def self.included base 
     base.send :include, InstanceMethods
   end
@@ -27,6 +31,18 @@ module WhatsOpt::Version
 
     def whatsopt_version
       VERSION
+    end
+
+    def wop_recommended_version
+      ">= #{WOP_MINIMAL_VERSION}"
+    end
+
+    def check_wop_minimal_version(wop_version)
+      if Gem::Version.new(WOP_MINIMAL_VERSION) > Gem::Version.new(wop_version)
+        raise WopVersionMismatchException.new(
+          "Minimal wop version required #{WOP_MINIMAL_VERSION}, yours is #{wop_version}. " + 
+          "Please upgrade wop with 'pip install -U wop'.")
+      end
     end
 
   end

@@ -128,7 +128,7 @@ class Analysis < ApplicationRecord
   end
 
   def responses_of_interest
-    variables.with_role(WhatsOpt::Variable::INTEREST_OUTPUT_ROLES)
+    variables.with_role(WhatsOpt::Variable::RESPONSE_OF_INTEREST_ROLE)
   end
 
   def response_variables
