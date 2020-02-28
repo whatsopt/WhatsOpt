@@ -1,8 +1,10 @@
 <h1>CHANGELOG</h1>
 
-<h3>1.5.1 (11/02/2020)</h3>
+<h3>1.6.0 (28/02/2020)</h3>
 <ul>
   <li>User can run montecarlo doe with regards to uncertain variables distributions</li>
+  <li>User can view distribution histograms when dealing with uncertain variables</li>
+  <li>User can run doe in parallel using MPI feature o OpenMDAO</li>
   <li>Remove OpenVSP geometry model visualisation (Hangar)</li>
   <li>Remove import from Excel or CMDOWS files</li>
   <li>Fix metamodel import bug</li>
