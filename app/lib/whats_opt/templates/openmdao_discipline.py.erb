@@ -6,8 +6,11 @@ class <%= @discipline.py_classname %>(<%= @discipline.py_classname %>Base):
 		
     def compute(self, inputs, outputs):
         """ <%= @discipline.py_classname %> computation """
+        if self._impl:
+            self._impl.compute(inputs, outputs)
+        else:
     <% @discipline.output_variables.numeric.each do |var_out| %>
-        outputs['<%= var_out.py_varname %>'] = <%= var_out.default_py_value %> <% end %>  
+            outputs['<%= var_out.py_varname %>'] = <%= var_out.default_py_value %> <% end %>  
 
 # Reminder: inputs of compute()
 #   <% @discipline.input_variables.numeric.each do |var_in| %>
