@@ -483,7 +483,8 @@ class Analysis < ApplicationRecord
   end
 
   def self.build_analysis(ope_attrs, outvar_count_hint = 1)
-    name = "#{ope_attrs[:name].camelize}"
+    disc_name = "#{ope_attrs[:name].camelize}"
+    name = "#{disc_name}Analysis"
     disc_vars = Variable.get_varattrs_from_caseattrs(ope_attrs[:cases], outvar_count_hint)
     driver_vars = disc_vars.map do |v|
       { name: v[:name],
@@ -494,13 +495,13 @@ class Analysis < ApplicationRecord
       name: name,
       disciplines_attributes: [
         { name: "__DRIVER__", variables_attributes: driver_vars },
-        { name: name, variables_attributes: disc_vars }
+        { name: disc_name, variables_attributes: disc_vars }
       ]
     )
   end
 
-  def self.build_metamodel_analysis(ope, varnames=nil, name=nil)
-    name = name || "#{ope.analysis.name.camelize}MetaModel"
+  def self.build_metamodel_analysis(ope, varnames=nil)
+    name = "#{ope.analysis.name.camelize}MetaModel"
     metamodel_varattrs = ope.build_metamodel_varattrs(varnames)
     driver_vars = metamodel_varattrs.map do |v|
       vcopy = v.clone
