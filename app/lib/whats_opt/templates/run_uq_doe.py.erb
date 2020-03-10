@@ -47,13 +47,13 @@ else:
     pb.model.nonlinear_solver.options['err_on_maxiter'] = True
 
 <%- @mda.uncertain_input_variables.each do |dv| %>
-pb.driver.add_design_var('<%= dv.name %>', lower=<%= dv.lower_py_value %>, upper=<%= dv.upper_py_value %>)<% end %>
+pb.model.add_design_var('<%= dv.name %>', lower=<%= dv.lower_py_value %>, upper=<%= dv.upper_py_value %>)<% end %>
 <% if @mda.responses_of_interest.size > 0 %>
 <%- @mda.responses_of_interest.each do |dv| %>
-pb.driver.add_objective('<%= dv.name %>')<% end %>
+pb.model.add_objective('<%= dv.name %>')<% end %>
 <% else %>
 <%- @mda.response_variables.each do |dv| %>
-pb.driver.add_objective('<%= dv.name %>')<% end %>
+pb.model.add_objective('<%= dv.name %>')<% end %>
 <% end %>
 
 pb.setup()  
@@ -76,7 +76,7 @@ for i in range(len(cases)):
 <% @mda.design_variables.each do |dv| -%>
     data['inputs']['<%= dv.name %>'][i,:] = case.outputs['<%= dv.name %>']
 <% end -%>
-print(case)
+
 <% @mda.response_variables.each do |r| -%>
     data['outputs']['<%= r.name %>'][i,:] = case.outputs['<%= r.name %>']
 <% end -%>
