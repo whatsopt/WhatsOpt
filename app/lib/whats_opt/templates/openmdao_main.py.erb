@@ -1,7 +1,6 @@
 from optparse import OptionParser
 from openmdao.api import Problem
 from openmdao.api import NonlinearBlockGS, ScipyKrylov
-from openmdao.api import view_model
 # from openmdao_extensions.reckless_nonlinear_block_gs import RecklessNonlinearBlockGS
 from <%= @mda.py_full_modulename %>_base import <%= @mda.py_classname %>Base, <%= @mda.py_classname %>FactoryBase
 
@@ -36,5 +35,9 @@ if __name__ == "__main__":
     problem.final_setup()
     
     if options.n2_view:
-        view_model(problem)
-    
+        from packaging import version
+        if version.parse(OPENMDAO_VERSION) < version.parse("2.10.0"):
+            from openmdao.api import view_model as n2
+        else:
+            from openmdao.visualization.n2_viewer.n2_viewer import n2
+            n2(problem)
