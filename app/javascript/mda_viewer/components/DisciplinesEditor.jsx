@@ -5,8 +5,7 @@ import AnalysisSelector from './AnalysisSelector';
 
 // mapping with XDSMjs type values
 const DISCIPLINE = 'analysis';
-const FUNCTION = 'function';
-const ANALYSIS = 'mda';
+const ANALYSIS = 'group';
 
 function isLocalHost(host) {
   return (host === '' || host === 'localhost' || host === '127.0.0.1');
@@ -185,7 +184,6 @@ class Discipline extends React.Component {
                     onChange={this.handleSelectChange}
                   >
                     <option value={DISCIPLINE}>Discipline</option>
-                    <option value={FUNCTION}>Function</option>
                     <option value={ANALYSIS}>Sub-Analysis</option>
                   </select>
                 </div>
