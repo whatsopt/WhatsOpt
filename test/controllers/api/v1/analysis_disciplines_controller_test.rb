@@ -66,4 +66,22 @@ class Api::V1::AnalysisDisciplinesControllerTest < ActionDispatch::IntegrationTe
       end
     end
   end
+
+  test "should replace analysis discipline without duplicating variables" do
+    disc = disciplines(:outermda_innermda_discipline)
+    varins = @cicav.input_variables.map(&:name)
+    varouts = @cicav.response_variables.map(&:name)
+    post api_v1_discipline_mda_url(@innermdadisc), params: { analysis_discipline: { analysis_id: @cicav.id } },
+      as: :json, headers: @auth_headers
+    disc.reload
+    assert_equal varins, disc.input_variables.map(&:name)
+    assert_equal varouts, disc.output_variables.map(&:name)
+  end
+
+  test "should not be authorized to attach an analysis owned by another user" do
+    singleton_of_user3 = analyses(:singleton)
+    post api_v1_discipline_mda_url(@innermdadisc), params: { analysis_discipline: { analysis_id: singleton_of_user3.id } },
+      as: :json, headers: @auth_headers
+    assert_response :unauthorized
+  end
 end
