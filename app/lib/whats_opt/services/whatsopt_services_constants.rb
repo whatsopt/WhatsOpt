@@ -5,9 +5,9 @@
 #
 
 require 'thrift'
-require 'surrogate_store_types'
+require 'whatsopt_services_types'
 
 module WhatsOpt
-  module SurrogateServer
+  module Services
   end
 end

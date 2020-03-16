@@ -8,8 +8,8 @@ from thrift.transport import TTransport
 from thrift.protocol import TBinaryProtocol
 from thrift.server import TServer
 
-from whatsopt_services.surrogate_server_handler import SurrogateServerHandler
-from whatsopt_services.surrogate_server import SurrogateStore as SurrogateStoreService
+from whatsopt.surrogate_server_handler import SurrogateServerHandler
+from whatsopt.services import SurrogateStore as SurrogateStoreService
 
 
 def main(args=sys.argv[1:]):
@@ -35,7 +35,7 @@ def main(args=sys.argv[1:]):
 
     server = TServer.TSimpleServer(processor, transport, tfactory, pfactory)
 
-    print("Starting Surrogate server...")
+    print("Starting WhatsOpt services...")
     server.serve()
     print("done!")
 

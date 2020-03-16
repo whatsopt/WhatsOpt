@@ -16,22 +16,18 @@ else:
 from thrift.transport import TTransport, TSocket, TSSLSocket, THttpClient
 from thrift.protocol.TBinaryProtocol import TBinaryProtocol
 
-from whatsopt_services.surrogate_server import SurrogateStore
-from whatsopt_services.surrogate_server.ttypes import *
+from whatsopt.services import OptimizerStore
+from whatsopt.services.ttypes import *
 
 if len(sys.argv) <= 1 or sys.argv[1] == '--help':
     print('')
     print('Usage: ' + sys.argv[0] + ' [-h host[:port]] [-u url] [-f[ramed]] [-s[sl]] [-novalidate] [-ca_certs certs] [-keyfile keyfile] [-certfile certfile] function [arg1 [arg2...]]')
     print('')
     print('Functions:')
-    print('  void ping()')
-    print('  void shutdown()')
-    print('  void create_surrogate(string surrogate_id, SurrogateKind kind, Matrix xt, Vector yt, Options options, Distributions uncertainties)')
-    print('  void copy_surrogate(string src_id, string dst_id)')
-    print('  SurrogateQualification qualify(string surrogate_id, Matrix xv, Vector yv)')
-    print('  Vector predict_values(string surrogate_id, Matrix x)')
-    print('  void destroy_surrogate(string surrogate_id)')
-    print('  SobolIndices get_sobol_pce_sensitivity_analysis(string surrogate_id)')
+    print('  void create_optimizer(string optimizer_id, OptimizerKind kind, Options options)')
+    print('  Float ask(string optimizer_id)')
+    print('  void tell(string optimizer_id, Vector x, Float y)')
+    print('  void destroy_optimizer(string surrogate_id)')
     print('')
     sys.exit(0)
 
@@ -108,56 +104,32 @@ else:
     else:
         transport = TTransport.TBufferedTransport(socket)
 protocol = TBinaryProtocol(transport)
-client = SurrogateStore.Client(protocol)
+client = OptimizerStore.Client(protocol)
 transport.open()
 
-if cmd == 'ping':
-    if len(args) != 0:
-        print('ping requires 0 args')
-        sys.exit(1)
-    pp.pprint(client.ping())
-
-elif cmd == 'shutdown':
-    if len(args) != 0:
-        print('shutdown requires 0 args')
-        sys.exit(1)
-    pp.pprint(client.shutdown())
-
-elif cmd == 'create_surrogate':
-    if len(args) != 6:
-        print('create_surrogate requires 6 args')
-        sys.exit(1)
-    pp.pprint(client.create_surrogate(args[0], eval(args[1]), eval(args[2]), eval(args[3]), eval(args[4]), eval(args[5]),))
-
-elif cmd == 'copy_surrogate':
-    if len(args) != 2:
-        print('copy_surrogate requires 2 args')
-        sys.exit(1)
-    pp.pprint(client.copy_surrogate(args[0], args[1],))
-
-elif cmd == 'qualify':
+if cmd == 'create_optimizer':
     if len(args) != 3:
-        print('qualify requires 3 args')
+        print('create_optimizer requires 3 args')
         sys.exit(1)
-    pp.pprint(client.qualify(args[0], eval(args[1]), eval(args[2]),))
+    pp.pprint(client.create_optimizer(args[0], eval(args[1]), eval(args[2]),))
 
-elif cmd == 'predict_values':
-    if len(args) != 2:
-        print('predict_values requires 2 args')
-        sys.exit(1)
-    pp.pprint(client.predict_values(args[0], eval(args[1]),))
-
-elif cmd == 'destroy_surrogate':
+elif cmd == 'ask':
     if len(args) != 1:
-        print('destroy_surrogate requires 1 args')
+        print('ask requires 1 args')
         sys.exit(1)
-    pp.pprint(client.destroy_surrogate(args[0],))
+    pp.pprint(client.ask(args[0],))
 
-elif cmd == 'get_sobol_pce_sensitivity_analysis':
-    if len(args) != 1:
-        print('get_sobol_pce_sensitivity_analysis requires 1 args')
+elif cmd == 'tell':
+    if len(args) != 3:
+        print('tell requires 3 args')
         sys.exit(1)
-    pp.pprint(client.get_sobol_pce_sensitivity_analysis(args[0],))
+    pp.pprint(client.tell(args[0], eval(args[1]), eval(args[2]),))
+
+elif cmd == 'destroy_optimizer':
+    if len(args) != 1:
+        print('destroy_optimizer requires 1 args')
+        sys.exit(1)
+    pp.pprint(client.destroy_optimizer(args[0],))
 
 else:
     print('Unrecognized method %s' % cmd)

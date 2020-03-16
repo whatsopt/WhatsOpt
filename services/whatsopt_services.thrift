@@ -1,5 +1,5 @@
-namespace py whatsopt_services.surrogate_server
-namespace rb WhatsOpt.SurrogateServer
+namespace py whatsopt.services
+namespace rb WhatsOpt.Services
  
 typedef i64 Integer
 typedef double Float
@@ -23,6 +23,10 @@ enum SurrogateKind {
   SMT_LS,
   SMT_QP,
   OPENTURNS_PCE
+}
+
+enum OptimizerKind {
+  SEGOMOE,
 }
 
 exception SurrogateException {
@@ -70,4 +74,18 @@ service SurrogateStore {
   void destroy_surrogate(1: string surrogate_id);
 
   SobolIndices get_sobol_pce_sensitivity_analysis(1: string surrogate_id);
+}
+
+
+service OptimizerStore {
+
+  void create_optimizer(1: string optimizer_id,
+                        2: OptimizerKind kind,
+                        3: Options options);
+
+  Float ask(1: string optimizer_id);
+
+  void tell(1: string optimizer_id, 2: Vector x, 3: Float y);
+
+  void destroy_optimizer(1: string surrogate_id);
 }

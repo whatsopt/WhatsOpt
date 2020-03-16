@@ -7,7 +7,7 @@
 require 'thrift'
 
 module WhatsOpt
-  module SurrogateServer
+  module Services
     module SurrogateKind
       SMT_KRIGING = 0
       SMT_KPLS = 1
@@ -17,6 +17,12 @@ module WhatsOpt
       OPENTURNS_PCE = 5
       VALUE_MAP = {0 => "SMT_KRIGING", 1 => "SMT_KPLS", 2 => "SMT_KPLSK", 3 => "SMT_LS", 4 => "SMT_QP", 5 => "OPENTURNS_PCE"}
       VALID_VALUES = Set.new([SMT_KRIGING, SMT_KPLS, SMT_KPLSK, SMT_LS, SMT_QP, OPENTURNS_PCE]).freeze
+    end
+
+    module OptimizerKind
+      SEGOMOE = 0
+      VALUE_MAP = {0 => "SEGOMOE"}
+      VALID_VALUES = Set.new([SEGOMOE]).freeze
     end
 
     class OptionValue

@@ -43,6 +43,18 @@ class SurrogateKind(object):
     }
 
 
+class OptimizerKind(object):
+    SEGOMOE = 0
+
+    _VALUES_TO_NAMES = {
+        0: "SEGOMOE",
+    }
+
+    _NAMES_TO_VALUES = {
+        "SEGOMOE": 0,
+    }
+
+
 class OptionValue(object):
     """
     Attributes:

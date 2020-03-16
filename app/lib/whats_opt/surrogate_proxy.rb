@@ -2,7 +2,7 @@
 
 require "thrift"
 require "securerandom"
-require_relative "surrogate_server/surrogate_store"
+require "surrogate_store"
 
 module WhatsOpt
   class SurrogateProxy
@@ -20,14 +20,14 @@ module WhatsOpt
       socket = Thrift::Socket.new(@host, @port)
       @transport = Thrift::BufferedTransport.new(socket)
       protocol = Thrift::BinaryProtocol.new(@transport)
-      @client = SurrogateServer::SurrogateStore::Client.new(protocol)
+      @client = Services::SurrogateStore::Client.new(protocol)
 
       @surrogate_id = surrogate_id || SecureRandom.uuid
 
       if server_start && !server_available?
-        cmd = "#{PYTHON} #{File.join(Rails.root, 'services', 'run_surrogate_server.py')} --outdir #{OUTDIR}"
+        cmd = "#{PYTHON} #{File.join(Rails.root, 'services', 'run_server.py')} --outdir #{OUTDIR}"
         Rails.logger.info cmd
-        @pid = spawn(cmd, [:out, :err] => File.join(Rails.root, "upload", "logs", "surrogate_server.log"))
+        @pid = spawn(cmd, [:out, :err] => File.join(Rails.root, "log", "whatsopt_server.log"))
         retries = 0
         while retries < 10 && !server_available?  # wait for server start
           retries += 1
@@ -44,7 +44,7 @@ module WhatsOpt
       socket = Thrift::Socket.new(host, port)
       transport = Thrift::BufferedTransport.new(socket)
       protocol = Thrift::BinaryProtocol.new(transport)
-      client = SurrogateServer::SurrogateStore::Client.new(protocol)
+      client = Services::SurrogateStore::Client.new(protocol)
       transport.open()
       client.shutdown
     rescue => e
@@ -64,14 +64,14 @@ module WhatsOpt
       opts = {}
       options.each do |ks, v|
         k = ks.to_s
-        opts[k] = SurrogateServer::OptionValue.new(vector: JSON.parse(v)) if v =~ /^\[.*\]$/
-        opts[k] = SurrogateServer::OptionValue.new(integer: v.to_i) if v == v.to_i.to_s
-        opts[k] = SurrogateServer::OptionValue.new(number: v.to_f) if (!opts[k] && v =~ /^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$/)
-        opts[k] = SurrogateServer::OptionValue.new(str: v.to_s) unless opts[k]
+        opts[k] = Services::OptionValue.new(vector: JSON.parse(v)) if v =~ /^\[.*\]$/
+        opts[k] = Services::OptionValue.new(integer: v.to_i) if v == v.to_i.to_s
+        opts[k] = Services::OptionValue.new(number: v.to_f) if (!opts[k] && v =~ /^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$/)
+        opts[k] = Services::OptionValue.new(str: v.to_s) unless opts[k]
       end 
       uncs = uncertainties.map {|us| 
         u = us.map {|k, v| [k.to_sym, v]}.to_h
-        SurrogateServer::Distribution.new(name: u[:name], kwargs: u[:kwargs].map{|ks, v| [ks.to_s, v.to_f]}.to_h ) unless u.blank?
+        Services::Distribution.new(name: u[:name], kwargs: u[:kwargs].map{|ks, v| [ks.to_s, v.to_f]}.to_h ) unless u.blank?
       }.compact
       _send { @client.create_surrogate(@surrogate_id, surrogate_kind, x, y, opts, uncs) }
     end
@@ -107,7 +107,7 @@ module WhatsOpt
     def _send
       @transport.open()
       yield
-    rescue SurrogateServer::SurrogateException => e
+    rescue Services::SurrogateException => e
       # puts "#{e}: #{e.msg}"
       Rails.logger.warn "#{e}: #{e.msg}"
       raise
