@@ -8,7 +8,7 @@ from thrift.transport import TTransport
 from thrift.protocol import TBinaryProtocol
 from thrift.server import TServer
 
-from whatsopt.surrogate_server_handler import SurrogateServerHandler
+from whatsopt.surrogate_store.surrogate_server_handler import SurrogateServerHandler
 from whatsopt.services import SurrogateStore as SurrogateStoreService
 
 

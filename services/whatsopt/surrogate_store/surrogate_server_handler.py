@@ -4,7 +4,7 @@ import numpy as np
 from sklearn.metrics import r2_score
 
 from whatsopt.services import ttypes as SurrogateStoreTypes
-from .surrogate_store import SurrogateStore
+from whatsopt.surrogate_store.surrogate_store import SurrogateStore
 
 SURROGATES_MAP = {
     SurrogateStoreTypes.SurrogateKind.SMT_KRIGING: SurrogateStore.SURROGATE_NAMES[0],
