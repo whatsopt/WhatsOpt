@@ -7,12 +7,7 @@ from whatsopt.services import ttypes as SurrogateStoreTypes
 from whatsopt.surrogate_store.surrogate_store import SurrogateStore
 
 SURROGATES_MAP = {
-    SurrogateStoreTypes.SurrogateKind.SMT_KRIGING: SurrogateStore.SURROGATE_NAMES[0],
-    SurrogateStoreTypes.SurrogateKind.SMT_KPLS: SurrogateStore.SURROGATE_NAMES[1],
-    SurrogateStoreTypes.SurrogateKind.SMT_KPLSK: SurrogateStore.SURROGATE_NAMES[2],
-    SurrogateStoreTypes.SurrogateKind.SMT_LS: SurrogateStore.SURROGATE_NAMES[3],
-    SurrogateStoreTypes.SurrogateKind.SMT_QP: SurrogateStore.SURROGATE_NAMES[4],
-    SurrogateStoreTypes.SurrogateKind.OPENTURNS_PCE: SurrogateStore.SURROGATE_NAMES[5],
+    SurrogateStoreTypes.OptimizerKind.SEGOMOE: SurrogateStore.SURROGATE_NAMES[0]
 }
 
 NULL_QUALIFICATION = SurrogateStoreTypes.SurrogateQualification(r2=0.0, yp=[])
@@ -70,6 +65,7 @@ class SurrogateServerHandler:
         uncertains = [
             {"name": dist.name, "kwargs": dist.kwargs} for dist in uncertainties
         ]
+        print("TOTO")
         self.sm_store.create_surrogate(
             surrogate_id,
             SURROGATES_MAP[surrogate_kind],

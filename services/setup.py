@@ -3,7 +3,7 @@
 from distutils.core import setup
 
 setup(
-    name="whatsopt_services",
+    name="whatsopt_server",
     version="0.1.0",
     description="WhatsOpt services implemented with Apache Thrift",
     author="Rémi Lafage",

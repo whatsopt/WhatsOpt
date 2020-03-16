@@ -1,12 +1,12 @@
 import unittest
 import os
 import numpy as np
-from whatsopt.surrogate_store import OptimizerStore
+from whatsopt.optimizer_store import OptimizerStore
 
 
 class TestSurrogateStore(unittest.TestCase):
     def setUp(self):
-        self.store = SurrogateStore()
+        self.store = OptimizerStore()
 
     def tearDown(self):
         if os.path.exists(self.store._sm_filename("1")):
@@ -16,7 +16,7 @@ class TestSurrogateStore(unittest.TestCase):
         if os.path.exists(self.store._sm_filename("3")):
             os.remove(self.store._sm_filename("3"))
 
-    def test_create_surrogate(self):
+    def test_create_optimizer(self):
         xt = np.array([[0.0, 1.0, 2.0, 3.0, 4.0]]).T
         yt = np.array([0.0, 1.0, 1.5, 0.5, 1.0]).T
 

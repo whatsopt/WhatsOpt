@@ -16,8 +16,8 @@ else:
 from thrift.transport import TTransport, TSocket, TSSLSocket, THttpClient
 from thrift.protocol.TBinaryProtocol import TBinaryProtocol
 
-from whatsopt.services import OptimizerStore
-from whatsopt.services.ttypes import *
+from whatsopt_server.services import OptimizerStore
+from whatsopt_server.services.ttypes import *
 
 if len(sys.argv) <= 1 or sys.argv[1] == '--help':
     print('')

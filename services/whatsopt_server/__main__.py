@@ -7,9 +7,10 @@ from thrift.transport import TSocket
 from thrift.transport import TTransport
 from thrift.protocol import TBinaryProtocol
 from thrift.server import TServer
+from thrift.TMultiplexedProcessor import TMultiplexedProcessor
 
-from whatsopt.surrogate_store.surrogate_server_handler import SurrogateServerHandler
-from whatsopt.services import SurrogateStore as SurrogateStoreService
+from whatsopt_server.handlers.surrogate_store_handler import SurrogateStoreHandler
+from whatsopt_server.services import SurrogateStore as SurrogateStoreService
 
 
 def main(args=sys.argv[1:]):
@@ -27,8 +28,13 @@ def main(args=sys.argv[1:]):
     (options, args) = parser.parse_args(args)
     outdir = options.outdir
     print("Surrogates saved to {}".format(outdir))
-    handler = SurrogateServerHandler(outdir)
-    processor = SurrogateStoreService.Processor(handler)
+
+    processor = TMultiplexedProcessor()
+    processor.registerProcessor(
+        "SurrogateStoreService",
+        SurrogateStoreService.Processor(SurrogateStoreHandler()),
+    )
+
     transport = TSocket.TServerSocket("0.0.0.0", port=41400)
     tfactory = TTransport.TBufferedTransportFactory()
     pfactory = TBinaryProtocol.TBinaryProtocolFactory()

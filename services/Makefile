@@ -1,4 +1,4 @@
-PY_SERVER_DIR = whatsopt/services
+PY_SERVER_DIR = whatsopt_server/services
 RB_CLIENT_DIR = ../app/lib/whats_opt/services
 
 PY_SERVER_FILE = ${PY_SERVER_DIR}/Surrogate.py

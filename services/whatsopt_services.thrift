@@ -1,4 +1,4 @@
-namespace py whatsopt.services
+namespace py whatsopt_server.services
 namespace rb WhatsOpt.Services
  
 typedef i64 Integer
@@ -89,3 +89,4 @@ service OptimizerStore {
 
   void destroy_optimizer(1: string surrogate_id);
 }
+
