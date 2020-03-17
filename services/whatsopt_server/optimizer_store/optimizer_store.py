@@ -7,91 +7,47 @@ try:
 except:
     import pickle
 
-SMT_NOT_INSTALLED = False
-try:
-    from smt.surrogate_models import KRG, KPLS, KPLSK, LS, QP
-except:
-    SMT_NOT_INSTALLED = True
-
-OPENTURNS_NOT_INSTALLED = False
-try:
-    from .openturns_surrogates import PCE
-except:
-    OPENTURNS_NOT_INSTALLED = True
+from whatsopt_server.optimizer_store.segomoe_optimizer import SegomoeOptimizer
 
 
-class SurrogateStore(object):
-    """
-    Object responsible for saving / loading / listing trained surrogates
-    """
+class OptimizerStore(object):
 
-    SURROGATE_NAMES = [
-        "SMT_KRIGING",
-        "SMT_KPLS",
-        "SMT_KPLSK",
-        "SMT_LS",
-        "SMT_QP",
-        "OPENTURNS_PCE",
-    ]
+    OPTIMIZERS_NAMES = ["SEGOMOE"]
 
     def __init__(self, outdir="."):
         self.outdir = outdir
-        self.surrogate_classes = {
-            "SMT_KRIGING": KRG,
-            "SMT_KPLS": KPLS,
-            "SMT_KPLSK": KPLSK,
-            "SMT_LS": LS,
-            "SMT_QP": QP,
-            "OPENTURNS_PCE": PCE,
-        }
+        self.optimizer_classes = {"SEGOMOE": SegomoeOptimizer}
         if not os.path.exists(outdir):
             os.makedirs(outdir)
 
-    def create_surrogate(self, surrogate_id, surrogate_kind, xt, yt, surrogate_options={}, uncertainty_specs=[]):
-        if surrogate_kind not in SurrogateStore.SURROGATE_NAMES:
+    def create_optimizer(self, optimizer_id, optimizer_kind, optimizer_options={}):
+        if optimizer_kind not in OptimizerStore.OPTIMIZERS_NAMES:
             raise Exception(
-                "Unknown surrogate {} not in {}".format(
-                    surrogate_kind, SurrogateStore.SURROGATE_NAMES
+                "Unknown optimizer {} not in {}".format(
+                    optimizer_kind, OptimizerStore.OPTIMIZERS_NAMES
                 )
             )
-        print("options = {}".format(surrogate_options))
-        sm = self.surrogate_classes[surrogate_kind](**surrogate_options)
-        if "uncertainties" in sm.supports:
-            sm.set_uncertainties(uncertainty_specs)
-            print("uncertainties = {}".format(uncertainty_specs))
-        sm.set_training_values(np.array(xt), np.array(yt))
-        sm.train()
+        print("options = {}".format(optimizer_options))
+        optimizer = self.optimizer_classes[optimizer_kind](**optimizer_options)
 
-        filename = self._sm_filename(surrogate_id)
+        filename = self._optimizer_filename(optimizer_id)
         print("DUMP ", filename)
         with open(filename, "wb") as f:
-            pickle.dump(sm, f)
-        return sm
+            pickle.dump(optimizer, f)
+        return optimizer
 
-    def get_surrogate(self, surrogate_id):
-        filename = self._sm_filename(surrogate_id)
-        sm = None
+    def get_optimizer(self, optimizer_id):
+        filename = self._optimizer_filename(optimizer_id)
+        optimizer = None
         with open(filename, "rb") as f:
-            sm = pickle.load(f)
-        return sm
+            optimizer = pickle.load(f)
+        return optimizer
 
-    def destroy_surrogate(self, surrogate_id):
-        filename = self._sm_filename(surrogate_id)
+    def destroy_optimizer(self, optimizer_id):
+        filename = self._optimizer_filename(optimizer_id)
         if os.path.exists(filename):
             os.remove(filename)
 
-    def copy_surrogate(self, src_id, dst_id):
-        src = self._sm_filename(src_id)
-        dst = self._sm_filename(dst_id)
-        copyfile(src, dst)
-
-    def get_sobol_pce_sensitivity_analysis(self, pce_surrogate_id):
-        sm = self.get_surrogate(pce_surrogate_id)
-        sa = sm.get_sobol_indices()
-        first_order = [sa.getSobolIndex(i) for i in range(sm.input_dim)]
-        total_order = [sa.getSobolTotalIndex(i) for i in range(sm.input_dim)]
-        return {"S1": first_order, "ST": total_order}
-
-    def _sm_filename(self, surrogate_id):
-        return "%s/surrogate_%s.pkl" % (self.outdir, surrogate_id)
+    def _optimizer_filename(self, optimizer_id):
+        return "%s/optimizer_%s.pkl" % (self.outdir, optimizer_id)
 
