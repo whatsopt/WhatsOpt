@@ -11,7 +11,8 @@ struct OptionValue {
   1: optional Integer integer,
   2: optional Float number,
   3: optional Vector vector,
-  4: optional string str
+  4: optional Matrix matrix,
+  5: optional string str
 }
 typedef map<OptionName, OptionValue> Options;
 typedef map<OptionName, double> Kwargs;
@@ -30,6 +31,10 @@ enum OptimizerKind {
 }
 
 exception SurrogateException {
+  1: string msg
+}
+
+exception OptimizerException {
   1: string msg
 }
 
@@ -79,13 +84,14 @@ service SurrogateStore {
 
 service OptimizerStore {
 
+  void ping();
   void create_optimizer(1: string optimizer_id,
                         2: OptimizerKind kind,
-                        3: Options options);
+                        3: Options options) throws (1: OptimizerException exc);
 
-  Float ask(1: string optimizer_id);
+  Float ask(1: string optimizer_id) throws (1: OptimizerException exc);
 
-  void tell(1: string optimizer_id, 2: Vector x, 3: Float y);
+  void tell(1: string optimizer_id, 2: Matrix x, 3: Matrix y) throws (1: OptimizerException exc);
 
   void destroy_optimizer(1: string surrogate_id);
 }

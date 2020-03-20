@@ -8,51 +8,41 @@ from thrift.transport import TSocket
 from thrift.transport import TTransport
 from thrift.protocol import TBinaryProtocol, TMultiplexedProtocol
 
-from whatsopt_server.services import ttypes as SurrogateStoreTypes
-from whatsopt_server.services import SurrogateStore
+from whatsopt_server.services import ttypes as OptimimzerStoreTypes
+from whatsopt_server.services import OptimizerStore
 
 
-class SurrogateStoreProxy(object):
+class OptimizerStoreProxy(object):
     def __init__(self):
         self.transport = transport = TSocket.TSocket("localhost", 41400)
         transport = TTransport.TBufferedTransport(transport)
         protocol = TBinaryProtocol.TBinaryProtocol(transport)
         protocol = TMultiplexedProtocol.TMultiplexedProtocol(
-            protocol, "SurrogateStoreService"
+            protocol, "OptimizerStoreService"
         )
-        self._thrift_client = SurrogateStore.Client(protocol)
+        self._thrift_client = OptimizerStore.Client(protocol)
         transport.open()
 
     def ping(self):
         return self._thrift_client.ping()
 
-    def create_surrogate(
-        self, surrogate_id, surrogate_kind, xt, yt, options={}, uncertainties=[]
-    ):
-        self._thrift_client.create_surrogate(
-            surrogate_id, surrogate_kind, xt, yt, options, uncertainties
-        )
+    def create_optimizer(self, optimizer_id, optimizer_kind, options={}):
+        self._thrift_client.create_optimizer(optimizer_id, optimizer_kind, options)
 
-    def predict_values(self, surrogate_id, xe):
-        return self._thrift_client.predict_values(surrogate_id, xe)
+    def ask(self, optimizer_id):
+        return self._thrift_client.ask(optimizer_id)
 
-    def qualify(self, surrogate_id, xv, yv):
-        return self._thrift_client.qualify(surrogate_id, xv, yv)
+    def tell(self, optimizer_id, x, y):
+        self._thrift_client.tell(optimizer_id, x, y)
 
-    def copy_surrogate(self, src_id, dst_id):
-        return self._thrift_client.copy_surrogate(src_id, dst_id)
-
-    def destroy_surrogate(self, surrogate_id):
-        return self._thrift_client.destroy_surrogate(surrogate_id)
-
-    def get_sobol_pce_sensitivity_analysis(self, surrogate_id):
-        return self._thrift_client.get_sobol_pce_sensitivity_analysis(surrogate_id)
+    def destroy_optimizer(self, optimizer_id):
+        return self._thrift_client.destroy_optimizer(optimizer_id)
 
     def close(self):
         self.transport.close()
 
 
-class TestSurrogateService(unittest.TestCase):
+class TestOptimizerService(unittest.TestCase):
     def setUp(self):
         cmd = os.path.join(
             os.path.dirname(__file__), os.path.pardir, "whatsopt_server", "__main__.py"
@@ -60,7 +50,7 @@ class TestSurrogateService(unittest.TestCase):
         self.server = subprocess.Popen(["python", cmd])
         for _ in range(10):
             try:
-                self.store = SurrogateStoreProxy()  # server has to start
+                self.store = OptimizerStoreProxy()  # server has to start
             except TTransport.TTransportException:
                 time.sleep(0.5)
                 continue
@@ -72,98 +62,17 @@ class TestSurrogateService(unittest.TestCase):
         self.server.kill()
 
     # @unittest.skip("skip")
-    def test_create_surrogate(self):
-        xt = np.array([[0.0, 1.0, 2.0, 3.0, 4.0]]).T
-        yt = np.array([0.0, 1.0, 1.5, 0.5, 1.0])
-
-        self.store.create_surrogate(
-            "1", SurrogateStore.SurrogateKind.SMT_KRIGING, xt, yt
-        )
-
-    # @unittest.skip("skip")
-    def test_create_surrogate_with_options(self):
-        xt = np.array([[0.0, 1.0, 2.0, 3.0, 4.0]]).T
-        yt = np.array([0.0, 1.0, 1.5, 0.5, 1.0])
-
-        self.store.create_surrogate(
+    def test_create_optimizer(self):
+        xlimits = [[-32.768, 32.768], [-32.768, 32.768]]
+        self.store.create_optimizer(
             "1",
-            SurrogateStore.SurrogateKind.SMT_KRIGING,
-            xt,
-            yt,
-            {"theta0": SurrogateStore.OptionValue(vector=[0.2])},
+            OptimizerStore.OptimizerKind.SEGOMOE,
+            {"xlimits": OptimizerStore.OptionValue(matrix=xlimits)},
         )
 
     # @unittest.skip("skip")
-    def test_predict(self):
-
-        xt = np.array([[0.0, 1.0, 2.0, 3.0, 4.0]]).T
-        yt = np.array([0.0, 1.0, 1.5, 0.5, 1.0])
-
-        self.store.create_surrogate(
-            "1", SurrogateStore.SurrogateKind.SMT_KRIGING, xt, yt
-        )
-
-        num = 13
-        x = np.linspace(0.0, 4.0, num).reshape((1, -1)).T
-        y1 = self.store.predict_values("1", x)
-
-        self.assertEqual(13, len(y1))
-
-    # @unittest.skip("skip")
-    def test_sobol_pce(self):
-        xt = np.array([[0.0, 1.0, 2.0, 3.0, 4.0]]).T
-        yt = np.array([0.0, 1.0, 1.5, 0.5, 1.0])
-
-        self.store.create_surrogate(
-            "3", SurrogateStore.SurrogateKind.OPENTURNS_PCE, xt, yt
-        )
-
-        sobol = self.store.get_sobol_pce_sensitivity_analysis("3")
-        print(sobol)
-
-    # @unittest.skip("skip")
-    def test_sobol_pce_with_uncertainties(self):
-        xt = np.array([[0.0, 1.0, 2.0, 3.0, 4.0]]).T
-        yt = np.array([0.0, 1.0, 1.5, 0.5, 1.0])
-
-        self.store.create_surrogate(
-            "1",
-            SurrogateStore.SurrogateKind.OPENTURNS_PCE,
-            xt,
-            yt,
-            uncertainties=[
-                SurrogateStore.Distribution(name="Uniform", kwargs={"a": 1.9, "b": 2.1})
-            ],
-        )
-        sobol = self.store.get_sobol_pce_sensitivity_analysis("1")
-        print(sobol)
-
-    # @unittest.skip("skip")
-    def test_qualification(self):
-        xt = np.array([[0.0, 1.0, 2.0, 3.0, 4.0]]).T
-        yt = np.array([0.0, 1.0, 1.5, 0.5, 1.0])
-
-        self.store.create_surrogate(
-            "1", SurrogateStore.SurrogateKind.SMT_KRIGING, xt, yt
-        )
-        q = self.store.qualify(
-            "1", np.array([[0.0, 2.0, 4.0]]).T, np.array([0.0, 1.5, 1.0])
-        )
-        self.assertAlmostEqual(1.0, q.r2)
-        for i, v in enumerate([0.0, 1.5, 1.0]):
-            self.assertAlmostEqual(v, q.yp[i])
-
-    # @unittest.skip("skip")
-    def test_copy_predict_destroy(self):
-        self.store.copy_surrogate("1", "2")
-        num = 13
-        x = np.linspace(0.0, 4.0, num).reshape((1, -1)).T
-        y1 = self.store.predict_values("2", x)
-
-        self.assertEqual(13, len(y1))
-        self.store.destroy_surrogate("2")
-        with self.assertRaises(SurrogateStoreTypes.SurrogateException):
-            self.store.predict_values("2", x)
+    def test_optimizer(self):
+        pass
 
 
 if __name__ == "__main__":

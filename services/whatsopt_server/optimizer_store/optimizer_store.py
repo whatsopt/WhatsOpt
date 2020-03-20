@@ -12,7 +12,7 @@ from whatsopt_server.optimizer_store.segomoe_optimizer import SegomoeOptimizer
 
 class OptimizerStore(object):
 
-    OPTIMIZERS_NAMES = ["SEGOMOE"]
+    OPTIMIZER_NAMES = ["SEGOMOE"]
 
     def __init__(self, outdir="."):
         self.outdir = outdir
@@ -21,10 +21,10 @@ class OptimizerStore(object):
             os.makedirs(outdir)
 
     def create_optimizer(self, optimizer_id, optimizer_kind, optimizer_options={}):
-        if optimizer_kind not in OptimizerStore.OPTIMIZERS_NAMES:
+        if optimizer_kind not in OptimizerStore.OPTIMIZER_NAMES:
             raise Exception(
                 "Unknown optimizer {} not in {}".format(
-                    optimizer_kind, OptimizerStore.OPTIMIZERS_NAMES
+                    optimizer_kind, OptimizerStore.OPTIMIZER_NAMES
                 )
             )
         print("options = {}".format(optimizer_options))

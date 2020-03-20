@@ -11,6 +11,8 @@ from thrift.TMultiplexedProcessor import TMultiplexedProcessor
 
 from whatsopt_server.handlers.surrogate_store_handler import SurrogateStoreHandler
 from whatsopt_server.services import SurrogateStore as SurrogateStoreService
+from whatsopt_server.handlers.optimizer_store_handler import OptimizerStoreHandler
+from whatsopt_server.services import OptimizerStore as OptimizerStoreService
 
 
 def main(args=sys.argv[1:]):
@@ -22,19 +24,22 @@ def main(args=sys.argv[1:]):
         "--outdir",
         dest="outdir",
         default=tempfile.gettempdir(),
-        help="save trained surrogate to DIRECTORY",
+        help="save trained surrogates or configured optimizers to DIRECTORY",
         metavar="DIRECTORY",
     )
     (options, args) = parser.parse_args(args)
     outdir = options.outdir
-    print("Surrogates saved to {}".format(outdir))
+    print("Surrogates/Optimizers saved to {}".format(outdir))
 
     processor = TMultiplexedProcessor()
     processor.registerProcessor(
         "SurrogateStoreService",
         SurrogateStoreService.Processor(SurrogateStoreHandler()),
     )
-
+    processor.registerProcessor(
+        "OptimizerStoreService",
+        OptimizerStoreService.Processor(OptimizerStoreHandler()),
+    )
     transport = TSocket.TServerSocket("0.0.0.0", port=41400)
     tfactory = TTransport.TBufferedTransportFactory()
     pfactory = TBinaryProtocol.TBinaryProtocolFactory()

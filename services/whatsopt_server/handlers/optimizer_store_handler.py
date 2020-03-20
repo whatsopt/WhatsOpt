@@ -1,109 +1,77 @@
 import numpy as np
 
-# from whatsopt.utils import r2_score
-from sklearn.metrics import r2_score
+from whatsopt_server.services import ttypes as OptimizerStoreTypes
+from whatsopt_server.optimizer_store.optimizer_store import OptimizerStore
 
-from whatsopt.services import ttypes as SurrogateStoreTypes
-from whatsopt.surrogate_store.surrogate_store import SurrogateStore
-
-SURROGATES_MAP = {
-    SurrogateStoreTypes.OptimizerKind.SEGOMOE: SurrogateStore.SURROGATE_NAMES[0]
+OPTIMIZERS_MAP = {
+    OptimizerStoreTypes.OptimizerKind.SEGOMOE: OptimizerStore.OPTIMIZER_NAMES[0]
 }
 
-NULL_QUALIFICATION = SurrogateStoreTypes.SurrogateQualification(r2=0.0, yp=[])
 
-
-def throw_surrogate_exception(func):
+def throw_optimizer_exception(func):
     def func_wrapper(*args, **kwargs):
         try:
             return func(*args, **kwargs)
         except Exception as err:
-            exc = SurrogateStoreTypes.SurrogateException()
+            exc = OptimizerStoreTypes.OptimizerException()
             exc.msg = str(err)
             raise exc
 
     return func_wrapper
 
 
-class SurrogateServerHandler:
+class OptimizerStoreHandler:
     def __init__(self, outdir="."):
-        self.sm_store = SurrogateStore(outdir)
+        self.optim_store = OptimizerStore(outdir)
 
     def ping(self):
-        print("Surrogate server... Ping!")
+        print("Optimizer server... Ping!")
 
     def shutdown(self):
         exit(0)
 
-    @throw_surrogate_exception
-    def create_surrogate(
-        self,
-        surrogate_id,
-        surrogate_kind,
-        xt,
-        yt,
-        surrogate_options={},
-        uncertainties=[],
-    ):
+    @throw_optimizer_exception
+    def create_optimizer(self, optimizer_id, optimizer_kind, optimizer_options={}):
         print(
             "CREATE ",
-            surrogate_id,
-            surrogate_kind,
-            SURROGATES_MAP[surrogate_kind],
-            surrogate_options,
+            optimizer_id,
+            optimizer_kind,
+            OPTIMIZERS_MAP[optimizer_kind],
+            optimizer_options,
         )
-        surrogate_opts = {}
-        for k, v in surrogate_options.items():
+        optimizer_opts = {}
+        for k, v in optimizer_options.items():
             if v.integer is not None:
-                surrogate_opts[k] = v.integer
+                optimizer_opts[k] = v.integer
             if v.number is not None:
-                surrogate_opts[k] = v.number
+                optimizer_opts[k] = v.number
             if v.vector is not None:
-                surrogate_opts[k] = v.vector
+                optimizer_opts[k] = v.vector
+            if v.matrix is not None:
+                optimizer_opts[k] = v.matrix
             if v.str is not None:
-                surrogate_opts[k] = v.str
-        uncertains = [
-            {"name": dist.name, "kwargs": dist.kwargs} for dist in uncertainties
-        ]
-        print("TOTO")
-        self.sm_store.create_surrogate(
-            surrogate_id,
-            SURROGATES_MAP[surrogate_kind],
-            xt,
-            yt,
-            surrogate_opts,
-            uncertains,
+                optimizer_opts[k] = v.str
+
+        self.optim_store.create_optimizer(
+            optimizer_id, OPTIMIZERS_MAP[optimizer_kind], optimizer_opts
         )
 
-    @throw_surrogate_exception
-    def qualify(self, surrogate_id, xv, yv):
-        print("QUALIFY ", surrogate_id)
-        yp = self.predict_values(surrogate_id, np.array(xv))
-        yv = np.array(yv).reshape(yp.shape)
-        r2 = r2_score(yv, yp)
-        print("R2={}".format(r2))
-        return SurrogateStoreTypes.SurrogateQualification(r2=r2, yp=yp)
-
-    @throw_surrogate_exception
-    def predict_values(self, surrogate_id, x):
-        print("PREDICT", surrogate_id)
-        sm = self.sm_store.get_surrogate(surrogate_id)
-        if sm:
-            return sm.predict_values(np.array(x))
+    @throw_optimizer_exception
+    def ask(self, optimizer_id):
+        print("ASK", optimizer_id)
+        optim = self.optim_store.get_optimizer(optimizer_id)
+        if optim:
+            return optim.ask()
         else:
-            return []
+            return None
 
-    def destroy_surrogate(self, surrogate_id):
+    @throw_optimizer_exception
+    def tell(self, optimizer_id, x, y):
+        print("TELL", optimizer_id, x, y)
+        optim = self.optim_store.get_optimizer(optimizer_id)
+        if optim:
+            optim.tell(np.array(x), np.array(y))
+
+    def destroy_optimizer(self, optimizer_id):
         print("DESTROY")
-        self.sm_store.destroy_surrogate(surrogate_id)
-
-    @throw_surrogate_exception
-    def copy_surrogate(self, src_id, dst_id):
-        print("COPY from surrogate {} to surrogate {}".format(src_id, dst_id))
-        self.sm_store.copy_surrogate(src_id, dst_id)
-
-    @throw_surrogate_exception
-    def get_sobol_pce_sensitivity_analysis(self, surrogate_id):
-        print("GET SOBOL INDICES from surrogate {}".format(surrogate_id))
-        sobols = self.sm_store.get_sobol_pce_sensitivity_analysis(surrogate_id)
-        return SurrogateStoreTypes.SobolIndices(S1=sobols["S1"], ST=sobols["ST"])
+        self.optim_store.destroy_optimizer(optimizer_id)
