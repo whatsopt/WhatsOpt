@@ -13,6 +13,20 @@ module WhatsOpt
       class Client
         include ::Thrift::Client
 
+        def ping()
+          send_ping()
+          recv_ping()
+        end
+
+        def send_ping()
+          send_message('ping', Ping_args)
+        end
+
+        def recv_ping()
+          result = receive_message(Ping_result)
+          return
+        end
+
         def create_optimizer(optimizer_id, kind, options)
           send_create_optimizer(optimizer_id, kind, options)
           recv_create_optimizer()
@@ -24,6 +38,7 @@ module WhatsOpt
 
         def recv_create_optimizer()
           result = receive_message(Create_optimizer_result)
+          raise result.exc unless result.exc.nil?
           return
         end
 
@@ -39,6 +54,7 @@ module WhatsOpt
         def recv_ask()
           result = receive_message(Ask_result)
           return result.success unless result.success.nil?
+          raise result.exc unless result.exc.nil?
           raise ::Thrift::ApplicationException.new(::Thrift::ApplicationException::MISSING_RESULT, 'ask failed: unknown result')
         end
 
@@ -53,6 +69,7 @@ module WhatsOpt
 
         def recv_tell()
           result = receive_message(Tell_result)
+          raise result.exc unless result.exc.nil?
           return
         end
 
@@ -75,24 +92,43 @@ module WhatsOpt
       class Processor
         include ::Thrift::Processor
 
+        def process_ping(seqid, iprot, oprot)
+          args = read_args(iprot, Ping_args)
+          result = Ping_result.new()
+          @handler.ping()
+          write_result(result, oprot, 'ping', seqid)
+        end
+
         def process_create_optimizer(seqid, iprot, oprot)
           args = read_args(iprot, Create_optimizer_args)
           result = Create_optimizer_result.new()
-          @handler.create_optimizer(args.optimizer_id, args.kind, args.options)
+          begin
+            @handler.create_optimizer(args.optimizer_id, args.kind, args.options)
+          rescue ::WhatsOpt::Services::OptimizerException => exc
+            result.exc = exc
+          end
           write_result(result, oprot, 'create_optimizer', seqid)
         end
 
         def process_ask(seqid, iprot, oprot)
           args = read_args(iprot, Ask_args)
           result = Ask_result.new()
-          result.success = @handler.ask(args.optimizer_id)
+          begin
+            result.success = @handler.ask(args.optimizer_id)
+          rescue ::WhatsOpt::Services::OptimizerException => exc
+            result.exc = exc
+          end
           write_result(result, oprot, 'ask', seqid)
         end
 
         def process_tell(seqid, iprot, oprot)
           args = read_args(iprot, Tell_args)
           result = Tell_result.new()
-          @handler.tell(args.optimizer_id, args.x, args.y)
+          begin
+            @handler.tell(args.optimizer_id, args.x, args.y)
+          rescue ::WhatsOpt::Services::OptimizerException => exc
+            result.exc = exc
+          end
           write_result(result, oprot, 'tell', seqid)
         end
 
@@ -106,6 +142,36 @@ module WhatsOpt
       end
 
       # HELPER FUNCTIONS AND STRUCTURES
+
+      class Ping_args
+        include ::Thrift::Struct, ::Thrift::Struct_Union
+
+        FIELDS = {
+
+        }
+
+        def struct_fields; FIELDS; end
+
+        def validate
+        end
+
+        ::Thrift::Struct.generate_accessors self
+      end
+
+      class Ping_result
+        include ::Thrift::Struct, ::Thrift::Struct_Union
+
+        FIELDS = {
+
+        }
+
+        def struct_fields; FIELDS; end
+
+        def validate
+        end
+
+        ::Thrift::Struct.generate_accessors self
+      end
 
       class Create_optimizer_args
         include ::Thrift::Struct, ::Thrift::Struct_Union
@@ -132,9 +198,10 @@ module WhatsOpt
 
       class Create_optimizer_result
         include ::Thrift::Struct, ::Thrift::Struct_Union
+        EXC = 1
 
         FIELDS = {
-
+          EXC => {:type => ::Thrift::Types::STRUCT, :name => 'exc', :class => ::WhatsOpt::Services::OptimizerException}
         }
 
         def struct_fields; FIELDS; end
@@ -164,9 +231,11 @@ module WhatsOpt
       class Ask_result
         include ::Thrift::Struct, ::Thrift::Struct_Union
         SUCCESS = 0
+        EXC = 1
 
         FIELDS = {
-          SUCCESS => {:type => ::Thrift::Types::DOUBLE, :name => 'success'}
+          SUCCESS => {:type => ::Thrift::Types::DOUBLE, :name => 'success'},
+          EXC => {:type => ::Thrift::Types::STRUCT, :name => 'exc', :class => ::WhatsOpt::Services::OptimizerException}
         }
 
         def struct_fields; FIELDS; end
@@ -185,8 +254,8 @@ module WhatsOpt
 
         FIELDS = {
           OPTIMIZER_ID => {:type => ::Thrift::Types::STRING, :name => 'optimizer_id'},
-          X => {:type => ::Thrift::Types::LIST, :name => 'x', :element => {:type => ::Thrift::Types::DOUBLE}},
-          Y => {:type => ::Thrift::Types::DOUBLE, :name => 'y'}
+          X => {:type => ::Thrift::Types::LIST, :name => 'x', :element => {:type => ::Thrift::Types::LIST, :element => {:type => ::Thrift::Types::DOUBLE}}},
+          Y => {:type => ::Thrift::Types::LIST, :name => 'y', :element => {:type => ::Thrift::Types::LIST, :element => {:type => ::Thrift::Types::DOUBLE}}}
         }
 
         def struct_fields; FIELDS; end
@@ -199,9 +268,10 @@ module WhatsOpt
 
       class Tell_result
         include ::Thrift::Struct, ::Thrift::Struct_Union
+        EXC = 1
 
         FIELDS = {
-
+          EXC => {:type => ::Thrift::Types::STRUCT, :name => 'exc', :class => ::WhatsOpt::Services::OptimizerException}
         }
 
         def struct_fields; FIELDS; end

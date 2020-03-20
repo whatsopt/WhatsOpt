@@ -20,6 +20,9 @@ module WhatsOpt
       socket = Thrift::Socket.new(@host, @port)
       @transport = Thrift::BufferedTransport.new(socket)
       protocol = Thrift::BinaryProtocol.new(@transport)
+      protocol = Thrift::MultiplexedProtocol.new(
+        protocol, "SurrogateStoreService"
+      )
       @client = Services::SurrogateStore::Client.new(protocol)
 
       @surrogate_id = surrogate_id || SecureRandom.uuid

@@ -30,12 +30,14 @@ module WhatsOpt
       INTEGER = 1
       NUMBER = 2
       VECTOR = 3
-      STR = 4
+      MATRIX = 4
+      STR = 5
 
       FIELDS = {
         INTEGER => {:type => ::Thrift::Types::I64, :name => 'integer', :optional => true},
         NUMBER => {:type => ::Thrift::Types::DOUBLE, :name => 'number', :optional => true},
         VECTOR => {:type => ::Thrift::Types::LIST, :name => 'vector', :element => {:type => ::Thrift::Types::DOUBLE}, :optional => true},
+        MATRIX => {:type => ::Thrift::Types::LIST, :name => 'matrix', :element => {:type => ::Thrift::Types::LIST, :element => {:type => ::Thrift::Types::DOUBLE}}, :optional => true},
         STR => {:type => ::Thrift::Types::STRING, :name => 'str', :optional => true}
       }
 
@@ -48,6 +50,29 @@ module WhatsOpt
     end
 
     class SurrogateException < ::Thrift::Exception
+      include ::Thrift::Struct, ::Thrift::Struct_Union
+      def initialize(message=nil)
+        super()
+        self.msg = message
+      end
+
+      def message; msg end
+
+      MSG = 1
+
+      FIELDS = {
+        MSG => {:type => ::Thrift::Types::STRING, :name => 'msg'}
+      }
+
+      def struct_fields; FIELDS; end
+
+      def validate
+      end
+
+      ::Thrift::Struct.generate_accessors self
+    end
+
+    class OptimizerException < ::Thrift::Exception
       include ::Thrift::Struct, ::Thrift::Struct_Union
       def initialize(message=nil)
         super()
