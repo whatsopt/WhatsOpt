@@ -9,6 +9,8 @@ from thrift.protocol import TBinaryProtocol
 from thrift.server import TServer
 from thrift.TMultiplexedProcessor import TMultiplexedProcessor
 
+from whatsopt_server.handlers.administration_handler import AdministrationHandler
+from whatsopt_server.services import Administration as AdministrationService
 from whatsopt_server.handlers.surrogate_store_handler import SurrogateStoreHandler
 from whatsopt_server.services import SurrogateStore as SurrogateStoreService
 from whatsopt_server.handlers.optimizer_store_handler import OptimizerStoreHandler
@@ -39,6 +41,10 @@ def main(args=sys.argv[1:]):
     processor.registerProcessor(
         "OptimizerStoreService",
         OptimizerStoreService.Processor(OptimizerStoreHandler()),
+    )
+    processor.registerProcessor(
+        "AdministrationService",
+        AdministrationService.Processor(AdministrationHandler()),
     )
     transport = TSocket.TServerSocket("0.0.0.0", port=41400)
     tfactory = TTransport.TBufferedTransportFactory()

@@ -26,10 +26,6 @@ enum SurrogateKind {
   OPENTURNS_PCE
 }
 
-enum OptimizerKind {
-  SEGOMOE,
-}
-
 exception SurrogateException {
   1: string msg
 }
@@ -54,11 +50,13 @@ struct Distribution {
 }
 typedef list<Distribution> Distributions;
 
-service SurrogateStore {
-
+service Administration {
   void ping();
-  oneway void shutdown();
 
+  oneway void shutdown();
+}
+
+service SurrogateStore {
   void create_surrogate(1: string surrogate_id,
                         2: SurrogateKind kind, 
                         3: Matrix xt, 
@@ -82,14 +80,22 @@ service SurrogateStore {
 }
 
 
+enum OptimizerKind {
+  SEGOMOE
+}
+
+struct OptimizerResult {
+  1: Integer status,
+  2: Vector x_suggested,
+}
+
 service OptimizerStore {
 
-  void ping();
   void create_optimizer(1: string optimizer_id,
                         2: OptimizerKind kind,
                         3: Options options) throws (1: OptimizerException exc);
 
-  Float ask(1: string optimizer_id) throws (1: OptimizerException exc);
+  OptimizerResult ask(1: string optimizer_id) throws (1: OptimizerException exc);
 
   void tell(1: string optimizer_id, 2: Matrix x, 3: Matrix y) throws (1: OptimizerException exc);
 

@@ -25,11 +25,10 @@ class TestSegomoeOptimizer(unittest.TestCase):
         segomoe.tell(self.x, self.y)
         res = segomoe.ask()
 
-        # status, x_suggested, best_y, t_elapsed = res
+        # status, x_suggested, y_value, t_elapsed = res
         status, x_suggested, _, _ = res
         self.assertEqual(0, status)
         np.testing.assert_allclose([0.8, 0.7], x_suggested, atol=0.1)
-        print(x_suggested)
 
 
 if __name__ == "__main__":

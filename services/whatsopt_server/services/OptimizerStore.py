@@ -19,9 +19,6 @@ all_structs = []
 
 
 class Iface(object):
-    def ping(self):
-        pass
-
     def create_optimizer(self, optimizer_id, kind, options):
         """
         Parameters:
@@ -61,30 +58,6 @@ class Client(Iface):
         if oprot is not None:
             self._oprot = oprot
         self._seqid = 0
-
-    def ping(self):
-        self.send_ping()
-        self.recv_ping()
-
-    def send_ping(self):
-        self._oprot.writeMessageBegin('ping', TMessageType.CALL, self._seqid)
-        args = ping_args()
-        args.write(self._oprot)
-        self._oprot.writeMessageEnd()
-        self._oprot.trans.flush()
-
-    def recv_ping(self):
-        iprot = self._iprot
-        (fname, mtype, rseqid) = iprot.readMessageBegin()
-        if mtype == TMessageType.EXCEPTION:
-            x = TApplicationException()
-            x.read(iprot)
-            iprot.readMessageEnd()
-            raise x
-        result = ping_result()
-        result.read(iprot)
-        iprot.readMessageEnd()
-        return
 
     def create_optimizer(self, optimizer_id, kind, options):
         """
@@ -223,7 +196,6 @@ class Processor(Iface, TProcessor):
     def __init__(self, handler):
         self._handler = handler
         self._processMap = {}
-        self._processMap["ping"] = Processor.process_ping
         self._processMap["create_optimizer"] = Processor.process_create_optimizer
         self._processMap["ask"] = Processor.process_ask
         self._processMap["tell"] = Processor.process_tell
@@ -243,29 +215,6 @@ class Processor(Iface, TProcessor):
         else:
             self._processMap[name](self, seqid, iprot, oprot)
         return True
-
-    def process_ping(self, seqid, iprot, oprot):
-        args = ping_args()
-        args.read(iprot)
-        iprot.readMessageEnd()
-        result = ping_result()
-        try:
-            self._handler.ping()
-            msg_type = TMessageType.REPLY
-        except TTransport.TTransportException:
-            raise
-        except TApplicationException as ex:
-            logging.exception('TApplication exception in handler')
-            msg_type = TMessageType.EXCEPTION
-            result = ex
-        except Exception:
-            logging.exception('Unexpected exception in handler')
-            msg_type = TMessageType.EXCEPTION
-            result = TApplicationException(TApplicationException.INTERNAL_ERROR, 'Internal error')
-        oprot.writeMessageBegin("ping", msg_type, seqid)
-        result.write(oprot)
-        oprot.writeMessageEnd()
-        oprot.trans.flush()
 
     def process_create_optimizer(self, seqid, iprot, oprot):
         args = create_optimizer_args()
@@ -371,92 +320,6 @@ class Processor(Iface, TProcessor):
 # HELPER FUNCTIONS AND STRUCTURES
 
 
-class ping_args(object):
-
-
-    def read(self, iprot):
-        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
-            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
-            return
-        iprot.readStructBegin()
-        while True:
-            (fname, ftype, fid) = iprot.readFieldBegin()
-            if ftype == TType.STOP:
-                break
-            else:
-                iprot.skip(ftype)
-            iprot.readFieldEnd()
-        iprot.readStructEnd()
-
-    def write(self, oprot):
-        if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
-            return
-        oprot.writeStructBegin('ping_args')
-        oprot.writeFieldStop()
-        oprot.writeStructEnd()
-
-    def validate(self):
-        return
-
-    def __repr__(self):
-        L = ['%s=%r' % (key, value)
-             for key, value in self.__dict__.items()]
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
-
-    def __eq__(self, other):
-        return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
-
-    def __ne__(self, other):
-        return not (self == other)
-all_structs.append(ping_args)
-ping_args.thrift_spec = (
-)
-
-
-class ping_result(object):
-
-
-    def read(self, iprot):
-        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
-            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
-            return
-        iprot.readStructBegin()
-        while True:
-            (fname, ftype, fid) = iprot.readFieldBegin()
-            if ftype == TType.STOP:
-                break
-            else:
-                iprot.skip(ftype)
-            iprot.readFieldEnd()
-        iprot.readStructEnd()
-
-    def write(self, oprot):
-        if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
-            return
-        oprot.writeStructBegin('ping_result')
-        oprot.writeFieldStop()
-        oprot.writeStructEnd()
-
-    def validate(self):
-        return
-
-    def __repr__(self):
-        L = ['%s=%r' % (key, value)
-             for key, value in self.__dict__.items()]
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
-
-    def __eq__(self, other):
-        return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
-
-    def __ne__(self, other):
-        return not (self == other)
-all_structs.append(ping_result)
-ping_result.thrift_spec = (
-)
-
-
 class create_optimizer_args(object):
     """
     Attributes:
@@ -493,12 +356,12 @@ class create_optimizer_args(object):
             elif fid == 3:
                 if ftype == TType.MAP:
                     self.options = {}
-                    (_ktype131, _vtype132, _size130) = iprot.readMapBegin()
-                    for _i134 in range(_size130):
-                        _key135 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
-                        _val136 = OptionValue()
-                        _val136.read(iprot)
-                        self.options[_key135] = _val136
+                    (_ktype138, _vtype139, _size137) = iprot.readMapBegin()
+                    for _i141 in range(_size137):
+                        _key142 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                        _val143 = OptionValue()
+                        _val143.read(iprot)
+                        self.options[_key142] = _val143
                     iprot.readMapEnd()
                 else:
                     iprot.skip(ftype)
@@ -523,9 +386,9 @@ class create_optimizer_args(object):
         if self.options is not None:
             oprot.writeFieldBegin('options', TType.MAP, 3)
             oprot.writeMapBegin(TType.STRING, TType.STRUCT, len(self.options))
-            for kiter137, viter138 in self.options.items():
-                oprot.writeString(kiter137.encode('utf-8') if sys.version_info[0] == 2 else kiter137)
-                viter138.write(oprot)
+            for kiter144, viter145 in self.options.items():
+                oprot.writeString(kiter144.encode('utf-8') if sys.version_info[0] == 2 else kiter144)
+                viter145.write(oprot)
             oprot.writeMapEnd()
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
@@ -698,8 +561,9 @@ class ask_result(object):
             if ftype == TType.STOP:
                 break
             if fid == 0:
-                if ftype == TType.DOUBLE:
-                    self.success = iprot.readDouble()
+                if ftype == TType.STRUCT:
+                    self.success = OptimizerResult()
+                    self.success.read(iprot)
                 else:
                     iprot.skip(ftype)
             elif fid == 1:
@@ -719,8 +583,8 @@ class ask_result(object):
             return
         oprot.writeStructBegin('ask_result')
         if self.success is not None:
-            oprot.writeFieldBegin('success', TType.DOUBLE, 0)
-            oprot.writeDouble(self.success)
+            oprot.writeFieldBegin('success', TType.STRUCT, 0)
+            self.success.write(oprot)
             oprot.writeFieldEnd()
         if self.exc is not None:
             oprot.writeFieldBegin('exc', TType.STRUCT, 1)
@@ -744,7 +608,7 @@ class ask_result(object):
         return not (self == other)
 all_structs.append(ask_result)
 ask_result.thrift_spec = (
-    (0, TType.DOUBLE, 'success', None, None, ),  # 0
+    (0, TType.STRUCT, 'success', [OptimizerResult, None], None, ),  # 0
     (1, TType.STRUCT, 'exc', [OptimizerException, None], None, ),  # 1
 )
 
@@ -780,30 +644,30 @@ class tell_args(object):
             elif fid == 2:
                 if ftype == TType.LIST:
                     self.x = []
-                    (_etype142, _size139) = iprot.readListBegin()
-                    for _i143 in range(_size139):
-                        _elem144 = []
-                        (_etype148, _size145) = iprot.readListBegin()
-                        for _i149 in range(_size145):
-                            _elem150 = iprot.readDouble()
-                            _elem144.append(_elem150)
+                    (_etype149, _size146) = iprot.readListBegin()
+                    for _i150 in range(_size146):
+                        _elem151 = []
+                        (_etype155, _size152) = iprot.readListBegin()
+                        for _i156 in range(_size152):
+                            _elem157 = iprot.readDouble()
+                            _elem151.append(_elem157)
                         iprot.readListEnd()
-                        self.x.append(_elem144)
+                        self.x.append(_elem151)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
             elif fid == 3:
                 if ftype == TType.LIST:
                     self.y = []
-                    (_etype154, _size151) = iprot.readListBegin()
-                    for _i155 in range(_size151):
-                        _elem156 = []
-                        (_etype160, _size157) = iprot.readListBegin()
-                        for _i161 in range(_size157):
-                            _elem162 = iprot.readDouble()
-                            _elem156.append(_elem162)
+                    (_etype161, _size158) = iprot.readListBegin()
+                    for _i162 in range(_size158):
+                        _elem163 = []
+                        (_etype167, _size164) = iprot.readListBegin()
+                        for _i168 in range(_size164):
+                            _elem169 = iprot.readDouble()
+                            _elem163.append(_elem169)
                         iprot.readListEnd()
-                        self.y.append(_elem156)
+                        self.y.append(_elem163)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
@@ -824,20 +688,20 @@ class tell_args(object):
         if self.x is not None:
             oprot.writeFieldBegin('x', TType.LIST, 2)
             oprot.writeListBegin(TType.LIST, len(self.x))
-            for iter163 in self.x:
-                oprot.writeListBegin(TType.DOUBLE, len(iter163))
-                for iter164 in iter163:
-                    oprot.writeDouble(iter164)
+            for iter170 in self.x:
+                oprot.writeListBegin(TType.DOUBLE, len(iter170))
+                for iter171 in iter170:
+                    oprot.writeDouble(iter171)
                 oprot.writeListEnd()
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         if self.y is not None:
             oprot.writeFieldBegin('y', TType.LIST, 3)
             oprot.writeListBegin(TType.LIST, len(self.y))
-            for iter165 in self.y:
-                oprot.writeListBegin(TType.DOUBLE, len(iter165))
-                for iter166 in iter165:
-                    oprot.writeDouble(iter166)
+            for iter172 in self.y:
+                oprot.writeListBegin(TType.DOUBLE, len(iter172))
+                for iter173 in iter172:
+                    oprot.writeDouble(iter173)
                 oprot.writeListEnd()
             oprot.writeListEnd()
             oprot.writeFieldEnd()

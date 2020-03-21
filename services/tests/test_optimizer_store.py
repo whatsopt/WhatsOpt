@@ -31,12 +31,13 @@ class TestOptimizerStore(unittest.TestCase):
 
     def test_optimizer(self):
         self.xlimits = np.array([[-32.768, 32.768], [-32.768, 32.768]])
-        opt = self.store.create_optimizer("1", "SEGOMOE", {"xlimits": self.xlimits})
-        opt.tell(self.x, self.y)
+        self.store.create_optimizer("1", "SEGOMOE", {"xlimits": self.xlimits})
+        self.store.tell_optimizer("1", self.x, self.y)
+        opt = self.store.get_optimizer("1")
         status, next_x, _, _ = opt.ask()
 
+        self.store.tell_optimizer("1", self.x, self.y)
         opt1 = self.store.get_optimizer("1")
-        opt1.tell(self.x, self.y)
         status1, next_x1, _, _ = opt1.ask()
         self.assertEqual(status, status1)
         np.testing.assert_allclose(next_x1, next_x, atol=0.1)

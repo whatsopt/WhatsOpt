@@ -9,7 +9,7 @@ from thrift.transport import TTransport
 from thrift.protocol import TBinaryProtocol, TMultiplexedProtocol
 
 from whatsopt_server.services import ttypes as OptimimzerStoreTypes
-from whatsopt_server.services import OptimizerStore
+from whatsopt_server.services import OptimizerStore, Administration
 
 
 class OptimizerStoreProxy(object):
@@ -17,10 +17,14 @@ class OptimizerStoreProxy(object):
         self.transport = transport = TSocket.TSocket("localhost", 41400)
         transport = TTransport.TBufferedTransport(transport)
         protocol = TBinaryProtocol.TBinaryProtocol(transport)
-        protocol = TMultiplexedProtocol.TMultiplexedProtocol(
+        multiplex1 = TMultiplexedProtocol.TMultiplexedProtocol(
             protocol, "OptimizerStoreService"
         )
-        self._thrift_client = OptimizerStore.Client(protocol)
+        self._thrift_client = OptimizerStore.Client(multiplex1)
+        multiplex2 = TMultiplexedProtocol.TMultiplexedProtocol(
+            protocol, "AdministrationService"
+        )
+        self._admin_client = Administration.Client(multiplex2)
         transport.open()
 
     def ping(self):
@@ -69,10 +73,34 @@ class TestOptimizerService(unittest.TestCase):
             OptimizerStore.OptimizerKind.SEGOMOE,
             {"xlimits": OptimizerStore.OptionValue(matrix=xlimits)},
         )
+        self.store.destroy_optimizer("1")
 
     # @unittest.skip("skip")
     def test_optimizer(self):
-        pass
+        xlimits = [[-32.768, 32.768], [-32.768, 32.768]]
+        self.store.create_optimizer(
+            "1",
+            OptimizerStore.OptimizerKind.SEGOMOE,
+            {"xlimits": OptimizerStore.OptionValue(matrix=xlimits)},
+        )
+        # test
+        doe = np.array(
+            [
+                [0.1005624023, 0.1763338461, 9.09955542],
+                [0.843746558, 0.6787895599, 6.38231049],
+                [0.3861691997, 0.106018846, 12.4677347],
+            ]
+        )
+        x = doe[:, :2]
+        y = doe[:, 2:]
+
+        self.store.tell("1", x, y)
+        res = self.store.ask("1")
+
+        self.assertEqual(0, res.status)
+        np.testing.assert_allclose([0.8, 0.7], res.x_suggested, atol=0.1)
+
+        self.store.destroy_optimizer("1")
 
 
 if __name__ == "__main__":

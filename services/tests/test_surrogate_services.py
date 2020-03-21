@@ -9,7 +9,7 @@ from thrift.transport import TTransport
 from thrift.protocol import TBinaryProtocol, TMultiplexedProtocol
 
 from whatsopt_server.services import ttypes as SurrogateStoreTypes
-from whatsopt_server.services import SurrogateStore
+from whatsopt_server.services import SurrogateStore, Administration
 
 
 class SurrogateStoreProxy(object):
@@ -17,14 +17,18 @@ class SurrogateStoreProxy(object):
         self.transport = transport = TSocket.TSocket("localhost", 41400)
         transport = TTransport.TBufferedTransport(transport)
         protocol = TBinaryProtocol.TBinaryProtocol(transport)
-        protocol = TMultiplexedProtocol.TMultiplexedProtocol(
+        multiplex1 = TMultiplexedProtocol.TMultiplexedProtocol(
             protocol, "SurrogateStoreService"
         )
-        self._thrift_client = SurrogateStore.Client(protocol)
+        self._thrift_client = SurrogateStore.Client(multiplex1)
+        multiplex2 = TMultiplexedProtocol.TMultiplexedProtocol(
+            protocol, "AdministrationService"
+        )
+        self._admin_client = Administration.Client(multiplex2)
         transport.open()
 
     def ping(self):
-        return self._thrift_client.ping()
+        return self._admin_client.ping()
 
     def create_surrogate(
         self, surrogate_id, surrogate_kind, xt, yt, options={}, uncertainties=[]

@@ -149,5 +149,23 @@ module WhatsOpt
       ::Thrift::Struct.generate_accessors self
     end
 
+    class OptimizerResult
+      include ::Thrift::Struct, ::Thrift::Struct_Union
+      STATUS = 1
+      X_SUGGESTED = 2
+
+      FIELDS = {
+        STATUS => {:type => ::Thrift::Types::I64, :name => 'status'},
+        X_SUGGESTED => {:type => ::Thrift::Types::LIST, :name => 'x_suggested', :element => {:type => ::Thrift::Types::DOUBLE}}
+      }
+
+      def struct_fields; FIELDS; end
+
+      def validate
+      end
+
+      ::Thrift::Struct.generate_accessors self
+    end
+
   end
 end

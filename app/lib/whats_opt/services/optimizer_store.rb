@@ -13,20 +13,6 @@ module WhatsOpt
       class Client
         include ::Thrift::Client
 
-        def ping()
-          send_ping()
-          recv_ping()
-        end
-
-        def send_ping()
-          send_message('ping', Ping_args)
-        end
-
-        def recv_ping()
-          result = receive_message(Ping_result)
-          return
-        end
-
         def create_optimizer(optimizer_id, kind, options)
           send_create_optimizer(optimizer_id, kind, options)
           recv_create_optimizer()
@@ -92,13 +78,6 @@ module WhatsOpt
       class Processor
         include ::Thrift::Processor
 
-        def process_ping(seqid, iprot, oprot)
-          args = read_args(iprot, Ping_args)
-          result = Ping_result.new()
-          @handler.ping()
-          write_result(result, oprot, 'ping', seqid)
-        end
-
         def process_create_optimizer(seqid, iprot, oprot)
           args = read_args(iprot, Create_optimizer_args)
           result = Create_optimizer_result.new()
@@ -142,36 +121,6 @@ module WhatsOpt
       end
 
       # HELPER FUNCTIONS AND STRUCTURES
-
-      class Ping_args
-        include ::Thrift::Struct, ::Thrift::Struct_Union
-
-        FIELDS = {
-
-        }
-
-        def struct_fields; FIELDS; end
-
-        def validate
-        end
-
-        ::Thrift::Struct.generate_accessors self
-      end
-
-      class Ping_result
-        include ::Thrift::Struct, ::Thrift::Struct_Union
-
-        FIELDS = {
-
-        }
-
-        def struct_fields; FIELDS; end
-
-        def validate
-        end
-
-        ::Thrift::Struct.generate_accessors self
-      end
 
       class Create_optimizer_args
         include ::Thrift::Struct, ::Thrift::Struct_Union
@@ -234,7 +183,7 @@ module WhatsOpt
         EXC = 1
 
         FIELDS = {
-          SUCCESS => {:type => ::Thrift::Types::DOUBLE, :name => 'success'},
+          SUCCESS => {:type => ::Thrift::Types::STRUCT, :name => 'success', :class => ::WhatsOpt::Services::OptimizerResult},
           EXC => {:type => ::Thrift::Types::STRUCT, :name => 'exc', :class => ::WhatsOpt::Services::OptimizerException}
         }
 

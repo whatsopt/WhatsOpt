@@ -61,16 +61,17 @@ class OptimizerStoreHandler:
         print("ASK", optimizer_id)
         optim = self.optim_store.get_optimizer(optimizer_id)
         if optim:
-            return optim.ask()
+            print("GOING TO ASK...")
+            status, x, _, _ = optim.ask()
+            print("status = {}, x_suggested = {}".format(status, x))
+            return OptimizerStoreTypes.OptimizerResult(status=status, x_suggested=x)
         else:
-            return None
+            return OptimizerStoreTypes.OptimizerResult(status=status, x_suggested=[])
 
     @throw_optimizer_exception
     def tell(self, optimizer_id, x, y):
         print("TELL", optimizer_id, x, y)
-        optim = self.optim_store.get_optimizer(optimizer_id)
-        if optim:
-            optim.tell(np.array(x), np.array(y))
+        self.optim_store.tell_optimizer(optimizer_id, x, y)
 
     def destroy_optimizer(self, optimizer_id):
         print("DESTROY")

@@ -28,13 +28,15 @@ class OptimizerStore(object):
                 )
             )
         print("options = {}".format(optimizer_options))
-        optimizer = self.optimizer_classes[optimizer_kind](**optimizer_options)
+        self.optimizer = self.optimizer_classes[optimizer_kind](**optimizer_options)
 
-        filename = self._optimizer_filename(optimizer_id)
-        print("DUMP ", filename)
-        with open(filename, "wb") as f:
-            pickle.dump(optimizer, f)
-        return optimizer
+        self._dump(optimizer_id)
+        return self.optimizer
+
+    def tell_optimizer(self, optimizer_id, x, y):
+        self.optimizer = self.get_optimizer(optimizer_id)
+        self.optimizer.tell(np.array(x), np.array(y))
+        self._dump(optimizer_id)
 
     def get_optimizer(self, optimizer_id):
         filename = self._optimizer_filename(optimizer_id)
@@ -51,3 +53,8 @@ class OptimizerStore(object):
     def _optimizer_filename(self, optimizer_id):
         return "%s/optimizer_%s.pkl" % (self.outdir, optimizer_id)
 
+    def _dump(self, optimizer_id):
+        filename = self._optimizer_filename(optimizer_id)
+        print("DUMP ", filename)
+        with open(filename, "wb") as f:
+            pickle.dump(self.optimizer, f)
