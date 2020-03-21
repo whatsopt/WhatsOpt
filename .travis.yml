@@ -45,6 +45,7 @@ install:
   - pip install salib
   - pip install thrift
   - pip install openturns
+  - pip install -e services
   - python --version
   - pip list
 
@@ -65,7 +66,7 @@ install:
 before_script:
   - cp config/configuration.yml.example config/configuration.yml
   - cp config/database.yml.example config/database.yml
-  - mkdir -p upload/logs upload/surrogate_store
+  - mkdir -p upload/store
   - RAILS_ENV=test bundle exec rake db:schema:load
   - bundle exec rake db:test:prepare
   - RAILS_ENV=test bundle exec rake webpacker:compile
