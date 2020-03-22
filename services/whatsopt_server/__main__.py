@@ -36,11 +36,11 @@ def main(args=sys.argv[1:]):
     processor = TMultiplexedProcessor()
     processor.registerProcessor(
         "SurrogateStoreService",
-        SurrogateStoreService.Processor(SurrogateStoreHandler()),
+        SurrogateStoreService.Processor(SurrogateStoreHandler(outdir=outdir)),
     )
     processor.registerProcessor(
         "OptimizerStoreService",
-        OptimizerStoreService.Processor(OptimizerStoreHandler()),
+        OptimizerStoreService.Processor(OptimizerStoreHandler(outdir=outdir)),
     )
     processor.registerProcessor(
         "AdministrationService",

@@ -27,27 +27,27 @@ class Optimization < ApplicationRecord
   end
 
   def xdim
-    0 if xlimits.blank?
-    Matrix[*xlimits]
+    0 if self.xlimits.blank?
+    Matrix[*self.xlimits]
   end
 
   def proxy
-    WhatsOpt::OptimizerProxy.new(id: id.to_s)
+    WhatsOpt::OptimizerProxy.new(id: self.id.to_s)
   end
 
   def check_optimization_config
-    kind = 'SEGOMOE' if kind.blank?
-    unless (kind == 'SEGOMOE')
-      raise ConfigurationInvalid.new("optitmizer kind should be SEGOMOE, got '#{kind}'")
+    kind = 'SEGOMOE' if kind.blank? 
+    unless (self.kind == 'SEGOMOE')
+      raise ConfigurationInvalid.new("optimizer kind should be SEGOMOE, got '#{self.kind}'")
     end
-    unless (xlimits)
-      raise ConfigurationInvalid.new("xlimits field should be present, got '#{xlimits}'") 
+    unless (self.xlimits)
+      raise ConfigurationInvalid.new("xlimits field should be present, got '#{self.xlimits}'") 
     end
     begin
-      m = Matrix[*xlimits]
+      m = Matrix[*self.xlimits]
       raise if m.row_count < 1 or m.column_count != 2
     rescue Exception
-      raise ConfigurationInvalid.new("xlimits should be a matrix (nx, 2), got '#{xlimits}'") 
+      raise ConfigurationInvalid.new("xlimits should be a matrix (nx, 2), got '#{self.xlimits}'") 
     end
   end
 

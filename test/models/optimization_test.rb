@@ -11,6 +11,7 @@ class OperationTest < ActiveSupport::TestCase
   test "should reject bad optimizer kind" do
     assert_raises Optimization::ConfigurationInvalid do 
       optim = Optimization.new(kind: "TOTO", xlimits: [[0, 1], [0, 1]])
+      p optim
     end
   end
 

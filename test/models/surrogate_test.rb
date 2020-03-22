@@ -5,7 +5,7 @@ require "test_helper"
 class SurrogateTest < ActiveSupport::TestCase
   setup do
     @surr = surrogates(:surrogate_obj)
-    @surr_file = File.join(WhatsOpt::SurrogateProxy::OUTDIR, "surrogate_#{@surr.id}.pkl")
+    @surr_file = File.join(WhatsOpt::ServiceProxy::OUTDIR, "surrogate_#{@surr.id}.pkl")
   end
 
   teardown do
@@ -16,6 +16,7 @@ class SurrogateTest < ActiveSupport::TestCase
     skip_if_parallel
     assert_equal Surrogate::STATUS_CREATED, @surr.status
     @surr.train
+    sleep 1
     assert File.exist?(@surr_file)
     @surr.reload
     assert_equal Surrogate::STATUS_TRAINED, @surr.status
