@@ -25,5 +25,15 @@ module ExceptionHandler
       json_response({ message: e.message }, :forbidden)
     end
 
+    rescue_from Optimization::ConfigurationInvalid do |e|
+      Rails.logger.error "Invalid configuration : " + e.message
+      json_response({ message: e.message }, :bad_request)
+    end
+
+    rescue_from Optimization::InputInvalid do |e|
+      Rails.logger.error "Invalid inputs : " + e.message
+      json_response({ message: e.message }, :bad_request)
+    end
+
   end
 end

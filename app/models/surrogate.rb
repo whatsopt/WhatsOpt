@@ -46,7 +46,7 @@ class Surrogate < ApplicationRecord
   before_destroy :_delete_surrogate
 
   def proxy
-    WhatsOpt::SurrogateProxy.new(surrogate_id: id.to_s)
+    WhatsOpt::SurrogateProxy.new(id: id.to_s)
   end
 
   def float_varname
