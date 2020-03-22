@@ -49,3 +49,7 @@ users_roles13:
 users_roles14:
   user: user3
   role: owner_singleton_mm_spec_role
+
+users_roles_optim_ackley2d:
+  user: user1
+  role: owner_optim_ackley2d_role

@@ -22,29 +22,28 @@ class Api::V1::OptimizationControllerTest < ActionDispatch::IntegrationTest
     assert_equal "SEGOMOE", resp['kind']
   end
 
-  # test "should get an operation" do
-  #   get api_v1_operation_url(@ope), as: :json, headers: @auth_headers
-  #   assert_response :success
-  #   resp = JSON.parse(response.body)
-  #   assert_equal 5, resp["success"].size
-  # end
+  test "should update and get an optimization" do
+    @optim = optimizations(:optim_ackley2d)
+    @optim.create_optimizer
 
-  # test "should update an operation with cases" do
-  #   patch api_v1_operation_url(@ope),
-  #     params: { operation: { name: "update_doe", driver: "slsqp", cases: [{ varname: "x1", coord_index: 0, values: [4, 5] },
-  #                                                                       { varname: "y2", coord_index: 0, values: [1, 2] }
-  #                                                                      ], success: [1, 1] } },
-  #     as: :json, headers: @auth_headers
-  #   assert_response :success
-  #   get api_v1_operation_url(@ope), as: :json, headers: @auth_headers
-  #   resp = JSON.parse(response.body)
-  #   assert_equal "update_doe", resp["name"]
-  #   assert_equal "slsqp", resp["driver"]
-  #   assert_equal ["x1", "y2"], resp["cases"].map { |c| c["varname"] }.sort
-  #   assert_equal [0, 0], resp["cases"].map { |c| c["coord_index"] }.sort
-  #   assert_equal [1, 2, 4, 5], resp["cases"].map { |c| c["values"] }.flatten.sort
-  #   assert_equal "DONE_OFFLINE", resp["job"]["status"]
-  #   assert_equal "this is a test job\nData uploaded\n", resp["job"]["log"]
-  # end
+    patch api_v1_optimization_url(@optim),
+      params: { optimization: { x: [[0.1005624023, 0.1763338461],
+                                [0.843746558, 0.6787895599],
+                                [0.3861691997, 0.106018846]], 
+                             y: [[9.09955542], [6.38231049], [12.4677347]]}},
+      as: :json, headers: @auth_headers
+    assert_response :success
+    resp = JSON.parse(response.body)
+    status = resp['status']
+    assert_equal 0, status
+    x = resp['x_suggested']
+    assert_in_delta(0.85, x[0], 0.5)
+    assert_in_delta(0.66, x[1], 0.5)
 
+    get api_v1_optimization_url(@optim), as: :json, headers: @auth_headers
+    assert_response :success
+    resp = JSON.parse(response.body)
+    assert_in_delta(0.85, resp['outputs']['x_suggested'][0], 0.5)
+    assert_in_delta(0.66, resp['outputs']['x_suggested'][1], 0.5)
+  end
 end

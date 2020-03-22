@@ -1,4 +1,5 @@
 require 'matrix'
+require 'whatsopt_services_types'
 
 class Optimization < ApplicationRecord
 
@@ -11,13 +12,19 @@ class Optimization < ApplicationRecord
   }
 
   store :config, accessors: [:xlimits], coder: JSON  
-  store :inputs, accessors: [:x, :y], coder: JSON, suffix: true
-  store :outputs, accessors: [:status, :suggested], coder: JSON
+  store :inputs, accessors: [:x, :y], coder: JSON
+  store :outputs, accessors: [:status, :x_suggested], coder: JSON
 
   class InputInvalid < Exception; end
   class ConfigurationInvalid < Exception; end
 
   after_initialize :check_optimization_config
+
+  def create_optimizer
+    unless new_record?  
+      proxy.create_optimizer(Optimization::OPTIMIZER_KINDS[kind], {xlimits: xlimits})
+    end
+  end
 
   def xdim
     0 if xlimits.blank?

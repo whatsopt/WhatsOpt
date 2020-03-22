@@ -5,6 +5,7 @@ class Api::V1::OptimizationsController < Api::ApiController
 
   # GET /api/v1/optimizations/1
   def show
+    json_response @optim
   end
 
   # POST /api/v1/optimizations
@@ -12,7 +13,7 @@ class Api::V1::OptimizationsController < Api::ApiController
     @optim = Optimization.new(optim_params)
     authorize @optim
     @optim.save!
-    @optim.proxy.create_optimizer(Optimization::OPTIMIZER_KINDS[@optim.kind], {xlimits: @optim.xlimits})
+    @optim.create_optimizer
     @optim.set_owner(current_user)
     json_response @optim, :created
   end
@@ -20,8 +21,11 @@ class Api::V1::OptimizationsController < Api::ApiController
   # PATCH /api/v1/optimizations/1
   def update
     @optim.check_optimization_inputs(optim_params)
-    @optim.update_optimization!(inputs: {x: opt_params['x'], y: opt_params['y']})
-    head :no_content
+    inputs = {x: optim_params['x'], y: optim_params['y']}
+    @optim.proxy.tell(inputs[:x], inputs[:y])
+    res = @optim.proxy.ask
+    @optim.update!(inputs: inputs, outputs: {status: res.status, x_suggested: res.x_suggested})
+    json_response res
   end
 
   # DELETE /api/v1/optimizations/1
@@ -33,7 +37,7 @@ class Api::V1::OptimizationsController < Api::ApiController
 
   private 
 
-    def set_operation
+    def set_optimization
       @optim = Optimization.find(params[:id])
       @proxy = @optim.proxy
       authorize @optim

@@ -26,9 +26,9 @@ module WhatsOpt
     end
 
     def ask()
-      x_suggested = nil
-      _send { x_suggested = @client.ask(@id) }
-      x_suggested
+      res = nil
+      _send { res = @client.ask(@id) }
+      res
     end
 
     def tell(x, y)

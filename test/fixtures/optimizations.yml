@@ -1,0 +1,3 @@
+optim_ackley2d:
+  kind: SEGOMOE
+  config: <%= { :xlimits => [[-32.768, 32.768], [-32.768, 32.768]] }.to_json.inspect  %>
