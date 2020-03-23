@@ -3,9 +3,15 @@ import numpy as np
 import re
 import csv
 import tempfile
+import warnings
 
-from segomoe.sego import Sego
-from segomoe.constraint import Constraint
+SEGOMOE_NOT_INSTALLED = False
+try:
+    from segomoe.sego import Sego
+    from segomoe.constraint import Constraint
+except ImportError:
+    warnings.warn("Optimizer SEGOMOE not installed")
+    SEGOMOE_NOT_INSTALLED = True
 
 
 class SegomoeOptimizer(object):
@@ -21,6 +27,8 @@ class SegomoeOptimizer(object):
     def ask(self):
         nx = self.x.shape[1]
         ny = self.y.shape[1]
+        if SEGOMOE_NOT_INSTALLED:
+            return (3, np.zeros((1, nx)), np.zeros((1, ny)), 0)
         obj = self.y[:, :1]
         cstrs = self.y[:, 1:]
         print("nx={}, ny={}, y={}".format(nx, ny, obj))

@@ -9,6 +9,7 @@ class Api::V1::OptimizationControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should create an optimization" do
+    skip_if_parallel
     assert_difference("Optimization.count", 1) do
       post api_v1_optimizations_url,
         params: { optimization: { kind: "SEGOMOE",
@@ -23,6 +24,8 @@ class Api::V1::OptimizationControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update and get an optimization" do
+    skip_if_parallel
+    skip_if_segomoe_not_installed
     @optim = optimizations(:optim_ackley2d)
     @optim.create_optimizer
 
