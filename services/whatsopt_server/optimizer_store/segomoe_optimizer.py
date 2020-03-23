@@ -71,7 +71,7 @@ class SegomoeOptimizer(object):
                     "analytical_diff": True,
                     "profiling": False,
                     "debug": False,
-                    "verbose": False,
+                    "verbose": True,
                     "cst_hand": self.constraint_handling,
                 },
                 path_hs=tmpdir,

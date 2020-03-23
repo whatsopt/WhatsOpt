@@ -13,7 +13,7 @@ require "rails/test_help"
 TEST_API_KEY = "FriendlyApiKey"
 
 SEGOMOE_INSTALLED = system("python << EOF\nimport segomoe\nEOF")
-print("SEGOMOE_INSTALLED=#{SEGOMOE_INSTALLED}")
+puts("SEGOMOE_INSTALLED=#{SEGOMOE_INSTALLED}")
 
 class ActiveSupport::TestCase
   # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.

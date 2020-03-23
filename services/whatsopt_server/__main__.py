@@ -16,6 +16,10 @@ from whatsopt_server.services import SurrogateStore as SurrogateStoreService
 from whatsopt_server.handlers.optimizer_store_handler import OptimizerStoreHandler
 from whatsopt_server.services import OptimizerStore as OptimizerStoreService
 
+import warnings
+
+warnings.simplefilter(action="ignore", category=FutureWarning)
+
 
 def main(args=sys.argv[1:]):
     from optparse import OptionParser
