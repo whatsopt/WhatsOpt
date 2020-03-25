@@ -1,4 +1,5 @@
 import os
+import sys
 import numpy as np
 import re
 import csv
@@ -31,7 +32,8 @@ class SegomoeOptimizer(object):
             return (3, np.zeros((1, nx)), np.zeros((1, ny)), 0)
         obj = self.y[:, :1]
         cstrs = self.y[:, 1:]
-        print("nx={}, ny={}, y={}".format(nx, ny, obj))
+        print("nx={}, x={}".format(nx, self.x))
+        print("ny={}, y={}".format(ny, obj))
 
         print("Bounds of design variables:")
         print(self.xlimits)
@@ -41,7 +43,7 @@ class SegomoeOptimizer(object):
         print("lower={} upper={}".format(lb, ub))
 
         def f_grouped(x):
-            return np.zeros(ny), False
+            return -sys.float_info.max * np.ones(ny), False
 
         var = [{"name": "x_" + str(i), "lb": lb[i], "ub": ub[i]} for i in range(nx)]
 
@@ -54,9 +56,18 @@ class SegomoeOptimizer(object):
         }
         mod_con = mod_obj
         default_models = {"obj": mod_obj, "con": mod_con}
+        optim_settings = {
+            "model_type": default_models,
+            "analytical_diff": True,
+            "profiling": False,
+            "debug": False,
+            "verbose": True,
+            "cst_hand": self.constraint_handling,
+        }
 
         print(var)
         res = None
+
         with tempfile.TemporaryDirectory() as tmpdir:
             np.save(os.path.join(tmpdir, "doe"), self.x)
             np.save(os.path.join(tmpdir, "doe_response"), self.y)
@@ -64,21 +75,12 @@ class SegomoeOptimizer(object):
                 f_grouped,
                 var,
                 const=[],
-                optim_settings={
-                    "model_type": default_models,
-                    "n_clusters": 1,
-                    "grouped_eval": True,
-                    "analytical_diff": True,
-                    "profiling": False,
-                    "debug": False,
-                    "verbose": True,
-                    "cst_hand": self.constraint_handling,
-                },
+                optim_settings=optim_settings,
                 path_hs=tmpdir,
                 comm=None,
             )
             res = sego.run_optim(n_iter=1)
-
+            print(res)
         if not res:
             res = (2, np.zeros((1, nx)), np.zeros((1, ny)), 0)
         return res
