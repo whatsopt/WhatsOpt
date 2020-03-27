@@ -26,6 +26,7 @@ class Api::V1::OptimizationControllerTest < ActionDispatch::IntegrationTest
   test "should update and get an optimization" do
     skip_if_parallel
     skip_if_segomoe_not_installed
+    skip("need n_clusters=1 option not yet implemented")
     @optim = optimizations(:optim_ackley2d)
     @optim.create_optimizer
 
