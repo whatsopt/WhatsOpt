@@ -31,9 +31,14 @@ class SegomoeOptimizer(object):
         if SEGOMOE_NOT_INSTALLED:
             return (3, np.zeros((1, nx)), np.zeros((1, ny)), 0)
         obj = self.y[:, :1]
+        nobj = obj.shape[1]
         cstrs = self.y[:, 1:]
+        ncstrs = cstrs.shape[1]
+
         print("nx={}, x={}".format(nx, self.x))
-        print("ny={}, y={}".format(ny, obj))
+        print("ny={}, y={}".format(ny, self.y))
+        print("nobj={}, obj={}".format(nobj, obj))
+        print("ncstrs={}, cstrs={}".format(ncstrs, cstrs))
 
         print("Bounds of design variables:")
         print(self.xlimits)
@@ -45,7 +50,16 @@ class SegomoeOptimizer(object):
         def f_grouped(x):
             return -sys.float_info.max * np.ones(ny), False
 
-        var = [{"name": "x_" + str(i), "lb": lb[i], "ub": ub[i]} for i in range(nx)]
+        def g(x):
+            return 1
+
+        dvars = [{"name": "x_" + str(i), "lb": lb[i], "ub": ub[i]} for i in range(nx)]
+        print(dvars)
+        cons = [
+            Constraint("<", 0.0, name="c_" + str(i), f=g, tol=1e-4)
+            for i in range(ncstrs)
+        ]
+        print(cons)
 
         mod_obj = {
             "type": "Krig",
@@ -56,8 +70,11 @@ class SegomoeOptimizer(object):
         }
         mod_con = mod_obj
         default_models = {"obj": mod_obj, "con": mod_con}
+        n_clusters = 1
         optim_settings = {
             "model_type": default_models,
+            "n_clusters": n_clusters,
+            "grouped_eval": True,
             "analytical_diff": True,
             "profiling": False,
             "debug": False,
@@ -65,16 +82,14 @@ class SegomoeOptimizer(object):
             "cst_hand": self.constraint_handling,
         }
 
-        print(var)
         res = None
-
         with tempfile.TemporaryDirectory() as tmpdir:
             np.save(os.path.join(tmpdir, "doe"), self.x)
             np.save(os.path.join(tmpdir, "doe_response"), self.y)
             sego = Sego(
-                f_grouped,
-                var,
-                const=[],
+                fun=f_grouped,
+                var=dvars,
+                const=cons,
                 optim_settings=optim_settings,
                 path_hs=tmpdir,
                 comm=None,
