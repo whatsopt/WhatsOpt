@@ -89,11 +89,25 @@ struct OptimizerResult {
   2: Vector x_suggested,
 }
 
+enum ConstraintType {
+  LESS,
+  EQUAL,
+  GREATER
+}
+
+struct ConstraintSpec {
+  1: ConstraintType type,
+  2: Float bound
+}
+typedef list<ConstraintSpec> ConstraintSpecs;
+
 service OptimizerStore {
 
   void create_optimizer(1: string optimizer_id,
                         2: OptimizerKind kind,
-                        3: Options options) throws (1: OptimizerException exc);
+                        3: Matrix xlimits, 
+                        4: ConstraintSpecs cstr_specs, 
+                        5: Options options) throws (1: OptimizerException exc);
 
   OptimizerResult ask(1: string optimizer_id) throws (1: OptimizerException exc);
 

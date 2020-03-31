@@ -20,7 +20,9 @@ class OptimizerStore(object):
         if not os.path.exists(outdir):
             os.makedirs(outdir)
 
-    def create_optimizer(self, optimizer_id, optimizer_kind, optimizer_options={}):
+    def create_optimizer(
+        self, optimizer_id, optimizer_kind, xlimits, cstr_specs=[], optimizer_options={}
+    ):
         if optimizer_kind not in OptimizerStore.OPTIMIZER_NAMES:
             raise Exception(
                 "Unknown optimizer {} not in {}".format(
@@ -28,7 +30,9 @@ class OptimizerStore(object):
                 )
             )
         print("options = {}".format(optimizer_options))
-        self.optimizer = self.optimizer_classes[optimizer_kind](**optimizer_options)
+        self.optimizer = self.optimizer_classes[optimizer_kind](
+            xlimits, cstr_specs, **optimizer_options
+        )
 
         self._dump(optimizer_id)
         return self.optimizer

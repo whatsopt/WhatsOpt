@@ -13,13 +13,13 @@ module WhatsOpt
       class Client
         include ::Thrift::Client
 
-        def create_optimizer(optimizer_id, kind, options)
-          send_create_optimizer(optimizer_id, kind, options)
+        def create_optimizer(optimizer_id, kind, xlimits, cstr_specs, options)
+          send_create_optimizer(optimizer_id, kind, xlimits, cstr_specs, options)
           recv_create_optimizer()
         end
 
-        def send_create_optimizer(optimizer_id, kind, options)
-          send_message('create_optimizer', Create_optimizer_args, :optimizer_id => optimizer_id, :kind => kind, :options => options)
+        def send_create_optimizer(optimizer_id, kind, xlimits, cstr_specs, options)
+          send_message('create_optimizer', Create_optimizer_args, :optimizer_id => optimizer_id, :kind => kind, :xlimits => xlimits, :cstr_specs => cstr_specs, :options => options)
         end
 
         def recv_create_optimizer()
@@ -82,7 +82,7 @@ module WhatsOpt
           args = read_args(iprot, Create_optimizer_args)
           result = Create_optimizer_result.new()
           begin
-            @handler.create_optimizer(args.optimizer_id, args.kind, args.options)
+            @handler.create_optimizer(args.optimizer_id, args.kind, args.xlimits, args.cstr_specs, args.options)
           rescue ::WhatsOpt::Services::OptimizerException => exc
             result.exc = exc
           end
@@ -126,11 +126,15 @@ module WhatsOpt
         include ::Thrift::Struct, ::Thrift::Struct_Union
         OPTIMIZER_ID = 1
         KIND = 2
-        OPTIONS = 3
+        XLIMITS = 3
+        CSTR_SPECS = 4
+        OPTIONS = 5
 
         FIELDS = {
           OPTIMIZER_ID => {:type => ::Thrift::Types::STRING, :name => 'optimizer_id'},
           KIND => {:type => ::Thrift::Types::I32, :name => 'kind', :enum_class => ::WhatsOpt::Services::OptimizerKind},
+          XLIMITS => {:type => ::Thrift::Types::LIST, :name => 'xlimits', :element => {:type => ::Thrift::Types::LIST, :element => {:type => ::Thrift::Types::DOUBLE}}},
+          CSTR_SPECS => {:type => ::Thrift::Types::LIST, :name => 'cstr_specs', :element => {:type => ::Thrift::Types::STRUCT, :class => ::WhatsOpt::Services::ConstraintSpec}},
           OPTIONS => {:type => ::Thrift::Types::MAP, :name => 'options', :key => {:type => ::Thrift::Types::STRING}, :value => {:type => ::Thrift::Types::STRUCT, :class => ::WhatsOpt::Services::OptionValue}}
         }
 

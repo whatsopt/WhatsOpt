@@ -25,6 +25,14 @@ module WhatsOpt
       VALID_VALUES = Set.new([SEGOMOE]).freeze
     end
 
+    module ConstraintType
+      LESS = 0
+      EQUAL = 1
+      GREATER = 2
+      VALUE_MAP = {0 => "LESS", 1 => "EQUAL", 2 => "GREATER"}
+      VALID_VALUES = Set.new([LESS, EQUAL, GREATER]).freeze
+    end
+
     class OptionValue
       include ::Thrift::Struct, ::Thrift::Struct_Union
       INTEGER = 1
@@ -162,6 +170,27 @@ module WhatsOpt
       def struct_fields; FIELDS; end
 
       def validate
+      end
+
+      ::Thrift::Struct.generate_accessors self
+    end
+
+    class ConstraintSpec
+      include ::Thrift::Struct, ::Thrift::Struct_Union
+      TYPE = 1
+      BOUND = 2
+
+      FIELDS = {
+        TYPE => {:type => ::Thrift::Types::I32, :name => 'type', :enum_class => ::WhatsOpt::Services::ConstraintType},
+        BOUND => {:type => ::Thrift::Types::DOUBLE, :name => 'bound'}
+      }
+
+      def struct_fields; FIELDS; end
+
+      def validate
+        unless @type.nil? || ::WhatsOpt::Services::ConstraintType::VALID_VALUES.include?(@type)
+          raise ::Thrift::ProtocolException.new(::Thrift::ProtocolException::UNKNOWN, 'Invalid value of field type!')
+        end
       end
 
       ::Thrift::Struct.generate_accessors self

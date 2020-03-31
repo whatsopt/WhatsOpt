@@ -31,14 +31,33 @@ class OptimizerStoreHandler:
         exit(0)
 
     @throw_optimizer_exception
-    def create_optimizer(self, optimizer_id, optimizer_kind, optimizer_options={}):
+    def create_optimizer(
+        self, optimizer_id, optimizer_kind, xlimits, cstr_specs, optimizer_options={}
+    ):
         print(
             "CREATE ",
             optimizer_id,
             optimizer_kind,
             OPTIMIZERS_MAP[optimizer_kind],
+            xlimits,
+            cstr_specs,
             optimizer_options,
         )
+        cspecs = []
+        for cspec in cstr_specs:
+            print(cspec)
+            if cspec.type == OptimizerStoreTypes.ConstraintType.GREATER:
+                cspecs.append({"type": ">", "bound": cspec.bound})
+            elif cspec.type == OptimizerStoreTypes.ConstraintType.EQUAL:
+                cspecs.append({"type": "=", "bound": cspec.bound})
+            elif cspec.type == OptimizerStoreTypes.ConstraintType.LESS:
+                cspecs.append({"type": "<", "bound": cspec.bound})
+            else:
+                Exception(
+                    "Bad constraint specification: should be <, > or =, got {}".format(
+                        cspec.type
+                    )
+                )
         optimizer_opts = {}
         for k, v in optimizer_options.items():
             if v.integer is not None:
@@ -53,7 +72,11 @@ class OptimizerStoreHandler:
                 optimizer_opts[k] = v.str
 
         self.optim_store.create_optimizer(
-            optimizer_id, OPTIMIZERS_MAP[optimizer_kind], optimizer_opts
+            optimizer_id,
+            OPTIMIZERS_MAP[optimizer_kind],
+            xlimits,
+            cspecs,
+            optimizer_opts,
         )
 
     @throw_optimizer_exception
@@ -61,7 +84,6 @@ class OptimizerStoreHandler:
         print("ASK", optimizer_id)
         optim = self.optim_store.get_optimizer(optimizer_id)
         if optim:
-            print("GOING TO ASK...")
             status, x, _, _ = optim.ask()
             print("status = {}, x_suggested = {}".format(status, x))
             return OptimizerStoreTypes.OptimizerResult(status=status, x_suggested=x)

@@ -15,9 +15,8 @@ class OptimizeAckley2D < ActionDispatch::IntegrationTest
   def optimize(fun, maxiter, xlimits, doe)
     post api_v1_optimizations_url,
     params: { optimization: { kind: "SEGOMOE",
-                              xlimits: xlimits,
-                          }
-              },
+                              xlimits: xlimits }
+            },
       as: :json, headers: @auth_headers
     assert_response :success
 

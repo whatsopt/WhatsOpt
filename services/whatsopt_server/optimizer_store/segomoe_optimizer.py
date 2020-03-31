@@ -16,12 +16,37 @@ except ImportError:
 
 
 class SegomoeOptimizer(object):
-    def __init__(self, xlimits):
+    def __init__(self, xlimits, cstr_specs=[]):
         self.constraint_handling = "MC"  # or 'UTB'
         self.xlimits = np.array(xlimits)
+        self.constraints = self._parse_constraint_specs(cstr_specs)
         self.workdir = tempfile.TemporaryDirectory()
 
+    @staticmethod
+    def _parse_constraint_specs(cstr_specs):
+        cstrs = []
+        for i, spec in enumerate(cstr_specs):
+            if spec["type"] == "<" or spec["type"] == "=" or spec["type"] == ">":
+                cstrs.append({"type": spec["type"], "bound": spec["bound"]})
+            else:
+                print("")
+                raise Exception(
+                    "Bad constraint spec type (n°{}): should match <, = or > , got {}".format(
+                        i + 1, spec
+                    )
+                )
+        return cstrs
+
     def tell(self, x, y):
+        ncstrs = len(self.constraints)
+        print(y.shape)
+        if y.shape[1] != (ncstrs + 1):
+            raise Exception(
+                "Size mismatch: y should be of {} size (1 objective + {} constraints), got {}".format(
+                    ncstrs + 1, ncstrs, y.shape[1]
+                )
+            )
+
         self.x = x
         self.y = y
 
@@ -30,15 +55,14 @@ class SegomoeOptimizer(object):
         ny = self.y.shape[1]
         if SEGOMOE_NOT_INSTALLED:
             return (3, np.zeros((1, nx)), np.zeros((1, ny)), 0)
-        obj = self.y[:, :1]
-        nobj = obj.shape[1]
-        cstrs = self.y[:, 1:]
-        ncstrs = cstrs.shape[1]
-
-        print("nx={}, x={}".format(nx, self.x))
-        print("ny={}, y={}".format(ny, self.y))
-        print("nobj={}, obj={}".format(nobj, obj))
-        print("ncstrs={}, cstrs={}".format(ncstrs, cstrs))
+        # obj = self.y[:, :1]
+        # cstrs = self.y[:, 1:]
+        # nobj = obj.shape[1]
+        # ncstrs = cstrs.shape[1]
+        # print("nx={}, x={}".format(nx, self.x))
+        # print("ny={}, y={}".format(ny, self.y))
+        # print("nobj={}, obj={}".format(nobj, obj))
+        # print("ncstrs={}, cstrs={}".format(ncstrs, cstrs))
 
         print("Bounds of design variables:")
         print(self.xlimits)
@@ -51,13 +75,13 @@ class SegomoeOptimizer(object):
             return -sys.float_info.max * np.ones(ny), False
 
         def g(x):
-            return 1
+            return np.ones((1, 1)), False
 
         dvars = [{"name": "x_" + str(i), "lb": lb[i], "ub": ub[i]} for i in range(nx)]
         print(dvars)
         cons = [
-            Constraint("<", 0.0, name="c_" + str(i), f=g, tol=1e-4)
-            for i in range(ncstrs)
+            Constraint(cstr["type"], cstr["bound"], name="c_" + str(i), f=g, tol=1e-4)
+            for i, cstr in enumerate(self.constraints)
         ]
         print(cons)
 
@@ -70,10 +94,11 @@ class SegomoeOptimizer(object):
         }
         mod_con = mod_obj
         default_models = {"obj": mod_obj, "con": mod_con}
-        n_clusters = 1
+        n_clusters = 0
         optim_settings = {
             "model_type": default_models,
             "n_clusters": n_clusters,
+            "optimizer": "slsqp",
             "grouped_eval": True,
             "analytical_diff": True,
             "profiling": False,

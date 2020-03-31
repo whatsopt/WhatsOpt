@@ -17,7 +17,7 @@ class OptimizerProxyTest < ActiveSupport::TestCase
     skip_if_parallel
     skip_if_segomoe_not_installed
     kind = WhatsOpt::Services::OptimizerKind::SEGOMOE
-    @proxy.create_optimizer(kind, {xlimits: [[-32.768, 32.768], [-32.768, 32.768]]})
+    @proxy.create_optimizer(kind, [[-32.768, 32.768], [-32.768, 32.768]])
     x = [[0.1005624023, 0.1763338461],
          [0.843746558, 0.6787895599],
          [0.3861691997, 0.106018846]]
