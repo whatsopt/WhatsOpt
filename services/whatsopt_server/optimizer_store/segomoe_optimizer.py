@@ -38,6 +38,10 @@ class SegomoeOptimizer(object):
         return cstrs
 
     def tell(self, x, y):
+        print("X *************************************************")
+        print(x)
+        print("Y *************************************************")
+        print(y)
         ncstrs = len(self.constraints)
         print(y.shape)
         if y.shape[1] != (ncstrs + 1):
@@ -74,16 +78,26 @@ class SegomoeOptimizer(object):
         def f_grouped(x):
             return -sys.float_info.max * np.ones(ny), False
 
-        def g(x):
-            return np.ones((1, 1)), False
-
         dvars = [{"name": "x_" + str(i), "lb": lb[i], "ub": ub[i]} for i in range(nx)]
         print(dvars)
         cons = [
-            Constraint(cstr["type"], cstr["bound"], name="c_" + str(i), f=g, tol=1e-4)
+            Constraint(
+                cstr.get("type", "<"),
+                cstr.get("bound", 0.0),
+                name="c_" + str(i),
+                tol=cstr.get("tol", 1e-4),
+            )
             for i, cstr in enumerate(self.constraints)
         ]
         print(cons)
+        # sego store constraint values as positive :
+        #   c < bound   => store (bound - c)
+        #   c >= bound  => store (c - bound)
+        for i, cstr in enumerate(self.constraints):
+            if cstr["type"] == "<":
+                self.y[:, i + 1] = cstr["bound"] - self.y[:, i + 1]
+            else:
+                self.y[:, i + 1] = self.y[:, i + 1] - cstr["bound"]
 
         mod_obj = {
             "type": "Krig",
@@ -91,16 +105,17 @@ class SegomoeOptimizer(object):
             "theta0": [1.0] * nx,
             "thetaL": [0.1] * nx,
             "thetaU": [10.0] * nx,
+            "normalize": True,
         }
         mod_con = mod_obj
         default_models = {"obj": mod_obj, "con": mod_con}
-        n_clusters = 0
+        n_clusters = 1
         optim_settings = {
             "model_type": default_models,
             "n_clusters": n_clusters,
             "optimizer": "slsqp",
+            "analytical_diff": False,
             "grouped_eval": True,
-            "analytical_diff": True,
             "profiling": False,
             "debug": False,
             "verbose": True,
