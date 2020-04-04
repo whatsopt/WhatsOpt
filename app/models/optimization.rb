@@ -11,6 +11,14 @@ class Optimization < ApplicationRecord
     "SEGOMOE" => WhatsOpt::Services::OptimizerKind::SEGOMOE
   }
 
+  PENDING = -1
+  VALID_POINT = 0
+  INVALID_POINT = 1
+  RUNTIME_ERROR = 2
+  SOLUTION_REACHED = 3
+  RUNNING = 4
+  OPTIMIZER_STATUS = [VALID_POINT, INVALID_POINT, RUNTIME_ERROR, SOLUTION_REACHED, RUNNING, PENDING]
+
   store :config, accessors: [:xlimits, :cstr_specs], coder: JSON  
   store :inputs, accessors: [:x, :y], coder: JSON
   store :outputs, accessors: [:status, :x_suggested], coder: JSON
@@ -24,6 +32,13 @@ class Optimization < ApplicationRecord
     unless new_record?
       proxy.create_optimizer(Optimization::OPTIMIZER_KINDS[kind], self.xlimits, self.cstr_specs)
     end
+  end
+
+  def perform
+    self.update!(outputs: {status: RUNNING, x_suggested: nil})
+    self.proxy.tell(inputs[:x], inputs[:y])
+    res = self.proxy.ask
+    self.update!(outputs: {status: res.status, x_suggested: res.x_suggested})
   end
 
   def xdim

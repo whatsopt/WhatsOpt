@@ -1,55 +1,11 @@
-require 'test_helper'
-require 'matrix'
+require 'integration/optimization_test_base'
 
-class OptimizeAckley2D < ActionDispatch::IntegrationTest
-
-  setup do
-    @user1 = users(:user1)
-    @auth_headers = { "Authorization" => "Token " + TEST_API_KEY }
-  end
-
-  def teardown
-    WhatsOpt::OptimizerProxy.shutdown_server
-  end
-
-  def optimize(fun, maxiter, xlimits, doe)
-    post api_v1_optimizations_url,
-    params: { optimization: { kind: "SEGOMOE",
-                              xlimits: xlimits }
-            },
-      as: :json, headers: @auth_headers
-    assert_response :success
-
-    resp = JSON.parse(response.body)
-    assert_equal "SEGOMOE", resp['kind']
-    optim_id = resp['id']
-
-    y = doe.map{|x| [fun.call(x)]}
-    x = doe
-
-    best = y.map{|r| r[0]}.each_with_index.min     
-    for i in 1..maxiter do
-      patch api_v1_optimization_url(optim_id),
-        params: { optimization: { x: x, y: y}},
-        as: :json, headers: @auth_headers
-      assert_response :success
-      resp = JSON.parse(response.body)
-      x_suggested = resp['x_suggested']
-      new_y = fun.call(x_suggested)
-
-      x << x_suggested
-      y << [new_y]
-
-      if new_y < best[0]
-        best = [new_y, y.size-1]
-      end
-    end
-    return best
-  end
+class SegomoeOptimization < OptimizationTestBase
 
   test "optimize sixhump" do
     skip_if_parallel
     skip_if_segomoe_not_installed
+    skip "a bit long to run"
 
     sixhump = Proc.new do |x|
       """
@@ -70,7 +26,7 @@ class OptimizeAckley2D < ActionDispatch::IntegrationTest
     [-2.40777823,  0.84365121],
     [-0.78322913, -1.82952567]]
 
-    best = self.optimize(sixhump, 30, xlimits, doe)
+    best = self.optimize(sixhump, [], 30, xlimits, [], doe)
 
     miny = best[0]
     minx = doe[best[1]]
@@ -103,7 +59,7 @@ class OptimizeAckley2D < ActionDispatch::IntegrationTest
            [ 24.60309692,   8.79743867],
            [ -1.54756028,  25.96816089]]
 
-    best = self.optimize(ackley2d, 2, xlimits, doe)
+    best = self.optimize(ackley2d, [], 2, xlimits, [], doe)
 
     miny = best[0]
     minx = doe[best[1]]

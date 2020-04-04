@@ -22,10 +22,9 @@ class Api::V1::OptimizationsController < Api::ApiController
   def update
     @optim.check_optimization_inputs(optim_params)
     inputs = {x: optim_params['x'], y: optim_params['y']}
-    @optim.proxy.tell(inputs[:x], inputs[:y])
-    res = @optim.proxy.ask
-    @optim.update!(inputs: inputs, outputs: {status: res.status, x_suggested: res.x_suggested})
-    json_response res
+    @optim.update!(inputs: inputs, outputs: {status: Optimization::RUNNING, x_suggested: nil})
+    OptimizationJob.perform_later(@optim)
+    head :no_content
   end
 
   # DELETE /api/v1/optimizations/1
