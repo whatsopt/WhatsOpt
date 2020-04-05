@@ -1,8 +1,10 @@
 <h1>CHANGELOG</h1>
 
-<h3>1.7.0 (??/03/2020)</h3>
+<h3>1.7.0 (05/04/2020)</h3>
 <ul>
-  <li>Openmdao 2.10.0 support</li>
+  <li>User has access to SEGOMOE optimizer as a web service</li>
+  <li>Code generation supports OpenMDAO 3.0</li>
+  <li>Fix sub-analysis replacement</li>
 </ul>
 
 <h3>1.6.0 (28/02/2020)</h3>
