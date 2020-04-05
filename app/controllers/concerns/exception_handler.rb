@@ -35,9 +35,10 @@ module ExceptionHandler
       json_response({ message: e.message }, :bad_request)
     end
 
-    rescue_from WhatsOpt::Services::OptimizerException do |e|
-      Rails.logger.error "Optimization error : " + e.message
-      json_response({ message: e.message }, :unprocessable_entity)
-    end
+    # Never catch here as the optimizer computation is asynchronous now
+    # rescue_from WhatsOpt::Services::OptimizerException do |e|
+    #   Rails.logger.error "Optimization error : " + e.message
+    #   json_response({ message: e.message }, :unprocessable_entity)
+    # end
   end
 end

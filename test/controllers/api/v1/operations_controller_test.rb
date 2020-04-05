@@ -199,6 +199,15 @@ class Api::V1::OperationsControllerTest < ActionDispatch::IntegrationTest
       get api_v1_operation_sensitivity_analysis_url(derived), as: :json, headers: @auth_headers
       assert_response :success
     end
+
   end
 
+  test "should prevent removal when removing a base operation" do
+    doe = operations(:morris_doe)
+    assert_difference('Operation.count', 0) do
+      delete api_v1_operation_url(doe), as: :json, headers: @auth_headers
+      assert_response :forbidden
+    end
+  end
+  
 end

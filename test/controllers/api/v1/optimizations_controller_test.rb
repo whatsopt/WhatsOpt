@@ -23,6 +23,34 @@ class Api::V1::OptimizationControllerTest < ActionDispatch::IntegrationTest
     assert_equal "SEGOMOE", resp['kind']
   end
 
+  test "should raise error on xlimits absence" do
+    skip_if_parallel
+    assert_difference("Optimization.count", 0) do
+      post api_v1_optimizations_url,
+        params: { optimization: { kind: "SEGOMOE"} }, as: :json, headers: @auth_headers
+    end
+    assert_response :bad_request
+  end
+
+  test "should raise error on ill formed xlimits" do
+    skip_if_parallel
+    assert_difference("Optimization.count", 0) do
+      post api_v1_optimizations_url,
+        params: { optimization: { kind: "SEGOMOE", xlimits: [1,2,3]} }, as: :json, headers: @auth_headers
+    end
+    assert_response :bad_request
+  end
+
+  # useless since optimization is asynchronous
+  # test "should raise error on optimizer error" do
+  #   skip_if_parallel
+  #   @optim = optimizations(:optim_ackley2d)
+  #   @optim.create_optimizer
+  #   patch api_v1_optimization_url(@optim),
+  #     params: { optimization: { x: [[1]], y: [[2]] }}, as: :json, headers: @auth_headers
+  #   assert_response :bad_request
+  # end
+
   test "should update and get an optimization" do
     skip_if_parallel
     skip_if_segomoe_not_installed
