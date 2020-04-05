@@ -7,7 +7,7 @@
 require 'thrift'
 
 module WhatsOpt
-  module SurrogateServer
+  module Services
     module SurrogateKind
       SMT_KRIGING = 0
       SMT_KPLS = 1
@@ -19,17 +19,33 @@ module WhatsOpt
       VALID_VALUES = Set.new([SMT_KRIGING, SMT_KPLS, SMT_KPLSK, SMT_LS, SMT_QP, OPENTURNS_PCE]).freeze
     end
 
+    module OptimizerKind
+      SEGOMOE = 0
+      VALUE_MAP = {0 => "SEGOMOE"}
+      VALID_VALUES = Set.new([SEGOMOE]).freeze
+    end
+
+    module ConstraintType
+      LESS = 0
+      EQUAL = 1
+      GREATER = 2
+      VALUE_MAP = {0 => "LESS", 1 => "EQUAL", 2 => "GREATER"}
+      VALID_VALUES = Set.new([LESS, EQUAL, GREATER]).freeze
+    end
+
     class OptionValue
       include ::Thrift::Struct, ::Thrift::Struct_Union
       INTEGER = 1
       NUMBER = 2
       VECTOR = 3
-      STR = 4
+      MATRIX = 4
+      STR = 5
 
       FIELDS = {
         INTEGER => {:type => ::Thrift::Types::I64, :name => 'integer', :optional => true},
         NUMBER => {:type => ::Thrift::Types::DOUBLE, :name => 'number', :optional => true},
         VECTOR => {:type => ::Thrift::Types::LIST, :name => 'vector', :element => {:type => ::Thrift::Types::DOUBLE}, :optional => true},
+        MATRIX => {:type => ::Thrift::Types::LIST, :name => 'matrix', :element => {:type => ::Thrift::Types::LIST, :element => {:type => ::Thrift::Types::DOUBLE}}, :optional => true},
         STR => {:type => ::Thrift::Types::STRING, :name => 'str', :optional => true}
       }
 
@@ -42,6 +58,29 @@ module WhatsOpt
     end
 
     class SurrogateException < ::Thrift::Exception
+      include ::Thrift::Struct, ::Thrift::Struct_Union
+      def initialize(message=nil)
+        super()
+        self.msg = message
+      end
+
+      def message; msg end
+
+      MSG = 1
+
+      FIELDS = {
+        MSG => {:type => ::Thrift::Types::STRING, :name => 'msg'}
+      }
+
+      def struct_fields; FIELDS; end
+
+      def validate
+      end
+
+      ::Thrift::Struct.generate_accessors self
+    end
+
+    class OptimizerException < ::Thrift::Exception
       include ::Thrift::Struct, ::Thrift::Struct_Union
       def initialize(message=nil)
         super()
@@ -113,6 +152,45 @@ module WhatsOpt
       def struct_fields; FIELDS; end
 
       def validate
+      end
+
+      ::Thrift::Struct.generate_accessors self
+    end
+
+    class OptimizerResult
+      include ::Thrift::Struct, ::Thrift::Struct_Union
+      STATUS = 1
+      X_SUGGESTED = 2
+
+      FIELDS = {
+        STATUS => {:type => ::Thrift::Types::I64, :name => 'status'},
+        X_SUGGESTED => {:type => ::Thrift::Types::LIST, :name => 'x_suggested', :element => {:type => ::Thrift::Types::DOUBLE}}
+      }
+
+      def struct_fields; FIELDS; end
+
+      def validate
+      end
+
+      ::Thrift::Struct.generate_accessors self
+    end
+
+    class ConstraintSpec
+      include ::Thrift::Struct, ::Thrift::Struct_Union
+      TYPE = 1
+      BOUND = 2
+
+      FIELDS = {
+        TYPE => {:type => ::Thrift::Types::I32, :name => 'type', :enum_class => ::WhatsOpt::Services::ConstraintType},
+        BOUND => {:type => ::Thrift::Types::DOUBLE, :name => 'bound'}
+      }
+
+      def struct_fields; FIELDS; end
+
+      def validate
+        unless @type.nil? || ::WhatsOpt::Services::ConstraintType::VALID_VALUES.include?(@type)
+          raise ::Thrift::ProtocolException.new(::Thrift::ProtocolException::UNKNOWN, 'Invalid value of field type!')
+        end
       end
 
       ::Thrift::Struct.generate_accessors self

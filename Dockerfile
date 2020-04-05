@@ -111,6 +111,13 @@ RUN bundle install --jobs 20 --retry 5
 
 COPY . ./
 
+RUN pip install -e services/whatsopt_server/optimizer_store/oneramdao/doe \
+	&& pip install -e services/whatsopt_server/optimizer_store/oneramdao/kpls \
+	&& pip install -e services/whatsopt_server/optimizer_store/oneramdao/mfk \
+	&& pip install -e services/whatsopt_server/optimizer_store/oneramdao/moe \
+	&& pip install -e services/whatsopt_server/optimizer_store/oneramdao/sego \
+	&& pip install -e services
+
 EXPOSE 3000
 
 CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0"]

@@ -36,6 +36,7 @@ Rails.application.routes.draw do
       resources :users, only: [:index, :update]  
       resources :user_roles, only: [:index, :update]  
       resource :versioning, only: [:show]  
+      resources :optimizations
     end
   end
 

@@ -6,10 +6,10 @@ import time
 
 from thrift.transport import TSocket
 from thrift.transport import TTransport
-from thrift.protocol import TBinaryProtocol
-from whatsopt_services.surrogate_server import ttypes as SurrogateStoreTypes
+from thrift.protocol import TBinaryProtocol, TMultiplexedProtocol
 
-from whatsopt_services.surrogate_server import SurrogateStore
+from whatsopt_server.services import ttypes as SurrogateStoreTypes
+from whatsopt_server.services import SurrogateStore, Administration
 
 
 class SurrogateStoreProxy(object):
@@ -17,14 +17,25 @@ class SurrogateStoreProxy(object):
         self.transport = transport = TSocket.TSocket("localhost", 41400)
         transport = TTransport.TBufferedTransport(transport)
         protocol = TBinaryProtocol.TBinaryProtocol(transport)
-        self._thrift_client = SurrogateStore.Client(protocol)
+        multiplex1 = TMultiplexedProtocol.TMultiplexedProtocol(
+            protocol, "SurrogateStoreService"
+        )
+        self._thrift_client = SurrogateStore.Client(multiplex1)
+        multiplex2 = TMultiplexedProtocol.TMultiplexedProtocol(
+            protocol, "AdministrationService"
+        )
+        self._admin_client = Administration.Client(multiplex2)
         transport.open()
 
     def ping(self):
-        return self._thrift_client.ping()
+        return self._admin_client.ping()
 
-    def create_surrogate(self, surrogate_id, surrogate_kind, xt, yt, options={}, uncertainties=[]):
-        self._thrift_client.create_surrogate(surrogate_id, surrogate_kind, xt, yt, options, uncertainties)
+    def create_surrogate(
+        self, surrogate_id, surrogate_kind, xt, yt, options={}, uncertainties=[]
+    ):
+        self._thrift_client.create_surrogate(
+            surrogate_id, surrogate_kind, xt, yt, options, uncertainties
+        )
 
     def predict_values(self, surrogate_id, xe):
         return self._thrift_client.predict_values(surrogate_id, xe)
@@ -45,13 +56,10 @@ class SurrogateStoreProxy(object):
         self.transport.close()
 
 
-class TestSurrogateServer(unittest.TestCase):
+class TestSurrogateService(unittest.TestCase):
     def setUp(self):
         cmd = os.path.join(
-            os.path.dirname(__file__),
-            os.path.pardir,
-            "whatsopt_services",
-            "__main__.py",
+            os.path.dirname(__file__), os.path.pardir, "whatsopt_server", "__main__.py"
         )
         self.server = subprocess.Popen(["python", cmd])
         for _ in range(10):
@@ -82,8 +90,11 @@ class TestSurrogateServer(unittest.TestCase):
         yt = np.array([0.0, 1.0, 1.5, 0.5, 1.0])
 
         self.store.create_surrogate(
-            "1", SurrogateStore.SurrogateKind.SMT_KRIGING, xt, yt, 
-            {"theta0": SurrogateStore.OptionValue(vector=[0.2])}
+            "1",
+            SurrogateStore.SurrogateKind.SMT_KRIGING,
+            xt,
+            yt,
+            {"theta0": SurrogateStore.OptionValue(vector=[0.2])},
         )
 
     # @unittest.skip("skip")
@@ -108,9 +119,10 @@ class TestSurrogateServer(unittest.TestCase):
         yt = np.array([0.0, 1.0, 1.5, 0.5, 1.0])
 
         self.store.create_surrogate(
-            "1", SurrogateStore.SurrogateKind.OPENTURNS_PCE, xt, yt
+            "3", SurrogateStore.SurrogateKind.OPENTURNS_PCE, xt, yt
         )
-        sobol = self.store.get_sobol_pce_sensitivity_analysis("1")
+
+        sobol = self.store.get_sobol_pce_sensitivity_analysis("3")
         print(sobol)
 
     # @unittest.skip("skip")
@@ -119,8 +131,13 @@ class TestSurrogateServer(unittest.TestCase):
         yt = np.array([0.0, 1.0, 1.5, 0.5, 1.0])
 
         self.store.create_surrogate(
-            "1", SurrogateStore.SurrogateKind.OPENTURNS_PCE, xt, yt,
-            uncertainties=[SurrogateStore.Distribution(name="Uniform", kwargs={"a": 1.9, "b": 2.1})]
+            "1",
+            SurrogateStore.SurrogateKind.OPENTURNS_PCE,
+            xt,
+            yt,
+            uncertainties=[
+                SurrogateStore.Distribution(name="Uniform", kwargs={"a": 1.9, "b": 2.1})
+            ],
         )
         sobol = self.store.get_sobol_pce_sensitivity_analysis("1")
         print(sobol)

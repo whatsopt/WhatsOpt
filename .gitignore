@@ -72,3 +72,5 @@ config/configuration.yml
 config/database.yml
 config/ldap.yml
 
+# Ignore OneraMDAO
+services/whatsopt_server/optimizer_store/oneramdao

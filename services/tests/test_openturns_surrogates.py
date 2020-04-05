@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from whatsopt_services.openturns_surrogates import PCE
+from whatsopt_server.surrogate_store.openturns_surrogates import PCE
 
 
 class TestOpenturnsSurrogates(unittest.TestCase):
@@ -26,7 +26,9 @@ class TestOpenturnsSurrogates(unittest.TestCase):
         self.assertEqual(1.0, sa.getSobolIndex(0))
 
     def test_train_and_predict_with_uncertainties(self):
-        self.surr.set_uncertainties([{"name": "Uniform", "kwargs": {"a": 1.9, "b": 2.3}}])
+        self.surr.set_uncertainties(
+            [{"name": "Uniform", "kwargs": {"a": 1.9, "b": 2.3}}]
+        )
         self.surr.train()
 
         num = 13
@@ -38,6 +40,7 @@ class TestOpenturnsSurrogates(unittest.TestCase):
         sa = self.surr.get_sobol_indices()
         print(sa.getSobolIndex(0))
         self.assertEqual(1.0, sa.getSobolIndex(0))
+
 
 if __name__ == "__main__":
     unittest.main()

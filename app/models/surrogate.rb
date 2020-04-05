@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "whats_opt/surrogate_server/surrogate_store_types"
+require "whatsopt_services_types"
 
 class Surrogate < ApplicationRecord
   SMT_KRIGING = "SMT_KRIGING"
@@ -14,12 +14,12 @@ class Surrogate < ApplicationRecord
                 SMT_LS, SMT_QP, OPENTURNS_PCE]
   
   SURROGATE_MAP = {
-    "SMT_KRIGING" => WhatsOpt::SurrogateServer::SurrogateKind::SMT_KRIGING,
-    "SMT_KPLS" => WhatsOpt::SurrogateServer::SurrogateKind::SMT_KPLS,
-    "SMT_KPLSK" => WhatsOpt::SurrogateServer::SurrogateKind::SMT_KPLSK,
-    "SMT_LS" => WhatsOpt::SurrogateServer::SurrogateKind::SMT_LS,
-    "SMT_QP" => WhatsOpt::SurrogateServer::SurrogateKind::SMT_QP,
-    "OPENTURNS_PCE" => WhatsOpt::SurrogateServer::SurrogateKind::OPENTURNS_PCE
+    "SMT_KRIGING" => WhatsOpt::Services::SurrogateKind::SMT_KRIGING,
+    "SMT_KPLS" => WhatsOpt::Services::SurrogateKind::SMT_KPLS,
+    "SMT_KPLSK" => WhatsOpt::Services::SurrogateKind::SMT_KPLSK,
+    "SMT_LS" => WhatsOpt::Services::SurrogateKind::SMT_LS,
+    "SMT_QP" => WhatsOpt::Services::SurrogateKind::SMT_QP,
+    "OPENTURNS_PCE" => WhatsOpt::Services::SurrogateKind::OPENTURNS_PCE
   }
 
   STATUS_CREATED = "created"
@@ -46,7 +46,7 @@ class Surrogate < ApplicationRecord
   before_destroy :_delete_surrogate
 
   def proxy
-    WhatsOpt::SurrogateProxy.new(surrogate_id: id.to_s)
+    WhatsOpt::SurrogateProxy.new(id: id.to_s)
   end
 
   def float_varname
@@ -85,7 +85,7 @@ class Surrogate < ApplicationRecord
       Rails.logger.warn "MetaModel DOE operation removed: Cannot train surrogates of MetaModel ##{meta_model.id}"
       self.status = STATUS_FAILED
     end
-  rescue WhatsOpt::SurrogateServer::SurrogateException => exc
+  rescue WhatsOpt::Services::SurrogateException => exc
     Rails.logger.warn "SURROGATE TRAIN: Error on surrogate #{id}: #{exc.msg}"
     self.status = STATUS_FAILED
   ensure
@@ -100,7 +100,7 @@ class Surrogate < ApplicationRecord
   def predict(x)
     train unless trained?
     y = proxy.predict_values(x)
-  rescue WhatsOpt::SurrogateServer::SurrogateException => exc
+  rescue WhatsOpt::Services::SurrogateException => exc
     Rails.logger.warn "SURROGATE TRAIN: #{exc} on surrogate #{id}: #{exc.msg}"
     self.status = STATUS_FAILED
   rescue => exception

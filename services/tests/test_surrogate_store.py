@@ -1,7 +1,7 @@
 import unittest
 import os
 import numpy as np
-from whatsopt_services.surrogate_store import SurrogateStore
+from whatsopt_server.surrogate_store.surrogate_store import SurrogateStore
 
 
 class TestSurrogateStore(unittest.TestCase):
@@ -76,10 +76,18 @@ class TestSurrogateStore(unittest.TestCase):
         xt = np.array([[0.0, 1.0, 2.0, 3.0, 4.0]]).T
         yt = np.array([0.0, 1.0, 1.5, 0.5, 1.0]).T
 
-        self.store.create_surrogate("3", "OPENTURNS_PCE", xt, yt, {}, [{"name": "Uniform", "kwargs": {"a": 1.9, "b": 2.3}}])
+        self.store.create_surrogate(
+            "3",
+            "OPENTURNS_PCE",
+            xt,
+            yt,
+            {},
+            [{"name": "Uniform", "kwargs": {"a": 1.9, "b": 2.3}}],
+        )
         sa = self.store.get_sobol_pce_sensitivity_analysis("3")
         self.assertEqual([1.0], sa["S1"])
         self.assertEqual([0.0], sa["ST"])
+
 
 if __name__ == "__main__":
     unittest.main()

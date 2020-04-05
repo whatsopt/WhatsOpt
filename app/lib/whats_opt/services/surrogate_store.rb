@@ -5,35 +5,14 @@
 #
 
 require 'thrift'
-require 'surrogate_store_types'
+require 'whatsopt_services_types'
 
 module WhatsOpt
-  module SurrogateServer
+  module Services
     module SurrogateStore
       class Client
         include ::Thrift::Client
 
-        def ping()
-          send_ping()
-          recv_ping()
-        end
-
-        def send_ping()
-          send_message('ping', Ping_args)
-        end
-
-        def recv_ping()
-          result = receive_message(Ping_result)
-          return
-        end
-
-        def shutdown()
-          send_shutdown()
-        end
-
-        def send_shutdown()
-          send_oneway_message('shutdown', Shutdown_args)
-        end
         def create_surrogate(surrogate_id, kind, xt, yt, options, uncertainties)
           send_create_surrogate(surrogate_id, kind, xt, yt, options, uncertainties)
           recv_create_surrogate()
@@ -130,25 +109,12 @@ module WhatsOpt
       class Processor
         include ::Thrift::Processor
 
-        def process_ping(seqid, iprot, oprot)
-          args = read_args(iprot, Ping_args)
-          result = Ping_result.new()
-          @handler.ping()
-          write_result(result, oprot, 'ping', seqid)
-        end
-
-        def process_shutdown(seqid, iprot, oprot)
-          args = read_args(iprot, Shutdown_args)
-          @handler.shutdown()
-          return
-        end
-
         def process_create_surrogate(seqid, iprot, oprot)
           args = read_args(iprot, Create_surrogate_args)
           result = Create_surrogate_result.new()
           begin
             @handler.create_surrogate(args.surrogate_id, args.kind, args.xt, args.yt, args.options, args.uncertainties)
-          rescue ::WhatsOpt::SurrogateServer::SurrogateException => exc
+          rescue ::WhatsOpt::Services::SurrogateException => exc
             result.exc = exc
           end
           write_result(result, oprot, 'create_surrogate', seqid)
@@ -159,7 +125,7 @@ module WhatsOpt
           result = Copy_surrogate_result.new()
           begin
             @handler.copy_surrogate(args.src_id, args.dst_id)
-          rescue ::WhatsOpt::SurrogateServer::SurrogateException => exc
+          rescue ::WhatsOpt::Services::SurrogateException => exc
             result.exc = exc
           end
           write_result(result, oprot, 'copy_surrogate', seqid)
@@ -170,7 +136,7 @@ module WhatsOpt
           result = Qualify_result.new()
           begin
             result.success = @handler.qualify(args.surrogate_id, args.xv, args.yv)
-          rescue ::WhatsOpt::SurrogateServer::SurrogateException => exc
+          rescue ::WhatsOpt::Services::SurrogateException => exc
             result.exc = exc
           end
           write_result(result, oprot, 'qualify', seqid)
@@ -181,7 +147,7 @@ module WhatsOpt
           result = Predict_values_result.new()
           begin
             result.success = @handler.predict_values(args.surrogate_id, args.x)
-          rescue ::WhatsOpt::SurrogateServer::SurrogateException => exc
+          rescue ::WhatsOpt::Services::SurrogateException => exc
             result.exc = exc
           end
           write_result(result, oprot, 'predict_values', seqid)
@@ -205,66 +171,6 @@ module WhatsOpt
 
       # HELPER FUNCTIONS AND STRUCTURES
 
-      class Ping_args
-        include ::Thrift::Struct, ::Thrift::Struct_Union
-
-        FIELDS = {
-
-        }
-
-        def struct_fields; FIELDS; end
-
-        def validate
-        end
-
-        ::Thrift::Struct.generate_accessors self
-      end
-
-      class Ping_result
-        include ::Thrift::Struct, ::Thrift::Struct_Union
-
-        FIELDS = {
-
-        }
-
-        def struct_fields; FIELDS; end
-
-        def validate
-        end
-
-        ::Thrift::Struct.generate_accessors self
-      end
-
-      class Shutdown_args
-        include ::Thrift::Struct, ::Thrift::Struct_Union
-
-        FIELDS = {
-
-        }
-
-        def struct_fields; FIELDS; end
-
-        def validate
-        end
-
-        ::Thrift::Struct.generate_accessors self
-      end
-
-      class Shutdown_result
-        include ::Thrift::Struct, ::Thrift::Struct_Union
-
-        FIELDS = {
-
-        }
-
-        def struct_fields; FIELDS; end
-
-        def validate
-        end
-
-        ::Thrift::Struct.generate_accessors self
-      end
-
       class Create_surrogate_args
         include ::Thrift::Struct, ::Thrift::Struct_Union
         SURROGATE_ID = 1
@@ -276,17 +182,17 @@ module WhatsOpt
 
         FIELDS = {
           SURROGATE_ID => {:type => ::Thrift::Types::STRING, :name => 'surrogate_id'},
-          KIND => {:type => ::Thrift::Types::I32, :name => 'kind', :enum_class => ::WhatsOpt::SurrogateServer::SurrogateKind},
+          KIND => {:type => ::Thrift::Types::I32, :name => 'kind', :enum_class => ::WhatsOpt::Services::SurrogateKind},
           XT => {:type => ::Thrift::Types::LIST, :name => 'xt', :element => {:type => ::Thrift::Types::LIST, :element => {:type => ::Thrift::Types::DOUBLE}}},
           YT => {:type => ::Thrift::Types::LIST, :name => 'yt', :element => {:type => ::Thrift::Types::DOUBLE}},
-          OPTIONS => {:type => ::Thrift::Types::MAP, :name => 'options', :key => {:type => ::Thrift::Types::STRING}, :value => {:type => ::Thrift::Types::STRUCT, :class => ::WhatsOpt::SurrogateServer::OptionValue}},
-          UNCERTAINTIES => {:type => ::Thrift::Types::LIST, :name => 'uncertainties', :element => {:type => ::Thrift::Types::STRUCT, :class => ::WhatsOpt::SurrogateServer::Distribution}}
+          OPTIONS => {:type => ::Thrift::Types::MAP, :name => 'options', :key => {:type => ::Thrift::Types::STRING}, :value => {:type => ::Thrift::Types::STRUCT, :class => ::WhatsOpt::Services::OptionValue}},
+          UNCERTAINTIES => {:type => ::Thrift::Types::LIST, :name => 'uncertainties', :element => {:type => ::Thrift::Types::STRUCT, :class => ::WhatsOpt::Services::Distribution}}
         }
 
         def struct_fields; FIELDS; end
 
         def validate
-          unless @kind.nil? || ::WhatsOpt::SurrogateServer::SurrogateKind::VALID_VALUES.include?(@kind)
+          unless @kind.nil? || ::WhatsOpt::Services::SurrogateKind::VALID_VALUES.include?(@kind)
             raise ::Thrift::ProtocolException.new(::Thrift::ProtocolException::UNKNOWN, 'Invalid value of field kind!')
           end
         end
@@ -299,7 +205,7 @@ module WhatsOpt
         EXC = 1
 
         FIELDS = {
-          EXC => {:type => ::Thrift::Types::STRUCT, :name => 'exc', :class => ::WhatsOpt::SurrogateServer::SurrogateException}
+          EXC => {:type => ::Thrift::Types::STRUCT, :name => 'exc', :class => ::WhatsOpt::Services::SurrogateException}
         }
 
         def struct_fields; FIELDS; end
@@ -333,7 +239,7 @@ module WhatsOpt
         EXC = 1
 
         FIELDS = {
-          EXC => {:type => ::Thrift::Types::STRUCT, :name => 'exc', :class => ::WhatsOpt::SurrogateServer::SurrogateException}
+          EXC => {:type => ::Thrift::Types::STRUCT, :name => 'exc', :class => ::WhatsOpt::Services::SurrogateException}
         }
 
         def struct_fields; FIELDS; end
@@ -370,8 +276,8 @@ module WhatsOpt
         EXC = 1
 
         FIELDS = {
-          SUCCESS => {:type => ::Thrift::Types::STRUCT, :name => 'success', :class => ::WhatsOpt::SurrogateServer::SurrogateQualification},
-          EXC => {:type => ::Thrift::Types::STRUCT, :name => 'exc', :class => ::WhatsOpt::SurrogateServer::SurrogateException}
+          SUCCESS => {:type => ::Thrift::Types::STRUCT, :name => 'success', :class => ::WhatsOpt::Services::SurrogateQualification},
+          EXC => {:type => ::Thrift::Types::STRUCT, :name => 'exc', :class => ::WhatsOpt::Services::SurrogateException}
         }
 
         def struct_fields; FIELDS; end
@@ -407,7 +313,7 @@ module WhatsOpt
 
         FIELDS = {
           SUCCESS => {:type => ::Thrift::Types::LIST, :name => 'success', :element => {:type => ::Thrift::Types::DOUBLE}},
-          EXC => {:type => ::Thrift::Types::STRUCT, :name => 'exc', :class => ::WhatsOpt::SurrogateServer::SurrogateException}
+          EXC => {:type => ::Thrift::Types::STRUCT, :name => 'exc', :class => ::WhatsOpt::Services::SurrogateException}
         }
 
         def struct_fields; FIELDS; end
@@ -470,7 +376,7 @@ module WhatsOpt
         SUCCESS = 0
 
         FIELDS = {
-          SUCCESS => {:type => ::Thrift::Types::STRUCT, :name => 'success', :class => ::WhatsOpt::SurrogateServer::SobolIndices}
+          SUCCESS => {:type => ::Thrift::Types::STRUCT, :name => 'success', :class => ::WhatsOpt::Services::SobolIndices}
         }
 
         def struct_fields; FIELDS; end

@@ -10,7 +10,7 @@ module WhatsOpt
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 6.0
-    Rails.autoloaders.main.ignore("#{Rails.root}/app/lib/whats_opt/surrogate_server")
+    Rails.autoloaders.main.ignore("#{Rails.root}/app/lib/whats_opt/services")
     Rails.autoloaders.main.ignore("#{Rails.root}/app/lib/whats_opt/string.rb")
 
     # Settings in config/environments/* take precedence over those specified here.
@@ -19,7 +19,7 @@ module WhatsOpt
     # the framework and any gems in your application.
     config.active_job.queue_adapter = :sucker_punch
 
-    config.autoload_paths << "#{config.root}/app/lib/whats_opt/surrogate_server"
+    config.autoload_paths << "#{config.root}/app/lib/whats_opt/services"
 
     # Require `belongs_to` associations by default. Previous versions < rails 6 had false.
     config.active_record.belongs_to_required_by_default = false

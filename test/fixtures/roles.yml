@@ -1,51 +1,54 @@
 admin_role: 
-  name: :admin
+  name: admin
   
 owner_cicav_mda_role:
-  name: :owner
+  name: owner
   resource: cicav (Analysis)
 
 owner_cicav_meta_model_role:
-  name: :owner
+  name: owner
   resource: cicav_metamodel_analysis (Analysis)
 
 owner_cicav_meta_model2_role:
-  name: :owner
+  name: owner
   resource: cicav_metamodel2_analysis (Analysis)
 
 member_cicav_meta_model2_role:
-  name: :member
+  name: member
   resource: cicav_metamodel2_analysis (Analysis)
 
 owner_outermda_role:
-  name: :owner
+  name: owner
   resource: outermda (Analysis)
   
 owner_innermda_role:
-  name: :owner
+  name: owner
   resource: innermda (Analysis)
   
 owner_fast_mda_role:
-  name: :owner
+  name: owner
   resource: fast (Analysis)
   
 owner_dummy_mda_role:
-  name: :owner
+  name: owner
   resource: dummy (Analysis)
   
 member_cicav_mda_role:
-  name: :member
+  name: member
   resource: cicav (Analysis)
 
 owner_singleton_role:
-  name: :owner
+  name: owner
   resource: singleton (Analysis)
 
 owner_singleton_mm_role:
-  name: :owner
+  name: owner
   resource: singleton_mm (Analysis)  
 
 owner_singleton_mm_spec_role:
-  name: :owner
+  name: owner
   resource: singleton_mm_spec (Analysis)  
 
+owner_optim_ackley2d_role:
+  name: owner
+  resource: optim_ackley2d (Optimization) 

@@ -254,6 +254,8 @@ GEM
     pundit (2.1.0)
       activesupport (>= 3.0.0)
     rack (2.0.7)
+    rack-attack (6.2.2)
+      rack (>= 1.0, < 3)
     rack-cors (1.1.0)
       rack (>= 2.0.0)
     rack-proxy (0.6.5)
@@ -444,6 +446,7 @@ DEPENDENCIES
   popper
   puma (~> 4.1)
   pundit
+  rack-attack
   rack-cors (>= 1.0.5)
   rails (~> 6.0.1)
   rails-assets-tether (>= 1.1.0)!

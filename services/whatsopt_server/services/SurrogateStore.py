@@ -19,12 +19,6 @@ all_structs = []
 
 
 class Iface(object):
-    def ping(self):
-        pass
-
-    def shutdown(self):
-        pass
-
     def create_surrogate(self, surrogate_id, kind, xt, yt, options, uncertainties):
         """
         Parameters:
@@ -83,40 +77,6 @@ class Client(Iface):
         if oprot is not None:
             self._oprot = oprot
         self._seqid = 0
-
-    def ping(self):
-        self.send_ping()
-        self.recv_ping()
-
-    def send_ping(self):
-        self._oprot.writeMessageBegin('ping', TMessageType.CALL, self._seqid)
-        args = ping_args()
-        args.write(self._oprot)
-        self._oprot.writeMessageEnd()
-        self._oprot.trans.flush()
-
-    def recv_ping(self):
-        iprot = self._iprot
-        (fname, mtype, rseqid) = iprot.readMessageBegin()
-        if mtype == TMessageType.EXCEPTION:
-            x = TApplicationException()
-            x.read(iprot)
-            iprot.readMessageEnd()
-            raise x
-        result = ping_result()
-        result.read(iprot)
-        iprot.readMessageEnd()
-        return
-
-    def shutdown(self):
-        self.send_shutdown()
-
-    def send_shutdown(self):
-        self._oprot.writeMessageBegin('shutdown', TMessageType.ONEWAY, self._seqid)
-        args = shutdown_args()
-        args.write(self._oprot)
-        self._oprot.writeMessageEnd()
-        self._oprot.trans.flush()
 
     def create_surrogate(self, surrogate_id, kind, xt, yt, options, uncertainties):
         """
@@ -329,8 +289,6 @@ class Processor(Iface, TProcessor):
     def __init__(self, handler):
         self._handler = handler
         self._processMap = {}
-        self._processMap["ping"] = Processor.process_ping
-        self._processMap["shutdown"] = Processor.process_shutdown
         self._processMap["create_surrogate"] = Processor.process_create_surrogate
         self._processMap["copy_surrogate"] = Processor.process_copy_surrogate
         self._processMap["qualify"] = Processor.process_qualify
@@ -352,40 +310,6 @@ class Processor(Iface, TProcessor):
         else:
             self._processMap[name](self, seqid, iprot, oprot)
         return True
-
-    def process_ping(self, seqid, iprot, oprot):
-        args = ping_args()
-        args.read(iprot)
-        iprot.readMessageEnd()
-        result = ping_result()
-        try:
-            self._handler.ping()
-            msg_type = TMessageType.REPLY
-        except TTransport.TTransportException:
-            raise
-        except TApplicationException as ex:
-            logging.exception('TApplication exception in handler')
-            msg_type = TMessageType.EXCEPTION
-            result = ex
-        except Exception:
-            logging.exception('Unexpected exception in handler')
-            msg_type = TMessageType.EXCEPTION
-            result = TApplicationException(TApplicationException.INTERNAL_ERROR, 'Internal error')
-        oprot.writeMessageBegin("ping", msg_type, seqid)
-        result.write(oprot)
-        oprot.writeMessageEnd()
-        oprot.trans.flush()
-
-    def process_shutdown(self, seqid, iprot, oprot):
-        args = shutdown_args()
-        args.read(iprot)
-        iprot.readMessageEnd()
-        try:
-            self._handler.shutdown()
-        except TTransport.TTransportException:
-            raise
-        except Exception:
-            logging.exception('Exception in oneway handler')
 
     def process_create_surrogate(self, seqid, iprot, oprot):
         args = create_surrogate_args()
@@ -540,135 +464,6 @@ class Processor(Iface, TProcessor):
 # HELPER FUNCTIONS AND STRUCTURES
 
 
-class ping_args(object):
-
-
-    def read(self, iprot):
-        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
-            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
-            return
-        iprot.readStructBegin()
-        while True:
-            (fname, ftype, fid) = iprot.readFieldBegin()
-            if ftype == TType.STOP:
-                break
-            else:
-                iprot.skip(ftype)
-            iprot.readFieldEnd()
-        iprot.readStructEnd()
-
-    def write(self, oprot):
-        if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
-            return
-        oprot.writeStructBegin('ping_args')
-        oprot.writeFieldStop()
-        oprot.writeStructEnd()
-
-    def validate(self):
-        return
-
-    def __repr__(self):
-        L = ['%s=%r' % (key, value)
-             for key, value in self.__dict__.items()]
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
-
-    def __eq__(self, other):
-        return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
-
-    def __ne__(self, other):
-        return not (self == other)
-all_structs.append(ping_args)
-ping_args.thrift_spec = (
-)
-
-
-class ping_result(object):
-
-
-    def read(self, iprot):
-        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
-            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
-            return
-        iprot.readStructBegin()
-        while True:
-            (fname, ftype, fid) = iprot.readFieldBegin()
-            if ftype == TType.STOP:
-                break
-            else:
-                iprot.skip(ftype)
-            iprot.readFieldEnd()
-        iprot.readStructEnd()
-
-    def write(self, oprot):
-        if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
-            return
-        oprot.writeStructBegin('ping_result')
-        oprot.writeFieldStop()
-        oprot.writeStructEnd()
-
-    def validate(self):
-        return
-
-    def __repr__(self):
-        L = ['%s=%r' % (key, value)
-             for key, value in self.__dict__.items()]
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
-
-    def __eq__(self, other):
-        return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
-
-    def __ne__(self, other):
-        return not (self == other)
-all_structs.append(ping_result)
-ping_result.thrift_spec = (
-)
-
-
-class shutdown_args(object):
-
-
-    def read(self, iprot):
-        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
-            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
-            return
-        iprot.readStructBegin()
-        while True:
-            (fname, ftype, fid) = iprot.readFieldBegin()
-            if ftype == TType.STOP:
-                break
-            else:
-                iprot.skip(ftype)
-            iprot.readFieldEnd()
-        iprot.readStructEnd()
-
-    def write(self, oprot):
-        if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
-            return
-        oprot.writeStructBegin('shutdown_args')
-        oprot.writeFieldStop()
-        oprot.writeStructEnd()
-
-    def validate(self):
-        return
-
-    def __repr__(self):
-        L = ['%s=%r' % (key, value)
-             for key, value in self.__dict__.items()]
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
-
-    def __eq__(self, other):
-        return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
-
-    def __ne__(self, other):
-        return not (self == other)
-all_structs.append(shutdown_args)
-shutdown_args.thrift_spec = (
-)
-
-
 class create_surrogate_args(object):
     """
     Attributes:
@@ -711,48 +506,48 @@ class create_surrogate_args(object):
             elif fid == 3:
                 if ftype == TType.LIST:
                     self.xt = []
-                    (_etype40, _size37) = iprot.readListBegin()
-                    for _i41 in range(_size37):
-                        _elem42 = []
-                        (_etype46, _size43) = iprot.readListBegin()
-                        for _i47 in range(_size43):
-                            _elem48 = iprot.readDouble()
-                            _elem42.append(_elem48)
+                    (_etype61, _size58) = iprot.readListBegin()
+                    for _i62 in range(_size58):
+                        _elem63 = []
+                        (_etype67, _size64) = iprot.readListBegin()
+                        for _i68 in range(_size64):
+                            _elem69 = iprot.readDouble()
+                            _elem63.append(_elem69)
                         iprot.readListEnd()
-                        self.xt.append(_elem42)
+                        self.xt.append(_elem63)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
             elif fid == 4:
                 if ftype == TType.LIST:
                     self.yt = []
-                    (_etype52, _size49) = iprot.readListBegin()
-                    for _i53 in range(_size49):
-                        _elem54 = iprot.readDouble()
-                        self.yt.append(_elem54)
+                    (_etype73, _size70) = iprot.readListBegin()
+                    for _i74 in range(_size70):
+                        _elem75 = iprot.readDouble()
+                        self.yt.append(_elem75)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
             elif fid == 5:
                 if ftype == TType.MAP:
                     self.options = {}
-                    (_ktype56, _vtype57, _size55) = iprot.readMapBegin()
-                    for _i59 in range(_size55):
-                        _key60 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
-                        _val61 = OptionValue()
-                        _val61.read(iprot)
-                        self.options[_key60] = _val61
+                    (_ktype77, _vtype78, _size76) = iprot.readMapBegin()
+                    for _i80 in range(_size76):
+                        _key81 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                        _val82 = OptionValue()
+                        _val82.read(iprot)
+                        self.options[_key81] = _val82
                     iprot.readMapEnd()
                 else:
                     iprot.skip(ftype)
             elif fid == 6:
                 if ftype == TType.LIST:
                     self.uncertainties = []
-                    (_etype65, _size62) = iprot.readListBegin()
-                    for _i66 in range(_size62):
-                        _elem67 = Distribution()
-                        _elem67.read(iprot)
-                        self.uncertainties.append(_elem67)
+                    (_etype86, _size83) = iprot.readListBegin()
+                    for _i87 in range(_size83):
+                        _elem88 = Distribution()
+                        _elem88.read(iprot)
+                        self.uncertainties.append(_elem88)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
@@ -777,33 +572,33 @@ class create_surrogate_args(object):
         if self.xt is not None:
             oprot.writeFieldBegin('xt', TType.LIST, 3)
             oprot.writeListBegin(TType.LIST, len(self.xt))
-            for iter68 in self.xt:
-                oprot.writeListBegin(TType.DOUBLE, len(iter68))
-                for iter69 in iter68:
-                    oprot.writeDouble(iter69)
+            for iter89 in self.xt:
+                oprot.writeListBegin(TType.DOUBLE, len(iter89))
+                for iter90 in iter89:
+                    oprot.writeDouble(iter90)
                 oprot.writeListEnd()
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         if self.yt is not None:
             oprot.writeFieldBegin('yt', TType.LIST, 4)
             oprot.writeListBegin(TType.DOUBLE, len(self.yt))
-            for iter70 in self.yt:
-                oprot.writeDouble(iter70)
+            for iter91 in self.yt:
+                oprot.writeDouble(iter91)
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         if self.options is not None:
             oprot.writeFieldBegin('options', TType.MAP, 5)
             oprot.writeMapBegin(TType.STRING, TType.STRUCT, len(self.options))
-            for kiter71, viter72 in self.options.items():
-                oprot.writeString(kiter71.encode('utf-8') if sys.version_info[0] == 2 else kiter71)
-                viter72.write(oprot)
+            for kiter92, viter93 in self.options.items():
+                oprot.writeString(kiter92.encode('utf-8') if sys.version_info[0] == 2 else kiter92)
+                viter93.write(oprot)
             oprot.writeMapEnd()
             oprot.writeFieldEnd()
         if self.uncertainties is not None:
             oprot.writeFieldBegin('uncertainties', TType.LIST, 6)
             oprot.writeListBegin(TType.STRUCT, len(self.uncertainties))
-            for iter73 in self.uncertainties:
-                iter73.write(oprot)
+            for iter94 in self.uncertainties:
+                iter94.write(oprot)
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
@@ -1062,25 +857,25 @@ class qualify_args(object):
             elif fid == 2:
                 if ftype == TType.LIST:
                     self.xv = []
-                    (_etype77, _size74) = iprot.readListBegin()
-                    for _i78 in range(_size74):
-                        _elem79 = []
-                        (_etype83, _size80) = iprot.readListBegin()
-                        for _i84 in range(_size80):
-                            _elem85 = iprot.readDouble()
-                            _elem79.append(_elem85)
+                    (_etype98, _size95) = iprot.readListBegin()
+                    for _i99 in range(_size95):
+                        _elem100 = []
+                        (_etype104, _size101) = iprot.readListBegin()
+                        for _i105 in range(_size101):
+                            _elem106 = iprot.readDouble()
+                            _elem100.append(_elem106)
                         iprot.readListEnd()
-                        self.xv.append(_elem79)
+                        self.xv.append(_elem100)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
             elif fid == 3:
                 if ftype == TType.LIST:
                     self.yv = []
-                    (_etype89, _size86) = iprot.readListBegin()
-                    for _i90 in range(_size86):
-                        _elem91 = iprot.readDouble()
-                        self.yv.append(_elem91)
+                    (_etype110, _size107) = iprot.readListBegin()
+                    for _i111 in range(_size107):
+                        _elem112 = iprot.readDouble()
+                        self.yv.append(_elem112)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
@@ -1101,18 +896,18 @@ class qualify_args(object):
         if self.xv is not None:
             oprot.writeFieldBegin('xv', TType.LIST, 2)
             oprot.writeListBegin(TType.LIST, len(self.xv))
-            for iter92 in self.xv:
-                oprot.writeListBegin(TType.DOUBLE, len(iter92))
-                for iter93 in iter92:
-                    oprot.writeDouble(iter93)
+            for iter113 in self.xv:
+                oprot.writeListBegin(TType.DOUBLE, len(iter113))
+                for iter114 in iter113:
+                    oprot.writeDouble(iter114)
                 oprot.writeListEnd()
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         if self.yv is not None:
             oprot.writeFieldBegin('yv', TType.LIST, 3)
             oprot.writeListBegin(TType.DOUBLE, len(self.yv))
-            for iter94 in self.yv:
-                oprot.writeDouble(iter94)
+            for iter115 in self.yv:
+                oprot.writeDouble(iter115)
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
@@ -1243,15 +1038,15 @@ class predict_values_args(object):
             elif fid == 2:
                 if ftype == TType.LIST:
                     self.x = []
-                    (_etype98, _size95) = iprot.readListBegin()
-                    for _i99 in range(_size95):
-                        _elem100 = []
-                        (_etype104, _size101) = iprot.readListBegin()
-                        for _i105 in range(_size101):
-                            _elem106 = iprot.readDouble()
-                            _elem100.append(_elem106)
+                    (_etype119, _size116) = iprot.readListBegin()
+                    for _i120 in range(_size116):
+                        _elem121 = []
+                        (_etype125, _size122) = iprot.readListBegin()
+                        for _i126 in range(_size122):
+                            _elem127 = iprot.readDouble()
+                            _elem121.append(_elem127)
                         iprot.readListEnd()
-                        self.x.append(_elem100)
+                        self.x.append(_elem121)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
@@ -1272,10 +1067,10 @@ class predict_values_args(object):
         if self.x is not None:
             oprot.writeFieldBegin('x', TType.LIST, 2)
             oprot.writeListBegin(TType.LIST, len(self.x))
-            for iter107 in self.x:
-                oprot.writeListBegin(TType.DOUBLE, len(iter107))
-                for iter108 in iter107:
-                    oprot.writeDouble(iter108)
+            for iter128 in self.x:
+                oprot.writeListBegin(TType.DOUBLE, len(iter128))
+                for iter129 in iter128:
+                    oprot.writeDouble(iter129)
                 oprot.writeListEnd()
             oprot.writeListEnd()
             oprot.writeFieldEnd()
@@ -1327,10 +1122,10 @@ class predict_values_result(object):
             if fid == 0:
                 if ftype == TType.LIST:
                     self.success = []
-                    (_etype112, _size109) = iprot.readListBegin()
-                    for _i113 in range(_size109):
-                        _elem114 = iprot.readDouble()
-                        self.success.append(_elem114)
+                    (_etype133, _size130) = iprot.readListBegin()
+                    for _i134 in range(_size130):
+                        _elem135 = iprot.readDouble()
+                        self.success.append(_elem135)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
@@ -1353,8 +1148,8 @@ class predict_values_result(object):
         if self.success is not None:
             oprot.writeFieldBegin('success', TType.LIST, 0)
             oprot.writeListBegin(TType.DOUBLE, len(self.success))
-            for iter115 in self.success:
-                oprot.writeDouble(iter115)
+            for iter136 in self.success:
+                oprot.writeDouble(iter136)
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         if self.exc is not None:
