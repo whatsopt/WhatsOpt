@@ -10,7 +10,8 @@ class <%= @discipline.py_classname %>(<%= @discipline.py_classname %>Base):
             # Docking mechanism: use implementation if referenced in .whatsopt_dock.yml file
             self._impl.compute(inputs, outputs)
         else:
-    <% @discipline.output_variables.numeric.each do |var_out| %>
+            <%= "pass" if @discipline.output_variables.numeric.empty? -%>
+        <% @discipline.output_variables.numeric.each do |var_out| %>
             outputs['<%= var_out.py_varname %>'] = <%= var_out.default_py_value %> <% end %>  
 
 # Reminder: inputs of compute()
