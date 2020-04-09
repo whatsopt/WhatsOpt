@@ -1,6 +1,4 @@
-# DO NOT EDIT unless you know what you are doing
-# whatsopt_url: <%= @whatsopt_url %>
-# analysis_id: <%= @mda.id %>
+<%= @generator.render_partial('base_header_partial.py.erb') %>
 
 import numpy as np
 from os import path
@@ -14,8 +12,9 @@ class <%= @discipline.py_classname %>Base(<%= @dimpl.implicit_component ? "Impli
     def __init__(self, **kwargs):
         super(<%= @discipline.py_classname %>Base, self).__init__(**kwargs)
         self._impl = None
-        if path.exists(".whatsopt_dock.yml"):
-            with open(".whatsopt_dock.yml") as dockfile:
+        dockconf = path.join(path.dirname(__file__), ".whatsopt_dock.yml")
+        if path.exists(dockconf):
+            with open(dockconf) as dockfile:
                 dock = load(dockfile, Loader=FullLoader)
                 impl = dock.get("<%= @discipline.py_modulename %>")
                 if impl:
