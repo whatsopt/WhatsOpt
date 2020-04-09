@@ -6,8 +6,8 @@ class <%= @discipline.py_classname %>(<%= @discipline.py_classname %>Base):
 		
     def compute(self, inputs, outputs):
         """ <%= @discipline.py_classname %> computation """
-        # Docking mechanism (experimental): use implementation if referenced in .whatsopt_dock.yml file
         if self._impl:
+            # Docking mechanism: use implementation if referenced in .whatsopt_dock.yml file
             self._impl.compute(inputs, outputs)
         else:
     <% @discipline.output_variables.numeric.each do |var_out| %>
