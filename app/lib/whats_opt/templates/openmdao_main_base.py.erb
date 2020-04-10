@@ -1,6 +1,7 @@
 <%= @generator.render_partial('base_header_partial.py.erb') %>
 
 import numpy as np
+from numpy import nan
 from packaging import version
 
 from openmdao.api import Problem, Group, ParallelGroup, IndepVarComp
