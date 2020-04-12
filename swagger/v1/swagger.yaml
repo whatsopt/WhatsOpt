@@ -10,22 +10,24 @@ info:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
 servers:
-- url: https://ether.onera.fr/whatsopt/api/v1
+- url: https://ether.onera.fr/whatsopt
   description: External production server
-- url: https://selene.onecert.fr/whatsopt/api/v1
+- url: https://selene.onecert.fr/whatsopt
   description: Internal production server
-- url: http://rdri206h.onecert.fr/whatsopt/api/v1
+- url: http://rdri206h.onecert.fr/whatsopt
   description: Internal staging server
-- url: http://endymion:3000/api/v1
+- url: http://endymion:3000
   description: Development server
-- url: http://192.168.99.100:3000/api/v1
+- url: http://192.168.99.100:3000
   description: Docker development server
 paths:
-  api/v1/analyses/{id}:
+  "/api/v1/analyses/{id}":
     get:
       summary: Get an analysis
       tags:
       - Analyses
+      security:
+      - Token: []
       parameters:
       - name: id
         in: path
@@ -34,7 +36,7 @@ paths:
           type: string
       responses:
         '200':
-          description: analysis found
+          description: Analysis found
           content:
             application/json:
               schema:
@@ -47,13 +49,26 @@ paths:
                   public:
                     type: boolean
                   created_at:
-                    type: date-time
+                    type: string
+                    format: date-time
                 required:
                 - id
                 - name
                 - public
                 - created_at
+        '404':
+          description: Analysis not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
 components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
   securitySchemes:
     Token:
       type: apiKey

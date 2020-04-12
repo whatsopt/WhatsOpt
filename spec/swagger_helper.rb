@@ -30,14 +30,22 @@ RSpec.configure do |config|
         }
       },
       servers: [
-        {url: "https://ether.onera.fr/whatsopt/api/v1", description: "External production server"},
-        {url: "https://selene.onecert.fr/whatsopt/api/v1", description: "Internal production server"},
-        {url: "http://rdri206h.onecert.fr/whatsopt/api/v1", description: "Internal staging server"},
-        {url: "http://endymion:3000/api/v1", description: "Development server"},
-        {url: "http://192.168.99.100:3000/api/v1", description: "Docker development server"},
+        {url: "https://ether.onera.fr/whatsopt", description: "External production server"},
+        {url: "https://selene.onecert.fr/whatsopt", description: "Internal production server"},
+        {url: "http://rdri206h.onecert.fr/whatsopt", description: "Internal staging server"},
+        {url: "http://endymion:3000", description: "Development server"},
+        {url: "http://192.168.99.100:3000", description: "Docker development server"},
       ],
       paths:{},
       components: {
+        schemas: {
+          Error: {
+            type: :object,
+            properties: {
+              message: { type: :string }
+            }
+          }
+        },
         securitySchemes: {
           Token: {
             type: 'apiKey',
@@ -45,7 +53,7 @@ RSpec.configure do |config|
             name: "Authorization",
             description: 'Enter your API key with the format **Token &lt;API key&gt;**'
           }
-        }
+        }        
       },
       security: [{Token: []}],
       externalDocs: {
