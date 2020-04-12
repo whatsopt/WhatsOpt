@@ -1,8 +1,8 @@
 <% if current_user %>
-  <div id="apidoc" data-api-key="<%=current_user.api_key%>"></div>
+<div id="apidoc" data-api-key="<%=current_user.api_key%>"></div>
 <% else %>
-  <div id="apidoc"></div> 
+<div id="apidoc"></div>
 <% end %>
+<div id="swagger-ui-config" data-swagger-ui-config="<%= @config_object.to_json %>"></div>>
 
 <%= javascript_pack_tag 'api_doc_viewer_application' %>
-

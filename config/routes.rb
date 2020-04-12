@@ -1,7 +1,5 @@
 Rails.application.routes.draw do
 
-  mount Rswag::Ui::Engine => '/api-docs'
-  mount Rswag::Api::Engine => '/api-docs'
   devise_for :users
   resources :users, only: [:show]
   resource :api_doc, only: [:show]
@@ -49,4 +47,5 @@ Rails.application.routes.draw do
   end
   root to: redirect('users/sign_in')
 
+  mount Rswag::Api::Engine => '/api_doc'
 end

@@ -7,5 +7,3 @@
 // = require x3dom
 // = require data-confirm-modal
 // = require_tree .
-
-
