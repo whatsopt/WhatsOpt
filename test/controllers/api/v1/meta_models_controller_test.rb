@@ -85,13 +85,13 @@ class Api::V1::MetaModelsControllerTest < ActionDispatch::IntegrationTest
   test "should use a metamodel" do
     mm = meta_models(:cicav_metamodel)
     put api_v1_meta_model_url(mm), params: { meta_model: {
-        format: "matrix", values: [[3, 5, 7], [6, 10, 1]]
+        x: [[3, 5, 7], [6, 10, 1]]
       } }, as: :json, headers: @auth_headers
     assert_response :success
     resp = JSON.parse(response.body)
-    responses = resp["responses"]
-    assert_in_delta(2.444, responses[0][0])
-    assert_in_delta(7.816, responses[1][0])
+    y = resp["y"]
+    assert_in_delta(2.444, y[0][0])
+    assert_in_delta(7.816, y[1][0])
   end
 
   test "anybody can make prediction" do

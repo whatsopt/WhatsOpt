@@ -75,7 +75,4 @@ class Api::V1::MetaModelsController < Api::ApiController
                                         )
     end
 
-    # def _get_options(opt_params)
-    #   opt_params.map {|o| {name: o[:name], value: o[:value]}}
-    # end
 end

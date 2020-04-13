@@ -4,11 +4,11 @@ describe 'analyses', type: :request do
   fixtures :all
 
   path '/api/v1/analyses/{id}' do
-    get 'Get an analysis' do
+    get 'Get analysis information' do
       tags 'Analyses'
       produces 'application/json'
       security [ Token: [] ]
-      parameter name: :id, in: :path, type: :string
+      parameter name: :id, in: :path, type: :string, description: "Analysis identifier"
 
       response '200', 'Analysis found' do
         schema type: :object,
