@@ -39,10 +39,7 @@ class <%= @discipline.py_classname %>(<%= @discipline.py_classname %>Base):
         """ <%= @discipline.py_classname %> metamodel computation """
         sample = <%= @discipline.py_classname %>._to_json_param(inputs)
         resp = self.session.put(self.url, headers=self.headers, 
-            json={"meta_model": 
-                    { "format": "matrix", "values": sample
-                    }
-                 })
+            json={"meta_model": { "x": sample }})
         if resp.ok:
             meta_outputs = {}
             # depend on how OpenMDAO component is initialized 
@@ -54,7 +51,7 @@ class <%= @discipline.py_classname %>(<%= @discipline.py_classname %>Base):
                 meta = self._var_rel2meta
             for name in outnames:
                 meta_outputs[name] = meta[name]
-            <%= @discipline.py_classname %>._from_json_responses(meta_outputs, resp.json()["responses"], outputs)
+            <%= @discipline.py_classname %>._from_json_responses(meta_outputs, resp.json()["y"], outputs)
         else:
             resp.raise_for_status()
 

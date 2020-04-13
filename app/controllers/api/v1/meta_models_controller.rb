@@ -2,8 +2,6 @@
 
 class Api::V1::MetaModelsController < Api::ApiController
 
-  include Api::V1::Concerns::Docs::MetaModelsController
-
   before_action :set_meta_model, only: [:show, :update, :destroy]
 
   # GET /api/v1/meta_models/1
@@ -51,8 +49,10 @@ class Api::V1::MetaModelsController < Api::ApiController
   
   # PATCH /api/v1/meta_models/1
   def update
-    if params[:meta_model][:format] == MetaModel::MATRIX_FORMAT
-      responses = @meta_model.predict params[:meta_model][:values]  # strong params do not work on nested arrays
+    format = meta_model_params[:format] || MetaModel::MATRIX_FORMAT  # format default to Matrix
+    if format == MetaModel::MATRIX_FORMAT
+      x = params[:meta_model][:x]
+      responses = @meta_model.predict(x)  # strong params do not work on nested arrays
       json_response(responses: responses)
     else
       json_response({ message: "Format not valid. Should be in #{MetaModel::FORMATS}, "\
@@ -71,7 +71,7 @@ class Api::V1::MetaModelsController < Api::ApiController
       params.require(:meta_model).permit(:kind, :format, 
                                          options: [ :name, :value ], 
                                          variables: [ inputs: [], outputs: [] ],
-                                         values: [], 
+                                         x: [], 
                                         )
     end
 
