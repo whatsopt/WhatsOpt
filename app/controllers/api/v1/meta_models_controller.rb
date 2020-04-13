@@ -53,7 +53,7 @@ class Api::V1::MetaModelsController < Api::ApiController
     if format == MetaModel::MATRIX_FORMAT
       x = params[:meta_model][:x]
       responses = @meta_model.predict(x)  # strong params do not work on nested arrays
-      json_response(responses: responses)
+      json_response(y: responses)
     else
       json_response({ message: "Format not valid. Should be in #{MetaModel::FORMATS}, "\
                                "but found #{params[:meta_model][:format]}" }, :bad_request)

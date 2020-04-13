@@ -98,7 +98,7 @@ class Api::V1::MetaModelsControllerTest < ActionDispatch::IntegrationTest
     mm = meta_models(:cicav_metamodel)
     @auth_headers = { "Authorization" => "Token " + @user2.api_key }
     put api_v1_meta_model_url(mm), params: { meta_model: {
-        format: "matrix", values: [[3, 5, 7], [6, 10, 1]]
+        x: [[3, 5, 7], [6, 10, 1]]
       } }, as: :json, headers: @auth_headers
     assert_response :success
   end

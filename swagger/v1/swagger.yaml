@@ -72,8 +72,7 @@ paths:
   "/api/v1/meta_models/{id}":
     put:
       summary: Predict using the metamodel
-      description: Compute y responses at given x points where x and y are matrices
-        in row format (see)
+      description: Compute y responses at given x points where x and y are matrices.
       tags:
       - MetaModels
       security:
@@ -95,6 +94,12 @@ paths:
                 properties:
                   y:
                     "$ref": "#/components/schemas/Matrix"
+        '404':
+          description: MetaModel not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
       requestBody:
         content:
           application/json:

@@ -12,7 +12,7 @@ describe 'meta_models', type: :request do
       produces 'application/json'
       security [ Token: [] ]
       parameter name: :id, in: :path, type: :string, description: "MetaModel identifier"
-      parameter name: :x,
+      parameter name: :xpoints,
         description: "TEST",
         in: :body,
         schema: {
@@ -46,23 +46,26 @@ describe 'meta_models', type: :request do
 
         let(:Authorization) { "Token FriendlyApiKey" }
         let(:id) { meta_models(:cicav_metamodel).id }
-        let(:x) {{meta_model: { x: [[3, 5, 7], [6, 10, 1]] }}}
+        let(:xpoints) { {meta_model: { x: [[3, 5, 7], [6, 10, 1]] }} }
         run_test!
       end
 
-      # response '404', 'Analysis not found' do
-      #   schema :$ref => "#/components/schemas/Error"
+      response '404', 'MetaModel not found' do
+        schema :$ref => "#/components/schemas/Error"
 
-      #   let(:Authorization) { "Token FriendlyApiKey" }
-      #   let(:id) { 'invalid' }
-      #   run_test! 
-      # end
+        let(:Authorization) { "Token FriendlyApiKey" }
+        let(:id) { 'invalid' }
+        let(:xpoints) { {meta_model: { x: [[3, 5, 7], [6, 10, 1]] }} }
+        run_test! 
+      end
 
+      # for now anybody has access to any metamodel
       # response '401', 'Unauthorized access' do
       #   schema :$ref => "#/components/schemas/Error"
 
-      #   let(:Authorization) { "Token FriendlyApiKey" } 
-      #   let(:id) { analyses(:fast).id }
+      #   let(:Authorization) { "Token FriendlyApiKey3" } 
+      #   let(:id) { meta_models(:cicav_metamodel2).id }
+      #   let(:xpoints) { {meta_model: { x: [[3, 5, 7], [6, 10, 1]] }} }
       #   run_test! 
       # end
 
