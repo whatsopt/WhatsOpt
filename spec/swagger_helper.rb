@@ -16,7 +16,7 @@ RSpec.configure do |config|
   # the root example_group in your specs, e.g. describe '...', swagger_doc: 'v2/swagger.json'
   config.swagger_docs = {
     'v1/swagger.yaml' => {
-      openapi: '3.0.2',
+      openapi: '3.0.3',
       info: {
         title: 'WhatsOpt API',
         version: 'v1',
@@ -49,14 +49,50 @@ RSpec.configure do |config|
             description: "list of row vectors",
             type: :array,
             items: {
-              description: "row vector", 
-              type: :array,
-              items: {
+              "$ref" => '#components/schemas/RowVector'
+            },
+            minItems: 1
+          },
+          RowVector: {
+            type: :array,
+            items: {
+              type: :number,
+              format: :double
+            },
+            minItems: 1
+          },
+          XLimits: {
+            description: "list of row vectors",
+            type: :array,
+            items: {
+              "$ref" => '#components/schemas/Doublet'
+            },
+            minItems: 1
+          },
+          Doublet: {
+            type: :array,
+            items: {
+              type: :number,
+              format: :double
+            },
+            minItems: 2,
+            maxItems: 2
+          },
+          ConstraintSpec: {
+            type: :object,
+            properties: {
+              type: {
+                type: :string,
+                enum: ['<', '>', '='],
+                default: '<'
+              },
+              bound: {
                 type: :number,
-                format: :double
-              }
-            }
-          }
+                format: :double,
+                default: 0.0
+              }              
+            } 
+          },
         },
         securitySchemes: {
           Token: {

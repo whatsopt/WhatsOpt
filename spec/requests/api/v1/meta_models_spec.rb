@@ -15,17 +15,17 @@ describe 'meta_model', type: :request do
       parameter name: :xpoints,
         in: :body,
         schema: {
+          description: "x points where to predict using matrix format (nsampling, nxdim) <br/> \
+          where <strong>nsampling</strong> is the number of points and <strong>nxdim</strong> the dimension of x<br/> \
+          Each column corresponds to the various values of an input variables of the metamodel. <br/> \
+          For one sampling point x (x_1, x_2, ..., x_nxdim), x_\* values consist of input variables listed in *lexical order* <br/> \
+          When a variable is multidimensional it should be expanded as variable's size scalar values<br/> \
+          (example: z of shape (m, p, q) will expands in 'z[0]', 'z[1]', ..., 'z[m\*p\*q-1]', 'z[m\*p\*q]' scalar values).",
           type: :object,
           properties: { 
             meta_model: {
               type: :object,
               properties: {
-                description: "x points where to predict using matrix format (nsampling, nxdim) <br/> \
-                where <strong>nsampling</strong> is the number of points and <strong>nxdim</strong> the dimension of x<br/> \
-                Each column corresponds to the various values of an input variables of the metamodel. <br/> \
-                For one sampling point x (x_1, x_2, ..., x_nxdim), x_\* values consist of input variables listed in *lexical order* <br/> \
-                When a variable is multidimensional it should be expanded as variable's size scalar values<br/> \
-                (example: z of shape (m, p, q) will expands in 'z[0]', 'z[1]', ..., 'z[m\*p\*q-1]', 'z[m\*p\*q]' scalar values).",
                 x: { 
                   "$ref": "#/components/schemas/Matrix"
                 }

@@ -4,37 +4,35 @@ describe 'optimization', type: :request do
   fixtures :all
 
   path '/api/v1/optimizations' do
-    post 'Create optimization context' do
+    post 'Create an optimization context' do
       description "Initialize optimization context specifying design space and constraints"
       tags 'Optimization'
       consumes 'application/json'
       produces 'application/json'
       security [ Token: [] ]
       parameter name: :context, 
-        description: "Optimization context",
         in: :body, 
         type: :string, 
         schema: {
+          description: "Optmization context: xlimits and optional constraints <br/>
+          * xlimits: design space in matrix format (nxdim, 2). The ith row is [lower bound, upper bound] of the ith design variable. </br>
+          * cstr_specs: constraint c specification either *c<bound*, *c>bound*, *c=bound* (default is *<0*)",
           type: :object,
           properties: {
             optimization: {
               type: :object,
               properties: {
                 xlimits: {
-                  "$ref": "#/components/schemas/Matrix" 
+                  "$ref": "#/components/schemas/XLimits" 
                 },
                 cstr_specs: {
                   type: :array,
                   items: {
-                    type: :object,
-                    properties: {
-                      type: :string,
-                      bound: :number
-                    } 
+                    "$ref": "#/components/schemas/ConstraintSpec"
                   }
-                },
-                required: [:xlimits]
-              }
+                }
+              },
+              required: [:xlimits]
             }
           },
           required: [:optimization]
@@ -54,8 +52,8 @@ describe 'optimization', type: :request do
   
   path '/api/v1/optimizations/{id}' do
     put 'Ask for next optimal x suggestion where f(x suggestion) is expected to be minimal' do
-      description "Compute next x sample point suggestion regarding provided x, y which result of previous function f evaluations <br/>
-      and optional constraint functions g1, g2, ..., gn specified at optimization creation.
+      description "Compute next x sample point suggestion regarding provided x, y which result of previous function f evaluations <br/> \
+      and optional constraint functions g1, g2, ..., gn specified at optimization creation. </br> \
       Previous evaluations should result from an initial DOE execution followed by previous call evaluation on previous suggestions."
       tags 'Optimization'
       consumes 'application/json'
@@ -65,22 +63,22 @@ describe 'optimization', type: :request do
       parameter name: :context,
         in: :body,
         schema: {
+          description: "x, y sampling points using matrix format (nsample, nxdim), (nsampling, nydim) <br/> \
+          where <strong>nsampling</strong> is the number of sample points, <strong>nxdim</strong> the dimension of x and<br/> \
+          <strong>nydim</strong> the dimension of y. <br/> \
+          Each column of x corresponds to the various values of an *input variables* of the optimized function. <br/> \
+          Each column of y corresponds to the various values of an *output variables* of the optimized function. <br/> \
+          y sampling result from the concatenation of the objective function f scalar result (required) and optional <br /> \
+          contraint functions g1, g2, etc evaluated at a given sampling point x. <br/> \
+          For one sampling point x (x_1, x_2, ..., x_nxdim), x_\* values consist of input variables listed in *lexical order* <br/> \
+          For one sampling result y (y_1, y_2, ..., y_nydim), x_\* values consist of output variables listed in *lexical order* <br/> \
+          When a variable is multidimensional it should be expanded as variable's size scalar values<br/> \
+          (example: z of shape (m, p, q) will expands in 'z[0]', 'z[1]', ..., 'z[m\*p\*q-1]', 'z[m\*p\*q]' scalar values).",
           type: :object,
           properties: { 
             optimization: {
               type: :object,
               properties: {
-                description: "x, y DOE points using matrix format (nsample, nxdim), (nsampling, nydim) <br/> \
-                where <strong>nsampling</strong> is the number of sample points, <strong>nxdim</strong> the dimension of x and<br/> \
-                <strong>nydim</strong> the dimension of y. 
-                Each column of x corresponds to the various values of an *input variables* of the optimized function. <br/> \
-                Each column of y corresponds to the various values of an *output variables* of the optimized function. <br/> \
-                y sampling result from the concatenation of the objective function f scalar result (required) and optional <br /> \
-                contraint functions g1, g2, etc evaluated at a given sampling point x.
-                For one sampling point x (x_1, x_2, ..., x_nxdim), x_\* values consist of input variables listed in *lexical order* <br/> \
-                For one sampling result y (y_1, y_2, ..., y_nydim), x_\* values consist of output variables listed in *lexical order* <br/> \
-                When a variable is multidimensional it should be expanded as variable's size scalar values<br/> \
-                (example: z of shape (m, p, q) will expands in 'z[0]', 'z[1]', ..., 'z[m\*p\*q-1]', 'z[m\*p\*q]' scalar values).",
                 x: { 
                   "$ref": "#/components/schemas/Matrix"
                 },
