@@ -24,6 +24,7 @@ class SwaggerApiDoc extends React.Component {
         ref={this.ref}
         url={api.docUrl()}
         onComplete={this.preAuthorize}
+        docExpansion="list"
       />
     );
   }
