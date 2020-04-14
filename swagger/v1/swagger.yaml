@@ -21,60 +21,12 @@ servers:
 - url: http://192.168.99.100:3000
   description: Docker development server
 paths:
-  "/api/v1/analyses/{id}":
-    get:
-      summary: Get analysis information
-      tags:
-      - Analyses
-      security:
-      - Token: []
-      parameters:
-      - name: id
-        in: path
-        description: Analysis identifier
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: Analysis found
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  id:
-                    type: integer
-                  name:
-                    type: string
-                  public:
-                    type: boolean
-                  created_at:
-                    type: string
-                    format: date-time
-                required:
-                - id
-                - name
-                - public
-                - created_at
-        '404':
-          description: Analysis not found
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/Error"
-        '401':
-          description: Unauthorized access
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/Error"
   "/api/v1/meta_models/{id}":
     put:
       summary: Predict using the metamodel
-      description: Compute y responses at given x points where x and y are matrices.
+      description: Compute y responses at given x points
       tags:
-      - MetaModels
+      - Meta Modeling
       security:
       - Token: []
       parameters:
@@ -86,7 +38,7 @@ paths:
           type: string
       responses:
         '200':
-          description: y predictions at x points in matrix format (nx, nydim)
+          description: y predictions at x points in matrix format (nsample, nydim)
           content:
             application/json:
               schema:
@@ -109,18 +61,109 @@ paths:
                 meta_model:
                   type: object
                   properties:
-                    description: 'x points where to predict using matrix format (nx,
-                      nxdim) <br/>                 where <strong>nx</strong> is the
-                      number of points and <strong>nxdim</strong> the dimension of
-                      x<br/>                 Each columns corresponds to the various
+                    description: 'x points where to predict using matrix format (nsampling,
+                      nxdim) <br/>                 where <strong>nsampling</strong>
+                      is the number of points and <strong>nxdim</strong> the dimension
+                      of x<br/>                 Each column corresponds to the various
                       values of an input variables of the metamodel. <br/>                 For
-                      one point x (x_1, x_2, ..., x_nxdim), x_* values consist of
-                      input variables listed in *lexical order* <br/>                 When
+                      one sampling point x (x_1, x_2, ..., x_nxdim), x_* values consist
+                      of input variables listed in *lexical order* <br/>                 When
                       a variable is multidimensional it should be expanded as variable''s
                       size scalar values<br/>                 (example: z of shape
                       (m, p, q) will expands in ''z[0]'', ''z[1]'', ..., ''z[m*p*q-1]'',
                       ''z[m*p*q]'' scalar values).'
                     x:
+                      "$ref": "#/components/schemas/Matrix"
+  "/api/v1/optimizations":
+    post:
+      summary: Create optimization context
+      description: Initialize optimization context specifying design space and constraints
+      tags:
+      - Optimization
+      security:
+      - Token: []
+      parameters: []
+      responses:
+        '200':
+          description: x suggestion computation started
+          content: {}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                optimization:
+                  type: object
+                  properties:
+                    xlimits:
+                      "$ref": "#/components/schemas/Matrix"
+                    cstr_specs:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          type: string
+                          bound: number
+                    required:
+                    - xlimits
+              required:
+              - optimization
+  "/api/v1/optimizations/{id}":
+    put:
+      summary: Ask for next optimal x suggestion where f(x suggestion) is expected
+        to be minimal
+      description: |-
+        Compute next x sample point suggestion regarding provided x, y which result of previous function f evaluations <br/>
+              and optional constraint functions g1, g2, ..., gn specified at optimization creation.
+              Previous evaluations should result from an initial DOE execution followed by previous call evaluation on previous suggestions.
+      tags:
+      - Optimization
+      security:
+      - Token: []
+      parameters:
+      - name: id
+        in: path
+        description: Optimization identifier
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: x suggestion computation started
+          content: {}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                optimization:
+                  type: object
+                  properties:
+                    description: "x, y DOE points using matrix format (nsample, nxdim),
+                      (nsampling, nydim) <br/>                 where <strong>nsampling</strong>
+                      is the number of sample points, <strong>nxdim</strong> the dimension
+                      of x and<br/>                 <strong>nydim</strong> the dimension
+                      of y. \n                Each column of x corresponds to the
+                      various values of an *input variables* of the optimized function.
+                      <br/>                 Each column of y corresponds to the various
+                      values of an *output variables* of the optimized function. <br/>
+                      \                y sampling result from the concatenation of
+                      the objective function f scalar result (required) and optional
+                      <br />                 contraint functions g1, g2, etc evaluated
+                      at a given sampling point x.\n                For one sampling
+                      point x (x_1, x_2, ..., x_nxdim), x_* values consist of input
+                      variables listed in *lexical order* <br/>                 For
+                      one sampling result y (y_1, y_2, ..., y_nydim), x_* values consist
+                      of output variables listed in *lexical order* <br/>                 When
+                      a variable is multidimensional it should be expanded as variable's
+                      size scalar values<br/>                 (example: z of shape
+                      (m, p, q) will expands in 'z[0]', 'z[1]', ..., 'z[m*p*q-1]',
+                      'z[m*p*q]' scalar values)."
+                    x:
+                      "$ref": "#/components/schemas/Matrix"
+                    y:
                       "$ref": "#/components/schemas/Matrix"
 components:
   schemas:
@@ -146,6 +189,11 @@ components:
       description: Enter your API key with the format **Token &lt;API key&gt;**
 security:
 - Token: []
+tags:
+- name: Meta Modeling
+  description: Operations for using metamodels created in WhatsOpt
+- name: Optimization
+  description: Operations for using Onera SEGOMOE optimizer
 externalDocs:
   description: Find out more on WhatsOpt
   url: http://github.com/OneraHub/WhatsOpt

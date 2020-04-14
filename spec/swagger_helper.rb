@@ -65,9 +65,14 @@ RSpec.configure do |config|
             name: "Authorization",
             description: 'Enter your API key with the format **Token &lt;API key&gt;**'
           }
-        }        
+        },
       },
       security: [{Token: []}],
+      tags: [
+        # { name: 'Multi-Disciplinary Analyses', description: 'Operations for using analyses created in WhatsOpt'},
+        { name: 'Meta Modeling', description: 'Operations for using metamodels created in WhatsOpt'},
+        { name: 'Optimization', description: 'Operations for using Onera SEGOMOE optimizer'}
+      ],
       externalDocs: {
         description: "Find out more on WhatsOpt",
         url: "http://github.com/OneraHub/WhatsOpt",

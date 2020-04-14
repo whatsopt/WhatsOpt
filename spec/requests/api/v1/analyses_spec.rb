@@ -1,11 +1,11 @@
 require 'swagger_helper'
 
-describe 'analyses', type: :request do
+describe 'analyses', type: :request, document: false do
   fixtures :all
 
   path '/api/v1/analyses/{id}' do
     get 'Get analysis information' do
-      tags 'Analyses'
+      tags 'Multi-Disciplinary Analyses'
       produces 'application/json'
       security [ Token: [] ]
       parameter name: :id, in: :path, type: :string, description: "Analysis identifier"
