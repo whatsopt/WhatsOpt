@@ -62,14 +62,14 @@ RSpec.configure do |config|
             minItems: 1
           },
           XLimits: {
-            description: "list of row vectors",
+            description: "design space (nxdim intervals)",
             type: :array,
             items: {
-              "$ref" => '#components/schemas/Doublet'
+              "$ref" => '#components/schemas/Interval'
             },
             minItems: 1
           },
-          Doublet: {
+          Interval: {
             type: :array,
             items: {
               type: :number,

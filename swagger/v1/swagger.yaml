@@ -73,6 +73,49 @@ paths:
                   properties:
                     x:
                       "$ref": "#/components/schemas/Matrix"
+  "/api/v1/optimization/{:id}":
+    get:
+      summary: Retrieve optimization result
+      description: 'Get current optimizer status and x suggestion. <br/>       * PENDING  (-1):
+        optimizer was not asked to compute x suggestion,</br>       * VALID    (0)
+        : valid x suggestion,</br>       * INVALID  (1) : invalid x suggestion (at
+        least one contraint is violated),</br>       * ERROR    (2) : runtime error,</br>       *
+        SOLUTION (3) : known solution reached (not implemented),</br>       * RUNNING  (4)
+        : computation in progress</br>'
+      tags:
+      - Optimization
+      security:
+      - Token: []
+      parameters:
+      - name: id
+        in: path
+        description: Optimization identifier
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Retrieve current optimization results
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Optimization result
+                properties:
+                  x_suggested:
+                    "$ref": "#components/schemas/RowVector"
+                  status:
+                    type: integer
+                    enum:
+                    - -1
+                    - 0
+                    - 1
+                    - 2
+                    - 3
+                    - 4
+                required:
+                - x_suggested
+                - status
   "/api/v1/optimizations":
     post:
       summary: Create an optimization context
@@ -164,6 +207,23 @@ paths:
                       "$ref": "#/components/schemas/Matrix"
                     y:
                       "$ref": "#/components/schemas/Matrix"
+    delete:
+      summary: Destroy optimization context
+      tags:
+      - Optimization
+      security:
+      - Token: []
+      parameters:
+      - name: id
+        in: path
+        description: Optimization identifier
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Optimization context successfully deleted
+          content: {}
 components:
   schemas:
     Error:
@@ -184,12 +244,12 @@ components:
         format: double
       minItems: 1
     XLimits:
-      description: list of row vectors
+      description: design space (nxdim intervals)
       type: array
       items:
-        "$ref": "#components/schemas/Doublet"
+        "$ref": "#components/schemas/Interval"
       minItems: 1
-    Doublet:
+    Interval:
       type: array
       items:
         type: number

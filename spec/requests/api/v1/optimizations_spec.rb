@@ -3,6 +3,41 @@ require 'swagger_helper'
 describe 'optimization', type: :request do
   fixtures :all
 
+  path '/api/v1/optimization/{:id}' do
+    get 'Retrieve optimization result' do
+      description "Get current optimizer status and x suggestion. <br/> \
+      * PENDING  (-1): optimizer was not asked to compute x suggestion,</br> \
+      * VALID    (0) : valid x suggestion,</br> \
+      * INVALID  (1) : invalid x suggestion (at least one contraint is violated),</br> \
+      * ERROR    (2) : runtime error,</br> \
+      * SOLUTION (3) : known solution reached (not implemented),</br> \
+      * RUNNING  (4) : computation in progress</br>" 
+      tags 'Optimization'
+      produces 'application/json'
+      security [ Token: [] ]
+      parameter name: :id, in: :path, type: :string, description: "Optimization identifier"    
+
+      response '200', "Retrieve current optimization result" do
+        schema type: :object,
+          description: "Optimization result",
+          properties: {
+            x_suggested: { 
+              "$ref": '#components/schemas/RowVector'
+            },
+            status: { 
+              type: :integer, 
+              enum: [-1, 0, 1, 2, 3, 4]
+            },
+          },
+          required: [ :x_suggested, :status ]
+
+        let(:Authorization) { "Token FriendlyApiKey" }
+        let(:id) { optimization(:optimization_ackley2d).id }
+        run_test!
+      end
+    end
+  end
+
   path '/api/v1/optimizations' do
     post 'Create an optimization context' do
       description "Initialize optimization context specifying design space and constraints"
@@ -51,6 +86,7 @@ describe 'optimization', type: :request do
   end
   
   path '/api/v1/optimizations/{id}' do
+
     put 'Ask for next optimal x suggestion where f(x suggestion) is expected to be minimal' do
       description "Compute next x sample point suggestion regarding provided x, y which result of previous function f evaluations <br/> \
       and optional constraint functions g1, g2, ..., gn specified at optimization creation. </br> \
@@ -119,6 +155,19 @@ describe 'optimization', type: :request do
       #   run_test! 
       # end
 
+    end
+  end
+
+  path '/api/v1/optimizations/{id}' do
+    delete 'Destroy optimization context' do
+      tags 'Optimization'
+      security [ Token: [] ]
+      parameter name: :id, in: :path, type: :string, description: "Optimization identifier"    
+
+      response '200', "Optimization context successfully deleted" do
+        let(:id) { optimization(:optimization_ackley2d).id }
+        run_test!
+      end
     end
   end
 
