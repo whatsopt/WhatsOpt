@@ -1,5 +1,10 @@
 <h1>CHANGELOG</h1>
 
+<h3>1.8.0 (??/05/2020)</h3>
+<ul>
+  <li>Add mechanism (whatsopt docking) to ease the connection of known discipline implementations</li>
+</ul>
+
 <h3>1.7.0 (05/04/2020)</h3>
 <ul>
   <li>User has access to SEGOMOE optimizer as a web service</li>

@@ -23,7 +23,7 @@ RUN apt-get update -y \
 	&& apt-get install -y libsm6 libxext6
 
 # Thrift
-ENV THRIFT_VERSION 0.11.0
+ENV THRIFT_VERSION 0.13.0
 
 RUN buildDeps=" \
 	automake \
@@ -97,7 +97,7 @@ RUN pip install numpy \
 	&& pip install salib \
 	&& pip install smt \
 	&& pip install openturns \
-	&& pip install thrift==0.11.0 \
+	&& pip install thrift \
 	&& pip install wop
 
 # Clean up APT when done.

@@ -19,6 +19,7 @@ module WhatsOpt
       @server_module = "server"
       @server_host = "localhost"
       @server_port = 31400
+      @generator = self
     end
 
     # options: only_base: false, with_run: true, with_server: false, with_runops: true, user_agent: nil, sqlite_filename: nil
@@ -43,6 +44,10 @@ module WhatsOpt
       end
       stringio.rewind
       return stringio.read, zip_filename
+    end
+
+    def render_partial(file)
+      ERB.new(File.read(File.join(@template_dir, file))).result(binding)
     end
 
     def _generate(filename, template_filename, gendir)
