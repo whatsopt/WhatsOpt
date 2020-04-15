@@ -47,7 +47,7 @@ class WhatsOptApi {
 
   // eslint-disable-next-line class-methods-use-this
   docUrl() {
-    return '/api_doc/v1/swagger.yaml';
+    return this.url('/api_doc/v1/swagger.yaml');
   }
 
   openmdaoChecking(mdaId, callback) {
