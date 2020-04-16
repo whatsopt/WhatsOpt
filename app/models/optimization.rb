@@ -51,7 +51,7 @@ class Optimization < ApplicationRecord
   end
 
   def check_optimization_config
-    kind = 'SEGOMOE' if kind.blank? 
+    self.kind = 'SEGOMOE' if kind.blank? 
     unless (self.kind == 'SEGOMOE')
       raise ConfigurationInvalid.new("optimizer kind should be SEGOMOE, got '#{self.kind}'")
     end

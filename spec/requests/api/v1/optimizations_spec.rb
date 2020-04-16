@@ -1,39 +1,92 @@
 require 'swagger_helper'
 
-describe 'optimization', type: :request do
+SEGOMOE_INSTALLED = system("python << EOF\nimport segomoe\nEOF")
+
+describe 'optimizations', type: :request do
   fixtures :all
 
-  path '/api/v1/optimization/{:id}' do
+  before(:each) do
+    # Bug: https://github.com/rails/rails/issues/37270 : test_adapter overrides backgroundjob runner
+    (ActiveJob::Base.descendants << ActiveJob::Base).each(&:disable_test_adapter)
+  end
+
+  path '/api/v1/optimizations/{id}' do
+
     get 'Retrieve optimization result' do
-      description "Get current optimizer status and x suggestion. <br/> \
-      * PENDING  (-1): optimizer was not asked to compute x suggestion,</br> \
-      * VALID    (0) : valid x suggestion,</br> \
-      * INVALID  (1) : invalid x suggestion (at least one contraint is violated),</br> \
-      * ERROR    (2) : runtime error,</br> \
-      * SOLUTION (3) : known solution reached (not implemented),</br> \
-      * RUNNING  (4) : computation in progress</br>" 
+      # description "Get current optimizer status and x suggestion. <br/> \
+      # * PENDING  (-1): optimizer was not asked to compute x suggestion,</br> \
+      # * VALID    (0) : valid x suggestion,</br> \
+      # * INVALID  (1) : invalid x suggestion (at least one contraint is violated),</br> \
+      # * ERROR    (2) : runtime error,</br> \
+      # * SOLUTION (3) : known solution reached (not implemented),</br> \
+      # * RUNNING  (4) : computation in progress</br>" 
       tags 'Optimization'
       produces 'application/json'
       security [ Token: [] ]
       parameter name: :id, in: :path, type: :string, description: "Optimization identifier"    
 
+      # {"id"=>481827740, "kind"=>"SEGOMOE", "inputs"=>{"x"=>[[0.1005624023, 0.1763338461], [0.843746558, 0.6787895599], [0.386
+      # 1691997, 0.106018846]], "y"=>[[9.09955542], [6.38231049], [12.4677347]]}, "outputs"=>{"status"=>0, "x_suggested"=>[0.854
+      # 7924827924868, 0.684126989684812]}, "created_at"=>"2020-04-16T16:16:37.238Z", "updated_at"=>"2020-04-16T16:16:38.365Z"}
+
       response '200', "Retrieve current optimization result" do
         schema type: :object,
           description: "Optimization result",
           properties: {
-            x_suggested: { 
-              "$ref": '#components/schemas/RowVector'
+            id: { type: :number },
+            kind: { type: :string },
+            inputs: {
+              type: :object,
+              properties: {
+                x: {
+                  "$ref": '#components/schemas/Matrix'
+                },
+                y: {
+                  "$ref": '#components/schemas/Matrix'
+                }
+              },
             },
-            status: { 
-              type: :integer, 
-              enum: [-1, 0, 1, 2, 3, 4]
+            outputs: {
+              type: :object,
+              properties: {
+                x_suggested: { 
+                  "$ref": '#components/schemas/RowVector', nullable: true
+                },
+                status: { 
+                  type: :integer, 
+                  enum: [-1, 0, 1, 2, 3, 4]
+                },
+              },
+              required: [ :x_suggested, :status ]
             },
+            created_at: { type: :string, format: :"date-time"},
+            updated_at: { type: :string, format: :"date-time"}
           },
-          required: [ :x_suggested, :status ]
-
+          required: [ :inputs, :outputs ]
+          
         let(:Authorization) { "Token FriendlyApiKey" }
-        let(:id) { optimization(:optimization_ackley2d).id }
-        run_test!
+        let(:id) { 
+          id = optimizations(:optim_ackley2d).id
+        }
+
+        xit unless SEGOMOE_INSTALLED
+        before do |example|
+          optim = optimizations(:optim_ackley2d)
+          optim.create_optimizer
+          put "/api/v1/optimizations/#{optim.id}", params: {
+            optimization: { 
+              x: [[0.1005624023, 0.1763338461],
+                  [0.843746558, 0.6787895599],
+                  [0.3861691997, 0.106018846]], 
+              y: [[9.09955542], [6.38231049], [12.4677347]] }},
+            as: :json, headers: { "Authorization" => "Token FriendlyApiKey" }
+          submit_request(example.metadata)
+        end
+      
+        it 'returns a valid 200 response' do |example|
+          assert_response_matches_metadata(example.metadata)
+        end
+      
       end
     end
   end
@@ -73,12 +126,16 @@ describe 'optimization', type: :request do
           required: [:optimization]
         }
       
-      response '200', "x suggestion computation started" do
+      response '201', "Optimization successfully created" do
         let(:Authorization) { "Token FriendlyApiKey" }
-        let(:id) { optimization(:optimization_ackley2d).id }
+        let(:id) { 
+          optim = optimizations(:optim_ackley2d)
+          optim.id
+        }
         let(:context) { { optimization: { 
           xlimits: [[-32.768, 32.768], [-32.768, 32.768]]
         }}}
+        xit unless SEGOMOE_INSTALLED
         run_test!
       end
         
@@ -96,7 +153,7 @@ describe 'optimization', type: :request do
       produces 'application/json'
       security [ Token: [] ]
       parameter name: :id, in: :path, type: :string, description: "Optimization identifier"
-      parameter name: :context,
+      parameter name: :xydoe,
         in: :body,
         schema: {
           description: "x, y sampling points using matrix format (nsample, nxdim), (nsampling, nydim) <br/> \
@@ -127,15 +184,19 @@ describe 'optimization', type: :request do
         },
         required: true
 
-      response '200', "x suggestion computation started" do
-
+      response '204', "x suggestion computation started" do
         let(:Authorization) { "Token FriendlyApiKey" }
-        let(:id) { optimization(:optimization_ackley2d).id }
+        let(:id) { 
+          optim = optimizations(:optim_ackley2d)
+          optim.create_optimizer
+          optim.id 
+        }
         let(:xydoe) { {optimization: { 
           x: [[0.1005624023, 0.1763338461],
               [0.843746558, 0.6787895599],
               [0.3861691997, 0.106018846]], 
           y: [[9.09955542], [6.38231049], [12.4677347]] }}}
+        xit unless SEGOMOE_INSTALLED
         run_test!
       end
 
@@ -164,8 +225,9 @@ describe 'optimization', type: :request do
       security [ Token: [] ]
       parameter name: :id, in: :path, type: :string, description: "Optimization identifier"    
 
-      response '200', "Optimization context successfully deleted" do
-        let(:id) { optimization(:optimization_ackley2d).id }
+      response '204', "Optimization context successfully deleted" do
+        let(:Authorization) { "Token FriendlyApiKey" }
+        let(:id) { optimizations(:optim_ackley2d).id }
         run_test!
       end
     end

@@ -73,15 +73,9 @@ paths:
                   properties:
                     x:
                       "$ref": "#/components/schemas/Matrix"
-  "/api/v1/optimization/{:id}":
+  "/api/v1/optimizations/{id}":
     get:
       summary: Retrieve optimization result
-      description: 'Get current optimizer status and x suggestion. <br/>       * PENDING  (-1):
-        optimizer was not asked to compute x suggestion,</br>       * VALID    (0)
-        : valid x suggestion,</br>       * INVALID  (1) : invalid x suggestion (at
-        least one contraint is violated),</br>       * ERROR    (2) : runtime error,</br>       *
-        SOLUTION (3) : known solution reached (not implemented),</br>       * RUNNING  (4)
-        : computation in progress</br>'
       tags:
       - Optimization
       security:
@@ -95,64 +89,51 @@ paths:
           type: string
       responses:
         '200':
-          description: Retrieve current optimization results
+          description: Retrieve current optimization result
           content:
             application/json:
               schema:
                 type: object
                 description: Optimization result
                 properties:
-                  x_suggested:
-                    "$ref": "#components/schemas/RowVector"
-                  status:
-                    type: integer
-                    enum:
-                    - -1
-                    - 0
-                    - 1
-                    - 2
-                    - 3
-                    - 4
+                  id:
+                    type: number
+                  kind:
+                    type: string
+                  inputs:
+                    type: object
+                    properties:
+                      x:
+                        "$ref": "#components/schemas/Matrix"
+                      y:
+                        "$ref": "#components/schemas/Matrix"
+                  outputs:
+                    type: object
+                    properties:
+                      x_suggested:
+                        "$ref": "#components/schemas/RowVector"
+                        nullable: true
+                      status:
+                        type: integer
+                        enum:
+                        - -1
+                        - 0
+                        - 1
+                        - 2
+                        - 3
+                        - 4
+                    required:
+                    - x_suggested
+                    - status
+                  created_at:
+                    type: string
+                    format: date-time
+                  updated_at:
+                    type: string
+                    format: date-time
                 required:
-                - x_suggested
-                - status
-  "/api/v1/optimizations":
-    post:
-      summary: Create an optimization context
-      description: Initialize optimization context specifying design space and constraints
-      tags:
-      - Optimization
-      security:
-      - Token: []
-      parameters: []
-      responses:
-        '200':
-          description: x suggestion computation started
-          content: {}
-      requestBody:
-        content:
-          application/json:
-            schema:
-              description: |-
-                Optmization context: xlimits and optional constraints <br/>
-                          * xlimits: design space in matrix format (nxdim, 2). The ith row is [lower bound, upper bound] of the ith design variable. </br>
-                          * cstr_specs: constraint c specification either *c<bound*, *c>bound*, *c=bound* (default is *<0*)
-              type: object
-              properties:
-                optimization:
-                  type: object
-                  properties:
-                    xlimits:
-                      "$ref": "#/components/schemas/XLimits"
-                    cstr_specs:
-                      type: array
-                      items:
-                        "$ref": "#/components/schemas/ConstraintSpec"
-                  required:
-                  - xlimits
-              required:
-              - optimization
-  "/api/v1/optimizations/{id}":
+                - inputs
+                - outputs
     put:
       summary: Ask for next optimal x suggestion where f(x suggestion) is expected
         to be minimal
@@ -173,7 +154,7 @@ paths:
         schema:
           type: string
       responses:
-        '200':
+        '204':
           description: x suggestion computation started
           content: {}
       requestBody:
@@ -221,9 +202,45 @@ paths:
         schema:
           type: string
       responses:
-        '200':
+        '204':
           description: Optimization context successfully deleted
           content: {}
+  "/api/v1/optimizations":
+    post:
+      summary: Create an optimization context
+      description: Initialize optimization context specifying design space and constraints
+      tags:
+      - Optimization
+      security:
+      - Token: []
+      parameters: []
+      responses:
+        '201':
+          description: Optimization successfully created
+          content: {}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: |-
+                Optmization context: xlimits and optional constraints <br/>
+                          * xlimits: design space in matrix format (nxdim, 2). The ith row is [lower bound, upper bound] of the ith design variable. </br>
+                          * cstr_specs: constraint c specification either *c<bound*, *c>bound*, *c=bound* (default is *<0*)
+              type: object
+              properties:
+                optimization:
+                  type: object
+                  properties:
+                    xlimits:
+                      "$ref": "#/components/schemas/XLimits"
+                    cstr_specs:
+                      type: array
+                      items:
+                        "$ref": "#/components/schemas/ConstraintSpec"
+                  required:
+                  - xlimits
+              required:
+              - optimization
 components:
   schemas:
     Error:

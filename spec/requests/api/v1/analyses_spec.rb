@@ -4,6 +4,7 @@ describe 'analyses', type: :request, document: false do
   fixtures :all
 
   path '/api/v1/analyses/{id}' do
+    
     get 'Get analysis information' do
       tags 'Multi-Disciplinary Analyses'
       produces 'application/json'
