@@ -50,6 +50,9 @@ group :development, :test do
   gem "selenium-webdriver"
   # Compute test coverage
   gem "coveralls", require: false
+  # rswag
+  gem 'rspec-rails'
+  gem 'rswag-specs'
 end
 
 group :development do
@@ -125,5 +128,4 @@ gem "thrift", "0.11.0"
 gem "image_processing", "~> 1.2"
 
 # Document API
-gem "swagger-blocks"
-
+gem 'rswag-api'

@@ -176,7 +176,7 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
 
     mm = @mda.disciplines.last.meta_model
     put api_v1_meta_model_url(mm), params: { meta_model: {
-        format: "matrix", values: [[3], [6]]
+        x: [[3], [6]]
       } }, as: :json, headers: @auth_headers
     assert_response :success
   end

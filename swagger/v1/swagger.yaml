@@ -1,0 +1,305 @@
+---
+openapi: 3.0.3
+info:
+  title: WhatsOpt API
+  version: v1
+  contact:
+    name: API Support
+    email: remi.lafage@onera.fr
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+servers:
+- url: https://ether.onera.fr/whatsopt
+  description: External production server
+- url: https://selene.onecert.fr/whatsopt
+  description: Internal production server
+- url: http://rdri206h.onecert.fr/whatsopt
+  description: Internal staging server
+- url: http://endymion:3000
+  description: Development server
+- url: http://192.168.99.100:3000
+  description: Docker development server
+paths:
+  "/api/v1/meta_models/{id}":
+    put:
+      summary: Predict using the metamodel
+      description: Compute y responses at given x points
+      tags:
+      - Meta Modeling
+      security:
+      - Token: []
+      parameters:
+      - name: id
+        in: path
+        description: MetaModel identifier
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: y predictions at x points in matrix format (nsample, nydim)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  y:
+                    "$ref": "#/components/schemas/Matrix"
+        '404':
+          description: MetaModel not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: 'x points where to predict using matrix format (nsampling,
+                nxdim) <br/>           where <strong>nsampling</strong> is the number
+                of points and <strong>nxdim</strong> the dimension of x<br/>           Each
+                column corresponds to the various values of an input variables of
+                the metamodel. <br/>           For one sampling point x (x_1, x_2,
+                ..., x_nxdim), x_* values consist of input variables listed in *lexical
+                order* <br/>           When a variable is multidimensional it should
+                be expanded as variable''s size scalar values<br/>           (example:
+                z of shape (m, p, q) will expands in ''z[0]'', ''z[1]'', ..., ''z[m*p*q-1]'',
+                ''z[m*p*q]'' scalar values).'
+              type: object
+              properties:
+                meta_model:
+                  type: object
+                  properties:
+                    x:
+                      "$ref": "#/components/schemas/Matrix"
+  "/api/v1/optimizations":
+    post:
+      summary: Create an optimization context
+      description: Initialize optimization context specifying design space and constraints
+      tags:
+      - Optimization
+      security:
+      - Token: []
+      parameters: []
+      responses:
+        '201':
+          description: Optimization successfully created
+          content: {}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: |-
+                Optmization context: xlimits and optional constraints <br/>
+                          * xlimits: design space in matrix format (nxdim, 2). The ith row is [lower bound, upper bound] of the ith design variable. </br>
+                          * cstr_specs: constraint c specification either *c<bound*, *c>bound*, *c=bound* (default is *<0*)
+              type: object
+              properties:
+                optimization:
+                  type: object
+                  properties:
+                    xlimits:
+                      "$ref": "#/components/schemas/XLimits"
+                    cstr_specs:
+                      type: array
+                      items:
+                        "$ref": "#/components/schemas/ConstraintSpec"
+                  required:
+                  - xlimits
+              required:
+              - optimization
+  "/api/v1/optimizations/{id}":
+    put:
+      summary: Ask for next optimal x suggestion where f(x suggestion) is expected
+        to be minimal
+      description: Compute next x sample point suggestion regarding provided x, y
+        which result of previous function f evaluations <br/>       and optional constraint
+        functions g1, g2, ..., gn specified at optimization creation. </br>       Previous
+        evaluations should result from an initial DOE execution followed by previous
+        call evaluation on previous suggestions.
+      tags:
+      - Optimization
+      security:
+      - Token: []
+      parameters:
+      - name: id
+        in: path
+        description: Optimization identifier
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: x suggestion computation started
+          content: {}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: 'x, y sampling points using matrix format (nsample, nxdim),
+                (nsampling, nydim) <br/>           where <strong>nsampling</strong>
+                is the number of sample points, <strong>nxdim</strong> the dimension
+                of x and<br/>           <strong>nydim</strong> the dimension of y.
+                <br/>           Each column of x corresponds to the various values
+                of an *input variables* of the optimized function. <br/>           Each
+                column of y corresponds to the various values of an *output variables*
+                of the optimized function. <br/>           y sampling result from
+                the concatenation of the objective function f scalar result (required)
+                and optional <br />           contraint functions g1, g2, etc evaluated
+                at a given sampling point x. <br/>           For one sampling point
+                x (x_1, x_2, ..., x_nxdim), x_* values consist of input variables
+                listed in *lexical order* <br/>           For one sampling result
+                y (y_1, y_2, ..., y_nydim), x_* values consist of output variables
+                listed in *lexical order* <br/>           When a variable is multidimensional
+                it should be expanded as variable''s size scalar values<br/>           (example:
+                z of shape (m, p, q) will expands in ''z[0]'', ''z[1]'', ..., ''z[m*p*q-1]'',
+                ''z[m*p*q]'' scalar values).'
+              type: object
+              properties:
+                optimization:
+                  type: object
+                  properties:
+                    x:
+                      "$ref": "#/components/schemas/Matrix"
+                    y:
+                      "$ref": "#/components/schemas/Matrix"
+    get:
+      summary: Retrieve optimization result
+      tags:
+      - Optimization
+      security:
+      - Token: []
+      parameters:
+      - name: id
+        in: path
+        description: Optimization identifier
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Retrieve current optimization result
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Optimization result
+                properties:
+                  id:
+                    type: number
+                  kind:
+                    type: string
+                  inputs:
+                    type: object
+                    properties:
+                      x:
+                        "$ref": "#components/schemas/Matrix"
+                      y:
+                        "$ref": "#components/schemas/Matrix"
+                  outputs:
+                    type: object
+                    properties:
+                      x_suggested:
+                        "$ref": "#components/schemas/RowVector"
+                        nullable: true
+                      status:
+                        type: integer
+                        enum:
+                        - -1
+                        - 0
+                        - 1
+                        - 2
+                        - 3
+                        - 4
+                    required:
+                    - x_suggested
+                    - status
+                  created_at:
+                    type: string
+                    format: date-time
+                  updated_at:
+                    type: string
+                    format: date-time
+                required:
+                - inputs
+                - outputs
+    delete:
+      summary: Destroy optimization context
+      tags:
+      - Optimization
+      security:
+      - Token: []
+      parameters:
+      - name: id
+        in: path
+        description: Optimization identifier
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Optimization context successfully deleted
+          content: {}
+components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+    Matrix:
+      description: list of row vectors
+      type: array
+      items:
+        "$ref": "#components/schemas/RowVector"
+      minItems: 1
+    RowVector:
+      type: array
+      items:
+        type: number
+        format: double
+      minItems: 1
+    XLimits:
+      description: design space (nxdim intervals)
+      type: array
+      items:
+        "$ref": "#components/schemas/Interval"
+      minItems: 1
+    Interval:
+      type: array
+      items:
+        type: number
+        format: double
+      minItems: 2
+      maxItems: 2
+    ConstraintSpec:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+          - "<"
+          - ">"
+          - "="
+          default: "<"
+        bound:
+          type: number
+          format: double
+          default: 0.0
+  securitySchemes:
+    Token:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: Enter your API key with the format **Token &lt;API key&gt;**
+security:
+- Token: []
+tags:
+- name: Meta Modeling
+  description: Operations for using metamodels created in WhatsOpt
+- name: Optimization
+  description: Operations for using Onera SEGOMOE optimizer
+externalDocs:
+  description: Find out more on WhatsOpt
+  url: http://github.com/OneraHub/WhatsOpt

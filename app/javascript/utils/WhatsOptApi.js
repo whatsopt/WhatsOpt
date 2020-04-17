@@ -45,6 +45,11 @@ class WhatsOptApi {
     return `${this.relativeUrlRoot}${API_URL}${path}`;
   }
 
+  // eslint-disable-next-line class-methods-use-this
+  docUrl() {
+    return this.url('/api_doc/v1/swagger.yaml');
+  }
+
   openmdaoChecking(mdaId, callback) {
     const path = `/analyses/${mdaId}/openmdao_checking`;
     axios.post(this.apiUrl(path))

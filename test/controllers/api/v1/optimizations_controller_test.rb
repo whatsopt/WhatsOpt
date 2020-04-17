@@ -6,6 +6,8 @@ require "matrix"
 class Api::V1::OptimizationControllerTest < ActionDispatch::IntegrationTest
   setup do
     @auth_headers = { "Authorization" => "Token " + TEST_API_KEY }
+    # Bug: https://github.com/rails/rails/issues/37270 : test_adapter overrides backgroundjob runner
+    (ActiveJob::Base.descendants << ActiveJob::Base).each(&:disable_test_adapter)
   end
 
   test "should create an optimization" do
@@ -54,7 +56,6 @@ class Api::V1::OptimizationControllerTest < ActionDispatch::IntegrationTest
   test "should update and get an optimization" do
     skip_if_parallel
     skip_if_segomoe_not_installed
-    skip("need n_clusters=1 option not yet implemented")
     @optim = optimizations(:optim_ackley2d)
     @optim.create_optimizer
 
@@ -65,10 +66,12 @@ class Api::V1::OptimizationControllerTest < ActionDispatch::IntegrationTest
                              y: [[9.09955542], [6.38231049], [12.4677347]]}},
       as: :json, headers: @auth_headers
     assert_response :success
+    get api_v1_optimization_url(@optim), as: :json, headers: @auth_headers
+    assert_response :success
     resp = JSON.parse(response.body)
-    status = resp['status']
+    status = resp['outputs']['status']
     assert_equal 0, status
-    x = resp['x_suggested']
+    x = resp['outputs']['x_suggested']
     assert_in_delta(0.85, x[0], 0.5)
     assert_in_delta(0.66, x[1], 0.5)
 
