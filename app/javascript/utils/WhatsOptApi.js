@@ -102,7 +102,7 @@ class WhatsOptApi {
   getAnalysis(mdaId, xdsmFormat, callback) {
     let path = `/analyses/${mdaId}`;
     if (xdsmFormat) {
-      path += '.xdsm';
+      path += '.whatsopt_ui';
     }
     axios.get(this.apiUrl(path))
       .then(callback)

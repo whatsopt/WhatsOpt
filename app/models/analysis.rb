@@ -202,7 +202,7 @@ class Analysis < ApplicationRecord
     @prev ||= (idx == 0) ? -1 : @opeIds[idx-1]
   end
 
-  def to_mda_viewer_json
+  def to_whatsopt_ui_json
     {
       id: id,
       name: name,

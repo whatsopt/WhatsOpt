@@ -1,7 +1,12 @@
+<%= render 'toolbar', ope: @ope %>
 
-<div id="runner" data-mda="<%= ope.analysis.to_mda_viewer_json %>" 
-                 data-ope="<%= ActiveModelSerializers::SerializableResource.new(ope).to_json %>" 
-                 data-api-key="<%= current_user.api_key %>"
-                 data-ws-server="<%= root_url(root_url, protocol: 'ws') %>"></div> 
-
-<%= javascript_pack_tag 'runner_application' %>
+<% if @ope.sensitivity_analysis? %>
+<div id="sensitivity_plotter" data-mda="<%= @mda.to_whatsopt_ui_json %>" data-ope="<%= @ope.to_plotter_json %>" data-api-key="<%=current_user.api_key%>"></div>
+<%= javascript_pack_tag 'sensitivity_plotter_application' %>
+<% elsif @ope.meta_model? %>
+<div id="metamodel_quality_plotter" data-mda-name="<%= @ope.analysis.name %>" data-meta-model-id="<%= @ope.meta_model.id %>" data-api-key="<%=current_user.api_key%>"></div>
+<%= javascript_pack_tag 'metamodel_quality_plotter_application' %>
+<% else %>
+<div id="plotter" data-mda="<%= @mda.to_whatsopt_ui_json %>" data-uq-mode="<%= @mda.uq_mode? %>" data-ope="<%= @ope.to_plotter_json %>" data-api-key="<%=current_user.api_key%>"></div>
+<%= javascript_pack_tag 'plotter_application' %>
+<% end %>
