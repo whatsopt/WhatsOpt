@@ -18,6 +18,8 @@ class Api::V1::AnalysesController < Api::ApiController
   def show
     if params[:format] == "whatsopt_ui"
       render json: @mda.to_whatsopt_ui_json
+    elsif params[:format] == "xdsm"
+      render json: @mda.to_xdsm_json
     else
       json_response @mda
     end

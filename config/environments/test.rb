@@ -48,4 +48,8 @@ Rails.application.configure do
 
   # do not work asynchronously for tests
   config.active_job.queue_adapter = :inline
+
+  RSpec.configure do |config|
+    config.swagger_dry_run = false
+  end
 end

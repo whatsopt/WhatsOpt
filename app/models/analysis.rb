@@ -219,6 +219,22 @@ class Analysis < ApplicationRecord
     }.to_json
   end
 
+  def to_xdsm_json
+    xdsm = {
+      root: {
+        nodes: build_nodes.map{|n| {
+          id: n[:id], 
+          name: n[:name]==WhatsOpt::Discipline::NULL_DRIVER_NAME ? "_U_" : n[:name],
+          type: n[:type]
+        }},
+        edges: build_edges.map{|e| 
+          { from: e[:from], to: e[:to], name: e[:name] }
+        }
+      }
+    }
+    xdsm.to_json
+  end
+
   def build_nodes
     disciplines.by_position.map do |d|
       # node = { id: d.id.to_s, type: d.type, name: d.name, endpoint: d.endpoint }
