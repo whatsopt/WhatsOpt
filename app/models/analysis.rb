@@ -222,10 +222,10 @@ class Analysis < ApplicationRecord
   def to_xdsm_json
     xdsm = {
       root: {
-        nodes: build_nodes.map{|n| {
+        nodes: build_nodes.map.with_index{|n, i| {
           id: n[:id], 
-          name: n[:name]==WhatsOpt::Discipline::NULL_DRIVER_NAME ? "_U_" : n[:name],
-          type: n[:type]
+          name: i==0 ? "_U_" : n[:name],
+          type: i==0 ? "driver" : n[:type]
         }},
         edges: build_edges.map{|e| 
           { from: e[:from], to: e[:to], name: e[:name] }
