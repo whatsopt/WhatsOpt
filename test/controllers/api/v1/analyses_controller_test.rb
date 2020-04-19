@@ -58,7 +58,7 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should get xdsm format" do
-    get api_v1_mda_url(@mda, format: "xdsm"), as: :json, headers: @auth_headers
+    get api_v1_mda_url(@mda, format: "whatsopt_ui"), as: :json, headers: @auth_headers
     assert_response :success
     resp = JSON.parse(response.body)
     assert_equal @mda.disciplines.count, resp["nodes"].size
@@ -128,8 +128,8 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     assert_equal public, @inner.reload.public
   end
 
-  test "should have an openmdao implementation in mda_viewer json" do
-    mdajson = JSON.parse(@mda.to_mda_viewer_json)
+  test "should have an openmdao implementation in whatsopt_ui json" do
+    mdajson = JSON.parse(@mda.to_whatsopt_ui_json)
     assert_equal({ "name" => "NonlinearBlockGS", "atol" => 1.0e-06, "rtol" => 1.0e-10,
                   "maxiter" => 7, "err_on_non_converge" => true, "iprint" => 2 }, mdajson["impl"]["openmdao"]["nonlinear_solver"])
     assert_equal({ "name" => "ScipyKrylov", "atol" => 1.0e-08, "rtol" => 1.0e-07,

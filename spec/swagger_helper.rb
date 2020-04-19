@@ -93,6 +93,67 @@ RSpec.configure do |config|
               }              
             } 
           },
+          AnalysisAttributes: {
+            type: :object,
+            properties: {
+              name: { type: :string },
+              disciplines_attributes: {
+                type: :array,
+                items: {
+                  type: :object,
+                  properties: {
+                    name: { type: :string },
+                    variables_attributes: {
+                      type: :array,
+                      items: {
+                        type: :object,
+                        properties: {
+                          name: { type: :string },
+                          io_mode: {
+                            type: :string,
+                            enum: ["in", "out"]
+                          }
+                        }
+                      }
+                    },
+                    sub_analysis_attributes: {
+                      "$ref": "#/components/schemas/AnalysisAttributes"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          Xdsm: {
+            type: :object,
+            additionalProperties: {
+              type: :object,
+              properties: {
+                nodes: {
+                  type: :array,
+                  items: {
+                    type: :object,
+                    properties: {
+                      id: {type: :string},
+                      name: {type: :string},
+                      type: {type: :string}
+                    }
+                  }
+                },
+                edges: {
+                  type: :array,
+                  items: {
+                    type: :object,
+                    properties: {
+                      from: {type: :string},
+                      to: {type: :string},
+                      name: {type: :string}
+                    }
+                  }
+                }
+              }
+            }
+          }
         },
         securitySchemes: {
           Token: {
@@ -105,7 +166,7 @@ RSpec.configure do |config|
       },
       security: [{Token: []}],
       tags: [
-        # { name: 'Multi-Disciplinary Analyses', description: 'Operations for using analyses created in WhatsOpt'},
+        { name: 'Multi-Disciplinary Analyses', description: 'Operations for using analyses created in WhatsOpt'},
         { name: 'Meta Modeling', description: 'Operations for using metamodels created in WhatsOpt'},
         { name: 'Optimization', description: 'Operations for using Onera SEGOMOE optimizer'}
       ],

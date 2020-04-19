@@ -35,7 +35,8 @@ class XdsmViewer extends React.Component {
         cellsize: { w: 150, h: 50 },
         padding: 10,
       },
-      titleTooltip: true,
+      noTitleTooltip: false,
+      noDefaultDriver: false,
       version,
     };
     const { mda, filter } = this.props;

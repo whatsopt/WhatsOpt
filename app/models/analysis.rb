@@ -202,7 +202,7 @@ class Analysis < ApplicationRecord
     @prev ||= (idx == 0) ? -1 : @opeIds[idx-1]
   end
 
-  def to_mda_viewer_json
+  def to_whatsopt_ui_json
     {
       id: id,
       name: name,
@@ -217,6 +217,22 @@ class Analysis < ApplicationRecord
       impl: { openmdao: build_openmdao_impl,
               metamodel: { quality: build_metamodel_quality } }
     }.to_json
+  end
+
+  def to_xdsm_json
+    xdsm = {
+      root: {
+        nodes: build_nodes.map.with_index{|n, i| {
+          id: n[:id], 
+          name: i==0 ? "_U_" : n[:name],
+          type: i==0 ? "driver" : n[:type]
+        }},
+        edges: build_edges.map{|e| 
+          { from: e[:from], to: e[:to], name: e[:name] }
+        }
+      }
+    }
+    xdsm.to_json
   end
 
   def build_nodes

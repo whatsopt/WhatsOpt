@@ -1,50 +1,51 @@
-<div class="btn-toolbar float-right">  
-<% unless @mda.operations.empty? %>
-<%= button_to mda_operations_path(@mda), method: :get, class: "btn ml-2", title:"List Operations" do %>
+<div class="btn-toolbar float-right">
+  <% unless @mda.operations.empty? %>
+  <%= button_to mda_operations_path(@mda), method: :get, class: "btn ml-2", title:"List Operations" do %>
   <span class="fa fa-ellipsis-v"></span>
   List Operations
-<% end %> 
-<% end %>
-<% if policy(@mda).create? %>
+  <% end %>
+  <% end %>
+  <% if policy(@mda).create? %>
   <%= button_to mdas_path(mda_id: @mda), method: :post, class:"btn" do |b|%>
-    <span class="fa fa-copy"></span>
-      Copy
+  <span class="fa fa-copy"></span>
+  Copy
   <% end %>
-<% end %>
-<% if policy(@mda).edit? %>
+  <% end %>
+  <% if policy(@mda).edit? %>
   <%= button_to edit_mda_path(@mda), method: :get, class:"btn" do |b|%>
-    <span class="fa fa-edit"></span>
-      Edit
+  <span class="fa fa-edit"></span>
+  Edit
   <% end %>
-<% end %>
-<% if policy(@mda).operate? %>      
+  <% end %>
+  <% if policy(@mda).operate? %>
   <%= button_to mda_operations_path(@mda), method: :post, class:"btn ml-2" do |b|%>
-    <span class="fa fa-rocket"></span>
-      Operate
-  <% end %>  
-<% end %>
-<% if policy(@mda).destroy? %>      
+  <span class="fa fa-rocket"></span>
+  Operate
+  <% end %>
+  <% end %>
+  <% if policy(@mda).destroy? %>
   <%= button_to mda_path(@mda), method: :delete, data: { title: 'Are you sure?', 
                                                               confirm: "Remove #{@mda.name} analysis?",
                                                               commit: 'Yes',
                                                               cancel: 'No, cancel' }, 
                   class: "btn ml-2", title:"Delete" do %>
-    <span class="fa fa-times"></span>
-      Delete
-  <% end %> 
-<% end %>  
+  <span class="fa fa-times"></span>
+  Delete
+  <% end %>
+  <% end %>
   <%= button_to mdas_path, method: :get, class:"btn ml-2" do |b|%>
-    <span class="fa fa-window-close"></span>
-      Close
-  <% end %>      
+  <span class="fa fa-window-close"></span>
+  Close
+  <% end %>
 </div>
-      
+
 
 <h1><%= @mda.name %></h1>
 
-<div id="mda-viewer" data-mda="<%= @mda.to_mda_viewer_json %>" data-is-editing="false" data-api-key="<%=current_user.api_key%>"></div>
+<div id="mda-viewer" data-mda="<%= @mda.to_whatsopt_ui_json %>" data-is-editing="false" data-api-key="<%=current_user.api_key%>"></div>
 
-<script>var API_KEY = "<%=current_user.api_key%>"</script>
+<script>
+  var API_KEY = "<%=current_user.api_key%>"
+</script>
 
 <%= javascript_pack_tag 'mda_viewer_application' %>
- 

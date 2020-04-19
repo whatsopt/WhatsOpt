@@ -21,6 +21,58 @@ servers:
 - url: http://192.168.99.100:3000
   description: Docker development server
 paths:
+  "/api/v1/analyses":
+    get:
+      summary: Get analyses
+      tags:
+      - Multi-Disciplinary Analyses
+      security:
+      - Token: []
+      responses:
+        '200':
+          description: List analyses
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    name:
+                      type: string
+                    public:
+                      type: boolean
+                    created_at:
+                      type: string
+                      format: date-time
+                  required:
+                  - id
+                  - name
+                  - public
+                  - created_at
+  "/api/v1/analyses/{id}.xdsm":
+    get:
+      summary: Get XDSMjs format for given analysis
+      tags:
+      - Multi-Disciplinary Analyses
+      security:
+      - Token: []
+      parameters:
+      - name: id
+        in: path
+        description: Analysis identifier
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: return XDSM structure
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Xdsm"
   "/api/v1/meta_models/{id}":
     put:
       summary: Predict using the metamodel
@@ -287,6 +339,59 @@ components:
           type: number
           format: double
           default: 0.0
+    AnalysisAttributes:
+      type: object
+      properties:
+        name:
+          type: string
+        disciplines_attributes:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              variables_attributes:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    io_mode:
+                      type: string
+                      enum:
+                      - in
+                      - out
+              sub_analysis_attributes:
+                "$ref": "#/components/schemas/AnalysisAttributes"
+    Xdsm:
+      type: object
+      additionalProperties:
+        type: object
+        properties:
+          nodes:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: string
+                name:
+                  type: string
+                type:
+                  type: string
+          edges:
+            type: array
+            items:
+              type: object
+              properties:
+                from:
+                  type: string
+                to:
+                  type: string
+                name:
+                  type: string
   securitySchemes:
     Token:
       type: apiKey
@@ -296,6 +401,8 @@ components:
 security:
 - Token: []
 tags:
+- name: Multi-Disciplinary Analyses
+  description: Operations for using analyses created in WhatsOpt
 - name: Meta Modeling
   description: Operations for using metamodels created in WhatsOpt
 - name: Optimization

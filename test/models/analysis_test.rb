@@ -52,6 +52,10 @@ class AnalysisTest < ActiveSupport::TestCase
     assert_empty edges.select { |e| e[:to] == e[:from] }
   end
 
+  test "should get XDSM json" do
+    assert @mda.to_xdsm_json
+  end
+
   test "should be able to build variable list" do
     tree = @mda.build_var_infos
     assert_equal @mda.disciplines.map(&:id), tree.keys

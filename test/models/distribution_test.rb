@@ -10,7 +10,7 @@ class DistributionTest < ActiveSupport::TestCase
   end
 
   test "should be present in mda json for uncertain variables" do
-    json = JSON.parse(analyses(:singleton).to_mda_viewer_json)
+    json = JSON.parse(analyses(:singleton).to_whatsopt_ui_json)
     variables = []
     json["vars"].each do |d, vars|
       variables << vars["out"]
@@ -26,7 +26,7 @@ class DistributionTest < ActiveSupport::TestCase
   end
 
   test "should not be present in mda json for determinist variables" do
-    json = JSON.parse(analyses(:cicav).to_mda_viewer_json)
+    json = JSON.parse(analyses(:cicav).to_whatsopt_ui_json)
     variables = []
     json["vars"].each do |d, vars|
       variables << vars["out"]
