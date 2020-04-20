@@ -35,12 +35,12 @@ class XdsmViewer extends React.Component {
         cellsize: { w: 150, h: 50 },
         padding: 10,
       },
-      noTitleTooltip: false,
-      noDefaultDriver: false,
+      withTitleTooltip: false,
+      withDefaultDriver: false,
       version,
     };
     const { mda, filter } = this.props;
-    this.graph = new Graph(mda, '', 'noDefaultDriver');
+    this.graph = new Graph(mda, '', config.withDefaultDriver);
     this.graph.nodes[0].name = 'Driver';
     this.graph.nodes[0].type = 'driver';
     this.xdsm = new Xdsm(this.graph, 'root', config);
