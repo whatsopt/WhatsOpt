@@ -220,19 +220,29 @@ class Analysis < ApplicationRecord
   end
 
   def to_xdsm_json
-    xdsm = {
-      root: {
-        nodes: build_nodes.map.with_index{|n, i| {
-          id: n[:id], 
-          name: i==0 ? "_U_" : n[:name],
-          type: i==0 ? "driver" : n[:type]
-        }},
+    to_xdsm.to_json
+  end
+
+  def to_xdsm(name="root")
+    xdsm = Hash[name => {
+        nodes: build_nodes.map.with_index{|n, i| 
+          node = {
+            id: n[:id], 
+            name: i==0 ? "_U_" : n[:name],
+            type: i==0 ? "driver" : n[:type]
+          }
+          node[:subxdsm] = n[:link][:name] if n[:link]
+          node
+        },
         edges: build_edges.map{|e| 
           { from: e[:from], to: e[:to], name: e[:name] }
         }
       }
-    }
-    xdsm.to_json
+    ]
+    sub_analyses.each do |submda|
+      xdsm.merge!(submda.to_xdsm(submda.name))
+    end
+    xdsm
   end
 
   def build_nodes

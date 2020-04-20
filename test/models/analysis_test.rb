@@ -53,7 +53,16 @@ class AnalysisTest < ActiveSupport::TestCase
   end
 
   test "should get XDSM json" do
-    assert @mda.to_xdsm_json
+    json = @mda.to_xdsm_json
+    xdsm = JSON.parse(json)
+    assert_equal ["root"], xdsm.keys() 
+  end
+
+  test "should get XDSM json of nested analysis" do
+    json =  analyses(:outermda).to_xdsm_json
+    xdsm = JSON.parse(json)
+    p xdsm
+    assert_equal ["root", analyses(:innermda).name.downcase], xdsm.keys()
   end
 
   test "should be able to build variable list" do
