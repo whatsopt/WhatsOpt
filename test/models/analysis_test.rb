@@ -62,7 +62,7 @@ class AnalysisTest < ActiveSupport::TestCase
     json =  analyses(:outermda).to_xdsm_json
     xdsm = JSON.parse(json)
     p xdsm
-    assert_equal ["root", analyses(:innermda).name.downcase], xdsm.keys()
+    assert_equal ["root", analyses(:innermda).name], xdsm.keys()
   end
 
   test "should be able to build variable list" do
