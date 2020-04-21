@@ -61,7 +61,6 @@ class AnalysisTest < ActiveSupport::TestCase
   test "should get XDSM json of nested analysis" do
     json =  analyses(:outermda).to_xdsm_json
     xdsm = JSON.parse(json)
-    p xdsm
     assert_equal ["root", analyses(:innermda).name], xdsm.keys()
   end
 
