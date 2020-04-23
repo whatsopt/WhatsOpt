@@ -4,7 +4,7 @@ require "test_helper"
 require "whats_opt/openmdao_generator"
 require "tmpdir"
 require "mkmf" # for find_executable
-MakeMakefile::Logging.instance_variable_set(:@log, File.open(File::NULL, "w"))
+MakeMakefile::Logging.instance_variable_set(:@log, File.open(File::NULL, "wb"))
 
 class OpenmdaoGeneratorTest < ActiveSupport::TestCase
   def thrift?
@@ -93,7 +93,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
   test "should generate openmdao mda zip file" do
     skip "Apache Thrift not installed" unless thrift?
     zippath = Tempfile.new("test_mda_file.zip")
-    File.open(zippath, "w") do |f|
+    File.open(zippath, "wb") do |f|
       content, _ = @ogen.generate
       f.write content
     end
@@ -108,7 +108,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
   test "should generate openmdao mda zip base files" do
     skip "Apache Thrift not installed" unless thrift?
     zippath = Tempfile.new("test_mda_file.zip")
-    File.open(zippath, "w") do |f|
+    File.open(zippath, "wb") do |f|
       content, _ = @ogen.generate(only_base: true)
       f.write content
     end
@@ -210,7 +210,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
   test "should use init value for independant variables" do
     skip "Apache Thrift not installed" unless thrift?
     zippath = Tempfile.new("test_mda_file.zip")
-    File.open(zippath, "w") do |f|
+    File.open(zippath, "wb") do |f|
       content, _ = @ogen.generate
       f.write content
     end

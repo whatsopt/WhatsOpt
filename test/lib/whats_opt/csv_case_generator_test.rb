@@ -19,7 +19,7 @@ class CsvCaseGeneratorTest < ActiveSupport::TestCase
 
   test "should generate csv zipped file from given operation cases" do
     zippath = Tempfile.new("cases.zip")
-    File.open(zippath, "w") do |f|
+    File.open(zippath, "wb") do |f|
       @csvgen = WhatsOpt::CsvCaseGenerator.new(zip: true)
       content, _ = @csvgen.generate @ope.sorted_cases, @ope.success
       f.write content
