@@ -231,6 +231,7 @@ class Analysis < ApplicationRecord
             name: i==0 ? "_U_" : n[:name],
             type: i==0 ? "driver" : n[:type]
           }
+          node[:type] = 'function' if node[:type] == 'analysis'  # XDSM v2
           node[:subxdsm] = n[:link][:name] if n[:type]=='group' && n[:link]
           node
         },
