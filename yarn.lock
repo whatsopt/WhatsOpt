@@ -12299,9 +12299,9 @@ x3dom@^1.7.2:
   integrity sha512-rlKMA0pWkBUqoC75fjSm1rRJhdlnqXcCgEP5MHsspcO5pdkr0J52oO5EmmR1eOCzex5U4qAlyG8aFVoZy8wtfA==
 
 xdsmjs@^0.8.1-rc1:
-  version "0.8.1-rc4"
-  resolved "https://registry.yarnpkg.com/xdsmjs/-/xdsmjs-0.8.1-rc4.tgz#4ae7e7d9fbca567b7ad218a298a8b5be7acc5953"
-  integrity sha512-k2xwMFPS9PWR6Iesm3PJBvl8CZ8YuZRnvRfRCiKh29VMBdAqXnWV+7BXNuYMovwkh+q0oLlca4g/Uglf+PK0zQ==
+  version "0.8.1"
+  resolved "https://registry.yarnpkg.com/xdsmjs/-/xdsmjs-0.8.1.tgz#2f9849e9ab0280d3975044a34b5ad6fc74c8a2ad"
+  integrity sha512-BJhCAsl/PuyeoeZjgznHeViaMLul71HRRnXndZpNM5SbGYalwOUrWPAC63nmotPqQcPoz0PkFV9qxATcZp7o2w==
   dependencies:
     d3-color "^1.2.3"
     d3-fetch "^1.1.2"
