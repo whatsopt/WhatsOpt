@@ -74,3 +74,6 @@ config/ldap.yml
 
 # Ignore OneraMDAO
 services/whatsopt_server/optimizer_store/oneramdao
+
+# Ignore XDSMjs
+app/javascript/XDSMjs

@@ -1,22 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import update from 'immutability-helper';
+import { XDSMjs, XDSM_V2 } from 'xdsmjs';
+// import XdsmFactory from 'XDSMjs/src/xdsm-factory';
 
-import Graph from 'XDSMjs/src/graph';
-import Xdsm, { VERSION2 } from 'XDSMjs/src/xdsm';
-import Selectable from 'XDSMjs/src/selectable';
-
-function _setTooltips() {
-  // bootstrap tooltip for connections
-
-  // eslint-disable-next-line no-undef
-  $('.ellipsized').attr('data-toggle', 'tooltip');
-  // eslint-disable-next-line no-undef
-  $(() => { $('.ellipsized').tooltip({ placement: 'right' }); });
-}
-
-const DEFAULT_XDSM_VERSION = VERSION2;
+const DEFAULT_XDSM_VERSION = XDSM_V2;
 
 class XdsmViewer extends React.Component {
+  static _setTooltips() {
+    // bootstrap tooltip for connections
+    // eslint-disable-next-line no-undef
+    $('.ellipsized').attr('data-toggle', 'tooltip');
+    // eslint-disable-next-line no-undef
+    $(() => { $('.ellipsized').tooltip({ placement: 'right' }); });
+  }
+
   constructor(props) {
     super(props);
     this.state = { version: DEFAULT_XDSM_VERSION };
@@ -40,14 +38,12 @@ class XdsmViewer extends React.Component {
       version,
     };
     const { mda, filter } = this.props;
-    this.graph = new Graph(mda, '', config.withDefaultDriver);
-    this.graph.nodes[0].name = 'Driver';
-    this.graph.nodes[0].type = 'driver';
-    this.xdsm = new Xdsm(this.graph, 'root', config);
-    this._draw();
-    this.selectable = new Selectable(this.xdsm, this._onSelectionChange.bind(this));
+    const xdsmMda = update(mda, { nodes: { 0: { name: { $set: 'Driver' }, type: { $set: 'driver' } } } });
+    // this.selectableXdsm = (new XdsmFactory(config)).createSelectableXdsm(xdsmMda, this._onSelectionChange.bind(this));
+    this.selectableXdsm = XDSMjs(config).createSelectableXdsm(xdsmMda, this._onSelectionChange.bind(this));
     this.setSelection(filter);
-    _setTooltips();
+    this._setLinks();
+    XdsmViewer._setTooltips();
   }
 
   shouldComponentUpdate() {
@@ -55,71 +51,28 @@ class XdsmViewer extends React.Component {
   }
 
   setSelection(filter) {
-    this.selectable.setFilter(filter);
+    this.selectableXdsm.setSelection(filter);
   }
-
-  addDiscipline(discattrs) {
-    this.xdsm.graph.addNode(discattrs);
-    this.xdsm._draw();
-    this.selectable.enable();
-  }
-
-  updateDiscipline(index, discattrs) {
-    const newNode = { ...this.xdsm.graph.nodes[index], ...discattrs };
-    console.log(JSON.stringify(discattrs));
-    this.xdsm.graph.nodes.splice(index, 1, newNode);
-    this._refresh();
-  }
-
-  removeDiscipline(index) {
-    this.xdsm.graph.removeNode(index);
-    this.xdsm._draw();
-  }
-
-  addConnection(connattrs) {
-    connattrs.names.map((name) => this.xdsm.graph.addEdgeVar(connattrs.from, connattrs.to, name));
-    this._refresh();
-  }
-
-  removeConnection(connattrs) {
-    connattrs.names.map(
-      (name) => this.xdsm.graph.removeEdgeVar(connattrs.from, connattrs.to, name),
-    );
-    this._refresh();
-  }
-
 
   update(mda) {
-    this.xdsm.graph = new Graph(mda, '', 'noDefaultDriver');
-    this.xdsm.graph.nodes[0].name = 'Driver';
-    this.xdsm.graph.nodes[0].type = 'driver';
-    this._refresh();
-  }
+    // remove bootstrap tooltip
+    $('.ellipsized').tooltip('dispose');
 
-  _draw() {
-    this.xdsm.draw();
+    const xdsmMda = update(mda, { nodes: { 0: { name: { $set: 'Driver' }, type: { $set: 'driver' } } } });
+    this.selectableXdsm.updateMdo(xdsmMda);
+
+    // links
     this._setLinks();
+    // select current
+    const { filter } = this.props;
+    this.setSelection(filter);
+    // reattach tooltips
+    XdsmViewer._setTooltips();
   }
 
   _onSelectionChange(filter) {
     const { onFilterChange } = this.props;
     onFilterChange(filter);
-  }
-
-  _refresh() {
-    // eslint-disable-next-line no-undef
-    $('.ellipsized').tooltip('dispose');
-    // remove and redraw xdsm
-    this.xdsm.refresh();
-    // links
-    this._setLinks();
-    // reattach selection
-    this.selectable.enable();
-    // select current
-    const { filter } = this.props;
-    this.setSelection(filter);
-    // reattach tooltips
-    _setTooltips();
   }
 
   _setLinks() {

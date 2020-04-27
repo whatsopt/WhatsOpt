@@ -17,13 +17,6 @@
   stroke-width: 1px;
 }
 
-.node text {
-  font-size: medium;
-}
-.edge text {
-  font-size: small;
-}
-
 /** XDSM v1 */
 .xdsm .optimization {
   fill: #CCCCFF;
@@ -76,7 +69,6 @@
   fill: #FFFCCC;
 }
 
-
 /* Title */
 .xdsm g.title text {
   display: block;
@@ -87,7 +79,6 @@
 .xdsm g.title rect {
   fill: none;
 }
-
 
 /* Text Default */
 .xdsm text {
@@ -192,7 +183,7 @@
 .xdsm2 g.title text {
   display: block;
   margin: 0.67em 0; 
-  font-size: 2em;
+  font-size: 1em;
   font-weight: bold;
 }
 .xdsm2 g.title rect {
@@ -296,3 +287,13 @@ select#xdsm-version-toggle {
   font-family: Arial, sans-serif;
 }
 
+.node text {
+  font-size: medium;
+}
+.edge text {
+  font-size: small;
+}
+
+.subxdsm-link:hover {
+  text-decoration: underline;
+}

@@ -30,7 +30,8 @@
     "save-svg-as-png": "^1.4.14",
     "swagger-ui-react": "^3.25.0",
     "trix": "^1.0.0",
-    "x3dom": "^1.7.2"
+    "x3dom": "^1.7.2",
+    "xdsmjs": "^0.8.1-rc1"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.1",
