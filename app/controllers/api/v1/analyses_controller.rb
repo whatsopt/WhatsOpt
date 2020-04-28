@@ -27,11 +27,22 @@ class Api::V1::AnalysesController < Api::ApiController
 
   # POST /api/v1/mdas
   def create
-    @mda = Analysis.new(mda_params)
-    authorize @mda
-    @mda.save!
-    @mda.set_owner(current_user)
-    json_response @mda, :created
+    xdsm = nil
+    Analysis.transaction do
+      @mda = Analysis.new(mda_params)
+      authorize @mda
+      @mda.save!
+      @mda.set_owner(current_user)
+      if params[:format] == "xdsm"
+        xdsm = @mda.to_xdsm_json
+        raise ActiveRecord::Rollback
+      else
+        json_response @mda, :created
+      end
+    end
+    if params[:format] == "xdsm"
+      json_response xdsm, :ok
+    end
   end
 
   # PUT/PATCH /api/v1/mdas/1
