@@ -249,8 +249,8 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
     update_attrs = attrs.zip(values).to_h
     update_attrs[:parameter_attributes] = { init: "[[1,2]]", lower: "0", upper: "10" }
     update_attrs[:scaling_attributes] = { ref: "[[1,2]]", ref0: "100", res_ref: "1e-6" }
-    update_attrs[:distribution_attributes] = { kind: "Normal", 
-                                               options_attributes: [{name: "mu", value: "0.0"}, {name: "sigma", value: "1.0"}] }
+    update_attrs[:distributions_attributes] = [{ kind: "Normal", 
+                                                 options_attributes: [{name: "mu", value: "0.0"}, {name: "sigma", value: "1.0"}] }]
     put api_v1_connection_url(conn, connection: update_attrs), as: :json, headers: @auth_headers
     assert_response :success
     conn_to_test.reload
@@ -272,8 +272,8 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
     assert_not conn_to_test.to.scaling
     assert_not conn_to_test.to.active
     assert_not conn_to_test.from.active
-    assert_equal "Normal", conn_to_test.from.distribution.kind
-    assert_equal "mu", conn_to_test.from.distribution.options.first.name
-    assert_equal "0.0", conn_to_test.from.distribution.options.first.value
+    assert_equal "Normal", conn_to_test.from.distributions[0].kind
+    assert_equal "mu", conn_to_test.from.distributions[0].options.first.name
+    assert_equal "0.0", conn_to_test.from.distributions[0].options.first.value
   end
 end

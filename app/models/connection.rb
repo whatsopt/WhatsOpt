@@ -97,6 +97,13 @@ class Connection < ApplicationRecord
   def update_connections!(params)
     params = params.to_h  # accept string parameters
     Connection.transaction do
+      # if shape is changed, destroy distributions if any and set parameter role if uncertain
+      if params[:shape] && from.dim != Variable.new(name: 'Prototype', shape: params[:shape]).dim
+        if Connection.where(from_id: from_id).first.role == WhatsOpt::Variable::UNCERTAIN_VAR_ROLE
+          params[:role] = WhatsOpt::Variable::PARAMETER_ROLE       
+        end
+      end
+
       role = nil
       if params[:role]
         # update role of all connections from the source variable
@@ -112,23 +119,20 @@ class Connection < ApplicationRecord
       # p "ROLE", role, from, from.distribution
       case role
       when WhatsOpt::Variable::PARAMETER_ROLE
-        # if from.parameter
-        #   params.merge!(parameter_attributes: {lower: "", upper: ""})
-        # end
-        params.merge!(distribution_attributes: {_destroy: 1}) if from.distribution
+        from.distributions.map(&:mark_for_destruction)
 
       when WhatsOpt::Variable::DESIGN_VAR_ROLE
-        params.merge!(distribution_attributes: {_destroy: 1}) if from.distribution
+        from.distributions.map(&:mark_for_destruction)
 
       when WhatsOpt::Variable::UNCERTAIN_VAR_ROLE
-        if from.distribution.blank?
+        if from.distributions.empty?
           if from.dim == 1 && from.parameter && (!from.parameter.lower.blank? && !from.parameter.upper.blank?)
-            params.merge!(distribution_attributes: 
-                            Distribution.uniform_attrs(from.parameter.lower, from.parameter.upper))
+            params.merge!(distributions_attributes: 
+                            [Distribution.uniform_attrs(from.parameter.lower, from.parameter.upper)])
           elsif from.dim == 1 && from.parameter && !from.parameter.init.blank?
-            params.merge!(distribution_attributes: Distribution.normal_attrs(from.parameter.init, "1.0"))
+            params.merge!(distributions_attributes: [Distribution.normal_attrs(from.parameter.init, "1.0")])
           else
-            params.merge!(distribution_attributes: Distribution.normal_attrs("0.0", "1.0"))
+            params.merge!(distributions_attributes: [Distribution.normal_attrs("1.0", "1.0")]*from.dim)
           end
         end 
         # p params
@@ -147,16 +151,17 @@ class Connection < ApplicationRecord
       if from.scaling && !params[:scaling_attributes].blank?
         params.merge!(scaling_attributes: params[:scaling_attributes].merge!(id: from.scaling.id))
       end
-      if from.distribution && !params[:distribution_attributes].blank?
-        params.merge!(distribution_attributes: params[:distribution_attributes].merge!(id: from.distribution.id))
+      if from.distributions.size>0 && !params[:distributions_attributes].blank?
+        params.merge!(distributions_attributes: params[:distributions_attributes])
       end
+      
       # params.permit!  # ensure all params transform are permitted
       # p params
       from.update!(params)
 
       # Note: update only primary attributes, secondary attrs are not propagated to "to" variables
       # FIXME: during analysis copy they are propagated, not a bug for now 
-      params = params.except(:parameter_attributes, :scaling_attributes, :distribution_attributes)
+      params = params.except(:parameter_attributes, :scaling_attributes, :distributions_attributes)
       Connection.where(from_id: from.id).each do |conn|
         conn.to.update!(params)
       end

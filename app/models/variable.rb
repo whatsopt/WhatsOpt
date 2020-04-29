@@ -21,7 +21,7 @@ class Variable < ApplicationRecord
 
   has_one :parameter, dependent: :destroy
   has_one :scaling, dependent: :destroy
-  has_one :distribution, dependent: :destroy
+  has_many :distributions, dependent: :destroy
 
   has_one  :incoming_connection, -> { includes :from }, class_name: "Connection", foreign_key: "to_id", dependent: :destroy
   has_many :outgoing_connections, -> { includes :to }, class_name: "Connection", foreign_key: "from_id", dependent: :destroy
@@ -40,7 +40,7 @@ class Variable < ApplicationRecord
                                                          attr["res_ref"].nil?
                                                      }, allow_destroy: true
 
-  accepts_nested_attributes_for :distribution, reject_if: proc { |attr| attr["kind"].nil? }, allow_destroy: true
+  accepts_nested_attributes_for :distributions, reject_if: proc { |attr| attr["kind"].nil? }, allow_destroy: true
 
   validates :name, format: { with: /\A[a-zA-Z][\-:_a-zA-Z0-9]*\z/, message: "%{value} is not a valid variable name." }
   validates :name, :io_mode, :type, :shape, presence: true, allow_blank: false
@@ -51,7 +51,7 @@ class Variable < ApplicationRecord
   scope :active, -> { where(active: true) }
   scope :ins, -> { where(io_mode: IN) }
   scope :outs, -> { where(io_mode: OUT) }
-  scope :uncertain, -> { joins(:distribution).distinct }
+  scope :uncertains, -> { joins(:distributions).distinct }
   scope :disconnected, -> { where.not(id: joins(:incoming_connection) + joins(:outgoing_connections)) }
 
   scope :of_analysis, ->(analysis_id) { joins(discipline: :analysis).where(analyses: { id: analysis_id }) }
@@ -62,7 +62,7 @@ class Variable < ApplicationRecord
   before_save :mark_dependents_for_removal
 
   def is_uncertain?
-    !distribution.nil?
+    !distributions.empty?
   end
 
   def init_py_value
@@ -123,9 +123,10 @@ class Variable < ApplicationRecord
     scaling&.res_ref.blank? ? super : scaling.res_ref
   end
 
-  def distribution_py
-    if distribution
-      "#{distribution.kind}(#{distribution.options.map(&:value).join(", ")})"
+  def distribution_py(coord_index=-1)
+    idx = [coord_index, 0].max
+    if distributions
+      "#{distributions[idx].kind}(#{distributions[idx].options.map(&:value).join(", ")})"
     end
   end
 
@@ -161,6 +162,6 @@ class Variable < ApplicationRecord
     def mark_dependents_for_removal
       parameter.mark_for_destruction if parameter&.nullified?
       scaling.mark_for_destruction if scaling&.nullified?
-      distribution.mark_for_destruction if distribution&.nullified?
+      distributions.map{|dist| dist.mark_for_destruction} if distributions.empty?
     end
 end
