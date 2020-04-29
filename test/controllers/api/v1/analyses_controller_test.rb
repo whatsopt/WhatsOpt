@@ -156,7 +156,7 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     @mda.reload
     newDisc = @mda.disciplines.last
     assert_equal disc.name, newDisc.name
-    assert_equal 11, Connection.of_analysis(@mda).count
+    assert_equal 12, Connection.of_analysis(@mda).count
     # Connection.of_analysis(@mda).each do |conn|
     #   puts "Connection #{conn.from.name} from #{conn.from.discipline.name} to #{conn.to.discipline.name}"
     # end
@@ -172,6 +172,7 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     # Connection ya from Aerodynamics to Geometry
     # Connection y2 from Aerodynamics to __DRIVER__
     # Connection y from PlainDiscipline to __DRIVER__
+    # Connection y2_dup from PlainDiscipline to __DRIVER__
   end
 
   test "should import a metamodel" do
@@ -218,7 +219,7 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test "should create a discipline without output variables when imported twice" do
+  test "should create a discipline without renamed out variables" do
     post api_v1_mdas_url, params: { analysis: { name: "Test" } }, as: :json, headers: @auth_headers
     assert_response :success
     mda = Analysis.last
@@ -228,7 +229,7 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_equal 4, mda.disciplines.count
     assert_equal [disc.name, disc.name, disc.name], mda.disciplines.nodes.map(&:name)
-    assert_equal [], Discipline.last.output_variables
+    assert_equal disc.output_variables.map{|v| v.name+'_dup_dup'}, Discipline.last.output_variables.map(&:name)
     assert_equal disc.input_variables.map(&:name), Discipline.last.input_variables.map(&:name)
   end
 

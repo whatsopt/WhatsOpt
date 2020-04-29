@@ -148,7 +148,7 @@ class Discipline < ApplicationRecord
     meta_model&.qualification.nil? ? [] : meta_model.qualification
   end
 
-  def prepare_attributes_for_import!(analysis_variables, analysis_driver)
+  def prepare_attributes_for_import!(analysis_variables, analysis_driver, suffix='_dup')
     # remove driver connections as new ones from new disc will take place
     analysis_driver.variables.outs.each do |driver_var|
       if self.variables.outs.where(name: driver_var.name).take
@@ -166,10 +166,21 @@ class Discipline < ApplicationRecord
     # remove from new discipline outvars already present in the analysis
     vars = self.variables
       .where.not(io_mode: WhatsOpt::Variable::OUT)
-      .or(self.variables.where.not(name: outvars)) 
-    # p "VARS", vars.map(&:name)
+      .or(self.variables.where.not(name: outvars))
+
+    duplicates = self.variables.where(io_mode: WhatsOpt::Variable::OUT).where(name: outvars)
+    vardupattrs = ActiveModelSerializers::SerializableResource.new(duplicates,
+                                                                   each_serializer: VariableSerializer).as_json 
+    vardupattrs.each do |varattr|
+      # p "varattr = #{varattr[:name]}"
+      while (outvars.include?(varattr[:name])) do
+        varattr[:name] << suffix
+      end
+    end
+
     varattrs = ActiveModelSerializers::SerializableResource.new(vars,
-          each_serializer: VariableSerializer).as_json
+          each_serializer: VariableSerializer).as_json + vardupattrs
+    # p "VARS", vars.map(&:name)
     attrs = {
       name: self.name,
       type: self.type,
