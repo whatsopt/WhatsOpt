@@ -1,6 +1,6 @@
 <h1>CHANGELOG</h1>
 
-<h3>1.8.0 (29/05/2020)</h3>
+<h3>1.8.0 (29/04/2020)</h3>
 <ul>
   <li>XDSM as a service (wop show): User can generate standalone XDSM web page</li>
   <li>Add mechanism (whatsopt docking) to ease the connection of known discipline implementations</li>
