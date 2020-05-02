@@ -118,15 +118,14 @@ function ButtonCell({
   } = connections[index];
   const label = uq.length > 0 ? _uqLabelOf(uq[0]) : '';
   if (isEditing) {
-    const isEditable = (role === 'uncertain_var')
-      && (shape === '1' || shape === '(1,)');
+    const isEditable = (role === 'uncertain_var');
     if (isEditable) {
       return (
         <button
           type="button"
           className={`btn btn-sm ${CELL_CLASSNAME} ${EDITABLE_CELL_CLASSNAME}`}
           style={{ paddingTop: 0, paddingBottom: 0 }}
-          onClick={() => $(`#distributionModal-${name}`).modal('show')}
+          onClick={() => $(`#distributionModalList-${name}`).modal('show')}
         >
           {label || 'No'}
         </button>

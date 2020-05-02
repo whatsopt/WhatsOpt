@@ -80,3 +80,18 @@ a.analysis-link {
 	font-size: 12px;
 }
 
+/* Prevent from modal shift due to scrollbar */
+body.modal-open{
+	width:100% !important;
+	padding-right:0 !important;
+	overflow-y:scroll !important;
+	position:fixed !important;
+}
+
+/* modal backdrop fix for distribution modals */
+.modal:nth-of-type(even) {
+	z-index: 1052 !important;
+}
+.modal-backdrop.show:nth-of-type(odd) {
+	z-index: 1051 !important;
+}
