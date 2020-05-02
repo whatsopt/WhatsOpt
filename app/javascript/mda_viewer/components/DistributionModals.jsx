@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Form from 'react-jsonschema-form-bs4';
+import update from 'immutability-helper';
 
 const NORMAL = 'Normal';
 const BETA = 'Beta';
@@ -82,47 +83,59 @@ const SCHEMA = {
   },
 };
 
-function _uqToState(uq) {
-  const { kind, options_attributes } = uq;
-  let state = { kind, options_attributes: [] };
-  for (let i = 0; i < options_attributes.length; i += 1) {
-    const opt = options_attributes[i];
-    state.options_attributes.push({ ...opt });
-  }
-  return state;
-}
 
-function _notEqualOptions(opt1, opt2) {
-  if (opt1.length != opt2.length) {
-    return true;
-  }
-  for (let i = 0; i < opt1.length; i += 1) {
-    let found = false;
-    for (let j = 0; j < opt2.length; j += 1) {
-      found = found || (opt1[i].name == opt2[j].name && opt1[i].value == opt2[j].value)
+class DistributionModal extends React.Component {
+  static _uqToState(uq) {
+    console.log('UQTOSTATE ', uq);
+    const state = { dists: [] };
+    for (let k = 0; k < uq.length; k += 1) {
+      const { id, kind, options_attributes } = uq[k];
+      state.dists.push({ id, kind, options_attributes: [] });
+      for (let i = 0; i < options_attributes.length; i += 1) {
+        const opt = options_attributes[i];
+        state.dists[0].options_attributes.push({ ...opt });
+      }
     }
-    if (!found) {
-      return true;
-    }
+    return state;
   }
-  return false;
-}
 
-class DistributionModal extends React.PureComponent {
   constructor(props) {
     super(props);
     const { conn: { uq } } = this.props;
-    this.state = _uqToState(uq);
+    console.log('CONSTRUCT ', uq);
+    this.state = DistributionModal._uqToState(uq);
+    this.visible = false;
 
     this.getFormData = this.getFormData.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleSave = this.handleSave.bind(this);
   }
 
+  componentDidMount() {
+    const { conn: { name } } = this.props;
+    $(`#distributionModal-${name}`).on('show.bs.modal',
+      () => {
+        const { conn: { uq } } = this.props;
+        console.log(`GET from props ${JSON.stringify(this.props)}`);
+        const dists = DistributionModal._uqToState(uq);
+        this.setState(dists);
+        this.visible = true;
+      });
+    $(`#distributionModal-${name}`).on('hidden.bs.modal',
+      () => {
+        const { conn: { uq } } = this.props;
+        this.visible = false;
+      });
+  }
+
+  shouldComponentUpdate() {
+    return this.visible;
+  }
+
   getFormData() {
     // console.log(this.state);
-    const { kind, options_attributes } = this.state;
-    let formData = { kind };
+    const { dists: { 0: { kind, options_attributes } } } = this.state;
+    const formData = { kind };
     if (options_attributes) {
       formData[`${kind.toLowerCase()}_options`] = {};
     }
@@ -136,16 +149,51 @@ class DistributionModal extends React.PureComponent {
 
   handleChange(data) {
     const { formData } = data;
-    // console.log(`Change FORMDATA= ${JSON.stringify(formData)}`);
-    const { kind } = formData
-    const newState = { kind, options_attributes: [] };
-    for (let k in formData) {
+    console.log(`Change FORMDATA= ${JSON.stringify(formData)}`);
+    const { kind } = formData;
+    const newState = update(this.state, {
+      dists: {
+        0: {
+          kind: { $set: kind },
+          options_attributes: { $set: [] },
+        },
+      },
+    });
+    console.log(`AGAIN FORMDATA= ${JSON.parse(JSON.stringify(formData))}`);
+    for (const k in formData) {
       if (k.startsWith(kind.toLowerCase())) {
-        for (let name in formData[k]) {
-          newState.options_attributes.push({ name, value: formData[k][name] });
+        console.log(formData[k]);
+        for (const name in formData[k]) {
+          if (formData[k][name] !== undefined) { // Form bug: filter undefined data
+            console.log('PUSH ', { name, value: formData[k][name] });
+            newState.dists[0].options_attributes.push({ name, value: formData[k][name] });
+          } else {
+            console.log(`Bug in jsonschema form: avoid pushing ${formData[k][name]}`);
+          }
         }
       }
     }
+
+    // distribution: check for updating/removing options
+    const { conn } = this.props;
+    const { uq: [{ options_attributes: prevOptAttrs }] } = conn;
+    // console.log(`OLDCONNATTRS = ${JSON.stringify(prevOptAttrs)}`);
+    const optIds = prevOptAttrs.map((opt) => opt.id);
+    console.log(optIds);
+    console.log(`NEW CONNATTRS = ${JSON.stringify(newState.dists[0].options_attributes)}`);
+    for (const optAttr of newState.dists[0].options_attributes) {
+      if (optIds.length) {
+        optAttr.id = optIds.shift();
+        console.log('NEW OPT ATT', optAttr);
+      }
+    }
+    // console.log(`BEFORE CONATTRS = ${JSON.stringify(cAttrs)}`);
+    // console.log("OPTIDS", optIds);
+    // if (connAttrs.options_attributes) {  // needed in case, normally should be at least []
+    optIds.forEach((id) => newState.dists[0].options_attributes.push({ id, _destroy: '1' }));
+    // }
+
+
     // console.log(`SETSTATE ${JSON.stringify(newState)}`)
     this.setState(newState);
   }
@@ -153,26 +201,15 @@ class DistributionModal extends React.PureComponent {
   handleSave() {
     const { conn: { id, name }, onConnectionChange } = this.props;
     console.log(`SAVE state= ${JSON.stringify(this.state)}`);
-    onConnectionChange(id, { distribution_attributes: this.state });
+    const { dists } = this.state;
+    onConnectionChange(id, { distributions_attributes: dists });
     $(`#distributionModal-${name}`).modal('hide');
   }
 
-  componentDidMount() {
-    const { conn: { name } } = this.props;
-    $(`#distributionModal-${name}`).on('shown.bs.modal',
-      () => {
-        const { conn: { uq } } = this.props;
-        // console.log("GET from props " + JSON.stringify(this.props));
-        this.setState(_uqToState(uq));
-      }
-    );
-  }
 
   render() {
     const { conn: { name } } = this.props;
     const formData = this.getFormData();
-
-    // console.log(`render FORMDATA= ${JSON.stringify(formData)}`);
 
     return (
       <div className="modal fade" id={`distributionModal-${name}`} tabIndex="-1" role="dialog" aria-labelledby={`distributionModalLabel-${name}`} aria-hidden="true">
@@ -210,10 +247,11 @@ class DistributionModal extends React.PureComponent {
 
 DistributionModal.propTypes = {
   conn: PropTypes.shape({
-    uq: PropTypes.shape({
+    uq: PropTypes.arrayOf(PropTypes.shape({
+      id: PropTypes.number,
       kind: PropTypes.string.isRequired,
       options_attributes: PropTypes.array.isRequired,
-    })
+    })),
   }).isRequired,
   onConnectionChange: PropTypes.func.isRequired,
 };
@@ -224,8 +262,8 @@ class DistributionModals extends React.PureComponent {
     const connections = db.computeConnections().filter((c) => c.role === 'design_var' || c.role === 'parameter' || c.role === 'uncertain_var');
     const modals = connections.map(
       (conn) => {
-        const { uq: { kind } } = conn;
-        if (kind != "none") {
+        const { uq: dists } = conn;
+        if (dists.length > 0) {
           return (<DistributionModal key={conn.id} conn={conn} onConnectionChange={onConnectionChange} />);
         }
         return null;

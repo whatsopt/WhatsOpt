@@ -240,7 +240,7 @@ class AnalysisDatabase {
     let ref = '';
     let ref0 = '';
     let resRef = '';
-    let uq = null;
+    let uq = [];
     const { active } = vfr;
 
     if (vfr.parameter_attributes) {
@@ -253,10 +253,8 @@ class AnalysisDatabase {
       ref0 = vfr.scaling_attributes.ref0;
       resRef = vfr.scaling_attributes.res_ref;
     }
-    if (vfr.distribution_attributes) {
-      uq = vfr.distribution_attributes;
-    } else {
-      uq = { kind: "none", options_attributes: [] };
+    if (vfr.distributions_attributes && vfr.distributions_attributes.length > 0) {
+      uq = vfr.distributions_attributes;
     }
     const infos = {
       id: conn.connId,

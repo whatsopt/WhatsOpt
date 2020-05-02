@@ -106,7 +106,7 @@ class Operation < ApplicationRecord
     cases.each do |c|
       varattr = ActiveModelSerializers::SerializableResource.new(c.variable).as_json
       if varattr[:distributions_attributes] && !varattr[:distributions_attributes].empty?
-        varattr[:distribution_attributes].map{|distAttr| distAttr[:options_attributes].map{|optAttr| optAttr.update(id: nil)}}
+        varattr[:distributions_attributes].map{|distAttr| distAttr[:options_attributes].map{|optAttr| optAttr.update(id: nil)}}
         varattr[:parameter_attributes].merge!(lower: "", upper: "")
       end
       if varattrs.keys.include?(c.variable.name)

@@ -219,6 +219,29 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test "should set default distribution when setting uncertain role" do
+    varx = variables(:varx1_out)
+    conn = connections(:driver_x1_geo)
+    update_attrs = {role: "uncertain_var"}
+    put api_v1_connection_url(conn, connection: update_attrs), as: :json, headers: @auth_headers    
+    assert_response :success
+    varx.reload
+    distjson = (ActiveModelSerializers::SerializableResource.new(varx).as_json)[:distributions_attributes]
+    assert_equal "Uniform", distjson[0][:kind]
+  end
+
+
+  test "should set default normal distributions when setting uncertain role for a vector" do
+    varz = variables(:varz_design_out)
+    conn = connections(:driver_z_geo)
+    update_attrs = {role: "uncertain_var"}
+    put api_v1_connection_url(conn, connection: update_attrs), as: :json, headers: @auth_headers    
+    assert_response :success
+    varz.reload
+    distjson = (ActiveModelSerializers::SerializableResource.new(varz).as_json)[:distributions_attributes]
+    assert_equal ["Normal", "Normal"], distjson.map{|d| d[:kind]}
+  end
+
   test "should propagate y connection update upward to ancestor" do
     conn = connections(:innermda_disc_y_innermda_driver)
     conn_to_test = connections(:innermda_disc_y_outermda_driver)

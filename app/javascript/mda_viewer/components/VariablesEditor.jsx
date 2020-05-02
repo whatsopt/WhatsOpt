@@ -114,9 +114,9 @@ function ButtonCell({
 }) {
   const { index } = row;
   const {
-    name, role, shape, uq: { kind },
+    name, role, shape, uq,
   } = connections[index];
-  const label = kind !== 'none' ? _uqLabelOf(connections[index].uq) : '';
+  const label = uq.length > 0 ? _uqLabelOf(uq[0]) : '';
   if (isEditing) {
     const isEditable = (role === 'uncertain_var')
       && (shape === '1' || shape === '(1,)');
@@ -402,7 +402,7 @@ function VariablesEditor(props) {
       },
       {
         Header: 'UQ',
-        accessor: (row) => row.uq.kind,
+        accessor: (row) => '',
         Cell: ButtonCell,
       },
       {

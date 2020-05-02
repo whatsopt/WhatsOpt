@@ -139,9 +139,6 @@ class Connection < ApplicationRecord
         init = params[:parameter_attributes] && params[:parameter_attributes][:init]
         init = from.parameter.init if init.nil? && from.parameter
         params.merge!(parameter_attributes: {init: init || "", lower: "", upper: "" })
-        unless from.dim == 1
-          params.merge!(shape: "1")
-        end
       end
 
       # update variable
@@ -158,7 +155,6 @@ class Connection < ApplicationRecord
       # params.permit!  # ensure all params transform are permitted
       # p params
       from.update!(params)
-
       # Note: update only primary attributes, secondary attrs are not propagated to "to" variables
       # FIXME: during analysis copy they are propagated, not a bug for now 
       params = params.except(:parameter_attributes, :scaling_attributes, :distributions_attributes)

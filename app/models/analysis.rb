@@ -296,6 +296,9 @@ class Analysis < ApplicationRecord
       { id => { in: inputs.as_json, out: outputs.as_json } }
     end
     tree = res.inject({}) { |result, h| result.update(h) }
+    p "***************************************************************************"
+    p tree
+    p "***************************************************************************"
     tree
   end
 
