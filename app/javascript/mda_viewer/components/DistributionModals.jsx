@@ -137,9 +137,21 @@ class DistributionModal extends React.Component {
         this.visible = false;
       });
     $(`#distributionModal-${name}`).on('show.bs.modal',
-      (e) => {
-        const coord = this.state.selected;
-        $(`#distributionModal-${name} .modal-title`).text(`Distribution of ${name}[${coord}]`);
+      () => {
+        const { conn: { uq } } = this.props;
+        if (uq.length === 1) {
+          const { dists } = DistributionModal._uqToState(uq);
+          this.setState({ selected: 0, dists });
+          this.visible = true;
+          for (let i = 0; i < dists.length; i += 1) {
+            $(`#${name}-${i}`).on('click', () => {
+              this.setState({ selected: i });
+            });
+          }
+        }
+        const { selected } = this.state;
+        const varname = uq.length === 1 ? name : `${name}[${selected}]`;
+        $(`#distributionModal-${name} .modal-title`).text(`Distribution of ${varname}`);
       });
     $(`#distributionModal-${name}`).on('hidden.bs.modal',
       () => {
