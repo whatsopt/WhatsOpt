@@ -129,8 +129,14 @@ class Connection < ApplicationRecord
           if from.dim == 1 && from.parameter && (!from.parameter.lower.blank? && !from.parameter.upper.blank?)
             params.merge!(distributions_attributes: 
                             [Distribution.uniform_attrs(from.parameter.lower, from.parameter.upper)])
-          elsif from.dim == 1 && from.parameter && !from.parameter.init.blank?
-            params.merge!(distributions_attributes: [Distribution.normal_attrs(from.parameter.init, "1.0")])
+          elsif from.parameter && !from.parameter.init.blank?
+            begin
+              init_values = WhatsOpt::PythonUtils::str_to_ary(from.parameter.init)
+              params.merge!(distributions_attributes: init_values.map{|init| Distribution.normal_attrs(init, "1.0")})
+            rescue WhatsOpt::PythonUtils::ParseError => e
+              Rails.logger.info e
+              params.merge!(distributions_attributes: [Distribution.normal_attrs("1.0", "1.0")]*from.dim)
+            end
           else
             params.merge!(distributions_attributes: [Distribution.normal_attrs("1.0", "1.0")]*from.dim)
           end
