@@ -95,3 +95,12 @@ body.modal-open{
 .modal-backdrop.show:nth-of-type(odd) {
 	z-index: 1051 !important;
 }
+
+/* scroll in modal */
+.distribution-list-modal .modal-dialog{
+	overflow-y: initial !important
+}
+.distribution-list-modal .modal-body{
+	height: 400px;
+	overflow-y: auto;
+}

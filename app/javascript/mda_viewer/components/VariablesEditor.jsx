@@ -117,7 +117,7 @@ function ButtonCell({
     name, role, shape, uq,
   } = connections[index];
   let label = uq.length > 0 ? _uqLabelOf(uq[0]) : '';
-  label = uq.length > 1 ? `${label}...` : label;
+  label = uq.length > 1 ? `[${label}, ...]` : label;
   if (isEditing) {
     const isEditable = (role === 'uncertain_var');
     if (isEditable) {
@@ -130,7 +130,7 @@ function ButtonCell({
             if (shape === '1' || shape === '(1,)') {
               $(`#distributionModal-${name}`).modal('show');
             } else {
-              $(`#distributionModalList-${name}`).modal('show');
+              $(`#distributionListModal-${name}`).modal('show');
             }
           }}
         >

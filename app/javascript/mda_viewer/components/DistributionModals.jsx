@@ -85,10 +85,14 @@ const SCHEMA = {
 
 
 class DistributionModal extends React.Component {
-  static _uqLabelOf(uq) {
-    const { kind, options_attributes } = uq;
+  static _uqLabelOf(dist) {
+    const { kind, options_attributes } = dist;
     const options = options_attributes.map((opt) => opt.value);
-    return `${kind[0]}(${options.join(', ')})`;
+    return `${kind}(${options.join(', ')})`;
+  }
+
+  static _uqLabelListOf(uq) {
+    return uq.map((dist) => DistributionModal._uqLabelOf(dist)).join(', ');
   }
 
   static _uqToState(uq) {
@@ -119,7 +123,7 @@ class DistributionModal extends React.Component {
 
   componentDidMount() {
     const { conn: { name } } = this.props;
-    $(`#distributionModalList-${name}`).on('show.bs.modal',
+    $(`#distributionListModal-${name}`).on('show.bs.modal',
       () => {
         const { conn: { uq } } = this.props;
         console.log(`GET from props ${JSON.stringify(this.props)}`);
@@ -132,7 +136,7 @@ class DistributionModal extends React.Component {
           });
         }
       });
-    $(`#distributionModalList-${name}`).on('hidden.bs.modal',
+    $(`#distributionListModal-${name}`).on('hidden.bs.modal',
       () => {
         this.visible = false;
       });
@@ -236,8 +240,6 @@ class DistributionModal extends React.Component {
     // if (connAttrs.options_attributes) {  // needed in case, normally should be at least []
     optIds.forEach((id) => newState.dists[selected].options_attributes.push({ id, _destroy: '1' }));
     // }
-
-
     console.log(`SETSTATE ${JSON.stringify(newState)}`);
     this.setState(newState);
   }
@@ -259,28 +261,30 @@ class DistributionModal extends React.Component {
 
     const distributionModalItems = uq.map(
       (dist, i) => (
-        <li key={`${name}-${i}`}>
-          {`${name}[${i}]`}
-          {' '}
-          {DistributionModal._uqLabelOf(uq[i])}
-          <button
-            type="button"
-            id={`${name}-${i}`}
-            data-varname={name}
-            data-coord={i}
-            data-toggle="modal"
-            data-target={`#distributionModal-${name}`}
-            className="btn btn-primary"
-          >
-            Edit
-          </button>
-        </li>
+        <div className="row" key={`${name}-${i}`}>
+          <div className="col-md-3">{`${name}[${i}]`}</div>
+          <div className="col-md-5">{DistributionModal._uqLabelOf(uq[i])}</div>
+          <div className="col-md-4">
+            <button
+              title="Edit"
+              type="button"
+              id={`${name}-${i}`}
+              data-varname={name}
+              data-coord={i}
+              data-toggle="modal"
+              data-target={`#distributionModal-${name}`}
+              className="btn btn-sm"
+            >
+              <i className="fas fa-edit" />
+            </button>
+          </div>
+        </div>
       ),
     );
     return (
       <div key={name}>
-        <div className="modal" id={`distributionModalList-${name}`}>
-          <div className="modal-dialog modal-lg">
+        <div className="modal distribution-list-modal" id={`distributionListModal-${name}`}>
+          <div className="modal-dialog">
             <div className="modal-content">
               <div className="modal-header">
                 <h4 className="modal-title">
@@ -292,17 +296,17 @@ class DistributionModal extends React.Component {
               </div>
               <div className="container" />
               <div className="modal-body">
-                <ul>
+                <div className="container-fluid">
                   {distributionModalItems}
-                </ul>
+                </div>
               </div>
               <div className="modal-footer">
-                <a href="#" data-dismiss="modal" className="btn">Close</a>
+                <button type="button" className="btn btn-primary" data-dismiss="modal">Close</button>
               </div>
             </div>
           </div>
         </div>
-        <div className="modal fade" id={`distributionModal-${name}`} tabIndex="-1" role="dialog" aria-labelledby={`distributionModalLabel-${name}`} aria-hidden="true">
+        <div className="modal fade distribution-modal" id={`distributionModal-${name}`} tabIndex="-1" role="dialog" aria-labelledby={`distributionModalLabel-${name}`} aria-hidden="true">
           <div className="modal-dialog" role="document">
             <div className="modal-content">
               <div className="modal-header">
