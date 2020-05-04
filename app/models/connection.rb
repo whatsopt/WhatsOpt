@@ -126,19 +126,32 @@ class Connection < ApplicationRecord
 
       when WhatsOpt::Variable::UNCERTAIN_VAR_ROLE
         if from.distributions.empty?
-          if from.dim == 1 && from.parameter && (!from.parameter.lower.blank? && !from.parameter.upper.blank?)
-            params.merge!(distributions_attributes: 
-                            [Distribution.uniform_attrs(from.parameter.lower, from.parameter.upper)])
-          elsif from.parameter && !from.parameter.init.blank?
+          if from.parameter && (!from.parameter.lower.blank? && !from.parameter.upper.blank?)
             begin
-              init_values = WhatsOpt::PythonUtils::str_to_ary(from.parameter.init)
-              params.merge!(distributions_attributes: init_values.map{|init| Distribution.normal_attrs(init, "1.0")})
-            rescue WhatsOpt::PythonUtils::ParseError => e
-              Rails.logger.info e
+              lowers = WhatsOpt::PythonUtils::str_to_ary(from.parameter.lower)
+              uppers = WhatsOpt::PythonUtils::str_to_ary(from.parameter.upper)
+              dists = lowers.zip(uppers).map{|lower, upper| Distribution.uniform_attrs(lower, upper)}
+              if dists.size == from.dim
+                params.merge!(distributions_attributes: dists)
+              elsif dists.size == 1
+                params.merge!(distributions_attributes: dists*from.dim)
+              end
+            rescue WhatsOpt::PythonUtils::ArrayParseError => e
+              Rails.logger.info "Error when parsing #{from.parameter.lower} or #{from.parameter.upper}  of #{from.name}: #{e}"
+            end
+          end
+          if params[:distributions_attributes].blank?
+            if from.parameter && !from.parameter.init.blank?
+              begin
+                init_values = WhatsOpt::PythonUtils::str_to_ary(from.parameter.init)
+                params.merge!(distributions_attributes: init_values.map{|init| Distribution.normal_attrs(init, "1.0")})
+              rescue WhatsOpt::PythonUtils::ParseError => e
+                Rails.logger.info "Error when parsing #{from.parameter.init} of #{from.name}: #{e}"
+                params.merge!(distributions_attributes: [Distribution.normal_attrs("1.0", "1.0")]*from.dim)
+              end
+            else
               params.merge!(distributions_attributes: [Distribution.normal_attrs("1.0", "1.0")]*from.dim)
             end
-          else
-            params.merge!(distributions_attributes: [Distribution.normal_attrs("1.0", "1.0")]*from.dim)
           end
         end 
         # p params
