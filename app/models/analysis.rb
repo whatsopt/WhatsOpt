@@ -296,9 +296,6 @@ class Analysis < ApplicationRecord
       { id => { in: inputs.as_json, out: outputs.as_json } }
     end
     tree = res.inject({}) { |result, h| result.update(h) }
-    p "***************************************************************************"
-    p tree
-    p "***************************************************************************"
     tree
   end
 
@@ -396,7 +393,6 @@ class Analysis < ApplicationRecord
             if disc.has_sub_analysis?
               newDisc.sub_analysis = disc.sub_analysis.create_copy!(self)
             end
-
             newDisc.save!
           end
         end
@@ -574,15 +570,6 @@ class Analysis < ApplicationRecord
     def _ensure_openmdao_impl_presence
       self.openmdao_impl ||= OpenmdaoAnalysisImpl.new
     end
-
-    # def _ensure_meta_models
-    #   disciplines.each do |disc|
-    #     if disc.is_pure_metamodel? && disc.meta_model.nil?
-    #       newDisc.meta_model = disc.meta_model.build_copy(newDisc)
-    #       newDisc.meta_model.save!
-    #     end
-    #   end
-    # end
 
     def _check_allowed_destruction
       # to do check ancestry: forbid if parent
