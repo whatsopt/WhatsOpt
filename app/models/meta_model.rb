@@ -110,8 +110,8 @@ class MetaModel < ApplicationRecord
   end
 
   def training_input_uncertainties
-    @distributions ||= operation.input_cases.map { |c| c.variable.distribution }.compact
-    @uncertainties ||= @distributions.map do |d| 
+    @distributions ||= operation.input_cases.map { |c| c.variable.distributions[[c.coord_index, 0].max] unless c.variable.distributions.empty?}.compact
+    @uncertainties ||= @distributions.flatten.map do |d| 
       {name: d.kind, kwargs: d.options.inject({}) {|acc, opt| acc.update([[opt.name, opt.value]].to_h) }} 
     end
   end

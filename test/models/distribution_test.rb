@@ -21,8 +21,8 @@ class DistributionTest < ActiveSupport::TestCase
                   {"name" => "mu", "value" => "0.5"}, 
                   {"name" => "sigma", "value" => "2.0"},
                 ]}
-    assert_equal ["kind", "options_attributes"], u["distribution_attributes"].keys
-    assert_equal 2, u["distribution_attributes"]["options_attributes"].size
+    assert_equal ["id", "kind", "options_attributes"], u["distributions_attributes"][0].keys
+    assert_equal 2, u["distributions_attributes"][0]["options_attributes"].size
   end
 
   test "should not be present in mda json for determinist variables" do
@@ -32,7 +32,7 @@ class DistributionTest < ActiveSupport::TestCase
       variables << vars["out"]
     end
     x1 = variables.flatten.detect{|v| v["name"]=="x1"} 
-    assert_nil x1["distribution_attributes"]   
+    assert_empty x1["distributions_attributes"]   
   end
 
 end

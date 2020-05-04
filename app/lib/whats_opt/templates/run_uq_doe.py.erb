@@ -33,7 +33,8 @@ parser.add_option("-p", "--parallel",
 pb = Problem(<%= @mda.py_classname %>())
 dists = []
 <%- @mda.uncertain_input_variables.each do |uv| %>
-dists.append(ot.<%= uv.distribution_py %>)<% end %>
+<% uv.distributions.each.with_index do |_, i| %>
+dists.append(ot.<%= uv.distribution_py(i) %>)<%- end %><%- end %>
 
 pb.driver = OpenturnsDOEDriver(n_samples=options.n_cases, distribution=ot.ComposedDistribution(dists))
 pb.driver.options['run_parallel'] = options.parallel

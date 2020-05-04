@@ -114,19 +114,25 @@ function ButtonCell({
 }) {
   const { index } = row;
   const {
-    name, role, shape, uq: { kind },
+    name, role, shape, uq,
   } = connections[index];
-  const label = kind !== 'none' ? _uqLabelOf(connections[index].uq) : '';
+  let label = uq.length > 0 ? _uqLabelOf(uq[0]) : '';
+  label = uq.length > 1 ? `[${label}, ...]` : label;
   if (isEditing) {
-    const isEditable = (role === 'uncertain_var')
-      && (shape === '1' || shape === '(1,)');
+    const isEditable = (role === 'uncertain_var');
     if (isEditable) {
       return (
         <button
           type="button"
           className={`btn btn-sm ${CELL_CLASSNAME} ${EDITABLE_CELL_CLASSNAME}`}
           style={{ paddingTop: 0, paddingBottom: 0 }}
-          onClick={() => $(`#distributionModal-${name}`).modal('show')}
+          onClick={() => {
+            if (shape === '1' || shape === '(1,)') {
+              $(`#distributionModal-${name}`).modal('show');
+            } else {
+              $(`#distributionListModal-${name}`).modal('show');
+            }
+          }}
         >
           {label || 'No'}
         </button>
@@ -192,7 +198,6 @@ function EditableCell({
       if (cellToFocus.current
         && cellToFocus.current.index === index
         && cellToFocus.current.id === id) {
-        console.log(myRef.current);
         if (myRef.current.myRef.current) { // defensive programming
           myRef.current.myRef.current.click();
         }
@@ -402,7 +407,7 @@ function VariablesEditor(props) {
       },
       {
         Header: 'UQ',
-        accessor: (row) => row.uq.kind,
+        accessor: (row) => '',
         Cell: ButtonCell,
       },
       {

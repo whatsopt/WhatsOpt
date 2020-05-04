@@ -54,6 +54,6 @@ class Api::V1::ConnectionsController < Api::ApiController
       params.require(:connection).permit(:name, :type, :shape, :units, :desc, :active, :role,
                                          parameter_attributes: [:id, :_destroy, :init, :lower, :upper],
                                          scaling_attributes: [:id, :_destroy, :ref, :ref0, :res_ref],
-                                         distribution_attributes: [:id, :_destroy, :kind, options_attributes: [:id, :_destroy, :name, :value]])
+                                         distributions_attributes: [:id, :_destroy, :kind, options_attributes: [:id, :_destroy, :name, :value]])
     end
 end

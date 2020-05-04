@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Form from 'react-jsonschema-form-bs4';
+import update from 'immutability-helper';
 
 const NORMAL = 'Normal';
 const BETA = 'Beta';
@@ -82,47 +83,99 @@ const SCHEMA = {
   },
 };
 
-function _uqToState(uq) {
-  const { kind, options_attributes } = uq;
-  let state = { kind, options_attributes: [] };
-  for (let i = 0; i < options_attributes.length; i += 1) {
-    const opt = options_attributes[i];
-    state.options_attributes.push({ ...opt });
-  }
-  return state;
-}
 
-function _notEqualOptions(opt1, opt2) {
-  if (opt1.length != opt2.length) {
-    return true;
+class DistributionModal extends React.Component {
+  static _uqLabelOf(dist) {
+    const { kind, options_attributes } = dist;
+    const options = options_attributes.map((opt) => opt.value);
+    return `${kind}(${options.join(', ')})`;
   }
-  for (let i = 0; i < opt1.length; i += 1) {
-    let found = false;
-    for (let j = 0; j < opt2.length; j += 1) {
-      found = found || (opt1[i].name == opt2[j].name && opt1[i].value == opt2[j].value)
-    }
-    if (!found) {
-      return true;
-    }
-  }
-  return false;
-}
 
-class DistributionModal extends React.PureComponent {
+  static _uqLabelListOf(uq) {
+    return uq.map((dist) => DistributionModal._uqLabelOf(dist)).join(', ');
+  }
+
+  static _uqToState(uq) {
+    console.log('UQTOSTATE ', uq);
+    const state = { dists: [] };
+    for (let k = 0; k < uq.length; k += 1) {
+      const { id, kind, options_attributes } = uq[k];
+      state.dists.push({ id, kind, options_attributes: [] });
+      for (let i = 0; i < options_attributes.length; i += 1) {
+        const opt = options_attributes[i];
+        state.dists[k].options_attributes.push({ ...opt });
+      }
+    }
+    return state;
+  }
+
   constructor(props) {
     super(props);
     const { conn: { uq } } = this.props;
-    this.state = _uqToState(uq);
+    console.log('CONSTRUCT ', uq);
+    this.state = { selected: -1, dists: DistributionModal._uqToState(uq).dists };
+    this.visible = false;
 
     this.getFormData = this.getFormData.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleSave = this.handleSave.bind(this);
   }
 
+  componentDidMount() {
+    const { conn: { name } } = this.props;
+    $(`#distributionListModal-${name}`).on('show.bs.modal',
+      () => {
+        const { conn: { uq } } = this.props;
+        console.log(`GET from props ${JSON.stringify(this.props)}`);
+        const dists = DistributionModal._uqToState(uq);
+        this.setState(dists);
+        this.visible = true;
+        for (let i = 0; i < dists.dists.length; i += 1) {
+          $(`#${name}-${i}`).on('click', (e) => {
+            this.setState({ selected: i });
+          });
+        }
+      });
+    $(`#distributionListModal-${name}`).on('hidden.bs.modal',
+      () => {
+        this.visible = false;
+      });
+    $(`#distributionModal-${name}`).on('show.bs.modal',
+      () => {
+        const { conn: { uq } } = this.props;
+        if (uq.length === 1) {
+          const { dists } = DistributionModal._uqToState(uq);
+          this.setState({ selected: 0, dists });
+          this.visible = true;
+          for (let i = 0; i < dists.length; i += 1) {
+            $(`#${name}-${i}`).on('click', () => {
+              this.setState({ selected: i });
+            });
+          }
+        }
+        const { selected } = this.state;
+        const varname = uq.length === 1 ? name : `${name}[${selected}]`;
+        $(`#distributionModal-${name} .modal-title`).text(`Distribution of ${varname}`);
+      });
+    $(`#distributionModal-${name}`).on('hidden.bs.modal',
+      () => {
+        const { conn: { uq } } = this.props;
+        const dists = DistributionModal._uqToState(uq);
+        this.setState(dists);
+      });
+    console.log(`DIDMOUNT ${JSON.stringify(this.state)}`);
+  }
+
+  shouldComponentUpdate() {
+    return this.visible;
+  }
+
   getFormData() {
     // console.log(this.state);
-    const { kind, options_attributes } = this.state;
-    let formData = { kind };
+    const { selected } = this.state;
+    const taken = selected < 0 ? 0 : selected;
+    const { dists: { [taken]: { kind, options_attributes } } } = this.state;
+    const formData = { kind };
     if (options_attributes) {
       formData[`${kind.toLowerCase()}_options`] = {};
     }
@@ -135,71 +188,150 @@ class DistributionModal extends React.PureComponent {
   }
 
   handleChange(data) {
+    const { selected } = this.state;
+
+    if (selected < 0) {
+      return;
+    }
     const { formData } = data;
-    // console.log(`Change FORMDATA= ${JSON.stringify(formData)}`);
-    const { kind } = formData
-    const newState = { kind, options_attributes: [] };
-    for (let k in formData) {
+    console.log(`Change FORMDATA= ${JSON.stringify(formData)}`);
+    const { kind } = formData;
+
+    const { conn: { name } } = this.props;
+    console.log(`${name}[${selected}]`);
+
+    const newState = update(this.state, {
+      dists: {
+        [selected]: {
+          kind: { $set: kind },
+          options_attributes: { $set: [] },
+        },
+      },
+    });
+    console.log(`AGAIN FORMDATA= ${JSON.stringify(formData)}`);
+    for (const k in formData) {
       if (k.startsWith(kind.toLowerCase())) {
-        for (let name in formData[k]) {
-          newState.options_attributes.push({ name, value: formData[k][name] });
+        for (const name in formData[k]) {
+          if (formData[k][name] !== undefined) { // Form bug: filter undefined data
+            console.log('PUSH ', { name, value: formData[k][name] });
+            newState.dists[selected].options_attributes.push({ name, value: formData[k][name] });
+          } else {
+            console.log(`Bug in jsonschema form: avoid pushing ${formData[k][name]}`);
+          }
         }
       }
     }
-    // console.log(`SETSTATE ${JSON.stringify(newState)}`)
+
+    // distribution: check for updating/removing options
+    const { conn } = this.props;
+    const { uq: { [selected]: { options_attributes: prevOptAttrs } } } = conn;
+    // console.log(`OLDCONNATTRS = ${JSON.stringify(prevOptAttrs)}`);
+    const optIds = prevOptAttrs.map((opt) => opt.id);
+    console.log(optIds);
+    console.log(`NEW CONNATTRS = ${JSON.stringify(newState.dists[selected].options_attributes)}`);
+    for (const optAttr of newState.dists[selected].options_attributes) {
+      if (optIds.length) {
+        optAttr.id = optIds.shift();
+        console.log('NEW OPT ATT', optAttr);
+      }
+    }
+    // console.log(`BEFORE CONATTRS = ${JSON.stringify(cAttrs)}`);
+    // console.log("OPTIDS", optIds);
+    // if (connAttrs.options_attributes) {  // needed in case, normally should be at least []
+    optIds.forEach((id) => newState.dists[selected].options_attributes.push({ id, _destroy: '1' }));
+    // }
+    console.log(`SETSTATE ${JSON.stringify(newState)}`);
     this.setState(newState);
   }
 
   handleSave() {
+    const { selected, dists } = this.state;
+    if (selected < 0) {
+      return;
+    }
     const { conn: { id, name }, onConnectionChange } = this.props;
-    console.log(`SAVE state= ${JSON.stringify(this.state)}`);
-    onConnectionChange(id, { distribution_attributes: this.state });
+    console.log(`SAVE state= ${JSON.stringify(dists[selected])}`);
+    onConnectionChange(id, { distributions_attributes: [dists[selected]] });
     $(`#distributionModal-${name}`).modal('hide');
   }
 
-  componentDidMount() {
-    const { conn: { name } } = this.props;
-    $(`#distributionModal-${name}`).on('shown.bs.modal',
-      () => {
-        const { conn: { uq } } = this.props;
-        // console.log("GET from props " + JSON.stringify(this.props));
-        this.setState(_uqToState(uq));
-      }
-    );
-  }
-
   render() {
-    const { conn: { name } } = this.props;
+    const { conn: { name, uq } } = this.props;
     const formData = this.getFormData();
 
-    // console.log(`render FORMDATA= ${JSON.stringify(formData)}`);
-
+    const distributionModalItems = uq.map(
+      (dist, i) => (
+        <div className="row" key={`${name}-${i}`}>
+          <div className="col-md-3">{`${name}[${i}]`}</div>
+          <div className="col-md-5">{DistributionModal._uqLabelOf(uq[i])}</div>
+          <div className="col-md-4">
+            <button
+              title="Edit"
+              type="button"
+              id={`${name}-${i}`}
+              data-varname={name}
+              data-coord={i}
+              data-toggle="modal"
+              data-target={`#distributionModal-${name}`}
+              className="btn btn-sm"
+            >
+              <i className="fas fa-edit" />
+            </button>
+          </div>
+        </div>
+      ),
+    );
     return (
-      <div className="modal fade" id={`distributionModal-${name}`} tabIndex="-1" role="dialog" aria-labelledby={`distributionModalLabel-${name}`} aria-hidden="true">
-        <div className="modal-dialog" role="document">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title" id={`distributionModalLabel-${name}`}>
-                Distribution of variable
-                {' '}
-                {name}
-              </h5>
-              <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
+      <div key={name}>
+        <div className="modal distribution-list-modal" id={`distributionListModal-${name}`}>
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h4 className="modal-title">
+                  Distributions of
+                  {' '}
+                  {name}
+                </h4>
+                <button type="button" className="close" data-dismiss="modal" aria-hidden="true">×</button>
+              </div>
+              <div className="container" />
+              <div className="modal-body">
+                <div className="container-fluid">
+                  {distributionModalItems}
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-primary" data-dismiss="modal">Close</button>
+              </div>
             </div>
-            <div className="modal-body">
-              <Form
-                schema={SCHEMA}
-                formData={formData}
-                onChange={this.handleChange}
-              >
-                <button type="button" className="d-none" />
-              </Form>
-            </div>
-            <div className="modal-footer">
-              <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
-              <button type="button" className="btn btn-primary" onClick={this.handleSave}>Save</button>
+          </div>
+        </div>
+        <div className="modal fade distribution-modal" id={`distributionModal-${name}`} tabIndex="-1" role="dialog" aria-labelledby={`distributionModalLabel-${name}`} aria-hidden="true">
+          <div className="modal-dialog" role="document">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h4 className="modal-title" id={`distributionModalLabel-${name}`}>
+                  Distribution of variable
+                  {' '}
+                  {name}
+                </h4>
+                <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div className="modal-body">
+                <Form
+                  schema={SCHEMA}
+                  formData={formData}
+                  onChange={this.handleChange}
+                >
+                  <button type="button" className="d-none" />
+                </Form>
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" className="btn btn-primary" onClick={this.handleSave}>Save</button>
+              </div>
             </div>
           </div>
         </div>
@@ -210,10 +342,12 @@ class DistributionModal extends React.PureComponent {
 
 DistributionModal.propTypes = {
   conn: PropTypes.shape({
-    uq: PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    uq: PropTypes.arrayOf(PropTypes.shape({
+      id: PropTypes.number,
       kind: PropTypes.string.isRequired,
       options_attributes: PropTypes.array.isRequired,
-    })
+    })),
   }).isRequired,
   onConnectionChange: PropTypes.func.isRequired,
 };
@@ -224,8 +358,8 @@ class DistributionModals extends React.PureComponent {
     const connections = db.computeConnections().filter((c) => c.role === 'design_var' || c.role === 'parameter' || c.role === 'uncertain_var');
     const modals = connections.map(
       (conn) => {
-        const { uq: { kind } } = conn;
-        if (kind != "none") {
+        const { uq: dists } = conn;
+        if (dists.length > 0) {
           return (<DistributionModal key={conn.id} conn={conn} onConnectionChange={onConnectionChange} />);
         }
         return null;

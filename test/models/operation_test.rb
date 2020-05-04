@@ -29,7 +29,9 @@ class OperationTest < ActiveSupport::TestCase
   test "should build varattrs from an operation" do
     ope = operations(:doe)
     varattrs = ope.build_metamodel_varattrs
-    expected = [{ name: "obj", io_mode: :out, shape: "1", type: "Float", active: true, parameter_attributes: {}}, { name: "x1", io_mode: :in, shape: "1", type: "Float", active: true, parameter_attributes: { init: "3.14", lower: "1", upper: "10" } }, { name: "z", io_mode: :in, shape: "(2,)", type: "Float", active: true, parameter_attributes: { init: "3.14", lower: "1", upper: "10" }}]
+    expected = [{ name: "obj", io_mode: :out, shape: "1", type: "Float", active: true, parameter_attributes: {}, distributions_attributes: []}, 
+      { name: "x1", io_mode: :in, shape: "1", type: "Float", active: true, parameter_attributes: { init: "3.14", lower: "1", upper: "10" }, distributions_attributes: [] }, 
+      { name: "z", io_mode: :in, shape: "(2,)", type: "Float", active: true, parameter_attributes: { init: "3.14", lower: "1", upper: "10" }, distributions_attributes: []}]
     assert_equal expected, varattrs
   end
 
