@@ -1,55 +1,55 @@
 /* Excel-like list of variables */
 table.connections td {
-	padding: 2px;
+  padding: 2px;
 }
 table.connections {
-	table-layout: fixed;
+  table-layout: fixed;
 }
 
 /* React table cell: give clickable widthxheight when the cell is empty*/
 .editable-react-table-cell {
-	background-color: #f0f8e0;
+  background-color: #f0f8e0;
 }
 
 span.react-table-cell {
-	min-height: 24px;
+  min-height: 24px;
   display: block;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
 input.react-table-cell {
-	width: 100%; 
-	box-sizing: border-box;
-	-webkit-box-sizing:border-box;
-	-moz-box-sizing: border-box;
+  width: 100%; 
+  box-sizing: border-box;
+  -webkit-box-sizing:border-box;
+  -moz-box-sizing: border-box;
 }
 
 /* Operation logs */
 .listing {
-	padding: 10px;
-	color: silver;
-	background-color: black;
-	border-radius: 10px;
-	font-family: "Courier New", monospace;
+  padding: 10px;
+  color: silver;
+  background-color: black;
+  border-radius: 10px;
+  font-family: "Courier New", monospace;
     white-space: pre;
 }
 
 .listing-line {
-	padding: 0px;
+  padding: 0px;
 }
 
 /* Analysis editor */
 div.mda-section {
-	margin-top: 0px;
+  margin-top: 0px;
 }
 
 div.editor-section {
-	margin-top:10px;
+  margin-top:10px;
 }
 
 div.editor-section-label {
-	margin:10px 0px 10px 0px;
+  margin:10px 0px 10px 0px;
 }
 
 .text-inactive {
@@ -59,7 +59,7 @@ div.editor-section-label {
 
 /* Discipline Editor */
 div.editor-discipline {
-	margin-top:5px;
+  margin-top:5px;
 }
 
 /* XDSM tooltip */
@@ -75,32 +75,33 @@ a.analysis-link {
 
 /* Analysis BreadCrumbs*/
 .breadcrumb {
-	background: #ffffff;
-	padding: 10px 15px 2px 15px !important;
-	font-size: 12px;
+  background: #ffffff;
+  padding: 10px 15px 2px 15px !important;
+  font-size: 12px;
 }
 
 /* Prevent from modal shift due to scrollbar */
-body.modal-open{
-	width:100% !important;
-	padding-right:0 !important;
-	overflow-y:scroll !important;
-	position:fixed !important;
+body.modal-open {
+  width: 100% !important;
+  padding-right: 0 !important;
+  overflow-y: scroll !important;
+  position: fixed !important;
 }
 
 /* modal backdrop fix for distribution modals */
 .modal:nth-of-type(even) {
-	z-index: 1052 !important;
+  z-index: 1052 !important;
 }
 .modal-backdrop.show:nth-of-type(odd) {
-	z-index: 1051 !important;
+  z-index: 1051 !important;
 }
 
 /* scroll in modal */
 .distribution-list-modal .modal-dialog{
-	overflow-y: initial !important
+  overflow-y: initial !important
 }
+
 .distribution-list-modal .modal-body{
-	height: 400px;
-	overflow-y: auto;
+  height: 400px;
+  overflow-y: auto;
 }
