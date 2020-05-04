@@ -239,7 +239,7 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     varz.reload
     distjson = (ActiveModelSerializers::SerializableResource.new(varz).as_json)[:distributions_attributes]
-    assert_equal ["Normal", "Normal"], distjson.map{|d| d[:kind]}
+    assert_equal ["Uniform", "Uniform"], distjson.map{|d| d[:kind]}
   end
 
   test "should propagate y connection update upward to ancestor" do
