@@ -9,7 +9,7 @@ class VariableSerializer < ActiveModel::Serializer
 
   def serializable_hash(adapter_options = nil, options = {}, adapter_instance = self.class.serialization_adapter_instance)
     hash = super(adapter_options, options, adapter_instance)
-    hash.each { |key, value| hash.delete(key) if value.nil? }
+    hash.each { |key, value| hash.delete(key) if value.nil? }  # avoid nil values in hash
     hash
   end
 

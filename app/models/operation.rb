@@ -104,9 +104,12 @@ class Operation < ApplicationRecord
     output_vars = output_vars.select { |v| varnames[:outputs].include?(v.name) } if varnames && varnames[:outputs]
     varattrs = {}
     cases.each do |c|
-      varattr = ActiveModelSerializers::SerializableResource.new(c.variable).as_json
+      varattr = VariableSerializer.new(c.variable).as_json
       if varattr[:distributions_attributes] && !varattr[:distributions_attributes].empty?
-        varattr[:distributions_attributes].map{|distAttr| distAttr[:options_attributes].map{|optAttr| optAttr.update(id: nil)}}
+        varattr[:distributions_attributes].map{|distAttr| 
+          distAttr.update(id: nil)
+          distAttr[:options_attributes].map{|optAttr| optAttr.update(id: nil)}
+        }
         varattr[:parameter_attributes].merge!(lower: "", upper: "")
       end
       if varattrs.keys.include?(c.variable.name)
