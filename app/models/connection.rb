@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class Connection < ApplicationRecord
+  include WhatsOpt::PythonUtils
 
   before_validation :_ensure_role_presence
   before_destroy :delete_driver_variables!
@@ -96,6 +97,7 @@ class Connection < ApplicationRecord
 
   def update_connections!(params)
     params = params.to_h  # accept string parameters
+    _sanitize_connection_params(params)
     Connection.transaction do
       # if shape is changed, destroy distributions if any and set parameter role if uncertain
       if params[:shape] && from.dim != Variable.new(name: 'Prototype', shape: params[:shape]).dim
@@ -128,15 +130,15 @@ class Connection < ApplicationRecord
         if from.distributions.empty?
           if from.parameter && (!from.parameter.lower.blank? && !from.parameter.upper.blank?)
             begin
-              lowers = WhatsOpt::PythonUtils::str_to_ary(from.parameter.lower)
-              uppers = WhatsOpt::PythonUtils::str_to_ary(from.parameter.upper)
+              lowers = str_to_ary(from.parameter.lower)
+              uppers = str_to_ary(from.parameter.upper)
               dists = lowers.zip(uppers).map{|lower, upper| Distribution.uniform_attrs(lower, upper)}
               if dists.size == from.dim
                 params.merge!(distributions_attributes: dists)
               elsif dists.size == 1
                 params.merge!(distributions_attributes: dists*from.dim)
               end
-            rescue WhatsOpt::PythonUtils::ArrayParseError => e
+            rescue ArrayParseError => e
               Rails.logger.info "Error when parsing #{from.parameter.lower} or #{from.parameter.upper}  of #{from.name}: #{e}"
             end
           end
@@ -145,7 +147,7 @@ class Connection < ApplicationRecord
               begin
                 init_values = WhatsOpt::PythonUtils::str_to_ary(from.parameter.init)
                 params.merge!(distributions_attributes: init_values.map{|init| Distribution.normal_attrs(init, "1.0")})
-              rescue WhatsOpt::PythonUtils::ParseError => e
+              rescue ArrayParseError => e
                 Rails.logger.info "Error when parsing #{from.parameter.init} of #{from.name}: #{e}"
                 params.merge!(distributions_attributes: [Distribution.normal_attrs("1.0", "1.0")]*from.dim)
               end
@@ -243,6 +245,26 @@ class Connection < ApplicationRecord
         if to&.discipline&.is_driver?
           self.role = WhatsOpt::Variable::RESPONSE_ROLE
         end
+      end
+    end
+
+    def _sanitize_connection_params(conn_params)
+      pr = conn_params
+      pr["name"] = sanitize_pystring(pr["name"]) unless pr["name"].blank? 
+      pr["shape"] = sanitize_pystring(pr["shape"]) unless pr["shape"].blank? 
+      pr["desc"] = sanitize_pystring(pr["desc"]) unless pr["desc"].blank?       
+      pr["units"] = sanitize_pystring(pr["units"]) unless pr["units"].blank?       
+      unless pr["parameter_attributes"].blank?
+        prp = pr["parameter_attributes"]
+        prp["init"] = sanitize_pystring(prp["init"]) unless prp["init"].blank? 
+        prp["lower"] = sanitize_pystring(prp["lower"]) unless prp["lower"].blank? 
+        prp["upper"] = sanitize_pystring(prp["upper"]) unless prp["upper"].blank?
+      end
+      unless pr["scaling_attributes"].blank?
+        prs = pr["scaling_attributes"]
+        prs["ref"] = sanitize_pystring(prs["ref"]) unless prs["ref"].blank? 
+        prs["ref0"] = sanitize_pystring(prs["ref0"]) unless prs["ref0"].blank? 
+        prs["res_ref"] = sanitize_pystring(prs["res_ref"]) unless prs["res_ref"].blank?
       end
     end
 end

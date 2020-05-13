@@ -8,6 +8,7 @@ class Distribution < ApplicationRecord
   accepts_nested_attributes_for :options, reject_if: proc { |attr| attr["name"].blank? }, allow_destroy: true 
 
   validates :kind, presence: true, allow_blank: false
+  validates :kind, inclusion: {in: DISTRIBUTIONS }
 
   def nullified?
     kind=="none" || kind.blank?
