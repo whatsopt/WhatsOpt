@@ -145,7 +145,7 @@ class Connection < ApplicationRecord
           if params[:distributions_attributes].blank?
             if from.parameter && !from.parameter.init.blank?
               begin
-                init_values = WhatsOpt::PythonUtils::str_to_ary(from.parameter.init)
+                init_values = str_to_ary(from.parameter.init)
                 params.merge!(distributions_attributes: init_values.map{|init| Distribution.normal_attrs(init, "1.0")})
               rescue ArrayParseError => e
                 Rails.logger.info "Error when parsing #{from.parameter.init} of #{from.name}: #{e}"
