@@ -30,5 +30,8 @@ class Scaling < ApplicationRecord
     return true if val.blank?
     return true if val =~ /^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$/
     return JSON.parse(val).kind_of?(Array)
+  rescue JSON.ParserError 
+    Rails.logger.warn "Scaling #{self.inspect} of variable #{variable.name}(#{variable.id}) is invalid"
+    return false
   end
 end
