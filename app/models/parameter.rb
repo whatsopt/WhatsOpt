@@ -33,7 +33,7 @@ class Parameter < ApplicationRecord
     return JSON.parse(val).kind_of?(Array)
   rescue JSON.ParserError 
     Rails.logger.warn "Parameter #{self.inspect} of variable #{variable.name}(#{variable.id}) is invalid"
-    return false
+    errors.add(attr, "should not be badly formed (should be blank, nan, float or array)")
   end
 
 end
