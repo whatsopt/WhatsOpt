@@ -67,6 +67,10 @@ class Analysis < ApplicationRecord
     !has_design_variables? && has_uncertain_input_variables?
   end
 
+  def operated?
+    operations.successful.size > 0
+  end
+
   def variables
     @variables = Variable.of_analysis(id).active.order("variables.name ASC")
   end
@@ -209,6 +213,7 @@ class Analysis < ApplicationRecord
       note: note.blank? ? "":note.to_s,
 
       public: public,
+      operated: operated?,
       path: path.map { |a| { id: a.id, name: a.name } },
       nodes: build_nodes,
       edges: build_edges,

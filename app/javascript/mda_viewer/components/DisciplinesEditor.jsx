@@ -120,7 +120,9 @@ class Discipline extends React.Component {
     const {
       isEditing, discType, discHost, discName,
     } = this.state;
-    const { node, onSubAnalysisSearch, index } = this.props;
+    const {
+      node, onSubAnalysisSearch, index, limited,
+    } = this.props;
     if (isEditing) {
       let deploymentOrSubAnalysis;
       let selected = [];
@@ -219,6 +221,7 @@ class Discipline extends React.Component {
               className="d-inline btn btn-light btn-inverse btn-sm float-right text-danger"
               title="Delete"
               onClick={this.handleDelete}
+              disabled={limited}
             >
               <i className="fa fa-times" />
             </button>
@@ -227,6 +230,7 @@ class Discipline extends React.Component {
               className="d-inline btn btn-light btn-sm ml-2"
               title="Edit"
               onClick={this.handleEdit}
+              disabled={limited}
             >
               <i className="fa fa-edit" />
             </button>
@@ -241,6 +245,7 @@ Discipline.propTypes = {
   node: PropTypes.object.isRequired,
   index: PropTypes.number.isRequired,
   subAnalysisOption: PropTypes.number,
+  limited: PropTypes.bool.isRequired,
   onDisciplineUpdate: PropTypes.func.isRequired,
   onDisciplineDelete: PropTypes.func.isRequired,
   onSubAnalysisSearch: PropTypes.func.isRequired,
@@ -277,6 +282,7 @@ class DisciplinesEditor extends React.Component {
     const { nodes } = this.state;
     const {
       name,
+      limited,
       onDisciplineUpdate, onDisciplineDelete,
       onSubAnalysisSearch, onSubAnalysisSelected,
       onDisciplineCreate, onDisciplineNameChange,
@@ -287,6 +293,7 @@ class DisciplinesEditor extends React.Component {
         pos={i + 1}
         index={i}
         node={node}
+        limited={limited}
         onDisciplineUpdate={onDisciplineUpdate}
         onDisciplineDelete={onDisciplineDelete}
         onSubAnalysisSearch={onSubAnalysisSearch}
@@ -334,11 +341,12 @@ class DisciplinesEditor extends React.Component {
                     className="form-control"
                     id="name"
                     onChange={onDisciplineNameChange}
+                    disabled={limited}
                   />
                 </div>
               </div>
             </div>
-            <button type="submit" className="btn btn-primary ml-3">Add</button>
+            <button type="submit" className="btn btn-primary ml-3" disabled={limited}>Add</button>
           </form>
         </div>
       </div>
@@ -349,12 +357,17 @@ class DisciplinesEditor extends React.Component {
 DisciplinesEditor.propTypes = {
   name: PropTypes.string.isRequired,
   nodes: PropTypes.array.isRequired,
+  limited: PropTypes.bool,
   onDisciplineUpdate: PropTypes.func.isRequired,
   onDisciplineDelete: PropTypes.func.isRequired,
   onDisciplineCreate: PropTypes.func.isRequired,
   onDisciplineNameChange: PropTypes.func.isRequired,
   onSubAnalysisSearch: PropTypes.func.isRequired,
   onSubAnalysisSelected: PropTypes.func.isRequired,
+};
+
+DisciplinesEditor.defaultProps = {
+  limited: false,
 };
 
 export default DisciplinesEditor;

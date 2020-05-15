@@ -54,7 +54,7 @@ class ConnectionList extends React.PureComponent {
   render() {
     const {
       // eslint-disable-next-line camelcase
-      names, conn_ids, active, onConnectionDelete,
+      names, conn_ids, active, limited, onConnectionDelete,
     } = this.props;
     const varnames = names.split(',');
     const vars = varnames.map((varname, i) => {
@@ -67,6 +67,7 @@ class ConnectionList extends React.PureComponent {
             type="button"
             className="btn text-danger"
             onClick={() => { onConnectionDelete(id); }}
+            disabled={limited}
           >
             <i className="fa fa-times" />
           </button>
@@ -82,6 +83,7 @@ ConnectionList.propTypes = {
   names: PropTypes.string.isRequired,
   conn_ids: PropTypes.array.isRequired,
   active: PropTypes.bool.isRequired,
+  limited: PropTypes.bool.isRequired,
   onConnectionDelete: PropTypes.func.isRequired,
 };
 
@@ -118,7 +120,7 @@ VariableList.propTypes = {
 
 class ConnectionsViewer extends React.PureComponent {
   render() {
-    const { filter, onConnectionDelete } = this.props;
+    const { filter, limited, onConnectionDelete } = this.props;
     let { edges } = this.props;
     let connections = [];
     let title = '';
@@ -153,6 +155,7 @@ class ConnectionsViewer extends React.PureComponent {
             names={edge.name}
             active={edge.active}
             conn_ids={edge.conn_ids}
+            limited={limited}
             onConnectionDelete={onConnectionDelete}
           />
         );
@@ -179,6 +182,7 @@ ConnectionsViewer.propTypes = {
     fr: PropTypes.string,
     to: PropTypes.string,
   }).isRequired,
+  limited: PropTypes.bool.isRequired,
   onConnectionDelete: PropTypes.func.isRequired,
 };
 
@@ -192,7 +196,7 @@ class ConnectionsForm extends React.Component {
 
   render() {
     const {
-      connectionErrors, selectedConnectionNames, db, filter,
+      connectionErrors, selectedConnectionNames, db, filter, limited,
       onConnectionCreate, onConnectionNameChange,
     } = this.props;
     let { edges } = this.props;
@@ -228,10 +232,11 @@ class ConnectionsForm extends React.Component {
             onChange={(sel) => { onConnectionNameChange(sel); }}
             options={selectable}
             selected={selected}
+            disabled={limited}
           />
         </div>
         <div className="form-group">
-          <button type="submit" className="btn btn-primary" disabled={isErroneous}>Add</button>
+          <button type="submit" className="btn btn-primary" disabled={isErroneous || limited}>Add</button>
         </div>
       </form>
     );
@@ -241,11 +246,16 @@ class ConnectionsForm extends React.Component {
 ConnectionsForm.propTypes = {
   db: PropTypes.object.isRequired,
   filter: PropTypes.object.isRequired,
+  limited: PropTypes.bool,
   edges: PropTypes.array.isRequired,
   selectedConnectionNames: PropTypes.array.isRequired,
   connectionErrors: PropTypes.array.isRequired,
   onConnectionCreate: PropTypes.func.isRequired,
   onConnectionNameChange: PropTypes.func.isRequired,
+};
+
+ConnectionsForm.defaultProps = {
+  limited: false,
 };
 
 class ConnectionsEditor extends React.Component {
@@ -268,7 +278,7 @@ class ConnectionsEditor extends React.Component {
   render() {
     let form;
     const {
-      filter, db, selectedConnectionNames, onConnectionCreate,
+      filter, db, limited, selectedConnectionNames, onConnectionCreate,
       onConnectionNameChange, connectionErrors, onConnectionDelete,
     } = this.props;
     if (filter.fr !== filter.to) {
@@ -278,6 +288,7 @@ class ConnectionsEditor extends React.Component {
             <ConnectionsForm
               db={db}
               filter={filter}
+              limited={limited}
               selectedConnectionNames={selectedConnectionNames}
               onConnectionCreate={onConnectionCreate}
               onConnectionNameChange={onConnectionNameChange}
@@ -316,6 +327,7 @@ class ConnectionsEditor extends React.Component {
             <ConnectionsViewer
               filter={filter}
               edges={db.edges}
+              limited={limited}
               onConnectionDelete={onConnectionDelete}
             />
           </div>
@@ -329,12 +341,18 @@ class ConnectionsEditor extends React.Component {
 ConnectionsEditor.propTypes = {
   db: PropTypes.object.isRequired,
   filter: PropTypes.object.isRequired,
+  limited: PropTypes.bool,
   selectedConnectionNames: PropTypes.array.isRequired,
   connectionErrors: PropTypes.array.isRequired,
   onFilterChange: PropTypes.func.isRequired,
   onConnectionCreate: PropTypes.func.isRequired,
   onConnectionNameChange: PropTypes.func.isRequired,
   onConnectionDelete: PropTypes.func.isRequired,
+};
+
+
+ConnectionsEditor.defaultProps = {
+  limited: false,
 };
 
 export default ConnectionsEditor;

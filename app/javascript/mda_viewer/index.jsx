@@ -450,6 +450,7 @@ class MdaViewer extends React.Component {
         onFilterChange={this.handleFilterChange}
         onConnectionChange={this.handleConnectionChange}
         isEditing={isEditing}
+        limited={db.mda.operated}
       />
     );
 
@@ -464,6 +465,21 @@ class MdaViewer extends React.Component {
         openmdaoImplMsg = (
           <div className="alert alert-warning" role="alert">
             Changes are not saved.
+          </div>
+        );
+      }
+      let warningIfOperated;
+      if (db.mda.operated) {
+        warningIfOperated = (
+          <div className="alert alert-info alert-dismissible fade show" role="alert">
+            As this analysis is already operated,
+            {' '}
+            <strong>your edition access is limited</strong>
+            . If you need full edition access either restart with a copy of the analysis
+            or discard existing operation results.
+            <button type="button" className="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
           </div>
         );
       }
@@ -482,6 +498,7 @@ class MdaViewer extends React.Component {
             {' '}
             {mda.name}
           </h1>
+          {warningIfOperated}
           {breadcrumbs}
           <div className="mda-section">
             {xdsmViewer}
@@ -576,6 +593,7 @@ class MdaViewer extends React.Component {
               <DisciplinesEditor
                 name={newDisciplineName}
                 nodes={db.nodes}
+                limited={db.mda.operated}
                 onDisciplineNameChange={this.handleDisciplineNameChange}
                 onSubAnalysisSearch={this.handleSubAnalysisSearch}
                 onSubAnalysisSelected={this.handleSubAnalysisCreate}
@@ -588,6 +606,7 @@ class MdaViewer extends React.Component {
               <ConnectionsEditor
                 db={db}
                 filter={filter}
+                limited={db.mda.operated}
                 onFilterChange={this.handleFilterChange}
                 selectedConnectionNames={selectedConnectionNames}
                 connectionErrors={errors}

@@ -8,17 +8,18 @@ const CELL_CLASSNAME = 'react-table-cell';
 const EDITABLE_CELL_CLASSNAME = 'editable-react-table-cell';
 
 function _computeRoleSelection(conn) {
-  const options = [{ id: 'parameter', text: 'Parameter' },
-  { id: 'design_var', text: 'Design Variable' },
-  { id: 'uncertain_var', text: 'Uncertain Variable' },
+  const options = [
+    { id: 'parameter', text: 'Parameter' },
+    { id: 'design_var', text: 'Design Variable' },
+    { id: 'uncertain_var', text: 'Uncertain Variable' },
 
-  { id: 'response', text: 'Response' },
-  { id: 'response_of_interest', text: 'Response of interest' },
-  { id: 'min_objective', text: 'Min Objective' },
-  { id: 'max_objective', text: 'Max Objective' },
-  { id: 'ineq_constraint', text: 'Neg Constraint' },
-  { id: 'eq_constraint', text: 'Eq Constraint' },
-  { id: 'state_var', text: 'State Variable' }];
+    { id: 'response', text: 'Response' },
+    { id: 'response_of_interest', text: 'Response of interest' },
+    { id: 'min_objective', text: 'Min Objective' },
+    { id: 'max_objective', text: 'Max Objective' },
+    { id: 'ineq_constraint', text: 'Neg Constraint' },
+    { id: 'eq_constraint', text: 'Eq Constraint' },
+    { id: 'state_var', text: 'State Variable' }];
   if (conn.role === 'parameter' || conn.role === 'design_var' || conn.role === 'uncertain_var') {
     options.splice(3); // remove outpuyts and state vars
   } else if (conn.role !== 'state_var') {
@@ -30,9 +31,10 @@ function _computeRoleSelection(conn) {
 
 // eslint-disable-next-line no-unused-vars
 function _computeTypeSelection(conn) {
-  const options = [{ id: 'Float', text: 'Float' },
-  { id: 'Integer', text: 'Integer' },
-  { id: 'String', text: 'String' },
+  const options = [
+    { id: 'Float', text: 'Float' },
+    { id: 'Integer', text: 'Integer' },
+    { id: 'String', text: 'String' },
   ];
   return options;
 }
@@ -43,6 +45,7 @@ function CheckButtonCell({
   column: { id },
   data: connections,
   onConnectionChange,
+  limited,
 }) {
   const isChecked = connections[index].active;
   return (
@@ -52,6 +55,7 @@ function CheckButtonCell({
       checked={isChecked}
       onChange={() => onConnectionChange(connections[index].id,
         { active: !isChecked })}
+      disabled={limited}
     />
   );
 }
@@ -151,12 +155,13 @@ function EditableCell({
   data: connections,
   onConnectionChange,
   isEditing,
+  limited,
   cellToFocus,
 }) {
   const { value } = cell;
   const { index } = row;
   const { id } = column;
-  if (isEditing && connections[index].active) {
+  if (isEditing && !(limited && id === 'type') && connections[index].active) {
     let selectOptions;
     if (id === 'role') {
       selectOptions = _computeRoleSelection(connections[index]);
@@ -206,7 +211,7 @@ function EditableCell({
 
     // Editable fields regarding variable role
     const { role } = connections[index];
-    const isEditable = (id === 'name' || id === 'desc' || id === 'shape' || id === 'units'
+    const isEditable = (((id === 'name' || id === 'shape') && !limited) || id === 'desc' || id === 'units'
       || id === 'ref' || id === 'ref0' || id === 'res_ref')
       || (role === 'state_var' && id === 'init')
       || (role === 'parameter' && (id === 'init' || id === 'lower' || id === 'upper'))
@@ -248,7 +253,7 @@ const defaultColumn = {
 
 // Be sure to pass our updateMyData and the skipPageReset option
 function Table({
-  columns, data, onConnectionChange, isEditing, useScaling,
+  columns, data, onConnectionChange, isEditing, limited, useScaling,
 }) {
   // For this example, we're using pagination to illustrate how to stop
   // the current page from resetting when our data changes
@@ -268,6 +273,7 @@ function Table({
       defaultColumn,
       onConnectionChange,
       isEditing,
+      limited,
       useScaling,
       cellToFocus,
     },
@@ -332,6 +338,7 @@ Table.propTypes = {
   data: PropTypes.array.isRequired,
   onConnectionChange: PropTypes.func.isRequired,
   isEditing: PropTypes.bool.isRequired,
+  limited: PropTypes.bool.isRequired,
   useScaling: PropTypes.bool.isRequired,
 };
 
@@ -349,7 +356,7 @@ function VariablesEditor(props) {
   }, []);
 
   const {
-    db, filter, isEditing, useScaling, onConnectionChange,
+    db, filter, isEditing, limited, useScaling, onConnectionChange,
   } = props;
 
   const connections = db.computeConnections(filter);
@@ -426,7 +433,7 @@ function VariablesEditor(props) {
         isVisible: useScaling,
       },
     ],
-    [isEditing, useScaling],
+    [isEditing, limited, useScaling],
   );
 
   return (
@@ -435,6 +442,7 @@ function VariablesEditor(props) {
       data={connections}
       onConnectionChange={onConnectionChange}
       isEditing={isEditing}
+      limited={limited}
       useScaling={useScaling}
     />
   );
@@ -442,10 +450,15 @@ function VariablesEditor(props) {
 
 VariablesEditor.propTypes = {
   isEditing: PropTypes.bool.isRequired,
+  limited: PropTypes.bool,
   db: PropTypes.object.isRequired,
   filter: PropTypes.object.isRequired,
   onConnectionChange: PropTypes.func.isRequired,
   useScaling: PropTypes.bool.isRequired,
+};
+
+VariablesEditor.defaultProps = {
+  limited: true,
 };
 
 export default VariablesEditor;
