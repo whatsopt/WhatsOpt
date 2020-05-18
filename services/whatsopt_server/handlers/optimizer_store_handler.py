@@ -1,5 +1,3 @@
-import numpy as np
-
 from whatsopt_server.services import ttypes as OptimizerStoreTypes
 from whatsopt_server.optimizer_store.optimizer_store import OptimizerStore
 

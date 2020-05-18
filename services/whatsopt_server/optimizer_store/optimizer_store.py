@@ -1,10 +1,9 @@
 import numpy as np
 import os
-from shutil import copyfile
 
 try:
     import cPickle as pickle
-except:
+except ImportError:
     import pickle
 
 from whatsopt_server.optimizer_store.segomoe_optimizer import SegomoeOptimizer
