@@ -96,7 +96,6 @@ class DistributionModal extends React.Component {
   }
 
   static _uqToState(uq) {
-    console.log('UQTOSTATE ', uq);
     const state = { dists: [] };
     for (let k = 0; k < uq.length; k += 1) {
       const { id, kind, options_attributes } = uq[k];
@@ -112,7 +111,6 @@ class DistributionModal extends React.Component {
   constructor(props) {
     super(props);
     const { conn: { uq } } = this.props;
-    console.log('CONSTRUCT ', uq);
     this.state = { selected: -1, dists: DistributionModal._uqToState(uq).dists };
     this.visible = false;
 
@@ -126,7 +124,6 @@ class DistributionModal extends React.Component {
     $(`#distributionListModal-${name}`).on('show.bs.modal',
       () => {
         const { conn: { uq } } = this.props;
-        console.log(`GET from props ${JSON.stringify(this.props)}`);
         const dists = DistributionModal._uqToState(uq);
         this.setState(dists);
         this.visible = true;
@@ -163,7 +160,6 @@ class DistributionModal extends React.Component {
         const dists = DistributionModal._uqToState(uq);
         this.setState(dists);
       });
-    console.log(`DIDMOUNT ${JSON.stringify(this.state)}`);
   }
 
   shouldComponentUpdate() {
@@ -171,7 +167,6 @@ class DistributionModal extends React.Component {
   }
 
   getFormData() {
-    // console.log(this.state);
     const { selected } = this.state;
     const taken = selected < 0 ? 0 : selected;
     const { dists: { [taken]: { kind, options_attributes } } } = this.state;
@@ -183,7 +178,6 @@ class DistributionModal extends React.Component {
       const opt = options_attributes[i];
       formData[`${kind.toLowerCase()}_options`][opt.name] = opt.value;
     }
-    // console.log(`get FORMDATA= ${JSON.stringify(formData)}`);
     return formData;
   }
 
@@ -194,7 +188,6 @@ class DistributionModal extends React.Component {
       return;
     }
     const { formData } = data;
-    console.log(`Change FORMDATA= ${JSON.stringify(formData)}`);
     const { kind } = formData;
 
     const { conn: { name } } = this.props;
@@ -208,7 +201,6 @@ class DistributionModal extends React.Component {
         },
       },
     });
-    console.log(`AGAIN FORMDATA= ${JSON.stringify(formData)}`);
     for (const k in formData) {
       if (k.startsWith(kind.toLowerCase())) {
         for (const name in formData[k]) {
@@ -225,22 +217,13 @@ class DistributionModal extends React.Component {
     // distribution: check for updating/removing options
     const { conn } = this.props;
     const { uq: { [selected]: { options_attributes: prevOptAttrs } } } = conn;
-    // console.log(`OLDCONNATTRS = ${JSON.stringify(prevOptAttrs)}`);
     const optIds = prevOptAttrs.map((opt) => opt.id);
-    console.log(optIds);
-    console.log(`NEW CONNATTRS = ${JSON.stringify(newState.dists[selected].options_attributes)}`);
     for (const optAttr of newState.dists[selected].options_attributes) {
       if (optIds.length) {
         optAttr.id = optIds.shift();
-        console.log('NEW OPT ATT', optAttr);
       }
     }
-    // console.log(`BEFORE CONATTRS = ${JSON.stringify(cAttrs)}`);
-    // console.log("OPTIDS", optIds);
-    // if (connAttrs.options_attributes) {  // needed in case, normally should be at least []
     optIds.forEach((id) => newState.dists[selected].options_attributes.push({ id, _destroy: '1' }));
-    // }
-    console.log(`SETSTATE ${JSON.stringify(newState)}`);
     this.setState(newState);
   }
 
@@ -250,7 +233,6 @@ class DistributionModal extends React.Component {
       return;
     }
     const { conn: { id, name }, onConnectionChange } = this.props;
-    console.log(`SAVE state= ${JSON.stringify(dists[selected])}`);
     onConnectionChange(id, { distributions_attributes: [dists[selected]] });
     $(`#distributionModal-${name}`).modal('hide');
   }
@@ -342,6 +324,7 @@ class DistributionModal extends React.Component {
 
 DistributionModal.propTypes = {
   conn: PropTypes.shape({
+    id: PropTypes.number.isRequired,
     name: PropTypes.string.isRequired,
     uq: PropTypes.arrayOf(PropTypes.shape({
       id: PropTypes.number,
