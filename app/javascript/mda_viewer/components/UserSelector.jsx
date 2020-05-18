@@ -28,7 +28,7 @@ class UserSelector extends React.Component {
     if (selected.length) {
       const { onMemberSelected } = this.props;
       onMemberSelected(selected);
-      this.typeaheadRef.current.getInstance().clear();
+      this.typeaheadRef.current.clear();
     }
   }
 
