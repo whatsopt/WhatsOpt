@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import update from 'immutability-helper';
 import Form from 'react-jsonschema-form-bs4';
 
 import Error from '../../utils/components/Error';

@@ -170,30 +170,6 @@ class MdaViewer extends React.Component {
     delete cAttrs.ref0;
     delete cAttrs.res_ref;
 
-    // distribution: check for updating/removing options
-    // if (cAttrs.distributions_attributes && cAttrs.distributions_attributes[0]) {
-    //   const { options_attributes: newOptAttrs } = cAttrs.distributions_attributes[0];
-    //   // console.log(`NEWOPTATTRS = ${JSON.stringify(newOptAttrs)}`);
-    //   const conn = this.db.connections.find((conn) => conn.id === connId);
-    //   const { uq: [{ options_attributes: prevOptAttrs }] } = conn;
-    //   // console.log(`OLDCONNATTRS = ${JSON.stringify(prevOptAttrs)}`);
-    //   const optIds = prevOptAttrs.map((opt) => opt.id);
-    //   // console.log(optIds);
-    //   for (const optAttr of newOptAttrs) {
-    //     if (optIds.length) {
-    //       optAttr.id = optIds.shift();
-    //       console.log('NEW OPT ATT', optAttr);
-    //     }
-    //   }
-    //   // console.log(`BEFORE CONATTRS = ${JSON.stringify(cAttrs)}`);
-    //   // console.log("OPTIDS", optIds);
-    //   // if (connAttrs.options_attributes) {  // needed in case, normally should be at least []
-    //   optIds.forEach((id) => cAttrs.distributions_attributes[0].options_attributes.push({ id, _destroy: '1' }));
-    //   // }
-    // }
-
-    // console.log(`CONATTRS = ${JSON.stringify(cAttrs)}`);
-
     if (Object.keys(cAttrs).length !== 0) {
       this.api.updateConnection(connId, cAttrs,
         () => {
@@ -265,8 +241,7 @@ class MdaViewer extends React.Component {
   handleSubAnalysisCreate(node, selected) {
     if (selected.length) {
       this.api.createSubAnalysisDiscipline(node.id, selected[0].id,
-        (response) => {
-          // console.log(response.data);
+        (/* response */) => {
           this.renderXdsm();
         });
     }

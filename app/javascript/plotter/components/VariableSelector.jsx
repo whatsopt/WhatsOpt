@@ -61,7 +61,7 @@ class VariableSelector extends React.PureComponent {
       <div className="container-fluid">
         <VariableList
           cases={cases.i}
-          title={uqMode ? "Uncertain Variables" : "Design Variables"}
+          title={uqMode ? 'Uncertain Variables' : 'Design Variables'}
           selection={selCases.i}
           onSelectionChange={onSelectionChange}
         />

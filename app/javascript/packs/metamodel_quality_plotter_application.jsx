@@ -16,5 +16,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const apiKey = plotterElt.data('api-key');
 
   const api = new WhatsOptApi(csrfToken, apiKey, relativeUrlRoot);
-  ReactDOM.render(<MetaModelQualityPlotter mdaName={mdaName} api={api} metaModelId={metaModelId} />, plotterElt[0]);
+  ReactDOM.render(<MetaModelQualityPlotter
+    mdaName={mdaName}
+    api={api}
+    metaModelId={metaModelId}
+  />, plotterElt[0]);
 });

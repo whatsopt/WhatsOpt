@@ -21,7 +21,7 @@ function saveAsPng() {
     backgroundColor: 'white',
     width: bbox.width - 100,
     height: bbox.height - 20,
-    selectorRemap: s => s.replace(/\.xdsm2 /g, '')
+    selectorRemap: (s) => s.replace(/\.xdsm2 /g, ''),
   });
 }
 

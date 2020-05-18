@@ -90,7 +90,8 @@ class MetaModelQualification extends React.Component {
           Coefficients of determination R
           <sup>2</sup>
           {' '}
-          for outputs computed from 10% of original DOE points used as validation set (the closer to one, the better).
+          for outputs computed from 10% of original DOE points
+          used as validation set (the closer to one, the better).
         </div>
         <div>
           <span className="mb-3">

@@ -17,7 +17,7 @@ const VARIABLES_TAB = 'variables';
 const METAMODEL_TAB = 'metamodel';
 
 class PlotPanel extends React.Component {
-  shouldComponentUpdate(nextProps, nextState) {
+  shouldComponentUpdate(nextProps /* ,  nextState */) {
     return nextProps.active;
   }
 
@@ -110,6 +110,7 @@ class PlotPanel extends React.Component {
 }
 
 PlotPanel.propTypes = {
+  active: PropTypes.bool.isRequired,
   db: PropTypes.object.isRequired,
   optim: PropTypes.bool.isRequired,
   cases: PropTypes.object.isRequired,
@@ -149,7 +150,7 @@ VariablePanel.propTypes = {
 };
 
 class MetaModelPanel extends React.Component {
-  shouldComponentUpdate(nextProps, nextState) {
+  shouldComponentUpdate(nextProps /* , nextState */) {
     return nextProps.active;
   }
 
