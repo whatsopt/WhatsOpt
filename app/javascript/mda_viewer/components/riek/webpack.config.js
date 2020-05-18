@@ -4,12 +4,12 @@ module.exports = {
       {
         test: /\.jsx?$/,
         exclude: /(node_modules)/,
-        loader: 'babel'
-      }
-    ]
+        loader: 'babel',
+      },
+    ],
   },
   externals: {
     react: 'React',
-    'react-dom': 'ReactDOM'
-  }
-}
+    'react-dom': 'ReactDOM',
+  },
+};

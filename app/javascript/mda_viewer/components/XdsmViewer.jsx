@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import update from 'immutability-helper';
 import { XDSMjs, XDSM_V2 } from 'xdsmjs';
-// import XdsmFactory from 'XDSMjs/src/xdsm-factory';
 
 const DEFAULT_XDSM_VERSION = XDSM_V2;
 
@@ -38,9 +37,16 @@ class XdsmViewer extends React.Component {
       version,
     };
     const { mda, filter } = this.props;
-    const xdsmMda = update(mda, { nodes: { 0: { name: { $set: 'Driver' }, type: { $set: 'driver' } } } });
-    // this.selectableXdsm = (new XdsmFactory(config)).createSelectableXdsm(xdsmMda, this._onSelectionChange.bind(this));
-    this.selectableXdsm = XDSMjs(config).createSelectableXdsm(xdsmMda, this._onSelectionChange.bind(this));
+    const xdsmMda = update(mda, {
+      nodes: {
+        0: {
+          name: { $set: 'Driver' },
+          type: { $set: 'driver' },
+        },
+      },
+    });
+    this.selectableXdsm = XDSMjs(config)
+      .createSelectableXdsm(xdsmMda, this._onSelectionChange.bind(this));
     this.setSelection(filter);
     this._setLinks();
     XdsmViewer._setTooltips();
@@ -56,6 +62,7 @@ class XdsmViewer extends React.Component {
 
   update(mda) {
     // remove bootstrap tooltip
+    // eslint-disable-next-line no-undef
     $('.ellipsized').tooltip('dispose');
 
     const xdsmMda = update(mda, { nodes: { 0: { name: { $set: 'Driver' }, type: { $set: 'driver' } } } });
