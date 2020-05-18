@@ -1,6 +1,3 @@
-import numpy as np
-
-
 class AdministrationHandler:
     def ping(self):
         print("Optimizer server... Ping!")

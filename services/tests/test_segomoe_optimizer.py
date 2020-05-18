@@ -1,5 +1,4 @@
 import unittest
-import os
 import numpy as np
 from whatsopt_server.optimizer_store.segomoe_optimizer import SegomoeOptimizer
 import DOE.doe_lhs as doe_lhs

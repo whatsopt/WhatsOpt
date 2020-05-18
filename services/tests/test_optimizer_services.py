@@ -8,7 +8,6 @@ from thrift.transport import TSocket
 from thrift.transport import TTransport
 from thrift.protocol import TBinaryProtocol, TMultiplexedProtocol
 
-from whatsopt_server.services import ttypes as OptimimzerStoreTypes
 from whatsopt_server.services import OptimizerStore, Administration
 
 import DOE.doe_lhs as doe_lhs
