@@ -121,6 +121,7 @@ class DistributionModal extends React.Component {
 
   componentDidMount() {
     const { conn: { name } } = this.props;
+    // eslint-disable-next-line no-undef
     $(`#distributionListModal-${name}`).on('show.bs.modal',
       () => {
         const { conn: { uq } } = this.props;
@@ -128,15 +129,18 @@ class DistributionModal extends React.Component {
         this.setState(dists);
         this.visible = true;
         for (let i = 0; i < dists.dists.length; i += 1) {
-          $(`#${name}-${i}`).on('click', (e) => {
+          // eslint-disable-next-line no-undef
+          $(`#${name}-${i}`).on('click', (/* e */) => {
             this.setState({ selected: i });
           });
         }
       });
+    // eslint-disable-next-line no-undef
     $(`#distributionListModal-${name}`).on('hidden.bs.modal',
       () => {
         this.visible = false;
       });
+    // eslint-disable-next-line no-undef
     $(`#distributionModal-${name}`).on('show.bs.modal',
       () => {
         const { conn: { uq } } = this.props;
@@ -145,6 +149,7 @@ class DistributionModal extends React.Component {
           this.setState({ selected: 0, dists });
           this.visible = true;
           for (let i = 0; i < dists.length; i += 1) {
+            // eslint-disable-next-line no-undef
             $(`#${name}-${i}`).on('click', () => {
               this.setState({ selected: i });
             });
@@ -152,8 +157,10 @@ class DistributionModal extends React.Component {
         }
         const { selected } = this.state;
         const varname = uq.length === 1 ? name : `${name}[${selected}]`;
+        // eslint-disable-next-line no-undef
         $(`#distributionModal-${name} .modal-title`).text(`Distribution of ${varname}`);
       });
+    // eslint-disable-next-line no-undef
     $(`#distributionModal-${name}`).on('hidden.bs.modal',
       () => {
         const { conn: { uq } } = this.props;
@@ -203,12 +210,14 @@ class DistributionModal extends React.Component {
     });
     for (const k in formData) {
       if (k.startsWith(kind.toLowerCase())) {
-        for (const name in formData[k]) {
-          if (formData[k][name] !== undefined) { // Form bug: filter undefined data
-            console.log('PUSH ', { name, value: formData[k][name] });
-            newState.dists[selected].options_attributes.push({ name, value: formData[k][name] });
+        for (const optname in formData[k]) {
+          if (formData[k][optname] !== undefined) { // Form bug: filter undefined data
+            // console.log('PUSH ', { name, value: formData[k][name] });
+            newState.dists[selected].options_attributes.push(
+              { optname, value: formData[k][optname] },
+            );
           } else {
-            console.log(`Bug in jsonschema form: avoid pushing ${formData[k][name]}`);
+            console.log(`Bug in jsonschema form: avoid pushing ${formData[k][optname]}`);
           }
         }
       }
@@ -234,9 +243,12 @@ class DistributionModal extends React.Component {
     }
     const { conn: { id, name }, onConnectionChange } = this.props;
     onConnectionChange(id, { distributions_attributes: [dists[selected]] });
+    // eslint-disable-next-line no-undef
     $(`#distributionModal-${name}`).modal('hide');
   }
 
+  /* eslint-disable jsx-a11y/control-has-associated-label */
+  /* eslint-disable react/no-array-index-key */
   render() {
     const { conn: { name, uq } } = this.props;
     const formData = this.getFormData();
@@ -338,12 +350,20 @@ DistributionModal.propTypes = {
 class DistributionModals extends React.PureComponent {
   render() {
     const { db, onConnectionChange } = this.props;
-    const connections = db.computeConnections().filter((c) => c.role === 'design_var' || c.role === 'parameter' || c.role === 'uncertain_var');
+    const connections = db.computeConnections().filter(
+      (c) => c.role === 'design_var' || c.role === 'parameter' || c.role === 'uncertain_var',
+    );
     const modals = connections.map(
       (conn) => {
         const { uq: dists } = conn;
         if (dists.length > 0) {
-          return (<DistributionModal key={conn.id} conn={conn} onConnectionChange={onConnectionChange} />);
+          return (
+            <DistributionModal
+              key={conn.id}
+              conn={conn}
+              onConnectionChange={onConnectionChange}
+            />
+          );
         }
         return null;
       },

@@ -42,7 +42,6 @@ function _computeTypeSelection(conn) {
 function CheckButtonCell({
   cell: { value },
   row: { index },
-  column: { id },
   data: connections,
   onConnectionChange,
   limited,
@@ -59,6 +58,18 @@ function CheckButtonCell({
     />
   );
 }
+
+CheckButtonCell.propTypes = {
+  cell: PropTypes.shapeOf({
+    value: PropTypes.bool.isRequired,
+  }).isRequired,
+  row: PropTypes.shapeOf({
+    index: PropTypes.number.isRequired,
+  }).isRequired,
+  data: PropTypes.object.isRequired,
+  onConnectionChange: PropTypes.func.isRequired,
+  limited: PropTypes.bool.isRequired,
+};
 
 function ReadonlyCell({
   cell: { value },
@@ -109,7 +120,7 @@ function _uqLabelOf(uq) {
 }
 
 function ButtonCell({
-  cell,
+  /* cell, */
   row,
   column,
   data: connections,
@@ -132,8 +143,10 @@ function ButtonCell({
           style={{ paddingTop: 0, paddingBottom: 0 }}
           onClick={() => {
             if (shape === '1' || shape === '(1,)') {
+              // eslint-disable-next-line no-undef
               $(`#distributionModal-${name}`).modal('show');
             } else {
+              // eslint-disable-next-line no-undef
               $(`#distributionListModal-${name}`).modal('show');
             }
           }}
@@ -169,6 +182,9 @@ function EditableCell({
     if (id === 'type') {
       selectOptions = _computeTypeSelection(connections[index]);
     }
+
+    const myRef = React.useRef(null);
+
     if (selectOptions) {
       const selected = selectOptions.filter((choice) => choice.id === value);
       return (
@@ -197,7 +213,6 @@ function EditableCell({
         />
       );
     }
-    const myRef = React.useRef(null);
 
     React.useEffect(() => {
       if (cellToFocus.current
@@ -251,6 +266,7 @@ const defaultColumn = {
   Cell: EditableCell,
 };
 
+/* eslint-disable react/jsx-props-no-spreading */
 // Be sure to pass our updateMyData and the skipPageReset option
 function Table({
   columns, data, onConnectionChange, isEditing, limited, useScaling,
@@ -319,7 +335,7 @@ function Table({
       </thead>
       <tbody {...getTableBodyProps()}>
         {rows.map(
-          (row, i) => {
+          (row /* i */) => {
             prepareRow(row);
             return (
               <tr {...row.getRowProps()}>
@@ -414,7 +430,7 @@ function VariablesEditor(props) {
       },
       {
         Header: 'UQ',
-        accessor: (row) => '',
+        accessor: (/* row */) => '',
         Cell: ButtonCell,
       },
       {
