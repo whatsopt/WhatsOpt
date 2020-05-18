@@ -4,19 +4,19 @@ from shutil import copyfile
 
 try:
     import cPickle as pickle
-except:
+except ImportError:
     import pickle
 
 SMT_NOT_INSTALLED = False
 try:
     from smt.surrogate_models import KRG, KPLS, KPLSK, LS, QP
-except:
+except ImportError:
     SMT_NOT_INSTALLED = True
 
 OPENTURNS_NOT_INSTALLED = False
 try:
     from .openturns_surrogates import PCE
-except:
+except ImportError:
     OPENTURNS_NOT_INSTALLED = True
 
 
@@ -102,4 +102,3 @@ class SurrogateStore(object):
 
     def _sm_filename(self, surrogate_id):
         return "%s/surrogate_%s.pkl" % (self.outdir, surrogate_id)
-

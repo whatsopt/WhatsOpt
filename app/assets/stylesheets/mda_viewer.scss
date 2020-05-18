@@ -2,11 +2,12 @@
 table.connections td {
   padding: 2px;
 }
+
 table.connections {
   table-layout: fixed;
 }
 
-/* React table cell: give clickable widthxheight when the cell is empty*/
+/* React table cell: give clickable widthxheight when the cell is empty */
 .editable-react-table-cell {
   background-color: #f0f8e0;
 }
@@ -18,6 +19,7 @@ span.react-table-cell {
   white-space: nowrap;
   text-overflow: ellipsis;
 }
+
 input.react-table-cell {
   width: 100%;
   box-sizing: border-box;
@@ -32,7 +34,7 @@ input.react-table-cell {
   background-color: black;
   border-radius: 10px;
   font-family: "Courier New", monospace;
-    white-space: pre;
+  white-space: pre;
 }
 
 .listing-line {
@@ -64,8 +66,11 @@ div.editor-discipline {
 
 /* XDSM tooltip */
 .tooltip-inner {
-  max-width: 300px; /* set this to your maximum fitting width */
-  width: inherit;   /* will take up least amount of space */ 
+  /* set this to your maximum fitting width */
+  max-width: 300px;
+
+  /* will take up least amount of space */
+  width: inherit;
 }
 
 /* XDSM sub-analysis link */
@@ -73,7 +78,7 @@ a.analysis-link {
   font-style: italic;
 }
 
-/* Analysis BreadCrumbs*/
+/* Analysis BreadCrumbs */
 .breadcrumb {
   background: #fff;
   padding: 10px 15px 2px 15px !important;
