@@ -111,3 +111,16 @@ div.field_with_errors {
   overflow: hidden;
   padding: 0.5rem 1rem;
 }
+
+/* Override default xdsmjs css */
+.xdsm .driver {
+  fill: #CCCCFF;
+  stroke: black;
+  stroke-width: 1px;
+}
+
+.xdsm2 .driver {
+  fill: #CCCCFF;
+  stroke: black;
+  stroke-width: 1px;
+}

@@ -60,13 +60,13 @@ function CheckButtonCell({
 }
 
 CheckButtonCell.propTypes = {
-  cell: PropTypes.shapeOf({
+  cell: PropTypes.shape({
     value: PropTypes.bool.isRequired,
   }).isRequired,
-  row: PropTypes.shapeOf({
+  row: PropTypes.shape({
     index: PropTypes.number.isRequired,
   }).isRequired,
-  data: PropTypes.object.isRequired,
+  data: PropTypes.array.isRequired,
   onConnectionChange: PropTypes.func.isRequired,
   limited: PropTypes.bool.isRequired,
 };

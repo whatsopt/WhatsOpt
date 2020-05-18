@@ -1,15 +1,21 @@
 /*
  * XDSMjs
- * Copyright 2016-2019 Rémi Lafage
+ * Copyright 2016-2020 Rémi Lafage
  */
+
+.node text {
+  font-size: medium;
+}
+
+.edge text {
+  font-size: small;
+}
 
 /** XDSM v1 ***************************************************/
 
 /* Special hidden first component */
 .xdsm .driver {
-  fill: #CCCCFF;
-  stroke: black;
-  stroke-width: 1px;
+  visibility: hidden;
 }
 
 .xdsm .node {
@@ -19,65 +25,60 @@
 
 /** XDSM v1 */
 .xdsm .optimization {
-  fill: #CCCCFF;
+  fill: #ccf;
 }
+
 .xdsm .lp_optimization {
-  fill: #CCCCFF;
+  fill: #ccf;
 }
 
 .xdsm .analysis {
-  fill: #CCFFCC;
+  fill: #cfc;
 }
+
 /* Forward compatibility */
 .xdsm .implicit_analysis {
-  fill: #9FCCC9;
+  fill: #9fccc9;
 }
 
 .xdsm .mdo {
-  fill: #FFCCCC;
+  fill: #fcc;
 }
+
 /* Forward compatibility */
 .xdsm .sub-optimization {
-  fill: #FFCCCC;
+  fill: #fcc;
 }
 
 .xdsm .function {
-  fill: #F2CCD9;
+  fill: #f2ccd9;
 }
+
 /* Forward compatibility */
 .xdsm .implicit-function {
-  fill: #F2CCD9;
+  fill: #f2ccd9;
 }
 
 .xdsm .mda {
-  fill: #FFE5CC;
+  fill: #ffe5cc;
 }
+
 /* Forward compatibility */
 .xdsm .group {
-  fill: #FFE5CC;
+  fill: #ffe5cc;
 }
+
 /* Forward compatibility */
 .xdsm .implicit-group {
-  fill: #FFE5CC;
+  fill: #ffe5cc;
 }
 
 .xdsm .metamodel {
-  fill: #FFFCCC;
+  fill: #fffccc;
 }
 
 .xdsm .doe {
-  fill: #FFFCCC;
-}
-
-/* Title */
-.xdsm g.title text {
-  display: block;
-  margin: 0.67em 0;
-  font-size: 2em;
-  font-weight: bold;
-}
-.xdsm g.title rect {
-  fill: none;
+  fill: #fffccc;
 }
 
 /* Text Default */
@@ -86,22 +87,36 @@
   stroke: none;
   font-family: Arial, sans-serif;
 }
+
+/* Title */
+.xdsm g.title text {
+  display: block;
+  margin: 0.67em 0;
+  font-size: 1em;
+  font-weight: bold;
+}
+
+.xdsm g.title rect {
+  fill: none;
+}
+
 .xdsm tspan.sub {
   font-size: small;
 }
+
 .xdsm tspan.sup {
   font-size: small;
 }
 
 /* Data */
 .xdsm .dataInter polygon {
-  fill: #E5E5E5;
+  fill: #e5e5e5;
   stroke: black;
   stroke-width: 1px;
 }
 
 .xdsm .dataIO polygon {
-  fill: #FFFFFF;
+  fill: #fff;
   stroke: black;
   stroke-width: 1px;
 }
@@ -123,9 +138,7 @@
 /** XDSM v2 ***************************************************/
 
 .xdsm2 .driver {
-  fill: #CCCCFF;
-  stroke: black;
-  stroke-width: 1px;
+  visibility: hidden;
 }
 
 .xdsm2 .node {
@@ -134,60 +147,56 @@
 }
 
 .xdsm2 .optimization {
-  fill: #A0CBE8;
+  fill: #a0cbe8;
 }
+
 .xdsm2 .sub-optimization {
-  fill: #A0CBE8;
+  fill: #a0cbe8;
 }
 
 /* Deprecated: use optimization */
+
 .xdsm2 .lp_optimization {
-  fill: #A0CBE8;
+  fill: #a0cbe8;
 }
+
 /* Deprecated: use sub-optimization */
+
 .xdsm2 .mdo {
-  fill: #A0CBE8;
+  fill: #a0cbe8;
 }
 
 .xdsm2 .doe {
-  fill: #A0CBE8;
+  fill: #a0cbe8;
 }
 
 .xdsm2 .function {
-  fill: #8CD17D;
+  fill: #8cd17d;
 }
+
 .xdsm2 .implicit-function {
-  fill: #FF9D9A;
+  fill: #ff9d9a;
 }
 
 /* Deprecated: use function */
 .xdsm2 .analysis {
-  fill: #8CD17D;
+  fill: #8cd17d;
 }
 
 .xdsm2 .mda {
-  fill: #FFBE7D;
+  fill: #ffbe7d;
 }
+
 .xdsm2 .metamodel {
-  fill: #F1CE63;
+  fill: #f1ce63;
 }
 
 .xdsm2 .group {
-  fill: #8CD17D;
-}
-.xdsm2 .implicit-group {
-  fill: #FF9D9A;
+  fill: #8cd17d;
 }
 
-/* Title */
-.xdsm2 g.title text {
-  display: block;
-  margin: 0.67em 0; 
-  font-size: 1em;
-  font-weight: bold;
-}
-.xdsm2 g.title rect {
-  fill: none;
+.xdsm2 .implicit-group {
+  fill: #ff9d9a;
 }
 
 /* Text Default */
@@ -196,22 +205,36 @@
   stroke: none;
   font-family: Arial, sans-serif;
 }
+
+/* Title */
+.xdsm2 g.title text {
+  display: block;
+  margin: 0.67em 0;
+  font-size: 1em;
+  font-weight: bold;
+}
+
+.xdsm2 g.title rect {
+  fill: none;
+}
+
 .xdsm2 tspan.sub {
   font-size: small;
 }
+
 .xdsm2 tspan.sup {
   font-size: small;
 }
 
 /* Data */
 .xdsm2 .dataInter polygon {
-  fill: #E5E5E5;
+  fill: #e5e5e5;
   stroke: black;
   stroke-width: 1px;
 }
 
 .xdsm2 .dataIO polygon {
-  fill: #FFFFFF;
+  fill: #fff;
   stroke: black;
   stroke-width: 1px;
 }
@@ -236,7 +259,7 @@ div.xdsm-tooltip {
   text-align: center;
   padding: 10px;
   background: lightsteelblue;
-  border: 0px;
+  border: 0;
   border-radius: 8px;
   pointer-events: none;
 }
@@ -245,19 +268,23 @@ div.xdsm-tooltip {
 div.optpb {
   position: absolute;
   padding: 10px;
-  background: #CCCCFF;
-  border: 0px;
+  background: #ccf;
+  border: 0;
   border-radius: 8px;
   font-size: 150%;
 }
 
-sub, sup {
+sub,
+sup {
   /* Specified in % so that the sup/sup is the right size relative to the surrounding text */
   font-size: 75%;
+
   /* Zero out the line-height so that it doesn't interfere with the positioning that follows */
   line-height: 0;
+
   /* Where the magic happens: makes all browsers position the sup/sup properly, relative to the surrounding text */
   position: relative;
+
   /* Note that if you're using Eric Meyer's reset.css, this is already set and you can remove this rule */
   vertical-align: baseline;
 }
@@ -274,24 +301,18 @@ sub {
 
 /* Version button */
 label#xdsm-version-label {
-  margin: 0px 5px 0px 50px;
+  margin: 0 5px 0 50px;
   font-weight: bolder;
   font-size: 24px;
   font-family: Arial, sans-serif;
 }
+
 select#xdsm-version-toggle {
   display: table-cell;
   vertical-align: top;
   font-weight: bolder;
   font-size: 20px;
   font-family: Arial, sans-serif;
-}
-
-.node text {
-  font-size: medium;
-}
-.edge text {
-  font-size: small;
 }
 
 .subxdsm-link:hover {
