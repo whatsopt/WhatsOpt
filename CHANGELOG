@@ -3,6 +3,8 @@
 <h3>1.9.0 (??/06/2020)</h3>
 <ul>
   <li>User can set non scalar input variables as uncertain variables and set corresponding distributions</li>
+  <li>User is warned when he wants to edit an anaysis with results</li>
+  <li>Implementation: upgrade gems and javascript modules</li>
 </ul>
 
 <h3>1.8.0 (29/04/2020)</h3>
