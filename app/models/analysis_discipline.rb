@@ -27,7 +27,7 @@ class AnalysisDiscipline < ApplicationRecord
       outermda = discipline.analysis
 
       disc.create_variables_from_sub_analysis
-      outermda.driver.create_variables_from_sub_analysis(innermda)
+      # outermda.driver.create_variables_from_sub_analysis(innermda)
       outermda.save!
     end
   end

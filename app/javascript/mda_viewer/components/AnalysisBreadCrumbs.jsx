@@ -27,10 +27,10 @@ class AnalysisBreadCrumbs extends React.PureComponent {
 
 AnalysisBreadCrumbs.propTypes = {
   api: PropTypes.object.isRequired,
-  path: PropTypes.arrayOf({
+  path: PropTypes.arrayOf(PropTypes.shape({
     name: PropTypes.string,
     id: PropTypes.number,
-  }).isRequired,
+  })).isRequired,
 };
 
 export default AnalysisBreadCrumbs;

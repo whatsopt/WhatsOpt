@@ -94,11 +94,11 @@ body.modal-open {
 }
 
 /* modal backdrop fix for distribution modals */
-.modal:nth-of-type(even) {
+#variables .modal:nth-of-type(even) {
   z-index: 1052 !important;
 }
 
-.modal-backdrop.show:nth-of-type(even) {
+#variables .modal-backdrop.show:nth-of-type(even) {
   z-index: 1051 !important;
 }
 
