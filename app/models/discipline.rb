@@ -31,6 +31,8 @@ class Discipline < ApplicationRecord
   accepts_nested_attributes_for :endpoint, reject_if: proc { |attr| attr["host"].blank? || attr["host"]=="localhost" }, allow_destroy: true
 
   validates :name, presence: true, allow_blank: false
+  validates :name, format: { with: /\A[a-zA-Z][_a-zA-Z0-9]*|__DRIVER__\z/, message: "%{value} is not a valid discipline name." }
+  validates :name, format: { with: /\A[^\/]*\z/, message: "%{value} is not a valid discipline name." }
 
   scope :driver, -> { where(type: WhatsOpt::Discipline::NULL_DRIVER) }
   scope :nodes, -> { where.not(type: WhatsOpt::Discipline::NULL_DRIVER) }

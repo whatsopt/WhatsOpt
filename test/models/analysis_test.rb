@@ -14,6 +14,12 @@ class AnalysisTest < ActiveSupport::TestCase
     assert_equal WhatsOpt::Discipline::NULL_DRIVER_NAME, mda.disciplines.first.name
   end
 
+  test "should be invalid" do
+    assert_not Analysis.new(name: "te/st/").valid?
+    assert Analysis.new(name: "test.valid").valid?
+    assert Analysis.new(name: "test valid").valid?
+  end
+
   test "should create new connections if needed" do
     @mda.disciplines.first.variables.create(name: "newvar", io_mode: "out")
     @mda.disciplines.second.variables.create(name: "newvar", io_mode: "in")

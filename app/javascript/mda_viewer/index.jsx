@@ -18,7 +18,7 @@ import MetaModelQualification from '../utils/components/MetaModelQualification';
 import AnalysisDatabase from '../utils/AnalysisDatabase';
 import deepIsEqual from '../utils/compare';
 
-const VAR_REGEXP = /^[a-zA-Z][_a-zA-Z0-9]*$/;
+const VAR_REGEXP = /^[a-zA-Z][_a-zA-Z0-9:.=]*$/;
 
 const reorder = (list, startIndex, endIndex) => {
   const result = Array.from(list);
@@ -197,6 +197,11 @@ class MdaViewer extends React.Component {
         const newState = update(this.state, { newDisciplineName: { $set: '' } });
         this.setState(newState);
         this.renderXdsm();
+      },
+      (error) => {
+        const message = error.response.data.message || 'Error: Update failed';
+        const newState = update(this.state, { errors: { $set: [message] } });
+        this.setState(newState);
       });
   }
 
@@ -213,7 +218,13 @@ class MdaViewer extends React.Component {
       const newState = update(this.state, { mda: { nodes: { $set: items } } });
       this.setState(newState);
     }
-    this.api.updateDiscipline(node.id, discAttrs, () => { this.renderXdsm(); });
+    this.api.updateDiscipline(node.id, discAttrs,
+      () => { this.renderXdsm(); },
+      (error) => {
+        const message = error.response.data.message || 'Error: Update failed';
+        const newState = update(this.state, { errors: { $set: [message] } });
+        this.setState(newState);
+      });
   }
 
   handleDisciplineDelete(node) {

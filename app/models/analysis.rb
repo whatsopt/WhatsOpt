@@ -42,6 +42,7 @@ class Analysis < ApplicationRecord
   before_destroy :_check_allowed_destruction
 
   validates :name, presence: true, allow_blank: false
+  validates :name, format: { with: /\A[a-zA-Z][_\.a-zA-Z0-9\s]*\z/, message: "%{value} is not a valid analysis name." }
 
   def driver
     @driver ||= disciplines.driver.take

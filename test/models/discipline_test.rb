@@ -16,6 +16,14 @@ class DisciplineTest < ActiveSupport::TestCase
     assert_equal WhatsOpt::Discipline::DISCIPLINE, disc.type
   end
 
+  test "should be invalid" do
+    assert_not Discipline.new(name: "te/st/").valid?
+    assert_not Discipline.new(name: "1test").valid?
+    assert Discipline.new(name: "__DRIVER__").valid?
+    assert Discipline.new(name: "test.valid").valid?
+    assert Discipline.new(name: "test valid").valid?
+  end
+
   def test_as_json
     disc = disciplines(:geometry)
     adapter = ActiveModelSerializers::SerializableResource.new(disc)

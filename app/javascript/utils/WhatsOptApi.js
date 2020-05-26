@@ -122,18 +122,18 @@ class WhatsOptApi {
       .catch(onError);
   }
 
-  createDiscipline(mdaId, disciplineAttributes, callback) {
+  createDiscipline(mdaId, disciplineAttributes, callback, onError) {
     const path = `/analyses/${mdaId}/disciplines`;
     axios.post(this.apiUrl(path), { discipline: disciplineAttributes })
       .then(callback)
-      .catch((error) => console.log(error));
+      .catch(onError);
   }
 
-  updateDiscipline(discId, disciplineAttributes, callback) {
+  updateDiscipline(discId, disciplineAttributes, callback, onError) {
     const path = `/disciplines/${discId}`;
     axios.put(this.apiUrl(path), { discipline: disciplineAttributes })
       .then(callback)
-      .catch((error) => console.log(error));
+      .catch(onError);
   }
 
   deleteDiscipline(discId, callback) {
