@@ -99,7 +99,13 @@ function ReadonlyCell({
     }
   }
   if (id === 'name') {
-    const title = connections[index].desc;
+    let title = '';
+    if (connections[index].name.length >= 40) {
+      title = connections[index].name;
+    }
+    if (connections[index].desc) {
+      title += `: ${connections[index].desc}`;
+    }
     textStyle += ' table-tooltip';
     return (<span className={textStyle} title={title} data-original-title={title}>{info}</span>);
   }
