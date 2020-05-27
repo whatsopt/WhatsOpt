@@ -34,8 +34,7 @@ class Analysis < ApplicationRecord
   scope :mine, ->{ with_role(:owner, current_user) }
 
   after_save :refresh_connections, unless: Proc.new { self.disciplines.count < 2 }
-  # after_save :_ensure_meta_models
-  after_save :_ensure_ancestry_for_sub_analyses
+  after_save :ensure_ancestry_for_sub_analyses
   after_save :_ensure_driver_presence
   after_save :_ensure_openmdao_impl_presence
 
@@ -559,18 +558,21 @@ class Analysis < ApplicationRecord
     end
   end
 
+  def ensure_ancestry_for_sub_analyses
+    disciplines.nodes.each do |d|
+      if d.has_sub_analysis? && d.sub_analysis.parent != self
+        d.sub_analysis.update(parent: self)
+        d.sub_analysis.ensure_ancestry_for_sub_analyses
+      end
+    end
+  end
+
   private
 
     def _ensure_driver_presence
       if self.disciplines.empty?
         disciplines.create!(name: WhatsOpt::Discipline::NULL_DRIVER_NAME, position: 0)
       end
-    end
-
-    def _ensure_ancestry_for_sub_analyses
-      disciplines.nodes
-                 .select { |d| d.has_sub_analysis? && d.sub_analysis.parent != self }
-                 .each { |d| d.sub_analysis.update(parent_id: id) unless new_record? }
     end
 
     def _ensure_openmdao_impl_presence
