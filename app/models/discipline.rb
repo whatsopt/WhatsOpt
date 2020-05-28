@@ -106,17 +106,17 @@ class Discipline < ApplicationRecord
 
   def create_variables_from_sub_analysis(sub_analysis = nil)
     sub_analysis ||= analysis_discipline&.analysis
-    variables.map(&:destroy!)
+    # variables.map(&:destroy!)
     if sub_analysis
       sub_analysis.driver.output_variables.each do |outvar|
-        newvar = variables.build(outvar.attributes.except("id", "discipline_id", "created_at", "updated_at"))
-        newvar.io_mode = WhatsOpt::Variable::IN unless is_driver?
-        newvar.save!
+        vattr = outvar.attributes.except("name", "id", "discipline_id", "created_at", "updated_at")
+        vattr["io_mode"] = WhatsOpt::Variable::IN unless is_driver?
+        variables.where(name: outvar.name).first_or_create!(vattr)
       end
       sub_analysis.driver.input_variables.each do |invar|
-        newvar = variables.build(invar.attributes.except("id", "discipline_id", "created_at", "updated_at"))
-        newvar.io_mode = WhatsOpt::Variable::OUT unless is_driver?
-        newvar.save!
+        vattr = invar.attributes.except("name", "id", "discipline_id", "created_at", "updated_at")
+        vattr["io_mode"] = WhatsOpt::Variable::OUT unless is_driver?
+        variables.where(name: invar.name).first_or_create!(vattr)
       end
     end
   end

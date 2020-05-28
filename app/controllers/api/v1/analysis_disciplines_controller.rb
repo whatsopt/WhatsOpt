@@ -12,7 +12,7 @@ class Api::V1::AnalysisDisciplinesController < Api::ApiController
     else
       # create from an analysis, build new discipline
       @outermda = Analysis.find(params[:mda_id])
-      @disc = @outermda.disciplines.build(name: @innermda.name)
+      @disc = @outermda.disciplines.create(name: @innermda.name)
     end
     @mda_discipline = AnalysisDiscipline.build_analysis_discipline(@disc, @innermda)
     authorize @mda_discipline

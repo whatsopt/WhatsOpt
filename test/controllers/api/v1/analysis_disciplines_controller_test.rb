@@ -74,8 +74,12 @@ class Api::V1::AnalysisDisciplinesControllerTest < ActionDispatch::IntegrationTe
     post api_v1_discipline_mda_url(@innermdadisc), params: { analysis_discipline: { analysis_id: @cicav.id } },
       as: :json, headers: @auth_headers
     disc.reload
-    assert_equal varins, disc.input_variables.map(&:name)
-    assert_equal varouts, disc.output_variables.map(&:name)
+    varins.each do |v|
+      assert_includes disc.input_variables.map(&:name), v
+    end
+    varouts.each do |v|
+      assert_includes disc.output_variables.map(&:name), v
+    end
   end
 
   test "should not be authorized to attach an analysis owned by another user" do
