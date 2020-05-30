@@ -184,7 +184,13 @@ class MdaViewer extends React.Component {
   }
 
   handleConnectionDelete(connId) {
-    this.api.deleteConnection(connId, () => { this.renderXdsm(); });
+    this.api.deleteConnection(connId,
+      () => { this.renderXdsm(); },
+      (error) => {
+        const message = error.response.data.message || 'Error: Update failed';
+        const newState = update(this.state, { errors: { $set: [message] } });
+        this.setState(newState);
+      });
   }
 
   // *** Disciplines ************************************************************

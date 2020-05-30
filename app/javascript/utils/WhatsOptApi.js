@@ -178,11 +178,11 @@ class WhatsOptApi {
       .catch(onError);
   }
 
-  deleteConnection(connectionId, callback) {
+  deleteConnection(connectionId, callback, onError) {
     const path = `/connections/${connectionId}`;
     axios.delete(this.apiUrl(path))
       .then(callback)
-      .catch((error) => console.log(error));
+      .catch(onError);
   }
 
   getOperation(operationId, callback) {
