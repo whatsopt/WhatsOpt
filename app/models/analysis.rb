@@ -320,9 +320,9 @@ class Analysis < ApplicationRecord
   def refresh_connections(default_role_for_inputs = WhatsOpt::Variable::PARAMETER_ROLE,
                           default_role_for_outputs = WhatsOpt::Variable::RESPONSE_ROLE)
     # p "REFRESH CONNS #{self.name}"
-    varouts = Variable.outs.of_analysis(id).disconnected
+    varouts = Variable.outs.of_analysis(id).disconnected.where.not(discipline: driver)
     # p varouts
-    varins = Variable.ins.of_analysis(id).disconnected
+    varins = Variable.ins.of_analysis(id).disconnected.where.not(discipline: driver)
     # p varins
     # check that each 'out' variables is connected
     varouts.each do |vout|
@@ -340,7 +340,7 @@ class Analysis < ApplicationRecord
       if driver && vins.empty?  # connect output to driver if driver still there (analysis destroy case)
         vattrs = vout.attributes.except("id")
         vattrs[:io_mode] = WhatsOpt::Variable::IN
-        newvar = driver.variables.create!(vattrs)
+        newvar = driver.variables.where(name: vattrs["name"]).first_or_create!(vattrs)
         # p "2 Connect #{vout.name} between #{vout.discipline.name} #{newvar.discipline.name}" unless Connection.where(from_id: vout.id, to_id: newvar.id).first
         Connection.where(from_id: vout.id, to_id: newvar.id).first_or_create!(role: WhatsOpt::Variable::RESPONSE_ROLE) 
       end
@@ -362,7 +362,7 @@ class Analysis < ApplicationRecord
       if driver && vouts.empty?  # connect input to driver if driver still there (analysis destroy case)
         vattrs = vin.attributes.except("id")
         vattrs[:io_mode] = WhatsOpt::Variable::OUT
-        newvar = driver.variables.create!(vattrs)
+        newvar = driver.variables.where(name: vattrs["name"]).first_or_create!(vattrs)
         # p "4 Connect #{vin.name} between #{newvar.discipline.name} #{vin.discipline.name}" unless Connection.where(from_id: newvar.id, to_id: vin.id).first
         Connection.where(from_id: newvar.id, to_id: vin.id).first_or_create!(role: WhatsOpt::Variable::PARAMETER_ROLE)
       end
@@ -506,10 +506,12 @@ class Analysis < ApplicationRecord
 
   def remove_upstream_connection!(varname, discipline)
     var = Variable.of_analysis(self).where(name: varname, discipline_id: discipline.id).take
-    if var.is_in?
-      destroy_connection!(var.incoming_connection, sub_analysis_check: false)
-    else
-      var.outgoing_connections.map { |conn| destroy_connection!(conn, sub_analysis_check: false) }
+    unless var.blank? # normally should exists but defensive programming
+      if var.is_in?
+        destroy_connection!(var.incoming_connection, sub_analysis_check: false)
+      else
+        var.outgoing_connections.map { |conn| destroy_connection!(conn, sub_analysis_check: false) }
+      end
     end
   end
 
