@@ -301,7 +301,7 @@ class AnalysisDatabase {
       [vinfo] = vinfos;
       console.log(`Take the first: ${JSON.stringify(vinfo)}`);
     } else {
-      throw Error(`Expected one variable "${vname}" found ${vinfos.length} in ${JSON.stringify(vars[disc][ioMode])}`);
+      throw Error(`Expected one variable "${vname}" found ${vinfos.length} in vars[${disc}][${ioMode}] ${JSON.stringify(vars[disc][ioMode])}`);
     }
     return vinfo;
   }
