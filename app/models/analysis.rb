@@ -322,8 +322,6 @@ class Analysis < ApplicationRecord
     # p "REFRESH CONNS #{self.name}"
     varouts = Variable.outs.of_analysis(id).disconnected.where.not(discipline: driver)
     # p varouts
-    varins = Variable.ins.of_analysis(id).disconnected.where.not(discipline: driver)
-    # p varins
     # check that each 'out' variables is connected
     varouts.each do |vout|
       vins = Variable.ins.of_analysis(id).where(name: vout.name)
@@ -345,7 +343,9 @@ class Analysis < ApplicationRecord
         Connection.where(from_id: vout.id, to_id: newvar.id).first_or_create!(role: WhatsOpt::Variable::RESPONSE_ROLE) 
       end
     end
-    
+
+    varins = Variable.ins.of_analysis(id).disconnected.where.not(discipline: driver)
+    # p varins
     # check that each in variables is connected
     varins.each do |vin|
       vouts = Variable.outs.of_analysis(id).where(name: vin.name)
