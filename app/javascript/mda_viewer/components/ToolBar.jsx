@@ -61,31 +61,38 @@ class ToolBar extends React.Component {
     this.api = props.api;
 
     this.state = {
-      loading: true,
+      checked: false,
+      loading: false,
       statusOk: false,
       log: [],
     };
 
     this.saveAsPng = saveAsPng.bind(this);
+    this.getStatus = this.getStatus.bind(this);
     this.exportCsv = this.exportCsv.bind(this);
   }
 
   componentDidMount() {
-    this.getStatus();
+    // this.getStatus();
   }
 
   getStatus() {
     const { mdaId } = this.props;
-    this.api.openmdaoChecking(
-      mdaId,
-      (response) => {
-        this.setState({
-          loading: false,
-          statusOk: response.data.statusOk,
-          log: response.data.log,
-        });
-      },
-    );
+    const { checked } = this.state;
+    if (!checked) {
+      this.setState({ loading: true });
+      this.api.openmdaoChecking(
+        mdaId,
+        (response) => {
+          this.setState({
+            loading: false,
+            checked: true,
+            statusOk: response.data.statusOk,
+            log: response.data.log,
+          });
+        },
+      );
+    }
   }
 
   exportCsv() {
@@ -96,12 +103,18 @@ class ToolBar extends React.Component {
 
   render() {
     const { mdaId } = this.props;
-    const { log, statusOk, loading } = this.state;
+    const {
+      log, statusOk, checked, loading,
+    } = this.state;
 
     // eslint-disable-next-line react/no-array-index-key
     const lines = log.map((l, i) => (<OpenMDAOLogLine key={i} line={l} />));
     let btnStatusClass = statusOk ? 'btn btn-success' : 'btn btn-warning';
     let btnIcon = statusOk ? <i className="fa fa-check" /> : <i className="fa fa-exclamation-triangle" />;
+    if (!checked) {
+      btnStatusClass = 'btn btn-info';
+      btnIcon = <i className="fa fa-question" />;
+    }
     if (loading) {
       btnStatusClass = 'btn btn-info';
       btnIcon = <i className="fa fa-cog fa-spin" />;
@@ -119,6 +132,7 @@ class ToolBar extends React.Component {
               data-toggle="collapse"
               data-target="#collapseListing"
               aria-expanded="false"
+              onClick={this.getStatus}
             >
               {btnIcon}
             </button>
