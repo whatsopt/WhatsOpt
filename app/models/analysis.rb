@@ -336,9 +336,14 @@ class Analysis < ApplicationRecord
         Connection.where(from_id: vout.id, to_id: vin.id).first_or_create!(role: role)
       end
       if driver && vins.empty?  # connect output to driver if driver still there (analysis destroy case)
-        vattrs = vout.attributes.except("id")
+        vattrs = vout.attributes.except("id", "discipline_id")
         vattrs[:io_mode] = WhatsOpt::Variable::IN
-        newvar = driver.variables.where(name: vattrs["name"]).first_or_create!(vattrs)
+        newvar = driver.variables.where(name: vattrs["name"], io_mode: WhatsOpt::Variable::OUT).first 
+        if newvar  # can occur in edge case with nested analysis while adding sub_analysis step by step
+          Rails.logger.warn "Driver variable #{newvar.name} has changed io_mode OUT -> IN"
+        end
+        newvar = driver.variables.where(name: vattrs["name"]).first_or_create!
+        newvar.update!(vattrs)
         # p "2 Connect #{vout.name} between #{vout.discipline.name} #{newvar.discipline.name}" unless Connection.where(from_id: vout.id, to_id: newvar.id).first
         Connection.where(from_id: vout.id, to_id: newvar.id).first_or_create!(role: WhatsOpt::Variable::RESPONSE_ROLE) 
       end
@@ -360,9 +365,14 @@ class Analysis < ApplicationRecord
         Connection.where(from_id: vout.id, to_id: vin.id).first_or_create!(role: role)
       end
       if driver && vouts.empty?  # connect input to driver if driver still there (analysis destroy case)
-        vattrs = vin.attributes.except("id")
+        vattrs = vin.attributes.except("id", "discipline_id")
         vattrs[:io_mode] = WhatsOpt::Variable::OUT
-        newvar = driver.variables.where(name: vattrs["name"]).first_or_create!(vattrs)
+        newvar = driver.variables.where(name: vattrs["name"], io_mode: WhatsOpt::Variable::IN).first
+        if newvar  # can occur in edge case with nested analysis while adding sub_analysis step by step
+          Rails.logger.warn "Driver variable #{newvar.name} has changed io_mode IN -> OUT"
+        end
+        newvar = driver.variables.where(name: vattrs["name"]).first_or_create!
+        newvar.update!(vattrs)
         # p "4 Connect #{vin.name} between #{newvar.discipline.name} #{vin.discipline.name}" unless Connection.where(from_id: newvar.id, to_id: vin.id).first
         Connection.where(from_id: newvar.id, to_id: vin.id).first_or_create!(role: WhatsOpt::Variable::PARAMETER_ROLE)
       end
@@ -567,6 +577,47 @@ class Analysis < ApplicationRecord
         d.sub_analysis.ensure_ancestry_for_sub_analyses
       end
     end
+  end
+
+  def self.create_nested_analyses(mda_attrs)
+    Rails.logger.info "################ CREATE NESTED #{mda_attrs["name"]}"
+    subs = []
+    # create sub analyses
+    if  mda_attrs["disciplines_attributes"]
+      mda_attrs["disciplines_attributes"].each.with_index do |disc, i|
+        if disc["sub_analysis_attributes"]
+          subs << self.create_nested_analyses(disc["sub_analysis_attributes"])
+          disc.delete("sub_analysis_attributes")
+        else
+          subs << nil
+        end
+      end
+    end
+
+    # create disciplines
+    Rails.logger.info "################ BEFORE CREATE #{mda_attrs["name"]}"
+    mda = Analysis.create(mda_attrs)
+    Rails.logger.info "################ AFTER CREATE #{mda_attrs["name"]}"
+    Rails.logger.info ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> #{mda.name}"
+    Variable.of_analysis(mda).each do |v|
+      Rails.logger.info ">>> #{v.discipline.name}(#{v.discipline.id}) #{v.name} #{v.io_mode}"
+    end
+    Connection.of_analysis(mda).each do |c|
+      Rails.logger.info "CCCCCCCCCCCCCCC #{c.from.discipline.name} -> #{c.to.discipline.name}  #{c.from.name}(#{c.from.id})"
+    end
+    # link disciplines and sub analyses
+    subs.each.with_index do |submda, i|
+      if submda
+        AnalysisDiscipline.build_analysis_discipline(mda.disciplines[i], submda).save!
+        Rails.logger.info "DISCIPLINE TYPE #{mda.disciplines[i].type}"
+      end
+    end
+    Rails.logger.info "================  EDGES of #{mda.name}"
+    Connection.of_analysis(mda).each do |c|
+      Rails.logger.info "DDDDDDDDDDDDDD #{c.from.discipline.name} -> #{c.to.discipline.name}  #{c.from.name}(#{c.from.id})"
+    end
+    Rails.logger.info mda.build_edges.inspect
+    mda
   end
 
   private
