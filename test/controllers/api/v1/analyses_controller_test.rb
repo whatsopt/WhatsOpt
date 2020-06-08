@@ -83,7 +83,7 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
                     "parameter_attributes": { "init": "2.0" } },
               { "name": "y", "io_mode": "in", "type": "Float", "shape": "1", "units": "" }] },
             { "name": "InnerDiscipline", "sub_analysis_attributes":
-              { "name": "MyInner", "disciplines_attributes": [
+              { "name": "InnerDiscipline", "disciplines_attributes": [
                 { "name": "__DRIVER__", "variables_attributes": [
                     { "name": "x", "io_mode": "out", "type": "Float", "shape": "1", "units": "",  "desc": "",
                         "parameter_attributes": { "init": "2.0" } },
@@ -100,14 +100,14 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
         assert_response :success
       end
     end
-    inner = Analysis.last
-    outer = Analysis.second_to_last
-    inner_disc = Discipline.find_by_name("MyInner")
+    outer = Analysis.last
+    inner = Analysis.second_to_last
+    inner_disc = Discipline.find_by_name("InnerDiscipline")
     assert_equal 2, inner_disc.variables.count
     assert_equal "x", inner_disc.input_variables.first.name
     assert_equal "y", inner_disc.output_variables.first.name
     assert_equal "Outer", outer.name
-    assert_equal "MyInner", inner.name
+    assert_equal "InnerDiscipline", inner.name
     assert_equal 2, Connection.of_analysis(outer).count
     assert_equal 2, Connection.of_analysis(inner).count
     assert_equal outer.id, inner.parent.id

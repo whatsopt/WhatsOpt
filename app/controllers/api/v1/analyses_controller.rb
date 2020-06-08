@@ -29,7 +29,7 @@ class Api::V1::AnalysesController < Api::ApiController
   def create
     xdsm = nil
     Analysis.transaction do
-      @mda = Analysis.new(mda_params)
+      @mda = Analysis.create_nested_analyses(mda_params)
       authorize @mda
       @mda.save!
       @mda.set_owner(current_user)
