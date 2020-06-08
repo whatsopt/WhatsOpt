@@ -1,11 +1,12 @@
 <h1>CHANGELOG</h1>
 
-<h3>1.9.0 (??/06/2020)</h3>
+<h3>1.9.0 (08/06/2020)</h3>
 <ul>
   <li>User can set non scalar input variables as uncertain variables and set corresponding distributions</li>
-  <li>User is warned when he wants to edit an anaysis with results</li>
+  <li>User is warned when he wants to edit an analysis with results</li>
   <li>User can push any OpenMDAO problem (even with connect calls or unpromoted variables) code 
       with <code>wop push -x</code> command for reverse-engineering dispay only</code>
+  <li>User can push or show with a level of sub-analysis nesting (--depth option, default is 3, no limit with 0)
   <li>Fixes: sub-analyses fixes, name validity checking, variables table fixes</li>
   <li>Implementation: upgrade gems and javascript modules</li>
 </ul>
