@@ -4,6 +4,11 @@ class Api::V1::MetaModelsController < Api::ApiController
 
   before_action :set_meta_model, only: [:show, :update, :destroy]
 
+  def index
+    @metamodels = policy_scope(MetaModel)
+    render json: @metamodels, status: status, each_serializer: MetaModelItemSerializer
+  end
+
   # GET /api/v1/meta_models/1
   def show
     json_response @meta_model

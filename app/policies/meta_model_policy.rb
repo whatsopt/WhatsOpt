@@ -2,6 +2,16 @@
 
 class MetaModelPolicy < ApplicationPolicy
 
+  class Scope < Scope
+    def resolve
+      if user.admin?
+        scope
+      else
+        scope.joins(:discipline).where(disciplines: {analysis: AnalysisPolicy::Scope.new(user, Analysis).resolve.roots})
+      end
+    end
+  end
+
   def show?
     @record.analysis.public || @user.admin? || @user.has_role?(:owner, @record.analysis) || @user.has_role?(:member, @record.analysis)
   end

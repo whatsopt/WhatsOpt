@@ -32,6 +32,7 @@ Rails.application.routes.draw do
         post 'openmdao_checking', to: 'openmdao_checking#create' 
         get 'exports/new'
       end
+      resources :meta_models, only: [:index]
       resources :operations, only: [:create]
       resources :users, only: [:index, :update]  
       resources :user_roles, only: [:index, :update]  
