@@ -23,7 +23,7 @@ class Api::V1::MetaModelsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     mms = JSON.parse(response.body)
     assert_equal 3, mms.count
-    assert_equal ["created_at", "id", "name", "owner"], mms.first.keys.sort 
+    assert_equal ["created_at", "id", "name", "owner_email"], mms.first.keys.sort 
   end
 
   test "should get list of metamodels for user2" do
