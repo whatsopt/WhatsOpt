@@ -73,12 +73,43 @@ paths:
             application/json:
               schema:
                 "$ref": "#/components/schemas/Xdsm"
+  "/api/v1/meta_models":
+    get:
+      summary: Get meta-models
+      tags:
+      - Meta-Modeling
+      security:
+      - Token: []
+      responses:
+        '200':
+          description: List meta-models
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    name:
+                      type: string
+                    owner_email:
+                      type: string
+                    created_at:
+                      type: string
+                      format: date-time
+                  required:
+                  - id
+                  - name
+                  - owner_email
+                  - created_at
   "/api/v1/meta_models/{id}":
     put:
       summary: Predict using the metamodel
       description: Compute y responses at given x points
       tags:
-      - Meta Modeling
+      - Meta-Modeling
       security:
       - Token: []
       parameters:
@@ -403,7 +434,7 @@ security:
 tags:
 - name: Multi-Disciplinary Analyses
   description: Operations for using analyses created in WhatsOpt
-- name: Meta Modeling
+- name: Meta-Modeling
   description: Operations for using metamodels created in WhatsOpt
 - name: Optimization
   description: Operations for using Onera SEGOMOE optimizer
