@@ -40,6 +40,14 @@ class Api::V1::MetaModelsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 2, mms.count   # cicav_meta_model2 is private hence 2 instead of 3
   end
 
+  test "should show a metamodel" do
+    mm = meta_models(:cicav_metamodel)
+    get api_v1_meta_model_url(mm), as: :json, headers: @auth_headers
+    assert_response :success
+    mminfos = JSON.parse(response.body)
+    assert_equal ["created_at", "id", "name", "owner_email"], mminfos.keys.sort 
+  end
+
   test "should create a metamodel" do
     assert_difference("Analysis.count", 1) do
       assert_difference("Operation.count", 2) do # doe copy + metamodel
