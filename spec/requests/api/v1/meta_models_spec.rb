@@ -3,11 +3,37 @@ require 'swagger_helper'
 describe 'meta_model', type: :request do
   fixtures :all
 
+  path '/api/v1/meta_models' do
+    
+    get 'Get meta-models' do
+      tags 'Meta-Modeling'
+      produces 'application/json'
+      security [ Token: [] ]
+
+      response '200', 'List meta-models' do
+        schema type: :array,
+          items: {
+            type: :object,
+            properties: {
+              id: { type: :integer },
+              name: { type: :string },
+              owner_email: { type: :string },
+              created_at: { type: :string, format: :"date-time"}
+            },
+            required: [ 'id', 'name', 'owner_email', 'created_at' ]
+          }
+
+        let(:Authorization) { "Token FriendlyApiKey" }
+        run_test!
+      end
+    end
+  end
+
   path '/api/v1/meta_models/{id}' do
 
     put 'Predict using the metamodel' do
       description "Compute y responses at given x points"
-      tags 'Meta Modeling'
+      tags 'Meta-Modeling'
       consumes 'application/json'
       produces 'application/json'
       security [ Token: [] ]

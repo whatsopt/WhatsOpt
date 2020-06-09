@@ -9,10 +9,35 @@ class Api::V1::MetaModelsControllerTest < ActionDispatch::IntegrationTest
     @user = users(:user1)
     @auth_headers = { "Authorization" => "Token " + @user.api_key }
     @user2 = users(:user2)
+    @auth_headers2 = { "Authorization" => "Token " + @user2.api_key }
+    @user3 = users(:user3)
+    @auth_headers3 = { "Authorization" => "Token " + @user3.api_key }
   end
 
   teardown do
     WhatsOpt::SurrogateProxy.shutdown_server
+  end
+
+  test "should get list of metamodels for user1" do
+    get api_v1_meta_models_url, as: :json, headers: @auth_headers
+    assert_response :success
+    mms = JSON.parse(response.body)
+    assert_equal 3, mms.count
+    assert_equal ["created_at", "id", "name", "owner_email"], mms.first.keys.sort 
+  end
+
+  test "should get list of metamodels for user2" do
+    get api_v1_meta_models_url, as: :json, headers: @auth_headers2
+    assert_response :success
+    mms = JSON.parse(response.body)
+    assert_equal 3, mms.count   # user2 is memeber of cicav_meta_model2
+  end
+
+  test "should get list of metamodels for user3" do
+    get api_v1_meta_models_url, as: :json, headers: @auth_headers3
+    assert_response :success
+    mms = JSON.parse(response.body)
+    assert_equal 2, mms.count   # cicav_meta_model2 is private hence 2 instead of 3
   end
 
   test "should create a metamodel" do

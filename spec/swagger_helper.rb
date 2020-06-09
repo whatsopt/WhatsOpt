@@ -167,7 +167,7 @@ RSpec.configure do |config|
       security: [{Token: []}],
       tags: [
         { name: 'Multi-Disciplinary Analyses', description: 'Operations for using analyses created in WhatsOpt'},
-        { name: 'Meta Modeling', description: 'Operations for using metamodels created in WhatsOpt'},
+        { name: 'Meta-Modeling', description: 'Operations for using metamodels created in WhatsOpt'},
         { name: 'Optimization', description: 'Operations for using Onera SEGOMOE optimizer'}
       ],
       externalDocs: {
