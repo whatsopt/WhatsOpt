@@ -15,7 +15,7 @@ module ExceptionHandler
       json_response({ message: e.message }, :unprocessable_entity)
     end
 
-    rescue_from Operation::ForbiddenRemovalException do |e|
+    rescue_from Operation::ForbiddenRemovalError do |e|
       Rails.logger.error "Operation forbidden removal: " + e.message
       json_response({ message: e.message }, :forbidden)
     end

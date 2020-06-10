@@ -15,14 +15,14 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     get api_v1_mdas_url, as: :json, headers: @auth_headers
     assert_response :success
     analyses = JSON.parse(response.body)
-    assert_equal Analysis.count-2, analyses.size # ALL - {one user3 private, one sub-analysis}
+    assert_equal Analysis.count-2, analyses.size # ALL - {user2 private, one sub-analysis}
   end
 
   test "should get all mdas even sub ones" do
     get api_v1_mdas_url(with_sub_analyses: true), as: :json, headers: @auth_headers
     assert_response :success 
     analyses = JSON.parse(response.body)
-    assert_equal Analysis.count-1, analyses.size # ALL - {one user3 private}
+    assert_equal Analysis.count-1, analyses.size # ALL - {user2 private}
   end
 
   test "should create a mda" do

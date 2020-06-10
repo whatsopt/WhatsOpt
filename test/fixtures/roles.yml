@@ -8,10 +8,6 @@ owner_cicav_mda_role:
 owner_cicav_meta_model_role:
   name: owner
   resource: cicav_metamodel_analysis (Analysis)
-
-owner_mm_proto_cicav_meta_model_role:
-    name: owner
-    resource: mm_proto_cicav_metamodel (Analysis)
   
 owner_cicav_meta_model2_role:
   name: owner
@@ -20,10 +16,6 @@ owner_cicav_meta_model2_role:
 member_cicav_meta_model2_role:
   name: member
   resource: cicav_metamodel2_analysis (Analysis)
-
-member_mm_proto_cicav_meta_model_role:
-  name: member
-  resource: mm_proto_cicav_metamodel (Analysis)  
 
 owner_outermda_role:
   name: owner
@@ -53,9 +45,9 @@ owner_singleton_mm_role:
   name: owner
   resource: singleton_mm (Analysis)  
 
-owner_mm_proto_singleton_mm_role:
-  name: owner
-  resource: mm_proto_singleton_mm (Analysis)    
+member_singleton_mm_role:
+  name: member
+  resource: singleton_mm (Analysis)    
 
 owner_optim_ackley2d_role:
   name: owner

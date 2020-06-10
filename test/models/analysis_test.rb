@@ -173,4 +173,12 @@ class AnalysisTest < ActiveSupport::TestCase
     assert_equal WhatsOpt::Discipline::METAMODEL, mda.disciplines.last.type
   end
 
+  test "should not destroy when it is a prototype mm which is used" do
+    mda = analyses(:cicav_metamodel_analysis)
+    assert mda.is_metamodel_prototype?
+    assert_difference("Analysis.count", 0) do
+      mda.destroy
+    end
+  end
+
 end

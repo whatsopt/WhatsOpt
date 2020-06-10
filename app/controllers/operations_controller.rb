@@ -45,7 +45,7 @@ class OperationsController < ApplicationController
     begin
       @ope.destroy
       redirect_to mdas_url, notice: "Operation was successfully destroyed."
-    rescue Operation::ForbiddenRemovalException => exc
+    rescue Operation::ForbiddenRemovalError => exc
       redirect_to mdas_url, alert: exc.message
     end
   end

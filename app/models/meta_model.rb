@@ -16,6 +16,7 @@ class MetaModel < ApplicationRecord
   has_many :surrogates, dependent: :destroy
 
   validates :discipline, presence: true
+  validates :prototype, presence: true
 
   after_initialize :_set_defaults
   before_destroy :_destroy_related_operation
@@ -49,6 +50,10 @@ class MetaModel < ApplicationRecord
     discipline.analysis  # a metamodel a no existence out of analysis context
   end
 
+  def is_primary?
+    prototype.blank?
+  end
+
   def build_surrogates
     opts = default_options.map {|o| {name: o[:name], value: o[:value]}}
     analysis.response_variables.each do |v|
@@ -60,6 +65,8 @@ class MetaModel < ApplicationRecord
 
   def create_copy!(mda=nil, discipline=nil)
     mm_copy = self.dup
+    # if no prototype it is a primary created meta_model 
+    # so the prototype of the copy is the analysis of this metamodel
     mm_copy.prototype = prototype || analysis
     if discipline
       mm_copy.discipline = discipline 

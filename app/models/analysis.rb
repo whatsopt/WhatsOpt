@@ -7,15 +7,15 @@ class Analysis < ApplicationRecord
 
   include WhatsOpt::OpenmdaoModule
   include Ownable
-
   resourcify
 
   has_rich_text :note
 
   has_ancestry
 
-  class AncestorUpdateError < StandardError
-  end
+  class AncestorUpdateError < StandardError; end
+
+  class ForbiddenRemovalError < StandardError; end
 
   has_many :disciplines, -> { includes(:variables).order(position: :asc) }, dependent: :destroy
   accepts_nested_attributes_for :disciplines,
@@ -24,8 +24,8 @@ class Analysis < ApplicationRecord
   has_one :analysis_discipline, dependent: :destroy
   has_one :super_discipline, through: :analysis_discipline, source: :discipline
 
-  has_one :meta_model_prototype, foreign_key: :prototype_id
-  has_one :meta_model, through: :meta_model_prototype, inverse_of: :prototype
+  has_many :meta_model_prototypes, foreign_key: :prototype_id, dependent: :destroy
+  has_many :meta_models, through: :meta_model_prototypes, inverse_of: :prototype
 
   has_many :operations, dependent: :destroy
 
@@ -60,7 +60,7 @@ class Analysis < ApplicationRecord
   end
 
   def is_metamodel_prototype?
-    Analysis.where(id: self).joins(:meta_model_prototype).count > 0
+    disciplines.nodes.count == 1 && disciplines.first.is_metamodel_prototype?
   end
 
   def uq_mode?
@@ -633,6 +633,10 @@ class Analysis < ApplicationRecord
     end
 
     def _check_allowed_destruction
-      # to do check ancestry: forbid if parent
+      if is_metamodel_prototype? 
+        mms = self.meta_models
+        msg = mms.map {|mm| "##{mm.analysis.id} #{mm.analysis.name}"}.join(', ')
+        raise ForbiddenRemovalError.new("Can not delete analysis '#{self.name}' as it is a prototype for metamodels in use in #{msg}")
+      end
     end
 end

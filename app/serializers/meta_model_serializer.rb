@@ -7,9 +7,9 @@ class MetaModelSerializer < ActiveModel::Serializer
     object.analysis.name
   end
 
-  def owner_email 
+  def owner_email
     p object
-    object.prototype.owner.email
+    object.analysis.owner.email
   end
 
   def note

@@ -390,39 +390,6 @@ disc_metamodel2_varobj_objective_out:
   <<: *disc_metamodel_varobj_objective_out
   discipline: disc_cicav_metamodel2
 
-# PROTOTYPE CICAV METAMODEL ##################################################################
-mm_proto_driver_metamodel_varx1_out:
-  <<: *driver_metamodel_varx1_out
-  discipline: mm_proto_driver_cicav_metamodel
-
-mm_proto_driver_metamodel_vary2_in:
-  <<: *driver_metamodel_vary2_in
-  discipline: mm_proto_driver_cicav_metamodel
-
-mm_proto_driver_metamodel_varz_design_out:
-  <<: *driver_metamodel_varz_design_out
-  discipline: mm_proto_driver_cicav_metamodel
-  
-mm_proto_driver_metamodel_varobj_objective_in:
-  <<: *driver_metamodel_varobj_objective_in
-  discipline: mm_proto_driver_cicav_metamodel
-
-mm_proto_disc_metamodel_varx1_in:
-  <<: *disc_metamodel_varx1_in
-  discipline: mm_proto_disc_cicav_metamodel
-
-mm_proto_disc_metamodel_vary2_out:
-  <<: *disc_metamodel_vary2_out
-  discipline: mm_proto_disc_cicav_metamodel
-
-mm_proto_disc_metamodel_varz_design_in:
-  <<: *disc_metamodel_varz_design_in
-  discipline: mm_proto_disc_cicav_metamodel
-  
-mm_proto_disc_metamodel_varobj_objective_out:
-  <<: *disc_metamodel_varobj_objective_out
-  discipline: mm_proto_disc_cicav_metamodel
-
 # SINGLETON ##################################################################
 varu_driver_out: &varu_driver_out
   name: u
@@ -464,20 +431,4 @@ varv_disc_out_mm:
   <<: *varv_disc_out
   discipline: disc_singleton_mm
 
-# PROTOTYPE SINGLETON MM ##################################################################
-mm_proto_varu_driver_out_mm: 
-  <<: *varu_driver_out
-  discipline: mm_proto_driver_singleton_mm
-
-mm_proto_varu_disc_in_mm:
-  <<: *varu_disc_in
-  discipline: mm_proto_disc_singleton_mm
-
-mm_proto_varv_driver_in_mm:
-  <<: *varv_driver_in
-  discipline: mm_proto_driver_singleton_mm
-
-mm_proto_varv_disc_out_mm:
-  <<: *varv_disc_out
-  discipline: mm_proto_disc_singleton_mm
 

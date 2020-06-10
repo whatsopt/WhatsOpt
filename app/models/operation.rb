@@ -19,7 +19,7 @@ class Operation < ApplicationRecord
   BATCH_COUNT = 10 # nb of log lines processed together
   LOGDIR = File.join(Rails.root, "upload/logs")
 
-  class ForbiddenRemovalException < Exception; end
+  class ForbiddenRemovalError < StandardError; end
 
   belongs_to :analysis
   has_many :options, as: :optionizable, dependent: :destroy
@@ -351,14 +351,9 @@ class Operation < ApplicationRecord
   end
 
   def _check_allowed_destruction
-    # unless self.meta_models.empty?
-    #   mdas = self.meta_models.map(&:analysis)
-    #   msg = mdas.map {|a| "##{a.id} #{a.name}"}.join(', ')
-    #   raise ForbiddenRemovalException.new("Can not delete operation '#{self.name}' as meta_models are in use: #{msg} (to be deleted first)")
-    # end
     unless self.derived_operations.empty?
       msg = self.derived_operations.map(&:name).join(', ')
-      raise ForbiddenRemovalException.new("Can not delete operation '#{self.name}' as another operation depends on it: #{msg} (to be deleted first)")
+      raise ForbiddenRemovalError.new("Can not delete operation '#{self.name}' as another operation depends on it: #{msg} (to be deleted first)")
     end
   end
 end
