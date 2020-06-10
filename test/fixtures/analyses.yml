@@ -27,4 +27,11 @@ singleton:
 
 singleton_mm:
   name: singleton_mm
+
+mm_proto_cicav_metamodel:
+  name: CicavMetaModelProto
+  public: false  
+
+mm_proto_singleton_mm:
+  name: SingletonMMProto
   

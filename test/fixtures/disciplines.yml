@@ -124,3 +124,27 @@ disc_singleton_mm:
   analysis: singleton_mm
   position: 1
   
+mm_proto_driver_cicav_metamodel:
+  name: __DRIVER__
+  type: null_driver
+  analysis: mm_proto_cicav_metamodel_analysis
+  position: 0
+
+mm_proto_disc_cicav_metamodel:
+  name: MetaModelDisc
+  type: metamodel
+  analysis: mm_proto_cicav_metamodel_analysis
+  position: 1
+
+mm_proto_driver_singleton_mm:
+  name: __DRIVER__
+  type: null_driver
+  analysis: mm_proto_singleton_mm
+  position: 0
+
+mm_proto_disc_singleton_mm:
+  name: SingletonDisciplineMM
+  type: metamodel
+  analysis: mm_proto_singleton_mm
+  position: 1
+  

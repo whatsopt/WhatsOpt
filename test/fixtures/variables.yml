@@ -292,8 +292,8 @@ vary_outermda_innermda_disc_out:
   name: y
   io_mode: out
 
-# METAMODEL ##################################################################
-driver_metamodel_varx1_out:
+# CICAV METAMODEL ##################################################################
+driver_metamodel_varx1_out: &driver_metamodel_varx1_out
   name: x1
   discipline: driver_cicav_metamodel
   io_mode: out
@@ -301,7 +301,7 @@ driver_metamodel_varx1_out:
   shape: 1
   active: true
 
-driver_metamodel_vary2_in:
+driver_metamodel_vary2_in: &driver_metamodel_vary2_in
   name: y2
   discipline: driver_cicav_metamodel
   io_mode: in
@@ -309,7 +309,7 @@ driver_metamodel_vary2_in:
   shape: 1
   active: true
 
-driver_metamodel_varz_design_out:
+driver_metamodel_varz_design_out: &driver_metamodel_varz_design_out
   name: z
   discipline: driver_cicav_metamodel
   io_mode: out
@@ -317,7 +317,7 @@ driver_metamodel_varz_design_out:
   shape: (2,)
   active: true
   
-driver_metamodel_varobj_objective_in:
+driver_metamodel_varobj_objective_in: &driver_metamodel_varobj_objective_in
   name: obj
   discipline: driver_cicav_metamodel
   io_mode: in
@@ -325,7 +325,7 @@ driver_metamodel_varobj_objective_in:
   shape: 1  
   active: true
 
-disc_metamodel_varx1_in:
+disc_metamodel_varx1_in: &disc_metamodel_varx1_in
   name: x1
   discipline: disc_cicav_metamodel
   io_mode: in
@@ -333,7 +333,7 @@ disc_metamodel_varx1_in:
   shape: 1
   active: true
 
-disc_metamodel_vary2_out:
+disc_metamodel_vary2_out: &disc_metamodel_vary2_out
   name: y2
   discipline: disc_cicav_metamodel
   io_mode: out
@@ -341,7 +341,7 @@ disc_metamodel_vary2_out:
   shape: 1
   active: true
 
-disc_metamodel_varz_design_in:
+disc_metamodel_varz_design_in: &disc_metamodel_varz_design_in
   name: z
   discipline: disc_cicav_metamodel
   io_mode: in
@@ -349,7 +349,7 @@ disc_metamodel_varz_design_in:
   shape: (2,)
   active: true
   
-disc_metamodel_varobj_objective_out:
+disc_metamodel_varobj_objective_out: &disc_metamodel_varobj_objective_out
   name: obj
   discipline: disc_cicav_metamodel
   io_mode: out
@@ -359,68 +359,69 @@ disc_metamodel_varobj_objective_out:
 
 # METAMODEL2 ##################################################################
 driver_metamodel2_varx1_out:
-  name: x1
+  <<: *driver_metamodel_varx1_out
   discipline: driver_cicav_metamodel2
-  io_mode: out
-  type: Float
-  shape: 1
-  active: true
 
 driver_metamodel2_vary2_in:
-  name: y2
+  <<: *driver_metamodel_vary2_in
   discipline: driver_cicav_metamodel2
-  io_mode: in
-  type: Float
-  shape: 1
-  active: true
 
 driver_metamodel2_varz_design_out:
-  name: z
+  <<: *driver_metamodel_varz_design_out
   discipline: driver_cicav_metamodel2
-  io_mode: out
-  type: Float
-  shape: 1
-  active: true
-  
+
 driver_metamodel2_varobj_objective_in:
-  name: obj
+  <<: *driver_metamodel_varobj_objective_in
   discipline: driver_cicav_metamodel2
-  io_mode: in
-  type: Float
-  shape: 1  
-  active: true
 
 disc_metamodel2_varx1_in:
-  name: x1
+  <<: *disc_metamodel_varx1_in
   discipline: disc_cicav_metamodel2
-  io_mode: in
-  type: Float
-  shape: 1
-  active: true
 
 disc_metamodel2_vary2_out:
-  name: y2
+  <<: *disc_metamodel_vary2_out
   discipline: disc_cicav_metamodel2
-  io_mode: out
-  type: Float
-  shape: 1
-  active: true
 
 disc_metamodel2_varz_design_in:
-  name: z
+  <<: *disc_metamodel_varz_design_in
   discipline: disc_cicav_metamodel2
-  io_mode: in
-  type: Float
-  shape: 1
-  active: true
-  
+
 disc_metamodel2_varobj_objective_out:
-  name: obj
+  <<: *disc_metamodel_varobj_objective_out
   discipline: disc_cicav_metamodel2
-  io_mode: out
-  type: Float
-  shape: 1  
-  active: true
+
+# PROTOTYPE CICAV METAMODEL ##################################################################
+mm_proto_driver_metamodel_varx1_out:
+  <<: *driver_metamodel_varx1_out
+  discipline: mm_proto_driver_cicav_metamodel
+
+mm_proto_driver_metamodel_vary2_in:
+  <<: *driver_metamodel_vary2_in
+  discipline: mm_proto_driver_cicav_metamodel
+
+mm_proto_driver_metamodel_varz_design_out:
+  <<: *driver_metamodel_varz_design_out
+  discipline: mm_proto_driver_cicav_metamodel
+  
+mm_proto_driver_metamodel_varobj_objective_in:
+  <<: *driver_metamodel_varobj_objective_in
+  discipline: mm_proto_driver_cicav_metamodel
+
+mm_proto_disc_metamodel_varx1_in:
+  <<: *disc_metamodel_varx1_in
+  discipline: mm_proto_disc_cicav_metamodel
+
+mm_proto_disc_metamodel_vary2_out:
+  <<: *disc_metamodel_vary2_out
+  discipline: mm_proto_disc_cicav_metamodel
+
+mm_proto_disc_metamodel_varz_design_in:
+  <<: *disc_metamodel_varz_design_in
+  discipline: mm_proto_disc_cicav_metamodel
+  
+mm_proto_disc_metamodel_varobj_objective_out:
+  <<: *disc_metamodel_varobj_objective_out
+  discipline: mm_proto_disc_cicav_metamodel
 
 # SINGLETON ##################################################################
 varu_driver_out: &varu_driver_out
@@ -431,41 +432,52 @@ varu_driver_out: &varu_driver_out
   shape: 1
   active: true
 
-varu_disc_in: 
+varu_disc_in: &varu_disc_in
   <<: *varu_driver_out
   discipline: disc_singleton
   io_mode: in
 
-varv_driver_out: &varu_driver_in
+varv_driver_in: &varv_driver_in
+  <<: *varu_driver_out
   name: v
-  discipline: driver_singleton
-  io_mode: out
-
-varv_disc_in:
-  <<: *varu_driver_in
-  discipline: disc_singleton
   io_mode: in
+
+varv_disc_out: &varv_disc_out
+  <<: *varu_driver_out
+  discipline: disc_singleton
+  io_mode: out
 
 # SINGLETON MM ##################################################################
-varu_driver_out_mm: &varu_driver_out_mm
-  name: u
+varu_driver_out_mm: 
+  <<: *varu_driver_out
   discipline: driver_singleton_mm
-  io_mode: out
-  type: Float
-  shape: 1
-  active: true
 
 varu_disc_in_mm: 
-  <<: *varu_driver_out
+  <<: *varu_disc_in
   discipline: disc_singleton_mm
-  io_mode: in
 
-varv_driver_out_mm: &varu_driver_in
-  name: v
+varv_driver_in_mm: 
+  <<: *varv_driver_in
   discipline: driver_singleton_mm
-  io_mode: in
 
-varv_disc_out_mm:
-  <<: *varu_driver_in
+varv_disc_out_mm: 
+  <<: *varv_disc_out
   discipline: disc_singleton_mm
-  io_mode: out
+
+# PROTOTYPE SINGLETON MM ##################################################################
+mm_proto_varu_driver_out_mm: 
+  <<: *varu_driver_out
+  discipline: mm_proto_driver_singleton_mm
+
+mm_proto_varu_disc_in_mm:
+  <<: *varu_disc_in
+  discipline: mm_proto_disc_singleton_mm
+
+mm_proto_varv_driver_in_mm:
+  <<: *varv_driver_in
+  discipline: mm_proto_driver_singleton_mm
+
+mm_proto_varv_disc_out_mm:
+  <<: *varv_disc_out
+  discipline: mm_proto_disc_singleton_mm
+

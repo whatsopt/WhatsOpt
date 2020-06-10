@@ -37,7 +37,7 @@ class Api::V1::MetaModelsControllerTest < ActionDispatch::IntegrationTest
     get api_v1_meta_models_url, as: :json, headers: @auth_headers3
     assert_response :success
     mms = JSON.parse(response.body)
-    assert_equal 2, mms.count   # cicav_meta_model2 is private hence 2 instead of 3
+    assert_equal 1, mms.count   # mm_proto_cicav_meta_model is private
   end
 
   test "should show a metamodel" do

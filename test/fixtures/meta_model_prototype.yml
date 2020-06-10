@@ -1,0 +1,11 @@
+cicav_metamodel_prototype:
+  meta_model: cicav_metamodel
+  prototype: mm_proto_cicav_metamodel
+
+cicav_metamodel2_prototype:
+  meta_model: cicav_metamodel2
+  prototype: mm_proto_cicav_metamodel
+
+singleton_mm_prototype:
+  meta_model: singleton_mm_metamodel
+  prototype: mm_proto_singleton_mm

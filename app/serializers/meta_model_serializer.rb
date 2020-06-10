@@ -1,13 +1,22 @@
 # frozen_string_literal: true
 
 class MetaModelSerializer < ActiveModel::Serializer
-  attributes :id, :name, :owner, :created_at
+  attributes :id, :name, :owner_email, :created_at, :note
 
   def name 
     object.analysis.name
   end
 
-  def owner 
-    object.analysis.owner
+  def owner_email 
+    p object
+    object.prototype.owner.email
   end
+
+  def note
+    object.analysis.note
+  end
+
+  # def x
+  #   object.surrogates.map{ |surr| surr.}
+  # end
 end

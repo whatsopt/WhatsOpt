@@ -7,7 +7,7 @@ class MetaModelPolicy < ApplicationPolicy
       if user.admin?
         scope
       else
-        scope.joins(:discipline).where(disciplines: {analysis: AnalysisPolicy::Scope.new(user, Analysis).resolve.roots})
+        scope.joins(:meta_model_prototype).where(meta_model_prototypes: {prototype: AnalysisPolicy::Scope.new(user, Analysis).resolve.roots})
       end
     end
   end
