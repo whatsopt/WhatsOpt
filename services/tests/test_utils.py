@@ -1,5 +1,5 @@
 import unittest
-from whatsopt_services.utils import r2_score
+from whatsopt_server.surrogate_store.utils import r2_score
 
 
 class TestUtils(unittest.TestCase):
