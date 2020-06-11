@@ -73,8 +73,10 @@ class AnalysesController < ApplicationController
       @mda.destroy!
       redirect_to mdas_url, notice: "Analysis #{@mda.name} was successfully deleted."
     end
+  rescue Discipline::ForbiddenRemovalError => exc
+    redirect_to mdas_url, alert: "Can not delete analysis #{@mda.name}, reason: "+exc.message
   rescue Operation::ForbiddenRemovalError => exc
-    redirect_to mdas_url, alert: "Can not delete analysis #{@mda.name} for following reason: "+exc.message
+    redirect_to mdas_url, alert: "Can not delete analysis #{@mda.name}, reason: "+exc.message
   end
 
   private

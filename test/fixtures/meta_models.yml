@@ -8,17 +8,7 @@ cicav_metamodel2:
   operation: mm_from_doe2
   default_surrogate_kind: SMT_KRIGING
 
-mm_proto_cicav_metamodel:
-    discipline: mm_proto_disc_cicav_metamodel
-    operation: mm_from_doe
-    default_surrogate_kind: SMT_KRIGING  
-
 singleton_mm_metamodel:
   discipline: disc_singleton_mm
-  operation: doe_singleton_build_mm
-  default_surrogate_kind: OPENTURNS_PCE
-
-mm_proto_singleton_mm_metamodel:
-  discipline: mm_proto_disc_singleton_mm
   operation: doe_singleton_build_mm
   default_surrogate_kind: OPENTURNS_PCE

@@ -37,7 +37,7 @@ class Api::V1::MetaModelsControllerTest < ActionDispatch::IntegrationTest
     get api_v1_meta_models_url, as: :json, headers: @auth_headers3
     assert_response :success
     mms = JSON.parse(response.body)
-    assert_equal 1, mms.count   # out of 2 primary mm, one is private for user3 and user1 member
+    assert_equal 2, mms.count   # out of 2 primary mm, one is private for user3 and user1 member
   end
 
   test "should show a metamodel" do
@@ -52,12 +52,10 @@ class Api::V1::MetaModelsControllerTest < ActionDispatch::IntegrationTest
     assert_difference("Analysis.count", 1) do
       assert_difference("Operation.count", 2) do # doe copy + metamodel
         assert_difference("MetaModel.count", 1) do
-          assert_difference("MetaModelPrototype.count", 1) do
-            assert_difference("Surrogate.count", 1) do
-              post api_v1_operation_meta_models_url(@ope), 
-                params: { meta_model: { kind: Surrogate::SMT_KPLS } }, 
-                as: :json, headers: @auth_headers
-            end
+          assert_difference("Surrogate.count", 1) do
+            post api_v1_operation_meta_models_url(@ope), 
+            params: { meta_model: { kind: Surrogate::SMT_KPLS } }, 
+            as: :json, headers: @auth_headers
           end
         end
       end

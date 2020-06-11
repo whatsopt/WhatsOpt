@@ -15,8 +15,6 @@ class Analysis < ApplicationRecord
 
   class AncestorUpdateError < StandardError; end
 
-  class ForbiddenRemovalError < StandardError; end
-
   has_many :disciplines, -> { includes(:variables).order(position: :asc) }, dependent: :destroy
   accepts_nested_attributes_for :disciplines,
                                 reject_if: proc { |attr| attr["name"].blank? }, allow_destroy: true
@@ -38,8 +36,6 @@ class Analysis < ApplicationRecord
   after_save :_ensure_driver_presence
   after_save :_ensure_openmdao_impl_presence
 
-  before_destroy :_check_allowed_destruction
-
   validates :name, presence: true, allow_blank: false
   validates :name, format: { with: /\A[a-zA-Z][_\.a-zA-Z0-9\s]*\z/, message: "%{value} is not a valid analysis name." }
 
@@ -60,7 +56,7 @@ class Analysis < ApplicationRecord
   end
 
   def is_metamodel_prototype?
-    disciplines.nodes.count == 1 && disciplines.first.is_metamodel_prototype?
+    disciplines.nodes.count == 1 && disciplines.last.is_metamodel_prototype?
   end
 
   def uq_mode?
@@ -632,11 +628,4 @@ class Analysis < ApplicationRecord
       self.openmdao_impl ||= OpenmdaoAnalysisImpl.new
     end
 
-    def _check_allowed_destruction
-      if is_metamodel_prototype? 
-        mms = self.meta_models
-        msg = mms.map {|mm| "##{mm.analysis.id} #{mm.analysis.name}"}.join(', ')
-        raise ForbiddenRemovalError.new("Can not delete analysis '#{self.name}' as it is a prototype for metamodels in use in #{msg}")
-      end
-    end
 end

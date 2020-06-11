@@ -15,8 +15,7 @@ class MetaModel < ApplicationRecord
 
   has_many :surrogates, dependent: :destroy
 
-  validates :discipline, presence: true
-  validates :prototype, presence: true
+  validates :discipline, presence: true                                                                                                                                                                                     
 
   after_initialize :_set_defaults
   before_destroy :_destroy_related_operation
@@ -50,7 +49,8 @@ class MetaModel < ApplicationRecord
     discipline.analysis  # a metamodel a no existence out of analysis context
   end
 
-  def is_primary?
+  def is_prototype?
+    # only a meta_model that do not has prototype is itself prototype!
     prototype.blank?
   end
 

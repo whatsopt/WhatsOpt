@@ -8,7 +8,6 @@ class MetaModelSerializer < ActiveModel::Serializer
   end
 
   def owner_email
-    p object
     object.analysis.owner.email
   end
 

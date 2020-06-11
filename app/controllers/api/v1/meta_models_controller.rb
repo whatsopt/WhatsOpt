@@ -43,9 +43,11 @@ class Api::V1::MetaModelsController < Api::ApiController
       if @meta_model.save
         json_response @meta_model
       else
+        Rails.logger.info @meta_model.errors
         json_response({ message: "Something went wrong. Can not create metamodel from current operation data." }, :bad_request)
       end
     else
+      Rails.logger.info @mda.errors
       json_response({ message: "Something went wrong. Can not create metamodel from current operation data." }, :bad_request)
     end
   rescue MetaModel::BadKindError => err
