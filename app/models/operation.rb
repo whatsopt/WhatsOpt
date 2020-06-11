@@ -202,7 +202,7 @@ class Operation < ApplicationRecord
   end
 
   def _ope_cases
-    @ope_cases ||= base_operation ? base_operation._ope_cases : cases.sort_by{|c| c.label}
+    @ope_cases ||= base_operation ? base_operation._ope_cases : cases.sort_by{|c| c.var_label}
   end
 
   def input_cases

@@ -56,9 +56,11 @@ class MetaModel < ApplicationRecord
 
   def build_surrogates
     opts = default_options.map {|o| {name: o[:name], value: o[:value]}}
+    # At build time, a meta_model is in a "metamodel prototype" analysis by construction
     analysis.response_variables.each do |v|
       (0...v.dim).each do |index|
-        surrogates.build(variable: v, coord_index: index-1, kind: default_surrogate_kind, options_attributes: opts)
+        surrogates.build(variable: v, coord_index: v.ndim == 0 ? -1 : index, 
+          kind: default_surrogate_kind, options_attributes: opts)
       end
     end
   end
@@ -109,11 +111,22 @@ class MetaModel < ApplicationRecord
     end
     res
   rescue => e
+    Rails.logger.warn "METAMODEL in ##{analysis.id} #{analysis.name}: Cannot make prediction for #{values}, error: #{e}"
     raise PredictionError.new("Cannot make prediction for #{values}, error: #{e}")
   end
 
   def training_input_names
-    @training_input_names ||= operation.input_cases.map { |c| c.label }
+    @training_input_names ||= operation.input_cases.map { |c| c.var_label }
+  end
+
+  def xlabels
+    analysis.input_variables.map do |v| 
+      (0...v.dim).map{ |i| Case.label(v.name, v.ndim == 0 ? -1 : i) } 
+    end.flatten
+  end
+
+  def ylabels
+    self.surrogates.map(&:var_label)
   end
 
   def training_input_uncertainties
@@ -124,7 +137,7 @@ class MetaModel < ApplicationRecord
   end
 
   def training_input_values
-    @training_inputs ||= Matrix.columns(operation.input_cases.sort_by { |c| c.label }.map(&:values)).to_a
+    @training_inputs ||= Matrix.columns(operation.input_cases.sort_by { |c| c.var_label }.map(&:values)).to_a
   end
 
   def training_output_values(varname, coord_index)

@@ -45,7 +45,9 @@ class Api::V1::MetaModelsControllerTest < ActionDispatch::IntegrationTest
     get api_v1_meta_model_url(mm), as: :json, headers: @auth_headers
     assert_response :success
     mminfos = JSON.parse(response.body)
-    assert_equal ["created_at", "id", "name", "note", "owner_email"], mminfos.keys.sort 
+    assert_equal ["created_at", "id", "name", "note", "owner_email", "xlabels", "ylabels"], mminfos.keys.sort 
+    assert_equal ["x1", "z[0]", "z[1]"], mminfos["xlabels"] 
+    assert_equal ["obj"], mminfos["ylabels"] 
   end
 
   test "should create a metamodel" do
