@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class MetaModelSerializer < ActiveModel::Serializer
+class MetaModelSpecSerializer < ActiveModel::Serializer
   attributes :id, :name, :owner_email, :created_at, :note, :xlabels, :ylabels
 
   def name 
