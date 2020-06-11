@@ -141,8 +141,12 @@ class MetaModel < ApplicationRecord
   end
 
   def training_output_values(varname, coord_index)
-    @training_outputs = operation.output_cases
-                          .detect {|c| c.variable.name == varname && c.coord_index == coord_index}.values
+    @training_outputs = operation.output_cases.detect do |c| 
+      c.variable.name == varname && 
+      (c.coord_index == coord_index || 
+        (c.variable.dim == 1 && coord_index == 0)) # manage case where output is typed (1,) while DOE data (ie cases) are pushed as scalar 
+    end
+    @training_outputs.values
   end
 
   def qualification
