@@ -31,6 +31,34 @@ describe 'meta_model', type: :request do
 
   path '/api/v1/meta_models/{id}' do
 
+    get 'Get meta-model details' do
+      tags 'Meta-Modeling'
+      produces 'application/json'
+      security [ Token: [] ]
+      parameter name: :id, in: :path, type: :string, description: "Meta-model identifier"
+
+      response '200', 'return meta-model information' do
+        schema type: :object,
+        properties: {
+          id: { type: :integer },
+          name: { type: :string },
+          owner_email: { type: :string, format: :email },
+          created_at: { type: :string, format: :"date-time"},
+          notes: { type: :string },
+          xlabels: { type: :array, items: {type: :string} },
+          ylabels: { type: :array, items: {type: :string} },
+        }
+        
+        let(:id) { meta_models(:cicav_metamodel).id }
+        let(:Authorization) { "Token FriendlyApiKey" }
+        after do |example|
+          example.metadata[:response][:examples] = { 'application/json' => JSON.parse(response.body, symbolize_names: true) }
+        end
+        run_test!
+      end
+
+    end
+
     put 'Predict using the metamodel' do
       description "Compute y responses at given x points"
       tags 'Meta-Modeling'

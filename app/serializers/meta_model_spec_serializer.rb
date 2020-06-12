@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class MetaModelSpecSerializer < ActiveModel::Serializer
-  attributes :id, :name, :owner_email, :created_at, :note, :xlabels, :ylabels
+  attributes :id, :name, :owner_email, :created_at, :notes, :xlabels, :ylabels
 
   def name 
     object.analysis.name
@@ -11,8 +11,8 @@ class MetaModelSpecSerializer < ActiveModel::Serializer
     object.analysis.owner.email
   end
 
-  def note
-    object.analysis.note
+  def notes
+    object.analysis.note.to_plain_text
   end
 
   def xlabels
