@@ -17,16 +17,46 @@ describe 'analyses', type: :request do
             properties: {
               id: { type: :integer },
               name: { type: :string },
-              public: { type: :boolean },
+              owner_email: { type: :string },
               created_at: { type: :string, format: :"date-time"}
             },
-            required: [ 'id', 'name', 'public', 'created_at' ]
+            required: [ 'id', 'name', 'owner_email', 'created_at' ]
           }
 
         let(:Authorization) { "Token FriendlyApiKey" }
         run_test!
       end
     end
+  end
+
+  path '/api/v1/analyses/{id}' do
+
+    get 'Get analysis details' do
+      tags 'Multi-Disciplinary Analyses'
+      consumes 'application/json'
+      produces 'application/json'
+      security [ Token: [] ]
+      parameter name: :id, in: :path, type: :string, description: "Analysis identifier"
+
+      response '200', 'return meta-model information' do
+        schema type: :object,
+        properties: {
+          id: { type: :integer },
+          name: { type: :string },
+          owner_email: { type: :string, format: :email },
+          created_at: { type: :string, format: :"date-time"},
+          notes: { type: :string }
+        }
+        
+        let(:id) { analyses(:cicav_metamodel_analysis).id }
+        let(:Authorization) { "Token FriendlyApiKey" }
+        after do |example|
+          example.metadata[:response][:examples] = { 'application/json' => JSON.parse(response.body, symbolize_names: true) }
+        end
+        run_test!
+      end
+    end
+
   end
 
   path '/api/v1/analyses/{id}.xdsm' do
@@ -47,26 +77,11 @@ describe 'analyses', type: :request do
         end
         run_test!
       end
-
     end
+
   end
 
-  # path '/api/v1/analyses.xdsm'
 
-  #   post 'Get XDSMjs format of given analysis' do
-  #     tags 'Multi-Disciplinary Analyses'
-  #     consumes 'application/json'
-  #     produces 'application/json'
-  #     security [ Token: [] ]
-  #     parameter name: :analysis_attributes, in: :body, 
-  #       type: {
-  #         "$ref": "#/components/schemas/AnalysisAttributes"
-  #       }
-
-  #     response '200', 'Get XDSMjs format for given analysis structure' do
-  #       run_test!
-  #     end
-  #   end
 
   # end
 

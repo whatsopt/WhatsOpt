@@ -59,7 +59,7 @@ describe 'meta_model', type: :request do
 
     end
 
-    put 'Predict using the metamodel' do
+    put 'Predict using the meta-model' do
       description "Compute y responses at given x points"
       tags 'Meta-Modeling'
       consumes 'application/json'

@@ -16,6 +16,8 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     analyses = JSON.parse(response.body)
     assert_equal Analysis.count-2, analyses.size # ALL - {user2 private, one sub-analysis}
+    mda = analyses[0]
+    assert_equal ["created_at", "id", "name", "owner_email"], mda.keys.sort
   end
 
   test "should get all mdas even sub ones" do
