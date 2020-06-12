@@ -8,7 +8,7 @@ class MetaModelPolicy < ApplicationPolicy
         scope
       else
         scope.where.not(id: scope.joins(:meta_model_prototype))
-             .joins(:discipline).where(disciplines: {analysis_id: AnalysisPolicy::Scope.new(user, Analysis).resolve})
+             .joins(:discipline).where(disciplines: {analysis_id: AnalysisPolicy::Scope.new(user, Analysis).resolve.map(&:id)})
       end
     end
   end
