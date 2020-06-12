@@ -216,7 +216,7 @@ class Discipline < ApplicationRecord
       if is_metamodel_prototype? and !self.analysis.meta_models.blank?
         mms = self.analysis.meta_models
         msg = mms.map {|mm| "##{mm.analysis.id} #{mm.analysis.name}"}.join(', ')
-        raise ForbiddenRemovalError.new("Can not delete analysis '#{self.name}' as it is a prototype for metamodel in use in #{msg}")
+        raise ForbiddenRemovalError.new("Can not delete discipline metamodel '#{self.name}' as it is a prototype for metamodel in use in #{msg}")
       end
     end
 end

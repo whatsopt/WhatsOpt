@@ -235,11 +235,23 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     assert_equal disc.input_variables.map(&:name), Discipline.last.input_variables.map(&:name)
   end
 
-  # test "analysis spec are immutable" do
-  #   @user3 = users(:user3)
-  #   @auth_headers = { "Authorization" => "Token " + @user3.api_key }
-  #   @spec = analyses(:singleton_mm_spec)
-  #   put api_v1_mda_url(@spec), params: { analysis: { name: "TestNewName" } }, as: :json, headers: @auth_headers
-  #   assert_response :unauthorized 
-  # end
+  test "should destroy a metamodel analysis" do
+    mm = analyses(:singleton_mm)
+    assert_difference("Analysis.count", -1) do
+      mm.destroy!
+    end
+    mm = analyses(:cicav_metamodel2_analysis)
+    assert_difference("Analysis.count", -1) do
+      mm.destroy!
+    end
+  end
+
+  test "should not destroy a metamodel analysis when prototype in use" do
+    mm = analyses(:cicav_metamodel_analysis)
+    assert_difference("Analysis.count", 0) do
+      assert_raise Discipline::ForbiddenRemovalError do
+        mm.destroy
+      end
+    end
+  end
 end
