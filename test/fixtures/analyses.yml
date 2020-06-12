@@ -20,11 +20,11 @@ cicav_metamodel_analysis:
 
 cicav_metamodel2_analysis:
   name: CicavMetaModel2
-  public: false
 
 singleton:
   name: singleton
 
 singleton_mm:
-  name: singleton_mm
+  name: SingletonMetaModel
+  public: false
   

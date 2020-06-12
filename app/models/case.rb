@@ -15,15 +15,11 @@ class Case < ApplicationRecord
     values.size
   end
 
-  def float_varname
-    label
+  def var_label
+    @label ||= Case.label(variable.name, coord_index) 
   end
 
-  def label
-    @label ||= Case.labelOf(variable.name, coord_index) 
-  end
-
-  def self.labelOf(name, coord)
+  def self.label(name, coord)
     name + (coord < 0 ? "" : "[#{coord}]")
   end
 

@@ -10,8 +10,8 @@ module WhatsOpt
       @sobol = (kind == :sobol) 
       @input_varcases = ope.input_cases
       @output_varcases = ope.output_cases
-      Rails.logger.info @input_varcases.map(&:float_varname)
-      Rails.logger.info @output_varcases.map(&:float_varname)
+      Rails.logger.info @input_varcases.map(&:var_label)
+      Rails.logger.info @output_varcases.map(&:var_label)
     end
 
     def run

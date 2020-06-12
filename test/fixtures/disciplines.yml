@@ -123,4 +123,5 @@ disc_singleton_mm:
   type: metamodel
   analysis: singleton_mm
   position: 1
+
   

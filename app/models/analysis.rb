@@ -7,15 +7,13 @@ class Analysis < ApplicationRecord
 
   include WhatsOpt::OpenmdaoModule
   include Ownable
-
   resourcify
 
   has_rich_text :note
 
   has_ancestry
 
-  class AncestorUpdateError < StandardError
-  end
+  class AncestorUpdateError < StandardError; end
 
   has_many :disciplines, -> { includes(:variables).order(position: :asc) }, dependent: :destroy
   accepts_nested_attributes_for :disciplines,
@@ -24,8 +22,8 @@ class Analysis < ApplicationRecord
   has_one :analysis_discipline, dependent: :destroy
   has_one :super_discipline, through: :analysis_discipline, source: :discipline
 
-  has_one :meta_model_prototype, foreign_key: :prototype_id
-  has_one :meta_model, through: :meta_model_prototype, inverse_of: :prototype
+  has_many :meta_model_prototypes, foreign_key: :prototype_id, dependent: :destroy
+  has_many :meta_models, through: :meta_model_prototypes, inverse_of: :prototype
 
   has_many :operations, dependent: :destroy
 
@@ -37,8 +35,6 @@ class Analysis < ApplicationRecord
   after_save :ensure_ancestry_for_sub_analyses
   after_save :_ensure_driver_presence
   after_save :_ensure_openmdao_impl_presence
-
-  before_destroy :_check_allowed_destruction
 
   validates :name, presence: true, allow_blank: false
   validates :name, format: { with: /\A[a-zA-Z][_\.a-zA-Z0-9\s]*\z/, message: "%{value} is not a valid analysis name." }
@@ -60,7 +56,7 @@ class Analysis < ApplicationRecord
   end
 
   def is_metamodel_prototype?
-    Analysis.where(id: self).joins(:meta_model_prototype).count > 0
+    disciplines.nodes.count == 1 && disciplines.last.is_metamodel_prototype?
   end
 
   def uq_mode?
@@ -632,7 +628,4 @@ class Analysis < ApplicationRecord
       self.openmdao_impl ||= OpenmdaoAnalysisImpl.new
     end
 
-    def _check_allowed_destruction
-      # to do check ancestry: forbid if parent
-    end
 end

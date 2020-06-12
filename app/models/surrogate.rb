@@ -49,8 +49,8 @@ class Surrogate < ApplicationRecord
     WhatsOpt::SurrogateProxy.new(id: id.to_s)
   end
 
-  def float_varname
-    variable.name + (coord_index < 0 ? "" : "[#{coord_index}]")
+  def var_label
+    Case.label(variable.name, coord_index)
   end
 
   def trained?

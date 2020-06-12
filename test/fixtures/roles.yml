@@ -8,7 +8,7 @@ owner_cicav_mda_role:
 owner_cicav_meta_model_role:
   name: owner
   resource: cicav_metamodel_analysis (Analysis)
-
+  
 owner_cicav_meta_model2_role:
   name: owner
   resource: cicav_metamodel2_analysis (Analysis)
@@ -45,9 +45,9 @@ owner_singleton_mm_role:
   name: owner
   resource: singleton_mm (Analysis)  
 
-owner_singleton_mm_spec_role:
-  name: owner
-  resource: singleton_mm_spec (Analysis)  
+member_singleton_mm_role:
+  name: member
+  resource: singleton_mm (Analysis)    
 
 owner_optim_ackley2d_role:
   name: owner

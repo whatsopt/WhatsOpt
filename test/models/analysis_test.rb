@@ -133,9 +133,10 @@ class AnalysisTest < ActiveSupport::TestCase
     assert_equal orig_conns.size, copy_conns.size
   end
 
-  test "should copy of a copy of a metamodel and predict with even middle copy removed" do
+  test "should copy of a copy of a metamodel and predict with" do
     # skip "doe copy not yet implemented"
     mda = analyses(:cicav_metamodel_analysis)
+    mda2 = analyses(:cicav_metamodel2_analysis)
     copy = mda.create_copy!
     assert copy.is_metamodel?
     x = [[1, 3, 4], [8, 9, 10], [5, 4, 3]]
@@ -145,7 +146,9 @@ class AnalysisTest < ActiveSupport::TestCase
     assert_in_delta 4.925, y[0][0]
     assert_equal x.size, y.size
     mda.operations.reverse.map(&:destroy)
-    mda.destroy
+    # mda2.destroy
+    # mda.destroy  # can not destroy as it is a mm prototype for mda2 but also mm_copy
+    assert 2, mda.meta_model_prototypes.count
     mm.reload
     y = mm.predict(x)
     assert_in_delta 4.925, y[0][0]
@@ -171,6 +174,24 @@ class AnalysisTest < ActiveSupport::TestCase
     mda.reload
     assert_equal 3, mda.disciplines.count
     assert_equal WhatsOpt::Discipline::METAMODEL, mda.disciplines.last.type
+  end
+
+  test "should not destroy when it is a prototype mm which is used" do
+    mda = analyses(:cicav_metamodel_analysis)
+    assert mda.is_metamodel_prototype?
+    assert_difference("Analysis.count", 0) do
+      assert_raise Discipline::ForbiddenRemovalError do
+        mda.destroy
+      end
+    end
+  end
+
+  test "should destroy when it is a prototype mm not used" do
+    mda = analyses(:singleton_mm)
+    assert mda.is_metamodel_prototype?
+    assert_difference("Analysis.count", -1) do
+      mda.destroy
+    end
   end
 
 end

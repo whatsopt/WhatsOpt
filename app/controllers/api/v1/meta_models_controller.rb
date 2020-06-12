@@ -5,13 +5,13 @@ class Api::V1::MetaModelsController < Api::ApiController
   before_action :set_meta_model, only: [:show, :update, :destroy]
 
   def index
-    @metamodels = policy_scope(MetaModel)
-    render json: @metamodels, status: status, each_serializer: MetaModelItemSerializer
+    @meta_models = policy_scope(MetaModel)
+    render json: @meta_models, status: status, each_serializer: MetaModelItemSerializer
   end
 
   # GET /api/v1/meta_models/1
   def show
-    json_response @meta_model
+    render json: @meta_model, status: status, serializer: MetaModelSpecSerializer
   end
 
   # POST /api/v1/operations/{operation_id}/meta_models
@@ -37,15 +37,17 @@ class Api::V1::MetaModelsController < Api::ApiController
       @meta_model = mda.disciplines.last.build_meta_model( # just one plain discipline in the analysis
         operation: mm_ope,
         default_surrogate_kind: meta_model_params[:kind],
-        default_options_attributes: meta_model_params[:options] || [] 
+        default_options_attributes: meta_model_params[:options] || []
       )
       @meta_model.build_surrogates
       if @meta_model.save
         json_response @meta_model
       else
+        Rails.logger.info @meta_model.errors
         json_response({ message: "Something went wrong. Can not create metamodel from current operation data." }, :bad_request)
       end
     else
+      Rails.logger.info @mda.errors
       json_response({ message: "Something went wrong. Can not create metamodel from current operation data." }, :bad_request)
     end
   rescue MetaModel::BadKindError => err

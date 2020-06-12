@@ -11,7 +11,7 @@ class Api::V1::AnalysesController < Api::ApiController
     else
       @mdas = policy_scope(Analysis).roots
     end
-    json_response @mdas
+    json_response @mdas, :ok, each_serializer: AnalysisItemSerializer
   end
 
   # GET /api/v1/mda/1

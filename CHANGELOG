@@ -1,5 +1,11 @@
 <h1>CHANGELOG</h1>
 
+<h3>1.10.0 (??/07/2020)</h3>
+<ul>
+  <li>User can get meta-models information (list and details) from the REST API</li>
+  <li>Change: OpenMDAO code checking is not run automatically anymore, it is on-demand (user click)</li>
+</ul>
+
 <h3>1.9.0 (08/06/2020)</h3>
 <ul>
   <li>User can set non scalar input variables as uncertain variables and set corresponding distributions</li>

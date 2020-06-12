@@ -15,7 +15,7 @@ class MetaModel < ApplicationRecord
 
   has_many :surrogates, dependent: :destroy
 
-  validates :discipline, presence: true
+  validates :discipline, presence: true                                                                                                                                                                                     
 
   after_initialize :_set_defaults
   before_destroy :_destroy_related_operation
@@ -49,17 +49,26 @@ class MetaModel < ApplicationRecord
     discipline.analysis  # a metamodel a no existence out of analysis context
   end
 
+  def is_prototype?
+    # only a meta_model that do not has prototype is itself prototype!
+    prototype.blank?
+  end
+
   def build_surrogates
     opts = default_options.map {|o| {name: o[:name], value: o[:value]}}
+    # At build time, a meta_model is in a "metamodel prototype" analysis by construction
     analysis.response_variables.each do |v|
       (0...v.dim).each do |index|
-        surrogates.build(variable: v, coord_index: index-1, kind: default_surrogate_kind, options_attributes: opts)
+        surrogates.build(variable: v, coord_index: v.ndim == 0 ? -1 : index, 
+          kind: default_surrogate_kind, options_attributes: opts)
       end
     end
   end
 
   def create_copy!(mda=nil, discipline=nil)
     mm_copy = self.dup
+    # if no prototype it is a primary created meta_model 
+    # so the prototype of the copy is the analysis of this metamodel
     mm_copy.prototype = prototype || analysis
     if discipline
       mm_copy.discipline = discipline 
@@ -102,11 +111,22 @@ class MetaModel < ApplicationRecord
     end
     res
   rescue => e
+    Rails.logger.warn "METAMODEL in ##{analysis.id} #{analysis.name}: Cannot make prediction for #{values}, error: #{e}"
     raise PredictionError.new("Cannot make prediction for #{values}, error: #{e}")
   end
 
   def training_input_names
-    @training_input_names ||= operation.input_cases.map { |c| c.label }
+    @training_input_names ||= operation.input_cases.map { |c| c.var_label }
+  end
+
+  def xlabels
+    analysis.input_variables.map do |v| 
+      (0...v.dim).map{ |i| Case.label(v.name, v.ndim == 0 ? -1 : i) } 
+    end.flatten
+  end
+
+  def ylabels
+    self.surrogates.map(&:var_label)
   end
 
   def training_input_uncertainties
@@ -117,12 +137,16 @@ class MetaModel < ApplicationRecord
   end
 
   def training_input_values
-    @training_inputs ||= Matrix.columns(operation.input_cases.sort_by { |c| c.label }.map(&:values)).to_a
+    @training_inputs ||= Matrix.columns(operation.input_cases.sort_by { |c| c.var_label }.map(&:values)).to_a
   end
 
   def training_output_values(varname, coord_index)
-    @training_outputs = operation.output_cases
-                          .detect {|c| c.variable.name == varname && c.coord_index == coord_index}.values
+    @training_outputs = operation.output_cases.detect do |c| 
+      c.variable.name == varname && 
+      (c.coord_index == coord_index || 
+        (c.variable.dim == 1 && coord_index == 0)) # manage case where output is typed (1,) while DOE data (ie cases) are pushed as scalar 
+    end
+    @training_outputs.values
   end
 
   def qualification

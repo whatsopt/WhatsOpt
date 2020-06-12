@@ -16,7 +16,7 @@ lower = []
 upper = []
 inputs = []
 <% @input_varcases.each do |vc| %>
-names.append("<%= vc.float_varname %>")
+names.append("<%= vc.var_label %>")
 inputs.append(np.array(<%= vc.values %>))
 <% end %>
 #bounds = zip(lower, upper)
@@ -32,8 +32,8 @@ salib_pb = {
 result = {}
 
 <% @output_varcases.each do |vc| %>
-# <%= vc.float_varname %>
-outname = '<%= vc.float_varname %>'
+# <%= vc.var_label %>
+outname = '<%= vc.var_label %>'
 result[outname] = {}
 output = np.array(<%= vc.values %>)
 <% if @sobol %>

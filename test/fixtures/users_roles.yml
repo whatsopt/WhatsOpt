@@ -29,11 +29,11 @@ users_roles7:
 users_roles71:
   user: user2 
   role: owner_cicav_meta_model2_role
-
+  
 users_roles72:
   user: user1
   role: member_cicav_meta_model2_role
-
+  
 users_roles8:
   user: user3 
   role: member_cicav_mda_role
@@ -47,8 +47,8 @@ users_roles13:
   role: owner_singleton_mm_role
 
 users_roles14:
-  user: user3
-  role: owner_singleton_mm_spec_role
+  user: user1
+  role: member_singleton_mm_role
 
 users_roles_optim_ackley2d:
   user: user1

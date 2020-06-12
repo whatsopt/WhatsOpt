@@ -8,9 +8,13 @@ class Discipline < ApplicationRecord
   include WhatsOpt::Discipline
   include WhatsOpt::OpenmdaoModule
 
+  class ForbiddenRemovalError < StandardError; end
+
   self.inheritance_column = :disable_inheritance
 
   after_initialize :set_defaults, unless: :persisted?
+  
+  before_destroy :_check_allowed_destruction
   before_destroy :_destroy_connections
   after_destroy :_refresh_analysis_connections
 
@@ -56,7 +60,7 @@ class Discipline < ApplicationRecord
   end
 
   def is_metamodel_prototype?
-    is_pure_metamodel? && !meta_model.prototype
+    is_pure_metamodel? && meta_model.is_prototype?
   end
 
   def is_metamodel?
@@ -208,4 +212,11 @@ class Discipline < ApplicationRecord
       analysis.refresh_connections
     end
 
+    def _check_allowed_destruction
+      if is_metamodel_prototype? and !self.analysis.meta_models.blank?
+        mms = self.analysis.meta_models
+        msg = mms.map {|mm| "##{mm.analysis.id} #{mm.analysis.name}"}.join(', ')
+        raise ForbiddenRemovalError.new("Can not delete analysis '#{self.name}' as it is a prototype for metamodel in use in #{msg}")
+      end
+    end
 end

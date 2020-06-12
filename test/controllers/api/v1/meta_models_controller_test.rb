@@ -22,7 +22,7 @@ class Api::V1::MetaModelsControllerTest < ActionDispatch::IntegrationTest
     get api_v1_meta_models_url, as: :json, headers: @auth_headers
     assert_response :success
     mms = JSON.parse(response.body)
-    assert_equal 3, mms.count
+    assert_equal 2, mms.count  # out of 2 primary mm, one is private for user3 and user1 member
     assert_equal ["created_at", "id", "name", "owner_email"], mms.first.keys.sort 
   end
 
@@ -30,14 +30,25 @@ class Api::V1::MetaModelsControllerTest < ActionDispatch::IntegrationTest
     get api_v1_meta_models_url, as: :json, headers: @auth_headers2
     assert_response :success
     mms = JSON.parse(response.body)
-    assert_equal 3, mms.count   # user2 is memeber of cicav_meta_model2
+    assert_equal 1, mms.count   # out of 2 primary mm, one is private for user3 and user1 member  
   end
 
   test "should get list of metamodels for user3" do
     get api_v1_meta_models_url, as: :json, headers: @auth_headers3
     assert_response :success
     mms = JSON.parse(response.body)
-    assert_equal 2, mms.count   # cicav_meta_model2 is private hence 2 instead of 3
+    assert_equal 2, mms.count   # out of 2 primary mm, one is private for user3 and user1 member
+  end
+
+  test "should show a metamodel" do
+    mm = meta_models(:cicav_metamodel)
+    get api_v1_meta_model_url(mm), as: :json, headers: @auth_headers
+    assert_response :success
+    mminfos = JSON.parse(response.body)
+    assert_equal ["created_at", "id", "name", "notes", "owner_email", "xlabels", "ylabels"], mminfos.keys.sort 
+    assert_equal ["x1", "z[0]", "z[1]"], mminfos["xlabels"] 
+    assert_equal ["obj"], mminfos["ylabels"] 
+    assert_equal "", mminfos["notes"]
   end
 
   test "should create a metamodel" do
@@ -46,8 +57,8 @@ class Api::V1::MetaModelsControllerTest < ActionDispatch::IntegrationTest
         assert_difference("MetaModel.count", 1) do
           assert_difference("Surrogate.count", 1) do
             post api_v1_operation_meta_models_url(@ope), 
-              params: { meta_model: { kind: Surrogate::SMT_KPLS } }, 
-              as: :json, headers: @auth_headers
+            params: { meta_model: { kind: Surrogate::SMT_KPLS } }, 
+            as: :json, headers: @auth_headers
           end
         end
       end
