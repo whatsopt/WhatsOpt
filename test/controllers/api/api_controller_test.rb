@@ -14,5 +14,4 @@ class Api::V1::VersioningsControllerTest < ActionDispatch::IntegrationTest
     get api_v1_optimization_url(666), as: :json, headers: @auth_headers
     assert_response :not_found
   end
-
 end

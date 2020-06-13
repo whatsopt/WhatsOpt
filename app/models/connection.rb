@@ -15,8 +15,8 @@ class Connection < ApplicationRecord
   scope :active, -> { joins(:from).where(variables: { active: true }) }
   scope :inactive, -> { joins(:from).where(variables: { active: false }) }
   scope :of_analysis, ->(analysis_id) { joins(from: :discipline).where(disciplines: { analysis_id: analysis_id }) }
-  scope :from_discipline, ->(discipline_id) { joins(from: :discipline).where(variables: {discipline_id: discipline_id}) }
-  scope :to_discipline, ->(discipline_id) { joins(to: :discipline).where(variables: {discipline_id: discipline_id}) }
+  scope :from_discipline, ->(discipline_id) { joins(from: :discipline).where(variables: { discipline_id: discipline_id }) }
+  scope :to_discipline, ->(discipline_id) { joins(to: :discipline).where(variables: { discipline_id: discipline_id }) }
   scope :with_role, ->(role) { where(role: role) }
 
   class SubAnalysisVariableNotFoundError < StandardError
@@ -77,7 +77,7 @@ class Connection < ApplicationRecord
 
   # manage exclusively Driver variables if deconnected should be removed
   def delete_driver_variables!
-    #p "BEFORE DESTROY #{self.from.name} #{self.from.discipline.name} #{self.to.discipline.name}"
+    # p "BEFORE DESTROY #{self.from.name} #{self.from.discipline.name} #{self.to.discipline.name}"
     Connection.transaction do
       to = self.to
       if to&.discipline&.is_driver?
@@ -85,7 +85,7 @@ class Connection < ApplicationRecord
         to.delete
       end
       conns = Connection.where(from_id: from_id)
-      if conns.size == 1 
+      if conns.size == 1
         from = conns.first.from
         if from&.discipline&.is_driver?
           # p "Connection only from driver: supress #{from.name} driver var"
@@ -100,9 +100,9 @@ class Connection < ApplicationRecord
     _sanitize_connection_params(params)
     Connection.transaction do
       # if shape is changed, destroy distributions if any and set parameter role if uncertain
-      if params[:shape] && from.dim != Variable.new(name: 'Prototype', shape: params[:shape]).dim
+      if params[:shape] && from.dim != Variable.new(name: "Prototype", shape: params[:shape]).dim
         if Connection.where(from_id: from_id).first.role == WhatsOpt::Variable::UNCERTAIN_VAR_ROLE
-          params[:role] = WhatsOpt::Variable::PARAMETER_ROLE       
+          params[:role] = WhatsOpt::Variable::PARAMETER_ROLE
         end
       end
 
@@ -132,7 +132,7 @@ class Connection < ApplicationRecord
             begin
               lowers = str_to_ary(from.parameter.lower)
               uppers = str_to_ary(from.parameter.upper)
-              dists = lowers.zip(uppers).map{|lower, upper| Distribution.uniform_attrs(lower, upper)}
+              dists = lowers.zip(uppers).map { |lower, upper| Distribution.uniform_attrs(lower, upper) }
               if dists.size == from.dim
                 params.merge!(distributions_attributes: dists)
               elsif dists.size == 1
@@ -146,38 +146,38 @@ class Connection < ApplicationRecord
             if from.parameter && !from.parameter.init.blank?
               begin
                 init_values = str_to_ary(from.parameter.init)
-                params.merge!(distributions_attributes: init_values.map{|init| Distribution.normal_attrs(init, "1.0")})
+                params.merge!(distributions_attributes: init_values.map { |init| Distribution.normal_attrs(init, "1.0") })
               rescue ArrayParseError => e
                 Rails.logger.info "Error when parsing #{from.parameter.init} of #{from.name}: #{e}"
                 params.merge!(distributions_attributes: [Distribution.normal_attrs("1.0", "1.0")]*from.dim)
               end
             else
-              params.merge!(distributions_attributes: [Distribution.normal_attrs("1.0", "1.0")]*from.dim)
+              params[:distributions_attributes] = [Distribution.normal_attrs("1.0", "1.0")]*from.dim
             end
           end
-        end 
+        end
         # p params
         init = params[:parameter_attributes] && params[:parameter_attributes][:init]
         init = from.parameter.init if init.nil? && from.parameter
-        params.merge!(parameter_attributes: {init: init || "", lower: "", upper: "" })
+        params[:parameter_attributes] = { init: init || "", lower: "", upper: "" }
       end
 
       # update variable
       if from.parameter && !params[:parameter_attributes].blank?
-        params.merge!(parameter_attributes: params[:parameter_attributes].merge!(id: from.parameter.id))
+        params[:parameter_attributes] = params[:parameter_attributes].merge!(id: from.parameter.id)
       end
       if from.scaling && !params[:scaling_attributes].blank?
-        params.merge!(scaling_attributes: params[:scaling_attributes].merge!(id: from.scaling.id))
+        params[:scaling_attributes] = params[:scaling_attributes].merge!(id: from.scaling.id)
       end
       if from.distributions.size>0 && !params[:distributions_attributes].blank?
-        params.merge!(distributions_attributes: params[:distributions_attributes])
+        params[:distributions_attributes] = params[:distributions_attributes]
       end
-      
+
       # params.permit!  # ensure all params transform are permitted
       # p params
       from.update!(params)
       # Note: update only primary attributes, secondary attrs are not propagated to "to" variables
-      # FIXME: during analysis copy they are propagated, not a bug for now 
+      # FIXME: during analysis copy they are propagated, not a bug for now
       params = params.except(:parameter_attributes, :scaling_attributes, :distributions_attributes)
       Connection.where(from_id: from.id).each do |conn|
         conn.to.update!(params)
@@ -250,20 +250,20 @@ class Connection < ApplicationRecord
 
     def _sanitize_connection_params(conn_params)
       pr = conn_params
-      pr["name"] = sanitize_pystring(pr["name"]) unless pr["name"].blank? 
-      pr["shape"] = sanitize_pystring(pr["shape"]) unless pr["shape"].blank? 
-      pr["desc"] = sanitize_pystring(pr["desc"]) unless pr["desc"].blank?       
-      pr["units"] = sanitize_pystring(pr["units"]) unless pr["units"].blank?       
+      pr["name"] = sanitize_pystring(pr["name"]) unless pr["name"].blank?
+      pr["shape"] = sanitize_pystring(pr["shape"]) unless pr["shape"].blank?
+      pr["desc"] = sanitize_pystring(pr["desc"]) unless pr["desc"].blank?
+      pr["units"] = sanitize_pystring(pr["units"]) unless pr["units"].blank?
       unless pr["parameter_attributes"].blank?
         prp = pr["parameter_attributes"]
-        prp["init"] = sanitize_pystring(prp["init"]) unless prp["init"].blank? 
-        prp["lower"] = sanitize_pystring(prp["lower"]) unless prp["lower"].blank? 
+        prp["init"] = sanitize_pystring(prp["init"]) unless prp["init"].blank?
+        prp["lower"] = sanitize_pystring(prp["lower"]) unless prp["lower"].blank?
         prp["upper"] = sanitize_pystring(prp["upper"]) unless prp["upper"].blank?
       end
       unless pr["scaling_attributes"].blank?
         prs = pr["scaling_attributes"]
-        prs["ref"] = sanitize_pystring(prs["ref"]) unless prs["ref"].blank? 
-        prs["ref0"] = sanitize_pystring(prs["ref0"]) unless prs["ref0"].blank? 
+        prs["ref"] = sanitize_pystring(prs["ref"]) unless prs["ref"].blank?
+        prs["ref0"] = sanitize_pystring(prs["ref0"]) unless prs["ref0"].blank?
         prs["res_ref"] = sanitize_pystring(prs["res_ref"]) unless prs["res_ref"].blank?
       end
     end

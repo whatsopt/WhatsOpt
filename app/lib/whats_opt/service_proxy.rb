@@ -40,7 +40,6 @@ module WhatsOpt
           sleep(1)
         end
       end
-
     end
 
     def _initialize

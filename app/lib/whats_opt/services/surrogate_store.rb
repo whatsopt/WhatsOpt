@@ -4,8 +4,8 @@
 # DO NOT EDIT UNLESS YOU ARE SURE THAT YOU KNOW WHAT YOU ARE DOING
 #
 
-require 'thrift'
-require 'whatsopt_services_types'
+require "thrift"
+require "whatsopt_services_types"
 
 module WhatsOpt
   module Services
@@ -19,13 +19,13 @@ module WhatsOpt
         end
 
         def send_create_surrogate(surrogate_id, kind, xt, yt, options, uncertainties)
-          send_message('create_surrogate', Create_surrogate_args, :surrogate_id => surrogate_id, :kind => kind, :xt => xt, :yt => yt, :options => options, :uncertainties => uncertainties)
+          send_message("create_surrogate", Create_surrogate_args, surrogate_id: surrogate_id, kind: kind, xt: xt, yt: yt, options: options, uncertainties: uncertainties)
         end
 
-        def recv_create_surrogate()
+        def recv_create_surrogate
           result = receive_message(Create_surrogate_result)
           raise result.exc unless result.exc.nil?
-          return
+          nil
         end
 
         def copy_surrogate(src_id, dst_id)
@@ -34,45 +34,45 @@ module WhatsOpt
         end
 
         def send_copy_surrogate(src_id, dst_id)
-          send_message('copy_surrogate', Copy_surrogate_args, :src_id => src_id, :dst_id => dst_id)
+          send_message("copy_surrogate", Copy_surrogate_args, src_id: src_id, dst_id: dst_id)
         end
 
-        def recv_copy_surrogate()
+        def recv_copy_surrogate
           result = receive_message(Copy_surrogate_result)
           raise result.exc unless result.exc.nil?
-          return
+          nil
         end
 
         def qualify(surrogate_id, xv, yv)
           send_qualify(surrogate_id, xv, yv)
-          return recv_qualify()
+          recv_qualify()
         end
 
         def send_qualify(surrogate_id, xv, yv)
-          send_message('qualify', Qualify_args, :surrogate_id => surrogate_id, :xv => xv, :yv => yv)
+          send_message("qualify", Qualify_args, surrogate_id: surrogate_id, xv: xv, yv: yv)
         end
 
-        def recv_qualify()
+        def recv_qualify
           result = receive_message(Qualify_result)
           return result.success unless result.success.nil?
           raise result.exc unless result.exc.nil?
-          raise ::Thrift::ApplicationException.new(::Thrift::ApplicationException::MISSING_RESULT, 'qualify failed: unknown result')
+          raise ::Thrift::ApplicationException.new(::Thrift::ApplicationException::MISSING_RESULT, "qualify failed: unknown result")
         end
 
         def predict_values(surrogate_id, x)
           send_predict_values(surrogate_id, x)
-          return recv_predict_values()
+          recv_predict_values()
         end
 
         def send_predict_values(surrogate_id, x)
-          send_message('predict_values', Predict_values_args, :surrogate_id => surrogate_id, :x => x)
+          send_message("predict_values", Predict_values_args, surrogate_id: surrogate_id, x: x)
         end
 
-        def recv_predict_values()
+        def recv_predict_values
           result = receive_message(Predict_values_result)
           return result.success unless result.success.nil?
           raise result.exc unless result.exc.nil?
-          raise ::Thrift::ApplicationException.new(::Thrift::ApplicationException::MISSING_RESULT, 'predict_values failed: unknown result')
+          raise ::Thrift::ApplicationException.new(::Thrift::ApplicationException::MISSING_RESULT, "predict_values failed: unknown result")
         end
 
         def destroy_surrogate(surrogate_id)
@@ -81,29 +81,28 @@ module WhatsOpt
         end
 
         def send_destroy_surrogate(surrogate_id)
-          send_message('destroy_surrogate', Destroy_surrogate_args, :surrogate_id => surrogate_id)
+          send_message("destroy_surrogate", Destroy_surrogate_args, surrogate_id: surrogate_id)
         end
 
-        def recv_destroy_surrogate()
+        def recv_destroy_surrogate
           result = receive_message(Destroy_surrogate_result)
-          return
+          nil
         end
 
         def get_sobol_pce_sensitivity_analysis(surrogate_id)
           send_get_sobol_pce_sensitivity_analysis(surrogate_id)
-          return recv_get_sobol_pce_sensitivity_analysis()
+          recv_get_sobol_pce_sensitivity_analysis()
         end
 
         def send_get_sobol_pce_sensitivity_analysis(surrogate_id)
-          send_message('get_sobol_pce_sensitivity_analysis', Get_sobol_pce_sensitivity_analysis_args, :surrogate_id => surrogate_id)
+          send_message("get_sobol_pce_sensitivity_analysis", Get_sobol_pce_sensitivity_analysis_args, surrogate_id: surrogate_id)
         end
 
-        def recv_get_sobol_pce_sensitivity_analysis()
+        def recv_get_sobol_pce_sensitivity_analysis
           result = receive_message(Get_sobol_pce_sensitivity_analysis_result)
           return result.success unless result.success.nil?
-          raise ::Thrift::ApplicationException.new(::Thrift::ApplicationException::MISSING_RESULT, 'get_sobol_pce_sensitivity_analysis failed: unknown result')
+          raise ::Thrift::ApplicationException.new(::Thrift::ApplicationException::MISSING_RESULT, "get_sobol_pce_sensitivity_analysis failed: unknown result")
         end
-
       end
 
       class Processor
@@ -117,7 +116,7 @@ module WhatsOpt
           rescue ::WhatsOpt::Services::SurrogateException => exc
             result.exc = exc
           end
-          write_result(result, oprot, 'create_surrogate', seqid)
+          write_result(result, oprot, "create_surrogate", seqid)
         end
 
         def process_copy_surrogate(seqid, iprot, oprot)
@@ -128,7 +127,7 @@ module WhatsOpt
           rescue ::WhatsOpt::Services::SurrogateException => exc
             result.exc = exc
           end
-          write_result(result, oprot, 'copy_surrogate', seqid)
+          write_result(result, oprot, "copy_surrogate", seqid)
         end
 
         def process_qualify(seqid, iprot, oprot)
@@ -139,7 +138,7 @@ module WhatsOpt
           rescue ::WhatsOpt::Services::SurrogateException => exc
             result.exc = exc
           end
-          write_result(result, oprot, 'qualify', seqid)
+          write_result(result, oprot, "qualify", seqid)
         end
 
         def process_predict_values(seqid, iprot, oprot)
@@ -150,23 +149,22 @@ module WhatsOpt
           rescue ::WhatsOpt::Services::SurrogateException => exc
             result.exc = exc
           end
-          write_result(result, oprot, 'predict_values', seqid)
+          write_result(result, oprot, "predict_values", seqid)
         end
 
         def process_destroy_surrogate(seqid, iprot, oprot)
           args = read_args(iprot, Destroy_surrogate_args)
           result = Destroy_surrogate_result.new()
           @handler.destroy_surrogate(args.surrogate_id)
-          write_result(result, oprot, 'destroy_surrogate', seqid)
+          write_result(result, oprot, "destroy_surrogate", seqid)
         end
 
         def process_get_sobol_pce_sensitivity_analysis(seqid, iprot, oprot)
           args = read_args(iprot, Get_sobol_pce_sensitivity_analysis_args)
           result = Get_sobol_pce_sensitivity_analysis_result.new()
           result.success = @handler.get_sobol_pce_sensitivity_analysis(args.surrogate_id)
-          write_result(result, oprot, 'get_sobol_pce_sensitivity_analysis', seqid)
+          write_result(result, oprot, "get_sobol_pce_sensitivity_analysis", seqid)
         end
-
       end
 
       # HELPER FUNCTIONS AND STRUCTURES
@@ -181,19 +179,19 @@ module WhatsOpt
         UNCERTAINTIES = 6
 
         FIELDS = {
-          SURROGATE_ID => {:type => ::Thrift::Types::STRING, :name => 'surrogate_id'},
-          KIND => {:type => ::Thrift::Types::I32, :name => 'kind', :enum_class => ::WhatsOpt::Services::SurrogateKind},
-          XT => {:type => ::Thrift::Types::LIST, :name => 'xt', :element => {:type => ::Thrift::Types::LIST, :element => {:type => ::Thrift::Types::DOUBLE}}},
-          YT => {:type => ::Thrift::Types::LIST, :name => 'yt', :element => {:type => ::Thrift::Types::DOUBLE}},
-          OPTIONS => {:type => ::Thrift::Types::MAP, :name => 'options', :key => {:type => ::Thrift::Types::STRING}, :value => {:type => ::Thrift::Types::STRUCT, :class => ::WhatsOpt::Services::OptionValue}},
-          UNCERTAINTIES => {:type => ::Thrift::Types::LIST, :name => 'uncertainties', :element => {:type => ::Thrift::Types::STRUCT, :class => ::WhatsOpt::Services::Distribution}}
+          SURROGATE_ID => { type: ::Thrift::Types::STRING, name: "surrogate_id" },
+          KIND => { type: ::Thrift::Types::I32, name: "kind", enum_class: ::WhatsOpt::Services::SurrogateKind },
+          XT => { type: ::Thrift::Types::LIST, name: "xt", element: { type: ::Thrift::Types::LIST, element: { type: ::Thrift::Types::DOUBLE } } },
+          YT => { type: ::Thrift::Types::LIST, name: "yt", element: { type: ::Thrift::Types::DOUBLE } },
+          OPTIONS => { type: ::Thrift::Types::MAP, name: "options", key: { type: ::Thrift::Types::STRING }, value: { type: ::Thrift::Types::STRUCT, class: ::WhatsOpt::Services::OptionValue } },
+          UNCERTAINTIES => { type: ::Thrift::Types::LIST, name: "uncertainties", element: { type: ::Thrift::Types::STRUCT, class: ::WhatsOpt::Services::Distribution } }
         }
 
         def struct_fields; FIELDS; end
 
         def validate
           unless @kind.nil? || ::WhatsOpt::Services::SurrogateKind::VALID_VALUES.include?(@kind)
-            raise ::Thrift::ProtocolException.new(::Thrift::ProtocolException::UNKNOWN, 'Invalid value of field kind!')
+            raise ::Thrift::ProtocolException.new(::Thrift::ProtocolException::UNKNOWN, "Invalid value of field kind!")
           end
         end
 
@@ -205,7 +203,7 @@ module WhatsOpt
         EXC = 1
 
         FIELDS = {
-          EXC => {:type => ::Thrift::Types::STRUCT, :name => 'exc', :class => ::WhatsOpt::Services::SurrogateException}
+          EXC => { type: ::Thrift::Types::STRUCT, name: "exc", class: ::WhatsOpt::Services::SurrogateException }
         }
 
         def struct_fields; FIELDS; end
@@ -222,8 +220,8 @@ module WhatsOpt
         DST_ID = 2
 
         FIELDS = {
-          SRC_ID => {:type => ::Thrift::Types::STRING, :name => 'src_id'},
-          DST_ID => {:type => ::Thrift::Types::STRING, :name => 'dst_id'}
+          SRC_ID => { type: ::Thrift::Types::STRING, name: "src_id" },
+          DST_ID => { type: ::Thrift::Types::STRING, name: "dst_id" }
         }
 
         def struct_fields; FIELDS; end
@@ -239,7 +237,7 @@ module WhatsOpt
         EXC = 1
 
         FIELDS = {
-          EXC => {:type => ::Thrift::Types::STRUCT, :name => 'exc', :class => ::WhatsOpt::Services::SurrogateException}
+          EXC => { type: ::Thrift::Types::STRUCT, name: "exc", class: ::WhatsOpt::Services::SurrogateException }
         }
 
         def struct_fields; FIELDS; end
@@ -257,9 +255,9 @@ module WhatsOpt
         YV = 3
 
         FIELDS = {
-          SURROGATE_ID => {:type => ::Thrift::Types::STRING, :name => 'surrogate_id'},
-          XV => {:type => ::Thrift::Types::LIST, :name => 'xv', :element => {:type => ::Thrift::Types::LIST, :element => {:type => ::Thrift::Types::DOUBLE}}},
-          YV => {:type => ::Thrift::Types::LIST, :name => 'yv', :element => {:type => ::Thrift::Types::DOUBLE}}
+          SURROGATE_ID => { type: ::Thrift::Types::STRING, name: "surrogate_id" },
+          XV => { type: ::Thrift::Types::LIST, name: "xv", element: { type: ::Thrift::Types::LIST, element: { type: ::Thrift::Types::DOUBLE } } },
+          YV => { type: ::Thrift::Types::LIST, name: "yv", element: { type: ::Thrift::Types::DOUBLE } }
         }
 
         def struct_fields; FIELDS; end
@@ -276,8 +274,8 @@ module WhatsOpt
         EXC = 1
 
         FIELDS = {
-          SUCCESS => {:type => ::Thrift::Types::STRUCT, :name => 'success', :class => ::WhatsOpt::Services::SurrogateQualification},
-          EXC => {:type => ::Thrift::Types::STRUCT, :name => 'exc', :class => ::WhatsOpt::Services::SurrogateException}
+          SUCCESS => { type: ::Thrift::Types::STRUCT, name: "success", class: ::WhatsOpt::Services::SurrogateQualification },
+          EXC => { type: ::Thrift::Types::STRUCT, name: "exc", class: ::WhatsOpt::Services::SurrogateException }
         }
 
         def struct_fields; FIELDS; end
@@ -294,8 +292,8 @@ module WhatsOpt
         X = 2
 
         FIELDS = {
-          SURROGATE_ID => {:type => ::Thrift::Types::STRING, :name => 'surrogate_id'},
-          X => {:type => ::Thrift::Types::LIST, :name => 'x', :element => {:type => ::Thrift::Types::LIST, :element => {:type => ::Thrift::Types::DOUBLE}}}
+          SURROGATE_ID => { type: ::Thrift::Types::STRING, name: "surrogate_id" },
+          X => { type: ::Thrift::Types::LIST, name: "x", element: { type: ::Thrift::Types::LIST, element: { type: ::Thrift::Types::DOUBLE } } }
         }
 
         def struct_fields; FIELDS; end
@@ -312,8 +310,8 @@ module WhatsOpt
         EXC = 1
 
         FIELDS = {
-          SUCCESS => {:type => ::Thrift::Types::LIST, :name => 'success', :element => {:type => ::Thrift::Types::DOUBLE}},
-          EXC => {:type => ::Thrift::Types::STRUCT, :name => 'exc', :class => ::WhatsOpt::Services::SurrogateException}
+          SUCCESS => { type: ::Thrift::Types::LIST, name: "success", element: { type: ::Thrift::Types::DOUBLE } },
+          EXC => { type: ::Thrift::Types::STRUCT, name: "exc", class: ::WhatsOpt::Services::SurrogateException }
         }
 
         def struct_fields; FIELDS; end
@@ -329,7 +327,7 @@ module WhatsOpt
         SURROGATE_ID = 1
 
         FIELDS = {
-          SURROGATE_ID => {:type => ::Thrift::Types::STRING, :name => 'surrogate_id'}
+          SURROGATE_ID => { type: ::Thrift::Types::STRING, name: "surrogate_id" }
         }
 
         def struct_fields; FIELDS; end
@@ -360,7 +358,7 @@ module WhatsOpt
         SURROGATE_ID = 1
 
         FIELDS = {
-          SURROGATE_ID => {:type => ::Thrift::Types::STRING, :name => 'surrogate_id'}
+          SURROGATE_ID => { type: ::Thrift::Types::STRING, name: "surrogate_id" }
         }
 
         def struct_fields; FIELDS; end
@@ -376,7 +374,7 @@ module WhatsOpt
         SUCCESS = 0
 
         FIELDS = {
-          SUCCESS => {:type => ::Thrift::Types::STRUCT, :name => 'success', :class => ::WhatsOpt::Services::SobolIndices}
+          SUCCESS => { type: ::Thrift::Types::STRUCT, name: "success", class: ::WhatsOpt::Services::SobolIndices }
         }
 
         def struct_fields; FIELDS; end
@@ -386,8 +384,6 @@ module WhatsOpt
 
         ::Thrift::Struct.generate_accessors self
       end
-
     end
-
   end
 end

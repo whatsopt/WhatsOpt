@@ -21,8 +21,8 @@ class Api::V1::OptimizationsController < Api::ApiController
   # PATCH /api/v1/optimizations/1
   def update
     @optim.check_optimization_inputs(optim_params)
-    inputs = {x: optim_params['x'], y: optim_params['y']}
-    @optim.update!(inputs: inputs, outputs: {status: Optimization::RUNNING, x_suggested: nil})
+    inputs = { x: optim_params["x"], y: optim_params["y"] }
+    @optim.update!(inputs: inputs, outputs: { status: Optimization::RUNNING, x_suggested: nil })
     OptimizationJob.perform_later(@optim)
     head :no_content
   end
@@ -34,8 +34,7 @@ class Api::V1::OptimizationsController < Api::ApiController
     head :no_content
   end
 
-  private 
-
+  private
     def set_optimization
       @optim = Optimization.find(params[:id])
       @proxy = @optim.proxy
@@ -45,5 +44,4 @@ class Api::V1::OptimizationsController < Api::ApiController
     def optim_params
       params.require(:optimization).permit!
     end
-
 end

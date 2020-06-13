@@ -8,8 +8,8 @@ class Api::ApiController < ActionController::Base
   # Authorization
   include Pundit
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
-  after_action :verify_authorized, except: [:index], unless: :api_docs_controller? 
-  after_action :verify_policy_scoped, only: [:index], unless: :api_docs_controller? 
+  after_action :verify_authorized, except: [:index], unless: :api_docs_controller?
+  after_action :verify_policy_scoped, only: [:index], unless: :api_docs_controller?
 
   respond_to :json
 
@@ -17,7 +17,7 @@ class Api::ApiController < ActionController::Base
   protect_from_forgery with: :null_session
 
   before_action :authenticate, unless: :api_docs_controller?
-  before_action :check_wop_version 
+  before_action :check_wop_version
 
   attr_reader :current_user
 
@@ -27,7 +27,7 @@ class Api::ApiController < ActionController::Base
 
   private
     def authenticate
-      authenticate_or_request_with_http_token('WhatsOpt') do |token, options|
+      authenticate_or_request_with_http_token("WhatsOpt") do |token, options|
         @current_user = User.where(api_key: token).first
       end
     end
@@ -41,11 +41,11 @@ class Api::ApiController < ActionController::Base
     end
 
     def api_docs_controller?
-      controller_name == 'api_docs'
+      controller_name == "api_docs"
     end
 
     def wop_agent_version
-      $1 if request.headers['User-Agent'] =~ /^wop\/(.*)/
+      $1 if request.headers["User-Agent"] =~ /^wop\/(.*)/
     end
 
     def check_wop_version

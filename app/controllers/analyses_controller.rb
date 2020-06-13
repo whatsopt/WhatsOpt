@@ -66,7 +66,7 @@ class AnalysesController < ApplicationController
       redirect_to mdas_url, alert: "Can not delete nested analysis (you should delete parent first)."
     else
       unless @mda.operations.blank? # remove operations in reverse order first
-        @mda.operations.reverse.each { |ope| ope.destroy! }
+        @mda.operations.reverse_each { |ope| ope.destroy! }
       end
       @mda.destroy!
       redirect_to mdas_url, notice: "Analysis #{@mda.name} was successfully deleted."

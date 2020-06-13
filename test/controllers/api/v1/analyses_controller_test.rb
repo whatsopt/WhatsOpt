@@ -22,7 +22,7 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
 
   test "should get all mdas even sub ones" do
     get api_v1_mdas_url(with_sub_analyses: true), as: :json, headers: @auth_headers
-    assert_response :success 
+    assert_response :success
     analyses = JSON.parse(response.body)
     assert_equal Analysis.count-1, analyses.size # ALL - {user2 private}
   end
@@ -51,7 +51,7 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should create a transient sellar mda when asking for the xdsm" do
-    assert_difference('Analysis.count', 0) do
+    assert_difference("Analysis.count", 0) do
       params = { 'analysis': { 'name': "Sellar", 'disciplines_attributes': [{ 'name': "__DRIVER__", 'variables_attributes': [{ 'name': "x", 'io_mode': "out", 'type': "Float", 'shape': "1", 'units': nil, 'desc': "", 'parameter_attributes': { 'init': "2.0" }, 'scaling_attributes': { 'ref': "3.0" } }, { 'name': "z", 'io_mode': "out", 'type': "Float", 'shape': "(2,)", 'units': nil, 'desc': "", 'parameter_attributes': { 'init': "[5.0, 2.0]" } }, { 'name': "obj", 'io_mode': "in", 'type': "Float", 'shape': "1", 'units': nil, 'desc': "" }, { 'name': "g1", 'io_mode': "in", 'type': "Float", 'shape': "1", 'units': nil, 'desc': "constraint" }, { 'name': "g2", 'io_mode': "in", 'type': "Float", 'shape': "1", 'units': nil, 'desc': "" }] }, { 'name': "Disc1", 'variables_attributes': [{ 'name': "x", 'io_mode': "in", 'type': "Float", 'shape': "1", 'units': nil, 'desc': "" }, { 'name': "y2", 'io_mode': "in", 'type': "Float", 'shape': "1", 'units': nil, 'desc': "" }, { 'name': "z", 'io_mode': "in", 'type': "Float", 'shape': "(2,)", 'units': nil, 'desc': "" }, { 'name': "y1", 'io_mode': "out", 'type': "Float", 'shape': "1", 'units': nil, 'desc': "" }] }, { 'name': "Disc2", 'variables_attributes': [{ 'name': "y2", 'io_mode': "out", 'type': "Float", 'shape': "1", 'units': nil, 'desc': "" }, { 'name': "y1", 'io_mode': "in", 'type': "Float", 'shape': "1", 'units': nil, 'desc': "" }, { 'name': "z", 'io_mode': "in", 'type': "Float", 'shape': "(2,)", 'units': nil, 'desc': "" }] }, { 'name': "Functions", 'variables_attributes': [{ 'name': "x", 'io_mode': "in", 'type': "Float", 'shape': "1", 'units': nil, 'desc': "" }, { 'name': "y1", 'io_mode': "in", 'type': "Float", 'shape': "1", 'units': nil, 'desc': "" }, { 'name': "y2", 'io_mode': "in", 'type': "Float", 'shape': "1", 'units': nil, 'desc': "" }, { 'name': "z", 'io_mode': "in", 'type': "Float", 'shape': "(2,)", 'units': nil, 'desc': "" }, { 'name': "obj", 'io_mode': "out", 'type': "Float", 'shape': "1", 'units': nil, 'desc': "" }, { 'name': "g1", 'io_mode': "out", 'type': "Float", 'shape': "1", 'units': nil, 'desc': "constraint" }, { 'name': "g2", 'io_mode': "out", 'type': "Float", 'shape': "1", 'units': nil, 'desc': "" }] }] } }
       post api_v1_mdas_url(format: "xdsm"), params: params, as: :json, headers: @auth_headers
       assert_response :success
@@ -153,7 +153,7 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     beforeConnsNb = Connection.of_analysis(@mda).size
     mda2 = analyses(:innermda)
     disc = disciplines(:innermda_discipline)
-    put api_v1_mda_url(@mda), params: {analysis: {import: {analysis: mda2.id, disciplines: [disc.id]}}}, 
+    put api_v1_mda_url(@mda), params: { analysis: { import: { analysis: mda2.id, disciplines: [disc.id] } } },
         as: :json, headers: @auth_headers
     @mda.reload
     newDisc = @mda.disciplines.last
@@ -181,7 +181,7 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     orig_count = @mda.disciplines.count
     mda2 = analyses(:singleton_mm)
     disc = disciplines(:disc_singleton_mm)
-    put api_v1_mda_url(@mda), params: {analysis: {import: {analysis: mda2.id, disciplines: [disc.id]}}}, 
+    put api_v1_mda_url(@mda), params: { analysis: { import: { analysis: mda2.id, disciplines: [disc.id] } } },
       as: :json, headers: @auth_headers
     @mda.reload
     assert_equal orig_count + 1, @mda.disciplines.count
@@ -197,7 +197,7 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     orig_count = @mda.disciplines.count
     mda2 = analyses(:outermda)
     disc = disciplines(:outermda_innermda_discipline)
-    put api_v1_mda_url(@mda), params: {analysis: {import: {analysis: mda2.id, disciplines: [disc.id]}}}, 
+    put api_v1_mda_url(@mda), params: { analysis: { import: { analysis: mda2.id, disciplines: [disc.id] } } },
       as: :json, headers: @auth_headers
     @mda.reload
     assert_equal orig_count + 1, @mda.disciplines.count
@@ -208,7 +208,7 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     mda = Analysis.last
     ids = @mda.disciplines.nodes.map(&:id)
-    put api_v1_mda_url(mda), params: {analysis: {import: {analysis: @mda.id, disciplines: ids}}}, 
+    put api_v1_mda_url(mda), params: { analysis: { import: { analysis: @mda.id, disciplines: ids } } },
         as: :json, headers: @auth_headers
     assert_response :success
     assert_equal @mda.disciplines.count, mda.disciplines.count
@@ -226,12 +226,12 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     mda = Analysis.last
     disc = @mda.disciplines.nodes.first
-    put api_v1_mda_url(mda), params: {analysis: {import: {analysis: @mda.id, disciplines: [disc.id, disc.id, disc.id]}}}, 
+    put api_v1_mda_url(mda), params: { analysis: { import: { analysis: @mda.id, disciplines: [disc.id, disc.id, disc.id] } } },
         as: :json, headers: @auth_headers
     assert_response :success
     assert_equal 4, mda.disciplines.count
     assert_equal [disc.name, disc.name, disc.name], mda.disciplines.nodes.map(&:name)
-    assert_equal disc.output_variables.map{|v| v.name+'_dup_dup'}, Discipline.last.output_variables.map(&:name)
+    assert_equal disc.output_variables.map { |v| v.name+"_dup_dup" }, Discipline.last.output_variables.map(&:name)
     assert_equal disc.input_variables.map(&:name), Discipline.last.input_variables.map(&:name)
   end
 

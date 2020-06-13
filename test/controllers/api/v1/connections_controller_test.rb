@@ -222,8 +222,8 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
   test "should set default distribution when setting uncertain role" do
     varx = variables(:varx1_out)
     conn = connections(:driver_x1_geo)
-    update_attrs = {role: "uncertain_var"}
-    put api_v1_connection_url(conn, connection: update_attrs), as: :json, headers: @auth_headers    
+    update_attrs = { role: "uncertain_var" }
+    put api_v1_connection_url(conn, connection: update_attrs), as: :json, headers: @auth_headers
     assert_response :success
     varx.reload
     distjson = (ActiveModelSerializers::SerializableResource.new(varx).as_json)[:distributions_attributes]
@@ -234,12 +234,12 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
   test "should set default normal distributions when setting uncertain role for a vector" do
     varz = variables(:varz_design_out)
     conn = connections(:driver_z_geo)
-    update_attrs = {role: "uncertain_var"}
-    put api_v1_connection_url(conn, connection: update_attrs), as: :json, headers: @auth_headers    
+    update_attrs = { role: "uncertain_var" }
+    put api_v1_connection_url(conn, connection: update_attrs), as: :json, headers: @auth_headers
     assert_response :success
     varz.reload
     distjson = (ActiveModelSerializers::SerializableResource.new(varz).as_json)[:distributions_attributes]
-    assert_equal ["Uniform", "Uniform"], distjson.map{|d| d[:kind]}
+    assert_equal ["Uniform", "Uniform"], distjson.map { |d| d[:kind] }
   end
 
   test "should propagate y connection update upward to ancestor" do
@@ -272,8 +272,8 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
     update_attrs = attrs.zip(values).to_h
     update_attrs[:parameter_attributes] = { init: "[[1,2]]", lower: "0", upper: "10" }
     update_attrs[:scaling_attributes] = { ref: "[[1,2]]", ref0: "100", res_ref: "1e-6" }
-    update_attrs[:distributions_attributes] = [{ kind: "Normal", 
-                                                 options_attributes: [{name: "mu", value: "0.0"}, {name: "sigma", value: "1.0"}] }]
+    update_attrs[:distributions_attributes] = [{ kind: "Normal",
+                                                 options_attributes: [{ name: "mu", value: "0.0" }, { name: "sigma", value: "1.0" }] }]
     put api_v1_connection_url(conn, connection: update_attrs), as: :json, headers: @auth_headers
     assert_response :success
     conn_to_test.reload

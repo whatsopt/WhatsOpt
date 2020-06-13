@@ -14,7 +14,7 @@ module Ownable
     members
   end
 
-  def set_owner(user) 
+  def set_owner(user)
     _remove_role(owner, :owner) if owner
     _add_role(user, :owner)
   end

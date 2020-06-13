@@ -4,8 +4,8 @@
 # DO NOT EDIT UNLESS YOU ARE SURE THAT YOU KNOW WHAT YOU ARE DOING
 #
 
-require 'thrift'
-require 'whatsopt_services_types'
+require "thrift"
+require "whatsopt_services_types"
 
 module WhatsOpt
   module Services
@@ -19,29 +19,29 @@ module WhatsOpt
         end
 
         def send_create_optimizer(optimizer_id, kind, xlimits, cstr_specs, options)
-          send_message('create_optimizer', Create_optimizer_args, :optimizer_id => optimizer_id, :kind => kind, :xlimits => xlimits, :cstr_specs => cstr_specs, :options => options)
+          send_message("create_optimizer", Create_optimizer_args, optimizer_id: optimizer_id, kind: kind, xlimits: xlimits, cstr_specs: cstr_specs, options: options)
         end
 
-        def recv_create_optimizer()
+        def recv_create_optimizer
           result = receive_message(Create_optimizer_result)
           raise result.exc unless result.exc.nil?
-          return
+          nil
         end
 
         def ask(optimizer_id)
           send_ask(optimizer_id)
-          return recv_ask()
+          recv_ask()
         end
 
         def send_ask(optimizer_id)
-          send_message('ask', Ask_args, :optimizer_id => optimizer_id)
+          send_message("ask", Ask_args, optimizer_id: optimizer_id)
         end
 
-        def recv_ask()
+        def recv_ask
           result = receive_message(Ask_result)
           return result.success unless result.success.nil?
           raise result.exc unless result.exc.nil?
-          raise ::Thrift::ApplicationException.new(::Thrift::ApplicationException::MISSING_RESULT, 'ask failed: unknown result')
+          raise ::Thrift::ApplicationException.new(::Thrift::ApplicationException::MISSING_RESULT, "ask failed: unknown result")
         end
 
         def tell(optimizer_id, x, y)
@@ -50,13 +50,13 @@ module WhatsOpt
         end
 
         def send_tell(optimizer_id, x, y)
-          send_message('tell', Tell_args, :optimizer_id => optimizer_id, :x => x, :y => y)
+          send_message("tell", Tell_args, optimizer_id: optimizer_id, x: x, y: y)
         end
 
-        def recv_tell()
+        def recv_tell
           result = receive_message(Tell_result)
           raise result.exc unless result.exc.nil?
-          return
+          nil
         end
 
         def destroy_optimizer(surrogate_id)
@@ -65,14 +65,13 @@ module WhatsOpt
         end
 
         def send_destroy_optimizer(surrogate_id)
-          send_message('destroy_optimizer', Destroy_optimizer_args, :surrogate_id => surrogate_id)
+          send_message("destroy_optimizer", Destroy_optimizer_args, surrogate_id: surrogate_id)
         end
 
-        def recv_destroy_optimizer()
+        def recv_destroy_optimizer
           result = receive_message(Destroy_optimizer_result)
-          return
+          nil
         end
-
       end
 
       class Processor
@@ -86,7 +85,7 @@ module WhatsOpt
           rescue ::WhatsOpt::Services::OptimizerException => exc
             result.exc = exc
           end
-          write_result(result, oprot, 'create_optimizer', seqid)
+          write_result(result, oprot, "create_optimizer", seqid)
         end
 
         def process_ask(seqid, iprot, oprot)
@@ -97,7 +96,7 @@ module WhatsOpt
           rescue ::WhatsOpt::Services::OptimizerException => exc
             result.exc = exc
           end
-          write_result(result, oprot, 'ask', seqid)
+          write_result(result, oprot, "ask", seqid)
         end
 
         def process_tell(seqid, iprot, oprot)
@@ -108,16 +107,15 @@ module WhatsOpt
           rescue ::WhatsOpt::Services::OptimizerException => exc
             result.exc = exc
           end
-          write_result(result, oprot, 'tell', seqid)
+          write_result(result, oprot, "tell", seqid)
         end
 
         def process_destroy_optimizer(seqid, iprot, oprot)
           args = read_args(iprot, Destroy_optimizer_args)
           result = Destroy_optimizer_result.new()
           @handler.destroy_optimizer(args.surrogate_id)
-          write_result(result, oprot, 'destroy_optimizer', seqid)
+          write_result(result, oprot, "destroy_optimizer", seqid)
         end
-
       end
 
       # HELPER FUNCTIONS AND STRUCTURES
@@ -131,18 +129,18 @@ module WhatsOpt
         OPTIONS = 5
 
         FIELDS = {
-          OPTIMIZER_ID => {:type => ::Thrift::Types::STRING, :name => 'optimizer_id'},
-          KIND => {:type => ::Thrift::Types::I32, :name => 'kind', :enum_class => ::WhatsOpt::Services::OptimizerKind},
-          XLIMITS => {:type => ::Thrift::Types::LIST, :name => 'xlimits', :element => {:type => ::Thrift::Types::LIST, :element => {:type => ::Thrift::Types::DOUBLE}}},
-          CSTR_SPECS => {:type => ::Thrift::Types::LIST, :name => 'cstr_specs', :element => {:type => ::Thrift::Types::STRUCT, :class => ::WhatsOpt::Services::ConstraintSpec}},
-          OPTIONS => {:type => ::Thrift::Types::MAP, :name => 'options', :key => {:type => ::Thrift::Types::STRING}, :value => {:type => ::Thrift::Types::STRUCT, :class => ::WhatsOpt::Services::OptionValue}}
+          OPTIMIZER_ID => { type: ::Thrift::Types::STRING, name: "optimizer_id" },
+          KIND => { type: ::Thrift::Types::I32, name: "kind", enum_class: ::WhatsOpt::Services::OptimizerKind },
+          XLIMITS => { type: ::Thrift::Types::LIST, name: "xlimits", element: { type: ::Thrift::Types::LIST, element: { type: ::Thrift::Types::DOUBLE } } },
+          CSTR_SPECS => { type: ::Thrift::Types::LIST, name: "cstr_specs", element: { type: ::Thrift::Types::STRUCT, class: ::WhatsOpt::Services::ConstraintSpec } },
+          OPTIONS => { type: ::Thrift::Types::MAP, name: "options", key: { type: ::Thrift::Types::STRING }, value: { type: ::Thrift::Types::STRUCT, class: ::WhatsOpt::Services::OptionValue } }
         }
 
         def struct_fields; FIELDS; end
 
         def validate
           unless @kind.nil? || ::WhatsOpt::Services::OptimizerKind::VALID_VALUES.include?(@kind)
-            raise ::Thrift::ProtocolException.new(::Thrift::ProtocolException::UNKNOWN, 'Invalid value of field kind!')
+            raise ::Thrift::ProtocolException.new(::Thrift::ProtocolException::UNKNOWN, "Invalid value of field kind!")
           end
         end
 
@@ -154,7 +152,7 @@ module WhatsOpt
         EXC = 1
 
         FIELDS = {
-          EXC => {:type => ::Thrift::Types::STRUCT, :name => 'exc', :class => ::WhatsOpt::Services::OptimizerException}
+          EXC => { type: ::Thrift::Types::STRUCT, name: "exc", class: ::WhatsOpt::Services::OptimizerException }
         }
 
         def struct_fields; FIELDS; end
@@ -170,7 +168,7 @@ module WhatsOpt
         OPTIMIZER_ID = 1
 
         FIELDS = {
-          OPTIMIZER_ID => {:type => ::Thrift::Types::STRING, :name => 'optimizer_id'}
+          OPTIMIZER_ID => { type: ::Thrift::Types::STRING, name: "optimizer_id" }
         }
 
         def struct_fields; FIELDS; end
@@ -187,8 +185,8 @@ module WhatsOpt
         EXC = 1
 
         FIELDS = {
-          SUCCESS => {:type => ::Thrift::Types::STRUCT, :name => 'success', :class => ::WhatsOpt::Services::OptimizerResult},
-          EXC => {:type => ::Thrift::Types::STRUCT, :name => 'exc', :class => ::WhatsOpt::Services::OptimizerException}
+          SUCCESS => { type: ::Thrift::Types::STRUCT, name: "success", class: ::WhatsOpt::Services::OptimizerResult },
+          EXC => { type: ::Thrift::Types::STRUCT, name: "exc", class: ::WhatsOpt::Services::OptimizerException }
         }
 
         def struct_fields; FIELDS; end
@@ -206,9 +204,9 @@ module WhatsOpt
         Y = 3
 
         FIELDS = {
-          OPTIMIZER_ID => {:type => ::Thrift::Types::STRING, :name => 'optimizer_id'},
-          X => {:type => ::Thrift::Types::LIST, :name => 'x', :element => {:type => ::Thrift::Types::LIST, :element => {:type => ::Thrift::Types::DOUBLE}}},
-          Y => {:type => ::Thrift::Types::LIST, :name => 'y', :element => {:type => ::Thrift::Types::LIST, :element => {:type => ::Thrift::Types::DOUBLE}}}
+          OPTIMIZER_ID => { type: ::Thrift::Types::STRING, name: "optimizer_id" },
+          X => { type: ::Thrift::Types::LIST, name: "x", element: { type: ::Thrift::Types::LIST, element: { type: ::Thrift::Types::DOUBLE } } },
+          Y => { type: ::Thrift::Types::LIST, name: "y", element: { type: ::Thrift::Types::LIST, element: { type: ::Thrift::Types::DOUBLE } } }
         }
 
         def struct_fields; FIELDS; end
@@ -224,7 +222,7 @@ module WhatsOpt
         EXC = 1
 
         FIELDS = {
-          EXC => {:type => ::Thrift::Types::STRUCT, :name => 'exc', :class => ::WhatsOpt::Services::OptimizerException}
+          EXC => { type: ::Thrift::Types::STRUCT, name: "exc", class: ::WhatsOpt::Services::OptimizerException }
         }
 
         def struct_fields; FIELDS; end
@@ -240,7 +238,7 @@ module WhatsOpt
         SURROGATE_ID = 1
 
         FIELDS = {
-          SURROGATE_ID => {:type => ::Thrift::Types::STRING, :name => 'surrogate_id'}
+          SURROGATE_ID => { type: ::Thrift::Types::STRING, name: "surrogate_id" }
         }
 
         def struct_fields; FIELDS; end
@@ -265,8 +263,6 @@ module WhatsOpt
 
         ::Thrift::Struct.generate_accessors self
       end
-
     end
-
   end
 end

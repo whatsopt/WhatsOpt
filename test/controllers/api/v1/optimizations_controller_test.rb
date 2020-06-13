@@ -22,14 +22,14 @@ class Api::V1::OptimizationControllerTest < ActionDispatch::IntegrationTest
     end
     assert_response :success
     resp = JSON.parse(response.body)
-    assert_equal "SEGOMOE", resp['kind']
+    assert_equal "SEGOMOE", resp["kind"]
   end
 
   test "should raise error on xlimits absence" do
     skip_if_parallel
     assert_difference("Optimization.count", 0) do
       post api_v1_optimizations_url,
-        params: { optimization: { kind: "SEGOMOE"} }, as: :json, headers: @auth_headers
+        params: { optimization: { kind: "SEGOMOE" } }, as: :json, headers: @auth_headers
     end
     assert_response :bad_request
   end
@@ -38,7 +38,7 @@ class Api::V1::OptimizationControllerTest < ActionDispatch::IntegrationTest
     skip_if_parallel
     assert_difference("Optimization.count", 0) do
       post api_v1_optimizations_url,
-        params: { optimization: { kind: "SEGOMOE", xlimits: [1,2,3]} }, as: :json, headers: @auth_headers
+        params: { optimization: { kind: "SEGOMOE", xlimits: [1, 2, 3] } }, as: :json, headers: @auth_headers
     end
     assert_response :bad_request
   end
@@ -62,23 +62,23 @@ class Api::V1::OptimizationControllerTest < ActionDispatch::IntegrationTest
     patch api_v1_optimization_url(@optim),
       params: { optimization: { x: [[0.1005624023, 0.1763338461],
                                 [0.843746558, 0.6787895599],
-                                [0.3861691997, 0.106018846]], 
-                             y: [[9.09955542], [6.38231049], [12.4677347]]}},
+                                [0.3861691997, 0.106018846]],
+                             y: [[9.09955542], [6.38231049], [12.4677347]] } },
       as: :json, headers: @auth_headers
     assert_response :success
     get api_v1_optimization_url(@optim), as: :json, headers: @auth_headers
     assert_response :success
     resp = JSON.parse(response.body)
-    status = resp['outputs']['status']
+    status = resp["outputs"]["status"]
     assert_equal 0, status
-    x = resp['outputs']['x_suggested']
+    x = resp["outputs"]["x_suggested"]
     assert_in_delta(0.85, x[0], 0.5)
     assert_in_delta(0.66, x[1], 0.5)
 
     get api_v1_optimization_url(@optim), as: :json, headers: @auth_headers
     assert_response :success
     resp = JSON.parse(response.body)
-    assert_in_delta(0.85, resp['outputs']['x_suggested'][0], 0.5)
-    assert_in_delta(0.66, resp['outputs']['x_suggested'][1], 0.5)
+    assert_in_delta(0.85, resp["outputs"]["x_suggested"][0], 0.5)
+    assert_in_delta(0.66, resp["outputs"]["x_suggested"][1], 0.5)
   end
 end

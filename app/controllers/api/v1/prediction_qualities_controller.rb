@@ -8,5 +8,4 @@ class Api::V1::PredictionQualitiesController < Api::ApiController
     quality = mm.qualification
     render json: quality, status: :ok
   end
-
 end

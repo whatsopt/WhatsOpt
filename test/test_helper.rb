@@ -1,5 +1,6 @@
 # frozen_string_literal: true
-require 'csv'
+
+require "csv"
 
 if ENV["WHATSOPT_COVERALLS"]
   require "coveralls"
@@ -31,20 +32,19 @@ class ActiveSupport::TestCase
   end
 
   def skip_if_segomoe_not_installed
-    skip "SEGOMOE not installed" unless SEGOMOE_INSTALLED    
+    skip "SEGOMOE not installed" unless SEGOMOE_INSTALLED
   end
 
   def csv2hash(filename)
     res = {}
-    CSV.foreach("test/fixtures/#{filename}", headers: true, col_sep: ';', converters: :float).with_index(1) do |row, ln|
+    CSV.foreach("test/fixtures/#{filename}", headers: true, col_sep: ";", converters: :float).with_index(1) do |row, ln|
       if ln == 1
-        row.headers.each {|h| res[h] = []}
+        row.headers.each { |h| res[h] = [] }
       end
-      row.each {|h, elt| res[h] << elt}
+      row.each { |h, elt| res[h] << elt }
     end
     res
   end
-
 end
 
 class ActionDispatch::IntegrationTest
@@ -62,4 +62,3 @@ class ActionDispatch::IntegrationTest
   #    Capybara.use_default_driver
   #  end
 end
-

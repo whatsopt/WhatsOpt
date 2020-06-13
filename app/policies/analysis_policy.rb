@@ -12,7 +12,7 @@ class AnalysisPolicy < ApplicationPolicy
           publicAnalyses = scope.where(public: true)
           authorizedAnalyses = scope.with_role([:owner, :member], user)
           analyses = (publicAnalyses + authorizedAnalyses).uniq
-          scope.where(id: analyses.map{|a| a[:id].to_i})
+          scope.where(id: analyses.map { |a| a[:id].to_i })
         end
       end
     end

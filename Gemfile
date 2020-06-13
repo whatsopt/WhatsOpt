@@ -51,8 +51,8 @@ group :development, :test do
   # Compute test coverage
   gem "coveralls", require: false
   # rswag
-  gem 'rspec-rails'
-  gem 'rswag-specs'
+  gem "rspec-rails"
+  gem "rswag-specs"
 end
 
 group :development do
@@ -79,7 +79,7 @@ group :staging, :production do
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
-gem "tzinfo-data"  #, platforms: [:mingw, :mswin, :x64_mingw, :jruby]
+gem "tzinfo-data"  # , platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 # required in dev but seems to be required also in production
 gem "highline"
 
@@ -128,4 +128,4 @@ gem "thrift", "0.11.0"
 gem "image_processing", "~> 1.2"
 
 # Document API
-gem 'rswag-api'
+gem "rswag-api"

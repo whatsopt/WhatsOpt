@@ -29,5 +29,4 @@ class PythonUtilsTest < ActiveSupport::TestCase
     assert_equal "a__BACKQUOTE__b", sanitize_pystring("a`b")
     assert_equal "a__EXCLAMATION__b", sanitize_pystring("a!b")
   end
-
 end
