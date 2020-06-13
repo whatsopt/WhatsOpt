@@ -25,7 +25,7 @@ namespace :whatsopt do
 
     desc "Run variables integrity/consistency check"
     task variables: :environment do
-      vars_to_delete = []
+      # vars_to_delete = []
       vars_to = Variable.left_outer_joins(:incoming_connection).where(connections: { id: nil })
       vars_from = Variable.left_outer_joins(:outgoing_connections).where(connections: { id: nil })
       vars = vars_to & vars_from

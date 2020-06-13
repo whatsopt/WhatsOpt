@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module WhatsOpt::Version
   VERSION = File.read(File.expand_path("VERSION", Rails.root)).chomp
 

@@ -32,7 +32,7 @@ namespace :whatsopt do
     end
 
     desc "Set operation as optionizable"
-    task set_optionizable: :environment do |ope|
+    task set_optionizable: :environment do
       Operation.all.each do |ope|
         ope.options.each do |opt|
           puts "Set #{ope.name}' for option '#{opt.name}' as optionizable"

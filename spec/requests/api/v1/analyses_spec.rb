@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "swagger_helper"
 
 describe "analyses", type: :request do
@@ -75,8 +77,4 @@ describe "analyses", type: :request do
       end
     end
   end
-
-
-
-  # end
 end

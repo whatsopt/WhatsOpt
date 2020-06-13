@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "matrix"
 require "whatsopt_services_types"
 

@@ -413,13 +413,13 @@ class Analysis < ApplicationRecord
   def create_copy!(parent = nil, super_disc = nil)
     mda_copy = nil
     Analysis.transaction do  # metamodel and subanalysis are saved, rollback if problem
-      mda_copy = Analysis.create!(name: name, public: public) do |mda_copy|
-        mda_copy.parent_id = parent.id if parent
-        mda_copy.openmdao_impl = self.openmdao_impl.build_copy if self.openmdao_impl
+      mda_copy = Analysis.create!(name: name, public: public) do |copy|
+        copy.parent_id = parent.id if parent
+        copy.openmdao_impl = self.openmdao_impl.build_copy if self.openmdao_impl
       end
       mda_copy.disciplines.first.delete  # remove default driver
       self.disciplines.each do |disc|
-        disc_copy = disc.create_copy!(mda_copy)
+        disc.create_copy!(mda_copy)
       end
       mda_copy.save!
       if super_disc

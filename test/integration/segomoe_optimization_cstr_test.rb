@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "integration/optimization_test_base"
 
 class SegomoeOptimizationCstrTest < OptimizationTestBase

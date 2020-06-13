@@ -32,7 +32,7 @@ class MetaModel < ApplicationRecord
   end
 
   def self.get_name_from_metamodel_kind(kind)
-    library, algo = get_infos_from_metamodel_kind(kind)
+    _library, algo = get_infos_from_metamodel_kind(kind)
     "Metamodel #{algo}"
   end
 
@@ -79,7 +79,7 @@ class MetaModel < ApplicationRecord
     end
     self.surrogates.each do |surr|
       var = discipline.variables.where(name: surr.variable.name).take if discipline
-      surr_copy = surr.build_copy(mm_copy, var)
+      surr.build_copy(mm_copy, var)
     end
     self.default_options.each do |opt|
       mm_copy.default_options << opt.build_copy
