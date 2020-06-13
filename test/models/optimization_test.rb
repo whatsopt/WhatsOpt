@@ -10,20 +10,19 @@ class OperationTest < ActiveSupport::TestCase
 
   test "should reject bad optimizer kind" do
     assert_raises Optimization::ConfigurationInvalid do
-      optim = Optimization.new(kind: "TOTO", xlimits: [[0, 1], [0, 1]])
-      p optim
+      Optimization.new(kind: "TOTO", xlimits: [[0, 1], [0, 1]])
     end
   end
 
   test "should reject bad xlimits" do
     assert_raises Optimization::ConfigurationInvalid do
-      optim = Optimization.new(kind: "SEGOMOE", xlimits: [])
+      Optimization.new(kind: "SEGOMOE", xlimits: [])
     end
   end
 
   test "should reject without xlimits" do
     assert_raises Optimization::ConfigurationInvalid do
-      optim = Optimization.new(kind: "SEGOMOE")
+      Optimization.new(kind: "SEGOMOE")
     end
   end
 end

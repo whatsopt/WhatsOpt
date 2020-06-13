@@ -8,7 +8,7 @@ inherit_mode:
 
 AllCops:
   Exclude:
-    - 'app/lib/whats_opt/surrogate_server/*.rb'
+    - 'app/lib/whats_opt/services/*.rb'
 
 Layout/IndentationConsistency:
   EnforcedStyle: indented_internal_methods

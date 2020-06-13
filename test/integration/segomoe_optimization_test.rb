@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "integration/optimization_test_base"
 
 class SegomoeOptimization < OptimizationTestBase
@@ -28,7 +30,7 @@ class SegomoeOptimization < OptimizationTestBase
     best = self.optimize(sixhump, [], 30, xlimits, [], doe)
 
     miny = best[0]
-    minx = doe[best[1]]
+    # minx = doe[best[1]]
     assert_in_delta(-1.013, miny, 0.1)
     # assert_in_delta(0, minx[0], 0.5)
     # assert_in_delta(0, minx[1], 0.5)
