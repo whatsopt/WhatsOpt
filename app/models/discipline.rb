@@ -13,7 +13,7 @@ class Discipline < ApplicationRecord
   self.inheritance_column = :disable_inheritance
 
   after_initialize :set_defaults, unless: :persisted?
-  
+
   before_destroy :_check_allowed_destruction
   before_destroy :_destroy_connections
   after_destroy :_refresh_analysis_connections
@@ -41,7 +41,7 @@ class Discipline < ApplicationRecord
   scope :driver, -> { where(type: WhatsOpt::Discipline::NULL_DRIVER) }
   scope :nodes, -> { where.not(type: WhatsOpt::Discipline::NULL_DRIVER) }
   scope :by_position, -> { order(position: :asc) }
-  scope :of_analysis, -> (analysis_id) { where( analysis_id: analysis_id) }
+  scope :of_analysis, -> (analysis_id) { where(analysis_id: analysis_id) }
 
   def input_variables
     variables.ins
@@ -154,7 +154,7 @@ class Discipline < ApplicationRecord
     meta_model&.qualification.nil? ? [] : meta_model.qualification
   end
 
-  def prepare_attributes_for_import!(analysis_variables, analysis_driver, suffix='_dup')
+  def prepare_attributes_for_import!(analysis_variables, analysis_driver, suffix = "_dup")
     # remove driver connections as new ones from new disc will take place
     analysis_driver.variables.outs.each do |driver_var|
       if self.variables.outs.where(name: driver_var.name).take
@@ -176,10 +176,10 @@ class Discipline < ApplicationRecord
 
     duplicates = self.variables.where(io_mode: WhatsOpt::Variable::OUT).where(name: outvars)
     vardupattrs = ActiveModelSerializers::SerializableResource.new(duplicates,
-                                                                   each_serializer: VariableSerializer).as_json 
+                                                                   each_serializer: VariableSerializer).as_json
     vardupattrs.each do |varattr|
       # p "varattr = #{varattr[:name]}"
-      while (outvars.include?(varattr[:name])) do
+      while outvars.include?(varattr[:name]) do
         varattr[:name] << suffix
       end
     end
@@ -190,7 +190,7 @@ class Discipline < ApplicationRecord
     attrs = {
       name: self.name,
       type: self.type,
-      variables_attributes: varattrs  #.map {|att| att.except(:parameter_attributes, :scaling)}
+      variables_attributes: varattrs  # .map {|att| att.except(:parameter_attributes, :scaling)}
     }
   end
 
@@ -213,9 +213,9 @@ class Discipline < ApplicationRecord
     end
 
     def _check_allowed_destruction
-      if is_metamodel_prototype? and !self.analysis.meta_models.blank?
+      if is_metamodel_prototype? && !self.analysis.meta_models.blank?
         mms = self.analysis.meta_models
-        msg = mms.map {|mm| "##{mm.analysis.id} #{mm.analysis.name}"}.join(', ')
+        msg = mms.map { |mm| "##{mm.analysis.id} #{mm.analysis.name}" }.join(", ")
         raise ForbiddenRemovalError.new("Can not delete discipline metamodel '#{self.name}' as it is a prototype for metamodel in use in #{msg}")
       end
     end

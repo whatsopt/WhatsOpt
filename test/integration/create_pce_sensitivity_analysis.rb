@@ -1,7 +1,6 @@
-require 'test_helper'
+require "test_helper"
 
 class CreatePCESensitivityAnalysis < ActionDispatch::IntegrationTest
-
   setup do
     @user1 = users(:user1)
     @auth_headers = { "Authorization" => "Token " + TEST_API_KEY }
@@ -20,20 +19,20 @@ class CreatePCESensitivityAnalysis < ActionDispatch::IntegrationTest
         varname = $1
         coord_index = $2
       end
-      {varname: varname, coord_index: coord_index, values: values}
+      { varname: varname, coord_index: coord_index, values: values }
     end
 
     post "/api/v1/operations", params: {
-      operation: {'name': "DOE LHS",
+      operation: { 'name': "DOE LHS",
                   'driver': "smt_doe_lhs",
                   'host': "localhost",
                   'cases': cases,
-                  'success': success},
+                  'success': success },
       outvar_count_hint: 3
       },
       as: :json, headers: @auth_headers
     assert_response :success
-    
+
     doe_mda = Analysis.last
 
     ope = Operation.last
@@ -42,7 +41,7 @@ class CreatePCESensitivityAnalysis < ActionDispatch::IntegrationTest
     assert_equal Operation::CAT_DOE, ope.category
 
     # Create an OpenTURNS PCE metamodel from previous DOE
-    post "/api/v1/operations/#{ope.id}/meta_models", params: { meta_model: {kind: Surrogate::OPENTURNS_PCE }},
+    post "/api/v1/operations/#{ope.id}/meta_models", params: { meta_model: { kind: Surrogate::OPENTURNS_PCE } },
     as: :json, headers: @auth_headers
     assert_response :success
 
@@ -69,12 +68,11 @@ class CreatePCESensitivityAnalysis < ActionDispatch::IntegrationTest
     delete "/operations/#{ope_mm.id}"
     assert_redirected_to mdas_url
 
-    assert_difference('Analysis.count', -1) do
-      assert_difference('Operation.count', -3) do
+    assert_difference("Analysis.count", -1) do
+      assert_difference("Operation.count", -3) do
         delete "/analyses/#{ope_mm.analysis.id}"
       end
     end
     assert_redirected_to mdas_url
   end
-
 end

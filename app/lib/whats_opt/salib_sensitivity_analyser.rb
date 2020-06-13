@@ -7,7 +7,7 @@ module WhatsOpt
     def initialize(ope, kind: :morris)
       super(ope.analysis)
       @kind = kind
-      @sobol = (kind == :sobol) 
+      @sobol = (kind == :sobol)
       @input_varcases = ope.input_cases
       @output_varcases = ope.output_cases
       Rails.logger.info @input_varcases.map(&:var_label)

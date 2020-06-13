@@ -14,7 +14,7 @@ module WhatsOpt
         @options[k] = v.to_s
         if ["true", "false"].include?(@options[k])
           @options[k] = @options[k].capitalize  # Python boolean
-        elsif @options[k] =~ /\b[a-zA-Z]/ # wrap string
+        elsif /\b[a-zA-Z]/.match?(@options[k]) # wrap string
           @options[k] = "'#{@options[k]}'"
         end
       end
@@ -126,9 +126,9 @@ module WhatsOpt
     end
 
     def create_driver
-      if @algoname =~ /doe/
+      if /doe/.match?(@algoname)
         OpenmdaoDoeDriver.new(@algoname, @dict[@algoname])
-      elsif @algoname =~ /optimizer/
+      elsif /optimizer/.match?(@algoname)
         OpenmdaoOptimizerDriver.new(@algoname, @dict[@algoname])
       else
         OpenmdaoRunOnceDriver.new(@algoname, @dict[@algoname])

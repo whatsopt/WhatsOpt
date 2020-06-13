@@ -40,14 +40,14 @@ class SurrogateProxyTest < ActiveSupport::TestCase
     xt = [[0.0], [1.0], [2.0], [3.0], [4.0]]
     yt = [0.0, 1.0, 1.5, 0.5, 1.0]
     surr_kind = WhatsOpt::Services::SurrogateKind::OPENTURNS_PCE
-    @surr_proxy.create_surrogate(surr_kind, xt, yt, {pce_degree: "3"}, 
-                                 [{name: "Uniform", kwargs: {a: "1.9", b: "2.1"}}])
+    @surr_proxy.create_surrogate(surr_kind, xt, yt, { pce_degree: "3" },
+                                 [{ name: "Uniform", kwargs: { a: "1.9", b: "2.1" } }])
     sobols = @surr_proxy.get_sobol_pce_sensitivity_analysis
     assert_equal([1.0], sobols.S1)
     assert_equal([0.0], sobols.ST)
     @surr_proxy.destroy_surrogate
   end
-  
+
   test "should qualify surrogate" do
     skip_if_parallel
     xt = [[0.0], [1.0], [2.0], [3.0], [4.0]]

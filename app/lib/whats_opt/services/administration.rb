@@ -4,8 +4,8 @@
 # DO NOT EDIT UNLESS YOU ARE SURE THAT YOU KNOW WHAT YOU ARE DOING
 #
 
-require 'thrift'
-require 'whatsopt_services_types'
+require "thrift"
+require "whatsopt_services_types"
 
 module WhatsOpt
   module Services
@@ -13,26 +13,26 @@ module WhatsOpt
       class Client
         include ::Thrift::Client
 
-        def ping()
+        def ping
           send_ping()
           recv_ping()
         end
 
-        def send_ping()
-          send_message('ping', Ping_args)
+        def send_ping
+          send_message("ping", Ping_args)
         end
 
-        def recv_ping()
+        def recv_ping
           result = receive_message(Ping_result)
-          return
+          nil
         end
 
-        def shutdown()
+        def shutdown
           send_shutdown()
         end
 
-        def send_shutdown()
-          send_oneway_message('shutdown', Shutdown_args)
+        def send_shutdown
+          send_oneway_message("shutdown", Shutdown_args)
         end
       end
 
@@ -43,15 +43,14 @@ module WhatsOpt
           args = read_args(iprot, Ping_args)
           result = Ping_result.new()
           @handler.ping()
-          write_result(result, oprot, 'ping', seqid)
+          write_result(result, oprot, "ping", seqid)
         end
 
         def process_shutdown(seqid, iprot, oprot)
           args = read_args(iprot, Shutdown_args)
           @handler.shutdown()
-          return
+          nil
         end
-
       end
 
       # HELPER FUNCTIONS AND STRUCTURES
@@ -115,8 +114,6 @@ module WhatsOpt
 
         ::Thrift::Struct.generate_accessors self
       end
-
     end
-
   end
 end

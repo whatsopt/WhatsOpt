@@ -13,11 +13,11 @@ class VersionTest < ActiveSupport::TestCase
     assert_raise WopVersionMismatchException do
       check_wop_minimal_version("1.3.6")
     end
-  end 
+  end
 
   test "should fail with release candidate" do
     assert_raise WopVersionMismatchException do
       check_wop_minimal_version("1.2.0rc2")
     end
-  end 
+  end
 end

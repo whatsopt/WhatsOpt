@@ -7,7 +7,7 @@ class Option < ApplicationRecord
   before_save :sanitize
 
   validates :name, presence: true
-  validates :value, presence: true 
+  validates :value, presence: true
 
   def build_copy
     self.dup

@@ -56,6 +56,6 @@ class MetaModelTest < ActiveSupport::TestCase
 
   test "should have uncertainty on inputs" do
     mm = meta_models(:singleton_mm_metamodel)
-    assert_equal [{:name=>"Normal", :kwargs=>{"sigma"=>"2.5", "mu"=>"1.0"}}], mm.training_input_uncertainties
+    assert_equal [{ name: "Normal", kwargs: { "sigma"=>"2.5", "mu"=>"1.0" } }], mm.training_input_uncertainties
   end
 end

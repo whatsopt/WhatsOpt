@@ -56,7 +56,7 @@ class Api::V1::AnalysisDisciplinesControllerTest < ActionDispatch::IntegrationTe
   end
 
   test "should delete and recreate analysis discipline without duplicating variables" do
-    assert_difference("Connection.count", 0) do 
+    assert_difference("Connection.count", 0) do
       assert_difference("Variable.count", 0) do
         # conns = Connection.of_analysis(@outermda).count
         # conns.each do |conn|

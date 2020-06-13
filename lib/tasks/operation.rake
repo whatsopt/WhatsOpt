@@ -21,11 +21,11 @@ namespace :whatsopt do
     task set_timestamps: :environment do
       Operation.all.each do |ope|
         timestamp = if ope.job && !ope.job.started_at.blank?
-          ope.job.started_at 
+          ope.job.started_at
         else
           ope.analysis.created_at
         end
-        puts "Set '#{ope.name}' at #{timestamp}" 
+        puts "Set '#{ope.name}' at #{timestamp}"
         ope.update_column(:created_at, timestamp)
         ope.update_column(:updated_at, timestamp)
       end
@@ -35,12 +35,11 @@ namespace :whatsopt do
     task set_optionizable: :environment do |ope|
       Operation.all.each do |ope|
         ope.options.each do |opt|
-          puts "Set #{ope.name}' for option '#{opt.name}' as optionizable" 
+          puts "Set #{ope.name}' for option '#{opt.name}' as optionizable"
           opt.update_column(:optionizable_id, opt.operation_id)
           opt.update_column(:optionizable_type, "Operation")
         end
       end
     end
-
   end
 end

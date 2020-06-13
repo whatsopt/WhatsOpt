@@ -61,7 +61,7 @@ class AnalysisTest < ActiveSupport::TestCase
   test "should get XDSM json" do
     json = @mda.to_xdsm_json
     xdsm = JSON.parse(json)
-    assert_equal ["root"], xdsm.keys() 
+    assert_equal ["root"], xdsm.keys()
   end
 
   test "should get XDSM json of nested analysis" do
@@ -193,5 +193,4 @@ class AnalysisTest < ActiveSupport::TestCase
       mda.destroy
     end
   end
-
 end

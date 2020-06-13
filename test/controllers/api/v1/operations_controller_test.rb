@@ -174,7 +174,7 @@ class Api::V1::OperationsControllerTest < ActionDispatch::IntegrationTest
     output = [0.97, 0.71, 2.39, 0.97, 2.30, 2.39,
       1.87, 2.40, 0.87, 2.15, 1.71, 1.54,
       2.15, 2.17, 1.54, 2.20, 1.87, 1.0]
-    assert_difference('Operation.count', 2) do
+    assert_difference("Operation.count", 2) do
       post api_v1_operations_url(),
         params: {
           operation: { name: "DOE morris",
@@ -188,26 +188,24 @@ class Api::V1::OperationsControllerTest < ActionDispatch::IntegrationTest
           outvar_count_hint: 1
         },
         as: :json, headers: @auth_headers
-      assert_response :success  
+      assert_response :success
       derived = Operation.last
       base = Operation.second_to_last
-      assert_equal "salib_doe_morris", base.driver 
+      assert_equal "salib_doe_morris", base.driver
       assert_equal "salib_sensitivity_morris", derived.driver
       assert_equal derived, base.derived_operations.first
-      assert derived.success? 
+      assert derived.success?
 
       get api_v1_operation_sensitivity_analysis_url(derived), as: :json, headers: @auth_headers
       assert_response :success
     end
-
   end
 
   test "should prevent removal when removing a base operation" do
     doe = operations(:morris_doe)
-    assert_difference('Operation.count', 0) do
+    assert_difference("Operation.count", 0) do
       delete api_v1_operation_url(doe), as: :json, headers: @auth_headers
       assert_response :forbidden
     end
   end
-  
 end

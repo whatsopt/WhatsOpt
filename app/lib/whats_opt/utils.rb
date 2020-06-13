@@ -5,7 +5,7 @@ require "yaml"
 module WhatsOpt
   module Utils
     def shape_of(str)
-      if str =~ /\[(.*)\]/
+      if /\[(.*)\]/.match?(str)
         ary = YAML.load(str)
         "(#{ary.size},#{_dim(ary.first)})"
       else

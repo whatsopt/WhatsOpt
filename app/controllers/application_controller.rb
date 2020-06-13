@@ -27,7 +27,7 @@ class ApplicationController < ActionController::Base
     end
 
     def api_docs_controller?
-      controller_name == 'api_docs'
+      controller_name == "api_docs"
     end
 
     def no_authorization_verify?

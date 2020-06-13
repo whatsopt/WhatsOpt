@@ -4,7 +4,6 @@ require "whats_opt/discipline"
 require "whats_opt/openmdao_module"
 
 class Analysis < ApplicationRecord
-
   include WhatsOpt::OpenmdaoModule
   include Ownable
   resourcify
@@ -29,7 +28,7 @@ class Analysis < ApplicationRecord
 
   has_one :openmdao_impl, class_name: "OpenmdaoAnalysisImpl", dependent: :destroy
 
-  scope :mine, ->{ with_role(:owner, current_user) }
+  scope :mine, -> { with_role(:owner, current_user) }
 
   after_save :refresh_connections, unless: Proc.new { self.disciplines.count < 2 }
   after_save :ensure_ancestry_for_sub_analyses
@@ -183,9 +182,9 @@ class Analysis < ApplicationRecord
     @remote ||= all_plain_disciplines.detect { |d| !d.local?(localhost) }
   end
 
-  def set_all_parameters_as_decision_variables(role=WhatsOpt::Variable::DESIGN_VAR_ROLE)
+  def set_all_parameters_as_decision_variables(role = WhatsOpt::Variable::DESIGN_VAR_ROLE)
     conns = Connection.of_analysis(self).with_role(WhatsOpt::Variable::PARAMETER_ROLE)
-    conns.map { |c| 
+    conns.map { |c|
       c.update_connections!(role: role)
     }
   end
@@ -224,19 +223,19 @@ class Analysis < ApplicationRecord
     to_xdsm.to_json
   end
 
-  def to_xdsm(name="root")
+  def to_xdsm(name = "root")
     xdsm = Hash[name => {
-        nodes: build_nodes.map.with_index{|n, i| 
+        nodes: build_nodes.map.with_index { |n, i|
           node = {
-            id: n[:id], 
+            id: n[:id],
             name: i==0 ? "_U_" : n[:name],
             type: i==0 ? "driver" : n[:type]
           }
-          node[:type] = 'function' if node[:type] == 'analysis'  # XDSM v2
-          node[:subxdsm] = n[:link][:name] if n[:type]=='group' && n[:link]
+          node[:type] = "function" if node[:type] == "analysis"  # XDSM v2
+          node[:subxdsm] = n[:link][:name] if n[:type]=="group" && n[:link]
           node
         },
-        edges: build_edges.map{|e| 
+        edges: build_edges.map { |e|
           { from: e[:from], to: e[:to], name: e[:name] }
         }
       }
@@ -253,9 +252,9 @@ class Analysis < ApplicationRecord
       node = ActiveModelSerializers::SerializableResource.new(d).as_json
       # TODO: if XDSM v2 accepted migrate database to take into account XDSM v2 new types
       # mda -> group
-      node[:type] = 'group' if node[:type] == 'mda'
+      node[:type] = "group" if node[:type] == "mda"
       # not required as function and analysis are considered synonymous in XDSMjs for XDSM v2
-      # node[:type] = 'function' if node[:type] == 'analysis' 
+      # node[:type] = 'function' if node[:type] == 'analysis'
       node[:id] = node[:id].to_s
       node[:link] = { id: parent.id, name: parent.name } if d.is_driver? && has_parent?
       node[:link] = { id: d.sub_analysis.id, name: d.sub_analysis.name } if d.has_sub_analysis?
@@ -334,14 +333,14 @@ class Analysis < ApplicationRecord
       if driver && vins.empty?  # connect output to driver if driver still there (analysis destroy case)
         vattrs = vout.attributes.except("id", "discipline_id")
         vattrs[:io_mode] = WhatsOpt::Variable::IN
-        newvar = driver.variables.where(name: vattrs["name"], io_mode: WhatsOpt::Variable::OUT).first 
+        newvar = driver.variables.where(name: vattrs["name"], io_mode: WhatsOpt::Variable::OUT).first
         if newvar  # can occur in edge case with nested analysis while adding sub_analysis step by step
           Rails.logger.warn "Driver variable #{newvar.name} has changed io_mode OUT -> IN"
         end
         newvar = driver.variables.where(name: vattrs["name"]).first_or_create!
         newvar.update!(vattrs)
         # p "2 Connect #{vout.name} between #{vout.discipline.name} #{newvar.discipline.name}" unless Connection.where(from_id: vout.id, to_id: newvar.id).first
-        Connection.where(from_id: vout.id, to_id: newvar.id).first_or_create!(role: WhatsOpt::Variable::RESPONSE_ROLE) 
+        Connection.where(from_id: vout.id, to_id: newvar.id).first_or_create!(role: WhatsOpt::Variable::RESPONSE_ROLE)
       end
     end
 
@@ -386,7 +385,7 @@ class Analysis < ApplicationRecord
 
   def import!(fromAnalysis, discipline_ids)
     # do not import from self
-    if fromAnalysis.id != id 
+    if fromAnalysis.id != id
       Analysis.transaction do
         discipline_ids.each do |discId|
           disc = Discipline.find(discId)
@@ -394,7 +393,7 @@ class Analysis < ApplicationRecord
           # check consistency
           if disc && fromAnalysis.disciplines.where(id: discId)
             discattrs = disc.prepare_attributes_for_import!(variables, driver)
-            attrs = {disciplines_attributes: [discattrs]}
+            attrs = { disciplines_attributes: [discattrs] }
             # p "ATTRS", attrs
             self.update!(attrs)
             newDisc = self.disciplines.reload.last
@@ -411,7 +410,7 @@ class Analysis < ApplicationRecord
     end
   end
 
-  def create_copy!(parent=nil, super_disc=nil)
+  def create_copy!(parent = nil, super_disc = nil)
     mda_copy = nil
     Analysis.transaction do  # metamodel and subanalysis are saved, rollback if problem
       mda_copy = Analysis.create!(name: name, public: public) do |mda_copy|
@@ -424,7 +423,7 @@ class Analysis < ApplicationRecord
       end
       mda_copy.save!
       if super_disc
-        super_disc.build_analysis_discipline(analysis: mda_copy) 
+        super_disc.build_analysis_discipline(analysis: mda_copy)
       end
     end
     mda_copy
@@ -539,7 +538,7 @@ class Analysis < ApplicationRecord
     )
   end
 
-  def self.build_metamodel_analysis(ope, varnames=nil)
+  def self.build_metamodel_analysis(ope, varnames = nil)
     name = "#{ope.analysis.name.camelize}MetaModel"
     metamodel_varattrs = ope.build_metamodel_varattrs(varnames)
     driver_vars = metamodel_varattrs.map do |v|
@@ -617,7 +616,6 @@ class Analysis < ApplicationRecord
   end
 
   private
-
     def _ensure_driver_presence
       if self.disciplines.empty?
         disciplines.create!(name: WhatsOpt::Discipline::NULL_DRIVER_NAME, position: 0)
@@ -627,5 +625,4 @@ class Analysis < ApplicationRecord
     def _ensure_openmdao_impl_presence
       self.openmdao_impl ||= OpenmdaoAnalysisImpl.new
     end
-
 end

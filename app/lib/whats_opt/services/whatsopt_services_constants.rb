@@ -4,8 +4,8 @@
 # DO NOT EDIT UNLESS YOU ARE SURE THAT YOU KNOW WHAT YOU ARE DOING
 #
 
-require 'thrift'
-require 'whatsopt_services_types'
+require "thrift"
+require "whatsopt_services_types"
 
 module WhatsOpt
   module Services

@@ -10,9 +10,9 @@ class Surrogate < ApplicationRecord
   SMT_QP = "SMT_QP"
   OPENTURNS_PCE = "OPENTURNS_PCE"
 
-  SURROGATES = [SMT_KRIGING, SMT_KPLS, SMT_KPLSK, 
+  SURROGATES = [SMT_KRIGING, SMT_KPLS, SMT_KPLSK,
                 SMT_LS, SMT_QP, OPENTURNS_PCE]
-  
+
   SURROGATE_MAP = {
     "SMT_KRIGING" => WhatsOpt::Services::SurrogateKind::SMT_KRIGING,
     "SMT_KPLS" => WhatsOpt::Services::SurrogateKind::SMT_KPLS,
@@ -32,9 +32,9 @@ class Surrogate < ApplicationRecord
 
   belongs_to :meta_model
   belongs_to :variable
-  
+
   has_many :options, as: :optionizable, dependent: :destroy
-  accepts_nested_attributes_for :options, reject_if: proc { |attr| attr["name"].blank? }, allow_destroy: true 
+  accepts_nested_attributes_for :options, reject_if: proc { |attr| attr["name"].blank? }, allow_destroy: true
 
   validates :meta_model, presence: true
   validates :variable, presence: true
@@ -73,7 +73,7 @@ class Surrogate < ApplicationRecord
         Rails.logger.warn "Surrogate kind '#{kind}' unkonwn: use SMT Kriging as default"
         surr_kind = SURROGATE_MAP[SMT_KRIGING]
       end
-      opts = options.inject({}){|acc, o| acc.update({o.name => o.value})}
+      opts = options.inject({}) { |acc, o| acc.update({ o.name => o.value }) }
       uncs = meta_model.training_input_uncertainties
       proxy.create_surrogate(surr_kind, xt, yt, opts, uncs)
       unless indices.to_a.empty?
@@ -118,10 +118,10 @@ class Surrogate < ApplicationRecord
       infos = proxy.get_sobol_pce_sensitivity_analysis
       {
         "#{variable.name}" => {
-          "S1" => infos.S1, 
-          "ST" => infos.ST, 
+          "S1" => infos.S1,
+          "ST" => infos.ST,
           "parameter_names" => self.meta_model.training_input_names
-        } 
+        }
       }
     else
       Rails.logger.warn "Can not get sensitivity analysis as surrogate"\
@@ -138,7 +138,7 @@ class Surrogate < ApplicationRecord
     return xt, xv
   end
 
-  def build_copy(mm=nil, var=nil)
+  def build_copy(mm = nil, var = nil)
     copy = self.dup
     copy.quality = nil
     copy.status = STATUS_CREATED
@@ -164,5 +164,4 @@ class Surrogate < ApplicationRecord
       update(status: STATUS_DELETED)
       proxy.destroy_surrogate
     end
-
 end

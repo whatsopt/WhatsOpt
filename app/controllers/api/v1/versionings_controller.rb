@@ -16,5 +16,4 @@ class Api::V1::VersioningsController < Api::ApiController
       @version[:whatsopt] = whatsopt_version
       @version[:wop] = wop_recommended_version
     end
-
 end

@@ -3,7 +3,6 @@
 require "test_helper"
 
 class ParameterTest < ActiveSupport::TestCase
-
   setup do
     @var = variables(:varx1_out)
   end
@@ -22,5 +21,4 @@ class ParameterTest < ActiveSupport::TestCase
     p = Parameter.new(variable: @var, init: "nan")
     assert p.valid?
   end
-
 end

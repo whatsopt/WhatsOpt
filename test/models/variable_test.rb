@@ -78,7 +78,7 @@ class VariableTest < ActiveSupport::TestCase
     assert_difference("Variable.count", -2) do
       varin.destroy!
     end
-    refute Variable.of_analysis(analyses(:cicav)).find_by_name(varin.name)
+    assert_not Variable.of_analysis(analyses(:cicav)).find_by_name(varin.name)
   end
 
   test "should delete and delete connected if only connected to driver" do
@@ -86,6 +86,6 @@ class VariableTest < ActiveSupport::TestCase
     assert_difference("Variable.count", -2) do
       var.destroy!
     end
-    refute Variable.of_analysis(analyses(:cicav)).find_by_name(var.name)
+    assert_not Variable.of_analysis(analyses(:cicav)).find_by_name(var.name)
   end
 end

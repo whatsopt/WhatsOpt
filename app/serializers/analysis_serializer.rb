@@ -3,7 +3,7 @@
 class AnalysisSerializer < ActiveModel::Serializer
   attributes :id, :name, :created_at, :owner_email, :notes
 
-  def name 
+  def name
     object.name
   end
 

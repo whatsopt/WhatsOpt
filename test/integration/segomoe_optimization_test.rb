@@ -1,7 +1,6 @@
-require 'integration/optimization_test_base'
+require "integration/optimization_test_base"
 
 class SegomoeOptimization < OptimizationTestBase
-
   test "optimize sixhump" do
     skip_if_parallel
     skip_if_segomoe_not_installed
@@ -12,8 +11,8 @@ class SegomoeOptimization < OptimizationTestBase
       Function Six-Hump Camel Back
       2 global optimum value =-1.0316 located at (0.089842, -0.712656) and  (-0.089842, 0.712656)
       https://www.sfu.ca/~ssurjano/camel6.html
-  
-      """ 
+
+      """
       x1 = x[0]
       x2 = x[1]
       4*x1**2-2.1*x1**4+1.0/3.0*x1**6+x1*x2-4*x2**2+4*x2**4
@@ -42,9 +41,9 @@ class SegomoeOptimization < OptimizationTestBase
     ackley2d = Proc.new do |x|
       """
       Fonction Ackley 2D:
-      1 global optimum value = 0 located at (0,0) 
+      1 global optimum value = 0 located at (0,0)
       https://www.sfu.ca/~ssurjano/ackley.html
-      """ 
+      """
       x1 = x[0]
       x2 = x[1]
       part_1 = -0.2*Math.sqrt(0.5*(x1*x1 + x2*x2))
@@ -67,5 +66,4 @@ class SegomoeOptimization < OptimizationTestBase
     assert_in_delta(0, minx[0], 0.5)
     assert_in_delta(0, minx[1], 0.5)
   end
-
 end

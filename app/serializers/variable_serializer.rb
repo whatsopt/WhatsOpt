@@ -12,5 +12,4 @@ class VariableSerializer < ActiveModel::Serializer
     hash.each { |key, value| hash.delete(key) if value.nil? }  # avoid nil values in hash
     hash
   end
-
 end

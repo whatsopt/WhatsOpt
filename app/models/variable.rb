@@ -55,7 +55,7 @@ class Variable < ApplicationRecord
   scope :disconnected, -> { where.not(id: joins(:incoming_connection) + joins(:outgoing_connections)) }
 
   scope :of_analysis, ->(analysis_id) { joins(discipline: :analysis).where(analyses: { id: analysis_id }) }
-  scope :of_discipline, ->(discipline_id) { where(discipline: discipline_id ) }
+  scope :of_discipline, ->(discipline_id) { where(discipline: discipline_id) }
   scope :with_role, ->(role) { joins(:outgoing_connections).where(connections: { role: role }).uniq }
 
   after_initialize :set_defaults, unless: :persisted?
@@ -123,7 +123,7 @@ class Variable < ApplicationRecord
     scaling&.res_ref.blank? ? super : scaling.res_ref
   end
 
-  def distribution_py(coord_index=-1)
+  def distribution_py(coord_index = -1)
     idx = [coord_index, 0].max
     if distributions
       "#{distributions[idx].kind}(#{distributions[idx].options.map(&:value).join(", ")})"
@@ -162,6 +162,6 @@ class Variable < ApplicationRecord
     def mark_dependents_for_removal
       parameter.mark_for_destruction if parameter&.nullified?
       scaling.mark_for_destruction if scaling&.nullified?
-      distributions.map{|dist| dist.mark_for_destruction} if distributions.empty?
+      distributions.map { |dist| dist.mark_for_destruction } if distributions.empty?
     end
 end

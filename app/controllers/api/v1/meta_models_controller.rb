@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class Api::V1::MetaModelsController < Api::ApiController
-
   before_action :set_meta_model, only: [:show, :update, :destroy]
 
   def index
@@ -53,7 +52,7 @@ class Api::V1::MetaModelsController < Api::ApiController
   rescue MetaModel::BadKindError => err
     json_response({ message: "Bad metamodel kind: #{err.message}" }, :bad_request)
   end
-  
+
   # PATCH /api/v1/meta_models/1
   def update
     format = meta_model_params[:format] || MetaModel::MATRIX_FORMAT  # format default to Matrix
@@ -75,11 +74,10 @@ class Api::V1::MetaModelsController < Api::ApiController
     end
 
     def meta_model_params
-      params.require(:meta_model).permit(:kind, :format, 
-                                         options: [ :name, :value ], 
+      params.require(:meta_model).permit(:kind, :format,
+                                         options: [ :name, :value ],
                                          variables: [ inputs: [], outputs: [] ],
-                                         x: [], 
+                                         x: [],
                                         )
     end
-
 end
