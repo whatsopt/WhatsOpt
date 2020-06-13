@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "swagger_helper"
 
 SEGOMOE_INSTALLED = system("python << EOF\nimport segomoe\nEOF")
@@ -178,9 +180,7 @@ describe "optimizations", type: :request do
           required: [ :inputs, :outputs ]
 
         let(:Authorization) { "Token FriendlyApiKey" }
-        let(:id) {
-          id = optimizations(:optim_ackley2d).id
-        }
+        let(:id) { optimizations(:optim_ackley2d).id }
 
         xit unless SEGOMOE_INSTALLED
         before do |example|

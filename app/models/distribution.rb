@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Distribution < ApplicationRecord
   DISTRIBUTIONS = %w(Normal Beta Gamma Uniform)
 

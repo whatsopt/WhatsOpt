@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "test_helper"
 
 class CreateAndImportMetamodel < ActionDispatch::IntegrationTest
@@ -33,7 +35,7 @@ class CreateAndImportMetamodel < ActionDispatch::IntegrationTest
       as: :json, headers: @auth_headers
     assert_response :success
 
-    doe_mda = Analysis.last
+    # doe_mda = Analysis.last
     ope = Operation.last
 
     assert_equal "DOE LHS", ope.name

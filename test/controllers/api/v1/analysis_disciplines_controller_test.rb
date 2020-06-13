@@ -62,7 +62,7 @@ class Api::V1::AnalysisDisciplinesControllerTest < ActionDispatch::IntegrationTe
         # conns.each do |conn|
         #   p "#{conn.from.name} : #{conn.from.discipline.name} -> #{conn.to.discipline.name}"
         # end
-        param_count = @outermda.input_variables.count
+        # param_count = @outermda.input_variables.count
         delete api_v1_discipline_url(@innermdadisc), as: :json, headers: @auth_headers
         post api_v1_mda_disciplines_url(@outermda), params: { discipline: { name: "TestDiscipline", type: "analysis" } }
         post api_v1_discipline_mda_url(@vacantdisc), params: { analysis_discipline: { analysis_id: @innermda.id } },

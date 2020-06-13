@@ -63,7 +63,7 @@ class Api::V1::MetaModelsControllerTest < ActionDispatch::IntegrationTest
         end
       end
     end
-    ope = Operation.last
+    # ope = Operation.last
     assert_response :success
     mda = Analysis.last
     assert_equal 2, mda.design_variables.count
@@ -92,7 +92,7 @@ class Api::V1::MetaModelsControllerTest < ActionDispatch::IntegrationTest
     post api_v1_operation_meta_models_url(@ope), params: {
       meta_model: { kind: Surrogate::SMT_KRIGING, variables: { inputs: ["x1"], outputs: ["obj"] } }
     }, as: :json, headers: @auth_headers
-    ope = Operation.last
+    # ope = Operation.last
     assert_response :success
     mda = Analysis.second_to_last
     assert_equal 1, mda.design_variables.count

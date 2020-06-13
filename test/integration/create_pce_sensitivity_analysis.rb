@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "test_helper"
 
 class CreatePCESensitivityAnalysis < ActionDispatch::IntegrationTest
@@ -33,8 +35,7 @@ class CreatePCESensitivityAnalysis < ActionDispatch::IntegrationTest
       as: :json, headers: @auth_headers
     assert_response :success
 
-    doe_mda = Analysis.last
-
+    # doe_mda = Analysis.last
     ope = Operation.last
 
     assert_equal "DOE LHS", ope.name
@@ -45,7 +46,7 @@ class CreatePCESensitivityAnalysis < ActionDispatch::IntegrationTest
     as: :json, headers: @auth_headers
     assert_response :success
 
-    mm_mda = Analysis.last
+    # mm_mda = Analysis.last
 
     ope_doe = Operation.third_to_last
     assert_equal Operation::CAT_DOE, ope_doe.category
@@ -60,7 +61,7 @@ class CreatePCESensitivityAnalysis < ActionDispatch::IntegrationTest
 
     get "/api/v1/operations/#{ope_sa.id}/sensitivity_analysis", as: :json, headers: @auth_headers
     assert_response :success
-    resp = JSON.parse(response.body)
+    # resp = JSON.parse(response.body)
 
     # Metamodel operation removal is forbidden due to Sensitivity operaition dependency
     delete "/api/v1/operations/#{ope_mm.id}", as: :json, headers: @auth_headers

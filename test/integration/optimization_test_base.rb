@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "test_helper"
 require "matrix"
 
@@ -33,7 +35,7 @@ class OptimizationTestBase < ActionDispatch::IntegrationTest
     x = doe
 
     best = [Float::MAX, nil]
-    for i in 1..maxiter do
+    (1..maxiter).each do
       patch api_v1_optimization_url(optim_id),
         params: { optimization: { x: x, y: y } }, as: :json, headers: @auth_headers
       assert_response :success

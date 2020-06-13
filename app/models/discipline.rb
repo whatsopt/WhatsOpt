@@ -139,10 +139,10 @@ class Discipline < ApplicationRecord
     end
     mda.disciplines << disc_copy
     if self.is_pure_metamodel?
-      meta_model = self.meta_model.create_copy!(mda, disc_copy)
+      self.meta_model.create_copy!(mda, disc_copy)
     end
     if self.has_sub_analysis?
-      sub_analysis = self.sub_analysis.create_copy!(mda, disc_copy)
+      self.sub_analysis.create_copy!(mda, disc_copy)
     end
     disc_copy.openmdao_impl = self.openmdao_impl&.build_copy
 
@@ -187,7 +187,7 @@ class Discipline < ApplicationRecord
     varattrs = ActiveModelSerializers::SerializableResource.new(vars,
           each_serializer: VariableSerializer).as_json + vardupattrs
     # p "VARS", vars.map(&:name)
-    attrs = {
+    {
       name: self.name,
       type: self.type,
       variables_attributes: varattrs  # .map {|att| att.except(:parameter_attributes, :scaling)}
