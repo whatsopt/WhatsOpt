@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "test_helper"
 
 class DistributionTest < ActiveSupport::TestCase
@@ -15,11 +17,11 @@ class DistributionTest < ActiveSupport::TestCase
       variables << vars["out"]
     end
     u = variables.flatten.detect { |v| v["name"]=="u" }
-    expected = { "kind"=>"Normal",
-                "options_attributes" => [
-                  { "name" => "mu", "value" => "0.5" },
-                  { "name" => "sigma", "value" => "2.0" },
-                ] }
+    # expected = { "kind"=>"Normal",
+    #             "options_attributes" => [
+    #               { "name" => "mu", "value" => "0.5" },
+    #               { "name" => "sigma", "value" => "2.0" },
+    #             ] }
     assert_equal ["id", "kind", "options_attributes"], u["distributions_attributes"][0].keys
     assert_equal 2, u["distributions_attributes"][0]["options_attributes"].size
   end

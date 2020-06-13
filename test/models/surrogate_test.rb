@@ -82,7 +82,6 @@ class SurrogateTest < ActiveSupport::TestCase
 
   test "should remove surrogate without deleting variables" do
     skip_if_parallel
-    var = @surr.variable
     @surr.destroy!
     assert @surr.variable
   end

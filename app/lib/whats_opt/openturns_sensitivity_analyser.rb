@@ -11,7 +11,6 @@ module WhatsOpt
     end
 
     def run
-      ok, out, err = false, "{}", ""
       ok, err = check_metamodel
       if ok
         sa = { saMethod: "sobol", saResult: get_sobol_pce_sensitivity_analysis }
