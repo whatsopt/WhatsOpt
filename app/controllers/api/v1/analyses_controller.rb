@@ -26,24 +26,21 @@ class Api::V1::AnalysesController < Api::ApiController
 
   # POST /api/v1/mdas
   def create
-    xdsm = nil
-    Analysis.transaction do
-      @mda = Rails.cache.fetch(mda_params) do
-        mda = Analysis.create_nested_analyses(mda_params)
-        mda.save!
-        mda.set_owner(current_user)
-        mda
-      end
-      authorize @mda
-      if params[:format] == "xdsm"
-        xdsm = @mda.to_xdsm_json
-        raise ActiveRecord::Rollback
-      else
-        json_response @mda, :created
-      end
-    end
     if params[:format] == "xdsm"
+      skip_authorization
+      xdsm = nil
+      Analysis.transaction do
+        xdsm = Rails.cache.fetch(mda_params) do
+          mda = create_nested_analysis
+          mda.to_xdsm_json
+        end
+        raise ActiveRecord::Rollback
+      end
+      Rails.logger.info ">>> XDSM = #{xdsm}"
       json_response xdsm, :ok
+    else
+      @mda = create_nested_analysis
+      json_response @mda, :created
     end
   end
 
@@ -61,6 +58,14 @@ class Api::V1::AnalysesController < Api::ApiController
   end
 
   protected
+    def create_nested_analysis
+      mda = Analysis.create_nested_analyses(mda_params)
+      mda.save!
+      mda.set_owner(current_user)
+      authorize mda
+      mda
+    end
+
     def set_mda
       @mda = Analysis.find(params[:id])
       authorize @mda
