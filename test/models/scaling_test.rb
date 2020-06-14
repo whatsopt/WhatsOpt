@@ -3,7 +3,6 @@
 require "test_helper"
 
 class ScalingTest < ActiveSupport::TestCase
-
   setup do
     @var = variables(:varx1_out)
   end

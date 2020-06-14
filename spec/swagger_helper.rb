@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.configure do |config|
   # Specify a root folder where Swagger JSON files are generated
   # NOTE: If you're using the rswag-api to serve API descriptions, you'll need
   # to ensure that it's configured to serve Swagger from the same folder
-  config.swagger_root = Rails.root.join('swagger').to_s
+  config.swagger_root = Rails.root.join("swagger").to_s
 
   # Define one or more Swagger documents and provide global metadata for each one
   # When you run the 'rswag:specs:swaggerize' rake task, the complete Swagger will
@@ -15,11 +15,11 @@ RSpec.configure do |config|
   # document below. You can override this behavior by adding a swagger_doc tag to the
   # the root example_group in your specs, e.g. describe '...', swagger_doc: 'v2/swagger.json'
   config.swagger_docs = {
-    'v1/swagger.yaml' => {
-      openapi: '3.0.3',
+    "v1/swagger.yaml" => {
+      openapi: "3.0.3",
       info: {
-        title: 'WhatsOpt API',
-        version: 'v1',
+        title: "WhatsOpt API",
+        version: "v1",
         contact: {
           name: "API Support",
           email: "remi.lafage@onera.fr"
@@ -30,13 +30,13 @@ RSpec.configure do |config|
         }
       },
       servers: [
-        {url: "https://ether.onera.fr/whatsopt", description: "External production server"},
-        {url: "https://selene.onecert.fr/whatsopt", description: "Internal production server"},
-        {url: "http://rdri206h.onecert.fr/whatsopt", description: "Internal staging server"},
-        {url: "http://endymion:3000", description: "Development server"},
-        {url: "http://192.168.99.100:3000", description: "Docker development server"},
+        { url: "https://ether.onera.fr/whatsopt", description: "External production server" },
+        { url: "https://selene.onecert.fr/whatsopt", description: "Internal production server" },
+        { url: "http://rdri206h.onecert.fr/whatsopt", description: "Internal staging server" },
+        { url: "http://endymion:3000", description: "Development server" },
+        { url: "http://192.168.99.100:3000", description: "Docker development server" },
       ],
-      paths:{},
+      paths: {},
       components: {
         schemas: {
           Error: {
@@ -49,7 +49,7 @@ RSpec.configure do |config|
             description: "list of row vectors",
             type: :array,
             items: {
-              "$ref" => '#components/schemas/RowVector'
+              "$ref" => "#components/schemas/RowVector"
             },
             minItems: 1
           },
@@ -65,7 +65,7 @@ RSpec.configure do |config|
             description: "design space (nxdim intervals)",
             type: :array,
             items: {
-              "$ref" => '#components/schemas/Interval'
+              "$ref" => "#components/schemas/Interval"
             },
             minItems: 1
           },
@@ -83,15 +83,15 @@ RSpec.configure do |config|
             properties: {
               type: {
                 type: :string,
-                enum: ['<', '>', '='],
-                default: '<'
+                enum: ["<", ">", "="],
+                default: "<"
               },
               bound: {
                 type: :number,
                 format: :double,
                 default: 0.0
-              }              
-            } 
+              }
+            }
           },
           AnalysisAttributes: {
             type: :object,
@@ -134,9 +134,9 @@ RSpec.configure do |config|
                   items: {
                     type: :object,
                     properties: {
-                      id: {type: :string},
-                      name: {type: :string},
-                      type: {type: :string}
+                      id: { type: :string },
+                      name: { type: :string },
+                      type: { type: :string }
                     }
                   }
                 },
@@ -145,9 +145,9 @@ RSpec.configure do |config|
                   items: {
                     type: :object,
                     properties: {
-                      from: {type: :string},
-                      to: {type: :string},
-                      name: {type: :string}
+                      from: { type: :string },
+                      to: { type: :string },
+                      name: { type: :string }
                     }
                   }
                 }
@@ -157,18 +157,18 @@ RSpec.configure do |config|
         },
         securitySchemes: {
           Token: {
-            type: 'apiKey',
-            in: 'header',
+            type: "apiKey",
+            in: "header",
             name: "Authorization",
-            description: 'Enter your API key with the format **Token &lt;API key&gt;**'
+            description: "Enter your API key with the format **Token &lt;API key&gt;**"
           }
         },
       },
-      security: [{Token: []}],
+      security: [{ Token: [] }],
       tags: [
-        { name: 'Multi-Disciplinary Analyses', description: 'Operations for using analyses created in WhatsOpt'},
-        { name: 'Meta-Modeling', description: 'Operations for using metamodels created in WhatsOpt'},
-        { name: 'Optimization', description: 'Operations for using Onera SEGOMOE optimizer'}
+        { name: "Multi-Disciplinary Analyses", description: "Operations for using analyses created in WhatsOpt" },
+        { name: "Meta-Modeling", description: "Operations for using metamodels created in WhatsOpt" },
+        { name: "Optimization", description: "Operations for using Onera SEGOMOE optimizer" }
       ],
       externalDocs: {
         description: "Find out more on WhatsOpt",

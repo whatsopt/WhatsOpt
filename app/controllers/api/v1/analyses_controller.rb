@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class Api::V1::AnalysesController < Api::ApiController
-
   before_action :set_mda, only: [:show, :update]
 
   # GET /api/v1/mdas[?with_sub_analyses=true]

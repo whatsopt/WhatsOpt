@@ -1,14 +1,13 @@
 # frozen_string_literal: true
 
 class MetaModelPolicy < ApplicationPolicy
-
   class Scope < Scope
     def resolve
       if user.admin?
         scope
       else
         scope.where.not(id: scope.joins(:meta_model_prototype))
-             .joins(:discipline).where(disciplines: {analysis_id: AnalysisPolicy::Scope.new(user, Analysis).resolve.map(&:id)})
+             .joins(:discipline).where(disciplines: { analysis_id: AnalysisPolicy::Scope.new(user, Analysis).resolve.map(&:id) })
       end
     end
   end

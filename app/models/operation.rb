@@ -12,7 +12,7 @@ class Operation < ApplicationRecord
   CAT_SENSITIVITY_DOE = "sensitivity_doe"
   CAT_SENSITIVITY = "sensitivity_analysis"
   CAT_METAMODEL = "metamodel"
-  CATEGORIES = [CAT_RUNONCE, CAT_OPTIMISATION, 
+  CATEGORIES = [CAT_RUNONCE, CAT_OPTIMISATION,
                 CAT_DOE, CAT_SENSITIVITY_DOE,
                 CAT_SENSITIVITY, CAT_METAMODEL].freeze
 
@@ -32,8 +32,8 @@ class Operation < ApplicationRecord
   # when meta model building operation
   has_one :meta_model
   # when derived from doe
-  has_many :derived_operations, class_name: 'Operation', foreign_key: 'base_operation_id', inverse_of: :base_operation
-  belongs_to :base_operation, class_name: 'Operation', foreign_key: 'base_operation_id', inverse_of: :derived_operations 
+  has_many :derived_operations, class_name: "Operation", foreign_key: "base_operation_id", inverse_of: :base_operation
+  belongs_to :base_operation, class_name: "Operation", foreign_key: "base_operation_id", inverse_of: :derived_operations
 
   before_destroy :_check_allowed_destruction
 
@@ -41,8 +41,8 @@ class Operation < ApplicationRecord
   validates :driver, presence: true, allow_blank: false
   validate :success_flags_consistent_with_cases
 
-  scope :in_progress, ->(analysis) { where(analysis: analysis).joins(:job).where(jobs: {status: Job::WIP_STATUSES}) } 
-  scope :successful, ->() { joins(:job).where(jobs: {status: Job::SUCCESS_STATUSES}) }
+  scope :in_progress, ->(analysis) { where(analysis: analysis).joins(:job).where(jobs: { status: Job::WIP_STATUSES }) }
+  scope :successful, ->() { joins(:job).where(jobs: { status: Job::SUCCESS_STATUSES }) }
   scope :final, ->() { where.not(id: pluck(:base_operation_id).compact) }
   scope :done, ->(analysis) { where(analysis: analysis).successful }
 
@@ -78,7 +78,7 @@ class Operation < ApplicationRecord
       if self.driver =~ /(\w+)_doe_(\w+)/
         library = $1
         algo = $2
-        derived = self.derived_operations.build(name: "Sensitivity #{algo}", 
+        derived = self.derived_operations.build(name: "Sensitivity #{algo}",
                                                 driver: "#{library}_sensitivity_#{algo}",
                                                 analysis_id: self.analysis_id)
         derived.build_job(status: "ASSUME_DONE")
@@ -89,7 +89,7 @@ class Operation < ApplicationRecord
       if self.driver =~ /(openturns)_metamodel_(pce)/
         library = $1
         algo = $2
-        derived = self.derived_operations.build(name: "Sensitivity #{algo}", 
+        derived = self.derived_operations.build(name: "Sensitivity #{algo}",
                                                 driver: "#{library}_sensitivity_#{algo}",
                                                 analysis_id: self.analysis_id)
         derived.build_job(status: "ASSUME_DONE")
@@ -106,9 +106,9 @@ class Operation < ApplicationRecord
     cases.each do |c|
       varattr = VariableSerializer.new(c.variable).as_json
       if varattr[:distributions_attributes] && !varattr[:distributions_attributes].empty?
-        varattr[:distributions_attributes].map{|distAttr| 
+        varattr[:distributions_attributes].map { |distAttr|
           distAttr.update(id: nil)
-          distAttr[:options_attributes].map{|optAttr| optAttr.update(id: nil)}
+          distAttr[:options_attributes].map { |optAttr| optAttr.update(id: nil) }
         }
         varattr[:parameter_attributes].merge!(lower: "", upper: "")
       end
@@ -141,13 +141,13 @@ class Operation < ApplicationRecord
   end
 
   def rerunnable?
-    # if started_at is nil, the operation was not run from WhatsOpt server 
+    # if started_at is nil, the operation was not run from WhatsOpt server
     # hence non runnable again.
-    self.job && self.job.started_at 
+    self.job && self.job.started_at
   end
 
   def success?
-    self.job && self.job.success? 
+    self.job && self.job.success?
   end
 
   def sensitivity_analysis?
@@ -202,7 +202,7 @@ class Operation < ApplicationRecord
   end
 
   def _ope_cases
-    @ope_cases ||= base_operation ? base_operation._ope_cases : cases.sort_by{|c| c.var_label}
+    @ope_cases ||= base_operation ? base_operation._ope_cases : cases.sort_by { |c| c.var_label }
   end
 
   def input_cases
@@ -222,7 +222,7 @@ class Operation < ApplicationRecord
   end
 
   # suppose analysis is already saved in database
-  def create_copy!(dest_analysis, varnames=[], prototypes_variables=Variable.none) 
+  def create_copy!(dest_analysis, varnames = [], prototypes_variables = Variable.none)
     ope_copy = dest_analysis.operations.build(self.attributes.except("id"))
     ope_copy.job = self.job.build_copy
     self.cases.each_with_index do |c|
@@ -323,9 +323,9 @@ class Operation < ApplicationRecord
     if job
       job.update(pid: -1, log: job.log << "Data uploaded\n", log_count: job.log_count + 1, ended_at: Time.now)
       if job.started?
-        job.update(status: :DONE) 
+        job.update(status: :DONE)
       else
-        job.update(status: :DONE_OFFLINE) 
+        job.update(status: :DONE_OFFLINE)
       end
     else # wop upload first time
       create_job(status: :DONE_OFFLINE, pid: -1, log: "Data uploaded\n", log_count: 1, started_at: Time.now, ended_at: Time.now)
@@ -352,7 +352,7 @@ class Operation < ApplicationRecord
 
   def _check_allowed_destruction
     unless self.derived_operations.empty?
-      msg = self.derived_operations.map(&:name).join(', ')
+      msg = self.derived_operations.map(&:name).join(", ")
       raise ForbiddenRemovalError.new("Can not delete operation '#{self.name}' as another operation depends on it: #{msg} (to be deleted first)")
     end
   end

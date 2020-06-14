@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module WhatsOpt
-  class OpenturnsSensitivityAnalyser 
+  class OpenturnsSensitivityAnalyser
     def initialize(ope_pce)
       if ope_pce.base_operation && ope_pce.base_operation.driver == "openturns_metamodel_pce"
         @mm = ope_pce.base_operation.meta_model
@@ -11,10 +11,9 @@ module WhatsOpt
     end
 
     def run
-      ok, out, err = false, "{}", ""
       ok, err = check_metamodel
       if ok
-        sa = {saMethod: 'sobol', saResult: get_sobol_pce_sensitivity_analysis}
+        sa = { saMethod: "sobol", saResult: get_sobol_pce_sensitivity_analysis }
       end
       return ok, sa, err
     end
@@ -28,8 +27,7 @@ module WhatsOpt
     end
 
     def get_sobol_pce_sensitivity_analysis
-      @mm.surrogates.inject({}){|acc, surr| acc.update(surr.get_sobol_pce_sensitivity_analysis)}
+      @mm.surrogates.inject({}) { |acc, surr| acc.update(surr.get_sobol_pce_sensitivity_analysis) }
     end
-
   end
 end

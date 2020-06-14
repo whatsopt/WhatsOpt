@@ -61,7 +61,7 @@ class AnalysisTest < ActiveSupport::TestCase
   test "should get XDSM json" do
     json = @mda.to_xdsm_json
     xdsm = JSON.parse(json)
-    assert_equal ["root"], xdsm.keys() 
+    assert_equal ["root"], xdsm.keys()
   end
 
   test "should get XDSM json of nested analysis" do
@@ -136,7 +136,7 @@ class AnalysisTest < ActiveSupport::TestCase
   test "should copy of a copy of a metamodel and predict with" do
     # skip "doe copy not yet implemented"
     mda = analyses(:cicav_metamodel_analysis)
-    mda2 = analyses(:cicav_metamodel2_analysis)
+    # mda2 = analyses(:cicav_metamodel2_analysis)
     copy = mda.create_copy!
     assert copy.is_metamodel?
     x = [[1, 3, 4], [8, 9, 10], [5, 4, 3]]
@@ -193,5 +193,4 @@ class AnalysisTest < ActiveSupport::TestCase
       mda.destroy
     end
   end
-
 end

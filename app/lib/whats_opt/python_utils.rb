@@ -1,9 +1,10 @@
-require 'open3'
-require 'json'
+# frozen_string_literal: true
+
+require "open3"
+require "json"
 
 module WhatsOpt
   module PythonUtils
-
     PYTHON = APP_CONFIG["python_cmd"] || "python"
 
     class ArrayParseError < StandardError
@@ -13,7 +14,7 @@ module WhatsOpt
       str = sanitize_pystring(str)
       out, err, status = Open3.capture3("#{PYTHON} << EOF\nimport numpy as np\nprint(np.array(#{str}).reshape((-1,)).tolist())\nEOF")
       raise ArrayParseError.new(err) unless status.exitstatus == 0
-      return JSON.parse(out.chomp)
+      JSON.parse(out.chomp)
     end
 
     def sanitize_pystring(str)
@@ -24,6 +25,5 @@ module WhatsOpt
       str = str.gsub(/!/, "__EXCLAMATION__")
       str
     end
-
   end
 end

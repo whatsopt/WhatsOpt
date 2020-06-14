@@ -85,7 +85,7 @@ class AnalysesControllerTest < ActionDispatch::IntegrationTest
       delete mda_url(analyses(:innermda))
     end
     assert_redirected_to mdas_url
-    assert_match /Can not delete nested analysis/, flash[:alert]
+    assert_match(/Can not delete nested analysis/, flash[:alert])
   end
 
   test "should destroy analysis and operation" do
@@ -171,5 +171,4 @@ class AnalysesControllerTest < ActionDispatch::IntegrationTest
     assert_equal user2, copy_outer.owner
     assert_equal user2, copy_inner.owner
   end
-
 end

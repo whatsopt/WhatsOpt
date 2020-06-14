@@ -3,7 +3,7 @@
 class MetaModelSpecSerializer < ActiveModel::Serializer
   attributes :id, :name, :owner_email, :created_at, :notes, :xlabels, :ylabels
 
-  def name 
+  def name
     object.analysis.name
   end
 
@@ -19,7 +19,7 @@ class MetaModelSpecSerializer < ActiveModel::Serializer
     object.xlabels
   end
 
-  def ylabels 
+  def ylabels
     object.ylabels
   end
 end

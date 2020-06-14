@@ -16,7 +16,7 @@ class Case < ApplicationRecord
   end
 
   def var_label
-    @label ||= Case.label(variable.name, coord_index) 
+    @label ||= Case.label(variable.name, coord_index)
   end
 
   def self.label(name, coord)
@@ -25,7 +25,7 @@ class Case < ApplicationRecord
 
   def build_copy(operation, variable = nil)
     copy = self.dup
-    copy.variable = variable unless variable.nil? 
+    copy.variable = variable unless variable.nil?
     copy.operation = operation
     copy
   end

@@ -4,26 +4,22 @@
 # DO NOT EDIT UNLESS YOU ARE SURE THAT YOU KNOW WHAT YOU ARE DOING
 #
 
-require 'thrift'
-require 'surrogate_store'
-require 'whatsopt_services_types'
+require "thrift"
+require "surrogate_store"
+require "whatsopt_services_types"
 
 module WhatsOpt
   module Services
     module WhatsOptServices
-      class Client < ::WhatsOpt::Services::SurrogateStore::Client 
+      class Client < ::WhatsOpt::Services::SurrogateStore::Client
         include ::Thrift::Client
-
       end
 
-      class Processor < ::WhatsOpt::Services::SurrogateStore::Processor 
+      class Processor < ::WhatsOpt::Services::SurrogateStore::Processor
         include ::Thrift::Processor
-
       end
 
       # HELPER FUNCTIONS AND STRUCTURES
-
     end
-
   end
 end

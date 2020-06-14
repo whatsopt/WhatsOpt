@@ -1,7 +1,8 @@
-require 'integration/optimization_test_base'
+# frozen_string_literal: true
+
+require "integration/optimization_test_base"
 
 class SegomoeOptimizationCstrTest < OptimizationTestBase
-
   test "optimize objective with constraints" do
     skip_if_parallel
     skip_if_segomoe_not_installed
@@ -32,7 +33,7 @@ class SegomoeOptimizationCstrTest < OptimizationTestBase
     [1.19953988, 1.87783283],
     [1.74449478, 0.69256039]]
 
-    cstr_specs = [{'type': '<', 'bound': 0.0}, {'type': '<', 'bound': 0.0}]
+    cstr_specs = [{ 'type': "<", 'bound': 0.0 }, { 'type': "<", 'bound': 0.0 }]
 
     best = self.optimize(f, [g1, g2], 15, xlimits, cstr_specs, doe)
 
@@ -43,5 +44,4 @@ class SegomoeOptimizationCstrTest < OptimizationTestBase
     assert_in_delta(2.3295, minx[0], 1e-1)
     assert_in_delta(3.1785, minx[1], 1e-1)
   end
-
 end

@@ -41,7 +41,7 @@ class SurrogateTest < ActiveSupport::TestCase
     @surr.train
     @surr.reload
     assert_equal Surrogate::STATUS_TRAINED, @surr.status
-    assert_difference('Option.count', 1) do
+    assert_difference("Option.count", 1) do
       copy = @surr.build_copy
       copy.save!
       assert_equal copy.options.count, @surr.options.count
@@ -82,7 +82,6 @@ class SurrogateTest < ActiveSupport::TestCase
 
   test "should remove surrogate without deleting variables" do
     skip_if_parallel
-    var = @surr.variable
     @surr.destroy!
     assert @surr.variable
   end

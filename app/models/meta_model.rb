@@ -10,12 +10,12 @@ class MetaModel < ApplicationRecord
   has_one :prototype, through: :meta_model_prototype, source: :prototype, class_name: :Analysis
   accepts_nested_attributes_for :meta_model_prototype
 
-  has_many :default_options, class_name: 'Option', as: :optionizable, dependent: :destroy
-  accepts_nested_attributes_for :default_options, reject_if: proc { |attr| attr["name"].blank? }, allow_destroy: true 
+  has_many :default_options, class_name: "Option", as: :optionizable, dependent: :destroy
+  accepts_nested_attributes_for :default_options, reject_if: proc { |attr| attr["name"].blank? }, allow_destroy: true
 
   has_many :surrogates, dependent: :destroy
 
-  validates :discipline, presence: true                                                                                                                                                                                     
+  validates :discipline, presence: true
 
   after_initialize :_set_defaults
   before_destroy :_destroy_related_operation
@@ -32,7 +32,7 @@ class MetaModel < ApplicationRecord
   end
 
   def self.get_name_from_metamodel_kind(kind)
-    library, algo = get_infos_from_metamodel_kind(kind)
+    _library, algo = get_infos_from_metamodel_kind(kind)
     "Metamodel #{algo}"
   end
 
@@ -55,23 +55,23 @@ class MetaModel < ApplicationRecord
   end
 
   def build_surrogates
-    opts = default_options.map {|o| {name: o[:name], value: o[:value]}}
+    opts = default_options.map { |o| { name: o[:name], value: o[:value] } }
     # At build time, a meta_model is in a "metamodel prototype" analysis by construction
     analysis.response_variables.each do |v|
       (0...v.dim).each do |index|
-        surrogates.build(variable: v, coord_index: v.ndim == 0 ? -1 : index, 
+        surrogates.build(variable: v, coord_index: v.ndim == 0 ? -1 : index,
           kind: default_surrogate_kind, options_attributes: opts)
       end
     end
   end
 
-  def create_copy!(mda=nil, discipline=nil)
+  def create_copy!(mda = nil, discipline = nil)
     mm_copy = self.dup
-    # if no prototype it is a primary created meta_model 
+    # if no prototype it is a primary created meta_model
     # so the prototype of the copy is the analysis of this metamodel
     mm_copy.prototype = prototype || analysis
     if discipline
-      mm_copy.discipline = discipline 
+      mm_copy.discipline = discipline
       # variables = Variable.of_analysis(mm_copy.prototype).outs
       # ope_copy = self.operation.create_copy!(discipline.analysis, varnames=[], variables)
       # mm_copy.operation = ope_copy
@@ -79,7 +79,7 @@ class MetaModel < ApplicationRecord
     end
     self.surrogates.each do |surr|
       var = discipline.variables.where(name: surr.variable.name).take if discipline
-      surr_copy = surr.build_copy(mm_copy, var)
+      surr.build_copy(mm_copy, var)
     end
     self.default_options.each do |opt|
       mm_copy.default_options << opt.build_copy
@@ -120,8 +120,8 @@ class MetaModel < ApplicationRecord
   end
 
   def xlabels
-    analysis.input_variables.map do |v| 
-      (0...v.dim).map{ |i| Case.label(v.name, v.ndim == 0 ? -1 : i) } 
+    analysis.input_variables.map do |v|
+      (0...v.dim).map { |i| Case.label(v.name, v.ndim == 0 ? -1 : i) }
     end.flatten
   end
 
@@ -130,9 +130,9 @@ class MetaModel < ApplicationRecord
   end
 
   def training_input_uncertainties
-    @distributions ||= operation.input_cases.map { |c| c.variable.distributions[[c.coord_index, 0].max] unless c.variable.distributions.empty?}.compact
-    @uncertainties ||= @distributions.flatten.map do |d| 
-      {name: d.kind, kwargs: d.options.inject({}) {|acc, opt| acc.update([[opt.name, opt.value]].to_h) }} 
+    @distributions ||= operation.input_cases.map { |c| c.variable.distributions[[c.coord_index, 0].max] unless c.variable.distributions.empty? }.compact
+    @uncertainties ||= @distributions.flatten.map do |d|
+      { name: d.kind, kwargs: d.options.inject({}) { |acc, opt| acc.update([[opt.name, opt.value]].to_h) } }
     end
   end
 
@@ -141,10 +141,10 @@ class MetaModel < ApplicationRecord
   end
 
   def training_output_values(varname, coord_index)
-    @training_outputs = operation.output_cases.detect do |c| 
-      c.variable.name == varname && 
-      (c.coord_index == coord_index || 
-        (c.variable.dim == 1 && coord_index == 0)) # manage case where output is typed (1,) while DOE data (ie cases) are pushed as scalar 
+    @training_outputs = operation.output_cases.detect do |c|
+      c.variable.name == varname &&
+      (c.coord_index == coord_index ||
+        (c.variable.dim == 1 && coord_index == 0)) # manage case where output is typed (1,) while DOE data (ie cases) are pushed as scalar
     end
     @training_outputs.values
   end
