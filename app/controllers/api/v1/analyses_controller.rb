@@ -29,10 +29,13 @@ class Api::V1::AnalysesController < Api::ApiController
   def create
     xdsm = nil
     Analysis.transaction do
-      @mda = Analysis.create_nested_analyses(mda_params)
-      authorize @mda
-      @mda.save!
-      @mda.set_owner(current_user)
+      @mda = Rails.cache.fetch(mda_params) do
+        mda = Analysis.create_nested_analyses(mda_params)
+        authorize mda
+        mda.save!
+        mda.set_owner(current_user)
+        mda
+      end
       if params[:format] == "xdsm"
         xdsm = @mda.to_xdsm_json
         raise ActiveRecord::Rollback
