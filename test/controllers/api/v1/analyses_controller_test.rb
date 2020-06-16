@@ -17,7 +17,14 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     analyses = JSON.parse(response.body)
     assert_equal Analysis.count-2, analyses.size # ALL - {user2 private, one sub-analysis}
     mda = analyses[0]
-    assert_equal ["created_at", "id", "name", "owner_email"], mda.keys.sort
+    assert_equal ["created_at", "id", "name"], mda.keys.sort
+  end
+
+  test "should get an analysis" do
+    get api_v1_mda_url(analyses(:cicav)), as: :json, headers: @auth_headers
+    assert_response :success
+    mda = JSON.parse(response.body)
+    assert_equal ["created_at", "id", "name", "notes", "owner_email"], mda.keys.sort
   end
 
   test "should get all mdas even sub ones" do

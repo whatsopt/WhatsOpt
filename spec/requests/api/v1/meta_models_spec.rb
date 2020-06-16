@@ -17,11 +17,16 @@ describe "meta_model", type: :request do
             type: :object,
             properties: {
               id: { type: :integer },
-              name: { type: :string },
-              owner_email: { type: :string },
-              created_at: { type: :string, format: :"date-time" }
+              reference_analysis: {
+                type: :object,
+                properties: {
+                  id: { type: :integer },
+                  name: { type: :string },
+                  created_at: { type: :string, format: :"date-time" },
+                },
+              },
             },
-            required: [ "id", "name", "owner_email", "created_at" ]
+            required: [ "id", "reference_analysis" ]
           }
 
         let(:Authorization) { "Token FriendlyApiKey" }
@@ -41,10 +46,16 @@ describe "meta_model", type: :request do
         schema type: :object,
         properties: {
           id: { type: :integer },
-          name: { type: :string },
-          owner_email: { type: :string, format: :email },
-          created_at: { type: :string, format: :"date-time" },
-          notes: { type: :string },
+          reference_analysis: {
+            type: :object,
+            properties: {
+              id: { type: :integer },
+              name: { type: :string },
+              created_at: { type: :string, format: :"date-time" },
+              owner_email: { type: :string, format: :email },
+              notes: { type: :string }
+            },
+          },
           xlabels: { type: :array, items: { type: :string } },
           ylabels: { type: :array, items: { type: :string } },
         }

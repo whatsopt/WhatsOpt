@@ -3,10 +3,6 @@
 class AnalysisSerializer < ActiveModel::Serializer
   attributes :id, :name, :created_at, :owner_email, :notes
 
-  def name
-    object.name
-  end
-
   def owner_email
     object.owner.email
   end

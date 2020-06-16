@@ -39,60 +39,6 @@ RSpec.configure do |config|
       paths: {},
       components: {
         schemas: {
-          Error: {
-            type: :object,
-            properties: {
-              message: { type: :string }
-            }
-          },
-          Matrix: {
-            description: "list of row vectors",
-            type: :array,
-            items: {
-              "$ref" => "#components/schemas/RowVector"
-            },
-            minItems: 1
-          },
-          RowVector: {
-            type: :array,
-            items: {
-              type: :number,
-              format: :double
-            },
-            minItems: 1
-          },
-          XLimits: {
-            description: "design space (nxdim intervals)",
-            type: :array,
-            items: {
-              "$ref" => "#components/schemas/Interval"
-            },
-            minItems: 1
-          },
-          Interval: {
-            type: :array,
-            items: {
-              type: :number,
-              format: :double
-            },
-            minItems: 2,
-            maxItems: 2
-          },
-          ConstraintSpec: {
-            type: :object,
-            properties: {
-              type: {
-                type: :string,
-                enum: ["<", ">", "="],
-                default: "<"
-              },
-              bound: {
-                type: :number,
-                format: :double,
-                default: 0.0
-              }
-            }
-          },
           AnalysisAttributes: {
             type: :object,
             properties: {
@@ -123,6 +69,60 @@ RSpec.configure do |config|
                 }
               }
             }
+          },
+          ConstraintSpec: {
+            type: :object,
+            properties: {
+              type: {
+                type: :string,
+                enum: ["<", ">", "="],
+                default: "<"
+              },
+              bound: {
+                type: :number,
+                format: :double,
+                default: 0.0
+              }
+            }
+          },
+          Error: {
+            type: :object,
+            properties: {
+              message: { type: :string }
+            }
+          },
+          Interval: {
+            type: :array,
+            items: {
+              type: :number,
+              format: :double
+            },
+            minItems: 2,
+            maxItems: 2
+          },
+          Matrix: {
+            description: "list of row vectors",
+            type: :array,
+            items: {
+              "$ref" => "#components/schemas/RowVector"
+            },
+            minItems: 1
+          },
+          RowVector: {
+            type: :array,
+            items: {
+              type: :number,
+              format: :double
+            },
+            minItems: 1
+          },
+          XLimits: {
+            description: "design space (nxdim intervals)",
+            type: :array,
+            items: {
+              "$ref" => "#components/schemas/Interval"
+            },
+            minItems: 1
           },
           Xdsm: {
             type: :object,
