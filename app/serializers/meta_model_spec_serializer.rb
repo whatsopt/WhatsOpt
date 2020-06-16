@@ -1,18 +1,10 @@
 # frozen_string_literal: true
 
 class MetaModelSpecSerializer < ActiveModel::Serializer
-  attributes :id, :name, :owner_email, :created_at, :notes, :xlabels, :ylabels
+  attributes :id, :reference_analysis, :xlabels, :ylabels
 
-  def name
-    object.analysis.name
-  end
-
-  def owner_email
-    object.analysis.owner.email
-  end
-
-  def notes
-    object.analysis.note.to_plain_text
+  def reference_analysis
+    AnalysisSerializer.new(object.analysis).as_json
   end
 
   def xlabels

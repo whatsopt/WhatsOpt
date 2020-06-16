@@ -23,7 +23,8 @@ class Api::V1::MetaModelsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     mms = JSON.parse(response.body)
     assert_equal 2, mms.count  # out of 2 primary mm, one is private for user3 and user1 member
-    assert_equal ["created_at", "id", "name", "owner_email"], mms.first.keys.sort
+    assert_equal ["id", "reference_analysis"], mms.first.keys.sort
+    assert_equal ["created_at", "id", "name"], mms.first["reference_analysis"].keys.sort
   end
 
   test "should get list of metamodels for user2" do
@@ -45,10 +46,12 @@ class Api::V1::MetaModelsControllerTest < ActionDispatch::IntegrationTest
     get api_v1_meta_model_url(mm), as: :json, headers: @auth_headers
     assert_response :success
     mminfos = JSON.parse(response.body)
-    assert_equal ["created_at", "id", "name", "notes", "owner_email", "xlabels", "ylabels"], mminfos.keys.sort
+    assert_equal ["id", "reference_analysis", "xlabels", "ylabels"], mminfos.keys.sort
+    ref = mminfos["reference_analysis"]
+    assert_equal ["created_at", "id", "name", "notes", "owner_email"], ref.keys.sort
+    assert_equal "", ref["notes"]
     assert_equal ["x1", "z[0]", "z[1]"], mminfos["xlabels"]
     assert_equal ["obj"], mminfos["ylabels"]
-    assert_equal "", mminfos["notes"]
   end
 
   test "should create a metamodel" do

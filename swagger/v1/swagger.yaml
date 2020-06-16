@@ -42,8 +42,6 @@ paths:
                       type: integer
                     name:
                       type: string
-                    owner_email:
-                      type: string
                     created_at:
                       type: string
                       format: date-time
@@ -126,18 +124,19 @@ paths:
                   properties:
                     id:
                       type: integer
-                    name:
-                      type: string
-                    owner_email:
-                      type: string
-                    created_at:
-                      type: string
-                      format: date-time
+                    reference_analysis:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                        created_at:
+                          type: string
+                          format: date-time
                   required:
                   - id
-                  - name
-                  - owner_email
-                  - created_at
+                  - reference_analysis
   "/api/v1/meta_models/{id}":
     get:
       summary: Get meta-model details
@@ -162,16 +161,21 @@ paths:
                 properties:
                   id:
                     type: integer
-                  name:
-                    type: string
-                  owner_email:
-                    type: string
-                    format: email
-                  created_at:
-                    type: string
-                    format: date-time
-                  notes:
-                    type: string
+                  reference_analysis:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      name:
+                        type: string
+                      created_at:
+                        type: string
+                        format: date-time
+                      owner_email:
+                        type: string
+                        format: email
+                      notes:
+                        type: string
                   xlabels:
                     type: array
                     items:
@@ -401,50 +405,6 @@ paths:
           content: {}
 components:
   schemas:
-    Error:
-      type: object
-      properties:
-        message:
-          type: string
-    Matrix:
-      description: list of row vectors
-      type: array
-      items:
-        "$ref": "#components/schemas/RowVector"
-      minItems: 1
-    RowVector:
-      type: array
-      items:
-        type: number
-        format: double
-      minItems: 1
-    XLimits:
-      description: design space (nxdim intervals)
-      type: array
-      items:
-        "$ref": "#components/schemas/Interval"
-      minItems: 1
-    Interval:
-      type: array
-      items:
-        type: number
-        format: double
-      minItems: 2
-      maxItems: 2
-    ConstraintSpec:
-      type: object
-      properties:
-        type:
-          type: string
-          enum:
-          - "<"
-          - ">"
-          - "="
-          default: "<"
-        bound:
-          type: number
-          format: double
-          default: 0.0
     AnalysisAttributes:
       type: object
       properties:
@@ -471,6 +431,50 @@ components:
                       - out
               sub_analysis_attributes:
                 "$ref": "#/components/schemas/AnalysisAttributes"
+    ConstraintSpec:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+          - "<"
+          - ">"
+          - "="
+          default: "<"
+        bound:
+          type: number
+          format: double
+          default: 0.0
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+    Interval:
+      type: array
+      items:
+        type: number
+        format: double
+      minItems: 2
+      maxItems: 2
+    Matrix:
+      description: list of row vectors
+      type: array
+      items:
+        "$ref": "#components/schemas/RowVector"
+      minItems: 1
+    RowVector:
+      type: array
+      items:
+        type: number
+        format: double
+      minItems: 1
+    XLimits:
+      description: design space (nxdim intervals)
+      type: array
+      items:
+        "$ref": "#components/schemas/Interval"
+      minItems: 1
     Xdsm:
       type: object
       additionalProperties:
