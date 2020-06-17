@@ -48,7 +48,6 @@ paths:
                   required:
                   - id
                   - name
-                  - owner_email
                   - created_at
   "/api/v1/analyses/{id}":
     get:
@@ -66,24 +65,11 @@ paths:
           type: string
       responses:
         '200':
-          description: return meta-model information
+          description: return analysis information
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  id:
-                    type: integer
-                  name:
-                    type: string
-                  owner_email:
-                    type: string
-                    format: email
-                  created_at:
-                    type: string
-                    format: date-time
-                  notes:
-                    type: string
+                "$ref": "#/components/schemas/AnalysisInfo"
   "/api/v1/analyses/{id}.xdsm":
     get:
       summary: Get XDSMjs format for given analysis
@@ -125,15 +111,7 @@ paths:
                     id:
                       type: integer
                     reference_analysis:
-                      type: object
-                      properties:
-                        id:
-                          type: integer
-                        name:
-                          type: string
-                        created_at:
-                          type: string
-                          format: date-time
+                      "$ref": "#components/schemas/AnalysisInfo"
                   required:
                   - id
                   - reference_analysis
@@ -162,20 +140,16 @@ paths:
                   id:
                     type: integer
                   reference_analysis:
-                    type: object
-                    properties:
-                      id:
-                        type: integer
-                      name:
-                        type: string
-                      created_at:
-                        type: string
-                        format: date-time
-                      owner_email:
-                        type: string
-                        format: email
-                      notes:
-                        type: string
+                    "$ref": "#components/schemas/AnalysisInfo"
+                  surrogate_kind:
+                    type: string
+                    enum:
+                    - SMT_KRIGING
+                    - SMT_KPLS
+                    - SMT_KPLSK
+                    - SMT_LS
+                    - SMT_QP
+                    - OPENTURNS_PCE
                   xlabels:
                     type: array
                     items:
@@ -405,6 +379,21 @@ paths:
           content: {}
 components:
   schemas:
+    AnalysisInfo:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        owner_email:
+          type: string
+          format: email
+        notes:
+          type: string
     AnalysisAttributes:
       type: object
       properties:
@@ -514,7 +503,7 @@ tags:
 - name: Multi-Disciplinary Analyses
   description: Operations for using analyses created in WhatsOpt
 - name: Meta-Modeling
-  description: Operations for using metamodels created in WhatsOpt
+  description: Operations for using meta-models created in WhatsOpt
 - name: Optimization
   description: Operations for using Onera SEGOMOE optimizer
 externalDocs:
