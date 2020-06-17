@@ -282,6 +282,14 @@ function Table({
   // Otherwise, nothing is different here.
   const cellToFocus = React.useRef({ index: null, id: null });
 
+  const hiddenColumns = [];
+  if (!isEditing) {
+    hiddenColumns.push('active', 'from', 'desc');
+  }
+  if (!useScaling) {
+    hiddenColumns.push('ref', 'ref0', 'res_ref');
+  }
+
   const {
     getTableProps,
     getTableBodyProps,
@@ -298,6 +306,7 @@ function Table({
       limited,
       useScaling,
       cellToFocus,
+      initialState: { hiddenColumns },
     },
     useSortBy,
   );
@@ -388,7 +397,6 @@ function VariablesEditor(props) {
       {
         Header: '#',
         accessor: 'active',
-        isVisible: isEditing,
         Cell: CheckButtonCell,
       },
       {
@@ -407,12 +415,10 @@ function VariablesEditor(props) {
       {
         Header: 'Description',
         accessor: 'desc',
-        isVisible: isEditing,
       },
       {
         Header: 'Type',
         accessor: 'type',
-        isVisible: isEditing,
       },
       {
         Header: 'Shape',
@@ -442,17 +448,14 @@ function VariablesEditor(props) {
       {
         Header: 'Ref',
         accessor: 'ref',
-        isVisible: useScaling,
       },
       {
         Header: 'Ref0',
         accessor: 'ref0',
-        isVisible: useScaling,
       },
       {
         Header: 'Res.Ref',
         accessor: 'res_ref',
-        isVisible: useScaling,
       },
     ],
     [isEditing, limited, useScaling],
