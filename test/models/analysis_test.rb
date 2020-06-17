@@ -193,4 +193,10 @@ class AnalysisTest < ActiveSupport::TestCase
       mda.destroy
     end
   end
+
+  test "should not be a prototype metamodel or a metamodel when newly created" do
+    mda = Analysis.new(name: "Test")
+    assert_not mda.is_metamodel_prototype?
+    assert_not mda.is_metamodel?
+  end
 end

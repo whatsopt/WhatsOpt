@@ -37,7 +37,7 @@ module AnalysesHelper
 
   def badges(analysis)
     res = ""
-    if analysis.is_metamodel?
+    if analysis.is_metamodel_prototype?
       res += '<span class="badge badge-pill badge-success mr-2">MM</span>'
     end
     if analysis.uq_mode?

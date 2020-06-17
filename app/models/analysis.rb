@@ -51,7 +51,7 @@ class Analysis < ApplicationRecord
   end
 
   def is_metamodel?
-    !disciplines.nodes.detect { |d| !d.is_metamodel? }
+    disciplines.nodes.size > 0 && !disciplines.nodes.detect { |d| !d.is_metamodel? }
   end
 
   def is_metamodel_prototype?
