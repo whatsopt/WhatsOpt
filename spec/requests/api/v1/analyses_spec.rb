@@ -37,15 +37,8 @@ describe "analyses", type: :request do
       security [ Token: [] ]
       parameter name: :id, in: :path, type: :string, description: "Analysis identifier"
 
-      response "200", "return meta-model information" do
-        schema type: :object,
-        properties: {
-          id: { type: :integer },
-          name: { type: :string },
-          owner_email: { type: :string, format: :email },
-          created_at: { type: :string, format: :"date-time" },
-          notes: { type: :string }
-        }
+      response "200", "return analysis information" do
+        schema :$ref => "#/components/schemas/AnalysisInfo"
 
         let(:id) { analyses(:cicav_metamodel_analysis).id }
         let(:Authorization) { "Token FriendlyApiKey" }

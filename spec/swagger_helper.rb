@@ -39,6 +39,16 @@ RSpec.configure do |config|
       paths: {},
       components: {
         schemas: {
+          AnalysisInfo: {
+            type: :object,
+            properties: {
+              id: { type: :integer },
+              name: { type: :string },
+              created_at: { type: :string, format: :"date-time" },
+              owner_email: { type: :string, format: :"email" },
+              notes: { type: :string }
+            },
+          },
           AnalysisAttributes: {
             type: :object,
             properties: {
@@ -104,7 +114,7 @@ RSpec.configure do |config|
             description: "list of row vectors",
             type: :array,
             items: {
-              "$ref" => "#components/schemas/RowVector"
+              "$ref": "#components/schemas/RowVector"
             },
             minItems: 1
           },
@@ -120,7 +130,7 @@ RSpec.configure do |config|
             description: "design space (nxdim intervals)",
             type: :array,
             items: {
-              "$ref" => "#components/schemas/Interval"
+              "$ref": "#components/schemas/Interval"
             },
             minItems: 1
           },
@@ -167,7 +177,7 @@ RSpec.configure do |config|
       security: [{ Token: [] }],
       tags: [
         { name: "Multi-Disciplinary Analyses", description: "Operations for using analyses created in WhatsOpt" },
-        { name: "Meta-Modeling", description: "Operations for using metamodels created in WhatsOpt" },
+        { name: "Meta-Modeling", description: "Operations for using meta-models created in WhatsOpt" },
         { name: "Optimization", description: "Operations for using Onera SEGOMOE optimizer" }
       ],
       externalDocs: {

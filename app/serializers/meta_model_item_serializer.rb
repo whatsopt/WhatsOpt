@@ -4,6 +4,6 @@ class MetaModelItemSerializer < ActiveModel::Serializer
   attributes :id, :reference_analysis
 
   def reference_analysis
-    AnalysisItemSerializer.new(object.analysis).as_json
+    AnalysisSerializer.new(object.analysis).as_json
   end
 end

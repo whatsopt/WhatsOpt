@@ -18,12 +18,7 @@ describe "meta_model", type: :request do
             properties: {
               id: { type: :integer },
               reference_analysis: {
-                type: :object,
-                properties: {
-                  id: { type: :integer },
-                  name: { type: :string },
-                  created_at: { type: :string, format: :"date-time" },
-                },
+                "$ref": "#components/schemas/AnalysisInfo",
               },
             },
             required: [ "id", "reference_analysis" ]
@@ -47,14 +42,11 @@ describe "meta_model", type: :request do
         properties: {
           id: { type: :integer },
           reference_analysis: {
-            type: :object,
-            properties: {
-              id: { type: :integer },
-              name: { type: :string },
-              created_at: { type: :string, format: :"date-time" },
-              owner_email: { type: :string, format: :email },
-              notes: { type: :string }
-            },
+            "$ref": "#components/schemas/AnalysisInfo",
+          },
+          surrogate_kind: {
+            type: :string,
+            enum: ["SMT_KRIGING", "SMT_KPLS", "SMT_KPLSK", "SMT_LS", "SMT_QP", "OPENTURNS_PCE"]
           },
           xlabels: { type: :array, items: { type: :string } },
           ylabels: { type: :array, items: { type: :string } },
