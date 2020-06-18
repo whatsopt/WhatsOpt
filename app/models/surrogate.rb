@@ -50,7 +50,7 @@ class Surrogate < ApplicationRecord
   end
 
   def var_label
-    Case.label(variable.name, coord_index)
+    Case.label(variable.name, variable.dim == 1 ? -1 : coord_index)
   end
 
   def trained?
