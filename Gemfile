@@ -129,3 +129,5 @@ gem "image_processing", "~> 1.2"
 
 # Document API
 gem "rswag-api"
+
+gem "deepsort"

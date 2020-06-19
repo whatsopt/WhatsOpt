@@ -30,9 +30,11 @@ class Api::V1::AnalysesController < Api::ApiController
       skip_authorization
       xdsm = nil
       Analysis.transaction do
-        xdsm = Rails.cache.fetch(mda_params) do
-          mda = create_nested_analysis
-          mda.to_xdsm_json
+        xdsm = Rails.cache.fetch(mda_params.to_h.deep_sort!) do
+          Rails.logger.warn "CACHE MIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIISSSSSSSSSSSS"
+          # mda = create_nested_analysis
+          # mda.to_xdsm_json
+          {CACHEMISS: "test"}
         end
         raise ActiveRecord::Rollback
       end
