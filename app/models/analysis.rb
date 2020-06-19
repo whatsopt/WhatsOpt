@@ -575,7 +575,7 @@ class Analysis < ApplicationRecord
   end
 
   def self.create_nested_analyses(mda_attrs)
-    Rails.logger.info "################ CREATE NESTED #{mda_attrs["name"]}"
+    # Rails.logger.info "################ CREATE NESTED #{mda_attrs["name"]}"
     subs = []
     # create sub analyses
     if  mda_attrs["disciplines_attributes"]
@@ -590,28 +590,28 @@ class Analysis < ApplicationRecord
     end
 
     # create disciplines
-    Rails.logger.info "################ BEFORE CREATE #{mda_attrs["name"]}"
+    # Rails.logger.info "################ BEFORE CREATE #{mda_attrs["name"]}"
     mda = Analysis.create(mda_attrs)
-    Rails.logger.info "################ AFTER CREATE #{mda_attrs["name"]}"
-    Rails.logger.info ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> #{mda.name}"
+    # Rails.logger.info "################ AFTER CREATE #{mda_attrs["name"]}"
+    # Rails.logger.info ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> #{mda.name}"
     Variable.of_analysis(mda).each do |v|
-      Rails.logger.info ">>> #{v.discipline.name}(#{v.discipline.id}) #{v.name} #{v.io_mode}"
+      # Rails.logger.info ">>> #{v.discipline.name}(#{v.discipline.id}) #{v.name} #{v.io_mode}"
     end
     Connection.of_analysis(mda).each do |c|
-      Rails.logger.info "CCCCCCCCCCCCCCC #{c.from.discipline.name} -> #{c.to.discipline.name}  #{c.from.name}(#{c.from.id})"
+      # Rails.logger.info "CCCCCCCCCCCCCCC #{c.from.discipline.name} -> #{c.to.discipline.name}  #{c.from.name}(#{c.from.id})"
     end
     # link disciplines and sub analyses
     subs.each.with_index do |submda, i|
       if submda
         AnalysisDiscipline.build_analysis_discipline(mda.disciplines[i], submda).save!
-        Rails.logger.info "DISCIPLINE TYPE #{mda.disciplines[i].type}"
+        # Rails.logger.info "DISCIPLINE TYPE #{mda.disciplines[i].type}"
       end
     end
-    Rails.logger.info "================  EDGES of #{mda.name}"
+    # Rails.logger.info "================  EDGES of #{mda.name}"
     Connection.of_analysis(mda).each do |c|
-      Rails.logger.info "DDDDDDDDDDDDDD #{c.from.discipline.name} -> #{c.to.discipline.name}  #{c.from.name}(#{c.from.id})"
+      # Rails.logger.info "DDDDDDDDDDDDDD #{c.from.discipline.name} -> #{c.to.discipline.name}  #{c.from.name}(#{c.from.id})"
     end
-    Rails.logger.info mda.build_edges.inspect
+    # Rails.logger.info mda.build_edges.inspect
     mda
   end
 

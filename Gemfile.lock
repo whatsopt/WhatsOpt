@@ -125,6 +125,7 @@ GEM
     crass (1.0.6)
     data-confirm-modal (1.6.3)
       railties (>= 3.0)
+    deepsort (0.4.5)
     devise (4.7.1)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
@@ -459,6 +460,7 @@ DEPENDENCIES
   concurrent-ruby
   coveralls
   data-confirm-modal
+  deepsort
   devise (>= 4.7.1)
   devise_ldap_authenticatable
   font_awesome5_rails
