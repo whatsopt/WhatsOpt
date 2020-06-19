@@ -34,7 +34,9 @@ Rails.application.routes.draw do
       end
       resources :meta_models, only: [:index, :show]
       resources :operations, only: [:create]
-      resources :users, only: [:index, :update]  
+      resources :users, only: [:update] do
+        resource :api_key
+      end
       resources :user_roles, only: [:index, :update]  
       resource :versioning, only: [:show]  
       resources :optimizations

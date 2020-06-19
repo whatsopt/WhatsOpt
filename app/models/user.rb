@@ -33,6 +33,11 @@ class User < ActiveRecord::Base
     has_role?(:admin)
   end
 
+  def reset_api_key!
+    generate_api_key
+    save
+  end
+
   private
     def generate_api_key
       begin
