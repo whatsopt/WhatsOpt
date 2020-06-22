@@ -31,7 +31,7 @@ class Parameter < ApplicationRecord
       return true if val.blank? || val=="nan"
       return true if /^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$/.match?(val)
       JSON.parse(val).kind_of?(Array)
-    rescue JSON.ParserError
+    rescue JSON::ParserError
       Rails.logger.warn "Parameter #{self.inspect} of variable #{variable.name}(#{variable.id}) is invalid"
       errors.add(attr, "should not be badly formed (should be blank, nan, float or array)")
     end
