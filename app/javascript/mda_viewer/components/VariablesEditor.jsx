@@ -284,7 +284,7 @@ function Table({
 
   const hiddenColumns = [];
   if (!isEditing) {
-    hiddenColumns.push('active', 'from', 'desc');
+    hiddenColumns.push('active', 'desc', 'type');
   }
   if (!useScaling) {
     hiddenColumns.push('ref', 'ref0', 'res_ref');
