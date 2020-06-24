@@ -64,4 +64,17 @@ class Api::V1::DisciplineControllerTest < ActionDispatch::IntegrationTest
     assert_equal "endymion", endpoint.host
     assert_equal 40000, endpoint.port
   end
+
+  test "should not delete analysis when destroyed as an analysis discipline" do
+    @disc = disciplines(:outermda_innermda_discipline)
+    assert_difference("Analysis.count", 0) do
+      assert_difference("Discipline.count", -1) do
+        assert_difference("AnalysisDiscipline.count", -1) do
+          innermda = @disc.sub_analysis
+          delete api_v1_discipline_url(@disc), as: :json, headers: @auth_headers
+          assert innermda.reload.is_root_analysis?
+        end
+      end
+    end
+  end
 end

@@ -199,4 +199,11 @@ class AnalysisTest < ActiveSupport::TestCase
     assert_not mda.is_metamodel_prototype?
     assert_not mda.is_metamodel?
   end
+
+  test "should destroy sub_analysis when destroyed" do
+    mda = analyses(:outermda)
+    assert_difference("Analysis.count", -2) do
+      mda.destroy
+    end
+  end
 end
