@@ -4,9 +4,7 @@
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
-from packaging import version
 
-from openmdao import __version__ as OPENMDAO_VERSION
 from openmdao.api import Problem, SqliteRecorder, CaseReader
 from openmdao_extensions.salib_doe_driver import SalibDOEDriver
 
@@ -47,10 +45,7 @@ case_recorder_filename = '<%= @sqlite_filename %>'
 recorder = SqliteRecorder(case_recorder_filename)
 pb.driver.add_recorder(recorder)
 
-if version.parse(OPENMDAO_VERSION) > version.parse("2.8.0"):
-    pb.model.nonlinear_solver.options['err_on_non_converge'] = True
-else:
-    pb.model.nonlinear_solver.options['err_on_maxiter'] = True
+pb.model.nonlinear_solver.options['err_on_non_converge'] = True
 
 <%- @mda.design_variables.each do |dv| %>
 pb.model.add_design_var('<%= dv.name %>', lower=<%= dv.lower_py_value %>, upper=<%= dv.upper_py_value %>)<% end %>
