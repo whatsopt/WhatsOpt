@@ -482,6 +482,26 @@ class Analysis < ApplicationRecord
     end
   end
 
+  def destroy_discipline!(disc, sub_analysis_check: true)
+    Analysis.transaction do
+      unless is_root?
+        disc.variables.each do |v|
+          v.outgoing_connections.each do |conn|
+            if should_update_analysis_ancestor?(conn)
+              parent.remove_upstream_connection!(v.name, super_discipline)
+            end
+          end
+          if v.incoming_connection
+            if should_update_analysis_ancestor?(v.incoming_connection)
+              parent.remove_upstream_connection!(v.name, super_discipline)
+            end
+          end
+        end
+      end
+      disc.destroy!
+    end
+  end
+
   def should_update_analysis_ancestor?(conn)
     has_parent? && conn.driverish?
   end

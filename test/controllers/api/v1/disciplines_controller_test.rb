@@ -57,6 +57,21 @@ class Api::V1::DisciplineControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test "should delete connections in parent analysis" do
+    @disc = disciplines(:innermda_discipline)
+    @innermda = @disc.analysis
+    @outermda = @disc.analysis.parent
+    p  @outermda.driver.variables.map(&:name)
+    initial_drivervar_count = @outermda.driver.variables.count
+    assert_difference("Discipline.count", -1) do
+      delete api_v1_discipline_url(@disc), as: :json, headers: @auth_headers
+      assert_response :success
+      # should have suppressed connection to y and driver y variable because only used by deleted disc in innermda
+      p @outermda.driver.reload.variables.map(&:name)
+      assert_equal initial_drivervar_count - 1, @outermda.driver.reload.variables.count
+    end
+  end
+
   test "should update discipline with an endpoint" do
     patch api_v1_discipline_url(@disc), params: { discipline: { endpoint_attributes: { host: "endymion", port: 40000 } } }, as: :json, headers: @auth_headers
     assert_response :success
