@@ -32,5 +32,23 @@ namespace :whatsopt do
       p vars
       # vars.map{|v| v.delete }
     end
+
+    desc "Run sub_analyses integrity/consistency check"
+    task sub_analyses: :environment do
+      Analysis.all.each do |a|
+        next if a.is_root?
+        parent = a.parent
+        found = false 
+        parent.disciplines.each do |d|
+          if d.sub_analysis&.id == a.id
+            found = true
+            break
+          end
+        end
+        unless found
+          puts "Analysis ##{a.id} #{a.name} is unplugged from ##{parent.id} #{parent.name}"
+        end
+      end
+    end
   end
 end
