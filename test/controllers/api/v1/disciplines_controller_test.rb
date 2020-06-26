@@ -61,14 +61,14 @@ class Api::V1::DisciplineControllerTest < ActionDispatch::IntegrationTest
     @disc = disciplines(:innermda_discipline)
     @innermda = @disc.analysis
     @outermda = @disc.analysis.parent
-    p  @outermda.driver.variables.map(&:name)
-    initial_drivervar_count = @outermda.driver.variables.count
+    initial_drivervars = @outermda.driver.variables.map(&:name)
     assert_difference("Discipline.count", -1) do
       delete api_v1_discipline_url(@disc), as: :json, headers: @auth_headers
       assert_response :success
       # should have suppressed connection to y and driver y variable because only used by deleted disc in innermda
-      p @outermda.driver.reload.variables.map(&:name)
-      assert_equal initial_drivervar_count - 1, @outermda.driver.reload.variables.count
+      # should have suppressed connection to x2 and driver x2 variable because only used by deleted disc in innermda
+      resvars = @outermda.driver.reload.variables.map(&:name)
+      assert_equal initial_drivervars - ["x2", "y"], @outermda.driver.reload.variables.map(&:name)
     end
   end
 

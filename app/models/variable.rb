@@ -29,6 +29,12 @@ class Variable < ApplicationRecord
 
   has_one :surrogate, dependent: :destroy
 
+  before_destroy :log_destroy
+
+  def log_destroy
+    Rails.logger.info "**************  DESTROY #{self.name} from #{self.discipline.name}"
+  end
+
   accepts_nested_attributes_for :parameter, reject_if: proc { |attr|
                                                          attr["init"].nil? &&
                                                            attr["lower"].nil? &&

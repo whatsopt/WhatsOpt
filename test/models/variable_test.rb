@@ -73,18 +73,22 @@ class VariableTest < ActiveSupport::TestCase
     assert_equal "Geometry", vars.first.discipline.name
   end
 
-  test "should delete and delete connected if only connected from driver" do
+  test "should delete and delete connected if only connected from driver once analysis is refreshed" do
     varin = variables(:varx1_geo_in)
+    analysis = varin.discipline.analysis
     assert_difference("Variable.count", -2) do
       varin.destroy!
+      analysis.refresh_connections
     end
     assert_not Variable.of_analysis(analyses(:cicav)).find_by_name(varin.name)
   end
 
-  test "should delete and delete connected if only connected to driver" do
+  test "should delete and delete connected if only connected to driver once analysis is refreshed" do
     var = variables(:varobj_geo_out)
+    analysis = var.discipline.analysis
     assert_difference("Variable.count", -2) do
       var.destroy!
+      analysis.refresh_connections
     end
     assert_not Variable.of_analysis(analyses(:cicav)).find_by_name(var.name)
   end

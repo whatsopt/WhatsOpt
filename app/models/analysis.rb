@@ -372,6 +372,8 @@ class Analysis < ApplicationRecord
         Connection.where(from_id: newvar.id, to_id: vin.id).first_or_create!(role: WhatsOpt::Variable::PARAMETER_ROLE)
       end
     end
+
+    driver.variables.disconnected.map(&:destroy!) if driver
   end
 
   def update!(mda_params)
@@ -476,29 +478,35 @@ class Analysis < ApplicationRecord
     Analysis.transaction do
       varname = conn.from.name
       conn.destroy_connection!(sub_analysis_check)
-      if should_update_analysis_ancestor?(conn)
+      if should_update_analysis_ancestor?(conn) && Connection.where(from: conn.from).count == 0
         parent.remove_upstream_connection!(varname, super_discipline)
       end
     end
+    refresh_connections
   end
 
   def destroy_discipline!(disc, sub_analysis_check: true)
     Analysis.transaction do
       unless is_root?
         disc.variables.each do |v|
+          Rails.logger.warn ">>> Variable #{v.name}"
           v.outgoing_connections.each do |conn|
-            if should_update_analysis_ancestor?(conn)
+            if should_update_analysis_ancestor?(conn) && Connection.where(from: conn.from).count <= 1
+              Rails.logger.warn ">>>>>> remove Variable #{v.name} outgoing connections in upper #{parent.name}"
               parent.remove_upstream_connection!(v.name, super_discipline)
             end
           end
-          if v.incoming_connection
-            if should_update_analysis_ancestor?(v.incoming_connection)
+          conn = v.incoming_connection
+          if conn
+            if should_update_analysis_ancestor?(conn) && Connection.where(from: conn.from).count <= 1
+              Rails.logger.warn ">>>>>> remove Variable #{v.name} incoming connection in upper #{parent.name}"
               parent.remove_upstream_connection!(v.name, super_discipline)
             end
           end
         end
       end
       disc.destroy!
+      refresh_connections
     end
   end
 
@@ -510,7 +518,7 @@ class Analysis < ApplicationRecord
     varname = inner_driver_var.name
     var_from = Variable.of_analysis(self).where(name: varname, io_mode: WhatsOpt::Variable::OUT).take
     if var_from
-      if (var_from.discipline.id == discipline.id) && (inner_driver_var.reflected_io == WhatsOpt::Variable::OUT)
+      if (var_from.discipline.id == discipline.id) && (inner_driver_var.reflected_io_mode == WhatsOpt::Variable::OUT)
         # ok var already produced by sub-analysis
       else
         if var_from.discipline.id != discipline.id # var consumed by sub-analysis
@@ -530,12 +538,25 @@ class Analysis < ApplicationRecord
   end
 
   def remove_upstream_connection!(varname, discipline)
-    var = Variable.of_analysis(self).where(name: varname, discipline_id: discipline.id).take
+    # var = Variable.of_analysis(self).where(name: varname, discipline_id: discipline.id).take
+    var = discipline.variables.find_by(name: varname)
     unless var.blank? # normally should exists but defensive programming
       if var.is_in?
-        destroy_connection!(var.incoming_connection, sub_analysis_check: false)
+        conn = var.incoming_connection
+        Rails.logger.warn ">>>>>>>>> try remove #{conn.from.name} from #{conn.from.discipline.name} ##{conn.from.id} to  ##{conn.to.discipline.name} #{conn.to.id} "
+        destroy_connection!(conn, sub_analysis_check: false)
+        Rails.logger.warn "<<<<<<<<< try remove #{conn.from.name}"
       else
-        var.outgoing_connections.map { |conn| destroy_connection!(conn, sub_analysis_check: false) }
+        var.outgoing_connections.map do |conn| 
+          if conn.driverish?
+            Rails.logger.warn ">>>>>>>>> try remove #{conn.from.name} from #{conn.from.discipline.name} ##{conn.from.id} to ##{conn.to.discipline.name} #{conn.to.id} "
+            destroy_connection!(conn, sub_analysis_check: false) 
+            Rails.logger.warn "<<<<<<<<< try remove #{conn.from.name}"
+          else
+            Rails.logger.warn ">>>>>>>>> update #{conn.from.name} to be from DRIVER"
+            conn.from.update(discipline: driver)
+          end
+        end
       end
     end
   end
