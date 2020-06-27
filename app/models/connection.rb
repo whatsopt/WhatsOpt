@@ -68,7 +68,7 @@ class Connection < ApplicationRecord
                     .first_or_create!(shape: 1, type: "Float", desc: "", units: "", active: true)
       conn = Connection.where(from_id: vout.id, to_id: vin.id).first_or_create!
       # downgrade the role if needed
-      Rails.logger.info "CREATED #{conn.from.inspect} #{conn.to.inspect}"
+      # Rails.logger.info "CREATED #{conn.from.inspect} #{conn.to.inspect}"
       if !conn.from.discipline.is_driver? && !conn.to.discipline.is_driver?
         Connection.where(from_id: vout.id).update(role: WhatsOpt::Variable::STATE_VAR_ROLE)
       end
@@ -218,7 +218,7 @@ class Connection < ApplicationRecord
     conns = Connection.where(from: from)
     # delete from only if it was the last connection from
     if conns.size == 0
-      Rails.logger.warn "----------------- DELETE FROM VAR #{from.name}"
+      # Rails.logger.warn "----------------- DELETE FROM VAR #{from.name}"
       from.delete
     else
       # special case: as connection to driver is removed role switch to state var for others
@@ -226,7 +226,7 @@ class Connection < ApplicationRecord
         conns.map { |conn| conn.update!(role: WhatsOpt::Variable::STATE_VAR_ROLE) }
       end
     end
-    Rails.logger.warn "----------------- DELETE TO VAR #{to.name}"
+    # Rails.logger.warn "----------------- DELETE TO VAR #{to.name}"
     to.delete
   end
 
