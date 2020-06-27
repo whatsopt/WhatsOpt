@@ -15,30 +15,9 @@ module ExceptionHandler
       json_response({ message: e.message }, :unprocessable_entity)
     end
 
-    rescue_from Operation::ForbiddenRemovalError do |e|
-      Rails.logger.error "Operation forbidden removal: " + e.message
-      json_response({ message: e.message }, :forbidden)
-    end
-
     rescue_from WhatsOpt::Version::WopVersionMismatchException do |e|
       Rails.logger.error "Version: " + e.message
       json_response({ message: e.message }, :forbidden)
     end
-
-    rescue_from Optimization::ConfigurationInvalid do |e|
-      Rails.logger.error "Invalid configuration : " + e.message
-      json_response({ message: e.message }, :bad_request)
-    end
-
-    rescue_from Optimization::InputInvalid do |e|
-      Rails.logger.error "Invalid inputs : " + e.message
-      json_response({ message: e.message }, :bad_request)
-    end
-
-    # Never catch here as the optimizer computation is asynchronous now
-    # rescue_from WhatsOpt::Services::OptimizerException do |e|
-    #   Rails.logger.error "Optimization error : " + e.message
-    #   json_response({ message: e.message }, :unprocessable_entity)
-    # end
   end
 end

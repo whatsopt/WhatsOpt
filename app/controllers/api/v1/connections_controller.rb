@@ -11,6 +11,8 @@ class Api::V1::ConnectionsController < Api::ApiController
     begin
       conns = mda.create_connections!(from_disc, to_disc, names)
       json_response conns, :created
+    rescue Analysis::AncestorUpdateError => e
+      json_response({ message: e }, :unprocessable_entity)
     rescue Connection::SubAnalysisVariableNotFoundError => e
       json_response({ message: e }, :unprocessable_entity)
     end

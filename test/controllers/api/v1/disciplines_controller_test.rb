@@ -57,11 +57,39 @@ class Api::V1::DisciplineControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test "should delete connections in parent analysis" do
+    @disc = disciplines(:innermda_discipline)
+    @innermda = @disc.analysis
+    @outermda = @disc.analysis.parent
+    initial_drivervars = @outermda.driver.variables.map(&:name)
+    assert_difference("Discipline.count", -1) do
+      delete api_v1_discipline_url(@disc), as: :json, headers: @auth_headers
+      assert_response :success
+      # should have suppressed connection to y and driver y variable because only used by deleted disc in innermda
+      # should have suppressed connection to x2 and driver x2 variable because only used by deleted disc in innermda
+      resvars = @outermda.driver.reload.variables.map(&:name)
+      assert_equal initial_drivervars - ["x2", "y"], @outermda.driver.reload.variables.map(&:name)
+    end
+  end
+
   test "should update discipline with an endpoint" do
     patch api_v1_discipline_url(@disc), params: { discipline: { endpoint_attributes: { host: "endymion", port: 40000 } } }, as: :json, headers: @auth_headers
     assert_response :success
     endpoint = Endpoint.all.last
     assert_equal "endymion", endpoint.host
     assert_equal 40000, endpoint.port
+  end
+
+  test "should not delete analysis when destroyed as an analysis discipline" do
+    @disc = disciplines(:outermda_innermda_discipline)
+    assert_difference("Analysis.count", 0) do
+      assert_difference("Discipline.count", -1) do
+        assert_difference("AnalysisDiscipline.count", -1) do
+          innermda = @disc.sub_analysis
+          delete api_v1_discipline_url(@disc), as: :json, headers: @auth_headers
+          assert innermda.reload.is_root_analysis?
+        end
+      end
+    end
   end
 end

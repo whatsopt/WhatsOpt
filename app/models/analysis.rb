@@ -372,6 +372,8 @@ class Analysis < ApplicationRecord
         Connection.where(from_id: newvar.id, to_id: vin.id).first_or_create!(role: WhatsOpt::Variable::PARAMETER_ROLE)
       end
     end
+
+    driver.variables.disconnected.map(&:destroy!) if driver
   end
 
   def update!(mda_params)
@@ -434,7 +436,7 @@ class Analysis < ApplicationRecord
       names.each do |name|
         conn = Connection.create_connection!(from_disc, to_disc, name, sub_analysis_check)
         if should_update_analysis_ancestor?(conn)
-          inner_driver_variable = driver.variables.where(name: name).take
+          inner_driver_variable = driver.variables.find_by(name: name)
           parent.add_upstream_connection!(inner_driver_variable, super_discipline)
         end
       end
@@ -476,9 +478,35 @@ class Analysis < ApplicationRecord
     Analysis.transaction do
       varname = conn.from.name
       conn.destroy_connection!(sub_analysis_check)
-      if should_update_analysis_ancestor?(conn)
+      if should_update_analysis_ancestor?(conn) && Connection.where(from: conn.from).count == 0
         parent.remove_upstream_connection!(varname, super_discipline)
       end
+    end
+    refresh_connections
+  end
+
+  def destroy_discipline!(disc, sub_analysis_check: true)
+    Analysis.transaction do
+      unless is_root?
+        disc.variables.each do |v|
+          Rails.logger.warn ">>> Variable #{v.name}"
+          v.outgoing_connections.each do |conn|
+            if should_update_analysis_ancestor?(conn) && Connection.where(from: conn.from).count <= 1
+              Rails.logger.warn ">>>>>> remove Variable #{v.name} outgoing connections in upper #{parent.name}"
+              parent.remove_upstream_connection!(v.name, super_discipline)
+            end
+          end
+          conn = v.incoming_connection
+          if conn
+            if should_update_analysis_ancestor?(conn) && Connection.where(from: conn.from).count <= 1
+              Rails.logger.warn ">>>>>> remove Variable #{v.name} incoming connection in upper #{parent.name}"
+              parent.remove_upstream_connection!(v.name, super_discipline)
+            end
+          end
+        end
+      end
+      disc.destroy!
+      refresh_connections
     end
   end
 
@@ -488,20 +516,31 @@ class Analysis < ApplicationRecord
 
   def add_upstream_connection!(inner_driver_var, discipline)
     varname = inner_driver_var.name
+    io_mode = inner_driver_var.reflected_io_mode
     var_from = Variable.of_analysis(self).where(name: varname, io_mode: WhatsOpt::Variable::OUT).take
     if var_from
-      if (var_from.discipline.id == discipline.id) && (inner_driver_var.reflected_io == WhatsOpt::Variable::OUT)
-        # ok var already produced by sub-analysis
+      if (var_from.discipline.id == discipline.id) && (io_mode == WhatsOpt::Variable::OUT)
+        # already produced by sub-analysis: should not happen... but nothing to do
       else
-        if var_from.discipline.id != discipline.id # var consumed by sub-analysis
-          from_disc = var_from.discipline
-          to_disc = discipline
-          create_connections!(from_disc, to_disc, [varname], sub_analysis_check: false)
+        if var_from.discipline == driver  # case the var is linked to driver
+          if io_mode == WhatsOpt::Variable::OUT  # produced by driver => now produced by sub-analysis
+            var_from.update(discipline: discipline)
+          else # new consumer discipline
+            from_disc = driver
+            to_disc = discipline
+            create_connections!(from_disc, to_disc, [varname], sub_analysis_check: false)
+          end
         else
-          raise AncestorUpdateError, "Variable #{varname} already used in parent analysis #{name}: Cannot create connection."
+          if io_mode == WhatsOpt::Variable::OUT  # variable already produced by another discipline => abort
+            raise AncestorUpdateError, "Variable #{varname} already produced in parent analysis #{name}: Cannot create connection."
+          else # new consumer discipline from another discipline 
+            from_disc = var_from.discipline
+            to_disc = discipline
+            create_connections!(from_disc, to_disc, [varname], sub_analysis_check: false)
+          end
         end
       end
-    else
+    else  # by default create connection from/to driver
       from_disc = driver
       to_disc = discipline
       from_disc, to_disc = to_disc, from_disc if inner_driver_var.is_in?
@@ -510,12 +549,25 @@ class Analysis < ApplicationRecord
   end
 
   def remove_upstream_connection!(varname, discipline)
-    var = Variable.of_analysis(self).where(name: varname, discipline_id: discipline.id).take
+    # var = Variable.of_analysis(self).where(name: varname, discipline_id: discipline.id).take
+    var = discipline.variables.find_by(name: varname)
     unless var.blank? # normally should exists but defensive programming
       if var.is_in?
-        destroy_connection!(var.incoming_connection, sub_analysis_check: false)
+        conn = var.incoming_connection
+        # Rails.logger.warn ">>>>>>>>> try remove #{conn.from.name} from #{conn.from.discipline.name} ##{conn.from.id} to  ##{conn.to.discipline.name} #{conn.to.id} "
+        destroy_connection!(conn, sub_analysis_check: false)
+        # Rails.logger.warn "<<<<<<<<< try remove #{conn.from.name}"
       else
-        var.outgoing_connections.map { |conn| destroy_connection!(conn, sub_analysis_check: false) }
+        var.outgoing_connections.map do |conn| 
+          if conn.driverish?
+            # Rails.logger.warn ">>>>>>>>> try remove #{conn.from.name} from #{conn.from.discipline.name} ##{conn.from.id} to ##{conn.to.discipline.name} #{conn.to.id} "
+            destroy_connection!(conn, sub_analysis_check: false) 
+            # Rails.logger.warn "<<<<<<<<< try remove #{conn.from.name}"
+          else
+            # Rails.logger.warn ">>>>>>>>> update #{conn.from.name} to be from DRIVER"
+            conn.from.update(discipline: driver)
+          end
+        end
       end
     end
   end
