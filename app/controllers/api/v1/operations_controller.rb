@@ -37,6 +37,9 @@ class Api::V1::OperationsController < Api::ApiController
   def destroy
     @operation.destroy!
     head :no_content
+  rescue Operation::ForbiddenRemovalError => e
+    Rails.logger.error "Operation forbidden removal: " + e.message
+    json_response({ message: e.message }, :forbidden)
   end
 
   private

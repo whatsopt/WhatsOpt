@@ -42,12 +42,10 @@ class OperationsController < ApplicationController
   # DELETE /operations/1
   def destroy
     authorize @ope
-    begin
-      @ope.destroy
-      redirect_to mdas_url, notice: "Operation was successfully destroyed."
-    rescue Operation::ForbiddenRemovalError => exc
-      redirect_to mdas_url, alert: exc.message
-    end
+    @ope.destroy
+    redirect_to mdas_url, notice: "Operation was successfully destroyed."
+  rescue Operation::ForbiddenRemovalError => exc
+    redirect_to mdas_url, alert: exc.message
   end
 
   private

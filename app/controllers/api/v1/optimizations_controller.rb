@@ -16,6 +16,10 @@ class Api::V1::OptimizationsController < Api::ApiController
     @optim.create_optimizer
     @optim.set_owner(current_user)
     json_response @optim, :created
+  rescue Optimization::ConfigurationInvalid => e
+    skip_authorization
+    Rails.logger.error "Invalid optimizer configuration : " + e.message
+    json_response({ message: e.message }, :bad_request)
   end
 
   # PATCH /api/v1/optimizations/1
@@ -25,6 +29,9 @@ class Api::V1::OptimizationsController < Api::ApiController
     @optim.update!(inputs: inputs, outputs: { status: Optimization::RUNNING, x_suggested: nil })
     OptimizationJob.perform_later(@optim)
     head :no_content
+  rescue Optimization::InputInvalid => e
+    Rails.logger.error "Invalid optimizer inputs : " + e.message
+    json_response({ message: e.message }, :bad_request)
   end
 
   # DELETE /api/v1/optimizations/1
