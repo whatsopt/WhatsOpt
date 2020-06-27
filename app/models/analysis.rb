@@ -28,6 +28,9 @@ class Analysis < ApplicationRecord
 
   has_one :openmdao_impl, class_name: "OpenmdaoAnalysisImpl", dependent: :destroy
 
+  has_one :design_project_filing, dependent: :destroy
+  has_one :design_project, through: :design_project_filing
+
   scope :mine, -> { with_role(:owner, current_user) }
 
   after_save :refresh_connections, unless: Proc.new { self.disciplines.count < 2 }

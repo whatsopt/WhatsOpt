@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_05_183019) do
+ActiveRecord::Schema.define(version: 2020_06_27_210649) do
 
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
@@ -52,6 +52,13 @@ ActiveRecord::Schema.define(version: 2020_05_05_183019) do
     t.index ["ancestry"], name: "index_analyses_on_ancestry"
   end
 
+  create_table "analyses_design_projects", id: false, force: :cascade do |t|
+    t.integer "design_project_id", null: false
+    t.integer "analysis_id", null: false
+    t.index ["analysis_id", "design_project_id"], name: "index_analysis_id_design_project_id"
+    t.index ["design_project_id", "analysis_id"], name: "index_design_project_id_analysis_id"
+  end
+
   create_table "analysis_disciplines", force: :cascade do |t|
     t.integer "discipline_id"
     t.integer "analysis_id"
@@ -80,12 +87,25 @@ ActiveRecord::Schema.define(version: 2020_05_05_183019) do
     t.text "values"
   end
 
+  create_table "components", force: :cascade do |t|
+    t.integer "discipline_id"
+    t.boolean "has_derivatives", default: false
+    t.boolean "is_implicit", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["discipline_id"], name: "index_components_on_discipline_id"
+  end
+
   create_table "connections", force: :cascade do |t|
     t.integer "from_id"
     t.integer "to_id"
     t.string "role", default: ""
     t.index ["from_id"], name: "index_connections_on_from_id"
     t.index ["to_id"], name: "index_connections_on_to_id"
+  end
+
+  create_table "design_projects", force: :cascade do |t|
+    t.string "name"
   end
 
   create_table "disciplines", force: :cascade do |t|
@@ -194,9 +214,9 @@ ActiveRecord::Schema.define(version: 2020_05_05_183019) do
   end
 
   create_table "parameters", force: :cascade do |t|
-    t.text "init"
-    t.text "lower"
-    t.text "upper"
+    t.string "init", default: ""
+    t.string "lower", default: ""
+    t.string "upper", default: ""
     t.integer "variable_id"
   end
 
@@ -281,7 +301,6 @@ ActiveRecord::Schema.define(version: 2020_05_05_183019) do
     t.index ["discipline_id"], name: "index_variables_on_discipline_id"
   end
 
-  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "analysis_disciplines", "analyses"
   add_foreign_key "analysis_disciplines", "disciplines"
 end
