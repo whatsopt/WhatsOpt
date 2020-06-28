@@ -1,0 +1,24 @@
+<%= form_for(design_project, url: (design_project.new_record? ? design_projects_path : design_project_path(@design_project)), :html => { :multipart => true, :role => "form" }) do |f| %>
+<% if @design_project.errors.any? %>
+<% @design_project.errors.full_messages.each do |message| %>
+<div class="alert <%= bootstrap_class_for :error %>" role="alert">
+  <a href="#" data-dismiss="alert" class="close">×</a>
+  <%= message %>
+</div>
+<% end %>
+<% end %>
+
+<div class="row">
+  <div class=" col-4">
+    <div class="form-group">
+      <%= f.label :name %>
+      <%= f.text_field :name, class: "form-control" %>
+    </div>
+
+    <div class="form-group">
+      <%= f.submit "Submit", class: "btn btn-primary" %>
+      <%= f.submit "Cancel", class: "btn btn-secondary", name: "cancel_button" %>
+    </div>
+  </div>
+</div>
+<% end %>
