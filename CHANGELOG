@@ -2,6 +2,7 @@
 
 <h3>1.10.0 (??/07/2020)</h3>
 <ul>
+  <li>Use can reset his/her API key</li>
   <li>User can get meta-models information (list and details) from the REST API</li>
   <li>Change: OpenMDAO code checking is not run automatically anymore, it is on-demand (user click)</li>
 </ul>
