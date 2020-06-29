@@ -165,6 +165,11 @@ class Analysis < ApplicationRecord
     children.joins(:analysis_discipline)
   end
 
+  def nesting_depth
+    depth = subtree.select(&:is_childless?).map(&:depth).max
+    depth
+  end
+
   def all_plain_disciplines
     @allplain ||= sub_analyses.inject(plain_disciplines) { |ary, elt| ary + elt.all_plain_disciplines }
   end

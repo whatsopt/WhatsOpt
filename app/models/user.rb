@@ -11,7 +11,7 @@ class User < ActiveRecord::Base
   after_initialize :initialize_defaults, if: :new_record?
   before_create :generate_api_key
 
-  store :settings, accessors: [:analyses_query], coder: JSON
+  store :settings, accessors: [:analyses_query, :analyses_scope_design_project_id], coder: JSON
 
   # work around rolify with_role method bug: see https://github.com/RolifyCommunity/rolify/issues/362
   scope :with_role_for_instance, lambda { |role_name, instance|
@@ -48,5 +48,6 @@ class User < ActiveRecord::Base
     def initialize_defaults
       add_role(:user)
       self.analyses_query = "all"
+      self.analyses_scope_design_project_id = nil 
     end
 end

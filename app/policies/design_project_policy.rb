@@ -1,20 +1,9 @@
 # frozen_string_literal: true
 
-class AnalysisPolicy < ApplicationPolicy
+class DesignProjectPolicy < ApplicationPolicy
   class Scope < Scope
     def resolve
-      if user.admin?
-        scope
-      else
-        if user.analyses_query == "mine"
-          scope.with_role(:owner, user)
-        else
-          publicAnalyses = scope.where(public: true)
-          authorizedAnalyses = scope.with_role([:owner, :member], user)
-          analyses = (publicAnalyses + authorizedAnalyses).uniq
-          scope.where(id: analyses.map { |a| a[:id].to_i })
-        end
-      end
+      scope.all
     end
   end
 
@@ -23,11 +12,7 @@ class AnalysisPolicy < ApplicationPolicy
   end
 
   def show?
-    @record.public || @user.admin? || @user.has_role?(:owner, @record) || @user.has_role?(:member, @record)
-  end
-
-  def operate?
-    APP_CONFIG["enable_remote_operations"] && update?
+    true 
   end
 
   def edit?

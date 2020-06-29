@@ -1,5 +1,5 @@
 <div class="btn-toolbar float-right">
-  <%= link_to 'New', new_mda_path, class: "btn btn-primary ml-2" %>
+  <%= link_to 'New', new_design_project_path, class: "btn btn-primary ml-2" %>
 </div>
 
 <h1>Design Projects</h1>
@@ -14,9 +14,9 @@
   </thead>
 
   <tbody>
-    <% @design_project.each do |mda| %>
+    <% @design_projects.each do |design| %>
     <tr>
-      <td><%= @design_project.name %></td>
+      <td><%= design.name %></td>
     </tr>
     <% end %>
   </tbody>

@@ -6,6 +6,10 @@ class AnalysesController < ApplicationController
   # GET /mdas
   def index
     @mdas = policy_scope(Analysis).roots
+    unless current_user.analyses_scope_design_project_id.blank?
+      @mdas = @mdas.joins(:design_project_filing)
+        .where(design_project_filings: {design_project_id: current_user.analyses_scope_design_project_id})
+    end
   end
 
   # GET /mdas/1

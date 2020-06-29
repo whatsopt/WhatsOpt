@@ -3,13 +3,9 @@
 class Api::V1::AnalysesController < Api::ApiController
   before_action :set_mda, only: [:show, :update]
 
-  # GET /api/v1/mdas[?with_sub_analyses=true]
+  # GET /api/v1/mdas
   def index
-    if params[:with_sub_analyses]
-      @mdas = policy_scope(Analysis)
-    else
-      @mdas = policy_scope(Analysis).roots
-    end
+    @mdas = policy_scope(Analysis).roots
     json_response @mdas, :ok, each_serializer: AnalysisItemSerializer
   end
 
