@@ -88,15 +88,18 @@ ActiveRecord::Schema.define(version: 2020_06_27_210649) do
     t.index ["to_id"], name: "index_connections_on_to_id"
   end
 
-  create_table "design_project_filings", id: false, force: :cascade do |t|
-    t.integer "design_project_id", null: false
-    t.integer "analysis_id", null: false
-    t.index ["analysis_id", "design_project_id"], name: "index_analysis_id_design_project_id"
-    t.index ["design_project_id", "analysis_id"], name: "index_design_project_id_analysis_id"
+  create_table "design_project_filings", force: :cascade do |t|
+    t.integer "design_project_id"
+    t.integer "analysis_id"
+    t.index ["analysis_id"], name: "index_design_project_filings_on_analysis_id"
+    t.index ["design_project_id"], name: "index_design_project_filings_on_design_project_id"
   end
 
   create_table "design_projects", force: :cascade do |t|
     t.string "name"
+    t.text "description"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "disciplines", force: :cascade do |t|

@@ -29,9 +29,9 @@ class Analysis < ApplicationRecord
   has_one :openmdao_impl, class_name: "OpenmdaoAnalysisImpl", dependent: :destroy
 
   has_one :design_project_filing, dependent: :destroy
-  has_one :design_project, through: :design_project_filing
 
   scope :mine, -> { with_role(:owner, current_user) }
+  scope :of_project, -> (project) { joins(:design_project_filings).where(design_project_filing: {design_project: project}) }
 
   after_save :refresh_connections, unless: Proc.new { self.disciplines.count < 2 }
   after_save :ensure_ancestry_for_sub_analyses
@@ -209,10 +209,15 @@ class Analysis < ApplicationRecord
     @prev ||= (idx == 0) ? -1 : @opeIds[idx-1]
   end
 
+  def design_project
+    design_project_filing&.design_project
+  end
+
   def to_whatsopt_ui_json
     {
       id: id,
       name: name,
+      project: design_project || { id: 0, name: "" },
       note: note.blank? ? "":note.to_s,
 
       public: public,
@@ -390,6 +395,22 @@ class Analysis < ApplicationRecord
       descendants.each do |inner|
         inner.update_column(:public, mda_params[:public])
       end
+    end
+  end
+
+  def update_design_project!(design_project_id)
+    # shortcut if already referenced
+    return if design_project && design_project.id == design_project_id
+    if design_project_id == 0
+      # remove project filing
+      design_project_filing.destroy!
+    else
+      dp = DesignProject.find(design_project_id)
+      p dp
+      dpf = self.design_project_filing || self.build_design_project_filing
+      p dpf
+      
+      dpf.update(design_project: dp)
     end
   end
 

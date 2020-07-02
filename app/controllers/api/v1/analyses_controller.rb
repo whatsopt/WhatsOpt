@@ -49,7 +49,10 @@ class Api::V1::AnalysesController < Api::ApiController
       authorize(fromAnalysis, :show?)
       @mda.import!(fromAnalysis, import[:disciplines])
     else
-      @mda.update!(mda_params)
+      if mda_params[:design_project_id]
+        @mda.update_design_project!(mda_params[:design_project_id])
+      end
+      @mda.update!(mda_params.except(:design_project_id))
     end
     head :no_content
   end
@@ -73,6 +76,7 @@ class Api::V1::AnalysesController < Api::ApiController
         :with_sub_analyses,
         :name,
         :note,
+        :design_project_id,
         :public,
         import: [:analysis, disciplines: [] ],
         disciplines_attributes: [

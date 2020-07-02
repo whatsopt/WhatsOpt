@@ -12,6 +12,14 @@ class AnalysesControllerTest < ActionDispatch::IntegrationTest
   test "should get index" do
     get mdas_url
     assert_response :success
+    assert_select "tbody>tr", count: Analysis.count - 2 # all - (1 sub analysis + 1 user2 private)
+  end
+
+  test "should filter by project" do
+    project = design_projects(:cicav_project)
+    get mdas_url(design_project: project.id)
+    assert_response :success
+    assert_select "tbody>tr", count: 1
   end
 
   test "should get new" do
@@ -63,11 +71,6 @@ class AnalysesControllerTest < ActionDispatch::IntegrationTest
   test "should get edit" do
     get edit_mda_url(@cicav)
     assert_response :success
-  end
-
-  test "should update analysis" do
-    patch mda_url(@cicav), params: { analysis: { name: @cicav.name } }
-    assert_redirected_to mda_url(@cicav)
   end
 
   test "should destroy analysis" do

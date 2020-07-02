@@ -8,6 +8,7 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     @auth_headers = { "Authorization" => "Token " + TEST_API_KEY }
     @mda = analyses(:cicav)
     @mda2 = analyses(:fast)
+    @auth_headers2 = { "Authorization" => "Token " + TEST_API_KEY + "User2" }
     @disc = @mda.disciplines.nodes.first
   end
 
@@ -25,13 +26,6 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     mda = JSON.parse(response.body)
     assert_equal ["created_at", "id", "name", "notes", "owner_email"], mda.keys.sort
-  end
-
-  test "should get all mdas even sub ones" do
-    get api_v1_mdas_url(with_sub_analyses: true), as: :json, headers: @auth_headers
-    assert_response :success
-    analyses = JSON.parse(response.body)
-    assert_equal Analysis.count-1, analyses.size # ALL - {user2 private}
   end
 
   test "should create a mda" do
@@ -260,5 +254,21 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
         mm.destroy
       end
     end
+  end
+
+  test "should file an analysis in a project reference" do
+    proj = design_projects(:empty_project)
+    assert_nil @mda2.design_project
+    put api_v1_mda_url(@mda2), params: { analysis: { design_project_id: proj.id } }, 
+      as: :json, headers: @auth_headers2  # should be as user2 who is owner of mda2
+    assert_response :success
+    assert_equal proj, @mda2.reload.design_project
+  end
+  
+  test "should update a project reference" do
+    proj = design_projects(:empty_project)
+    put api_v1_mda_url(@mda), params: { analysis: { design_project_id: proj.id } }, as: :json, headers: @auth_headers
+    assert_response :success
+    assert_equal proj, @mda.reload.design_project
   end
 end

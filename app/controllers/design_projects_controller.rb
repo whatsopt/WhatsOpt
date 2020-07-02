@@ -29,7 +29,7 @@ class DesignProjectsController < ApplicationController
     else
       if @design_project.save
         @design_project.set_owner(current_user)
-        redirect_to design_project_url(@design_project), notice: "Design project #{@design_project.name} was successfully created."
+        redirect_to design_projects_url, notice: "Design project #{@design_project.name} was successfully created."
       else
         redirect_to new_design_project_url, error: "Something went wrong while creating #{@design_project.name}."
       end
@@ -48,6 +48,7 @@ class DesignProjectsController < ApplicationController
   # DELETE /design_projects/1
   def destroy
     @design_project.destroy
+    redirect_to design_projects_url, notice: "Design project #{@design_project.name} was successfully deleted."
   end
 
 private
@@ -57,7 +58,7 @@ private
   end
 
   def design_project_params
-    params.require(:design_project).permit(:name, :public)
+    params.require(:design_project).permit(:name, :description)
   end
 
 end

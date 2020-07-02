@@ -2,6 +2,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import UserSelector from './UserSelector';
+import ProjectSelector from './ProjectSelector';
 import AnalysisNoteEditor from './AnalysisNoteEditor';
 
 class MemberList extends React.PureComponent {
@@ -33,7 +34,7 @@ class AnalysisEditor extends React.PureComponent {
       analysisPublic, analysisMembers,
       onAnalysisMemberSearch, onAnalysisMemberSelected, onAnalysisMemberDelete, onAnalysisUpdate,
       newAnalysisName, onAnalysisNameChange, onAnalysisNoteChange, onAnalysisPublicChange,
-      mdaId, note,
+      mdaId, note, onProjectSearch, onProjectSelected, mdaProject,
     } = this.props;
     if (!analysisPublic) {
       teamMembers = (
@@ -81,6 +82,16 @@ class AnalysisEditor extends React.PureComponent {
             </div>
             <div className="form-group">
               <div className="editor-section-label">
+                Design Project
+              </div>
+              <ProjectSelector
+                selected={mdaProject}
+                onProjectSearch={onProjectSearch}
+                onProjectSelected={onProjectSelected}
+              />
+            </div>
+            <div className="form-group">
+              <div className="editor-section-label">
                 Notes
               </div>
               <div className="editor-section-label">
@@ -120,6 +131,7 @@ class AnalysisEditor extends React.PureComponent {
 AnalysisEditor.propTypes = {
   note: PropTypes.string.isRequired,
   mdaId: PropTypes.number.isRequired,
+  mdaProject: PropTypes.object.isRequired,
   newAnalysisName: PropTypes.string.isRequired,
   analysisPublic: PropTypes.bool.isRequired,
   analysisMembers: PropTypes.array.isRequired,
@@ -130,6 +142,8 @@ AnalysisEditor.propTypes = {
   onAnalysisMemberSearch: PropTypes.func.isRequired,
   onAnalysisMemberSelected: PropTypes.func.isRequired,
   onAnalysisMemberDelete: PropTypes.func.isRequired,
+  onProjectSearch: PropTypes.func.isRequired,
+  onProjectSelected: PropTypes.func.isRequired,
 };
 
 export default AnalysisEditor;
