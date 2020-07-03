@@ -14,7 +14,4 @@ module DesignProjectsHelper
     raw(res)
   end
 
-  def link_to_analyses_index(design_project)
-  end
-
 end

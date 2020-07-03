@@ -53,3 +53,7 @@ users_roles14:
 users_roles_optim_ackley2d:
   user: user1
   role: owner_optim_ackley2d_role
+
+users_roles_design_project:
+  user: user1
+  role: owner_cicav_project_role

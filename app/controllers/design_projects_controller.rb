@@ -39,7 +39,7 @@ class DesignProjectsController < ApplicationController
   # PATCH/PUT /design_projects/1
   def update
     if @design_project.update(design_project_params)
-      redirect_to design_project_url(@design_project), notice: "Design project #{@design_project.name} was successfully updated."
+      redirect_to design_projects_url, notice: "Design project #{@design_project.name} was successfully updated."
     else
       render :edit
     end

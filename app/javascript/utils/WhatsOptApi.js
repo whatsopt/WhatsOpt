@@ -71,20 +71,6 @@ class WhatsOptApi {
       .catch((error) => console.log(error));
   }
 
-  // setProject(projectId, mdaId, callback) {
-  //   const path = `/analyses/${mdaId}/design_project_filing`;
-  //   axios.post(this.apiUrl(path), { design_project_filing: { design_project_id: projectId } })
-  //     .then(callback)
-  //     .catch((error) => console.log(error));
-  // }
-
-  // unsetProject(mdaId, callback) {
-  //   const path = `/analyses/${mdaId}/design_project_filing`;
-  //   axios.delete(this.apiUrl(path))
-  //     .then(callback)
-  //     .catch((error) => console.log(error));
-  // }
-
   getMemberCandidates(mdaId, callback) {
     const path = `/user_roles?query[analysis_id]=${mdaId}&query[select]=member_candidates`;
     axios.get(this.apiUrl(path))

@@ -17,7 +17,6 @@ Rails.application.routes.draw do
     namespace :v1, defaults: { format: :json } do
       resource :api_doc, only: [:show]
       resources :analyses, shallow: true, as: :mdas, only: [:index, :show, :create, :update] do
-        resource :design_project_filing, only: [:create, :destroy]
         resource :analysis_discipline, as: :discipline, only: [:create]
         resources :disciplines, only: [:show, :create, :update, :destroy], shallow: true do
           resource :analysis_discipline, as: :mda, only: [:create, :destroy]
@@ -43,7 +42,7 @@ Rails.application.routes.draw do
       resources :user_roles, only: [:index, :update]  
       resource :versioning, only: [:show]  
       resources :optimizations
-      resources :design_projects
+      resources :design_projects, only: [:index]
     end
   end
 
