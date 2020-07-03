@@ -7,12 +7,12 @@
   <li>User can filter analyses by design project</li> 
   <li>User can see some qualitative information (tags) in the analyses list: 
     <ul>
-      <li>OPTIM: an objective variable is defined
+      <li>OPTIM: an objective variable is defined</li>
       <li>MM: analysis created as a metamodel container</li>
       <li>UQ: uncertainty quantification mode: no design variables but uncertain variables</li>
       <li>DEEP: analysis with more than 2 levels of nesting</li>
     </ul>
-  <li>
+  </li>
   <li>User can reset his/her API key</li>
   <li>User can get meta-models information (list and details) from the REST API</li>
   <li>Change: OpenMDAO code checking is not run automatically anymore, it is on-demand (user click)</li>
