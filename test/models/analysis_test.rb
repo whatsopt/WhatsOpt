@@ -206,4 +206,9 @@ class AnalysisTest < ActiveSupport::TestCase
       mda.destroy
     end
   end
+
+  test "may have a project" do
+    assert_equal design_projects(:cicav_project), @mda.design_project
+    assert_nil analyses(:fast).design_project
+  end
 end

@@ -3,13 +3,9 @@
 class Api::V1::AnalysesController < Api::ApiController
   before_action :set_mda, only: [:show, :update]
 
-  # GET /api/v1/mdas[?with_sub_analyses=true]
+  # GET /api/v1/mdas
   def index
-    if params[:with_sub_analyses]
-      @mdas = policy_scope(Analysis)
-    else
-      @mdas = policy_scope(Analysis).roots
-    end
+    @mdas = policy_scope(Analysis).roots
     json_response @mdas, :ok, each_serializer: AnalysisItemSerializer
   end
 
@@ -53,7 +49,10 @@ class Api::V1::AnalysesController < Api::ApiController
       authorize(fromAnalysis, :show?)
       @mda.import!(fromAnalysis, import[:disciplines])
     else
-      @mda.update!(mda_params)
+      if mda_params[:design_project_id]
+        @mda.update_design_project!(mda_params[:design_project_id])
+      end
+      @mda.update!(mda_params.except(:design_project_id))
     end
     head :no_content
   end
@@ -77,6 +76,7 @@ class Api::V1::AnalysesController < Api::ApiController
         :with_sub_analyses,
         :name,
         :note,
+        :design_project_id,
         :public,
         import: [:analysis, disciplines: [] ],
         disciplines_attributes: [

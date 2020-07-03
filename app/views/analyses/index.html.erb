@@ -1,5 +1,19 @@
+
 <div class="btn-toolbar float-right">
-  <div class="btn-group btn-group-toggle mr-2" data-toggle="buttons">
+
+  <div class="input-group  mr-2">
+    <div class="input-group-prepend">
+      <label class="input-group-text" for="designProjectScope">Design Project</label>
+    </div>
+
+    <%= select_tag("design_project_scope", 
+                    options_from_collection_for_select(DesignProject.all, "id", "name", current_user.analyses_scope_design_project_id.to_s),
+                    prompt: "-- any --",
+                    "data-design-project-scope": current_user.analyses_scope_design_project_id,
+                    class: "custom-select", id: "designProjectScope") %>
+  </div>
+
+  <div class="btn-group btn-group-toggle mr-4" data-toggle="buttons">
     <label class="btn btn-secondary <%= is_user_setting?('analyses_query', 'all') ? 'active':'' %>"  >
       <input type="radio" name="query_all" id="all" data-analyses-query="all" autocomplete="off" <%= is_user_setting?('analyses_query', 'all') ? 'checked':'' %> /> All
     </label>
@@ -8,7 +22,7 @@
     </label>
   </div>
 
-  <%= link_to 'New', new_mda_path, class: "btn btn-primary ml-2" %>
+  <%= link_to 'New', new_mda_path, class: "btn btn-primary" %>
 </div>
 
 <h1>Multi Disciplinary Analyses</h1>
@@ -18,14 +32,28 @@
 <% content_for :document_ready do %>
 <script>
   var relRoot = "<%= Rails.application.config.action_controller.relative_url_root %>";
-  $("input[data-analyses-query]").on('change', function() {
-    var query = $(this).data("analyses-query");
+  $("#design_project_scope").on('change', function() {
+    let query = $(this).data("analyses-query");
     $.ajax({
       type: "PATCH",
       xhrFields: { withCredentials: true },
       headers: {'Authorization': 'Token <%= current_user.api_key%>'},
       url: relRoot+'/api/v1/users/<%= current_user.id%>',
       data: {user: {settings:{analyses_query: query}}},
+      success: function() {
+        $.getScript(this.href);
+      }
+    })
+  });
+
+  $("#designProjectScope").on('change', function(e) {
+    let design_project_id = this.value;
+    $.ajax({
+      type: "PATCH",
+      xhrFields: { withCredentials: true },
+      headers: {'Authorization': 'Token <%= current_user.api_key%>'},
+      url: relRoot+'/api/v1/users/<%= current_user.id%>',
+      data: {user: {settings:{analyses_scope_design_project_id: design_project_id}}},
       success: function() {
         $.getScript(this.href);
       }

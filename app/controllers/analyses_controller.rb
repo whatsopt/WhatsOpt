@@ -6,6 +6,18 @@ class AnalysesController < ApplicationController
   # GET /mdas
   def index
     @mdas = policy_scope(Analysis).roots
+    if params[:design_project]
+      @design_project = DesignProject.find(params[:design_project])
+      if @design_project
+        current_user.analyses_scope_design_project_id = @design_project.id
+      else
+        redirect_to mdas_url, notice: "Project with id ##{params[:design_project]} not found"
+      end
+    end
+    unless current_user.analyses_scope_design_project_id.blank?
+      @mdas = @mdas.joins(:design_project_filing)
+        .where(design_project_filings: { design_project_id: current_user.analyses_scope_design_project_id })
+    end
   end
 
   # GET /mdas/1
@@ -16,10 +28,6 @@ class AnalysesController < ApplicationController
   def new
     @mda = Analysis.new
     authorize @mda
-  end
-
-  # GET /mdas/1/edit
-  def edit
   end
 
   # POST /mdas
@@ -51,15 +59,6 @@ class AnalysesController < ApplicationController
     end
   end
 
-  # PATCH/PUT /mdas/1
-  def update
-    if @mda.update(mda_params)
-      redirect_to mda_url(@mda), notice: "Analysis #{@mda.name} was successfully updated."
-    else
-      render :edit
-    end
-  end
-
   # DELETE /mdas/1
   def destroy
     if @mda.parent
@@ -84,7 +83,6 @@ class AnalysesController < ApplicationController
     end
 
     def mda_params
-      params.require(:analysis)
-        .permit(:name, :public)
+      params.require(:analysis).permit(:name, :public, design_project: [:id])
     end
 end

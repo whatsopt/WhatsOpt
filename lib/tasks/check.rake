@@ -38,7 +38,7 @@ namespace :whatsopt do
       Analysis.all.each do |a|
         next if a.is_root?
         parent = a.parent
-        found = false 
+        found = false
         parent.disciplines.each do |d|
           if d.sub_analysis&.id == a.id
             found = true

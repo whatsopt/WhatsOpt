@@ -64,6 +64,13 @@ class WhatsOptApi {
       .catch((error) => console.log(error));
   }
 
+  getProjects(callback) {
+    const path = '/design_projects';
+    axios.get(this.apiUrl(path))
+      .then(callback)
+      .catch((error) => console.log(error));
+  }
+
   getMemberCandidates(mdaId, callback) {
     const path = `/user_roles?query[analysis_id]=${mdaId}&query[select]=member_candidates`;
     axios.get(this.apiUrl(path))
@@ -245,12 +252,6 @@ class WhatsOptApi {
         .then(callback)
         .catch(onError),
     );
-  }
-
-  getApiDocs() {
-    const path = '/api/v1/docs';
-    axios.post(this.apiUrl(path))
-      .catch((error) => console.log(error));
   }
 }
 
