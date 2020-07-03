@@ -33,7 +33,7 @@ class Parameter < ApplicationRecord
       # nan values are accepted in order to accept parameters generated from pushed OpenMDAO code
       # example CICAV BWB analysis
       # accept array or matrices of nans only, dim 3 or 4 not handled (yagni)
-      return true if /^\[(\[?(nan,?\s*)*\]?,?\s*)*\]$/.match?(val) 
+      return true if /^\[(\[?(nan,?\s*)*\]?,?\s*)*\]$/.match?(val)
       JSON.parse(val).kind_of?(Array)
     rescue JSON::ParserError
       Rails.logger.warn "Parameter #{self.inspect} of variable #{variable.name}(#{variable.id}) is invalid"

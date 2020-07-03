@@ -259,12 +259,12 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
   test "should file an analysis in a project reference" do
     proj = design_projects(:empty_project)
     assert_nil @mda2.design_project
-    put api_v1_mda_url(@mda2), params: { analysis: { design_project_id: proj.id } }, 
+    put api_v1_mda_url(@mda2), params: { analysis: { design_project_id: proj.id } },
       as: :json, headers: @auth_headers2  # should be as user2 who is owner of mda2
     assert_response :success
     assert_equal proj, @mda2.reload.design_project
   end
-  
+
   test "should update a project reference" do
     proj = design_projects(:empty_project)
     put api_v1_mda_url(@mda), params: { analysis: { design_project_id: proj.id } }, as: :json, headers: @auth_headers

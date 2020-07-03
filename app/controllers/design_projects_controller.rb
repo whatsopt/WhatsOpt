@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class DesignProjectsController < ApplicationController
   before_action :set_design_project, only: [:show, :edit, :update, :destroy]
 
@@ -60,5 +62,4 @@ private
   def design_project_params
     params.require(:design_project).permit(:name, :description)
   end
-
 end

@@ -48,6 +48,6 @@ class User < ActiveRecord::Base
     def initialize_defaults
       add_role(:user)
       self.analyses_query = "all"
-      self.analyses_scope_design_project_id = nil 
+      self.analyses_scope_design_project_id = nil
     end
 end

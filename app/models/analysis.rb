@@ -31,7 +31,7 @@ class Analysis < ApplicationRecord
   has_one :design_project_filing, dependent: :destroy
 
   scope :mine, -> { with_role(:owner, current_user) }
-  scope :of_project, -> (project) { joins(:design_project_filings).where(design_project_filing: {design_project: project}) }
+  scope :of_project, -> (project) { joins(:design_project_filings).where(design_project_filing: { design_project: project }) }
 
   after_save :refresh_connections, unless: Proc.new { self.disciplines.count < 2 }
   after_save :ensure_ancestry_for_sub_analyses
@@ -409,7 +409,7 @@ class Analysis < ApplicationRecord
       p dp
       dpf = self.design_project_filing || self.build_design_project_filing
       p dpf
-      
+
       dpf.update(design_project: dp)
     end
   end
@@ -562,7 +562,7 @@ class Analysis < ApplicationRecord
         else
           if io_mode == WhatsOpt::Variable::OUT  # variable already produced by another discipline => abort
             raise AncestorUpdateError, "Variable #{varname} already produced in parent analysis #{name}: Cannot create connection."
-          else # new consumer discipline from another discipline 
+          else # new consumer discipline from another discipline
             from_disc = var_from.discipline
             to_disc = discipline
             create_connections!(from_disc, to_disc, [varname], sub_analysis_check: false)
@@ -582,19 +582,19 @@ class Analysis < ApplicationRecord
     var = discipline.variables.find_by(name: varname)
     unless var.blank? # normally should exists but defensive programming
       if var.is_in?
-        conn = var.incoming_connection
+        connin = var.incoming_connection
         # Rails.logger.warn ">>>>>>>>> try remove #{conn.from.name} from #{conn.from.discipline.name} ##{conn.from.id} to  ##{conn.to.discipline.name} #{conn.to.id} "
-        destroy_connection!(conn, sub_analysis_check: false)
+        destroy_connection!(connin, sub_analysis_check: false)
         # Rails.logger.warn "<<<<<<<<< try remove #{conn.from.name}"
       else
-        var.outgoing_connections.map do |conn| 
-          if conn.driverish?
+        var.outgoing_connections.map do |connout|
+          if connout.driverish?
             # Rails.logger.warn ">>>>>>>>> try remove #{conn.from.name} from #{conn.from.discipline.name} ##{conn.from.id} to ##{conn.to.discipline.name} #{conn.to.id} "
-            destroy_connection!(conn, sub_analysis_check: false) 
+            destroy_connection!(connout, sub_analysis_check: false)
             # Rails.logger.warn "<<<<<<<<< try remove #{conn.from.name}"
           else
             # Rails.logger.warn ">>>>>>>>> update #{conn.from.name} to be from DRIVER"
-            conn.from.update(discipline: driver)
+            connout.from.update(discipline: driver)
           end
         end
       end

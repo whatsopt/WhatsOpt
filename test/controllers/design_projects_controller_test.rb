@@ -29,7 +29,7 @@ class DesignProjectsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "name cannot be blank on creation" do
-    post design_projects_url, params: { design_project: { name: "" }}
+    post design_projects_url, params: { design_project: { name: "" } }
     assert_redirected_to new_design_project_url
   end
 
@@ -68,5 +68,4 @@ class DesignProjectsControllerTest < ActionDispatch::IntegrationTest
       delete design_project_url(@dp)
     end
   end
-
 end

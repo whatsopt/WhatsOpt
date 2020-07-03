@@ -122,7 +122,7 @@ class MetaModel < ApplicationRecord
   def xlabels
     analysis.input_variables.map do |v|
       # when one dim use "x" instead of "x[0]"
-      (0...v.dim).map { |i| Case.label(v.name, v.dim == 1 ? -1 : i) }  
+      (0...v.dim).map { |i| Case.label(v.name, v.dim == 1 ? -1 : i) }
     end.flatten
   end
 

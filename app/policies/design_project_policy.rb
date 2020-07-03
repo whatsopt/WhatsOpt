@@ -12,7 +12,7 @@ class DesignProjectPolicy < ApplicationPolicy
   end
 
   def show?
-    true 
+    true
   end
 
   def edit?

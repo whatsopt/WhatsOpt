@@ -1,5 +1,6 @@
-module DesignProjectsHelper
+# frozen_string_literal: true
 
+module DesignProjectsHelper
   def link_to_analyses_if_authorized(design_project)
     res = ""
     design_project.analyses.each do |mda|
@@ -13,5 +14,4 @@ module DesignProjectsHelper
     end
     raw(res)
   end
-
 end

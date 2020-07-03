@@ -5,5 +5,4 @@ class Api::V1::DesignProjectsController < Api::ApiController
   def index
     json_response policy_scope(DesignProject)
   end
-
 end
