@@ -1,8 +1,19 @@
 <h1>CHANGELOG</h1>
 
-<h3>1.10.0 (??/07/2020)</h3>
+<h3>1.10.0 (03/07/2020)</h3>
 <ul>
-  <li>Use can reset his/her API key</li>
+  <li>User can organize analyses within design projects: an analysis belongs to one design project and 
+  a design project has many analyses.</li>
+  <li>User can filter analyses by design project</li> 
+  <li>User can see some qualitative information (tags) in the analyses list: 
+    <ul>
+      <li>OPTIM: an objective variable is defined
+      <li>MM: analysis created as a metamodel container</li>
+      <li>UQ: uncertainty quantification mode: no design variables but uncertain variables</li>
+      <li>DEEP: analysis with more than 2 levels of nesting</li>
+    </ul>
+  <li>
+  <li>User can reset his/her API key</li>
   <li>User can get meta-models information (list and details) from the REST API</li>
   <li>Change: OpenMDAO code checking is not run automatically anymore, it is on-demand (user click)</li>
 </ul>
