@@ -67,7 +67,7 @@ class Api::V1::DisciplineControllerTest < ActionDispatch::IntegrationTest
       assert_response :success
       # should have suppressed connection to y and driver y variable because only used by deleted disc in innermda
       # should have suppressed connection to x2 and driver x2 variable because only used by deleted disc in innermda
-      resvars = @outermda.driver.reload.variables.map(&:name)
+      @outermda.driver.reload.variables.map(&:name)
       assert_equal initial_drivervars - ["x2", "y"], @outermda.driver.reload.variables.map(&:name)
     end
   end

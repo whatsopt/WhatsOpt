@@ -1,0 +1,46 @@
+<div class="btn-toolbar float-right">
+  <%= link_to 'New', new_design_project_path, class: "btn btn-primary ml-2" %>
+</div>
+
+<h1>Design Projects</h1>
+
+<p>
+<table class="table table-striped">
+
+  <thead>
+    <tr>
+      <th class="col-md-2">Name</th>
+      <th class="col-md-3">Description</th>
+      <th class="col-md-5">Analyses</th>
+      <th class="col-md-2">Actions</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @design_projects.each do |project| %>
+    <tr>
+      <td><%= link_to project.name, mdas_url(design_project: project.id) %></td>
+      <td><%= project.description %></td>
+      <td><%= link_to_analyses_if_authorized(project) %></td>
+      <td>
+        <% if policy(project).update? %>
+          <%= link_to edit_design_project_path(project), 
+            class: "btn btn-sm", title: "Edit" do %>
+            <i class="fas fa-edit"></i> 
+          <% end %>    
+        <% end %>
+        <% if policy(project).destroy? %>
+          <%= link_to design_project_path(project), method: :delete, data: { title: 'Are you sure?', 
+                                                              confirm: "Remove #{project.name} design project?",
+                                                              commit: 'Yes',
+                                                              cancel: 'No, cancel' }, 
+              class: "btn btn-sm text-danger", title:"Delete" do %>
+              <i class="fas fa-times"></i> 
+          <% end %>    
+        <% end %>
+      </td>
+    </tr>
+    <% end %>
+  </tbody>
+</table>
+</p>

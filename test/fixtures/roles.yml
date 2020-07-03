@@ -52,3 +52,7 @@ member_singleton_mm_role:
 owner_optim_ackley2d_role:
   name: owner
   resource: optim_ackley2d (Optimization) 
+
+owner_cicav_project_role:
+  name: owner
+  resource: cicav_project(DesignProject)

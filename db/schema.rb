@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_05_183019) do
+ActiveRecord::Schema.define(version: 2020_06_27_210649) do
 
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
@@ -86,6 +86,20 @@ ActiveRecord::Schema.define(version: 2020_05_05_183019) do
     t.string "role", default: ""
     t.index ["from_id"], name: "index_connections_on_from_id"
     t.index ["to_id"], name: "index_connections_on_to_id"
+  end
+
+  create_table "design_project_filings", force: :cascade do |t|
+    t.integer "design_project_id"
+    t.integer "analysis_id"
+    t.index ["analysis_id"], name: "index_design_project_filings_on_analysis_id"
+    t.index ["design_project_id"], name: "index_design_project_filings_on_design_project_id"
+  end
+
+  create_table "design_projects", force: :cascade do |t|
+    t.string "name"
+    t.text "description"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "disciplines", force: :cascade do |t|

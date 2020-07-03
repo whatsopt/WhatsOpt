@@ -10,7 +10,9 @@ Rails.application.routes.draw do
     end
     get 'exports/new', to: 'analysis_exports#new'
   end
-    
+     
+  resources :design_projects
+
   namespace :api do
     namespace :v1, defaults: { format: :json } do
       resource :api_doc, only: [:show]
@@ -40,6 +42,7 @@ Rails.application.routes.draw do
       resources :user_roles, only: [:index, :update]  
       resource :versioning, only: [:show]  
       resources :optimizations
+      resources :design_projects, only: [:index]
     end
   end
 

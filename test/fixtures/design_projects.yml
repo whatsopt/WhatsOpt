@@ -1,0 +1,7 @@
+cicav_project:
+  name: "CICAV project"
+  description: "The project CICAV"
+
+empty_project:
+  name: "Empty Project"
+  description: "Project without analysis"

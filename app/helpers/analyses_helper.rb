@@ -43,6 +43,12 @@ module AnalysesHelper
     if analysis.uq_mode?
       res += '<span class="badge badge-pill badge-info mr-2">UQ</span>'
     end
+    if analysis.has_objective?
+      res += '<span class="badge badge-pill badge-primary mr-2">OPTIM</span>'
+    end
+    if analysis.nesting_depth > 2
+      res += '<span class="badge badge-pill badge-danger mr-2">DEEP</span>'
+    end
     raw(res)
   end
 end

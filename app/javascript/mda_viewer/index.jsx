@@ -72,6 +72,8 @@ class MdaViewer extends React.Component {
     this.handleOpenmdaoImplUpdate = this.handleOpenmdaoImplUpdate.bind(this);
     this.handleOpenmdaoImplChange = this.handleOpenmdaoImplChange.bind(this);
     this.handleOpenmdaoImplReset = this.handleOpenmdaoImplReset.bind(this);
+    this.handleProjectSearch = this.handleProjectSearch.bind(this);
+    this.handleProjectSelected = this.handleProjectSelected.bind(this);
   }
 
   handleFilterChange(filter) {
@@ -275,13 +277,30 @@ class MdaViewer extends React.Component {
     return false;
   }
 
+
+  handleProjectSearch(callback) {
+    // TODO: query could be used to filter user on server side
+    this.api.getProjects((response) => callback(response.data));
+  }
+
+  handleProjectSelected(selected) {
+    let newState = update(this.state, {
+      mda: { project: { $set: null } },
+    });
+    if (selected.length) {
+      console.log(`Project: ${JSON.stringify(selected[0])}`);
+      newState = update(this.state, {
+        mda: { project: { $set: selected[0] } },
+      });
+    }
+    this.setState(newState);
+  }
+
   handleAnalysisNoteChange(event) {
-    event.preventDefault();
     const newState = update(this.state, {
       mda: { note: { $set: event.target.innerHTML } },
     });
     this.setState(newState);
-    return false;
   }
 
   handleAnalysisPublicChange() {
@@ -327,7 +346,12 @@ class MdaViewer extends React.Component {
   handleAnalysisUpdate(event) {
     event.preventDefault();
     const { mda, newAnalysisName } = this.state;
-    this.api.updateAnalysis(mda.id, { name: newAnalysisName, note: mda.note },
+    const params = {
+      name: newAnalysisName,
+      note: mda.note,
+      design_project_id: mda.project.id,
+    };
+    this.api.updateAnalysis(mda.id, params,
       () => {
         this.api.getAnalysis(mda.id, false,
           () => {
@@ -335,6 +359,7 @@ class MdaViewer extends React.Component {
               mda: {
                 name: { $set: newAnalysisName },
                 note: { $set: mda.note },
+                project: { $set: mda.project },
               },
             });
             this.setState(newState);
@@ -567,6 +592,7 @@ class MdaViewer extends React.Component {
             <div className="tab-pane fade" id="analysis" role="tabpanel" aria-labelledby="analysis-tab">
               <AnalysisEditor
                 mdaId={db.mda.id}
+                mdaProject={db.mda.project}
                 api={this.api}
                 note={db.mda.note}
                 newAnalysisName={newAnalysisName}
@@ -579,6 +605,8 @@ class MdaViewer extends React.Component {
                 onAnalysisMemberSearch={this.handleAnalysisMemberSearch}
                 onAnalysisMemberSelected={this.handleAnalysisMemberCreate}
                 onAnalysisMemberDelete={this.handleAnalysisMemberDelete}
+                onProjectSearch={this.handleProjectSearch}
+                onProjectSelected={this.handleProjectSelected}
               />
             </div>
             <div className="tab-pane fade" id="disciplines" role="tabpanel" aria-labelledby="disciplines-tab">
