@@ -10,8 +10,9 @@
   <thead>
     <tr>
       <th class="col-md-2">Name</th>
+      <th class="col-md-1">Owner</th>
       <th class="col-md-3">Description</th>
-      <th class="col-md-5">Analyses</th>
+      <th class="col-md-4">Analyses</th>
       <th class="col-md-2">Actions</th>
     </tr>
   </thead>
@@ -20,6 +21,7 @@
     <% @design_projects.each do |project| %>
     <tr>
       <td><%= link_to project.name, mdas_url(design_project: project.id) %></td>
+      <td><%= project.owner.login %></td>
       <td><%= project.description %></td>
       <td><%= link_to_analyses_if_authorized(project) %></td>
       <td>
