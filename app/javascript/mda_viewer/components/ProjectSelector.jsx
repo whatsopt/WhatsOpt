@@ -25,10 +25,8 @@ class ProjectSelector extends React.Component {
   }
 
   handleChange(selected) {
-    if (selected.length) {
-      const { onProjectSelected } = this.props;
-      onProjectSelected(selected);
-    }
+    const { onProjectSelected } = this.props;
+    onProjectSelected(selected);
   }
 
   render() {
@@ -36,6 +34,7 @@ class ProjectSelector extends React.Component {
     const { isLoading, options } = this.state;
     return (
       <AsyncTypeahead
+        clearButton
         defaultSelected={[selected]}
         isLoading={isLoading}
         multiple={false}

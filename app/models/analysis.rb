@@ -217,7 +217,7 @@ class Analysis < ApplicationRecord
     {
       id: id,
       name: name,
-      project: design_project || { id: 0, name: "" },
+      project: design_project || { id: -1, name: "" },
       note: note.blank? ? "":note.to_s,
 
       public: public,
@@ -401,9 +401,9 @@ class Analysis < ApplicationRecord
   def update_design_project!(design_project_id)
     # shortcut if already referenced
     return if design_project && design_project.id == design_project_id
-    if design_project_id == 0
+    if design_project_id < 0
       # remove project filing
-      design_project_filing.destroy!
+      design_project_filing&.destroy!
     else
       dp = DesignProject.find(design_project_id)
       dpf = self.design_project_filing || self.build_design_project_filing

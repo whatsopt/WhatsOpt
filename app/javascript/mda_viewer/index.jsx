@@ -277,7 +277,6 @@ class MdaViewer extends React.Component {
     return false;
   }
 
-
   handleProjectSearch(callback) {
     // TODO: query could be used to filter user on server side
     this.api.getProjects((response) => callback(response.data));
@@ -285,8 +284,9 @@ class MdaViewer extends React.Component {
 
   handleProjectSelected(selected) {
     let newState = update(this.state, {
-      mda: { project: { $set: null } },
+      mda: { project: { $set: { id: -1, name: '' } } },
     });
+    console.log(selected);
     if (selected.length) {
       console.log(`Project: ${JSON.stringify(selected[0])}`);
       newState = update(this.state, {
