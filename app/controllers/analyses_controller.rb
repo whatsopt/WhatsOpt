@@ -9,7 +9,8 @@ class AnalysesController < ApplicationController
     if params[:design_project]
       @design_project = DesignProject.find(params[:design_project])
       if @design_project
-        current_user.analyses_scope_design_project_id = @design_project.id
+        current_user.update(analyses_scope_design_project_id: @design_project.id)
+        redirect_to mdas_url
       else
         redirect_to mdas_url, notice: "Project with id ##{params[:design_project]} not found"
       end

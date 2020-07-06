@@ -31,8 +31,9 @@
 
 <% content_for :document_ready do %>
 <script>
-  var relRoot = "<%= Rails.application.config.action_controller.relative_url_root %>";
-  $("#design_project_scope").on('change', function() {
+  let relRoot = "<%= Rails.application.config.action_controller.relative_url_root %>";
+
+  $("input[data-analyses-query]").on('change', function() {
     let query = $(this).data("analyses-query");
     $.ajax({
       type: "PATCH",

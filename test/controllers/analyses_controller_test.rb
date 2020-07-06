@@ -15,10 +15,11 @@ class AnalysesControllerTest < ActionDispatch::IntegrationTest
     assert_select "tbody>tr", count: Analysis.count - 2 # all - (1 sub analysis + 1 user2 private)
   end
 
-  test "should filter by project" do
+  test "should get analyses by project" do
     project = design_projects(:cicav_project)
     get mdas_url(design_project: project.id)
-    assert_response :success
+    assert_redirected_to mdas_url
+    get mdas_url
     assert_select "tbody>tr", count: 1
   end
 
@@ -56,7 +57,7 @@ class AnalysesControllerTest < ActionDispatch::IntegrationTest
     get mda_url(Analysis.last)
     assert_response :success
   end
-
+  
   test "should authorized access to members" do
     sign_in users(:user3)
     get mda_url(@cicav)
