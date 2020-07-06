@@ -56,3 +56,7 @@ owner_optim_ackley2d_role:
 owner_cicav_project_role:
   name: owner
   resource: cicav_project(DesignProject)
+
+owner_empty_project_role:
+  name: owner
+  resource: empty_project(DesignProject)

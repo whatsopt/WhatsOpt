@@ -406,10 +406,7 @@ class Analysis < ApplicationRecord
       design_project_filing.destroy!
     else
       dp = DesignProject.find(design_project_id)
-      p dp
       dpf = self.design_project_filing || self.build_design_project_filing
-      p dpf
-
       dpf.update(design_project: dp)
     end
   end
