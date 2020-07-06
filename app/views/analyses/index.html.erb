@@ -8,7 +8,7 @@
 
     <%= select_tag("design_project_scope", 
                     options_from_collection_for_select(DesignProject.all, "id", "name", current_user.analyses_scope_design_project_id.to_s),
-                    prompt: "-- any --",
+                    prompt: "-- Any --",
                     "data-design-project-scope": current_user.analyses_scope_design_project_id,
                     class: "custom-select", id: "designProjectScope") %>
   </div>
