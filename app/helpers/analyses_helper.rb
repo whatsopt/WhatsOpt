@@ -21,6 +21,16 @@ module AnalysesHelper
     end
   end
 
+  def link_to_design_project_if_any(analysis)
+    res = ""
+    project = analysis.design_project
+    if project
+      res += link_to "#{project.name}", design_project_url(project)
+      res += " / "
+    end
+    raw(res)
+  end
+  
   def link_to_final_operations_if_authorized(analysis, user)
     res = ""
     Operation.final.done(analysis).each do |ope|

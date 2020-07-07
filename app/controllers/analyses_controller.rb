@@ -6,14 +6,10 @@ class AnalysesController < ApplicationController
   # GET /mdas
   def index
     @mdas = policy_scope(Analysis).roots
-    if params[:design_project]
-      @design_project = DesignProject.find(params[:design_project])
-      if @design_project
-        current_user.update(analyses_scope_design_project_id: @design_project.id)
-        redirect_to mdas_url
-      else
-        redirect_to mdas_url, notice: "Project with id ##{params[:design_project]} not found"
-      end
+    if params[:design_project_id]
+      @design_project = DesignProject.find(params[:design_project_id])
+      current_user.update(analyses_scope_design_project_id: @design_project.id)
+      redirect_to mdas_url
     end
     unless current_user.analyses_scope_design_project_id.blank?
       @mdas = @mdas.joins(:design_project_filing)

@@ -20,7 +20,7 @@
   <tbody>
     <% @design_projects.each do |project| %>
     <tr>
-      <td><%= link_to project.name, mdas_url(design_project: project.id) %></td>
+      <td><%= link_to project.name, mdas_url(design_project_id: project.id) %></td>
       <td><%= project.owner.login %></td>
       <td><%= project.description %></td>
       <td><%= link_to_analyses_if_authorized(project) %></td>

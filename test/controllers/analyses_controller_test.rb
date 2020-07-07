@@ -17,7 +17,7 @@ class AnalysesControllerTest < ActionDispatch::IntegrationTest
 
   test "should get analyses by project" do
     project = design_projects(:cicav_project)
-    get mdas_url(design_project: project.id)
+    get mdas_url(design_project_id: project.id)
     assert_redirected_to mdas_url
     get mdas_url
     assert_select "tbody>tr", count: 1

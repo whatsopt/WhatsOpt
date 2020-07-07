@@ -10,6 +10,7 @@ class DesignProjectsController < ApplicationController
 
   # GET /design_projects/1
   def show
+    redirect_to mdas_url(design_project_id: @design_project.id)
   end
 
   # GET /design_projects/new

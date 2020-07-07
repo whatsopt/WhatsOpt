@@ -47,6 +47,7 @@ class MdaViewer extends React.Component {
       selectedConnectionNames: [],
       errors: [],
       implEdited: false,
+      mdaEdited: false,
       useScaling: this.db.isScaled(),
     };
     this.handleFilterChange = this.handleFilterChange.bind(this);
@@ -272,6 +273,7 @@ class MdaViewer extends React.Component {
     const newState = update(this.state, {
       newAnalysisName: { $set: event.target.value },
       errors: { $set: [] },
+      mdaEdited: { $set: true },
     });
     this.setState(newState);
     return false;
@@ -283,22 +285,28 @@ class MdaViewer extends React.Component {
   }
 
   handleProjectSelected(selected) {
-    let newState = update(this.state, {
-      mda: { project: { $set: { id: -1, name: '' } } },
-    });
-    console.log(selected);
-    if (selected.length) {
-      console.log(`Project: ${JSON.stringify(selected[0])}`);
-      newState = update(this.state, {
-        mda: { project: { $set: selected[0] } },
+    const { mda: { project } } = this.state;
+    if (selected !== project) {
+      let newState = update(this.state, {
+        mdaEdited: { $set: true },
+        mda: {
+          project: { $set: { id: -1, name: '' } },
+        },
       });
+      if (selected.length) {
+        console.log(`Project: ${JSON.stringify(selected[0])}`);
+        newState = update(this.state, {
+          mda: { project: { $set: selected[0] } },
+        });
+      }
+      this.setState(newState);
     }
-    this.setState(newState);
   }
 
   handleAnalysisNoteChange(event) {
     const newState = update(this.state, {
       mda: { note: { $set: event.target.innerHTML } },
+      mdaEdited: { $set: true },
     });
     this.setState(newState);
   }
@@ -355,7 +363,9 @@ class MdaViewer extends React.Component {
       () => {
         this.api.getAnalysis(mda.id, false,
           () => {
+            console.log('MDA UPDATED');
             const newState = update(this.state, {
+              mdaEdited: { $set: false },
               mda: {
                 name: { $set: newAnalysisName },
                 note: { $set: mda.note },
@@ -432,7 +442,7 @@ class MdaViewer extends React.Component {
 
   render() {
     const {
-      mda, useScaling, errors, isEditing, filter, implEdited,
+      mda, useScaling, errors, isEditing, filter, implEdited, mdaEdited,
       newAnalysisName, analysisMembers, selectedConnectionNames, newDisciplineName,
     } = this.state;
     const errs = errors.map(
@@ -485,6 +495,14 @@ class MdaViewer extends React.Component {
           </div>
         );
       }
+      let mdaMsg;
+      if (mdaEdited) {
+        mdaMsg = (
+          <div className="alert alert-warning" role="alert">
+            Changes are not saved.
+          </div>
+        );
+      }
       let warningIfOperated;
       if (db.mda.operated) {
         warningIfOperated = (
@@ -501,6 +519,20 @@ class MdaViewer extends React.Component {
         );
       }
 
+      let mdaProjectLink;
+      if (db.mda.project.id > 0) {
+        mdaProjectLink = (
+          <span>
+            <a href={this.api.url(`/design_projects/${db.mda.project.id}`)}>
+              {db.mda.project.name}
+            </a>
+            {' '}
+            /
+            {' '}
+          </span>
+        );
+      }
+
       return (
         <div>
           <form className="button_to" method="get" action={this.api.url(`/analyses/${mda.id}`)}>
@@ -513,6 +545,7 @@ class MdaViewer extends React.Component {
           <h1>
             Edit
             {' '}
+            {mdaProjectLink}
             {mda.name}
           </h1>
           {warningIfOperated}
@@ -590,6 +623,7 @@ class MdaViewer extends React.Component {
           <div className="tab-content" id="myTabContent">
             {errs}
             <div className="tab-pane fade" id="analysis" role="tabpanel" aria-labelledby="analysis-tab">
+              {mdaMsg}
               <AnalysisEditor
                 mdaId={db.mda.id}
                 mdaProject={db.mda.project}
