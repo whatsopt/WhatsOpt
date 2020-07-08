@@ -7,11 +7,14 @@ module Ownable
     owners.take
   end
 
+  def readers
+    readers = User.with_role_for_instance(:owner, self)
+    readers |= members
+    readers
+  end
+
   def members
-    members = User.with_role(:admin)
-    members |= User.with_role_for_instance(:owner, self)
-    members |= User.with_role_for_instance(:member, self)
-    members
+    User.with_role_for_instance(:member, self)
   end
 
   def set_owner(user)
@@ -20,11 +23,17 @@ module Ownable
   end
 
   def add_member(user)
-    _add_role(user, :member)
+    _add_role(user, :member) unless user == self.owner
   end
 
   def remove_member(user)
     _remove_role(user, :member)
+  end
+
+  def copy_membership(ownable_src)
+    ownable_src.readers.each do |m|
+      self.add_member(m)
+    end
   end
 
   # superseded by has_ancestry call in analysis

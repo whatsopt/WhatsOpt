@@ -145,8 +145,10 @@ class AnalysesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should make a copy of an analysis" do
-    sign_out users(:user1)
+    user1 = users(:user1)
     user2 = users(:user2)
+    user3 = users(:user3)
+    sign_out user1
     sign_in user2
     assert_difference("Analysis.count") do
       post mdas_url, params: { mda_id: @cicav.id }
@@ -155,6 +157,8 @@ class AnalysesControllerTest < ActionDispatch::IntegrationTest
     copy =  Analysis.last
     assert_equal @cicav.disciplines.count, copy.disciplines.count
     assert_equal user2, copy.owner
+    assert_equal @cicav.design_project, copy.design_project
+    assert_equal [user1, user3], copy.members  # user1 owner of cicav, user3 member of cicav
   end
 
   test "should make a copy of a nested analysis" do

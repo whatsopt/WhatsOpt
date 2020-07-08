@@ -21,7 +21,8 @@ class Api::V1::UserRolesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     resp = JSON.parse(response.body)
     user2 = users(:user2)
-    assert_equal [{ "id" => user2.id, "login" => user2.login }], resp
+    admin = users(:admin)
+    assert_equal [admin.id, user2.id], resp.map{|u| u["id"]}
   end
 
   test "should add a member" do

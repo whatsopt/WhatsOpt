@@ -43,6 +43,7 @@ class AnalysesController < ApplicationController
       end
       if @mda.save
         @mda.set_owner(current_user)
+        @mda.copy_membership(@orig_mda) if @orig_mda
         if @mda.disciplines.nodes.empty?
           redirect_to edit_mda_url(@mda)
         else

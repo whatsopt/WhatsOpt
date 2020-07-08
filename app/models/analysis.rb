@@ -444,6 +444,7 @@ class Analysis < ApplicationRecord
       mda_copy = Analysis.create!(name: name, public: public) do |copy|
         copy.parent_id = parent.id if parent
         copy.openmdao_impl = self.openmdao_impl.build_copy if self.openmdao_impl
+        copy.build_design_project_filing(design_project: self.design_project) if self.design_project
       end
       mda_copy.disciplines.first.delete  # remove default driver
       self.disciplines.each do |disc|
