@@ -156,7 +156,9 @@ class AnalysesControllerTest < ActionDispatch::IntegrationTest
     end
     copy =  Analysis.last
     assert_equal @cicav.disciplines.count, copy.disciplines.count
+
     assert_equal user2, copy.owner
+    assert_equal @cicav.public, copy.public
     assert_equal @cicav.design_project, copy.design_project
     assert_equal [user1, user3], copy.members  # user1 owner of cicav, user3 member of cicav
   end

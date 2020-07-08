@@ -6,8 +6,8 @@ class Api::V1::MetaModelsControllerTest < ActionDispatch::IntegrationTest
   setup do
     @mda = analyses(:cicav)
     @ope = operations(:doe)
-    @user = users(:user1)
-    @auth_headers = { "Authorization" => "Token " + @user.api_key }
+    @user1 = users(:user1)
+    @auth_headers = { "Authorization" => "Token " + @user1.api_key }
     @user2 = users(:user2)
     @auth_headers2 = { "Authorization" => "Token " + @user2.api_key }
     @user3 = users(:user3)
@@ -61,7 +61,7 @@ class Api::V1::MetaModelsControllerTest < ActionDispatch::IntegrationTest
           assert_difference("Surrogate.count", 1) do
             post api_v1_operation_meta_models_url(@ope),
             params: { meta_model: { kind: Surrogate::SMT_KPLS } },
-            as: :json, headers: @auth_headers
+            as: :json, headers: @auth_headers3
           end
         end
       end
@@ -69,6 +69,11 @@ class Api::V1::MetaModelsControllerTest < ActionDispatch::IntegrationTest
     # ope = Operation.last
     assert_response :success
     mda = Analysis.last
+    assert_equal @user3, mda.owner
+    assert_equal @mda.public, mda.public
+    assert_equal @mda.design_project, mda.design_project
+    assert_equal [@user1], mda.members  # user1 owner of cicav
+
     assert_equal 2, mda.design_variables.count
     assert_equal 1, mda.response_variables.count
     x1 = mda.design_variables.first
@@ -88,7 +93,7 @@ class Api::V1::MetaModelsControllerTest < ActionDispatch::IntegrationTest
     assert_equal surr, mm.surrogates.first
     assert_equal mm.default_surrogate_kind, surr.kind
     assert_equal(-1, surr.coord_index)  # obj is a scalar
-    assert_equal @user, mm.discipline.analysis.owner
+    assert_equal @user3, mm.discipline.analysis.owner
   end
 
   test "should take into account variables selection" do

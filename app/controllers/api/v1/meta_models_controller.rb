@@ -32,6 +32,7 @@ class Api::V1::MetaModelsController < Api::ApiController
       mm_ope.save!
       mda.set_all_parameters_as_decision_variables(ope.analysis.decision_role)
       mda.set_owner(current_user)
+      mda.copy_membership(ope.analysis)
 
       @meta_model = mda.disciplines.last.build_meta_model( # just one plain discipline in the analysis
         operation: mm_ope,

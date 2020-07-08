@@ -627,12 +627,15 @@ class Analysis < ApplicationRecord
     end
     analysis_attrs= {
       name: name,
+      public: ope.analysis.public,
       disciplines_attributes: [
         { name: "__DRIVER__", variables_attributes: driver_vars },
         { name: "#{ope.analysis.name.camelize}", type: WhatsOpt::Discipline::METAMODEL,
           variables_attributes: metamodel_varattrs }
     ] }
-    Analysis.new(analysis_attrs)
+    mm_mda = Analysis.new(analysis_attrs)
+    mm_mda.build_design_project_filing(design_project: ope.analysis.design_project) if ope.analysis.design_project
+    mm_mda
   end
 
   def parameterize(parameterization)

@@ -31,8 +31,8 @@ module Ownable
   end
 
   def copy_membership(ownable_src)
-    ownable_src.readers.each do |m|
-      self.add_member(m)
+    ownable_src.readers.each do |r|
+      self.add_member(r) 
     end
   end
 
