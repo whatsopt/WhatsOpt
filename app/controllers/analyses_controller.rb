@@ -30,6 +30,7 @@ class AnalysesController < ApplicationController
   # POST /mdas
   def create
     if params[:cancel_button]
+      skip_authorization
       redirect_to mdas_url, notice: "Analysis creation cancelled."
     else
       if params[:mda_id]
