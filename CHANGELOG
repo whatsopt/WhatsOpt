@@ -1,5 +1,11 @@
 <h1>CHANGELOG</h1>
 
+<h3>1.11.0 (??/08/2020)</h3>
+<ul>
+  <li>When user copies or create a metamodel, new analysis gets 
+  same project and members access than the original analysis</li>
+</ul>
+
 <h3>1.10.0 (03/07/2020)</h3>
 <ul>
   <li>User can organize analyses within design projects: an analysis belongs to one design project and 
