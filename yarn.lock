@@ -11198,7 +11198,7 @@ swagger-client@=3.10.12:
     traverse "~0.6.6"
     url "~0.11.0"
 
-swagger-ui-react@^3.29.0:
+swagger-ui-react@^3.32.5:
   version "3.32.5"
   resolved "https://registry.yarnpkg.com/swagger-ui-react/-/swagger-ui-react-3.32.5.tgz#866369dcefd0741ff8c35f3e8743e5a48a04f18f"
   integrity sha512-p1/NU1stVf6RRj/+mGRMMNwB18UTDFSK0s7LLCxXLCK4ml6yeyHjeOY/T997B29ZPprOLmzJJdMzWEz2m+4jQg==
