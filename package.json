@@ -36,7 +36,7 @@
     "save-svg-as-png": "^1.4.17",
     "swagger-ui-react": "^3.32.5",
     "trix": "^1.2.3",
-    "xdsmjs": "^0.8.4"
+    "xdsmjs": "^1.0.0"
   },
   "devDependencies": {
     "babel-eslint": "^10.1.0",
