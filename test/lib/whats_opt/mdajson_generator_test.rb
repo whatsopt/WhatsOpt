@@ -1,12 +1,11 @@
 # frozen_string_literal: true
 
 require "test_helper"
-require "whats_opt/json_mda_generator"
 
 class MdajsonGeneratorTest < ActiveSupport::TestCase
   def setup
     @mda = analyses(:cicav)
-    @jsongen = WhatsOpt::JsonMdaGenerator.new(@mda)
+    @jsongen = WhatsOpt::MdajsonGenerator.new(@mda)
   end
 
   test "should generate mda json" do
