@@ -32,6 +32,8 @@ class Api::V1::ExportsController < Api::ApiController
         Rails.logger.warn "CMDOWS export warning: #{e}"
       end
       send_data content, filename: filename, type:  "application/xml"
+    elsif format == "mdajson"
+      json_response mda, :ok, serializer: AnalysisAttrsSerializer
     else
       json_response({ message: "Export format #{format} not knwon" }, :bad_request)
     end
