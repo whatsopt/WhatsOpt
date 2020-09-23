@@ -664,7 +664,7 @@ class Analysis < ApplicationRecord
       mda_attrs["disciplines_attributes"].each.with_index do |disc, i|
         # when creating an analysis from params, just disable metamodel
         # and set a regular discipline instead
-        disc["type"] == Discipline.DISCIPLINE if disc["type"] == Discipline.METAMODEL
+        disc["type"] == Discipline::DISCIPLINE if disc["type"] == Discipline::METAMODEL
         if disc["sub_analysis_attributes"]
           subs << self.create_nested_analyses(disc["sub_analysis_attributes"])
           disc.delete("sub_analysis_attributes")

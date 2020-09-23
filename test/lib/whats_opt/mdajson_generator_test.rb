@@ -10,7 +10,7 @@ class MdajsonGeneratorTest < ActiveSupport::TestCase
 
   test "should generate mda json" do
     content = @jsongen.generate
-    expected = sample_file("cicav_mda.json").read
+    expected = sample_file("cicav_mda.json").read.chomp
     assert_equal expected, content
   end
 end
