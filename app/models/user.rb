@@ -38,6 +38,18 @@ class User < ActiveRecord::Base
     save
   end
 
+  def active_for_authentication?
+    super && !deactivated
+  end
+
+  def destroy
+    update_attributes(deactivated: true) unless deactivated
+  end
+
+  def destroy!
+    update_attributes!(deactivated: true) unless deactivated
+  end
+
   private
     def generate_api_key
       begin
