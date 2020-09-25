@@ -235,6 +235,7 @@ function EditableCell({
     const isEditable = (((id === 'name' || id === 'shape') && !limited) || id === 'desc' || id === 'units'
       || id === 'ref' || id === 'ref0' || id === 'res_ref')
       || (role === 'state_var' && id === 'init')
+      || (role === 'response' && id === 'init')
       || (role === 'parameter' && (id === 'init' || id === 'lower' || id === 'upper'))
       || (role === 'design_var' && (id === 'init' || id === 'lower' || id === 'upper'))
       || (role === 'uncertain_var' && (id === 'init' || id === 'uq'));
