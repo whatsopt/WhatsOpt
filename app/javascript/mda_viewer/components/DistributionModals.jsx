@@ -212,12 +212,12 @@ class DistributionModal extends React.Component {
       if (k.startsWith(kind.toLowerCase())) {
         for (const optname in formData[k]) {
           if (formData[k][optname] !== undefined) { // Form bug: filter undefined data
-            // console.log('PUSH ', { name, value: formData[k][name] });
+            // console.log('PUSH ', { name: optname, value: formData[k][optname] });
             newState.dists[selected].options_attributes.push(
-              { optname, value: formData[k][optname] },
+              { name: optname, value: formData[k][optname] },
             );
           } else {
-            console.log(`Bug in jsonschema form: avoid pushing ${formData[k][optname]}`);
+            console.log(`Bug in jsonschema form: avoid pushing ${k} ${optname} ${formData[k][optname]}`);
           }
         }
       }
