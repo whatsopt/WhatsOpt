@@ -471,6 +471,15 @@ class Analysis < ApplicationRecord
   end
 
   def update_connections!(conn, params, down_check = true, up_check = true)
+    # FIXME: do not propagate distributions for now to avoid error
+    # should update distributions properly to manage distribution list should build new params
+    # related to variable in sub or super-analysis
+    # FIXME: Maybe sub-analysis variable edition should be disabled to avoid inconsistencies!!! 
+    if (params[:distributions_attributes])
+      down_check = false
+      up_check = false
+    end
+
     # propagate upward
     if up_check && should_update_analysis_ancestor?(conn)
       up_conn = Connection.of_analysis(parent)
@@ -481,7 +490,7 @@ class Analysis < ApplicationRecord
 
     # propagate downward
     # check connection from
-    if conn.from.discipline.has_sub_analysis?
+    if down_check && conn.from.discipline.has_sub_analysis?
       sub_analysis = conn.from.discipline.sub_analysis
       inner_driver_var = sub_analysis.driver.variables.where(name: conn.from.name).take
       down_conn = Connection.of_analysis(sub_analysis).where("from_id = ? or to_id = ?", inner_driver_var.id, inner_driver_var.id).take
@@ -489,7 +498,7 @@ class Analysis < ApplicationRecord
     end
     # check connection tos
     conn.from.outgoing_connections.each do |cn|
-      next unless cn.to.discipline.has_sub_analysis?
+      next unless (cn.to.discipline.has_sub_analysis? and down_check) 
 
       sub_analysis = cn.to.discipline.sub_analysis
       inner_driver_var = sub_analysis.driver.variables
