@@ -150,6 +150,10 @@ class Operation < ApplicationRecord
     self.job && self.job.success?
   end
 
+  def failed?
+    self.job && self.job.failed?
+  end
+
   def sensitivity_analysis?
     self.category == CAT_SENSITIVITY
   end
@@ -197,7 +201,11 @@ class Operation < ApplicationRecord
     update(ope_attrs.except(:cases))
     if ope_attrs[:cases]
       _update_cases(ope_attrs[:cases])
-      _set_upload_job_done
+      if self.valid?
+        set_upload_job_done
+      else
+        job.update(status: :FAILED, ended_at: Time.now)
+      end
     end
   end
 
@@ -298,10 +306,15 @@ class Operation < ApplicationRecord
         update(cases: [])
       else
         # upload
-        _upload
+        begin
+          _upload
+        rescue => err
+          Rails.logger.warn "JOB STATUS = FAILED. Can not upload results: #{err}"
+          job.update(status: :FAILED, ended_at: Time.now)
+        end
       end
     else
-      Rails.logger.info "JOB STATUS = FAILED"
+      Rails.logger.warn "JOB STATUS = FAILED"
       job.update(status: :FAILED, ended_at: Time.now)
     end
   end
@@ -319,7 +332,7 @@ class Operation < ApplicationRecord
     # File.delete(sqlite_filename)
   end
 
-  def _set_upload_job_done
+  def set_upload_job_done
     if job
       job.update(pid: -1, log: job.log << "Data uploaded\n", log_count: job.log_count + 1, ended_at: Time.now)
       if job.started?

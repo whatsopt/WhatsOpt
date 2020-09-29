@@ -31,7 +31,7 @@ module WhatsOpt
 
       @num_cases = 0
       @cases = {}
-      db.execute("select iteration_coordinate, inputs, outputs from system_iterations") do |row|
+      db.execute("select iteration_coordinate, inputs, outputs from driver_iterations") do |row|
         if /#{@driver_name}/.match?(row[0])
           cases = {}
           JSON.parse(row[1], allow_nan: true).each do |absname, values|
