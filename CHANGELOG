@@ -1,10 +1,14 @@
 <h1>CHANGELOG</h1>
 
-<h3>1.11.0 (??/08/2020)</h3>
+<h3>1.11.0 (29/09/2020)</h3>
 <ul>
   <li>When user copies or create a metamodel, new analysis gets 
   same project and members access than the original analysis</li>
   <li>User can pull (dump) analysis in pushable (load) json format</li>
+  <li>Admin can deactivate a user account</li>
+  <li>Fix remote operations (operate button)</li>
+  <li>Allow initial value setting for response variables</li>
+  <li>Tech: upgrade all dependencies</li>
 </ul>
 
 <h3>1.10.0 (03/07/2020)</h3>
