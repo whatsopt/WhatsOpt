@@ -55,7 +55,7 @@ pb.model.add_objective('<%= dv.name %>')<% end %>
 pb.setup()  
 pb.run_driver()        
 
-<% if @mda.response_variables.size < 10 %>
+<% if (@mda.response_dim * @mda.design_var_dim) < 10 %>
 if options.batch or options.parallel:
     exit(0)
 reader = CaseReader(case_recorder_filename)

@@ -138,23 +138,15 @@ class Analysis < ApplicationRecord
   end
 
   def response_dim
-    response_variables.inject(0) { |s, v| s + v.dim }
-  end
-
-  def responses_of_interest_dim
-    responses_of_interest.inject(0) { |s, v| s + v.dim }
+    vars_dim(response_variables)
   end
 
   def design_var_dim
-    design_variables.inject(0) { |s, v| s + v.dim }
+    vars_dim(design_variables)
   end
 
-  def parameter_dim
-    input_variables.inject(0) { |s, v| s + v.dim }
-  end
-
-  def input_dim
-    input_variables.inject(0) { |s, v| s + v.dim }
+  def vars_dim(vars)
+    vars.inject(0) { |s, v| s + v.dim }
   end
 
   def plain_disciplines
