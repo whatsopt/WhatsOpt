@@ -5,7 +5,15 @@ class Api::V1::AnalysesController < Api::ApiController
 
   # GET /api/v1/mdas
   def index
-    @mdas = policy_scope(Analysis).roots
+    @mdas = policy_scope(Analysis)
+    if params[:all]
+      @mdas
+    elsif params[:design_project_query]  
+      @mdas = @mdas.joins(design_project_filing: :design_project)
+                   .where(design_projects: {name: params["design_project_query"]})
+    else
+      @mdas.with_role(:owner, current_user)
+    end
     json_response @mdas, :ok, each_serializer: AnalysisItemSerializer
   end
 
