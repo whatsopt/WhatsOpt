@@ -12,7 +12,7 @@ class Api::V1::AnalysesController < Api::ApiController
       @mdas = @mdas.joins(design_project_filing: :design_project)
                    .where(design_projects: {name: params["design_project_query"]})
     else
-      @mdas.with_role(:owner, current_user)
+      @mdas = @mdas.with_role(:owner, current_user)
     end
     json_response @mdas, :ok, each_serializer: AnalysisItemSerializer
   end
