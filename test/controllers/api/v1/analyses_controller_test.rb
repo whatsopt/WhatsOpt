@@ -12,13 +12,29 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     @disc = @mda.disciplines.nodes.first
   end
 
-  test "should get only root authorized mdas" do
+  test "should get only owned root authorized mdas" do
     get api_v1_mdas_url, as: :json, headers: @auth_headers
+    assert_response :success
+    analyses = JSON.parse(response.body)
+    assert_equal 4, analyses.size # user1 owns 4 analyses
+    mda = analyses[0]
+    assert_equal ["created_at", "id", "name"], mda.keys.sort
+  end
+
+  test "should get only all authorized mdas" do
+    get api_v1_mdas_url(all: true), as: :json, headers: @auth_headers
     assert_response :success
     analyses = JSON.parse(response.body)
     assert_equal Analysis.count-2, analyses.size # ALL - {user2 private, one sub-analysis}
     mda = analyses[0]
     assert_equal ["created_at", "id", "name"], mda.keys.sort
+  end
+
+  test "should get analyses by project name substring" do
+    query = design_projects(:cicav_project).name
+    get api_v1_mdas_url(design_project_query: query), as: :json, headers: @auth_headers
+    analyses = JSON.parse(response.body)
+    assert_equal 1, analyses.size # cicav analysis
   end
 
   test "should get an analysis" do

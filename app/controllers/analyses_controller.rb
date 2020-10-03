@@ -5,15 +5,20 @@ class AnalysesController < ApplicationController
 
   # GET /mdas
   def index
-    @mdas = policy_scope(Analysis).roots
     if params[:design_project_id]
+      policy_scope(DesignProject)
       @design_project = DesignProject.find(params[:design_project_id])
       current_user.update(analyses_scope_design_project_id: @design_project.id)
       redirect_to mdas_url
-    end
-    unless current_user.analyses_scope_design_project_id.blank?
-      @mdas = @mdas.joins(:design_project_filing)
-        .where(design_project_filings: { design_project_id: current_user.analyses_scope_design_project_id })
+    else
+      @mdas = policy_scope(Analysis)
+      if current_user.analyses_query == "mine"
+        @mdas = @mdas.owned_by(current_user)
+      end
+      unless current_user.analyses_scope_design_project_id.blank?
+        @mdas = @mdas.joins(:design_project_filing)
+          .where(design_project_filings: { design_project_id: current_user.analyses_scope_design_project_id })
+      end
     end
   end
 

@@ -4,7 +4,8 @@ require "test_helper"
 
 class AnalysesControllerTest < ActionDispatch::IntegrationTest
   setup do
-    sign_in users(:user1)
+    @user1 = users(:user1)
+    sign_in @user1
     @cicav = analyses(:cicav)
     @singl = analyses(:singleton)
   end
@@ -13,6 +14,14 @@ class AnalysesControllerTest < ActionDispatch::IntegrationTest
     get mdas_url
     assert_response :success
     assert_select "tbody>tr", count: Analysis.count - 2 # all - (1 sub analysis + 1 user2 private)
+  end
+
+  test "should get my analyses" do
+    @user1.analyses_query = "mine"
+    @user1.save!
+    get mdas_url
+    assert_response :success
+    assert_select "tbody>tr", count: Analysis.roots.owned_by(@user1).size
   end
 
   test "should get analyses by project" do

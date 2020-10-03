@@ -30,7 +30,7 @@ class Analysis < ApplicationRecord
 
   has_one :design_project_filing, dependent: :destroy
 
-  scope :mine, -> { with_role(:owner, current_user) }
+  scope :owned_by, ->(user) { with_role(:owner, user) }
   scope :of_project, -> (project) { joins(:design_project_filings).where(design_project_filing: { design_project: project }) }
 
   after_save :refresh_connections, unless: Proc.new { self.disciplines.count < 2 }
