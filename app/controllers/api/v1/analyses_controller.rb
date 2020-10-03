@@ -10,7 +10,7 @@ class Api::V1::AnalysesController < Api::ApiController
       @mdas
     elsif params[:design_project_query]  
       @mdas = @mdas.joins(design_project_filing: :design_project)
-                   .where(design_projects: {name: params["design_project_query"]})
+                   .where('design_projects.name like ?', '%' + params["design_project_query"] + '%')
     else
       @mdas = @mdas.with_role(:owner, current_user)
     end
