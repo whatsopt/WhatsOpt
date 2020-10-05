@@ -4,16 +4,12 @@ class AnalysisPolicy < ApplicationPolicy
   class Scope < Scope
     def resolve
       if user.admin?
-        scope
+        scope.roots
       else
-        if user.analyses_query == "mine"
-          scope.with_role(:owner, user)
-        else
-          publicAnalyses = scope.where(public: true)
-          authorizedAnalyses = scope.with_role([:owner, :member], user)
-          analyses = (publicAnalyses + authorizedAnalyses).uniq
-          scope.where(id: analyses.map { |a| a[:id].to_i })
-        end
+        publicAnalyses = scope.where(public: true)
+        authorizedAnalyses = scope.with_role([:owner, :member], user)
+        analyses = (publicAnalyses + authorizedAnalyses).uniq
+        scope.where(id: analyses.map { |a| a[:id].to_i }).roots
       end
     end
   end
