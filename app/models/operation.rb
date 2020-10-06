@@ -45,6 +45,7 @@ class Operation < ApplicationRecord
   scope :successful, ->() { joins(:job).where(jobs: { status: Job::SUCCESS_STATUSES }) }
   scope :final, ->() { where.not(id: pluck(:base_operation_id).compact) }
   scope :done, ->(analysis) { where(analysis: analysis).successful }
+  scope :latest, ->() { order(updated_at: :desc) }
 
   serialize :success, Array
 
