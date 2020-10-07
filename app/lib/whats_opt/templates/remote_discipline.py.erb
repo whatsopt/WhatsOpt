@@ -22,19 +22,24 @@ class Remote<%= disc.py_classname %>(<%= disc.py_classname %>):
 
     def __init__(self, thrift_client = None, *args, **kwargs):
         super(Remote<%= disc.py_classname %>, self).__init__(*args, **kwargs)
+        self._manage_connection = False
         if thrift_client is None:
-            transport = TSocket.TSocket('<%= disc.endpoint&.host %>', <%= disc.endpoint&.port %>)
-            transport = TTransport.TBufferedTransport(transport)
-            protocol = TBinaryProtocol.TBinaryProtocol(transport)
+            self._transport = TSocket.TSocket('<%= disc.endpoint&.host %>', <%= disc.endpoint&.port %>)
+            self._transport = TTransport.TBufferedTransport(self._transport)
+            protocol = TBinaryProtocol.TBinaryProtocol(self._transport)
             thrift_client = <%= @mda.py_classname %>.Client(protocol)
             self._discipline_proxy = <%= disc.py_classname %>Proxy(thrift_client)
-            transport.open()
+            self._manage_connection = True
         else:
             self._discipline_proxy = <%= disc.py_classname %>Proxy(thrift_client)
 
     def compute(self, inputs, outputs):
         """ <%= disc.py_classname %> computation """
+        if self._manage_connection:
+            self._transport.open()
         self._discipline_proxy.compute(inputs, outputs)
+        if self._manage_connection:
+            self._transport.close()
 
 <% end %>
 
