@@ -93,6 +93,10 @@ module WhatsOpt
     end
 
     module ClassMethods
+      def vars_dim(vars)
+        vars.inject(0) { |s, v| s + v.dim }
+      end
+
       def reflect_io_mode(io_mode)
         io_mode == OUT ? IN : OUT
       end

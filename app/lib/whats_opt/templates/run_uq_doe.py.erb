@@ -32,9 +32,18 @@ pb = Problem(<%= @mda.py_classname %>())
 dists = []
 <%- @mda.uncertain_input_variables.each do |uv| %>
 <% uv.distributions.each.with_index do |_, i| %>
+# <%= uv.name %><%= "[#{i}]" if  uv.distributions.size>1 %> 
 dists.append(ot.<%= uv.distribution_py(i) %>)<%- end %><%- end %>
 
-pb.driver = OpenturnsDOEDriver(n_samples=options.n_cases, distribution=ot.ComposedDistribution(dists))
+# Dependency betwen variables can be specified by choosing a specific copula
+copula = ot.IndependantCopula(<%= uv.distributions.size %>)  # default to no dependency
+# ex.: Normal copula
+# R = ot.CorrelationMatrix(<%= uv.distributions.size %>)
+# R[i, j] = ...
+# copula = ot.NormalCopula(R)
+
+comp_dist = ot.ComposedDistribution(dists, copula=copula)
+pb.driver = OpenturnsDOEDriver(n_samples=options.n_cases, distribution=comp_dist)
 pb.driver.options['run_parallel'] = options.parallel
 
 case_recorder_filename = '<%= @sqlite_filename %>'        
