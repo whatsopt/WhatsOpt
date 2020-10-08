@@ -145,6 +145,10 @@ class Analysis < ApplicationRecord
     Variable.vars_dim(design_variables)
   end
 
+  def self.vars_dim(vars)
+    Variable.vars_dim(vars)
+  end
+
   def plain_disciplines
     disciplines.nodes.select(&:is_plain?)
   end

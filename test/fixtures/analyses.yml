@@ -28,3 +28,6 @@ singleton_mm:
   name: SingletonMetaModel
   public: false
   
+singleton_uq:
+  name: singleton_uq
+  

@@ -137,7 +137,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     # assert_match /already been used/, log.join(' ')  # thrift error
   end
 
-  test "should run optimization as default" do
+  test "should run analysis as default" do
     skip_if_parallel
     skip "Apache Thrift not installed" unless thrift?
     Dir.mktmpdir do |dir|
@@ -177,6 +177,24 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
       assert(ok, log)
       assert File.exist?("cicav_doe.sqlite")
       File.delete("cicav_doe.sqlite") if File.exist?("cicav_doe.sqlite")
+      Process.kill("TERM", pid)
+      Process.waitpid pid
+    end
+  end
+
+  test "should run UQ doe" do
+    skip_if_parallel
+    skip "Apache Thrift not installed" unless thrift?
+    @mda = analyses(:singleton_uq)
+    Dir.mktmpdir do |dir|
+      @ogen._generate_code dir
+      pid = spawn("#{WhatsOpt::OpenmdaoGenerator::PYTHON} #{File.join(dir, 'run_server.py')}", [:out] => "/dev/null")
+      @ogen_remote = WhatsOpt::OpenmdaoGenerator.new(@mda, server_host: "localhost")
+      File.delete("singleton_uq_doe.sqlite") if File.exist?("singleton_uq_doe.sqlite")
+      ok, log = @ogen_remote.run :doe
+      assert(ok, log)
+      assert File.exist?("singleton_uq_doe.sqlite")
+      File.delete("singleton_uq.sqlite") if File.exist?("singleton_uq_doe.sqlite")
       Process.kill("TERM", pid)
       Process.waitpid pid
     end

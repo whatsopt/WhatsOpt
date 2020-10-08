@@ -124,4 +124,16 @@ disc_singleton_mm:
   analysis: singleton_mm
   position: 1
 
+driver_singleton_uq:
+  name: __DRIVER__
+  type: null_driver
+  analysis: singleton_uq
+  position: 0
+
+disc_singleton_uq:
+  name: SingletonDiscipline
+  type: analysis
+  analysis: singleton_uq
+  position: 1
+
   
