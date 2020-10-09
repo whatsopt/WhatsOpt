@@ -11,7 +11,7 @@ class DistributionTest < ActiveSupport::TestCase
   end
 
   test "should be present in mda json for uncertain variables" do
-    json = JSON.parse(analyses(:singleton).to_whatsopt_ui_json)
+    json = JSON.parse(analyses(:singleton_uq).to_whatsopt_ui_json)
     variables = []
     json["vars"].each do |d, vars|
       variables << vars["out"]

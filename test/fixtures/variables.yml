@@ -437,7 +437,7 @@ varu_driver_out_uq:
   discipline: driver_singleton_uq
 
 varu_disc_in_uq:
-  <<: *varu_driver_out
+  <<: *varu_disc_in
   discipline: disc_singleton_uq
 
 varv_driver_in_uq:

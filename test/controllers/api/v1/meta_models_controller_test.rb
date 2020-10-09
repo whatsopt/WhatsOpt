@@ -96,13 +96,12 @@ class Api::V1::MetaModelsControllerTest < ActionDispatch::IntegrationTest
     assert_equal @user3, mm.discipline.analysis.owner
   end
 
-  test "should take into account variables selection" do
+  test "should create a mm and take into account variables selection" do
     post api_v1_operation_meta_models_url(@ope), params: {
       meta_model: { kind: Surrogate::SMT_KRIGING, variables: { inputs: ["x1"], outputs: ["obj"] } }
     }, as: :json, headers: @auth_headers
-    # ope = Operation.last
     assert_response :success
-    mda = Analysis.second_to_last
+    mda = Analysis.last
     assert_equal 1, mda.design_variables.count
     assert_equal 1, mda.response_variables.count
   end

@@ -194,7 +194,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
       ok, log = @ogen_remote.run :doe
       assert(ok, log)
       assert File.exist?("singleton_uq_doe.sqlite")
-      File.delete("singleton_uq.sqlite") if File.exist?("singleton_uq_doe.sqlite")
+      File.delete("singleton_uq_doe.sqlite") if File.exist?("singleton_uq_doe.sqlite")
       Process.kill("TERM", pid)
       Process.waitpid pid
     end

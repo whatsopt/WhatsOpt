@@ -159,21 +159,21 @@ sobol_case_objective_in:
              27.64901652]
 
 singleton_case1:
-    operation: doe_singleton
-    variable: varu_driver_out
+    operation: doe_singleton_uq
+    variable: varu_driver_out_uq
     values: [1, 2, 3, 4, 5]
 
 singleton_case2:
-    operation: doe_singleton
-    variable: varv_disc_out
+    operation: doe_singleton_uq
+    variable: varv_disc_out_uq
     values: [1, 2, 3, 4, 5]    
 
 singleton_mm_case1:
-    operation: doe_singleton_mm
+    operation: doe_singleton_uq_mm
     variable: varu_driver_out_mm
     values: [1, 2, 3, 4, 5]
 
 singleton_mm_case2:
-    operation: doe_singleton_mm
+    operation: doe_singleton_uq_mm
     variable: varv_disc_out_mm
     values: [1, 2, 3, 4, 5]  

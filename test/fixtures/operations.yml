@@ -73,21 +73,21 @@ mm_from_doe2:
     base_operation: doe2
 
 
-doe_singleton:
+doe_singleton_uq:
     name: LHS
     driver: smt_doe_random
-    analysis: singleton
+    analysis: singleton_uq
     success: [1, 1, 1, 1, 1]
 
-doe_singleton_mm:
+doe_singleton_uq_mm:
     name: LHS5
     driver: smt_doe_random
     analysis: singleton_mm
     success: [1, 1, 1, 1, 1]
 
-doe_singleton_build_mm:
+doe_singleton_uq_build_mm:
     name: Kriging
     driver: smt_metamodel_kriging
     analysis: singleton_mm
     success: [1, 1, 1, 1, 1]
-    base_operation: doe_singleton_mm
+    base_operation: doe_singleton_uq_mm

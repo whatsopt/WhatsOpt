@@ -1,5 +1,5 @@
 singleton_u_uq:
-  variable: varu_driver_out
+  variable: varu_driver_out_uq
   kind: Normal
 
 singleton_mm_u_uq:
