@@ -33,8 +33,9 @@ pb.driver.options['run_parallel'] = options.parallel
 case_recorder_filename = '<%= @sqlite_filename %>'        
 recorder = SqliteRecorder(case_recorder_filename)
 pb.driver.add_recorder(recorder)
+<% unless @impl.nonlinear_solver.runonce? -%>
 pb.model.nonlinear_solver.options['err_on_non_converge'] = True
-
+<% end %>
 <%- @mda.design_variables.each do |dv| %>
 pb.model.add_design_var('<%= dv.name %>', lower=<%= dv.lower_py_value %>, upper=<%= dv.upper_py_value %>)<% end %>
 <% if @mda.objective_variables.size > 0 || @mda.responses_of_interest.size > 0 %>
