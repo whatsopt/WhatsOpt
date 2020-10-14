@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-from optparse import OptionParser
-
 from thrift.transport import TSocket
 from thrift.transport import TTransport
 from thrift.protocol import TBinaryProtocol
@@ -12,7 +10,6 @@ from <%= @server_module %>.remote_discipline import *
 from <%= @mda.py_modulename %> import <%= @mda.py_classname %>Factory as Factory
 
 class <%= @mda.camelname %>Handler:
-    server = None
 
     def __init__(self):
         factory = Factory()
@@ -49,20 +46,26 @@ class <%= @mda.camelname %>Handler:
     <% end %>
     <% end %>
 
-parser = OptionParser()
-parser.add_option("-p", "--port", type="int",
-                  dest="port", default=<%= @server_port %>,
-                  help="server listening port number")
-(options, args) = parser.parse_args()
+def makeServer(port):
+    handler = <%= @mda.camelname %>Handler()
+    processor = <%= @mda.camelname %>Service.Processor(handler)
+    transport = TSocket.TServerSocket('0.0.0.0', port=port)
+    tfactory = TTransport.TBufferedTransportFactory()
+    pfactory = TBinaryProtocol.TBinaryProtocolFactory()
 
-handler = <%= @mda.camelname %>Handler()
-processor = <%= @mda.camelname %>Service.Processor(handler)
-transport = TSocket.TServerSocket('0.0.0.0', port=options.port)
-tfactory = TTransport.TBufferedTransportFactory()
-pfactory = TBinaryProtocol.TBinaryProtocolFactory()
+    return TServer.TSimpleServer(processor, transport, tfactory, pfactory)
 
-server = handler.server = TServer.TSimpleServer(processor, transport, tfactory, pfactory)
+if __name__=="__main__":
+    from optparse import OptionParser
 
-print("Start <%= @mda.py_classname %> analysis server listening on port {}".format(options.port))
-server.serve()
-print("done!")
+    parser = OptionParser()
+    parser.add_option("-p", "--port", type="int",
+                    dest="port", default=<%= @server_port %>,
+                    help="server listening port number")
+    (options, args) = parser.parse_args()
+
+    server = makeServer(options.port)
+
+    print("Start <%= @mda.py_classname %> analysis server listening on port {}".format(options.port))
+    server.serve()
+    print("done!")
