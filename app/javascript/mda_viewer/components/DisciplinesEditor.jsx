@@ -154,9 +154,11 @@ class Discipline extends React.Component {
                 placeholder="localhost"
                 onChange={this.handleDiscHostChange}
               />
-              :
+            </label>
+            :
+            <label htmlFor="port">
               <input
-                className="form-control ml-1"
+                className="form-control"
                 id="port"
                 type="number"
                 defaultValue={discPort}
