@@ -46,26 +46,25 @@ class <%= @mda.camelname %>Handler:
     <% end %>
     <% end %>
 
-def makeServer(port):
+def run_server(port):
     handler = <%= @mda.camelname %>Handler()
     processor = <%= @mda.camelname %>Service.Processor(handler)
     transport = TSocket.TServerSocket('0.0.0.0', port=port)
     tfactory = TTransport.TBufferedTransportFactory()
     pfactory = TBinaryProtocol.TBinaryProtocolFactory()
 
-    return TServer.TSimpleServer(processor, transport, tfactory, pfactory)
+    print("Start <%= @mda.py_classname %> analysis server listening on port {}".format(port))
+    server = TServer.TSimpleServer(processor, transport, tfactory, pfactory)
+    server.serve()
 
 if __name__=="__main__":
     from optparse import OptionParser
 
     parser = OptionParser()
     parser.add_option("-p", "--port", type="int",
-                    dest="port", default=<%= @server_port %>,
-                    help="server listening port number")
+                      dest="port", default=<%= @server_port %>,
+                      help="server listening port number")
     (options, args) = parser.parse_args()
 
-    server = makeServer(options.port)
-
-    print("Start <%= @mda.py_classname %> analysis server listening on port {}".format(options.port))
-    server.serve()
+    run_server(options.port)
     print("done!")
