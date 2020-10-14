@@ -118,7 +118,7 @@ class Discipline extends React.Component {
 
   render() {
     const {
-      isEditing, discType, discHost, discName,
+      isEditing, discType, discHost, discPort, discName,
     } = this.state;
     const {
       node, onSubAnalysisSearch, index, limited,
@@ -153,6 +153,15 @@ class Discipline extends React.Component {
                 defaultValue={discHost}
                 placeholder="localhost"
                 onChange={this.handleDiscHostChange}
+              />
+              :
+              <input
+                className="form-control ml-1"
+                id="port"
+                type="number"
+                defaultValue={discPort}
+                placeholder="31400"
+                onChange={this.handleDiscPortChange}
               />
             </label>
           </div>
