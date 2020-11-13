@@ -1,9 +1,9 @@
 <h1>CHANGELOG</h1>
 
-<h3>1.12.0 (??/10/2020)</h3>
+<h3>1.12.0 (31/10/2020)</h3>
 <ul>
   <li>User can specify listening port to run remote analysis server and discipline distribution</li>
-  <li>User can list his/her own analysis, all available analysis or by project</li>
+  <li>User can list his/her own analysis, all available analysis (-a) or by project (-p <substring>)</li>
   <li>Fix bug related to remote discipline executions</li>
 </ul>
 
