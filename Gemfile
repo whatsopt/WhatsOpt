@@ -58,11 +58,12 @@ end
 
 group :development do
   # Use Capistrano for deployment
-  gem "capistrano", "~> 3.10", require: false
+  gem "capistrano", "~> 3.11", require: false
   gem "capistrano-rails", "~> 1.4", require: false
   gem "capistrano-rvm"
   gem "capistrano-passenger"
   gem "capistrano-git-with-submodules", "~> 2.0"
+  gem "capistrano-maintenance", "~> 1.2", require: false
   # Access an IRB console on exception pages or by using <%= console %> in views
   gem "web-console"
   gem "listen", ">= 3.0.5", "< 3.2"

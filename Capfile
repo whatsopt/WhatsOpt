@@ -13,6 +13,7 @@ require "capistrano/bundler"
 require "capistrano/rails/assets"
 require "capistrano/rails/migrations"
 require "capistrano/passenger"
+require "capistrano/maintenance"
 
 if ENV["WHATSOPT_INTERNET"]
   require_relative "lib/capistrano/whatsopt_plugin"
