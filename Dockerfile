@@ -2,7 +2,7 @@
 # sure you lock down to a specific version, not to `latest`!
 # See https://github.com/phusion/passenger-docker/blob/master/Changelog.md for
 # a list of version numbers.
-FROM phusion/passenger-customizable:1.0.9
+FROM phusion/passenger-customizable:1.0.12
 # Or, instead of the 'full' variant, use one of these:
 #FROM phusion/passenger-ruby23:<VERSION>
 #FROM phusion/passenger-ruby24:<VERSION>
@@ -66,15 +66,15 @@ RUN buildDeps=" \
 #   Ruby support
 #RUN /pd_build/ruby-2.3.*.sh
 #RUN /pd_build/ruby-2.4.*.sh
-RUN /pd_build/ruby-2.5.*.sh \
-	&& bash -lc 'rvm install ruby-2.5.3' \
-	&& bash -lc 'rvm --default use ruby-2.5.3'
+# RUN /pd_build/ruby-2.5.*.sh \
+# 	&& bash -lc 'rvm install ruby-2.5.3' \
+# 	&& bash -lc 'rvm --default use ruby-2.5.3'
 #RUN /pd_build/ruby-2.6.*.sh
 #RUN /pd_build/jruby-9.2.*.sh
 #   Python support.
 RUN /pd_build/python.sh \
-	&& ln -sf /usr/bin/python3.6 /usr/bin/python
-RUN apt-get install -y python3.6-dev 
+	&& ln -sf /usr/bin/python3.8 /usr/bin/python
+RUN apt-get install -y python3.8-dev python3-distutils
 
 #   Node.js and Meteor standalone support.
 #   (not needed if you already have the above Ruby support)
@@ -107,7 +107,9 @@ RUN mkdir -p /whatsopt
 WORKDIR /whatsopt
 
 COPY Gemfile Gemfile.lock ./ 
-RUN bundle install --jobs 20 --retry 5
+
+RUN bundle config without staging production \
+    && bundle install --jobs 20 --retry 5
 
 COPY . ./
 

@@ -15,12 +15,12 @@ class SurrogateProxyTest < ActiveSupport::TestCase
   test "should predict values" do
     skip_if_parallel
     xt = [[0.0], [1.0], [2.0], [3.0], [4.0]]
-    yt = [0.0, 1.0, 1.5, 0.5, 1.0]
+    yt = [0.0, 1.0, 1.5, 0.9, 1.0]
     surr_kind = WhatsOpt::Services::SurrogateKind::SMT_KRIGING
     @surr_proxy.create_surrogate(surr_kind, xt, yt)
     values = @surr_proxy.predict_values([[1.0], [2.5]])
     assert_in_delta(1.0, values[0])
-    assert_in_delta(0.983, values[1])
+    assert_in_delta(1.194, values[1])
     @surr_proxy.destroy_surrogate
   end
 

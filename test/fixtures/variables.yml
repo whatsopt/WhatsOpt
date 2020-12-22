@@ -410,7 +410,7 @@ varv_driver_in: &varv_driver_in
   io_mode: in
 
 varv_disc_out: &varv_disc_out
-  <<: *varu_driver_out
+  <<: *varv_driver_in
   discipline: disc_singleton
   io_mode: out
 
@@ -430,5 +430,22 @@ varv_driver_in_mm:
 varv_disc_out_mm: 
   <<: *varv_disc_out
   discipline: disc_singleton_mm
+
+# SINGLETON UQ ##################################################################
+varu_driver_out_uq:
+  <<: *varu_driver_out
+  discipline: driver_singleton_uq
+
+varu_disc_in_uq:
+  <<: *varu_disc_in
+  discipline: disc_singleton_uq
+
+varv_driver_in_uq:
+  <<: *varv_driver_in
+  discipline: driver_singleton_uq
+
+varv_disc_out_uq:
+  <<: *varv_disc_out
+  discipline: disc_singleton_uq
 
 

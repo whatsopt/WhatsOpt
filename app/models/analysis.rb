@@ -138,15 +138,15 @@ class Analysis < ApplicationRecord
   end
 
   def response_dim
-    vars_dim(response_variables)
+    Variable.vars_dim(response_variables)
   end
 
   def design_var_dim
-    vars_dim(design_variables)
+    Variable.vars_dim(design_variables)
   end
 
-  def vars_dim(vars)
-    vars.inject(0) { |s, v| s + v.dim }
+  def self.vars_dim(vars)
+    Variable.vars_dim(vars)
   end
 
   def plain_disciplines

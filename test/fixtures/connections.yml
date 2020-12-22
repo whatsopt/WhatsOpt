@@ -148,9 +148,20 @@ disc_driver_v:
 driver_disc_u_mm:
   from_id: <%= ActiveRecord::FixtureSet.identify(:varu_driver_out_mm) %>
   to_id: <%= ActiveRecord::FixtureSet.identify(:varu_disc_in_mm) %>
-  role: "design_var"
+  role: "uncertain_var"
 
 disc_driver_v_mm:
   from_id: <%= ActiveRecord::FixtureSet.identify(:varv_disc_out_mm) %>
   to_id: <%= ActiveRecord::FixtureSet.identify(:varv_driver_in_mm) %>
+  role: "response"
+
+# SINGLETON UQ ################################################################
+driver_disc_u_uq:
+  from_id: <%= ActiveRecord::FixtureSet.identify(:varu_driver_out_uq) %>
+  to_id: <%= ActiveRecord::FixtureSet.identify(:varu_disc_in_uq) %>
+  role: "uncertain_var"
+
+disc_driver_v_uq:
+  from_id: <%= ActiveRecord::FixtureSet.identify(:varv_disc_out_uq) %>
+  to_id: <%= ActiveRecord::FixtureSet.identify(:varv_driver_in_uq) %>
   role: "response"

@@ -22,7 +22,7 @@ class CaseTest < ActiveSupport::TestCase
   end
 
   def test_uncertains
-    ope = operations(:doe_singleton)
+    ope = operations(:doe_singleton_uq)
     assert_not ope.cases.uncertains.blank?
   end
 end

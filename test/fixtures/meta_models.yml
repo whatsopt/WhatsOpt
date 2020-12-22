@@ -10,5 +10,5 @@ cicav_metamodel2:
 
 singleton_mm_metamodel:
   discipline: disc_singleton_mm
-  operation: doe_singleton_build_mm
+  operation: doe_singleton_uq_build_mm
   default_surrogate_kind: OPENTURNS_PCE
