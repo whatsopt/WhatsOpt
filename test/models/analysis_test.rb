@@ -143,7 +143,7 @@ class AnalysisTest < ActiveSupport::TestCase
     mm = copy.disciplines.last.meta_model
     assert_not_equal mda.disciplines.last, mm
     y = mm.predict(x)
-    assert_in_delta 4.925, y[0][0]
+    assert_in_delta 4.959, y[0][0]
     assert_equal x.size, y.size
     mda.operations.reverse.map(&:destroy)
     # mda2.destroy
@@ -151,7 +151,7 @@ class AnalysisTest < ActiveSupport::TestCase
     assert 2, mda.meta_model_prototypes.count
     mm.reload
     y = mm.predict(x)
-    assert_in_delta 4.925, y[0][0]
+    assert_in_delta 4.959, y[0][0]
     assert_equal x.size, y.size
   end
 
