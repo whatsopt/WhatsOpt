@@ -1,5 +1,15 @@
 <h1>CHANGELOG</h1>
 
+<h3>1.14.0 (??/03/2020)</h3>
+<ul>
+  <li>Upgrade SEGOMOE optmizer</li>
+</ul>
+
+<h3>1.13.0 (23/12/2020)</h3>
+<ul>
+  <li>Tech: upgrade ruby 2.7.2</li>
+</ul>
+
 <h3>1.12.0 (31/10/2020)</h3>
 <ul>
   <li>User can specify listening port to run remote analysis server and discipline distribution</li>
