@@ -117,7 +117,7 @@ class SegomoeOptimizer(object):
             "profiling": False,
             "debug": False,
             "verbose": True,
-            "cst_hand": self.constraint_handling,
+            "cst_crit": self.constraint_handling,
         }
 
         res = None
