@@ -7,18 +7,21 @@ import openturns as ot
 class SurrogateOpenturnsException(Exception):
     pass
 
+
 DISTRIBUTION_SIGNATURES = {
     "Normal": ["mu", "sigma"],
     "Beta": ["alpha", "beta", "a", "b"],
     "Gamma": ["k", "lambda", "gamma"],
-    "Uniform": ["a", "b"]
+    "Uniform": ["a", "b"],
 }
 
 
 class PCE(SurrogateModel):
+
+    name = "OPENTURNS_PCE"
+
     def _initialize(self):
         super(PCE, self)._initialize()
-        self.name = "OPENTURNS_PCE"
         declare = self.options.declare
 
         declare("pce_degree", default=3, types=int, desc="Degree of chaos polynoms")
@@ -27,8 +30,8 @@ class PCE(SurrogateModel):
             "uncertainty_specs",
             default=None,
             types=list,
-            desc="list of Openturns distribution specs {name: ClassName, kwargs: **kwargs}. "\
-                "List length should be equal to input dim.",
+            desc="list of Openturns distribution specs {name: ClassName, kwargs: **kwargs}. "
+            "List length should be equal to input dim.",
         )
         self.supports["uncertainties"] = True
 
@@ -53,7 +56,9 @@ class PCE(SurrogateModel):
                 )
             for ds in dist_specs:
                 dist_klass = getattr(sys.modules["openturns"], ds["name"])
-                args = [ds["kwargs"][name] for name in DISTRIBUTION_SIGNATURES[ds["name"]]]
+                args = [
+                    ds["kwargs"][name] for name in DISTRIBUTION_SIGNATURES[ds["name"]]
+                ]
                 distributions.append(dist_klass(*args))
         else:
             for i in range(self.input_dim):
@@ -104,7 +109,7 @@ class PCE(SurrogateModel):
         algo.run()
         self._pce_result = algo.getResult()
 
-    def predict_values(self, x):
+    def _predict_values(self, x):
         mm = self._pce_result.getMetaModel()
         return np.array(mm(x))
 
