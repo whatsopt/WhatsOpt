@@ -8,7 +8,7 @@ git_source(:github) do |repo_name|
 end
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem "rails", "~> 6.0.1"
+gem "rails", "~> 6.1"
 # Use Puma as the app server
 gem "puma", "~> 4.1"
 # Use SCSS for stylesheets
@@ -109,7 +109,7 @@ gem "ancestry"
 gem "acts_as_list"
 
 # JSON serializers
-gem "active_model_serializers", "~> 0.10.7"
+gem "active_model_serializers", "~> 0.10.12"
 
 # Background jobs
 gem "sucker_punch"
