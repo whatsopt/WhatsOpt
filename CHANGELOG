@@ -2,7 +2,7 @@
 
 <h3>1.14.0 (??/03/2020)</h3>
 <ul>
-  <li>Upgrade SEGOMOE optimizer</li>
+  <li>Tech: upgrade SEGOMOE optimizer, smt 0.8.0</li>
 </ul>
 
 <h3>1.13.0 (23/12/2020)</h3>
