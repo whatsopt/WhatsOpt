@@ -13,7 +13,6 @@ const SMT_LS = 'SMT_LS';
 const SMT_QP = 'SMT_QP';
 const OPENTURNS_PCE = 'OPENTURNS_PCE';
 
-
 const UQ_SCHEMA = {
   type: 'object',
   properties: {

@@ -350,7 +350,6 @@ ConnectionsEditor.propTypes = {
   onConnectionDelete: PropTypes.func.isRequired,
 };
 
-
 ConnectionsEditor.defaultProps = {
   limited: false,
 };

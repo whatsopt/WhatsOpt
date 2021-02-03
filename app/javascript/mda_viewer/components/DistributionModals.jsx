@@ -83,7 +83,6 @@ const SCHEMA = {
   },
 };
 
-
 class DistributionModal extends React.Component {
   static _uqLabelOf(dist) {
     const { kind, options_attributes } = dist;

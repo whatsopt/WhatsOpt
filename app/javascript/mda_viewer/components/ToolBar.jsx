@@ -54,7 +54,6 @@ function _exportCsvVariables(connections) {
   document.body.removeChild(link);
 }
 
-
 class ToolBar extends React.Component {
   constructor(props) {
     super(props);

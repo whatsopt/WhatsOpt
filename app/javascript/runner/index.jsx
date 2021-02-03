@@ -210,7 +210,6 @@ function _filterFormOptions(options) {
   return filteredOptions;
 }
 
-
 function _toFormOptions(driver, options) {
   const formOptions = {};
   formOptions[driver] = options.reduce((acc, val) => {

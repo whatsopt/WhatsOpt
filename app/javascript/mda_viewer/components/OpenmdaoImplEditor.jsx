@@ -48,7 +48,6 @@ const SCHEMA_LINEAR_SOLVER = {
   },
 };
 
-
 function _getOpenmdaoImpl(formData) {
   const openmdaoComps = formData.components;
   const nodes = [];

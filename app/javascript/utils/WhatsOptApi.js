@@ -3,7 +3,6 @@ import { trackPromise } from 'react-promise-tracker';
 
 const API_URL = '/api/v1';
 
-
 function _pollStatus(fn, check, callback, timeout, interval) {
   const endTime = Number(new Date()) + (timeout || 2000);
   const interv = interval || 100;
@@ -254,6 +253,5 @@ class WhatsOptApi {
     );
   }
 }
-
 
 export default WhatsOptApi;
