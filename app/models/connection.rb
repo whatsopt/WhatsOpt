@@ -63,39 +63,16 @@ class Connection < ApplicationRecord
       vout = Variable.of_analysis(from_disc.analysis)
                      .where(name: name, io_mode: WhatsOpt::Variable::OUT)
                      .first_or_create!(shape: 1, type: "Float", desc: "", units: "", active: true)
-      vout.update(discipline_id: from_disc.id)
+      vout.update!(discipline_id: from_disc.id)
       vin = Variable.where(discipline_id: to_disc.id, name: name, io_mode: WhatsOpt::Variable::IN)
                     .first_or_create!(shape: 1, type: "Float", desc: "", units: "", active: true)
       conn = Connection.where(from_id: vout.id, to_id: vin.id).first_or_create!
-      # downgrade the role if needed
-      # Rails.logger.info "CREATED #{conn.from.inspect} #{conn.to.inspect}"
       if !conn.from.discipline.is_driver? && !conn.to.discipline.is_driver?
         Connection.where(from_id: vout.id).update(role: WhatsOpt::Variable::STATE_VAR_ROLE)
       end
       conn
     end
   end
-
-  # manage exclusively Driver variables if deconnected should be removed
-  # def delete_driver_variables!
-  #   Rails.logger.info "BEFORE DESTROY #{self.from&.name} #{self.from&.discipline&.name} #{self.to&.discipline&.name}"
-  #   Connection.transaction do
-  #     to = self.to
-  #     if to&.discipline&.is_driver?
-  #       Rails.logger.info "-----------------------  Connection to driver: supress #{to.name} #{to.id} driver var"
-  #       to.delete
-  #     end
-  #     conns = Connection.where(from: from)
-  #     Rails.logger.info "#{conns.inspect}"
-  #     if conns.size == 1
-  #       from = conns.first.from
-  #       if from&.discipline&.is_driver?
-  #         Rails.logger.info "-----------------------  Connection only from driver: supress #{from.name} #{from.id} driver var"
-  #         from.delete
-  #       end
-  #     end
-  #   end
-  # end
 
   def update_connections!(params)
     params = params.to_h  # accept string parameters

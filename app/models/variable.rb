@@ -44,7 +44,10 @@ class Variable < ApplicationRecord
 
   validates :name, format: { with: /\A[a-zA-Z][\-\.=:_a-zA-Z0-9]*\z/, message: "%{value} is not a valid variable name." }
   validates :name, :io_mode, :type, :shape, presence: true, allow_blank: false
-  validates :name, uniqueness: { scope: [:discipline], message: "%{value} should be unique per discipline." }
+  validates :name, uniqueness: { scope: [:discipline], message: -> (object, data) {
+      "%{value} as a variable name should be unique for discipline #{object.discipline.name}." 
+    }
+  }
   validate :shape_is_well_formed
 
   scope :numeric, -> { where.not(type: STRING_T) }

@@ -109,7 +109,7 @@ WORKDIR /whatsopt
 COPY Gemfile Gemfile.lock ./ 
 
 RUN bundle config without staging production \
-    && bundle install --jobs 20 --retry 5
+	&& bundle install --jobs 20 --retry 5
 
 COPY . ./
 
