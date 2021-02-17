@@ -39,7 +39,6 @@ class UserSelector extends React.Component {
         allowNew={false}
         isLoading={isLoading}
         multiple={false}
-        selectHintOnEnter
         options={options}
         id="typeahead-users"
         labelKey="login"

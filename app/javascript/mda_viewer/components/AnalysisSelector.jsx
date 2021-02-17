@@ -48,7 +48,6 @@ class AnalysisSelector extends React.Component {
         options={options}
         allowNew={false}
         multiple={false}
-        selectHintOnEnter
         labelKey="label"
         minLength={2}
         onSearch={this.handleSearch}

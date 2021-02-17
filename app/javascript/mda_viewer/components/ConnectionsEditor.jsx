@@ -227,7 +227,6 @@ class ConnectionsForm extends React.Component {
             newSelectionPrefix="New: "
             multiple
             labelKey="name"
-            selectHintOnEnter
             isInvalid={isErroneous}
             minLength={1}
             placeholder="Enter variable names..."

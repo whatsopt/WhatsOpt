@@ -38,7 +38,6 @@ class ProjectSelector extends React.Component {
         defaultSelected={[selected]}
         isLoading={isLoading}
         multiple={false}
-        selectHintOnEnter
         options={options}
         id="typeahead-projects"
         labelKey="name"
