@@ -212,6 +212,10 @@ class AnalysisDatabase {
     return this.mda.vars[discId].out.sort();
   }
 
+  getInputVariables(discId) {
+    return this.mda.vars[discId].in.sort();
+  }
+
   getAnalysisInputVariables() {
     return this.inputVariables;
   }

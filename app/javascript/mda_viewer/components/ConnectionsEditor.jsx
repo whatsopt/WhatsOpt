@@ -204,6 +204,7 @@ class ConnectionsForm extends React.Component {
     const selected = selectedConnectionNames;
     // console.log('RENDER ', selected);
     const outvars = db.getOutputVariables(filter.fr);
+    const invars = db.getInputVariables(filter.to);
     // console.log(`OUTPUT VARS = ${JSON.stringify(outvars)}`);
     edges = edges.filter(
       (edge) => (edge.from === filter.fr) && (edge.to === filter.to),
@@ -211,7 +212,8 @@ class ConnectionsForm extends React.Component {
     ) || [];
     const current = edges.map((edge) => edge.name.split(','))[0] || [];
     // console.log(`CURRENT = ${JSON.stringify(current)}`);
-    const selectable = outvars.filter((e) => !current.includes(e.name));
+    let selectable = invars.concat(outvars);
+    selectable = selectable.filter((e) => !current.includes(e.name));
     // console.log('SELECTABLE', selectable);
     return (
       <form className="form" onSubmit={onConnectionCreate} noValidate>
