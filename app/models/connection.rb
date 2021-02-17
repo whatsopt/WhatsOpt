@@ -68,14 +68,16 @@ class Connection < ApplicationRecord
                     .first_or_create!(shape: 1, type: "Float", desc: "", units: "", active: true)
       conn = Connection.where(from_id: vout.id, to_id: vin.id).first_or_create!
       # update role if needed
-      if !conn.from.discipline.is_driver? && !conn.to.discipline.is_driver?
-        Connection.where(from_id: vout.id).map { |conn| conn.update!(role: WhatsOpt::Variable::STATE_VAR_ROLE) }
-      end
       if conn.from.discipline.is_driver?
         Connection.where(from_id: vout.id).map { |conn| conn.update!(role: WhatsOpt::Variable::DESIGN_VAR_ROLE) }
-      end
-      if conn.to.discipline.is_driver?
-        Connection.where(from_id: vout.id) .map { |conn| conn.update!(role: WhatsOpt::Variable::RESPONSE_ROLE) }
+      else
+        # check if variable connection is connected TO the driver by any means
+        conns = Connection.where(from_id: vout.id).joins(:to).where(variables: { discipline_id: conn.analysis.driver.id })
+        if conns.blank?
+          Connection.where(from_id: vout.id).map { |conn| conn.update!(role: WhatsOpt::Variable::STATE_VAR_ROLE) }
+        else
+          Connection.where(from_id: vout.id).map { |conn| conn.update!(role: WhatsOpt::Variable::RESPONSE_ROLE) }
+        end
       end
       conn
     end
