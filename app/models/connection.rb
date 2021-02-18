@@ -88,8 +88,9 @@ class Connection < ApplicationRecord
     _sanitize_connection_params(params)
     Connection.transaction do
       # if shape is changed, destroy distributions if any and set parameter role if uncertain
-      if params[:shape] && from.dim != Variable.new(name: "Prototype", shape: params[:shape]).dim
-        if Connection.where(from_id: from_id).first.role == WhatsOpt::Variable::UNCERTAIN_VAR_ROLE
+      if params[:shape]
+        proto = Variable.new(name: from.name, shape: params[:shape])
+        if from.dim != proto.dim && Connection.where(from_id: from_id).first.role == WhatsOpt::Variable::UNCERTAIN_VAR_ROLE
           params[:role] = WhatsOpt::Variable::PARAMETER_ROLE
         end
       end

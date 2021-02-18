@@ -22,8 +22,12 @@ class Api::V1::ConnectionsController < Api::ApiController
   def update
     connection = Connection.find(params[:id])
     authorize connection.analysis
-    connection.analysis.update_connections!(connection, connection_update_params)
-    head :no_content
+    begin
+      connection.analysis.update_connections!(connection, connection_update_params)
+      head :no_content
+    rescue WhatsOpt::Variable::BadShapeAttributeError => e
+      json_response({ message: e }, :unprocessable_entity)
+    end
   end
 
   # DELETE /api/v1/connections/1

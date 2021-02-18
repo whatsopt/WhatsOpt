@@ -4,9 +4,6 @@ require "whats_opt/variable"
 require "whats_opt/openmdao_variable"
 require "whats_opt/thrift_variable"
 
-class BadShapeAttributeError < StandardError
-end
-
 class Variable < ApplicationRecord
   include WhatsOpt::Variable
   include WhatsOpt::OpenmdaoVariable
@@ -152,7 +149,7 @@ class Variable < ApplicationRecord
 
     def shape_is_well_formed
       dim
-    rescue BadShapeAttributeError => e
+    rescue WhatsOpt::Variable::BadShapeAttributeError => e
       errors.add(:shape, e.message)
     end
 

@@ -2,6 +2,10 @@
 
 module WhatsOpt
   module Variable
+
+    class BadShapeAttributeError < StandardError
+    end
+
     def self.included(klass)
       klass.extend(ClassMethods)
     end
@@ -50,7 +54,7 @@ module WhatsOpt
                 when /\A\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)\s*\z/
                   $1.to_i * $2.to_i * $3.to_i * $4.to_i
                 else
-                  raise BadShapeAttributeError.new("should be either 1, (n,), (n, m), (n, m, p) or (n, m, p, q) but found #{self.shape} for variable #{self.name}")
+                  raise BadShapeAttributeError.new("Shape should be either 1, (n,), (n, m), (n, m, p) or (n, m, p, q) but got '#{self.shape}' for variable #{self.name}")
       end
     end
 
@@ -67,7 +71,7 @@ module WhatsOpt
                 when /\A\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)\s*\z/
                   4
                 else
-                  raise BadShapeAttributeError.new("should be either 1, (n,), (n, m), (n, m, p) or (n, m, p, q) but found #{self.shape}")
+                  raise BadShapeAttributeError.new("Shape should be either 1, (n,), (n, m), (n, m, p) or (n, m, p, q) but got '#{self.shape}' for variable #{self.name}")
       end
     end
 
