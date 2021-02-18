@@ -39,15 +39,15 @@ module WhatsOpt
 
     def dim
       @dim ||=  case self.shape
-                when /\A1\z/
+                when /\A\s*1\s*\z/
                   1
-                when /\A\((\d+),\)\z/
+                when /\A\s*\(\s*(\d+)\s*,\s*\)\s*\z/
                   $1.to_i
-                when /\A\((\d+), (\d+)\)\z/
+                when /\A\s*\(\s*(\d+)\s*,\s*(\d+)\s*\)\s*\z/
                   $1.to_i * $2.to_i
-                when /\A\((\d+), (\d+), (\d+)\)\z/
+                when /\A\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)\s*\z/
                   $1.to_i * $2.to_i * $3.to_i
-                when /\A\((\d+), (\d+), (\d+), (\d+)\)\z/
+                when /\A\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)\s*\z/
                   $1.to_i * $2.to_i * $3.to_i * $4.to_i
                 else
                   raise BadShapeAttributeError.new("should be either 1, (n,), (n, m), (n, m, p) or (n, m, p, q) but found #{self.shape} for variable #{self.name}")
@@ -56,15 +56,15 @@ module WhatsOpt
 
     def ndim
       @ndim ||= case self.shape
-                when /\A1\z/
+                when /\A\s*1\s*\z/
                   0
-                when /\A\((\d+),\)\z/
+                when /\A\s*\(\s*(\d+)\s*,\s*\)\s*\z/
                   1
-                when /\A\((\d+), (\d+)\)\z/
+                when /\A\s*\(\s*(\d+)\s*,\s*(\d+)\s*\)\s*\z/
                   2
-                when /\A\((\d+), (\d+), (\d+)\)\z/
+                when /\A\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)\s*\z/
                   3
-                when /\A\((\d+), (\d+), (\d+), (\d+)\)\z/
+                when /\A\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)\s*\z/
                   4
                 else
                   raise BadShapeAttributeError.new("should be either 1, (n,), (n, m), (n, m, p) or (n, m, p, q) but found #{self.shape}")
