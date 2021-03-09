@@ -25,6 +25,9 @@ class Connection < ApplicationRecord
   class CannotRemoveConnectionError < StandardError
   end
 
+  class VariableAlreadyProducedError < StandardError
+  end
+
   def self.between(disc_from_id, disc_to_id)
     Connection.joins(:from).where(variables: { discipline_id: disc_from_id }) # .where.not(variables: {type: :String})
               .order("variables.name")
@@ -61,9 +64,21 @@ class Connection < ApplicationRecord
         _check_sub_analysis(name, to_disc, WhatsOpt::Variable::OUT)
       end
       vout = Variable.of_analysis(from_disc.analysis)
-                     .where(name: name, io_mode: WhatsOpt::Variable::OUT)
-                     .first_or_create!(shape: 1, type: "Float", desc: "", units: "", active: true)
-      vout.update!(discipline_id: from_disc.id)
+                     .where(name: name, io_mode: WhatsOpt::Variable::OUT).first
+      if vout.blank? 
+        vout = Variable.of_analysis(from_disc.analysis)
+          .where(name: name, io_mode: WhatsOpt::Variable::OUT)
+          .create!(discipline: from_disc,  shape: 1, type: "Float", desc: "", units: "", active: true)
+      else
+        if vout.discipline.is_driver?
+          vout.update!(discipline_id: from_disc.id)
+        elsif vout.discipline.id == from_disc.id
+          # ok from disc is already producing vout
+        else
+          raise VariableAlreadyProducedError.new "Variable #{vout.name} already produced by #{vout.discipline.name} discipline"
+        end
+      end
+      
       vin = Variable.where(discipline_id: to_disc.id, name: name, io_mode: WhatsOpt::Variable::IN)
                     .first_or_create!(shape: 1, type: "Float", desc: "", units: "", active: true)
       conn = Connection.where(from_id: vout.id, to_id: vin.id).first_or_create!
@@ -179,7 +194,7 @@ class Connection < ApplicationRecord
       if sub_analysis_check && from.discipline.has_sub_analysis?
         if from.outgoing_connections.count == 1
           if to.discipline.is_driver?
-            raise CannotRemoveConnectionError, "Connection #{from.name} has to be suppressed" \
+            raise CannotRemoveConnectionError.new "Connection #{from.name} has to be suppressed" \
               " in #{from.discipline.name} sub-analysis first"
           else # ok variable provided by outer driver now not sub-analysis
             from.update(discipline_id: from.discipline.analysis.driver.id)
@@ -189,7 +204,7 @@ class Connection < ApplicationRecord
         end
       elsif sub_analysis_check && to.discipline.has_sub_analysis?
         if from.discipline.is_driver?
-          raise CannotRemoveConnectionError, "Connection #{from.name} has to be suppressed" \
+          raise CannotRemoveConnectionError.new "Connection #{from.name} has to be suppressed" \
             " in #{to.discipline.name} sub-analysis first"
         else
           from.update(discipline_id: from.discipline.analysis.driver.id)
@@ -222,7 +237,7 @@ class Connection < ApplicationRecord
       if disc.has_sub_analysis?
         var = disc.sub_analysis.driver.variables.where(name: varname, io_mode: driver_io_mode).take
         unless var
-          raise SubAnalysisVariableNotFoundError, "Variable #{varname} should be created as an #{driver_io_mode}" \
+          raise SubAnalysisVariableNotFoundError.new "Variable #{varname} should be created as an #{driver_io_mode}" \
               " variable of Driver in sub-analysis first"
         end
       end

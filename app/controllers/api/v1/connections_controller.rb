@@ -13,7 +13,7 @@ class Api::V1::ConnectionsController < Api::ApiController
       json_response conns, :created
     rescue Analysis::AncestorUpdateError => e
       json_response({ message: e }, :unprocessable_entity)
-    rescue Connection::SubAnalysisVariableNotFoundError => e
+    rescue Connection::SubAnalysisVariableNotFoundError, Connection::VariableAlreadyProducedError => e
       json_response({ message: e }, :unprocessable_entity)
     end
   end

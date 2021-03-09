@@ -216,6 +216,10 @@ class AnalysisDatabase {
     return this.mda.vars[discId].in.sort();
   }
 
+  getDriverOutVariables() {
+    return this.mda.vars[this.driver.id].out.sort();
+  }
+
   getAnalysisInputVariables() {
     return this.inputVariables;
   }
