@@ -20,7 +20,7 @@ class SurrogateProxyTest < ActiveSupport::TestCase
     @surr_proxy.create_surrogate(surr_kind, xt, yt)
     values = @surr_proxy.predict_values([[1.0], [2.5]])
     assert_in_delta(1.0, values[0])
-    assert_in_delta(1.194, values[1])
+    assert_in_delta(1.195, values[1])
     @surr_proxy.destroy_surrogate
   end
 
