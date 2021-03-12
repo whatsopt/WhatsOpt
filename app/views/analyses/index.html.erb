@@ -33,7 +33,7 @@
 <script>
   let relRoot = "<%= Rails.application.config.action_controller.relative_url_root %>";
 
-  $("input[data-analyses-query]").on('change', function() {
+  $("input[data-analyses-query]").on('click', function() {
     let query = $(this).data("analyses-query");
     $.ajax({
       type: "PATCH",
@@ -47,7 +47,7 @@
     })
   });
 
-  $("#designProjectScope").on('change', function(e) {
+  $("#designProjectScope").on('click', function(e) {
     let design_project_id = this.value;
     $.ajax({
       type: "PATCH",

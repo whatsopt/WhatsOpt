@@ -133,8 +133,8 @@ class Api::V1::MetaModelsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     resp = JSON.parse(response.body)
     y = resp["y"]
-    assert_in_delta(2.321, y[0][0])
-    assert_in_delta(7.903, y[1][0])
+    assert_in_delta(2.025, y[0][0])
+    assert_in_delta(8, y[1][0])
   end
 
   test "anybody can make prediction" do
