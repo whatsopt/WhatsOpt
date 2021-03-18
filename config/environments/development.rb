@@ -46,7 +46,6 @@ Rails.application.configure do
     :domain  => "onecert.fr",
     :enable_starttls_auto => true
   }
-  ActionMailer::Base.delivery_method = :smtp
   
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
