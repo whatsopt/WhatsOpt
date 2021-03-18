@@ -132,4 +132,5 @@ gem "image_processing", "~> 1.2"
 # Document API
 gem "rswag-api"
 
+# To cache XDSM json to get XDSM standalone html
 gem "deepsort"

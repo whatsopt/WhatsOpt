@@ -6,16 +6,14 @@
 <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post }) do |f| %>
   <%= devise_error_messages! %>
 
-  <div class="form-group">
+  <div class="form-group col-4">
     <%= f.label :email %>
     <%= f.email_field :email, autofocus: true, class: "form-control" %>
   </div>
 
-  <div class="actions">
-    <%= f.submit "Send me reset password instructions" %>
+  <div class="form-group col-4">
+    <%= f.submit "Send me reset password instructions", class: "btn btn-primary" %>
   </div>
 <% end %>
 </div>
 </div>
-
-<%= render "devise/shared/links" %>

@@ -5,8 +5,9 @@ class User < ActiveRecord::Base
 
   devise :database_authenticatable
   devise :ldap_authenticatable if APP_CONFIG["enable_ldap"]
-  devise :trackable, :validatable, :timeoutable
-  # devise :ldap_authenticatable, :trackable, :validatable, :timeoutable
+  devise :trackable, :validatable, :timeoutable, :recoverable
+
+  validate :password_complexity
 
   after_initialize :initialize_defaults, if: :new_record?
   before_create :generate_api_key
@@ -23,6 +24,12 @@ class User < ActiveRecord::Base
                           resource_id: instance.id
                         })
   }
+
+  def password_complexity
+    # Regexp extracted from https://stackoverflow.com/questions/19605150
+    return if password.blank? || password =~ /(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-;])/
+    errors.add :password, 'Complexity requirement not met. Please use: 1 uppercase, 1 lowercase, 1 digit and 1 special character (#?!@$%^&*-;)'
+  end
 
   # Used to create user on first LDAP authentication
   def ldap_before_save
