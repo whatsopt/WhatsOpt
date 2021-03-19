@@ -2,6 +2,7 @@
 
 <h3>1.14.0 (??/03/2020)</h3>
 <ul>
+  <li>User can reset his/her password through email request.
   <li>User can select input variables of consuming discipline that are now suggested when editing a connection</li>
   <li>Tech: upgrade SEGOMOE optimizer, smt 0.8.0</li>
 </ul>
