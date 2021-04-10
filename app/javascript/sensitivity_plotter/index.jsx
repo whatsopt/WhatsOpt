@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import MorrisScatterPlot from './components/MorrisScatterPlot';
 import SobolScatterPlot from './components/SobolScatterPlot';
+import SobolHeatMap from './components/SobolHeatMap';
 
 class SensitivityPlotter extends React.Component {
   constructor(props) {
@@ -22,6 +23,7 @@ class SensitivityPlotter extends React.Component {
   }
 
   render() {
+    let heatmaps;
     let plots;
     let desc;
     const { sensitivity } = this.state;
@@ -45,6 +47,10 @@ class SensitivityPlotter extends React.Component {
         );
       } else if (saMethod === 'sobol') {
         desc = 'For each output, plot of Sobol first order (S1) and total order (ST) indices (share of the variance of the output that is due to a given input: the greater, the more influent the input is)';
+        heatmaps = [
+          <SobolHeatMap outVarNames={varnames} saResult={saResult} firstOrder />,
+          <SobolHeatMap outVarNames={varnames} saResult={saResult} />,
+        ];
         plots = outs.map(
           (o) => (
             <SobolScatterPlot
@@ -69,6 +75,7 @@ class SensitivityPlotter extends React.Component {
         <p>
           {desc}
         </p>
+        {heatmaps}
         {plots}
       </div>
     );
