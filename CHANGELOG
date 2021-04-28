@@ -1,10 +1,11 @@
 <h1>CHANGELOG</h1>
 
-<h3>1.14.0 (??/03/2020)</h3>
+<h3>1.14.0 (28/04/2020)</h3>
 <ul>
-  <li>User can reset his/her password through email request.
-  <li>User can select input variables of consuming discipline that are now suggested when editing a connection</li>
-  <li>Tech: upgrade SEGOMOE optimizer, smt 0.8.0</li>
+  <li>User can view Sobol indices using heatmaps.</li>
+  <li>User can reset his/her password through email request.</li>
+  <li>User can select input variables of consuming discipline that are now suggested when editing a connection.</li>
+  <li>Tech: upgrade SEGOMOE optimizer, SMT 1.0.0.</li>
 </ul>
 
 <h3>1.13.0 (23/12/2020)</h3>
