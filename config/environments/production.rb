@@ -69,8 +69,8 @@ Rails.application.configure do
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.perform_deliveries = true
   config.action_mailer.default :charset => "utf-8"
-  ActionMailer::Base.smtp_settings = {
-    :address => "mailhost",
+  config.action_mailer.smtp_settings = {
+    :address => ENV['WHATSOPT_MAILER_HOST'],
     :port    => 25,
     :domain  => "onecert.fr",
     :enable_starttls_auto => true
