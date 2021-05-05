@@ -8,4 +8,9 @@ class UserTest < ActiveSupport::TestCase
     mda = analyses(:cicav)
     assert user.has_role?(:owner, mda)
   end
+
+  test "should not validate complexity on creation" do
+    user = User.create!(login: "Test", email: "fdsfd@onera.fr", password: "too_simple", password_confirmation: "too_simple")
+    user.update(password: "too_simple", password_confirmation: "too_simple")
+  end
 end

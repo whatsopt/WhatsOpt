@@ -7,7 +7,8 @@ class User < ActiveRecord::Base
   devise :ldap_authenticatable if APP_CONFIG["enable_ldap"]
   devise :trackable, :validatable, :timeoutable, :recoverable
 
-  validate :password_complexity
+  validates :login, :email, presence: true
+  validate :password_complexity, on: :update  # Only used by devise on password reset by the user
 
   after_initialize :initialize_defaults, if: :new_record?
   before_create :generate_api_key
@@ -25,6 +26,9 @@ class User < ActiveRecord::Base
                         })
   }
 
+  # Backward-compatibility WhatsOpt < 1.13
+  # Use save not save! (update not update!) to avoid exception due to password 
+  # complexity validation failure now because we have stronger conditions for password on reset (ie on update)
   def password_complexity
     # Regexp extracted from https://stackoverflow.com/questions/19605150
     return if password.blank? || password =~ /(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-;])/
