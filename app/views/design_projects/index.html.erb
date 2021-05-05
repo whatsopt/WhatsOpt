@@ -9,11 +9,11 @@
 
   <thead>
     <tr>
-      <th class="col-md-2">Name</th>
-      <th class="col-md-1">Owner</th>
-      <th class="col-md-3">Description</th>
-      <th class="col-md-4">Analyses</th>
-      <th class="col-md-2">Actions</th>
+      <th style="10%">Name</th>
+      <th style="10%">Owner</th>
+      <th style="30%">Description</th>
+      <th style="30%">Analyses</th>
+      <th style="20%">Actions</th>
     </tr>
   </thead>
 
@@ -23,22 +23,29 @@
       <td><%= link_to project.name, mdas_url(design_project_id: project.id) %></td>
       <td><%= project.owner.login %></td>
       <td><%= project.description %></td>
-      <td><%= link_to_analyses_if_authorized(project) %></td>
+      <td><%= link_to_analyses_if_authorized(project) %>
+        <% unless project.analyses.roots.empty? %>
+        <%= link_to design_project_path(project), 
+                class: "btn btn-sm", title: "List Analyses" do %>
+        <i class="fas fa-ellipsis-v"></i>
+        <% end %>
+        <% end %>
+      </td>
       <td>
         <% if policy(project).update? %>
-          <%= link_to edit_design_project_path(project), 
+        <%= link_to edit_design_project_path(project), 
             class: "btn btn-sm", title: "Edit" do %>
-            <i class="fas fa-edit"></i> 
-          <% end %>    
+        <i class="fas fa-edit"></i>
+        <% end %>
         <% end %>
         <% if policy(project).destroy? %>
-          <%= link_to design_project_path(project), method: :delete, data: { title: 'Are you sure?', 
+        <%= link_to design_project_path(project), method: :delete, data: { title: 'Are you sure?', 
                                                               confirm: "Remove #{project.name} design project?",
                                                               commit: 'Yes',
                                                               cancel: 'No, cancel' }, 
               class: "btn btn-sm text-danger", title:"Delete" do %>
-              <i class="fas fa-times"></i> 
-          <% end %>    
+        <i class="fas fa-times"></i>
+        <% end %>
         <% end %>
       </td>
     </tr>
