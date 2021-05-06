@@ -15,6 +15,32 @@ jobs:
           ruby-version: '2.7'
           bundler-cache: true
 
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          pip install -e services
+          pip list
+
+      - name: Install Thrift Compiler
+        run: |
+          export THRIFT_VERSION=0.13.0
+          export buildDeps="automake bison curl flex g++ libboost-dev libboost-filesystem-dev libboost-program-options-dev libboost-system-dev libboost-test-dev  libevent-dev libssl-dev libtool make pkg-config"
+          sudo apt-get install -y --no-install-recommends $buildDeps && sudo rm -rf /var/lib/apt/lists/*
+          sudo curl -sSL "http://apache.mirrors.spacedump.net/thrift/$THRIFT_VERSION/thrift-$THRIFT_VERSION.tar.gz" -o $HOME/thrift.tar.gz
+          mkdir -p $HOME/thrift
+          tar zxf $HOME/thrift.tar.gz -C $HOME/thrift --strip-components=1
+          pushd $HOME/thrift
+          ./configure  --without-python --without-cpp --without-ruby --without-nodejs --without-py3 --without-go --without-php --without-java
+          make
+          sudo make install
+          popd
+
       - name: Setup Node
         uses: actions/setup-node@v1
         with:
