@@ -36,7 +36,8 @@ jobs:
           mkdir -p $HOME/thrift
           tar zxf $HOME/thrift.tar.gz -C $HOME/thrift --strip-components=1
           pushd $HOME/thrift
-          ./configure  --without-python --without-cpp --without-ruby --without-nodejs --without-py3 --without-go --without-php --without-java
+          ./configure --help
+          ./configure --without-python --without-netstd --without-erlang --without-rs --without-swift --without-dotnetcore --without-cpp --without-ruby --without-nodejs --without-py3 --without-go --without-php --without-java
           make
           sudo make install
           popd
@@ -49,7 +50,7 @@ jobs:
         id: yarn-cache
         run: echo "::set-output name=dir::$(yarn cache dir)"
       - name: JS package cache
-        uses: actions/cache@v1
+        uses: actions/cache@v2
         with:
           path: ${{ steps.yarn-cache.outputs.dir }}
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
