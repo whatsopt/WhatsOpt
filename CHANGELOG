@@ -1,5 +1,11 @@
 <h1>CHANGELOG</h1>
 
+<h3>1.15.0 (??/06/2020)</h3>
+<ul>
+  <li>Fix design project list display</li>
+  <li>Tech: update RoR backend</li>
+</ul>
+
 <h3>1.14.0 (28/04/2020)</h3>
 <ul>
   <li>User can view Sobol indices using heatmaps.</li>
