@@ -124,7 +124,7 @@ gem "font_awesome5_rails"
 gem "data-confirm-modal"
 
 # thrift
-gem "thrift", "0.11.0"
+gem "thrift", "~>0.13.0"
 
 # Actiontext image processing
 gem "image_processing", "~> 1.2"
