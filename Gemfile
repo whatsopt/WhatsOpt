@@ -50,7 +50,8 @@ group :development, :test do
   gem "capybara"
   gem "selenium-webdriver"
   # Compute test coverage
-  gem "coveralls", require: false
+  gem 'simplecov',      require: false
+  gem 'simplecov-lcov', require: false
   # rswag
   gem "rspec-rails"
   gem "rswag-specs"
