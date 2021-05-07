@@ -3,8 +3,7 @@
 require "csv"
 
 if ENV["WHATSOPT_COVERALLS"]
-  require "coveralls"
-  Coveralls.wear!("rails")
+  require "simplecov"
 end
 
 ENV["RAILS_ENV"] ||= "test"
