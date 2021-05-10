@@ -1,0 +1,109 @@
+<%= @generator.render_partial('../base_header_partial.py.erb') %>
+
+from os import path
+import inspect
+import numpy as np
+from numpy import nan
+
+<% @mda.all_plain_disciplines.each do |d| -%>
+from <%= d.py_full_modulename %> import <%= d.py_classname %>
+<% end -%>
+
+from gemseo.mda.jacobi import MDAJacobi
+from gemseo.core.doe_scenario import DOEScenario
+from gemseo.core.doe_scenario import MDOScenario
+
+class <%= @mda.py_classname %>MDABase(MDAJacobi):
+    def __init__(self, dtype="float64", **mda_options):
+        disciplines = [
+            <%= @mda.disciplines.nodes.map{|d| "self.create_#{d.basename}()"}.join(', ') %>
+        ]
+        super(<%= @mda.py_classname %>MDABase, self).__init__(disciplines, **mda_options)
+
+<% @mda.sub_analyses.each do |a| %>
+    def create_<%= a.basename %>(self):
+    	return <%= a.py_classname %>()
+<% end %>
+
+class <%= @mda.py_classname %>DOEScenarioBase(DOEScenario):
+    """ A base class for <%= @mda.py_classname %> DOE Scenario """
+
+    def __init__(self, **kwargs):
+
+        self._disciplines = [
+            <%= @mda.disciplines.nodes.map{|d| "self.create_#{d.basename}()"}.join(', ') %>
+        ]
+        for disc in self._disciplines:
+            disc.set_jacobian_approximation()
+        self._formulation = @mda.formulation 
+        self._objective_name =  @mda.min_objective_variables.first
+        self._design_space = <%= @mda.py_classname %>DesignSpace()
+        self._name = "<%= @mda.py_classname %>DOEScenario"
+
+        super(<%= @mda.py_classname %>Base, self).__init__(
+            self._disciplines,
+            self._formulation,
+            self._objective_name,
+            self._design_space,
+            self._name,
+            **kwargs,
+        )
+
+        <% @mda.ineq_constraint_variables.each do |voi| %>
+        pb.model.add_constraint('<%= voi.name %>', "ineq")<% end %>
+        <% @mda.eq_constraint_variables.each do |voi| %>
+        pb.model.add_constraint('<%= voi.name %>', "eq")<% end %>
+
+    def _init_base_grammar(self, name):
+        name = "DOEScenario"
+        self.comp_dir = path.dirname(inspect.getfile("DOEScenario"))
+        input_grammar_file = self.auto_get_grammar_file(True, name, self.comp_dir)
+        output_grammar_file = self.auto_get_grammar_file(False, name, self.comp_dir)
+        self._instantiate_grammars(input_grammar_file, output_grammar_file)
+
+<% @mda.sub_analyses.each do |a| %>
+    def create_<%= a.basename %>(self):
+    	return <%= a.py_classname %>()
+<% end %>
+
+
+class <%= @mda.py_classname %>MDOScenarioBase(MDOScenario):
+    """ A base class for <%= @mda.py_classname %> MDO Scenario """
+
+    def __init__(self, **kwargs):
+
+        self._disciplines = [
+            <%= @mda.disciplines.nodes.map{|d| "self.create_#{d.basename}()"}.join(', ') %>
+        ]
+        for disc in self._disciplines:
+            disc.set_jacobian_approximation()
+        self._formulation = @mda.formulation 
+        self._objective_name =  @mda.min_objective_variables.first
+        self._design_space = <%= @mda.py_classname %>DesignSpace()
+        self._name = "<%= @mda.py_classname %>MDOScenario"
+
+        super(<%= @mda.py_classname %>Base, self).__init__(
+            self._disciplines,
+            self._formulation,
+            self._objective_name,
+            self._design_space,
+            self._name,
+            **kwargs,
+        )
+
+        <% @mda.ineq_constraint_variables.each do |voi| %>
+        pb.model.add_constraint('<%= voi.name %>', "ineq")<% end %>
+        <% @mda.eq_constraint_variables.each do |voi| %>
+        pb.model.add_constraint('<%= voi.name %>', "eq")<% end %>
+
+    def _init_base_grammar(self, name):
+        name = "MDOScenario"
+        self.comp_dir = path.dirname(inspect.getfile("MDOScenario"))
+        input_grammar_file = self.auto_get_grammar_file(True, name, self.comp_dir)
+        output_grammar_file = self.auto_get_grammar_file(False, name, self.comp_dir)
+        self._instantiate_grammars(input_grammar_file, output_grammar_file)
+
+<% @mda.sub_analyses.each do |a| %>
+    def create_<%= a.basename %>(self):
+    	return <%= a.py_classname %>()
+<% end %>

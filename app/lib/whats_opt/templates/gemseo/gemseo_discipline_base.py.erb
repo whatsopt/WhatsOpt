@@ -1,0 +1,34 @@
+<%= @generator.render_partial('../base_header_partial.py.erb') %>
+
+import numpy as np
+from numpy import nan
+from os import path
+from importlib import import_module
+from yaml import load, FullLoader
+from gemseo.core.discipline import MDODiscipline
+
+class <%= @discipline.py_classname %>Base(MDODiscipline):
+    """ An GEMSEO discipline to encapsulate <%= @discipline.py_classname %> discipline """
+
+    def __init__(self, **kwargs):
+        self.comp_dir = "./"
+        super(<%= @discipline.py_classname %>Base, self).__init__(**kwargs)
+        self._initialize_impl()
+        self.default_inputs = {
+        <% @discipline.input_variables.each do |var| -%>
+            '<%= var.py_varname %>': val=<%= var.init_py_value %>')
+        <% end -%>
+        }
+
+    def _run(self):
+    <% @discipline.input_variables.each do |var| -%>
+        <%= var.py_varname %> = self.get_inputs_by_name(["<%= var.py_varname %>"])
+    <% end -%>
+        inputs = self.local_data
+        outputs = {}
+        self.compute(inputs, outputs)
+    <% @discipline.input_variables.each do |var| -%>
+        self.store_local_data(
+            <%= var.py_varname %>=np.array(outputs[<%= var.py_varname %>])
+        )
+    <% end -%>

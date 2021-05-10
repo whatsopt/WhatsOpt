@@ -1,0 +1,8 @@
+from gemseo.api import configure_logger
+from <%= @mda.py_modulename %> import <%= @mda.py_classname %> 
+
+configure_logger()
+
+scenario = <%= @mda.py_classname %>()
+
+scenario.execute(input_data={"max_iter": 10, "algo": "SLSQP"}) 
