@@ -1,4 +1,4 @@
-<%= @generator.render_partial('../base_header_partial.py.erb') %>
+<%= @generator.render_partial('base_header_partial.py.erb') %>
 
 from os import path
 import inspect
@@ -12,6 +12,7 @@ from <%= d.py_full_modulename %> import <%= d.py_classname %>
 from gemseo.mda.jacobi import MDAJacobi
 from gemseo.core.doe_scenario import DOEScenario
 from gemseo.core.doe_scenario import MDOScenario
+from gemseo.algos.design_space import DesignSpace
 
 class <%= @mda.py_classname %>MDABase(MDAJacobi):
     def __init__(self, dtype="float64", **mda_options):
@@ -24,6 +25,25 @@ class <%= @mda.py_classname %>MDABase(MDAJacobi):
     def create_<%= a.basename %>(self):
     	return <%= a.py_classname %>()
 <% end %>
+
+
+class <%= @mda.py_classname %>DesignSpace(DesignSpace):
+    """**<%= @mda.py_classname %>DesignSpace** creates the :class:`.DesignSpace` of the
+    <%= @mda.py_classname %> problem"""
+
+    def __init__(self):
+        super(<%= @mda.py_classname %>DesignSpace, self).__init__()
+
+        # Initial solution
+        <% @mda.input_variables.each do |dv| %>
+        <%= dv.name %> = np.array(<%= dv.init_py_value %>)
+        <% end -%>
+
+        # Design variables
+        <% @mda.design_variables.each do |dv| %>
+        self.add_variable("<%= dv.name %>", <%= dv.dim %>, l_b=<%= dv.lower_py_value %>, u_b=<%= dv.upper_py_value %>, value=<%= dv.name %>)  
+        <% end -%>
+
 
 class <%= @mda.py_classname %>DOEScenarioBase(DOEScenario):
     """ A base class for <%= @mda.py_classname %> DOE Scenario """

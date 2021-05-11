@@ -3,7 +3,7 @@ from <%= @mda.py_modulename %> import <%= @mda.py_classname %>
 
 parser = OptionParser()
 parser.add_option("-n", "--ncases", type="int",
-                  dest="n_cases", default=<%= @driver.options[:nbpts]%>,
+                  dest="n_cases", default=50,
                   help="number of samples")
 (options, args) = parser.parse_args()
 

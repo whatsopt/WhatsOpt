@@ -180,7 +180,7 @@ class Analysis < ApplicationRecord
   end
 
   def has_remote_discipline?(localhost)
-    @remote ||= all_plain_disciplines.detect { |d| !d.local?(localhost) }
+    @remote ||= !!all_plain_disciplines.detect { |d| !d.local?(localhost) }
   end
 
   def set_all_parameters_as_decision_variables(role = WhatsOpt::Variable::DESIGN_VAR_ROLE)

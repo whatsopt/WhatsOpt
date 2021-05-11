@@ -105,21 +105,6 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     end
   end
 
-  test "should generate openmdao mda zip base files" do
-    skip "Apache Thrift not installed" unless thrift?
-    zippath = Tempfile.new("test_mda_file.zip")
-    File.open(zippath, "wb") do |f|
-      content, _ = @ogen.generate(only_base: true)
-      f.write content
-    end
-    assert File.exist?(zippath)
-    Zip::File.open(zippath) do |zip|
-      zip.each do |entry|
-        assert_match(/__init__.py|_base\.py|run_\w+\.py|server/, entry.name)
-      end
-    end
-  end
-
   test "should run openmdao check and return true when valid" do
     skip "Apache Thrift not installed" unless thrift?
     ok, _log = @ogen.check_mda_setup
