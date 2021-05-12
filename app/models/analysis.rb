@@ -78,6 +78,10 @@ class Analysis < ApplicationRecord
     @params = variables.with_role(WhatsOpt::Variable::INPUT_ROLES)
   end
 
+  def output_variables
+    @params = variables.with_role(WhatsOpt::Variable::OUTPUT_ROLES)
+  end
+
   def design_variables
     @desvars = variables.with_role(WhatsOpt::Variable::DESIGN_VAR_ROLE)
   end

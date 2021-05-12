@@ -58,7 +58,6 @@ module WhatsOpt::Gemseo
       _generate_main(gendir, opts)
       _generate_run_scripts(gendir, opts)
       if opts[:with_server] || (!@check_only && @mda.has_remote_discipline?(@remote_ip))
-        p "COCUOCU #{!@check_only} #{@mda.has_remote_discipline?(@remote_ip)}"
         raise NotYetImplementedError.new("Cannot generate code for server")
       end
       @genfiles
@@ -87,6 +86,8 @@ module WhatsOpt::Gemseo
         _generate("run_parameters_init.py", "run_parameters_init.py.erb", gendir)
         _generate("run_analysis.py", "gemseo/run_analysis.py.erb", gendir)
       end
+      p "***********************************************************************************"
+      p options[:with_runops], @mda.is_root_analysis?, @mda.has_decision_variables?
       if (options[:with_runops] || @mda.is_root_analysis?) && @mda.has_decision_variables?
         if @mda.is_root_analysis? && @mda.has_objective?
           _generate("run_doe.py", "gemseo/run_doe.py.erb", gendir)
