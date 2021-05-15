@@ -26,11 +26,11 @@ class <%= @mda.py_classname %>MDABase(MDAJacobi):
     def _instantiate_grammars(self, input_grammar_file, output_grammar_file, grammar_type=MDODiscipline.JSON_GRAMMAR_TYPE):
         self.default_inputs = {
         <% @mda.input_variables.each do |var| %>
-            '<%= var.py_varname %>': <%= var.init_py_value %>,<% end -%>
+            '<%= var.py_varname %>': np.atleast_1d(<%= var.init_py_value %>),<% end -%>
         }
         self.default_outputs = {
         <% @mda.output_variables.each do |var| %>
-            '<%= var.py_varname %>': <%= var.init_py_value %>,<% end -%>
+            '<%= var.py_varname %>': np.atleast_1d(<%= var.init_py_value %>),<% end -%>
         }
         self.input_grammar = JSONGrammar("<%= @discipline.py_classname %>")
         self.input_grammar.initialize_from_base_dict(self.default_inputs)
@@ -51,7 +51,7 @@ class <%= @mda.py_classname %>DesignSpace(DesignSpace):
 
         # Initial solution
         <% @mda.input_variables.each do |dv| %>
-        <%= dv.name %> = np.array(<%= dv.init_py_value %>)
+        <%= dv.name %> = np.atleast_1d(<%= dv.init_py_value %>)
         <% end -%>
 
         # Design variables

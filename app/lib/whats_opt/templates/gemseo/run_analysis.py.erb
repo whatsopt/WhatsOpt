@@ -5,6 +5,6 @@ from run_parameters_init import initialize
 mda = <%= @mda.py_classname %>MDA()
 init_data = {}
 initialize(init_data)
-np_init_data = {k: np.array(v) for k, v in init_data.items()}
+np_init_data = {k: np.atleast_1d(v) for k, v in init_data.items()}
 print(mda.execute(input_data=np_init_data))
 
