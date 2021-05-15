@@ -86,8 +86,6 @@ module WhatsOpt::Gemseo
         _generate("run_parameters_init.py", "run_parameters_init.py.erb", gendir)
         _generate("run_analysis.py", "gemseo/run_analysis.py.erb", gendir)
       end
-      p "***********************************************************************************"
-      p options[:with_runops], @mda.is_root_analysis?, @mda.has_decision_variables?
       if (options[:with_runops] || @mda.is_root_analysis?) && @mda.has_decision_variables?
         if @mda.is_root_analysis? && @mda.has_objective?
           _generate("run_doe.py", "gemseo/run_doe.py.erb", gendir)

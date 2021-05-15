@@ -66,7 +66,6 @@ class Variable < ApplicationRecord
   end
 
   def init_py_value
-    p self.parameter
     if self.parameter&.init.blank?
       if is_in? # retrieve init value from connected uniq 'out' variable
         val = incoming_connection&.from&.init_py_value
