@@ -78,6 +78,10 @@ class Analysis < ApplicationRecord
     @params = variables.with_role(WhatsOpt::Variable::INPUT_ROLES)
   end
 
+  def output_variables
+    @params = variables.with_role(WhatsOpt::Variable::OUTPUT_ROLES)
+  end
+
   def design_variables
     @desvars = variables.with_role(WhatsOpt::Variable::DESIGN_VAR_ROLE)
   end
@@ -180,7 +184,7 @@ class Analysis < ApplicationRecord
   end
 
   def has_remote_discipline?(localhost)
-    @remote ||= all_plain_disciplines.detect { |d| !d.local?(localhost) }
+    @remote ||= !!all_plain_disciplines.detect { |d| !d.local?(localhost) }
   end
 
   def set_all_parameters_as_decision_variables(role = WhatsOpt::Variable::DESIGN_VAR_ROLE)

@@ -10,17 +10,26 @@ class Api::V1::ExportsController < Api::ApiController
     with_server = !!params[:with_server]
     with_runops = !!params[:with_runops]
     with_unittests = !!params[:with_unittests]
-    # with_run = !(with_server || with_runops || with_server || (format == "openmdao_base"))
     with_run=true
 
     user_agent = request.headers["User-Agent"]
     mda = Analysis.find(mda_id)
     authorize mda
-    if format == "openmdao" || format == "openmdao_base"
+    if format == "openmdao"
       ogen = WhatsOpt::OpenmdaoGenerator.new(mda, whatsopt_url: whatsopt_url,
                                              api_key: current_user.api_key, remote_ip: request.remote_ip)
-      content, filename = ogen.generate(only_base: (format == "openmdao_base"), user_agent: user_agent, with_run: with_run,
+      content, filename = ogen.generate(user_agent: user_agent, with_run: with_run,
                                         with_server: with_server, with_runops: with_runops, with_unittests: with_unittests)
+      send_data content, filename: filename
+    elsif format == "gemseo"
+      ggen = WhatsOpt::Gemseo::Generator.new(mda, whatsopt_url: whatsopt_url,
+                                            api_key: current_user.api_key, remote_ip: request.remote_ip)
+      begin
+        content, filename = ggen.generate(user_agent: user_agent, with_run: with_run,
+                                          with_server: with_server, with_runops: with_runops, with_unittests: with_unittests)
+      rescue WhatsOpt::Gemseo::Generator::NotYetImplementedError => e
+        json_response({ message: "GEMSEO export failure: #{e}" }, :bad_request)
+      end
       send_data content, filename: filename
     elsif format == "cmdows"
       cmdowsgen = WhatsOpt::CmdowsGenerator.new(mda)
@@ -30,12 +39,13 @@ class Api::V1::ExportsController < Api::ApiController
       rescue WhatsOpt::CmdowsGenerator::CmdowsValidationError => e
         Rails.logger.warn "CMDOWS export warning: CMDOWS validation error"
         Rails.logger.warn "CMDOWS export warning: #{e}"
+        json_response({ message: "CMDOWS validation error: #{e}" }, :bad_request)
       end
       send_data content, filename: filename, type:  "application/xml"
     elsif format == "mdajson"
       json_response mda, :ok, serializer: AnalysisAttrsSerializer
     else
-      json_response({ message: "Export format #{format} not knwon" }, :bad_request)
+      json_response({ message: "Export format #{format} not known" }, :bad_request)
     end
   end
 end

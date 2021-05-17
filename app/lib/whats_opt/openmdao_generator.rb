@@ -94,9 +94,9 @@ module WhatsOpt
       Open3.popen2e(PYTHON, script, "--batch", &block)
     end
 
-    # only_base: false, sqlite_filename: nil, with_run: true, with_server: true, with_runops: true
+    # sqlite_filename: nil, with_run: true, with_server: true, with_runops: true
     def _generate_code(gendir, options = {})
-      opts = { only_base: false, with_server: true, with_run: true, with_unittests: false }.merge(options)
+      opts = { with_server: true, with_run: true, with_unittests: false }.merge(options)
       @mda.disciplines.nodes.each do |disc|
         if disc.has_sub_analysis?
           _generate_sub_analysis(disc, gendir, opts)
@@ -121,27 +121,26 @@ module WhatsOpt
       if @discipline.type == "metamodel"
         _generate(discipline.py_filename, "openmdao_metamodel.py.erb", gendir)
       else
-        _generate(discipline.py_filename, "openmdao_discipline.py.erb", gendir) unless options[:only_base]
+        _generate(discipline.py_filename, "openmdao_discipline.py.erb", gendir)
       end
       _generate(discipline.py_basefilename, "openmdao_discipline_base.py.erb", gendir)
     end
 
-    # options: only_base=true, sqlite_filename=nil
+    # options: sqlite_filename=nil
     def _generate_sub_analysis(super_discipline, gendir, options = {})
       mda = super_discipline.sub_analysis
       sub_ogen = OpenmdaoGenerator.new(mda, server_host: @server_host, driver_name: @driver_name, driver_options: @driver_options)
       gendir = File.join(gendir, mda.basename)
       Dir.mkdir(gendir) unless Dir.exist?(gendir)
 
-      # generate only nalaysis code: no script , no server
+      # generate only analaysis code: no script , no server
       opts = options.merge(with_run: false, with_server: false, with_runops: false)
       sub_ogen._generate_code(gendir, opts)
       @genfiles += sub_ogen.genfiles
     end
 
-    # options: only_base
     def _generate_main(gendir, options = {})
-      _generate(@mda.py_filename, "openmdao_main.py.erb", gendir) unless options[:only_base]
+      _generate(@mda.py_filename, "openmdao_main.py.erb", gendir)
       _generate(@mda.py_basefilename, "openmdao_main_base.py.erb", gendir)
       _generate("__init__.py", "__init__.py.erb", gendir)
     end

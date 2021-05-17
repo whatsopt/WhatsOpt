@@ -22,7 +22,7 @@ module WhatsOpt
       @generator = self
     end
 
-    # options: only_base: false, with_run: true, with_server: false, with_runops: true, user_agent: nil, sqlite_filename: nil
+    # options: with_run: true, with_server: false, with_runops: true, user_agent: nil, sqlite_filename: nil
     def generate(options = {})
       zip_filename = nil
       stringio = nil

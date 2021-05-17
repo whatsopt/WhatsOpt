@@ -1,0 +1,16 @@
+from <%= @mda.py_full_modulename %>_base import <%= @mda.py_classname %>MDABase, <%= @mda.py_classname %>DOEScenarioBase, <%= @mda.py_classname %>MDOScenarioBase
+
+class <%= @mda.py_classname %>MDA(<%= @mda.py_classname %>MDABase):
+    """ A GEMSEO MDA to encapsulate <%= @mda.py_classname %> disciplines """
+    def __init__(self, **kwargs):
+        super(<%= @mda.py_classname %>MDA, self).__init__(**kwargs)
+
+class <%= @mda.py_classname %>DOEScenario(<%= @mda.py_classname %>DOEScenarioBase):
+    """ A GEMSEO DOE scenario to encapsulate <%= @mda.py_classname %> analysis """
+    def __init__(self, **kwargs):
+        super(<%= @mda.py_classname %>DOEScenario, self).__init__(**kwargs)
+
+class <%= @mda.py_classname %>MDOScenario(<%= @mda.py_classname %>MDOScenarioBase):
+    """ A GEMSEO MDO scenario to encapsulate <%= @mda.py_classname %> analysis """
+    def __init__(self, **kwargs):
+        super(<%= @mda.py_classname %>MDOScenario, self).__init__(**kwargs)

@@ -1,0 +1,16 @@
+from optparse import OptionParser
+from gemseo.api import configure_logger
+from <%= @mda.py_modulename %> import <%= @mda.py_classname %>DOEScenario 
+
+parser = OptionParser()
+parser.add_option("-n", "--ncases", type="int",
+                  dest="n_cases", default=50,
+                  help="number of samples")
+(options, args) = parser.parse_args()
+
+configure_logger()
+
+scenario = <%= @mda.py_classname %>DOEScenario()
+
+scenario.execute(input_data={"max_iter": 10, "algo": "OT_LHS", "n_samples": options.n_cases })
+
