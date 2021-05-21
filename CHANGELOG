@@ -2,6 +2,7 @@
 
 <h3>1.15.0 (??/06/2020)</h3>
 <ul>
+  <li>Fix scatterplot legend width</li> 
   <li>Fix design project list display</li>
   <li>Tech: update RoR backend</li>
 </ul>
