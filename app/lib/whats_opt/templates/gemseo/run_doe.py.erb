@@ -14,3 +14,10 @@ scenario = <%= @mda.py_classname %>DOEScenario()
 
 scenario.execute(input_data={"max_iter": 10, "algo": "OT_LHS", "n_samples": options.n_cases })
 
+problem = scenario.formulation.opt_problem
+problem.export_hdf("<%= @mda.py_modulename %>_doe.hdf5")
+
+### Post-processing Example
+# from gemseo.api import execute_post
+# execute_post("./sellar_doe.hdf5", 'ParallelCoordinates', show=True, save=False)
+
