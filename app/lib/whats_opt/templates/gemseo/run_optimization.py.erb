@@ -6,3 +6,10 @@ configure_logger()
 scenario = <%= @mda.py_classname %>MDOScenario()
 
 scenario.execute(input_data={"max_iter": 10, "algo": "SLSQP"}) 
+
+problem = scenario.formulation.opt_problem
+problem.export_hdf("<%= @mda.py_modulename %>_optimization.hdf5")
+
+### Post-processing Example
+# from gemseo.api import execute_post
+# execute_post("./sellar_optimization.hdf5", 'OptHistoryView', show=True, save=False)
