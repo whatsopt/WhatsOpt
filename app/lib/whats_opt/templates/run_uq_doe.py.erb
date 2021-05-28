@@ -4,6 +4,7 @@
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
+from run_parameters_init import initialize
 
 from openmdao.api import Problem, SqliteRecorder, CaseReader
 from openmdao_extensions.openturns_doe_driver import OpenturnsDOEDriver
@@ -65,5 +66,7 @@ pb.model.add_objective('<%= dv.name %>')<% end %>
 <% end %>
 
 pb.setup()  
+initialize(pb)
+
 pb.run_driver()        
 

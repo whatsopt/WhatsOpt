@@ -10,7 +10,6 @@ from <%= @mda.py_modulename %> import <%= @mda.py_classname %>
 <% end %>
 pb = Problem(<%= @mda.py_classname %>())
 pb.setup()  
-
 initialize(pb)
 
 pb.run_model()   
