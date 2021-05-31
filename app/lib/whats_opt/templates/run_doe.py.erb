@@ -4,6 +4,7 @@
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
+from run_parameters_init import initialize
 
 from openmdao.api import Problem, SqliteRecorder, CaseReader
 from openmdao_extensions.smt_doe_driver import SmtDOEDriver
@@ -54,6 +55,8 @@ pb.model.add_objective('<%= voi.name %>')<% end %>
 pb.model.add_objective('<%= voi.name %>')<% end %>
 <% end %>
 pb.setup()  
+initialize(pb)
+
 pb.run_driver()        
 
 <% if (@mda.response_dim * @mda.design_var_dim) < 10 %>
