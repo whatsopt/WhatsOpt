@@ -9,34 +9,35 @@ from run_parameters_init import initialize
 from openmdao.api import Problem, SqliteRecorder, CaseReader
 from openmdao_extensions.smt_doe_driver import SmtDOEDriver
 <% if @remote -%>
-from <%= @server_module %>.<%= @mda.py_modulename %>_proxy import <%= @mda.py_classname %>Proxy as <%= @mda.py_classname %> 
+from <%= @server_module %>.<%= @mda.py_modulename %>_proxy import <%= @mda.py_classname %>Proxy as <%= @mda.py_classname %>
 <% else -%>
-from <%= @mda.py_modulename %> import <%= @mda.py_classname %> 
-<% end %>
+from <%= @mda.py_modulename %> import <%= @mda.py_classname %>
+<% end -%>
 from optparse import OptionParser
 
 parser = OptionParser()
 parser.add_option("-b", "--batch",
-                  action="store_true", dest="batch", default=False,
+                  action="store_true", dest="batch",
                   help="do not plot anything")
 parser.add_option("-n", "--ncases", type="int",
                   dest="n_cases", default=<%= @driver.options[:nbpts]%>,
                   help="number of samples")
-parser.add_option("-p", "--parallel", 
-                  action="store_true", default=False,
+parser.add_option("-p", "--parallel",
+                  action="store_true",
                   help="run doe in parallel")
 (options, args) = parser.parse_args()
 
 pb = Problem(<%= @mda.py_classname %>())
-pb.driver = SmtDOEDriver(sampling_method_name='LHS', n_cases=options.n_cases, sampling_method_options={'criterion': 'ese'})
+pb.driver = SmtDOEDriver(sampling_method_name='LHS', n_cases=options.n_cases,
+                         sampling_method_options={'criterion': 'ese'})
 pb.driver.options['run_parallel'] = options.parallel
 
-case_recorder_filename = '<%= @sqlite_filename %>'        
+case_recorder_filename = '<%= @sqlite_filename %>'
 recorder = SqliteRecorder(case_recorder_filename)
 pb.driver.add_recorder(recorder)
 <% unless @impl.nonlinear_solver.runonce? -%>
 pb.model.nonlinear_solver.options['err_on_non_converge'] = True
-<% end %>
+<% end -%>
 <%- @mda.design_variables.each do |dv| %>
 pb.model.add_design_var('<%= dv.name %>', lower=<%= dv.lower_py_value %>, upper=<%= dv.upper_py_value %>)<% end %>
 <% if @mda.objective_variables.size > 0 || @mda.responses_of_interest.size > 0 %>
@@ -50,14 +51,14 @@ pb.model.add_constraint('<%= voi.name %>', upper=0.)<% end %>
 pb.model.add_constraint('<%= voi.name %>', equals=0.)<% end %>
 <% @mda.responses_of_interest.each do |voi| %>
 pb.model.add_objective('<%= voi.name %>')<% end %>
-<% else %>
+<% else -%>
 <% @mda.response_variables.each do |voi| %>
 pb.model.add_objective('<%= voi.name %>')<% end %>
-<% end %>
-pb.setup()  
+<% end -%>
+pb.setup()
 initialize(pb)
 
-pb.run_driver()        
+pb.run_driver()
 
 <% if (@mda.response_dim * @mda.design_var_dim) < 10 %>
 if options.batch or options.parallel:
@@ -65,7 +66,7 @@ if options.batch or options.parallel:
 reader = CaseReader(case_recorder_filename)
 cases = reader.list_cases('driver')
 n = len(cases)
-data = {'inputs': {}, 'outputs': {} }
+data = {'inputs': {}, 'outputs': {}}
 <% @mda.design_variables.each do |dv| %>
 data['inputs']['<%= dv.name %>'] = np.zeros((n,)+<%= dv.shape=="1"?"(1,)":dv.shape %>)<% end %>
 <% @mda.response_variables.each do |r| %>
@@ -74,12 +75,12 @@ data['outputs']['<%= r.name %>'] = np.zeros((n,)+<%= r.shape=="1"?"(1,)":r.shape
 for i in range(len(cases)):
     case = reader.get_case(cases[i])
 <% @mda.design_variables.each do |dv| -%>
-    data['inputs']['<%= dv.name %>'][i,:] = case.outputs['<%= dv.name %>']
+    data['inputs']['<%= dv.name %>'][i, :] = case.outputs['<%= dv.name %>']
 <% end -%>
 <% @mda.response_variables.each do |r| -%>
-    data['outputs']['<%= r.name %>'][i,:] = case.outputs['<%= r.name %>']
+    data['outputs']['<%= r.name %>'][i, :] = case.outputs['<%= r.name %>']
 <% end -%>
-      
+
 <% row = 0 -%>
 <% @mda.response_variables.each_with_index do |r, j| -%>
 
