@@ -4,13 +4,14 @@ from openmdao.api import NonlinearBlockGS, ScipyKrylov
 # from openmdao_extensions.reckless_nonlinear_block_gs import RecklessNonlinearBlockGS
 from <%= @mda.py_full_modulename %>_base import <%= @mda.py_classname %>Base, <%= @mda.py_classname %>FactoryBase
 
+
 class <%= @mda.py_classname %>(<%= @mda.py_classname %>Base):
     """ An OpenMDAO component to encapsulate <%= @mda.py_classname %> analysis """
     def __init__(self, **kwargs):
         super(<%= @mda.py_classname %>, self).__init__(**kwargs)
 
         # Example of manual solver adjusments (imports should be adjusted accordingly)
-        # self.nonlinear_solver = NewtonSolver() 
+        # self.nonlinear_solver = NewtonSolver()
         # self.nonlinear_solver.options['maxiter'] = 20
         # self.linear_solver = DirectSolver()
 
@@ -22,9 +23,10 @@ class <%= @mda.py_classname %>Factory(<%= @mda.py_classname %>FactoryBase):
     """ A factory to create disciplines of <%= @mda.py_classname %> analysis """
     pass
 
+
 if __name__ == "__main__":
     parser = OptionParser()
-    parser.add_option("-n", "--no-n2", action="store_false", dest='n2_view', default=True, 
+    parser.add_option("-n", "--no-n2", action="store_false", dest='n2_view',
                       help="display N2 openmdao viewer")
     (options, args) = parser.parse_args()
 
@@ -33,7 +35,7 @@ if __name__ == "__main__":
 
     problem.setup()
     problem.final_setup()
-    
+
     if options.n2_view:
         from openmdao.visualization.n2_viewer.n2_viewer import n2
         n2(problem)
