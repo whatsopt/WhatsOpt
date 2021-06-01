@@ -22,7 +22,7 @@ from <%= d.py_full_modulename %> import <%= d.py_classname %>
 <% @mda.sub_analyses.each do |disc| -%>
 from <%= @server_module %>.sub_analysis_proxy import <%= disc.py_classname %>Proxy
 <% end -%>
-<% end %>
+<% end -%>
 <% @mda.plain_disciplines.each do |disc| %>
 <% if @remote || !(@check_only || disc.local?(@remote_ip)) %>
 from <%= @server_module %>.remote_discipline import Remote<%= disc.py_classname %>
@@ -34,7 +34,7 @@ class <%= @mda.py_classname %>Base(<%= @impl.parallel_group ? "ParallelGroup" : 
     def __init__(self, thrift_client=None, **kwargs):
         super(<%= @mda.py_classname %>Base, self). __init__(**kwargs)
 
-        self.nonlinear_solver = <%= @impl.nonlinear_solver.name %>() 
+        self.nonlinear_solver = <%= @impl.nonlinear_solver.name %>()
 <% unless @impl.nonlinear_solver.runonce? -%>
         self.nonlinear_solver.options['atol'] = <%= @impl.nonlinear_solver.atol %>
         self.nonlinear_solver.options['rtol'] = <%= @impl.nonlinear_solver.rtol %>
@@ -42,7 +42,7 @@ class <%= @mda.py_classname %>Base(<%= @impl.parallel_group ? "ParallelGroup" : 
         self.nonlinear_solver.options['reraise_child_analysiserror'] = False
 <% end -%>
 
-        self.linear_solver = <%= @impl.linear_solver.name %>()       
+        self.linear_solver = <%= @impl.linear_solver.name %>()
         self.linear_solver.options['atol'] = <%= @impl.linear_solver.atol %>
         self.linear_solver.options['rtol'] = <%= @impl.linear_solver.rtol %>
         self.linear_solver.options['err_on_non_converge'] = <%= @impl.to_code(:linear_solver, :err_on_non_converge) %>
@@ -51,20 +51,22 @@ class <%= @mda.py_classname %>Base(<%= @impl.parallel_group ? "ParallelGroup" : 
         self._thrift_client = thrift_client
 <% end -%>
 
-    def setup(self): 
+    def setup(self):
 <% if @mda.is_root_analysis? && @mda.input_variables.size > 0 -%>
-        indeps = self.add_subsystem('indeps', IndepVarComp(), promotes=['*'])
+        indeps = self.add_subsystem('indeps', IndepVarComp(),
+                                    promotes=['*'])
 <% @mda.input_variables.each do |dv| %>
         indeps.add_output('<%= dv.name %>', <%= dv.init_py_value %>)<% end -%>
 <% end -%>
 <% @mda.disciplines.nodes.each do |d| %>
-        self.add_subsystem('<%= d.py_classname %>', self.create_<%= d.basename %>(), promotes=[<%= d.variables.map(&:py_varname).map{|v| "'#{v}'"}.join(', ') %>])<% end -%>
+        self.add_subsystem('<%= d.py_classname %>', self.create_<%= d.basename %>(),
+                           promotes=[<%= d.variables.map(&:py_varname).map{|v| "'#{v}'"}.join(', ') %>])<% end -%>
 
 <% @mda.sub_analyses.each do |a| %>
     def create_<%= a.basename %>(self):
 <% if @remote %>
         return <%= a.py_classname %>Proxy(self._thrift_client)
-<% else -%>
+<% else %>
     	return <%= a.py_classname %>()
 <% end %>
 <% end %>
@@ -72,9 +74,9 @@ class <%= @mda.py_classname %>Base(<%= @impl.parallel_group ? "ParallelGroup" : 
     def create_<%= disc.basename %>(self):
 <% if !(@check_only || disc.local?(@remote_ip)) -%>
         return Remote<%= disc.py_classname %>()
-<% else -%>
-    	return <%= disc.py_classname %>()
-<% end -%>
+<% else %>
+        return <%= disc.py_classname %>()
+<% end %>
 <% end %>
 
 # Used by Thrift server to serve disciplines
@@ -82,5 +84,6 @@ class <%= @mda.py_classname %>FactoryBase(object):
 <% @mda.all_plain_disciplines.each do |disc| -%>
     @staticmethod
     def create_<%= disc.snake_modulename %>():
-    	return <%= disc.py_classname %>()
+        return <%= disc.py_classname %>()
+
 <% end %>

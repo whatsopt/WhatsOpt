@@ -11,19 +11,22 @@ from run_parameters_init import initialize
 <% if @remote -%>
 from openmdao.api import Problem, SqliteRecorder, CaseReader, ScipyOptimizeDriver, pyOptSparseDriver
 from openmdao_extensions.onera_sego_driver import OneraSegoDriver
-from <%= @server_module %>.<%= @mda.py_modulename %>_proxy import <%= @mda.py_classname %>Proxy as <%= @mda.py_classname %> 
+from <%= @server_module %>.<%= @mda.py_modulename %>_proxy import <%= @mda.py_classname %>Proxy as <%= @mda.py_classname %>
 <% else -%>
 from openmdao.api import Problem, SqliteRecorder, CaseReader, ScipyOptimizeDriver #, pyOptSparseDriver
-from <%= @mda.py_modulename %> import <%= @mda.py_classname %> 
-<% end %>
+from <%= @mda.py_modulename %> import <%= @mda.py_classname %>
+<% end -%>
 
 <%= ERB.new(File.read(File.join(@template_dir, 'options_partial.py.erb')), nil, nil, eoutvar='_sub01').result(binding) %>
 pb = Problem(<%= @mda.py_classname %>())
+
 
 <% if @driver.pyoptsparse? -%>
 class NamedPyOptSparseDriver(pyOptSparseDriver):
     def _get_name(self):
         return '<%= "pyoptsparse_optimizer_#{@driver.algo_option.downcase}" %>'
+
+
 pb.driver = NamedPyOptSparseDriver()
 <% elsif @driver.onerasego? -%>
 pb.driver = OneraSegoDriver()
@@ -34,7 +37,6 @@ class NamedScipyOptimizeDriver(ScipyOptimizeDriver):
 pb.driver = NamedScipyOptimizeDriver()
 <% end -%>
 pb.driver.options['optimizer'] = '<%= @driver.algo_option %>'
-
 <% @driver.options.each do |k, v|%>
 pb.driver.options['<%= k %>'] = <%= v %>
 <% end -%>
@@ -45,7 +47,7 @@ pb.driver.opt_settings['<%= k %>'] = <%= v %>
 pb.driver.options['debug_print'] = []
 
 case_recorder_filename = '<%= @sqlite_filename %>'
-print(case_recorder_filename)        
+print(case_recorder_filename)
 recorder = SqliteRecorder(case_recorder_filename)
 # pb.add_recorder(recorder)
 pb.driver.add_recorder(recorder)
@@ -57,26 +59,31 @@ pb.model.add_recorder(recorder)
 pb.model.approx_totals(method='fd', step=1e-6, form='central')
 <% end -%>
 <%- @mda.design_variables.each do |dv| %>
-pb.model.add_design_var('<%= dv.name %>', lower=<%= dv.lower_py_value %>, upper=<%= dv.upper_py_value %>)<% end %>
+pb.model.add_design_var('<%= dv.name %>', lower=<%= dv.lower_py_value %>, upper=<%= dv.upper_py_value %>)<% end -%>
+
 <% @mda.min_objective_variables.each do |voi| %>
-pb.model.add_objective('<%= voi.name %>')<% end %>
+pb.model.add_objective('<%= voi.name %>')<% end -%>
+
 <% @mda.max_objective_variables.each do |voi| %>
-pb.model.add_objective('<%= voi.name %>', scaler=-1)<% end %>
+pb.model.add_objective('<%= voi.name %>', scaler=-1)<% end -%>
+
 <% @mda.ineq_constraint_variables.each do |voi| %>
-pb.model.add_constraint('<%= voi.name %>', upper=0.)<% end %>
+pb.model.add_constraint('<%= voi.name %>', upper=0.)<% end -%>
+
 <% @mda.eq_constraint_variables.each do |voi| %>
-pb.model.add_constraint('<%= voi.name %>', equals=0.)<% end %>
-pb.setup()  
+pb.model.add_constraint('<%= voi.name %>', equals=0.)<% end -%>
+
+pb.setup()
 
 initialize(pb)
 
-pb.run_driver()      
+pb.run_driver()
 
 <%- @mda.design_variables.each do |dv| %>
 print("<%= dv.name %>= {}".format(pb['<%= dv.name %>']))<% end %>
 
 if options.batch:
-    exit(0)  
+    exit(0)
 
 # reader = CaseReader(case_recorder_filename)
 # cases = reader.list_cases('problem')
@@ -84,4 +91,4 @@ if options.batch:
 
 # for i in range(len(cases)):
 #    obj = cases[i].get_objectives()
-#    print(obj)      
+#    print(obj)
