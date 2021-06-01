@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { useTable, useSortBy } from 'react-table';
+import { useTable, useSortBy, usePagination } from 'react-table';
 import { RIEInput, RIESelect } from './riek/src';
+import VariablesPagination from './VariablesPagination';
 
 const CELL_CLASSNAME = 'react-table-cell';
 // const EDITABLE_CELL_CLASSNAME = 'bg-light';
@@ -292,8 +293,19 @@ function Table({
     getTableProps,
     getTableBodyProps,
     headerGroups,
-    rows,
     prepareRow,
+    page, // instead of rows,
+
+    // The rest of these things are super handy, too ;)
+    canPreviousPage,
+    canNextPage,
+    pageOptions,
+    pageCount,
+    gotoPage,
+    nextPage,
+    previousPage,
+    setPageSize,
+    state: { pageIndex, pageSize },
   } = useTable(
     {
       columns,
@@ -308,6 +320,7 @@ function Table({
       autoResetSortBy: false,
     },
     useSortBy,
+    usePagination,
   );
 
   //            From, Name, Role, Shape, Units, Init, Lower, Upper, UQ
@@ -333,43 +346,58 @@ function Table({
 
   // Render the UI for your table
   return (
-    <table className="connections table table-striped table-sm table-hover mt-3" {...tableProps}>
-      <thead>
-        {headerGroups.map((headerGroup) => (
-          <tr {...headerGroup.getHeaderGroupProps()}>
-            {headerGroup.headers.map((column, i) => {
-              const cprops = {
-                width: `${colWidths[i]}% `,
-                ...column.getHeaderProps(column.getSortByToggleProps()),
-              };
-              const sortSymbol = (column.isSortedDesc ? ' 🔽' : ' 🔼');
+
+    <div>
+      <table className="connections table table-striped table-sm table-hover mt-3" {...getTableProps()}>
+        <thead>
+          {headerGroups.map((headerGroup) => (
+            <tr {...headerGroup.getHeaderGroupProps()}>
+              {headerGroup.headers.map((column, i) => {
+                const cprops = {
+                  width: `${colWidths[i]}% `,
+                  ...column.getHeaderProps(column.getSortByToggleProps()),
+                };
+                const sortSymbol = (column.isSortedDesc ? ' 🔽' : ' 🔼');
+                return (
+                  <th {...cprops}>
+                    {column.render('Header')}
+                    <span>
+                      {column.isSorted
+                        ? sortSymbol
+                        : ''}
+                    </span>
+                  </th>
+                );
+              })}
+            </tr>
+          ))}
+        </thead>
+        <tbody {...getTableBodyProps()}>
+          {page.map(  // {rows.map(
+            (row /* i */) => {
+              prepareRow(row);
               return (
-                <th {...cprops}>
-                  {column.render('Header')}
-                  <span>
-                    {column.isSorted
-                      ? sortSymbol
-                      : ''}
-                  </span>
-                </th>
+                <tr {...row.getRowProps()}>
+                  {row.cells.map((cell) => <td {...cell.getCellProps()}>{cell.render('Cell')}</td>)}
+                </tr>
               );
-            })}
-          </tr>
-        ))}
-      </thead>
-      <tbody {...getTableBodyProps()}>
-        {rows.map(
-          (row /* i */) => {
-            prepareRow(row);
-            return (
-              <tr {...row.getRowProps()}>
-                {row.cells.map((cell) => <td {...cell.getCellProps()}>{cell.render('Cell')}</td>)}
-              </tr>
-            );
-          },
-        )}
-      </tbody>
-    </table>
+            },
+          )}
+        </tbody>
+      </table>
+      <VariablesPagination
+        canPreviousPage={canPreviousPage}
+        canNextPage={canNextPage}
+        pageOptions={pageOptions}
+        pageCount={pageCount}
+        gotoPage={gotoPage}
+        nextPage={nextPage}
+        previousPage={previousPage}
+        setPageSize={setPageSize}
+        pageIndex={pageIndex}
+        pageSize={pageSize}
+      />
+    </div>
   );
 }
 
