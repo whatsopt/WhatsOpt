@@ -23,11 +23,12 @@ from <%= d.py_full_modulename %> import <%= d.py_classname %>
 from <%= @server_module %>.sub_analysis_proxy import <%= disc.py_classname %>Proxy
 <% end -%>
 <% end -%>
-<% @mda.plain_disciplines.each do |disc| %>
-<% if @remote || !(@check_only || disc.local?(@remote_ip)) %>
+<% @mda.plain_disciplines.each do |disc| -%>
+<% if @remote || !(@check_only || disc.local?(@remote_ip)) -%>
 from <%= @server_module %>.remote_discipline import Remote<%= disc.py_classname %>
 <% end -%>
 <% end -%>
+
 
 class <%= @mda.py_classname %>Base(<%= @impl.parallel_group ? "ParallelGroup" : "Group" %>):
     """ An OpenMDAO base component to encapsulate <%= @mda.py_classname %> MDA """
@@ -74,9 +75,9 @@ class <%= @mda.py_classname %>Base(<%= @impl.parallel_group ? "ParallelGroup" : 
     def create_<%= disc.basename %>(self):
 <% if !(@check_only || disc.local?(@remote_ip)) -%>
         return Remote<%= disc.py_classname %>()
-<% else %>
+<% else -%>
         return <%= disc.py_classname %>()
-<% end %>
+<% end -%>
 <% end %>
 
 # Used by Thrift server to serve disciplines
@@ -85,5 +86,5 @@ class <%= @mda.py_classname %>FactoryBase(object):
     @staticmethod
     def create_<%= disc.snake_modulename %>():
         return <%= disc.py_classname %>()
-
 <% end %>
+# 

@@ -7,23 +7,23 @@ class <%= @discipline.py_classname %>(<%= @discipline.py_classname %>Base):
     def compute(self, inputs, outputs):
         """ <%= @discipline.py_classname %> computation """
         <%= "pass" if @discipline.output_variables.numeric.empty? -%>
-
+    # Here comes discipline resolution code (python function ou module, external software calls...)
     <% @discipline.output_variables.numeric.each do |var_out| %>
-        outputs['<%= var_out.py_varname %>'] = <%= var_out.default_py_value %> <% end %>
+        outputs['<%= var_out.py_varname %>'] = <%= var_out.default_py_value %><% end -%>
 
-# WhatsOpt docking mechanism: .whatsopt_dock.yml file should contain <%= @discipline.py_modulename %> entry, like
+# WhatsOpt docking mechanism: .whatsopt_dock.yml file should contain
+# <%= @discipline.py_modulename %> entry, like:
 #   <%= @discipline.py_modulename %>:
 #     module: <python.module.name>
 #     class: <ClassName>
 #
-# then _impl field (= ClassName instance) is available, remove default implementation above,
+# then _impl field (= ClassName instance) is available,
+# remove default implementation above,
 # uncomment and adapt the line below as needed
 #        self._impl.compute(inputs, outputs)
 
-# Reminder of inputs
-#   <% @discipline.input_variables.numeric.each do |var_in| %>
-#       inputs['<%= var_in.py_varname %>'] -> shape: <%= var_in.shape -%>, type: <%= var_in.type -%>
-    <% end %>
+# Reminder of inputs:<% @discipline.input_variables.numeric.each do |var_in| %>
+#       inputs['<%= var_in.py_varname %>'] -> shape: <%= var_in.shape -%>, type: <%= var_in.type -%><% end %>
 
 # To declare partial derivatives computation
 #
@@ -33,5 +33,5 @@ class <%= @discipline.py_classname %>(<%= @discipline.py_classname %>Base):
 #
 #    def compute_partials(self, inputs, partials):
 #        """ Jacobian for <%= @discipline.py_classname %> """
-#   <% @discipline.output_variables.numeric.each do |var_out| %><% @discipline.input_variables.numeric.each do |var_in| %>
-#       	partials['<%= var_out.py_varname %>', '<%= var_in.py_varname %>'] = np.zeros((<%= var_out.dim %>, <%= var_in.dim %>))<% end %><% end %>
+#<% @discipline.output_variables.numeric.each do |var_out| %><% @discipline.input_variables.numeric.each do |var_in| %>
+#        partials['<%= var_out.py_varname %>', '<%= var_in.py_varname %>'] = np.zeros((<%= var_out.dim %>, <%= var_in.dim %>))<% end %><% end %>
