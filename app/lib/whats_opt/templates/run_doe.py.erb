@@ -17,12 +17,12 @@ from optparse import OptionParser
 
 parser = OptionParser()
 parser.add_option("-b", "--batch",
-                  action="store_true", dest="batch",
+                  action="store_true", dest="batch", default=False,
                   help="do not plot anything")
 parser.add_option("-n", "--ncases", type="int",
                   dest="n_cases", default=<%= @driver.options[:nbpts]%>,
                   help="number of samples")
-parser.add_option("-p", "--parallel",
+parser.add_option("-p", "--parallel", default=False,
                   action="store_true",
                   help="run doe in parallel")
 (options, args) = parser.parse_args()
