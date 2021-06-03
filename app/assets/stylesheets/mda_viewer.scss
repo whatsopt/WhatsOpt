@@ -66,8 +66,9 @@ div.editor-discipline {
 
 /* XDSM tooltip */
 .tooltip-inner {
-  /* set this to your maximum fitting width */
-  max-width: 300px;
+  /* allow tooltip to grow as necessary */
+  min-width: 50px;
+  max-width: 1000px;
 
   /* will take up least amount of space */
   width: inherit;
