@@ -6,10 +6,14 @@ class <%= @discipline.py_classname %>(<%= @discipline.py_classname %>Base):
     """ An OpenMDAO component to encapsulate <%= @discipline.py_classname %> discipline """
     def compute(self, inputs, outputs):
         """ <%= @discipline.py_classname %> computation """
-        <%= "pass" if @discipline.output_variables.numeric.empty? -%>
-    # Here comes discipline resolution code (python function ou module, external software calls...)
-    <% @discipline.output_variables.numeric.each do |var_out| %>
-        outputs['<%= var_out.py_varname %>'] = <%= var_out.default_py_value %><% end -%>
+        # Here comes discipline resolution code
+        # (python function ou module, external software calls...)
+        <%- if @discipline.output_variables.numeric.empty? %>
+        pass
+        <%- else -%><%- @discipline.output_variables.numeric.each do |var_out| -%>
+        outputs['<%= var_out.py_varname %>'] = <%= var_out.default_py_value %>        <%- end %>
+        <%- end -%>
+
 
 # WhatsOpt docking mechanism: .whatsopt_dock.yml file should contain
 # <%= @discipline.py_modulename %> entry, like:
