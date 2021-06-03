@@ -27,9 +27,9 @@ class <%= @discipline.py_classname %>Base(<%= @dimpl.implicit_component ? "Impli
     def setup(self):
 <% @discipline.input_variables.numeric.each do |var| -%>
         self.add_input('<%= var.py_varname %>', val=<%= var.init_py_value %>, desc='<%= var.escaped_desc %>')
-<% end -%>
+<% end %>
 <% @discipline.output_variables.numeric.each do |var| -%>
-<% if var.scaling.blank? %>
+<% if var.scaling.blank? -%>
         self.add_output('<%= var.py_varname %>', val=<%= var.init_py_value %>, desc='<%= var.escaped_desc %>')
 <% else -%>
         self.add_output('<%= var.py_varname %>', val=<%= var.init_py_value %>, desc='<%= var.escaped_desc %>',
