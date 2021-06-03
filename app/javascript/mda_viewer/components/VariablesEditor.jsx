@@ -99,10 +99,7 @@ function ReadonlyCell({
     }
   }
   if (id === 'name') {
-    let title = '';
-    if (connections[index].name.length >= 40) {
-      title = connections[index].name;
-    }
+    let title = connections[index].name;
     if (connections[index].desc) {
       title += `: ${connections[index].desc}`;
     }
