@@ -32,7 +32,15 @@ jobs:
           pip install -e services
           pip list
 
-      - name: Install Thrift Compiler
+      - name: Cache Thrift
+        id: cache-thrift
+        uses: actions/cache@v2
+        with:
+          path: /usr/local/bin/thrift
+          key: ${{ runner.os }}-thrift
+
+      - name: Make Thrift Compiler
+        if: steps.cache-thrift.outputs.cache-hit != 'true'
         run: |
           export THRIFT_VERSION=0.13.0
           export buildDeps="automake bison curl flex g++ libboost-dev libboost-filesystem-dev libboost-program-options-dev libboost-system-dev libboost-test-dev  libevent-dev libssl-dev libtool make pkg-config"
