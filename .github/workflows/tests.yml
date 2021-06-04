@@ -32,20 +32,31 @@ jobs:
           pip install -e services
           pip list
 
-      - name: Install Thrift Compiler
+      - name: Cache Thrift
+        id: cache-thrift
+        uses: actions/cache@v2
+        with:
+          path: $HOME/install/bin/thrift
+          key: ${{ runner.os }}-thrift
+
+      - name: Make Thrift Compiler
+        if: steps.cache-thrift.outputs.cache-hit != 'true'
         run: |
           export THRIFT_VERSION=0.13.0
           export buildDeps="automake bison curl flex g++ libboost-dev libboost-filesystem-dev libboost-program-options-dev libboost-system-dev libboost-test-dev  libevent-dev libssl-dev libtool make pkg-config"
           sudo apt-get install -y --no-install-recommends $buildDeps && sudo rm -rf /var/lib/apt/lists/*
-          sudo curl -sSL "http://apache.mirrors.spacedump.net/thrift/$THRIFT_VERSION/thrift-$THRIFT_VERSION.tar.gz" -o $HOME/thrift.tar.gz
+          curl -sSL "http://apache.mirrors.spacedump.net/thrift/$THRIFT_VERSION/thrift-$THRIFT_VERSION.tar.gz" -o $HOME/thrift.tar.gz
           mkdir -p $HOME/thrift
           tar zxf $HOME/thrift.tar.gz -C $HOME/thrift --strip-components=1
           pushd $HOME/thrift
           ./configure --help
-          ./configure --without-c_glib --without-csharp --without-python --without-netstd --without-erlang --without-rs --without-swift --without-dotnetcore --without-cpp --without-ruby --without-nodejs --without-py3 --without-go --without-php --without-java
+          mkdir -p $HOME/install
+          ./configure --prefix=$HOME/install --without-c_glib --without-csharp --without-python --without-netstd --without-erlang --without-rs --without-swift --without-dotnetcore --without-cpp --without-ruby --without-nodejs --without-py3 --without-go --without-php --without-java
           make
-          sudo make install
+          make install
           popd
+          ls $HOME/install
+          echo "$HOME/install/bin" >> $GITHUB_PATH
 
       - name: Setup Node
         uses: actions/setup-node@v1
