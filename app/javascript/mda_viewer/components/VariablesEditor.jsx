@@ -99,12 +99,11 @@ function ReadonlyCell({
     }
   }
   if (id === 'name') {
-    let title = connections[index].name;
-    if (connections[index].desc) {
-      title += `: ${connections[index].desc}`;
+    let title = connections[index].desc;
+    if (title) {
+      textStyle += ' table-tooltip';
+      return (<span className={textStyle} title={title} data-original-title={title}>{info}</span>);
     }
-    textStyle += ' table-tooltip';
-    return (<span className={textStyle} title={title} data-original-title={title}>{info}</span>);
   }
   return (<span className={textStyle}>{info}</span>);
 }
@@ -273,7 +272,8 @@ const defaultColumn = {
 /* eslint-disable react/jsx-props-no-spreading */
 // Be sure to pass our updateMyData and the skipPageReset option
 function Table({
-  columns, data, onConnectionChange, isEditing, limited, useScaling,
+  columns, data,
+  onConnectionChange, isEditing, limited, useScaling
 }) {
   // For this example, we're using pagination to illustrate how to stop
   // the current page from resetting when our data changes
@@ -311,19 +311,29 @@ function Table({
   );
 
   //            From, Name, Role, Shape, Units, Init, Lower, Upper, UQ
-  let colWidths = ['10', '20', '10', '5', '5', '10', '10', '10', '20'];
+  let colWidths = ['10', '30', '10', '5', '5', '10', '10', '10', '10'];
   if (isEditing) {
     //         # From Name Role Description Type Shape Units Init Lower Upper UQ
-    colWidths = ['2', '5', '15', '10', '13', '5', '5', '5', '10', '10', '10', '10'];
+    colWidths = ['2', '10', '30', '10', '13', '5', '5', '5', '10', '10', '10', '10'];
   }
   if (isEditing && useScaling) {
     //   #  From Name Role Description Type  Shape  Units  Init  Lower  Upper UQ, Ref, Ref0, Res.Ref
-    colWidths = ['2', '5', '15', '10', '13', '5', '5', '5', '5', '5', '5', '10', '5', '5', '5'];
+    colWidths = ['2', '5', '20', '10', '13', '5', '5', '5', '5', '5', '5', '10', '5', '5', '5'];
+  }
+
+  let table_layout = "auto";
+  if (isEditing) {
+    table_layout = "fixed";
+  }
+
+  const tableProps = {
+    style: { tableLayout: table_layout },
+    ...getTableProps()
   }
 
   // Render the UI for your table
   return (
-    <table className="connections table table-striped table-sm table-hover mt-3" {...getTableProps()}>
+    <table className="connections table table-striped table-sm table-hover mt-3" {...tableProps}>
       <thead>
         {headerGroups.map((headerGroup) => (
           <tr {...headerGroup.getHeaderGroupProps()}>
