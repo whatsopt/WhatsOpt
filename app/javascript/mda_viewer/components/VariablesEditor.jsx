@@ -99,7 +99,7 @@ function ReadonlyCell({
     }
   }
   if (id === 'name') {
-    let title = connections[index].desc;
+    const title = connections[index].desc;
     if (title) {
       textStyle += ' table-tooltip';
       return (<span className={textStyle} title={title} data-original-title={title}>{info}</span>);
@@ -273,7 +273,7 @@ const defaultColumn = {
 // Be sure to pass our updateMyData and the skipPageReset option
 function Table({
   columns, data,
-  onConnectionChange, isEditing, limited, useScaling
+  onConnectionChange, isEditing, limited, useScaling,
 }) {
   // For this example, we're using pagination to illustrate how to stop
   // the current page from resetting when our data changes
@@ -321,14 +321,14 @@ function Table({
     colWidths = ['2', '5', '20', '10', '13', '5', '5', '5', '5', '5', '5', '10', '5', '5', '5'];
   }
 
-  let table_layout = "auto";
+  let table_layout = 'auto';
   if (isEditing) {
-    table_layout = "fixed";
+    table_layout = 'fixed';
   }
 
   const tableProps = {
     style: { tableLayout: table_layout },
-    ...getTableProps()
+    ...getTableProps(),
   }
 
   // Render the UI for your table
