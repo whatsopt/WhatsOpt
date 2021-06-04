@@ -308,6 +308,7 @@ function Table({
       useScaling,
       cellToFocus,
       initialState: { hiddenColumns },
+      autoResetSortBy: false,
     },
     useSortBy,
   );
