@@ -37,7 +37,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: $HOME/install/bin/thrift
-          key: ${{ runner.os }}-thrift
+          key: ${{ runner.os }}-thrift-new
 
       - name: Make Thrift Compiler
         if: steps.cache-thrift.outputs.cache-hit != 'true'
@@ -55,6 +55,10 @@ jobs:
           make
           make install
           popd
+          ls -al $HOME/install/bin
+
+      - name: Check Thrift install
+        run: |
           ls -al $HOME/install/bin
           echo "$HOME/install/bin" >> $GITHUB_PATH
 
@@ -88,7 +92,6 @@ jobs:
       - name: Run tests
         run: |
           echo $PATH
-          thrift --help
           WHATSOPT_COVERALLS=1 bundle exec rails test
 
       - name: Coveralls 
