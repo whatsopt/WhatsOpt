@@ -7,7 +7,7 @@ class <%= @discipline.py_classname %>(<%= @discipline.py_classname %>Base):
     def compute(self, inputs, outputs):
         """ <%= @discipline.py_classname %> computation """
         # Here comes discipline resolution code
-        # (python function ou module, external software calls...)
+        # (python function or module, external software calls...)
         <%- if @discipline.output_variables.numeric.empty? -%>
         pass
         <%- else -%><%- @discipline.output_variables.numeric.each do |var_out| -%>
