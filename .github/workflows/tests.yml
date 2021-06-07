@@ -32,15 +32,15 @@ jobs:
           pip install -e services
           pip list
 
-      # - name: Cache Thrift
-      #   id: cache-thrift
-      #   uses: actions/cache@v2
-      #   with:
-      #     path: $HOME/install/bin/thrift
-      #     key: ${{ runner.os }}-thrift-new
+      - name: Cache Thrift
+        id: cache-thrift
+        uses: actions/cache@v2
+        with:
+          path: $HOME/.local/bin/thrift
+          key: ${{ runner.os }}-thrift-0.13.0
 
       - name: Make Thrift Compiler
-#        if: steps.cache-thrift.outputs.cache-hit != 'true'
+        if: steps.cache-thrift.outputs.cache-hit != 'true'
         run: |
           export THRIFT_VERSION=0.13.0
           export buildDeps="automake bison curl flex g++ libboost-dev libboost-filesystem-dev libboost-program-options-dev libboost-system-dev libboost-test-dev  libevent-dev libssl-dev libtool make pkg-config"
@@ -50,17 +50,16 @@ jobs:
           tar zxf $HOME/thrift.tar.gz -C $HOME/thrift --strip-components=1
           pushd $HOME/thrift
           ./configure --help
-          mkdir -p $HOME/install
-          ./configure --prefix=$HOME/install --without-c_glib --without-csharp --without-python --without-netstd --without-erlang --without-rs --without-swift --without-dotnetcore --without-cpp --without-ruby --without-nodejs --without-py3 --without-go --without-php --without-java
+          mkdir -p $HOME/.local
+          ./configure --prefix=$HOME/.local --without-c_glib --without-csharp --without-python --without-netstd --without-erlang --without-rs --without-swift --without-dotnetcore --without-cpp --without-ruby --without-nodejs --without-py3 --without-go --without-php --without-java
           make
           make install
           popd
-          ls -al $HOME/install/bin
+          ls -al $HOME/.local/bin
 
       - name: Check Thrift install
         run: |
-          ls -al $HOME/install/bin
-          echo "$HOME/install/bin" >> $GITHUB_PATH
+          ls -al $HOME/.local/*
 
       - name: Setup Node
         uses: actions/setup-node@v1
