@@ -1,10 +1,13 @@
 import numpy as np
 from numpy import nan
 
+
 def initialize(mda):
-<%- @mda.input_variables.each do |param| %>
-    mda['<%= param.name %>'] = <%= param.init_py_value %><%- end %>
+    <%- @mda.input_variables.each do |param| -%>
+    mda['<%= param.name %>'] = <%= param.init_py_value %>
+    <%- end -%>
     return mda
+
 
 if __name__ == "__main__":
     from tabulate import tabulate
@@ -14,4 +17,3 @@ if __name__ == "__main__":
     headers = ["parameter", "value"]
     data = [[k, v] for k, v in mda.items()]
     print(tabulate(data, headers))
-    

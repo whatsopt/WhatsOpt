@@ -23,11 +23,12 @@ from <%= d.py_full_modulename %> import <%= d.py_classname %>
 from <%= @server_module %>.sub_analysis_proxy import <%= disc.py_classname %>Proxy
 <% end -%>
 <% end -%>
-<% @mda.plain_disciplines.each do |disc| %>
-<% if @remote || !(@check_only || disc.local?(@remote_ip)) %>
+<% @mda.plain_disciplines.each do |disc| -%>
+<% if @remote || !(@check_only || disc.local?(@remote_ip)) -%>
 from <%= @server_module %>.remote_discipline import Remote<%= disc.py_classname %>
 <% end -%>
 <% end -%>
+
 
 class <%= @mda.py_classname %>Base(<%= @impl.parallel_group ? "ParallelGroup" : "Group" %>):
     """ An OpenMDAO base component to encapsulate <%= @mda.py_classname %> MDA """
@@ -61,29 +62,28 @@ class <%= @mda.py_classname %>Base(<%= @impl.parallel_group ? "ParallelGroup" : 
 <% @mda.disciplines.nodes.each do |d| %>
         self.add_subsystem('<%= d.py_classname %>', self.create_<%= d.basename %>(),
                            promotes=[<%= d.variables.map(&:py_varname).map{|v| "'#{v}'"}.join(', ') %>])<% end -%>
-
 <% @mda.sub_analyses.each do |a| %>
     def create_<%= a.basename %>(self):
-<% if @remote %>
+<% if @remote -%>
         return <%= a.py_classname %>Proxy(self._thrift_client)
-<% else %>
+<% else -%>
     	return <%= a.py_classname %>()
+<% end -%>
 <% end %>
-<% end %>
-<% @mda.plain_disciplines.each do |disc| -%>
+<% @mda.plain_disciplines.each do |disc| %>
     def create_<%= disc.basename %>(self):
 <% if !(@check_only || disc.local?(@remote_ip)) -%>
         return Remote<%= disc.py_classname %>()
-<% else %>
+<% else -%>
         return <%= disc.py_classname %>()
-<% end %>
+<% end -%>
 <% end %>
 
 # Used by Thrift server to serve disciplines
 class <%= @mda.py_classname %>FactoryBase(object):
-<% @mda.all_plain_disciplines.each do |disc| -%>
+<% @mda.all_plain_disciplines.each do |disc| %>
     @staticmethod
     def create_<%= disc.snake_modulename %>():
         return <%= disc.py_classname %>()
-
 <% end %>
+#
