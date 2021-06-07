@@ -36,8 +36,8 @@ jobs:
         id: cache-thrift
         uses: actions/cache@v2
         with:
-          path: ${HOME}/install/bin
-          key: ${{ runner.os }}-thrift-0.13.0-new
+          path: ${HOME}/install/bin/thrift
+          key: ${{ runner.os }}-thrift-0.13.0-cache-v2
 
       - name: Make Thrift Compiler
         if: steps.cache-thrift.outputs.cache-hit != 'true'
@@ -59,6 +59,7 @@ jobs:
       - name: Check Thrift install
         run: |
           echo $PWD
+          echo $HOME
           ls -al ${HOME}/
           ls -al ${HOME}/install/*
           echo "${HOME}/install/bin" >> $GITHUB_PATH
