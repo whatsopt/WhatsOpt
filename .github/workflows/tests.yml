@@ -36,8 +36,8 @@ jobs:
         id: cache-thrift
         uses: actions/cache@v2
         with:
-          path: ${HOME}/install/bin/thrift
-          key: ${{ runner.os }}-thrift-0.13.0-cache-v2
+          path: install
+          key: ${{ runner.os }}-thrift-0.13.0-cache-v3
 
       - name: Make Thrift Compiler
         if: steps.cache-thrift.outputs.cache-hit != 'true'
@@ -46,23 +46,22 @@ jobs:
           export buildDeps="automake bison curl flex g++ libboost-dev libboost-filesystem-dev libboost-program-options-dev libboost-system-dev libboost-test-dev  libevent-dev libssl-dev libtool make pkg-config"
           sudo apt-get install -y --no-install-recommends $buildDeps && sudo rm -rf /var/lib/apt/lists/*
           curl -sSL "http://apache.mirrors.spacedump.net/thrift/$THRIFT_VERSION/thrift-$THRIFT_VERSION.tar.gz" -o thrift.tar.gz
-          mkdir -p ${HOME}/thrift
-          mkdir -p ${HOME}/install
-          tar zxf thrift.tar.gz -C ${HOME}/thrift --strip-components=1
-          pushd ${HOME}/thrift
-          ./configure --prefix=${HOME}/install --without-c_glib --without-csharp --without-python --without-netstd --without-erlang --without-rs --without-swift --without-dotnetcore --without-cpp --without-ruby --without-nodejs --without-py3 --without-go --without-php --without-java
+          mkdir -p thrift
+          mkdir -p install
+          tar zxf thrift.tar.gz -C ${PWD}/thrift --strip-components=1
+          cd thrift
+          ./configure --prefix=${PWD}/../install --without-c_glib --without-csharp --without-python --without-netstd --without-erlang --without-rs --without-swift --without-dotnetcore --without-cpp --without-ruby --without-nodejs --without-py3 --without-go --without-php --without-java
           make
           make install
-          popd
-          ls -al ${HOME}/install/*
+          cd ..
+          ls -al install/*
 
       - name: Check Thrift install
         run: |
           echo $PWD
-          echo $HOME
-          ls -al ${HOME}/
-          ls -al ${HOME}/install/*
-          echo "${HOME}/install/bin" >> $GITHUB_PATH
+          ls -al 
+          ls -al install/*
+          echo "${PWD}/install/bin" >> $GITHUB_PATH
 
       - name: Setup Node
         uses: actions/setup-node@v1
