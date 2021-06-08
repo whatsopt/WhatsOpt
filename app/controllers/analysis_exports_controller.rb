@@ -15,9 +15,13 @@ class AnalysisExportsController < ApplicationController
       content, filename = ogen.generate
       send_data content, filename: filename
     elsif format == "gemseo"
-      ggen = WhatsOpt::Gemseo::Generator.new(mda)
-      content, filename = ggen.generate
-      send_data content, filename: filename
+      begin
+        ggen = WhatsOpt::Gemseo::Generator.new(mda)
+        content, filename = ggen.generate
+        send_data content, filename: filename
+      rescue WhatsOpt::Gemseo::Generator::NotYetImplementedError => e
+        redirect_to mdas_url, alert: "GEMSEO export failure: #{e}!"
+      end
     elsif format == "cmdows"
       cmdowsgen = WhatsOpt::CmdowsGenerator.new(mda)
       content, filename = cmdowsgen.generate

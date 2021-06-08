@@ -20,10 +20,10 @@ class ExportsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test "should get new gemseo zip archive given an mda_id" do
+  test "should get redirection with error message" do
     skip "Apache Thrift not installed" unless thrift?
     get mda_exports_new_url(mda_id: @mda.id, format: :gemseo)
-    assert_response :success
+    assert_response :redirect
   end
 
   test "should get cmdows file given an mda_id" do

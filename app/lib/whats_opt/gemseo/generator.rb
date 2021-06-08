@@ -48,11 +48,11 @@ module WhatsOpt::Gemseo
       opts = { with_server: true, with_run: true, with_unittests: false }.merge(options)
       @mda.disciplines.nodes.each do |disc|
         if disc.has_sub_analysis?
-          raise NotYetImplementedError.new("Cannot generate code for sub_analysis #{@disc.name}")
+          raise NotYetImplementedError.new("Cannot generate code for sub_analysis #{disc.name}")
           _generate_sub_analysis(disc, gendir, opts)
         else
           _generate_discipline(disc, gendir, opts)
-          raise NotYetImplementedError.new("Cannot generate code for unit test #{@disc.name}") if opts[:with_unittests]
+          raise NotYetImplementedError.new("Cannot generate code for unit test #{disc.name}") if opts[:with_unittests]
         end
       end
       _generate_main(gendir, opts)
