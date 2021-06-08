@@ -24,12 +24,8 @@ class Api::V1::ExportsController < Api::ApiController
     elsif format == "gemseo"
       ggen = WhatsOpt::Gemseo::Generator.new(mda, whatsopt_url: whatsopt_url,
                                             api_key: current_user.api_key, remote_ip: request.remote_ip)
-      begin
-        content, filename = ggen.generate(user_agent: user_agent, with_run: with_run,
-                                          with_server: with_server, with_runops: with_runops, with_unittests: with_unittests)
-      rescue WhatsOpt::Gemseo::Generator::NotYetImplementedError => e
-        json_response({ message: "GEMSEO export failure: #{e}" }, :bad_request)
-      end
+      content, filename = ggen.generate(user_agent: user_agent, with_run: with_run,
+                                        with_server: with_server, with_runops: with_runops, with_unittests: with_unittests)
       send_data content, filename: filename
     elsif format == "cmdows"
       cmdowsgen = WhatsOpt::CmdowsGenerator.new(mda)

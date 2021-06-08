@@ -25,4 +25,16 @@ class Api::V1::ExportsControllerTest < ActionDispatch::IntegrationTest
     assert_equal expected, resp.to_json.to_s
   end
 
+  test "should dump nested analysis as openmdao code" do
+    mda = analyses(:outermda)
+    get api_v1_mda_exports_new_url(mda, format: :openmdao), as: :json, headers: @auth_headers
+    assert_response :success
+  end
+
+  test "should dump nested analysis as gemseo code" do
+    mda = analyses(:outermda)
+    get api_v1_mda_exports_new_url(mda, format: :gemseo), as: :json, headers: @auth_headers
+    assert_response :success
+  end
+
 end
