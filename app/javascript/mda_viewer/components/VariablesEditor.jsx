@@ -348,7 +348,19 @@ function Table({
   return (
 
     <div>
-      <table className="connections table table-striped table-sm table-hover mt-3" {...getTableProps()}>
+      <VariablesPagination
+        canPreviousPage={canPreviousPage}
+        canNextPage={canNextPage}
+        pageOptions={pageOptions}
+        pageCount={pageCount}
+        gotoPage={gotoPage}
+        nextPage={nextPage}
+        previousPage={previousPage}
+        setPageSize={setPageSize}
+        pageIndex={pageIndex}
+        pageSize={pageSize}
+      />
+      <table className="connections table table-striped table-sm table-hover" {...tableProps}>
         <thead>
           {headerGroups.map((headerGroup) => (
             <tr {...headerGroup.getHeaderGroupProps()}>
