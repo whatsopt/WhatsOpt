@@ -317,6 +317,7 @@ function Table({
       useScaling,
       cellToFocus,
       initialState: { hiddenColumns },
+      autoResetPage: false,
       autoResetSortBy: false,
     },
     useSortBy,
