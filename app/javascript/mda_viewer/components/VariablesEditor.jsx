@@ -1,7 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { useTable, useSortBy } from 'react-table';
+import {
+  useTable, useSortBy, usePagination, useGlobalFilter,
+} from 'react-table';
 import { RIEInput, RIESelect } from './riek/src';
+import VariablesPagination from './VariablesPagination';
+import VariablesGlobalFilter from './VariablesGlobalFilter';
 
 const CELL_CLASSNAME = 'react-table-cell';
 // const EDITABLE_CELL_CLASSNAME = 'bg-light';
@@ -292,8 +296,22 @@ function Table({
     getTableProps,
     getTableBodyProps,
     headerGroups,
-    rows,
     prepareRow,
+    page, // instead of rows,
+    preGlobalFilteredRows,
+    globalFilteredRows,
+    setGlobalFilter,
+
+    // The rest of these things are super handy, too ;)
+    canPreviousPage,
+    canNextPage,
+    pageOptions,
+    pageCount,
+    gotoPage,
+    nextPage,
+    previousPage,
+    setPageSize,
+    state: { pageIndex, pageSize, globalFilter },
   } = useTable(
     {
       columns,
@@ -305,16 +323,19 @@ function Table({
       useScaling,
       cellToFocus,
       initialState: { hiddenColumns },
+      autoResetPage: false,
       autoResetSortBy: false,
     },
+    useGlobalFilter,
     useSortBy,
+    usePagination,
   );
 
   //            From, Name, Role, Shape, Units, Init, Lower, Upper, UQ
   let colWidths = ['10', '30', '10', '5', '5', '10', '10', '10', '10'];
   if (isEditing) {
     //         # From Name Role Description Type Shape Units Init Lower Upper UQ
-    colWidths = ['2', '10', '30', '10', '13', '5', '5', '5', '10', '10', '10', '10'];
+    colWidths = ['2', '10', '36', '10', '13', '5', '5', '5', '8', '8', '8', '10'];
   }
   if (isEditing && useScaling) {
     //   #  From Name Role Description Type  Shape  Units  Init  Lower  Upper UQ, Ref, Ref0, Res.Ref
@@ -329,47 +350,78 @@ function Table({
   const tableProps = {
     style: { tableLayout: table_layout },
     ...getTableProps(),
-  }
+  };
 
-  // Render the UI for your table
   return (
-    <table className="connections table table-striped table-sm table-hover mt-3" {...tableProps}>
-      <thead>
-        {headerGroups.map((headerGroup) => (
-          <tr {...headerGroup.getHeaderGroupProps()}>
-            {headerGroup.headers.map((column, i) => {
-              const cprops = {
-                width: `${colWidths[i]}% `,
-                ...column.getHeaderProps(column.getSortByToggleProps()),
-              };
-              const sortSymbol = (column.isSortedDesc ? ' 🔽' : ' 🔼');
-              return (
-                <th {...cprops}>
-                  {column.render('Header')}
-                  <span>
-                    {column.isSorted
-                      ? sortSymbol
-                      : ''}
-                  </span>
-                </th>
-              );
-            })}
-          </tr>
-        ))}
-      </thead>
-      <tbody {...getTableBodyProps()}>
-        {rows.map(
-          (row /* i */) => {
-            prepareRow(row);
-            return (
-              <tr {...row.getRowProps()}>
-                {row.cells.map((cell) => <td {...cell.getCellProps()}>{cell.render('Cell')}</td>)}
-              </tr>
-            );
-          },
-        )}
-      </tbody>
-    </table>
+    <div className="container-fluid">
+      <div className="editor-section row">
+        <div className="col-4">
+          <VariablesGlobalFilter
+            preGlobalFilteredRows={preGlobalFilteredRows}
+            globalFilteredRows={globalFilteredRows}
+            globalFilter={globalFilter}
+            setGlobalFilter={setGlobalFilter}
+          />
+        </div>
+      </div>
+      <div className="row">
+        <div className="col-12">
+          <table className="connections table table-striped table-sm table-hover col" {...tableProps}>
+            <thead>
+              {headerGroups.map((headerGroup) => (
+                <tr {...headerGroup.getHeaderGroupProps()}>
+                  {headerGroup.headers.map((column, i) => {
+                    const cprops = {
+                      width: `${colWidths[i]}% `,
+                      ...column.getHeaderProps(column.getSortByToggleProps()),
+                    };
+                    const sortSymbol = (column.isSortedDesc ? ' 🔽' : ' 🔼');
+                    return (
+                      <th {...cprops}>
+                        {column.render('Header')}
+                        <span>
+                          {column.isSorted
+                            ? sortSymbol
+                            : ''}
+                        </span>
+                      </th>
+                    );
+                  })}
+                </tr>
+              ))}
+            </thead>
+            <tbody {...getTableBodyProps()}>
+              {page.map( // {rows.map(
+                (row /* i */) => {
+                  prepareRow(row);
+                  return (
+                    <tr {...row.getRowProps()}>
+                      {row.cells.map((cell) => <td {...cell.getCellProps()}>{cell.render('Cell')}</td>)}
+                    </tr>
+                  );
+                },
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div className="row">
+        <div className="col-12">
+          <VariablesPagination
+            canPreviousPage={canPreviousPage}
+            canNextPage={canNextPage}
+            pageOptions={pageOptions}
+            pageCount={pageCount}
+            gotoPage={gotoPage}
+            nextPage={nextPage}
+            previousPage={previousPage}
+            setPageSize={setPageSize}
+            pageIndex={pageIndex}
+            pageSize={pageSize}
+          />
+        </div>
+      </div>
+    </div>
   );
 }
 
