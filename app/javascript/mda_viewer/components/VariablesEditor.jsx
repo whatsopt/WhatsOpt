@@ -357,7 +357,6 @@ function Table({
       <div className="editor-section row">
         <div className="col-4">
           <VariablesGlobalFilter
-            preGlobalFilteredRows={preGlobalFilteredRows}
             globalFilteredRows={globalFilteredRows}
             globalFilter={globalFilter}
             setGlobalFilter={setGlobalFilter}

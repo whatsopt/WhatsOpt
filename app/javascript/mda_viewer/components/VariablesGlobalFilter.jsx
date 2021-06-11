@@ -5,12 +5,10 @@ import 'regenerator-runtime/runtime';
 import { useAsyncDebounce } from 'react-table';
 
 function VariablesGlobalFilter({
-  preGlobalFilteredRows,
   globalFilteredRows,
   globalFilter,
   setGlobalFilter,
 }) {
-  const totalCount = preGlobalFilteredRows.length;
   const matchCount = globalFilteredRows.length;
   const [value, setValue] = React.useState(globalFilter);
   const onChange = useAsyncDebounce((val) => {
@@ -60,7 +58,6 @@ function VariablesGlobalFilter({
 }
 
 VariablesGlobalFilter.propTypes = {
-  preGlobalFilteredRows: PropTypes.array.isRequired,
   globalFilteredRows: PropTypes.array.isRequired,
   globalFilter: PropTypes.string,
   setGlobalFilter: PropTypes.func.isRequired,

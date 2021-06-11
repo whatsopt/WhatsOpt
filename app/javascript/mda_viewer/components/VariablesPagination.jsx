@@ -2,10 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 class VariablesPagination extends React.PureComponent {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     const {
       canPreviousPage,
@@ -27,12 +23,12 @@ class VariablesPagination extends React.PureComponent {
       <nav>
         <ul className="pagination" style={{ marginBottom: 0 }}>
           <li className={pageItemPrev}>
-            <button className="page-link" onClick={() => gotoPage(0)} aria-label="Previous">
+            <button type="button" className="page-link" onClick={() => gotoPage(0)} aria-label="Previous">
               <i className="fas fa-angle-double-left" />
             </button>
           </li>
           <li className={pageItemPrev}>
-            <button className="page-link" onClick={() => previousPage()} aria-label="Previous">
+            <button type="button" className="page-link" onClick={() => previousPage()} aria-label="Previous">
               <i className="fas fa-angle-left" />
             </button>
           </li>
@@ -47,12 +43,12 @@ class VariablesPagination extends React.PureComponent {
           </li>
 
           <li className={pageItemNext}>
-            <button className="page-link" onClick={() => nextPage()} aria-label="Previous">
+            <button type="button" className="page-link" onClick={() => nextPage()} aria-label="Previous">
               <i className="fas fa-angle-right" />
             </button>
           </li>
           <li className={pageItemNext}>
-            <button className="page-link" onClick={() => gotoPage(pageCount - 1)} aria-label="Previous">
+            <button type="button" className="page-link" onClick={() => gotoPage(pageCount - 1)} aria-label="Previous">
               <i className="fas fa-angle-double-right" />
             </button>
           </li>
@@ -67,11 +63,11 @@ class VariablesPagination extends React.PureComponent {
                     setPageSize(Number(e.target.value));
                   }}
                 >
-                  {[10, 20, 30, 50, 100].map((pageSize) => (
-                    <option key={pageSize} value={pageSize}>
+                  {[10, 20, 30, 50, 100].map((pSize) => (
+                    <option key={pSize} value={pSize}>
                       Show
                       {' '}
-                      {pageSize}
+                      {pSize}
                     </option>
                   ))}
                 </select>
@@ -85,16 +81,16 @@ class VariablesPagination extends React.PureComponent {
 }
 
 VariablesPagination.propTypes = {
-  canPreviousPage: PropTypes.bool,
-  canNextPage: PropTypes.bool,
-  pageOptions: PropTypes.arrayOf(PropTypes.number),
-  pageCount: PropTypes.number,
-  gotoPage: PropTypes.func,
-  nextPage: PropTypes.func,
-  previousPage: PropTypes.func,
-  setPageSize: PropTypes.func,
-  pageIndex: PropTypes.number,
-  pageSize: PropTypes.number,
+  canPreviousPage: PropTypes.bool.isRequired,
+  canNextPage: PropTypes.bool.isRequired,
+  pageOptions: PropTypes.arrayOf(PropTypes.number).isRequired,
+  pageCount: PropTypes.number.isRequired,
+  gotoPage: PropTypes.func.isRequired,
+  nextPage: PropTypes.func.isRequired,
+  previousPage: PropTypes.func.isRequired,
+  setPageSize: PropTypes.func.isRequired,
+  pageIndex: PropTypes.number.isRequired,
+  pageSize: PropTypes.number.isRequired,
 };
 
 export default VariablesPagination;
