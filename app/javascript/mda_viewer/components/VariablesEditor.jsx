@@ -4,7 +4,6 @@ import {
   useTable, useSortBy, usePagination, useGlobalFilter,
 } from 'react-table';
 import { RIEInput, RIESelect } from './riek/src';
-import VariablesToolbar from './VariablesToolbar';
 import VariablesPagination from './VariablesPagination';
 import VariablesGlobalFilter from './VariablesGlobalFilter';
 
@@ -300,6 +299,7 @@ function Table({
     prepareRow,
     page, // instead of rows,
     preGlobalFilteredRows,
+    globalFilteredRows,
     setGlobalFilter,
 
     // The rest of these things are super handy, too ;)
@@ -354,65 +354,72 @@ function Table({
 
   return (
     <div className="container-fluid">
-      <div className="editor-section col-3">
-        <VariablesGlobalFilter
-          preGlobalFilteredRows={preGlobalFilteredRows}
-          globalFilter={globalFilter}
-          setGlobalFilter={setGlobalFilter}
-        />
+      <div className="editor-section row align-items-center">
+        <div className="col-4">
+          <VariablesGlobalFilter
+            preGlobalFilteredRows={preGlobalFilteredRows}
+            globalFilteredRows={globalFilteredRows}
+            globalFilter={globalFilter}
+            setGlobalFilter={setGlobalFilter}
+          />
+        </div>
       </div>
-      <div className="editor-section col">
-        <table className="connections table table-striped table-sm table-hover mt-3 col" {...tableProps}>
-          <thead>
-            {headerGroups.map((headerGroup) => (
-              <tr {...headerGroup.getHeaderGroupProps()}>
-                {headerGroup.headers.map((column, i) => {
-                  const cprops = {
-                    width: `${colWidths[i]}% `,
-                    ...column.getHeaderProps(column.getSortByToggleProps()),
-                  };
-                  const sortSymbol = (column.isSortedDesc ? ' 🔽' : ' 🔼');
+      <div className="row">
+        <div className="col-12">
+          <table className="connections table table-striped table-sm table-hover col" {...tableProps}>
+            <thead>
+              {headerGroups.map((headerGroup) => (
+                <tr {...headerGroup.getHeaderGroupProps()}>
+                  {headerGroup.headers.map((column, i) => {
+                    const cprops = {
+                      width: `${colWidths[i]}% `,
+                      ...column.getHeaderProps(column.getSortByToggleProps()),
+                    };
+                    const sortSymbol = (column.isSortedDesc ? ' 🔽' : ' 🔼');
+                    return (
+                      <th {...cprops}>
+                        {column.render('Header')}
+                        <span>
+                          {column.isSorted
+                            ? sortSymbol
+                            : ''}
+                        </span>
+                      </th>
+                    );
+                  })}
+                </tr>
+              ))}
+            </thead>
+            <tbody {...getTableBodyProps()}>
+              {page.map( // {rows.map(
+                (row /* i */) => {
+                  prepareRow(row);
                   return (
-                    <th {...cprops}>
-                      {column.render('Header')}
-                      <span>
-                        {column.isSorted
-                          ? sortSymbol
-                          : ''}
-                      </span>
-                    </th>
+                    <tr {...row.getRowProps()}>
+                      {row.cells.map((cell) => <td {...cell.getCellProps()}>{cell.render('Cell')}</td>)}
+                    </tr>
                   );
-                })}
-              </tr>
-            ))}
-          </thead>
-          <tbody {...getTableBodyProps()}>
-            {page.map( // {rows.map(
-              (row /* i */) => {
-                prepareRow(row);
-                return (
-                  <tr {...row.getRowProps()}>
-                    {row.cells.map((cell) => <td {...cell.getCellProps()}>{cell.render('Cell')}</td>)}
-                  </tr>
-                );
-              },
-            )}
-          </tbody>
-        </table>
-      </div>
-      <div className="editor-section col">
-        <VariablesPagination
-          canPreviousPage={canPreviousPage}
-          canNextPage={canNextPage}
-          pageOptions={pageOptions}
-          pageCount={pageCount}
-          gotoPage={gotoPage}
-          nextPage={nextPage}
-          previousPage={previousPage}
-          setPageSize={setPageSize}
-          pageIndex={pageIndex}
-          pageSize={pageSize}
-        />
+                },
+              )}
+            </tbody>
+          </table>
+        </div>
+        <div className="row">
+          <div className="col-12">
+            <VariablesPagination
+              canPreviousPage={canPreviousPage}
+              canNextPage={canNextPage}
+              pageOptions={pageOptions}
+              pageCount={pageCount}
+              gotoPage={gotoPage}
+              nextPage={nextPage}
+              previousPage={previousPage}
+              setPageSize={setPageSize}
+              pageIndex={pageIndex}
+              pageSize={pageSize}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );
