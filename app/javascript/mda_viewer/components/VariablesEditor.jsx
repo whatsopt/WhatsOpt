@@ -335,7 +335,7 @@ function Table({
   let colWidths = ['10', '30', '10', '5', '5', '10', '10', '10', '10'];
   if (isEditing) {
     //         # From Name Role Description Type Shape Units Init Lower Upper UQ
-    colWidths = ['2', '10', '30', '10', '13', '5', '5', '5', '10', '10', '10', '10'];
+    colWidths = ['2', '10', '36', '10', '13', '5', '5', '5', '8', '8', '8', '10'];
   }
   if (isEditing && useScaling) {
     //   #  From Name Role Description Type  Shape  Units  Init  Lower  Upper UQ, Ref, Ref0, Res.Ref
@@ -354,7 +354,7 @@ function Table({
 
   return (
     <div className="container-fluid">
-      <div className="editor-section row align-items-center">
+      <div className="editor-section row">
         <div className="col-4">
           <VariablesGlobalFilter
             preGlobalFilteredRows={preGlobalFilteredRows}
@@ -404,21 +404,21 @@ function Table({
             </tbody>
           </table>
         </div>
-        <div className="row">
-          <div className="col-12">
-            <VariablesPagination
-              canPreviousPage={canPreviousPage}
-              canNextPage={canNextPage}
-              pageOptions={pageOptions}
-              pageCount={pageCount}
-              gotoPage={gotoPage}
-              nextPage={nextPage}
-              previousPage={previousPage}
-              setPageSize={setPageSize}
-              pageIndex={pageIndex}
-              pageSize={pageSize}
-            />
-          </div>
+      </div>
+      <div className="row">
+        <div className="col-12">
+          <VariablesPagination
+            canPreviousPage={canPreviousPage}
+            canNextPage={canNextPage}
+            pageOptions={pageOptions}
+            pageCount={pageCount}
+            gotoPage={gotoPage}
+            nextPage={nextPage}
+            previousPage={previousPage}
+            setPageSize={setPageSize}
+            pageIndex={pageIndex}
+            pageSize={pageSize}
+          />
         </div>
       </div>
     </div>
