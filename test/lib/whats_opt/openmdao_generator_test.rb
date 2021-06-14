@@ -210,24 +210,6 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     assert_match(/Could not connect/, lines.join(" "))
   end
 
-  test "should use init value for independant variables" do
-    skip "Apache Thrift not installed" unless thrift?
-    zippath = Tempfile.new("test_mda_file.zip")
-    File.open(zippath, "wb") do |f|
-      content, _ = @ogen.generate
-      f.write content
-    end
-    assert File.exist?(zippath)
-    Zip::File.open(zippath) do |zip|
-      zip.each do |entry|
-        if entry.name =~ /cicav_base\.py/
-          assert entry.get_input_stream.read =~
-            Regexp.new(Regexp.escape("indeps.add_output('x1', 3.14)"), Regexp::MULTILINE)
-        end
-      end
-    end
-  end
-
   test "should generate nested group for nested mda" do
     skip "Apache Thrift not installed" unless thrift?
     mda = analyses(:outermda)
