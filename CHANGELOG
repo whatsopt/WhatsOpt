@@ -1,10 +1,21 @@
 <h1>CHANGELOG</h1>
 
-<h3>1.15.0 (??/06/2020)</h3>
+<h3>1.14.5 (15/06/2021)</h3>
 <ul>
-  <li>Export GEMSEO code from WhatsOpt analysis (aka wop pull --gemseo <id>)</li>  
-  <li>Update code from OpenMDAO to GEMSEO and back (aka wop update --gemseo/--openmdao)</li>
-  <li>Python templates improvements (PEP8)<li>
+  <li>User can export GEMSEO code: require wop 1.14.0
+    <ul> 
+  	<li>Export GEMSEO code from WhatsOpt analysis (aka wop pull --gemseo <id>)</li>  
+  	<li>Update code from OpenMDAO to GEMSEO and back (aka wop update --gemseo/--openmdao)</li>
+    </ul>
+  </li>
+  <li>GUI improvements
+    <ul>
+  	<li>User can filter displayed variables via substring match</li>
+  	<li>User can view variables by pages</li>
+    </ul>
+  <ul>
+  <li>Python templates improvements (PEP8)</li>
+  <li>Fix column ordering when editing the variable table</li> 
   <li>Fix lengthy variable names visibility in variable table</li>
   <li>Fix column sorting (not to be reset when editing)</li>
   <li>Fix scatterplot legend width</li> 
