@@ -8,15 +8,15 @@ class Api::ApiController < ActionController::Base
   # Authorization
   include Pundit
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
-  after_action :verify_authorized, except: [:index], unless: :api_docs_controller?
-  after_action :verify_policy_scoped, only: [:index], unless: :api_docs_controller?
+  after_action :verify_authorized, except: [:index], unless: :authorized_controller?
+  after_action :verify_policy_scoped, only: [:index], unless: :authorized_controller?
 
   respond_to :json
 
   # API is protected through Api Key authentication not CSRF
   protect_from_forgery with: :null_session
 
-  before_action :authenticate, unless: :api_docs_controller?
+  before_action :authenticate, unless: :authorized_controller?
   before_action :check_wop_version
 
   attr_reader :current_user
@@ -40,8 +40,8 @@ class Api::ApiController < ActionController::Base
       json_response({ message: "Unauthorized" }, :unauthorized)
     end
 
-    def api_docs_controller?
-      controller_name == "api_docs"
+    def authorized_controller?
+      (controller_name == "analyses" && action_name == "create" && params[:format] == "xdsm")
     end
 
     def wop_agent_version

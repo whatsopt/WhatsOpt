@@ -45,6 +45,8 @@ class Api::V1::AnalysesController < Api::ApiController
       json_response xdsm, :ok
     else
       @mda = create_nested_analysis
+      @mda.set_owner(current_user)
+      authorize @mda
       json_response @mda, :created
     end
   end
@@ -69,8 +71,6 @@ class Api::V1::AnalysesController < Api::ApiController
     def create_nested_analysis
       mda = Analysis.create_nested_analyses(mda_params)
       mda.save!
-      mda.set_owner(current_user)
-      authorize mda
       mda
     end
 
