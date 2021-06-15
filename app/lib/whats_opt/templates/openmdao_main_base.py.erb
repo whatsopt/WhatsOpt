@@ -74,7 +74,7 @@ class <%= @mda.py_classname %>Base(<%= @impl.parallel_group ? "ParallelGroup" : 
 <% end %>
 
 # Used by Thrift server to serve disciplines
-class <%= @mda.py_classname %>FactoryBase(object):
+class <%= @mda.py_classname %>FactoryBase():
 <% @mda.all_plain_disciplines.each do |disc| %>
     @staticmethod
     def create_<%= disc.snake_modulename %>():
