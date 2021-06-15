@@ -1,7 +1,7 @@
 from .<%= @mda.basename %>_conversions import *
 
 <% @mda.all_plain_disciplines.each do |disc| %>
-class <%= disc.camelname %>Proxy(object):
+class <%= disc.camelname %>Proxy():
     def __init__(self, thrift_client=None):
         super(<%= disc.camelname %>Proxy, self).__init__()
         self._thrift_client = thrift_client
