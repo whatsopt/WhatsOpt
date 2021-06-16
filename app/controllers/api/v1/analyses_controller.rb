@@ -41,9 +41,9 @@ class Api::V1::AnalysesController < Api::ApiController
               Rails.logger.debug ">>> XDSM request cache miss"
               Rails.logger.debug ">>> XDSM creation..."
               mda = create_nested_analysis
+              Rails.logger.debug ">>> XDSM depth=#{mda.depth}"
               mda.to_xdsm_json
             end
-            Rails.logger.debug ">>> XDSM depth=#{mda.depth}"
             raise ActiveRecord::Rollback
           end
         end
