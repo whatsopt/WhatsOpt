@@ -53,6 +53,8 @@ class <%= @mda.py_classname %>Base(<%= @impl.parallel_group ? "ParallelGroup" : 
 <% end -%>
 
     def setup(self): 
+<% @mda.input_variables.each do |dv| %>
+        self.set_input_defaults('<%= dv.name %>', val=<%= dv.init_py_value %>)<% end -%>
 <% @mda.disciplines.nodes.each do |d| %>
         self.add_subsystem('<%= d.py_classname %>', self.create_<%= d.basename %>(),
                            promotes=[<%= d.variables.map(&:py_varname).map{|v| "'#{v}'"}.join(', ') %>])<% end -%>

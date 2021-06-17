@@ -19,7 +19,7 @@ class Discipline < ApplicationRecord
   before_destroy :_destroy_connections
   after_destroy :_refresh_analysis_connections
 
-  has_many :variables, -> { includes(:parameter).order("name ASC") }, dependent: :destroy
+  has_many :variables, -> { includes([:parameter, :distributions, :scaling]).order("name ASC") }, dependent: :destroy
   # has_many :variables, :dependent => :destroy
   has_one :analysis_discipline, dependent: :destroy, autosave: true
   has_one :sub_analysis, through: :analysis_discipline, source: :analysis
