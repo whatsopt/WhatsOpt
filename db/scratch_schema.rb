@@ -26,7 +26,7 @@ ActiveRecord::Schema.define(version: 2020_09_24_122931) do
     t.string "name", null: false
     t.string "record_type", null: false
     t.integer "record_id", null: false
-    t.integer "blob_id", null: false
+    t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
     t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
     t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
@@ -53,8 +53,8 @@ ActiveRecord::Schema.define(version: 2020_09_24_122931) do
   end
 
   create_table "analysis_disciplines", force: :cascade do |t|
-    t.integer "discipline_id"
-    t.integer "analysis_id"
+    t.bigint "discipline_id"
+    t.bigint "analysis_id"
     t.index ["analysis_id"], name: "index_analysis_disciplines_on_analysis_id"
     t.index ["discipline_id"], name: "index_analysis_disciplines_on_discipline_id"
   end
