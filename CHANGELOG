@@ -14,6 +14,7 @@
   	<li>User can view variables by pages</li>
     </ul>
   <ul>
+  <li>XDSM generation (wop show -f) is available without WhatsOpt account</li>
   <li>Python templates improvements (PEP8)</li>
   <li>Fix column ordering when editing the variable table</li> 
   <li>Fix lengthy variable names visibility in variable table</li>
