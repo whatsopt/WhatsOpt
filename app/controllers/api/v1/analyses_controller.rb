@@ -44,7 +44,7 @@ class Api::V1::AnalysesController < Api::ApiController
               Rails.logger.debug ">>> XDSM depth=#{mda.depth}"
               mda.to_xdsm_json
             end
-            raise ActiveRecord::Rollback
+            # raise ActiveRecord::Rollback
           end
         end
       end
