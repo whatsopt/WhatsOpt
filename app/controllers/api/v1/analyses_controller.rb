@@ -33,18 +33,26 @@ class Api::V1::AnalysesController < Api::ApiController
     if params[:format] == "xdsm"
       skip_authorization
       xdsm = nil
-      Analysis.transaction do
-        xdsm = Rails.cache.fetch(mda_params.to_h.deep_sort!) do
-          Rails.logger.info "CACHE MIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIISSSSSSSSSSSS"
-          mda = create_nested_analysis
-          mda.to_xdsm_json
+      original_connection = Analysis.remove_connection
+      begin
+        ActiveRecord::Base.connected_to(role: :writing, shard: :scratch) do
+          Analysis.transaction do
+            xdsm = Rails.cache.fetch(mda_params.to_h.deep_sort!) do
+              Rails.logger.debug ">>> XDSM request cache miss"
+              Rails.logger.debug ">>> XDSM creation..."
+              mda = create_nested_analysis
+              Rails.logger.debug ">>> XDSM depth=#{mda.depth}"
+              mda.to_xdsm_json
+            end
+            # raise ActiveRecord::Rollback
+          end
         end
-        raise ActiveRecord::Rollback
       end
-      Rails.logger.debug ">>> XDSM = #{xdsm}"
       json_response xdsm, :ok
     else
       @mda = create_nested_analysis
+      @mda.set_owner(current_user)
+      authorize @mda
       json_response @mda, :created
     end
   end
@@ -69,8 +77,6 @@ class Api::V1::AnalysesController < Api::ApiController
     def create_nested_analysis
       mda = Analysis.create_nested_analyses(mda_params)
       mda.save!
-      mda.set_owner(current_user)
-      authorize mda
       mda
     end
 
