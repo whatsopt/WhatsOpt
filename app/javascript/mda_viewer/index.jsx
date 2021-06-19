@@ -85,29 +85,6 @@ class MdaViewer extends React.Component {
 
   // *** Connections *********************************************************
 
-  _validateConnectionNames(selected) {
-    const names = selected.map((e) => e.name);
-    const newSelected = [];
-    const errors = [];
-    // console.log("VALID: ", names);
-    names.forEach((n) => {
-      const vnames = n.split(','); // allow "var1, var2" input
-      const varnames = vnames.map((name) => name.trim());
-      // console.log(varnames);
-      varnames.forEach((name) => {
-        if (!name.match(VAR_REGEXP)) {
-          if (name !== '') {
-            errors.push(`Variable name '${name}' is invalid`);
-            // console.log("Error: " + errors);
-          }
-        }
-        newSelected.push({ name });
-      }, this);
-    }, this);
-    // console.log(JSON.stringify({ selected: newSelected, errors: errors }));
-    return { selected: newSelected, errors };
-  }
-
   handleConnectionNameChange(selected) {
     // console.log(selected);
     const selection = this._validateConnectionNames(selected);
@@ -418,6 +395,29 @@ class MdaViewer extends React.Component {
   handleOpenmdaoImplReset() {
     const newState = update(this.state, { implEdited: { $set: false } });
     this.setState(newState);
+  }
+
+  _validateConnectionNames(selected) {
+    const names = selected.map((e) => e.name);
+    const newSelected = [];
+    const errors = [];
+    // console.log("VALID: ", names);
+    names.forEach((n) => {
+      const vnames = n.split(','); // allow "var1, var2" input
+      const varnames = vnames.map((name) => name.trim());
+      // console.log(varnames);
+      varnames.forEach((name) => {
+        if (!name.match(VAR_REGEXP)) {
+          if (name !== '') {
+            errors.push(`Variable name '${name}' is invalid`);
+            // console.log("Error: " + errors);
+          }
+        }
+        newSelected.push({ name });
+      }, this);
+    }, this);
+    // console.log(JSON.stringify({ selected: newSelected, errors: errors }));
+    return { selected: newSelected, errors };
   }
 
   renderXdsm() {
