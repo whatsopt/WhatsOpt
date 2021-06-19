@@ -36,7 +36,7 @@ function VariablesGlobalFilter({
       />
       <div className="input-group-append">
         <button
-          diabled={!active}
+          disabled={!active}
           type="button"
           className="btn bg-transparent"
           style={{ marginLeft: '-40px', zIndex: 100, color }}
