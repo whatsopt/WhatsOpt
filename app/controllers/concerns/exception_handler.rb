@@ -19,5 +19,10 @@ module ExceptionHandler
       Rails.logger.error "Version: " + e.message
       json_response({ message: e.message }, :forbidden)
     end
+
+    rescue_from AnalysisDiscipline::AlreadyDefinedError do |e|
+      Rails.logger.error "AlreadyDefinedError: " + e.message
+      json_response({ message: e.message }, :forbidden)
+    end
   end
 end

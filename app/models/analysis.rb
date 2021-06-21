@@ -241,7 +241,6 @@ class Analysis < ApplicationRecord
             name: i==0 ? "_U_" : n[:name],
             type: i==0 ? "driver" : n[:type]
           }
-          node[:type] = "function" if node[:type] == "analysis"  # XDSM v2
           node[:subxdsm] = n[:link][:name] if n[:type]=="group" && n[:link]
           node
         },
@@ -263,8 +262,9 @@ class Analysis < ApplicationRecord
       # TODO: if XDSM v2 accepted migrate database to take into account XDSM v2 new types
       # mda -> group
       node[:type] = "group" if node[:type] == "mda"
+      # analysis -> function 
       # not required as function and analysis are considered synonymous in XDSMjs for XDSM v2
-      # node[:type] = 'function' if node[:type] == 'analysis'
+      node[:type] = 'function' if node[:type] == 'analysis'
       node[:id] = node[:id].to_s
       node[:link] = { id: parent.id, name: parent.name } if d.is_driver? && has_parent?
       node[:link] = { id: d.sub_analysis.id, name: d.sub_analysis.name } if d.has_sub_analysis?

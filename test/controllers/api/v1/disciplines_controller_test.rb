@@ -8,6 +8,7 @@ class Api::V1::DisciplineControllerTest < ActionDispatch::IntegrationTest
     @mda = analyses(:cicav)
     @disc = disciplines(:geometry)
     @disc2 = disciplines(:aerodynamics)
+    @submda = analyses(:singleton)
   end
 
   test "should get given discipline" do
@@ -20,12 +21,28 @@ class Api::V1::DisciplineControllerTest < ActionDispatch::IntegrationTest
 
   test "should create discipline in given mda" do
     assert_difference("Discipline.count") do
-      post api_v1_mda_disciplines_url(@mda), params: { discipline: { name: "TestDiscipline", type: "analysis" } }, as: :json, headers: @auth_headers
+      post api_v1_mda_disciplines_url(@mda), params: { 
+        discipline: { name: "TestDiscipline", type: "analysis" 
+      } }, as: :json, headers: @auth_headers
     end
     assert_response :success
     resp = JSON.parse(response.body)
     assert_equal "TestDiscipline", resp["name"]
     assert_equal @mda.id, Discipline.last.analysis.id
+  end
+
+  test "should update a discipline with sub analysis" do
+    assert_difference("Discipline.count", 0) do
+      assert_difference("AnalysisDiscipline.count") do
+        put api_v1_discipline_url(@disc), params: { 
+          discipline: { name: "TestDiscipline", type: "mda",
+                        analysis_discipline_attributes: { discipline_id: @disc.id, analysis_id: @submda.id }
+          } }, as: :json, headers: @auth_headers
+      end
+    end
+    assert @disc.sub_analysis
+    assert_response :success
+    @disc.reload
   end
 
   test "should update discipline" do

@@ -5,7 +5,10 @@ import AnalysisSelector from './AnalysisSelector';
 
 // mapping with XDSMjs type values
 const DISCIPLINE = 'analysis';
-const ANALYSIS = 'group';
+const ANALYSIS = 'mda';
+const METAMODEL = 'metamodel';
+const XDSMJS_DISCIPLINE = 'function';
+const XDSMJS_ANALYSIS = 'group';
 
 function isLocalHost(host) {
   return (host === '' || host === 'localhost' || host === '127.0.0.1');
@@ -19,6 +22,7 @@ class Discipline extends React.Component {
       discHost: '',
       discPort: 31400,
       isEditing: false,
+      selected: [],
     };
 
     this.handleDiscNameChange = this.handleDiscNameChange.bind(this);
@@ -46,9 +50,16 @@ class Discipline extends React.Component {
 
   handleEdit() {
     const { node } = this.props;
+    let { type } = node;
+    if (type === XDSMJS_ANALYSIS) {
+      type = ANALYSIS;
+    }
+    if (type === XDSMJS_DISCIPLINE) {
+      type = DISCIPLINE;
+    }
     const newState = {
       discName: node.name,
-      discType: node.type,
+      discType: type,
       discHost: node.endpoint ? node.endpoint.host : '',
       discPort: node.endpoint ? node.endpoint.port : 31400,
       isEditing: true,
@@ -63,29 +74,36 @@ class Discipline extends React.Component {
   handleUpdate(event) {
     event.preventDefault();
     this.handleCancelEdit();
+    const { node } = this.props;
     const {
       discName, discType, discHost, discPort, selected,
     } = this.state;
-    const discattrs = {
+    const subAnalysisId = selected[0] && selected[0].id;
+    const discAttrs = {
       name: discName,
       type: discType,
-      endpoint_attributes: { host: discHost, port: discPort },
+      // endpoint_attributes: { host: discHost, port: discPort },
+      // analysis_discipline_attributes: { discipline_id: node.id, analysis_id: subAnalysisId },
     };
-    const { node } = this.props;
+    if (discType === DISCIPLINE) {
+      discAttrs.endpoint_attributes = { host: discHost, port: discPort };
+    }
+    if (discType === ANALYSIS) {
+      discAttrs.analysis_discipline_attributes = {
+        discipline_id: node.id, analysis_id: subAnalysisId,
+      };
+    }
     const { endpoint } = node; // an endpoint is already present
     if (endpoint && endpoint.id) {
-      const endattrs = discattrs.endpoint_attributes;
+      const endattrs = discAttrs.endpoint_attributes;
       endattrs.id = endpoint.id;
       if (isLocalHost(endattrs.host)) {
         endattrs._destroy = 1;
       }
     }
     // console.log(JSON.stringify(discattrs));
-    const { onDisciplineUpdate, onSubAnalysisSelected } = this.props;
-    onDisciplineUpdate(node, discattrs);
-    if (selected) {
-      onSubAnalysisSelected(node, selected);
-    }
+    const { onDisciplineUpdate } = this.props;
+    onDisciplineUpdate(node, discAttrs);
   }
 
   handleDelete() {
@@ -123,6 +141,9 @@ class Discipline extends React.Component {
     const {
       node, onSubAnalysisSearch, index, limited,
     } = this.props;
+
+    const not_editable = (discType === METAMODEL);
+
     if (isEditing) {
       let deploymentOrSubAnalysis;
       let selected = [];
@@ -241,7 +262,7 @@ class Discipline extends React.Component {
               className="d-inline btn btn-light btn-sm ml-2"
               title="Edit"
               onClick={this.handleEdit}
-              disabled={limited}
+              disabled={limited && not_editable}
             >
               <i className="fa fa-edit" />
             </button>
@@ -260,7 +281,6 @@ Discipline.propTypes = {
   onDisciplineUpdate: PropTypes.func.isRequired,
   onDisciplineDelete: PropTypes.func.isRequired,
   onSubAnalysisSearch: PropTypes.func.isRequired,
-  onSubAnalysisSelected: PropTypes.func.isRequired,
 };
 Discipline.defaultProps = { subAnalysisOption: -1 };
 class DisciplinesEditor extends React.Component {
@@ -295,7 +315,7 @@ class DisciplinesEditor extends React.Component {
       name,
       limited,
       onDisciplineUpdate, onDisciplineDelete,
-      onSubAnalysisSearch, onSubAnalysisSelected,
+      onSubAnalysisSearch,
       onDisciplineCreate, onDisciplineNameChange,
     } = this.props;
     let disciplines = nodes.map((node, i) => (
@@ -308,7 +328,6 @@ class DisciplinesEditor extends React.Component {
         onDisciplineUpdate={onDisciplineUpdate}
         onDisciplineDelete={onDisciplineDelete}
         onSubAnalysisSearch={onSubAnalysisSearch}
-        onSubAnalysisSelected={onSubAnalysisSelected}
       />
     ));
     const nbNodes = disciplines.length;
@@ -374,7 +393,6 @@ DisciplinesEditor.propTypes = {
   onDisciplineCreate: PropTypes.func.isRequired,
   onDisciplineNameChange: PropTypes.func.isRequired,
   onSubAnalysisSearch: PropTypes.func.isRequired,
-  onSubAnalysisSelected: PropTypes.func.isRequired,
 };
 
 DisciplinesEditor.defaultProps = {

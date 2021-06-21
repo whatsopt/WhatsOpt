@@ -17,9 +17,9 @@ Rails.application.routes.draw do
     namespace :v1, defaults: { format: :json } do
       resource :api_doc, only: [:show]
       resources :analyses, shallow: true, as: :mdas, only: [:index, :show, :create, :update] do
-        resource :analysis_discipline, as: :discipline, only: [:create]
+        # resource :analysis_discipline, as: :discipline, only: [:create]
         resources :disciplines, only: [:show, :create, :update, :destroy], shallow: true do
-          resource :analysis_discipline, as: :mda, only: [:create, :destroy]
+          # resource :analysis_discipline, as: :mda, only: [:create, :destroy]
         end
         resources :connections, only: [:create, :update, :destroy]
         resources :operations, only: [:show, :create, :update, :destroy] do

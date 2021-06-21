@@ -20,8 +20,7 @@ class Discipline < ApplicationRecord
   after_destroy :_refresh_analysis_connections
 
   has_many :variables, -> { includes([:parameter, :distributions, :scaling]).order("name ASC") }, dependent: :destroy
-  # has_many :variables, :dependent => :destroy
-  has_one :analysis_discipline, dependent: :destroy, autosave: true
+  has_one :analysis_discipline, dependent: :destroy, inverse_of: :discipline
   has_one :sub_analysis, through: :analysis_discipline, source: :analysis
   has_one :meta_model, dependent: :destroy
 
@@ -31,9 +30,10 @@ class Discipline < ApplicationRecord
   has_one :openmdao_impl, class_name: "OpenmdaoDisciplineImpl", dependent: :destroy
   has_one :endpoint, as: :service, dependent: :destroy
 
-  accepts_nested_attributes_for :variables, reject_if: proc { |attr| attr["name"].blank? }, allow_destroy: true
-  accepts_nested_attributes_for :sub_analysis, reject_if: proc { |attr| attr["name"].blank? }, allow_destroy: true
-  accepts_nested_attributes_for :endpoint, reject_if: proc { |attr| attr["host"].blank? || attr["host"]=="localhost" }, allow_destroy: true
+  accepts_nested_attributes_for :variables, reject_if: proc { |attrs| attrs["name"].blank? }, allow_destroy: true
+  accepts_nested_attributes_for :sub_analysis, reject_if: proc { |attrs| attrs["name"].blank? }, allow_destroy: true
+  accepts_nested_attributes_for :endpoint, reject_if: proc { |attrs| attrs["host"].blank? || attrs["host"]=="localhost" }, allow_destroy: true
+  accepts_nested_attributes_for :analysis_discipline, reject_if: :analysis_discipline_invalid?, allow_destroy: true
 
   validates :name, presence: true, allow_blank: false
   validates :name, format: { with: /\A[a-zA-Z][_a-zA-Z0-9]*|__DRIVER__\z/, message: "%{value} is not a valid discipline name." }
@@ -43,6 +43,14 @@ class Discipline < ApplicationRecord
   scope :nodes, -> { where.not(type: WhatsOpt::Discipline::NULL_DRIVER) }
   scope :by_position, -> { order(position: :asc) }
   scope :of_analysis, -> (analysis_id) { where(analysis_id: analysis_id) }
+
+  def analysis_discipline_invalid?(attrs)
+    Rails.logger.info Analysis.find(attrs["analysis_id"]).nil?
+    Rails.logger.info attrs["discipline_id"] != id.to_s
+    invalid = attrs["discipline_id"] != id.to_s || Analysis.find(attrs["analysis_id"]).nil?
+    Rails.logger.info "INVALID #{invalid}"
+    invalid
+  end
 
   def input_variables
     variables.ins
@@ -66,6 +74,10 @@ class Discipline < ApplicationRecord
 
   def is_metamodel?
     !!(meta_model || (has_sub_analysis? && sub_analysis.is_metamodel?))
+  end
+
+  def is_sub_analysis?
+    type == Discipline::ANALYSIS
   end
 
   def has_sub_analysis?
@@ -102,10 +114,15 @@ class Discipline < ApplicationRecord
     if params[:position]
       insert_at(params[:position])
     end
-    update(params)
-    if sub_analysis && type != WhatsOpt::Discipline::ANALYSIS
-      _detach_sub_analysis
-      analysis_discipline.destroy
+    update!(params)
+    if sub_analysis 
+      if type != WhatsOpt::Discipline::ANALYSIS
+        _detach_sub_analysis
+        analysis_discipline.destroy
+      elsif type == WhatsOpt::Discipline::ANALYSIS
+        self.sub_analysis.parent = self.analysis
+        self.sub_analysis.save!
+      end
     end
   end
 
