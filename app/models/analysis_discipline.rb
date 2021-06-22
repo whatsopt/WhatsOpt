@@ -23,7 +23,6 @@ class AnalysisDiscipline < ApplicationRecord
   end
 
   def report_connections!
-    p "REPORT"
     unless analysis&.new_record?
       disc = discipline
       innermda = analysis
@@ -54,6 +53,7 @@ class AnalysisDiscipline < ApplicationRecord
       innermda.driver.input_variables.each do |var|
         # Rails.logger.info "EXISTENCE #{var.name}"
         producer_count = outermda.disciplines.nodes.joins(:variables).where(variables: { name: var.name, io_mode: WhatsOpt::Variable::OUT }).count
+        # p "#{var.name} #{producer_count}"
         unless producer_count==1 # produced only by sub_analysis
           raise AlreadyDefinedError, "Variable #{var.name} already defined, present in analysis and sub_analysis to be added. \n
           You must remove either one or the other before attaching the sub_analysis."

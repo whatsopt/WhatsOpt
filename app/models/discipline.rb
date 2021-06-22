@@ -45,9 +45,9 @@ class Discipline < ApplicationRecord
   scope :of_analysis, -> (analysis_id) { where(analysis_id: analysis_id) }
 
   def analysis_discipline_invalid?(attrs)
-    Rails.logger.info Analysis.find(attrs["analysis_id"]).nil?
-    Rails.logger.info attrs["discipline_id"] != id.to_s
-    invalid = attrs["discipline_id"] != id.to_s || Analysis.find(attrs["analysis_id"]).nil?
+    Rails.logger.info "FIND ANALYSIS #{Analysis.find(attrs["analysis_id"]).nil?}"
+    Rails.logger.info "DISC #{attrs["discipline_id"] != id}"
+    invalid = (attrs["discipline_id"] != id) || Analysis.find(attrs["analysis_id"]).nil?
     Rails.logger.info "INVALID #{invalid}"
     invalid
   end

@@ -20,6 +20,8 @@ class Api::V1::DisciplinesController < Api::ApiController
   def update
     @discipline.update_discipline(discipline_params)
     head :no_content
+  rescue AnalysisDiscipline::AlreadyDefinedError => e
+      json_response({ message: e.message }, :unprocessable_entity)
   end
 
   # DELETE /api/v1/disciplines/1
