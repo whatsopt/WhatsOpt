@@ -63,8 +63,6 @@ class MdaViewer extends React.Component {
     this.handleDisciplineUpdate = this.handleDisciplineUpdate.bind(this);
     this.handleDisciplineDelete = this.handleDisciplineDelete.bind(this);
     this.handleSubAnalysisSearch = this.handleSubAnalysisSearch.bind(this);
-    // this.handleSubAnalysisCreate = this.handleSubAnalysisCreate.bind(this);
-    // this.handleSubAnalysisSelected = this.handleSubAnalysisSelected.bind(this);
     this.handleConnectionNameChange = this.handleConnectionNameChange.bind(this);
     this.handleConnectionCreate = this.handleConnectionCreate.bind(this);
     this.handleConnectionDelete = this.handleConnectionDelete.bind(this);
@@ -236,26 +234,6 @@ class MdaViewer extends React.Component {
       },
     );
   }
-
-  // handleSubAnalysisCreate(node, selected) {
-  //   if (selected.length) {
-  //     this.api.createSubAnalysisDiscipline(node.id, selected[0].id,
-  //       (/* response */) => {
-  //         this.renderXdsm();
-  //       });
-  //   }
-  // }
-
-  // handleSubAnalysisSelected(node, selected) {
-  //   if (selected.length) {
-  //     const selection = {};
-  //     selection[node.id] = selected[0].id;
-  //     const newState = update(this.state, {
-  //       selectedSubAnalyses: { $merge: selection },
-  //     });
-  //     this.setState(newState);
-  //   }
-  // }
 
   // *** Analysis ************************************************************
   handleAnalysisNameChange(event) {
