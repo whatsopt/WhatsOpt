@@ -46,8 +46,8 @@ class Discipline < ApplicationRecord
 
   def analysis_discipline_invalid?(attrs)
     Rails.logger.info "FIND ANALYSIS #{Analysis.find(attrs["analysis_id"]).nil?}"
-    Rails.logger.info "DISC #{attrs["discipline_id"] != id}"
-    invalid = (attrs["discipline_id"] != id) || Analysis.find(attrs["analysis_id"]).nil?
+    Rails.logger.info "DISC #{attrs["discipline_id"].to_i != id}"
+    invalid = (attrs["discipline_id"].to_i != id) || Analysis.find(attrs["analysis_id"]).nil?
     Rails.logger.info "INVALID #{invalid}"
     invalid
   end
