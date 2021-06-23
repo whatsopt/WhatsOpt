@@ -146,8 +146,17 @@ class Discipline < ApplicationRecord
   def build_sub_analysis(mda_params)
     self.name = mda_params["name"]
     new_sub_analysis = Analysis.new(mda_params)
-    AnalysisDiscipline.build_analysis_discipline(self, new_sub_analysis)
+    self.create_sub_analysis_discipline!(new_sub_analysis)
     new_sub_analysis
+  end
+
+  def create_sub_analysis_discipline!(innermda)
+    self.type = Discipline::ANALYSIS
+    self.name = innermda.name
+    self.save!
+    self.build_analysis_discipline(analysis: innermda)
+    innermda.parent = self.analysis
+    innermda.save!
   end
 
   def create_copy!(mda)

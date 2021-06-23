@@ -688,20 +688,20 @@ class Analysis < ApplicationRecord
     Variable.of_analysis(mda).each do |v|
       # Rails.logger.info ">>> #{v.discipline.name}(#{v.discipline.id}) #{v.name} #{v.io_mode}"
     end
-    Connection.of_analysis(mda).each do |c|
-      # Rails.logger.info "CCCCCCCCCCCCCCC #{c.from.discipline.name} -> #{c.to.discipline.name}  #{c.from.name}(#{c.from.id})"
-    end
+    # Connection.of_analysis(mda).each do |c|
+    #   # Rails.logger.info "CCCCCCCCCCCCCCC #{c.from.discipline.name} -> #{c.to.discipline.name}  #{c.from.name}(#{c.from.id})"
+    # end
     # link disciplines and sub analyses
     subs.each.with_index do |submda, i|
       if submda
-        AnalysisDiscipline.build_analysis_discipline(mda.disciplines[i], submda).save!
+        mda.disciplines[i].create_sub_analysis_discipline!(submda)
         # Rails.logger.info "DISCIPLINE TYPE #{mda.disciplines[i].type}"
       end
     end
     # Rails.logger.info "================  EDGES of #{mda.name}"
-    Connection.of_analysis(mda).each do |c|
-      # Rails.logger.info "DDDDDDDDDDDDDD #{c.from.discipline.name} -> #{c.to.discipline.name}  #{c.from.name}(#{c.from.id})"
-    end
+    # Connection.of_analysis(mda).each do |c|
+    #   # Rails.logger.info "DDDDDDDDDDDDDD #{c.from.discipline.name} -> #{c.to.discipline.name}  #{c.from.name}(#{c.from.id})"
+    # end
     # Rails.logger.info mda.build_edges.inspect
     mda
   end

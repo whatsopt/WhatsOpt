@@ -8,20 +8,6 @@ class AnalysisDiscipline < ApplicationRecord
 
   class AlreadyDefinedError < StandardError; end
 
-  def self.build_analysis_discipline(disc, innermda)
-    disc.type = Discipline::ANALYSIS
-    disc.name = innermda.name
-    mda_discipline = disc.build_analysis_discipline
-    mda_discipline.analysis = innermda
-    innermda.parent = disc.analysis
-    mda_discipline
-  end
-
-  def save!
-    self.analysis.save!
-    self.discipline.save!
-  end
-
   def report_connections!
     unless analysis&.new_record?
       disc = discipline

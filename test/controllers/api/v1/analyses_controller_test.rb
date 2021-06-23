@@ -95,6 +95,7 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
   test "should create nested analysis" do
     assert_difference("Discipline.count", 4) do
       assert_difference("Analysis.count", 2) do
+        assert_difference("AnalysisDiscipline.count", 1) do
         mda_attrs =
           { "name": "Outer", "disciplines_attributes": [
             { "name": "__DRIVER__", "variables_attributes": [
@@ -117,6 +118,7 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
           ] }
         post api_v1_mdas_url, params: { analysis: mda_attrs }, as: :json, headers: @auth_headers
         assert_response :success
+        end
       end
     end
     outer = Analysis.last
@@ -132,6 +134,14 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     assert_equal outer.id, inner.parent.id
     assert_equal @user1, outer.owner
     assert_equal @user1, inner.owner
+  end
+
+  test "should create nested sellar analysis" do
+    mda_attrs = JSON.parse(sample_file("nested_sellar.json").read.chomp)
+    assert_difference("AnalysisDiscipline.count", 1) do
+      post api_v1_mdas_url, params: { analysis: mda_attrs }, as: :json, headers: @auth_headers
+      assert_response :success
+    end
   end
 
   test "should create sellar optim analysis" do
