@@ -136,4 +136,14 @@ disc_singleton_uq:
   analysis: singleton_uq
   position: 1
 
-  
+driver_sub_analysis:
+  name: __DRIVER__
+  type: null_driver
+  analysis: sub_analysis
+  position: 0
+
+disc_sub_analysis:
+  name: SingletonDiscipline
+  type: analysis
+  analysis: sub_analysis
+  position: 1

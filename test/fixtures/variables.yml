@@ -448,4 +448,29 @@ varv_disc_out_uq:
   <<: *varv_disc_out
   discipline: disc_singleton_uq
 
+# SUB_ANALYSIS ##################################################################
+varu_driver_out_sub: &var_in
+  name: u
+  discipline: driver_sub_analysis
+  io_mode: out
+  type: Float
+  shape: 1
+  active: true
 
+varu_disc_in_sub:
+  <<: *var_in
+  io_mode: in
+  discipline: disc_sub_analysis
+
+varv_driver_in_sub: &var_out
+  name: ya
+  discipline: driver_sub_analysis
+  io_mode: in
+  type: Float
+  shape: 1
+  active: true
+
+varv_disc_out_sub:
+  <<: *var_out
+  io_mode: out
+  discipline: disc_sub_analysis

@@ -49,4 +49,19 @@ class DisciplineTest < ActiveSupport::TestCase
     assert :metamodel, copy.type
     assert copy.is_pure_metamodel?
   end
+
+  test "should create ancestor when creating analysis_discipline" do
+    disc = disciplines(:outermda_vacant_discipline)
+    innermda = analyses(:singleton)
+    outermda = analyses(:outermda)
+    assert_difference("AnalysisDiscipline.count") do
+      disc.create_sub_analysis_discipline!(innermda)
+    end
+    innermda.reload
+    outermda.reload
+    disc.reload
+    assert innermda.has_parent?
+    assert outermda, innermda.ancestors
+    assert innermda.name, disc.name
+  end
 end

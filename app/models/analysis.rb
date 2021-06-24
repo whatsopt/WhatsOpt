@@ -241,7 +241,6 @@ class Analysis < ApplicationRecord
             name: i==0 ? "_U_" : n[:name],
             type: i==0 ? "driver" : n[:type]
           }
-          node[:type] = "function" if node[:type] == "analysis"  # XDSM v2
           node[:subxdsm] = n[:link][:name] if n[:type]=="group" && n[:link]
           node
         },
@@ -263,8 +262,9 @@ class Analysis < ApplicationRecord
       # TODO: if XDSM v2 accepted migrate database to take into account XDSM v2 new types
       # mda -> group
       node[:type] = "group" if node[:type] == "mda"
+      # analysis -> function 
       # not required as function and analysis are considered synonymous in XDSMjs for XDSM v2
-      # node[:type] = 'function' if node[:type] == 'analysis'
+      node[:type] = 'function' if node[:type] == 'analysis'
       node[:id] = node[:id].to_s
       node[:link] = { id: parent.id, name: parent.name } if d.is_driver? && has_parent?
       node[:link] = { id: d.sub_analysis.id, name: d.sub_analysis.name } if d.has_sub_analysis?
@@ -688,20 +688,20 @@ class Analysis < ApplicationRecord
     Variable.of_analysis(mda).each do |v|
       # Rails.logger.info ">>> #{v.discipline.name}(#{v.discipline.id}) #{v.name} #{v.io_mode}"
     end
-    Connection.of_analysis(mda).each do |c|
-      # Rails.logger.info "CCCCCCCCCCCCCCC #{c.from.discipline.name} -> #{c.to.discipline.name}  #{c.from.name}(#{c.from.id})"
-    end
+    # Connection.of_analysis(mda).each do |c|
+    #   # Rails.logger.info "CCCCCCCCCCCCCCC #{c.from.discipline.name} -> #{c.to.discipline.name}  #{c.from.name}(#{c.from.id})"
+    # end
     # link disciplines and sub analyses
     subs.each.with_index do |submda, i|
       if submda
-        AnalysisDiscipline.build_analysis_discipline(mda.disciplines[i], submda).save!
+        mda.disciplines[i].create_sub_analysis_discipline!(submda)
         # Rails.logger.info "DISCIPLINE TYPE #{mda.disciplines[i].type}"
       end
     end
     # Rails.logger.info "================  EDGES of #{mda.name}"
-    Connection.of_analysis(mda).each do |c|
-      # Rails.logger.info "DDDDDDDDDDDDDD #{c.from.discipline.name} -> #{c.to.discipline.name}  #{c.from.name}(#{c.from.id})"
-    end
+    # Connection.of_analysis(mda).each do |c|
+    #   # Rails.logger.info "DDDDDDDDDDDDDD #{c.from.discipline.name} -> #{c.to.discipline.name}  #{c.from.name}(#{c.from.id})"
+    # end
     # Rails.logger.info mda.build_edges.inspect
     mda
   end

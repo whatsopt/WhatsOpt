@@ -8,6 +8,8 @@ class Api::V1::DisciplineControllerTest < ActionDispatch::IntegrationTest
     @mda = analyses(:cicav)
     @disc = disciplines(:geometry)
     @disc2 = disciplines(:aerodynamics)
+    @submda = analyses(:singleton)
+    @submda2 = analyses(:sub_analysis)
   end
 
   test "should get given discipline" do
@@ -20,12 +22,55 @@ class Api::V1::DisciplineControllerTest < ActionDispatch::IntegrationTest
 
   test "should create discipline in given mda" do
     assert_difference("Discipline.count") do
-      post api_v1_mda_disciplines_url(@mda), params: { discipline: { name: "TestDiscipline", type: "analysis" } }, as: :json, headers: @auth_headers
+      post api_v1_mda_disciplines_url(@mda), params: { 
+        discipline: { name: "TestDiscipline", type: "analysis" 
+      } }, as: :json, headers: @auth_headers
     end
     assert_response :success
     resp = JSON.parse(response.body)
     assert_equal "TestDiscipline", resp["name"]
     assert_equal @mda.id, Discipline.last.analysis.id
+  end
+
+  test "should update a discipline with sub analysis" do
+    assert_difference("Discipline.count", 0) do
+      assert_difference("AnalysisDiscipline.count") do
+        put api_v1_discipline_url(@disc), params: { 
+          discipline: { name: "TestDiscipline", type: "mda",
+                        analysis_discipline_attributes: { discipline_id: @disc.id, analysis_id: @submda.id }
+          } }, as: :json, headers: @auth_headers
+      end
+    end
+    assert_response :success
+    assert @disc.sub_analysis
+    @disc.reload
+  end
+
+  test "should prevent a sub_analysis with same output" do
+    post api_v1_mda_disciplines_url(@mda), params: { 
+      discipline: { name: "TestDiscipline", type: "analysis" 
+    } }, as: :json, headers: @auth_headers
+    assert_response :success
+    disc = Discipline.last
+    assert_difference("Discipline.count", 0) do
+      assert_difference("AnalysisDiscipline.count", 0) do
+        put api_v1_discipline_url(disc), params: { 
+          discipline: { name: "TestDiscipline", type: "mda",
+                        analysis_discipline_attributes: { discipline_id: disc.id, analysis_id: @submda2.id }
+          } }, as: :json, headers: @auth_headers
+      end
+    end
+    assert_response :unprocessable_entity
+  end
+
+  test "should prevent a sub_analysis discipline without analysis" do
+    assert_difference("AnalysisDiscipline.count", 0) do
+      put api_v1_discipline_url(@disc), params: { 
+        discipline: { name: "TestDiscipline", type: "mda",
+                      analysis_discipline_attributes: { discipline_id: @disc.id, analysis_id: nil }
+        } }, as: :json, headers: @auth_headers
+    end
+    assert_response :not_found
   end
 
   test "should update discipline" do

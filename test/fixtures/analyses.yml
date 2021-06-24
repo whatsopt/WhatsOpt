@@ -30,4 +30,7 @@ singleton_mm:
   
 singleton_uq:
   name: singleton_uq
+
+sub_analysis:
+  name: sub_analysis_to_be_added
   

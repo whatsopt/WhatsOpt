@@ -63,7 +63,6 @@ class MdaViewer extends React.Component {
     this.handleDisciplineUpdate = this.handleDisciplineUpdate.bind(this);
     this.handleDisciplineDelete = this.handleDisciplineDelete.bind(this);
     this.handleSubAnalysisSearch = this.handleSubAnalysisSearch.bind(this);
-    this.handleSubAnalysisCreate = this.handleSubAnalysisCreate.bind(this);
     this.handleConnectionNameChange = this.handleConnectionNameChange.bind(this);
     this.handleConnectionCreate = this.handleConnectionCreate.bind(this);
     this.handleConnectionDelete = this.handleConnectionDelete.bind(this);
@@ -204,6 +203,7 @@ class MdaViewer extends React.Component {
       const newState = update(this.state, { mda: { nodes: { $set: items } } });
       this.setState(newState);
     }
+    console.log(discAttrs);
     this.api.updateDiscipline(node.id, discAttrs,
       () => { this.renderXdsm(); },
       (error) => {
@@ -233,15 +233,6 @@ class MdaViewer extends React.Component {
         callback(options);
       },
     );
-  }
-
-  handleSubAnalysisCreate(node, selected) {
-    if (selected.length) {
-      this.api.createSubAnalysisDiscipline(node.id, selected[0].id,
-        (/* response */) => {
-          this.renderXdsm();
-        });
-    }
   }
 
   // *** Analysis ************************************************************
@@ -650,7 +641,7 @@ class MdaViewer extends React.Component {
                 limited={db.mda.operated}
                 onDisciplineNameChange={this.handleDisciplineNameChange}
                 onSubAnalysisSearch={this.handleSubAnalysisSearch}
-                onSubAnalysisSelected={this.handleSubAnalysisCreate}
+                onSubAnalysisSelected={this.handleSubAnalysisSelected}
                 onDisciplineCreate={this.handleDisciplineCreate}
                 onDisciplineDelete={this.handleDisciplineDelete}
                 onDisciplineUpdate={this.handleDisciplineUpdate}

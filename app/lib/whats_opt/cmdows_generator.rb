@@ -45,7 +45,7 @@ class WhatsOpt::CmdowsGenerator
 
   def _generate_header(xml)
     xml.header do
-      xml.creator @mda.owner
+      xml.creator @mda.owner.email
       xml.description @mda.name
       xml.timestamp DateTime.now
       xml.fileVersion "1.0"

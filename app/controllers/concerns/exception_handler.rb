@@ -19,5 +19,6 @@ module ExceptionHandler
       Rails.logger.error "Version: " + e.message
       json_response({ message: e.message }, :forbidden)
     end
+
   end
 end

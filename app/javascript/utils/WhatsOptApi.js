@@ -163,13 +163,6 @@ class WhatsOptApi {
       .catch((error) => console.log(error));
   }
 
-  createSubAnalysisDiscipline(discId, subMdaId, callback) {
-    const path = `/disciplines/${discId}/analysis_discipline`;
-    axios.post(this.apiUrl(path), { analysis_discipline: { analysis_id: subMdaId } })
-      .then(callback)
-      .catch((error) => console.log(error));
-  }
-
   createConnection(mdaId, connectionAttributes, callback, onError) {
     const path = `/analyses/${mdaId}/connections`;
     axios.post(this.apiUrl(path), { connection: connectionAttributes })

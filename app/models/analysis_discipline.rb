@@ -6,19 +6,7 @@ class AnalysisDiscipline < ApplicationRecord
   belongs_to :discipline
   belongs_to :analysis
 
-  def self.build_analysis_discipline(disc, innermda)
-    disc.type = :mda
-    disc.name = innermda.name
-    mda_discipline = disc.build_analysis_discipline
-    mda_discipline.analysis = innermda
-    innermda.parent = disc.analysis
-    mda_discipline
-  end
-
-  def save!
-    analysis.save!
-    discipline.save!
-  end
+  class AlreadyDefinedError < StandardError; end
 
   def report_connections!
     unless analysis&.new_record?
@@ -50,6 +38,13 @@ class AnalysisDiscipline < ApplicationRecord
       # should add to the driver if not connected by other disciplines
       innermda.driver.input_variables.each do |var|
         # Rails.logger.info "EXISTENCE #{var.name}"
+        producer_count = outermda.disciplines.nodes.joins(:variables).where(variables: { name: var.name, io_mode: WhatsOpt::Variable::OUT }).count
+        # p "#{var.name} #{producer_count}"
+        unless producer_count==1 # produced only by sub_analysis
+          raise AlreadyDefinedError, "Variable #{var.name} already defined, present in analysis and sub_analysis to be added. \n
+          You must remove either one or the other before attaching the sub_analysis."
+        end
+
         existing = outermda.driver.variables.where(name: var.name, io_mode: WhatsOpt::Variable::OUT).first
         if existing
           # Rails.logger.info "REMOVE EXISTING SOURCE FROM DRIVER"
