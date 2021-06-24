@@ -1,8 +1,8 @@
 <h1>CHANGELOG</h1>
 
-<h3>1.14.5 (15/06/2021)</h3>
+<h3>1.15.0 (25/06/2021)</h3>
 <ul>
-  <li>User can export GEMSEO code: require wop 1.14.0
+  <li>User can export GEMSEO code (require wop 1.14.0):
     <ul> 
   	<li>Export GEMSEO code from WhatsOpt analysis (aka wop pull --gemseo <id>)</li>  
   	<li>Update code from OpenMDAO to GEMSEO and back (aka wop update --gemseo/--openmdao)</li>
@@ -14,8 +14,10 @@
   	<li>User can view variables by pages</li>
     </ul>
   <ul>
-  <li>XDSM generation (wop show -f) is available without WhatsOpt account</li>
+  <li>XDSM generation (wop show -f) is available without WhatsOpt account (require wop 1.15.0)</li>
   <li>Python templates improvements (PEP8)</li>
+  <li>Fix sub analysis attachment preventing from missing sub analysis</li>
+  <li>Fix possible duplicated outputs when attaching sub_analysis</li>
   <li>Fix column ordering when editing the variable table</li> 
   <li>Fix lengthy variable names visibility in variable table</li>
   <li>Fix column sorting (not to be reset when editing)</li>
