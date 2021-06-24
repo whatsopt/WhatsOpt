@@ -27,7 +27,6 @@
     <ul>
       <li>Fix sub analysis attachment preventing from missing sub analysis</li>
       <li>Fix possible duplicated outputs when attaching sub_analysis</li>
-      <li>Fix column ordering when editing the variable table</li>
       <li>Fix lengthy variable names visibility in variable table</li>
       <li>Fix column sorting (not to be reset when editing)</li>
       <li>Fix scatterplot legend width</li>
