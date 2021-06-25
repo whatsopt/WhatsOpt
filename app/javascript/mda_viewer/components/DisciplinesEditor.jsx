@@ -82,8 +82,6 @@ class Discipline extends React.Component {
     const discAttrs = {
       name: discName,
       type: discType,
-      // endpoint_attributes: { host: discHost, port: discPort },
-      // analysis_discipline_attributes: { discipline_id: node.id, analysis_id: subAnalysisId },
     };
     if (discType === DISCIPLINE) {
       discAttrs.endpoint_attributes = { host: discHost, port: discPort };
@@ -131,7 +129,9 @@ class Discipline extends React.Component {
 
   handleSubAnalysisSelected(selected) {
     console.log(`Select ${JSON.stringify(selected)}`);
-    this.setState({ selected });
+    // Extract name from analysis label #\d+ name
+    const [, discName] = selected[0].label.match(/#\d+\s(.*)/);
+    this.setState({ selected, discName });
   }
 
   render() {
