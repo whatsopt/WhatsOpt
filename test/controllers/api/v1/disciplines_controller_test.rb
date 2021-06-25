@@ -33,17 +33,19 @@ class Api::V1::DisciplineControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update a discipline with sub analysis" do
+    assert_not_equal @submda.name, @disc.name
     assert_difference("Discipline.count", 0) do
       assert_difference("AnalysisDiscipline.count") do
         put api_v1_discipline_url(@disc), params: { 
-          discipline: { name: "TestDiscipline", type: "mda",
+          discipline: { type: "mda",
                         analysis_discipline_attributes: { discipline_id: @disc.id, analysis_id: @submda.id }
           } }, as: :json, headers: @auth_headers
       end
     end
     assert_response :success
-    assert @disc.sub_analysis
     @disc.reload
+    assert_equal @submda, @disc.sub_analysis
+    assert @submda.name, @disc.name
   end
 
   test "should prevent a sub_analysis with same output" do
