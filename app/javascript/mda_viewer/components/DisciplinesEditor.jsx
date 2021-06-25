@@ -16,13 +16,19 @@ function isLocalHost(host) {
 class Discipline extends React.Component {
   constructor(props) {
     super(props);
+    const { node: { link } } = props;
+    let selected = [];
+    if (link) {
+      selected = [{ id: link.id, label: `#${link.id} ${link.name}` }];
+    }
+
     this.state = {
       discName: '',
       discType: DISCIPLINE,
       discHost: '',
       discPort: 31400,
       isEditing: false,
-      selected: [],
+      selected,
     };
 
     this.handleDiscNameChange = this.handleDiscNameChange.bind(this);
@@ -136,7 +142,7 @@ class Discipline extends React.Component {
 
   render() {
     const {
-      isEditing, discType, discHost, discPort, discName,
+      isEditing, discType, discHost, discPort, discName, selected,
     } = this.state;
     const {
       node, onSubAnalysisSearch, index, limited,
@@ -146,11 +152,6 @@ class Discipline extends React.Component {
 
     if (isEditing) {
       let deploymentOrSubAnalysis;
-      let selected = [];
-      const { link } = node;
-      if (link) {
-        selected = [{ id: link.id, label: `#${link.id} ${link.name}` }];
-      }
       if (discType === ANALYSIS) {
         deploymentOrSubAnalysis = (
           <div className="form-group ml-2">
