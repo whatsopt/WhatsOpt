@@ -15,7 +15,6 @@ class Discipline < ApplicationRecord
   after_initialize :set_defaults, unless: :persisted?
 
   before_destroy :_check_allowed_destruction
-  before_destroy :_detach_sub_analysis
   before_destroy :_destroy_connections
   after_destroy :_refresh_analysis_connections
 
@@ -117,7 +116,7 @@ class Discipline < ApplicationRecord
     update!(params)
     if sub_analysis 
       if type != WhatsOpt::Discipline::ANALYSIS
-        _detach_sub_analysis
+        # _detach_sub_analysis
         analysis_discipline.destroy
       elsif type == WhatsOpt::Discipline::ANALYSIS
         self.sub_analysis.parent = self.analysis
@@ -233,13 +232,6 @@ class Discipline < ApplicationRecord
     def _destroy_connections
       conns = Connection.from_discipline(self.id) + Connection.to_discipline(self.id)
       conns.map(&:destroy!)
-    end
-
-    def _detach_sub_analysis
-      if sub_analysis
-        sub_analysis.parent = nil
-        sub_analysis.save!
-      end
     end
 
     def _refresh_analysis_connections

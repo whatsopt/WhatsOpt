@@ -2,12 +2,17 @@
 
 class AnalysisDiscipline < ApplicationRecord
   before_save :report_connections!
+  before_destroy :detach_analysis!
 
   belongs_to :discipline
   belongs_to :analysis
 
   class AlreadyDefinedError < StandardError; end
 
+private
+
+  # When saving analysis_discipline we ensiure we propagate sub driver's
+  # connections to parent analysis.
   def report_connections!
     unless analysis&.new_record?
       disc = discipline
@@ -64,5 +69,11 @@ class AnalysisDiscipline < ApplicationRecord
 
       outermda.save!
     end
+  end
+
+  # When analysis_discipline is destroyed we manage analysis ancestry
+  # by nullifying the parent and make it root again. 
+  def detach_analysis!
+    analysis.update!(parent: nil)
   end
 end

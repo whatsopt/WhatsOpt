@@ -48,6 +48,27 @@ class Api::V1::DisciplineControllerTest < ActionDispatch::IntegrationTest
     assert @submda.name, @disc.name
   end
 
+  test "should update a sub analysis" do
+    disc = disciplines(:outermda_innermda_discipline)
+    innermda = analyses(:innermda)
+    assert_difference("Discipline.count", 0) do
+      assert_difference("AnalysisDiscipline.count", 0) do
+        put api_v1_discipline_url(disc), params: { 
+          discipline: { type: "mda",
+                        analysis_discipline_attributes: { discipline_id: disc.id, analysis_id: @submda.id }
+          } }, as: :json, headers: @auth_headers
+        assert_response :success
+      end
+    end
+    disc.reload
+    assert_equal @submda, disc.sub_analysis
+    @submda.reload
+    refute @submda.is_root?
+    innermda.reload
+    assert innermda.is_root?
+    assert innermda.analysis_discipline.nil?
+  end
+
   test "should prevent a sub_analysis with same output" do
     post api_v1_mda_disciplines_url(@mda), params: { 
       discipline: { name: "TestDiscipline", type: "analysis" 
