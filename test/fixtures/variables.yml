@@ -5,6 +5,7 @@ varx1_out:
   type: Float
   shape: 1
   active: true
+  units: "m"
 
 vary2_in:
   name: y2

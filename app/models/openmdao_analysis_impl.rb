@@ -58,5 +58,6 @@ class OpenmdaoAnalysisImpl < ActiveRecord::Base
       self.parallel_group = false if parallel_group.nil?
       self.nonlinear_solver ||= Solver.new(name: "NonlinearBlockGS")
       self.linear_solver ||= Solver.new(name: "ScipyKrylov")
+      self.use_units = false if use_units.nil?
     end
 end
