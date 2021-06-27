@@ -13,9 +13,22 @@ class Api::V1::OpenmdaoImplsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test "should update openmdao impl" do
+  test "should update openmdao impl parallel flag" do
+    refute @mda.openmdao_impl.parallel_group
     put api_v1_mda_openmdao_impl_url(@mda), params: { openmdao_impl: { components: { parallel_group: true } } },
                                             as: :json, headers: @auth_headers
     assert_response :success
+    @mda.reload
+    assert @mda.openmdao_impl.parallel_group
   end
+
+  test "should update openmdao impl use_units flag" do
+    refute @mda.openmdao_impl.use_units
+    put api_v1_mda_openmdao_impl_url(@mda), params: { openmdao_impl: { components: { use_units: true } } },
+                                            as: :json, headers: @auth_headers
+    assert_response :success
+    @mda.reload
+    assert @mda.openmdao_impl.use_units
+  end
+
 end
