@@ -112,6 +112,14 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     # assert_empty log
   end
 
+  test "should run openmdao check and return true when using units" do
+    skip "Apache Thrift not installed" unless thrift?
+    @mda.openmdao_impl.update(use_units: true)
+    ok, _log = @ogen.check_mda_setup
+    assert ok  # ok even if discipline without connections
+    # assert_empty log
+  end
+
   test "should run openmdao check and return false when invalid" do
     skip "Apache Thrift not installed" unless thrift?
     mda = analyses(:fast)

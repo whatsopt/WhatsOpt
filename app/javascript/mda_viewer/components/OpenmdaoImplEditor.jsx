@@ -65,6 +65,7 @@ function _getOpenmdaoImpl(formData) {
     components: {
       parallel_group: formData.components.parallel_group,
       use_scaling: formData.components.use_scaling,
+      use_units: formData.components.use_units,
       nodes,
     },
     nonlinear_solver: { ...formData.nonlinear_solver },
@@ -116,8 +117,9 @@ class OpenmdaoImplEditor extends React.Component {
           title: 'Group',
           type: 'object',
           properties: {
-            parallel_group: { type: 'boolean', title: 'Parallel Execution (MPI)' },
+            use_units: { type: 'boolean', title: 'Use units' },
             use_scaling: { type: 'boolean', title: 'Use scaling' },
+            parallel_group: { type: 'boolean', title: 'Parallel Execution (MPI)' },
           },
         },
       },
@@ -136,7 +138,7 @@ class OpenmdaoImplEditor extends React.Component {
     });
     // UI schema
     const uiSchema = {
-      components: { 'ui:order': ['parallel_group', 'use_scaling', '*'] },
+      components: { 'ui:order': ['use_units', 'use_scaling', 'parallel_group', '*'] },
     };
     if (db.isScaled()) {
       uiSchema.components.use_scaling = { 'ui:disabled': true };
@@ -147,8 +149,9 @@ class OpenmdaoImplEditor extends React.Component {
     const linearSolver = impl.linear_solver;
     const formData = {
       components: {
-        parallel_group: impl.components.parallel_group,
+        use_units: impl.components.use_units,
         use_scaling: impl.components.use_scaling,
+        parallel_group: impl.components.parallel_group,
       },
       nonlinear_solver: { ...nonlinearSolver },
       linear_solver: { ...linearSolver },

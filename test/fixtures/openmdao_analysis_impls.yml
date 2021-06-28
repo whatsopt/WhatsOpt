@@ -3,3 +3,4 @@ openmdao_cicav_impl:
   parallel_group: false
   nonlinear_solver_id: <%= ActiveRecord::FixtureSet.identify(:nlbgs) %>
   linear_solver_id: <%= ActiveRecord::FixtureSet.identify(:scipy_krylov) %>
+  use_units: false

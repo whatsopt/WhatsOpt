@@ -59,19 +59,19 @@ pb.model.add_recorder(recorder)
 pb.model.approx_totals(method='fd', step=1e-6, form='central')
 <% end -%>
 <%- @mda.design_variables.each do |dv| %>
-pb.model.add_design_var('<%= dv.name %>', lower=<%= dv.lower_py_value %>, upper=<%= dv.upper_py_value %>)<% end -%>
+pb.model.add_design_var('<%= dv.name %>', lower=<%= dv.lower_py_value %>, upper=<%= dv.upper_py_value %><%= @impl.use_units && !dv.units.blank? ? ", units='#{dv.units}'":"" %>)<% end -%>
 
 <% @mda.min_objective_variables.each do |voi| %>
-pb.model.add_objective('<%= voi.name %>')<% end -%>
+pb.model.add_objective('<%= voi.name %>'<%= @impl.use_units && !voi.units.blank? ? ", units='#{voi.units}'":"" %>)<% end -%>
 
 <% @mda.max_objective_variables.each do |voi| %>
-pb.model.add_objective('<%= voi.name %>', scaler=-1)<% end -%>
+pb.model.add_objective('<%= voi.name %>', scaler=-1<%= @impl.use_units && !voi.units.blank? ? ", units='#{voi.units}'":"" %>)<% end -%>
 
 <% @mda.ineq_constraint_variables.each do |voi| %>
-pb.model.add_constraint('<%= voi.name %>', upper=0.)<% end -%>
+pb.model.add_constraint('<%= voi.name %>', upper=0.<%= @impl.use_units && !voi.units.blank? ? ", units='#{voi.units}'":"" %>)<% end -%>
 
 <% @mda.eq_constraint_variables.each do |voi| %>
-pb.model.add_constraint('<%= voi.name %>', equals=0.)<% end -%>
+pb.model.add_constraint('<%= voi.name %>', equals=0.<%= @impl.use_units && !voi.units.blank? ? ", units='#{voi.units}'":"" %>)<% end -%>
 
 pb.setup()
 

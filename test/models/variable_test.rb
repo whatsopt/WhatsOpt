@@ -49,7 +49,7 @@ class VariableTest < ActiveSupport::TestCase
   def test_as_json
     var = variables(:varx1_out)
     adapter = ActiveModelSerializers::SerializableResource.new(var)
-    assert_equal [:active, :distributions_attributes, :io_mode, :name, :parameter_attributes, :shape, :type], adapter.as_json.keys.sort
+    assert_equal [:active, :distributions_attributes, :io_mode, :name, :parameter_attributes, :shape, :type, :units], adapter.as_json.keys.sort
     assert_equal({ init: "3.14", lower: "1", upper: "10" }, adapter.as_json[:parameter_attributes])
   end
 

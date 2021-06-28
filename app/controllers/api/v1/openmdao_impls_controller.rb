@@ -20,7 +20,7 @@ class Api::V1::OpenmdaoImplsController < Api::ApiController
 
   private
     def impl_params
-      params.require(:openmdao_impl).permit(components: [:parallel_group, nodes: [[:discipline_id, :implicit_component, :support_derivatives]]],
+      params.require(:openmdao_impl).permit(components: [:parallel_group, :use_units, nodes: [[:discipline_id, :implicit_component, :support_derivatives]]],
                                             nonlinear_solver: [:name, :atol, :rtol, :maxiter, :err_on_non_converge, :iprint],
                                             linear_solver: [:name, :atol, :rtol, :maxiter, :err_on_non_converge, :iprint])
     end
