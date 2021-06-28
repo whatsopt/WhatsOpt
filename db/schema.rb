@@ -2,15 +2,15 @@
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
 #
-# This file is the source Rails uses to define your schema when running `rails
-# db:schema:load`. When creating a new database, `rails db:schema:load` tends to
+# This file is the source Rails uses to define your schema when running `bin/rails
+# db:schema:load`. When creating a new database, `bin/rails db:schema:load` tends to
 # be faster and is potentially less error prone than running all of your
 # migrations from scratch. Old migrations may fail to apply correctly if those
 # migrations use external dependencies or application code.
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_24_122931) do
+ActiveRecord::Schema.define(version: 2021_06_27_063744) do
 
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
@@ -165,6 +165,7 @@ ActiveRecord::Schema.define(version: 2020_09_24_122931) do
     t.integer "analysis_id"
     t.integer "nonlinear_solver_id"
     t.integer "linear_solver_id"
+    t.boolean "use_units"
     t.index ["analysis_id"], name: "index_openmdao_analysis_impls_on_analysis_id"
     t.index ["linear_solver_id"], name: "index_openmdao_analysis_impls_on_linear_solver_id"
     t.index ["nonlinear_solver_id"], name: "index_openmdao_analysis_impls_on_nonlinear_solver_id"
@@ -208,9 +209,9 @@ ActiveRecord::Schema.define(version: 2020_09_24_122931) do
   end
 
   create_table "parameters", force: :cascade do |t|
-    t.text "init"
-    t.text "lower"
-    t.text "upper"
+    t.string "init", default: ""
+    t.string "lower", default: ""
+    t.string "upper", default: ""
     t.integer "variable_id"
   end
 
@@ -295,7 +296,6 @@ ActiveRecord::Schema.define(version: 2020_09_24_122931) do
     t.boolean "active", default: true
     t.index ["discipline_id"], name: "index_variables_on_discipline_id"
   end
-
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "analysis_disciplines", "analyses"
   add_foreign_key "analysis_disciplines", "disciplines"
