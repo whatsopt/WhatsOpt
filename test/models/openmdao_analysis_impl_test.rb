@@ -15,11 +15,14 @@ class OpenmdaoAnalysisImplTest < ActiveSupport::TestCase
   end
 
   test "should update parallel flag" do
-    @oai.update_impl(parallel_group: true)
+    @oai.update_impl({components: {parallel_group: true, use_units: true}})
     assert_not @oai.parallel_group.nil?
     assert @oai.parallel_group
-    @oai.update_impl(parallel_group: false)
+    assert_not @oai.use_units.nil?
+    assert @oai.use_units
+    @oai.update_impl({components: {parallel_group: false, use_units: false}})
     assert_not @oai.parallel_group
+    assert_not @oai.use_units
   end
 
   test "should update solver" do
