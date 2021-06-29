@@ -30,6 +30,7 @@ Rails.application.routes.draw do
         resource :parameterization, only: [:update]
         post 'openmdao_checking', to: 'openmdao_checking#create' 
         get 'exports/new'
+        get 'comparisons/new'
       end
       resources :meta_models, only: [:index, :show]
       resources :operations, only: [:create]
