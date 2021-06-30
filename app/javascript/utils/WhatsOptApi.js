@@ -156,8 +156,9 @@ class WhatsOptApi {
       .catch((error) => console.log(error));
   }
 
-  getAnalysisCandidates(callback) {
-    const path = '/analyses?with_sub_analyses=true';
+  getAnalysisCandidates(callback, allAnalysis) {
+    const all = allAnalysis ? '?all=true' : ''; // otherwise default to mine only
+    const path = `/analyses${all}`;
     axios.get(this.apiUrl(path))
       .then(callback)
       .catch((error) => console.log(error));

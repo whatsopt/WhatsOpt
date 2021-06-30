@@ -95,7 +95,7 @@ class ExportPanel extends React.Component {
           <div className="row">
             <div className="col-4">
               <AnalysisSelector
-                message="Search an analysis to export to..."
+                message="Search an analysis among yours to export to..."
                 selected={selected}
                 onAnalysisSearch={this.handleAnalysisSearch}
                 onAnalysisSelected={this.handleAnalysisSelected}
