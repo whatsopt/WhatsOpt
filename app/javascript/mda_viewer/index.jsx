@@ -11,6 +11,7 @@ import ConnectionsEditor from 'mda_viewer/components/ConnectionsEditor';
 import VariablesEditor from 'mda_viewer/components/VariablesEditor';
 import OpenmdaoImplEditor from 'mda_viewer/components/OpenmdaoImplEditor';
 import ExportPanel from 'mda_viewer/components/ExportPanel';
+import ComparisonPanel from 'mda_viewer/components/ComparisonPanel';
 import DistributionModals from 'mda_viewer/components/DistributionModals';
 
 import Error from '../utils/components/Error';
@@ -538,6 +539,12 @@ class MdaViewer extends React.Component {
             {' '}
             {mdaProjectLink}
             {mda.name}
+            {' '}
+            <small>
+              (#
+              {mda.id}
+              )
+            </small>
           </h1>
           {warningIfOperated}
           {breadcrumbs}
@@ -757,7 +764,20 @@ class MdaViewer extends React.Component {
                 aria-controls="exports"
                 aria-selected="false"
               >
-                Exports
+                Export...
+              </a>
+            </li>
+            <li className="nav-item">
+              <a
+                className="nav-link"
+                id="exports-tab"
+                data-toggle="tab"
+                href="#diffs"
+                role="tab"
+                aria-controls="diffs"
+                aria-selected="false"
+              >
+                Compare...
               </a>
             </li>
           </ul>
@@ -769,10 +789,12 @@ class MdaViewer extends React.Component {
             {metaModelTab}
             <div className="tab-pane fade" id="exports" role="tabpanel" aria-labelledby="exports-tab">
               <ExportPanel
-                mdaId={db.mda.id}
                 api={this.api}
                 db={db}
               />
+            </div>
+            <div className="tab-pane fade" id="diffs" role="tabpanel" aria-labelledby="diffs-tab">
+              <ComparisonPanel api={this.api} mdaId={db.mda.id} />
             </div>
           </div>
         </div>

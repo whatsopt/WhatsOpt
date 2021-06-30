@@ -17,7 +17,7 @@ class ExportPanel extends React.Component {
   }
 
   handleAnalysisSearch(callback) {
-    this.api.getAnalysisToExportTo(
+    this.api.getAnalysisCandidates(
       (response) => {
         const options = response.data
           .filter((analysis) => analysis.id !== this.db.getAnalysisId())
@@ -95,7 +95,7 @@ class ExportPanel extends React.Component {
           <div className="row">
             <div className="col-4">
               <AnalysisSelector
-                message="Search analysis to export to..."
+                message="Search an analysis to export to..."
                 selected={selected}
                 onAnalysisSearch={this.handleAnalysisSearch}
                 onAnalysisSelected={this.handleAnalysisSelected}
