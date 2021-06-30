@@ -26,14 +26,14 @@ class <%= @discipline.py_classname %>Base(<%= @dimpl.implicit_component ? "Impli
 <% unless @discipline.variables.empty? -%>
     def setup(self):
 <% @discipline.input_variables.numeric.each do |var| -%>
-        self.add_input('<%= var.py_varname %>', val=<%= var.init_py_value %>, desc='<%= var.escaped_desc %>')
+        self.add_input('<%= var.py_varname %>', val=<%= var.init_py_value %>, desc='<%= var.escaped_desc %>'<%= @impl.use_units && !var.units.blank? ? ", units='#{var.units}'":"" %>)
 <% end %>
 <% @discipline.output_variables.numeric.each do |var| -%>
 <% if var.scaling.blank? -%>
-        self.add_output('<%= var.py_varname %>', val=<%= var.init_py_value %>, desc='<%= var.escaped_desc %>')
+        self.add_output('<%= var.py_varname %>', val=<%= var.init_py_value %>, desc='<%= var.escaped_desc %>'<%= @impl.use_units && !var.units.blank? ? ", units='#{var.units}'":"" %>)
 <% else -%>
         self.add_output('<%= var.py_varname %>', val=<%= var.init_py_value %>, desc='<%= var.escaped_desc %>',
-                        ref=<%= var.scaling_ref_py_value %>, ref0=<%= var.scaling_ref0_py_value %>, res_ref=<%= var.scaling_res_ref_py_value %>)
+                        ref=<%= var.scaling_ref_py_value %>, ref0=<%= var.scaling_ref0_py_value %>, res_ref=<%= var.scaling_res_ref_py_value %><%= @impl.use_units && !var.units.blank? ? ", units='#{var.units}'":"" %>)
 <% end -%>
 <% end -%>
 <% if @dimpl.support_derivatives -%>
