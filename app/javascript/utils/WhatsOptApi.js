@@ -115,6 +115,13 @@ class WhatsOptApi {
       .catch(onError);
   }
 
+  compareAnalyses(mdaId, otherMdaId, callback) {
+    const path = `/analyses/${mdaId}/comparisons/new?with=${otherMdaId}`;
+    axios.get(this.apiUrl(path))
+      .then(callback)
+      .catch((error) => console.log(error));
+  }
+
   importDiscipline(fromMdaId, discId, toMdaId, callback, onError) {
     const path = `/analyses/${toMdaId}`;
     axios.put(this.apiUrl(path), {
@@ -149,7 +156,7 @@ class WhatsOptApi {
       .catch((error) => console.log(error));
   }
 
-  getAnalysisToExportTo(callback) {
+  getAnalysisCandidates(callback) {
     const path = '/analyses?with_sub_analyses=true';
     axios.get(this.apiUrl(path))
       .then(callback)
