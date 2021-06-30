@@ -539,6 +539,12 @@ class MdaViewer extends React.Component {
             {' '}
             {mdaProjectLink}
             {mda.name}
+            {' '}
+            <small>
+              (#
+              {mda.id}
+              )
+            </small>
           </h1>
           {warningIfOperated}
           {breadcrumbs}
