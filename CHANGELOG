@@ -1,5 +1,14 @@
 <h1>CHANGELOG</h1>
 
+<h3>1.16.0 (??)</h3>
+<ul>
+  <li>User can compare an analysis to another viewing diff like information</li>
+  <li>User can generate an OpenMDAO code enforcing the usage of units. By ticking the use units check box,
+  WhatsOpt generates an OpenMDAO code which specify units. Units should be recognise by OpenMDAO.
+  see <a href="https://openmdao.org/newdocs/versions/latest/features/units.html">Units definitions</a></li>
+  <li>User can see the analysis identifier in the title</li>
+</ul>
+
 <h3>1.15.0 (25/06/2021)</h3>
 <ul>
   <li>User can export GEMSEO code (require wop 1.14.0):
