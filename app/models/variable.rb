@@ -65,6 +65,22 @@ class Variable < ApplicationRecord
     !distributions.empty?
   end
 
+  def roles 
+    outgoing_connections.map(&:role).uniq
+  end
+
+  def main_role
+    conn_roles = self.roles
+    if conn_roles.size > 1
+      # a variable may be connected as response or as state var. Response supersedes StateVar
+      conn_roles -= [WhatsOpt::Variable::STATE_VAR_ROLE]
+      if conn_roles.size > 1  # should not occur then
+        Rails.logger.warn "Variable #{self.name}(#{self.id}) has several roles #{self.conn_roles}. Please check and fix the database"
+      end
+    end
+    conn_roles.first
+  end
+
   def init_py_value
     if self.parameter&.init.blank?
       if is_in? # retrieve init value from connected uniq 'out' variable

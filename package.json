@@ -20,6 +20,7 @@
     "d3-selection": "^2.0.0",
     "d3-transition": "^2.0.0",
     "debug": "^4.1.1",
+    "diff2html": "^3.4.5",
     "ify-loader": "^1.1.0",
     "immutability-helper": "^3.0.2",
     "plotly.js": "^1.54.1",
