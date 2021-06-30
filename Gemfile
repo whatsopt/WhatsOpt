@@ -73,6 +73,7 @@ group :development do
   gem "spring-watcher-listen", "~> 2.0.0"
   gem "rubocop", require: false
   gem "rubocop-rails_config"
+  gem "solargraph"
 end
 
 group :staging, :production do
