@@ -33,7 +33,7 @@ module WhatsOpt
       ok, lines = false, []
       @mda.set_as_root_module
       Dir.mktmpdir("check_#{@mda.basename}_") do |dir|
-        dir="/tmp" # for debug
+        # dir="/tmp/check" # for debug
         begin
           @check_only = true
           _generate_code(dir, with_server: false, with_runops: false)
@@ -52,7 +52,7 @@ module WhatsOpt
     def run(method = "analysis", sqlite_filename = nil)
       ok, lines = false, []
       Dir.mktmpdir("run_#{@mda.basename}_#{method}") do |dir|
-        # dir='/tmp' # for debug
+        dir='/tmp/run' # for debug
         begin
           _generate_code(dir, sqlite_filename: sqlite_filename)
         rescue ServerGenerator::ThriftError => e
@@ -129,7 +129,8 @@ module WhatsOpt
     # options: sqlite_filename=nil
     def _generate_sub_analysis(super_discipline, gendir, options = {})
       mda = super_discipline.sub_analysis
-      sub_ogen = OpenmdaoGenerator.new(mda, server_host: @server_host, driver_name: @driver_name, driver_options: @driver_options)
+      sub_ogen = OpenmdaoGenerator.new(mda, server_host: @server_host, remote_ip: @remote_ip,
+        driver_name: @driver_name, driver_options: @driver_options)
       gendir = File.join(gendir, mda.basename)
       Dir.mkdir(gendir) unless Dir.exist?(gendir)
 
