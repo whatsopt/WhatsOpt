@@ -29,8 +29,13 @@ from <%= @server_module %>.remote_discipline import Remote<%= disc.py_classname 
 <% end -%>
 <% end -%>
 
+class <%= @mda.py_classname %>FactoryBase():
+<% @mda.all_plain_disciplines.each do |disc| %>
+    def create_<%= disc.snake_modulename %>(self):
+        return <%= disc.py_classname %>()
+<% end %>
 
-class <%= @mda.py_classname %>Base(<%= @impl.parallel_group ? "ParallelGroup" : "Group" %>):
+class <%= @mda.py_classname %>Base(<%= @impl.parallel_group ? "ParallelGroup" : "Group" %>, <%= @mda.py_classname %>FactoryBase):
     """ An OpenMDAO base component to encapsulate <%= @mda.py_classname %> MDA """
     def __init__(self, thrift_client=None, **kwargs):
         super(<%= @mda.py_classname %>Base, self). __init__(**kwargs)
@@ -66,19 +71,10 @@ class <%= @mda.py_classname %>Base(<%= @impl.parallel_group ? "ParallelGroup" : 
 <% end -%>
 <% end %>
 <% @mda.plain_disciplines.each do |disc| %>
-    def create_<%= disc.basename %>(self):
 <% if !(@check_only || disc.local?(@remote_ip)) -%>
+    def create_<%= disc.basename %>(self):
+    """ Override default creation to cretate Thrift client """
         return Remote<%= disc.py_classname %>()
-<% else -%>
-        return <%= disc.py_classname %>()
-<% end -%>
+<% end %>
 <% end %>
 
-# Used by Thrift server to serve disciplines
-class <%= @mda.py_classname %>FactoryBase():
-<% @mda.all_plain_disciplines.each do |disc| %>
-    @staticmethod
-    def create_<%= disc.snake_modulename %>():
-        return <%= disc.py_classname %>()
-<% end %>
-#
