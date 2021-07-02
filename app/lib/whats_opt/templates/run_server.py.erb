@@ -18,7 +18,8 @@ class <%= @mda.camelname %>Handler:
         self.<%= disc.snake_modulename %>.setup()
         <% end %>
 
-    # Admin interface
+    ### Admin interface
+
     def ping(self):
         print("Ping!")
 
@@ -26,25 +27,25 @@ class <%= @mda.camelname %>Handler:
         print("Shutting down <%= @mda.py_classname %> server...")
         exit(0)
 
-    # <%= @mda.camelname %> interface
-    <% @mda.all_plain_disciplines.each do |disc| %>
+    ### <%= @mda.camelname %> interface
+<% @mda.all_plain_disciplines.each do |disc| %>
     def compute_<%= disc.snake_modulename %>(self, ins):
-    <% if !disc.local?(@remote_ip) %>
-        transport = TSocket.TSocket('<%= disc.endpoint&.host %>', <%= disc.endpoint&.port %>)
-        transport = TTransport.TBufferedTransport(transport)
+<% if !disc.local?(@remote_ip) -%>
+        socket = TSocket.TSocket('<%= disc.endpoint&.host %>', <%= disc.endpoint&.port %>)
+        transport = TTransport.TBufferedTransport(socket)
         protocol = TBinaryProtocol.TBinaryProtocol(transport)
         thrift_client = <%= @mda.py_classname %>.Client(protocol)
         transport.open()
         outs = thrift_client.compute_<%= disc.snake_modulename %>(ins)
         transport.close()
         return outs
-    <% else %>
+<% else -%>
         outputs = {}
         inputs = to_openmdao_<%= disc.snake_modulename %>_inputs(ins)
         self.<%= disc.snake_modulename %>.compute(inputs, outputs)
         return to_thrift_<%= disc.snake_modulename %>_output(outputs)
-    <% end %>
-    <% end %>
+<% end -%>
+<% end -%>
 
 def run_server(port):
     handler = <%= @mda.camelname %>Handler()

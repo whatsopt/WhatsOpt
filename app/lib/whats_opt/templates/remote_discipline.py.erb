@@ -9,12 +9,12 @@ from thrift.transport import TTransport
 from thrift.protocol import TBinaryProtocol
 
 from <%= @server_module %>.<%= @mda.py_full_modulename %> import <%= @mda.py_classname %>
-<% @mda.all_plain_disciplines.each do |disc| %>
+<% @mda.all_plain_disciplines.each do |disc| -%>
 from <%= disc.py_full_modulename %> import <%= disc.py_classname %>
-<% end %>
-<% @mda.all_plain_disciplines.each do |disc| %>
+<% end -%>
+<% @mda.all_plain_disciplines.each do |disc| -%>
 from .discipline_proxy import <%= disc.py_classname %>Proxy
-<% end %>
+<% end -%>
 
 <% @mda.all_plain_disciplines.each do |disc| %>
 class Remote<%= disc.py_classname %>(<%= disc.py_classname %>):

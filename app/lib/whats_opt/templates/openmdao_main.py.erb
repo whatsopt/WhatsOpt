@@ -8,7 +8,7 @@ from <%= @mda.py_full_modulename %>_base import <%= @mda.py_classname %>Base, <%
 class <%= @mda.py_classname %>(<%= @mda.py_classname %>Base):
     """ An OpenMDAO component to encapsulate <%= @mda.py_classname %> analysis """
     def __init__(self, **kwargs):
-        super(<%= @mda.py_classname %>, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
         # Example of manual solver adjusments (imports should be adjusted accordingly)
         # self.nonlinear_solver = NewtonSolver()
@@ -16,11 +16,14 @@ class <%= @mda.py_classname %>(<%= @mda.py_classname %>Base):
         # self.linear_solver = DirectSolver()
 
     def setup(self):
-        super(<%= @mda.py_classname %>, self).setup()
+        super().setup()
 
 
 class <%= @mda.py_classname %>Factory(<%= @mda.py_classname %>FactoryBase):
-    """ A factory to create disciplines of <%= @mda.py_classname %> analysis """
+    """ 
+    A factory to create disciplines of <%= @mda.py_classname %> analysis.
+    User can override create methods from the base class to handle disciplines creation as needed.
+    """
     pass
 
 
