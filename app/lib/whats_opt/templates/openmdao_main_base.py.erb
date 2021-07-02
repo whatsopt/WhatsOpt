@@ -40,7 +40,7 @@ class <%= @mda.py_classname %>FactoryBase():
     """
 <% @mda.all_plain_disciplines.each do |disc| %>
     def create_<%= disc.snake_modulename %>(self):
-<% if !(@check_only || disc.local?(@remote_ip)) -%>
+<% if @remote || !(@check_only || disc.local?(@remote_ip)) -%>
         """ 
         <%= disc.py_classname %> is expected to be run on remote host <%= disc.host %>.
         """
