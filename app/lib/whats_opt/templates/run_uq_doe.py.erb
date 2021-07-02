@@ -6,7 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from run_parameters_init import initialize
 
-from openmdao.api import Problem, SqliteRecorder, CaseReader
+import openmdao.api as om
 from openmdao_extensions.openturns_doe_driver import OpenturnsDOEDriver
 
 import openturns as ot
@@ -29,7 +29,7 @@ parser.add_option("-p", "--parallel",
                   help="run doe in parallel")
 (options, args) = parser.parse_args()
 
-pb = Problem(<%= @mda.py_classname %>())
+pb = om.Problem(<%= @mda.py_classname %>())
 dists = []
 <% @mda.uncertain_input_variables.each do |uv| -%>
 <% uv.distributions.each.with_index do |_, i| %>
@@ -49,7 +49,7 @@ pb.driver = OpenturnsDOEDriver(n_samples=options.n_cases, distribution=comp_dist
 pb.driver.options['run_parallel'] = options.parallel
 
 case_recorder_filename = '<%= @sqlite_filename %>'        
-recorder = SqliteRecorder(case_recorder_filename)
+recorder = om.SqliteRecorder(case_recorder_filename)
 pb.driver.add_recorder(recorder)
 pb.model.nonlinear_solver.options['err_on_non_converge'] = True
 

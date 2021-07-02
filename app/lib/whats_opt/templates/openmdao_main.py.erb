@@ -1,6 +1,5 @@
 from optparse import OptionParser
-from openmdao.api import Problem
-from openmdao.api import NonlinearBlockGS, ScipyKrylov
+import openmdao.api as om
 # from openmdao_extensions.reckless_nonlinear_block_gs import RecklessNonlinearBlockGS
 from <%= @mda.py_full_modulename %>_base import <%= @mda.py_classname %>Base, <%= @mda.py_classname %>FactoryBase
 
@@ -33,7 +32,7 @@ if __name__ == "__main__":
                       help="display N2 openmdao viewer")
     (options, args) = parser.parse_args()
 
-    problem = Problem()
+    problem = om.Problem()
     problem.model = <%= @mda.py_classname %>()
 
     problem.setup()

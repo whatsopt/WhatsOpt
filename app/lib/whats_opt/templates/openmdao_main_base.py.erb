@@ -3,7 +3,7 @@
 import numpy as np
 from numpy import nan
 
-from openmdao.api import Problem, Group, ParallelGroup
+import openmdao.api as om
 <% if @impl.nonlinear_solver.reckless? -%>
 from openmdao_extensions.reckless_nonlinear_block_gs import RecklessNonlinearBlockGS
 <% else -%>
@@ -50,7 +50,7 @@ class <%= @mda.py_classname %>FactoryBase():
 <% end -%>
 <% end %>
 
-class <%= @mda.py_classname %>Base(<%= @impl.parallel_group ? "ParallelGroup" : "Group" %>):
+class <%= @mda.py_classname %>Base(<%= @impl.parallel_group ? "om.ParallelGroup" : "om.Group" %>):
     """ An OpenMDAO base component to encapsulate <%= @mda.py_classname %> MDA """
     def __init__(self, factory=<%= @mda.py_classname %>FactoryBase(), thrift_client=None, **kwargs):
         super(<%= @mda.py_classname %>Base, self). __init__(**kwargs)

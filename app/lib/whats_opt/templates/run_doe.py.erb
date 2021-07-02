@@ -6,7 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from run_parameters_init import initialize
 
-from openmdao.api import Problem, SqliteRecorder, CaseReader
+import openmdao.api as om
 from openmdao_extensions.smt_doe_driver import SmtDOEDriver
 <% if @remote -%>
 from <%= @server_module %>.<%= @mda.py_modulename %>_proxy import <%= @mda.py_classname %>Proxy as <%= @mda.py_classname %>
@@ -27,13 +27,13 @@ parser.add_option("-p", "--parallel", default=False,
                   help="run doe in parallel")
 (options, args) = parser.parse_args()
 
-pb = Problem(<%= @mda.py_classname %>())
+pb = om.Problem(<%= @mda.py_classname %>())
 pb.driver = SmtDOEDriver(sampling_method_name='LHS', n_cases=options.n_cases,
                          sampling_method_options={'criterion': 'ese'})
 pb.driver.options['run_parallel'] = options.parallel
 
 case_recorder_filename = '<%= @sqlite_filename %>'
-recorder = SqliteRecorder(case_recorder_filename)
+recorder = om.SqliteRecorder(case_recorder_filename)
 pb.driver.add_recorder(recorder)
 <% unless @impl.nonlinear_solver.runonce? -%>
 pb.model.nonlinear_solver.options['err_on_non_converge'] = True
@@ -63,7 +63,7 @@ pb.run_driver()
 <% if (@mda.response_dim * @mda.design_var_dim) < 10 %>
 if options.batch or options.parallel:
     exit(0)
-reader = CaseReader(case_recorder_filename)
+reader = om.CaseReader(case_recorder_filename)
 cases = reader.list_cases('driver')
 n = len(cases)
 data = {'inputs': {}, 'outputs': {}}
