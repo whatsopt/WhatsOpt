@@ -49,7 +49,6 @@ pb.driver.recording_options['includes'] = ['*']
 
 <%- @mda.design_variables.each do |dv| %>
 pb.model.add_design_var('<%= dv.name %>', lower=<%= dv.lower_py_value %>, upper=<%= dv.upper_py_value %>)<% end %>
-
 pb.setup()  
 initialize(pb)
 
