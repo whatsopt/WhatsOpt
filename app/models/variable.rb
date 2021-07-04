@@ -127,6 +127,18 @@ class Variable < ApplicationRecord
     parameter&.upper.blank? ? super : parameter.upper
   end
 
+  def cstr_init_py_value
+    parameter&.init.blank? ? super : parameter.init
+  end
+
+  def cstr_lower_py_value
+    parameter&.lower.blank? ? super : parameter.lower
+  end
+
+  def cstr_upper_py_value
+    parameter&.upper.blank? ? super : parameter.upper
+  end
+
   def scaling_ref_py_value
     scaling&.ref.blank? ? super : scaling.ref
   end

@@ -55,6 +55,18 @@ module WhatsOpt
       "inf"
     end
 
+    def cstr_init_py_value
+      "0.0"
+    end
+
+    def cstr_lower_py_value
+      "-inf"
+    end
+
+    def cstr_upper_py_value
+      "inf"
+    end
+
     def scaling_ref_py_value
       "1.0"
     end

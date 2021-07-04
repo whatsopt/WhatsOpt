@@ -134,6 +134,10 @@ class Analysis < ApplicationRecord
     @ineqs = variables.with_role(WhatsOpt::Variable::INEQ_CONSTRAINT_ROLE)
   end
 
+  def constraint_variables
+    @ineqs = variables.with_role(WhatsOpt::Variable::CONSTRAINT_ROLE)
+  end
+
   def responses_of_interest
     variables.with_role(WhatsOpt::Variable::RESPONSE_OF_INTEREST_ROLE)
   end
