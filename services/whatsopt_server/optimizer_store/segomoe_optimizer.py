@@ -1,5 +1,4 @@
 import os
-import sys
 import numpy as np
 import tempfile
 import warnings
@@ -74,7 +73,7 @@ class SegomoeOptimizer(object):
         print("lower={} upper={}".format(lb, ub))
 
         def f_grouped(x):
-            return -sys.float_info.max * np.ones(ny), False
+            return -np.inf * np.ones(ny), False
 
         dvars = [{"name": "x_" + str(i), "lb": lb[i], "ub": ub[i]} for i in range(nx)]
         print(dvars)

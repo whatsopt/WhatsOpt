@@ -28,7 +28,7 @@ class Parameter < ApplicationRecord
     end
 
     def _is_well_formed(name, val)
-      return true if val.blank? || val=="nan"
+      return true if val.blank? || val=="nan" || val=="inf" || val=="-inf"
       return true if val =~ /^np\.(.*)/  # authorize numpy whatever operations
       return true if /^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$/.match?(val)
       # nan values are accepted in order to accept parameters generated from pushed OpenMDAO code
@@ -38,6 +38,6 @@ class Parameter < ApplicationRecord
       JSON.parse(val).kind_of?(Array)
     rescue JSON::ParserError
       Rails.logger.warn "Parameter #{self.inspect} of variable #{variable.name}(#{variable.id}) is invalid"
-      errors.add(name, "should not be badly formed (should be blank, nan, float or array)")
+      errors.add(name, "should not be badly formed (should be blank, nan, inf, float, array or np.*)")
     end
 end
