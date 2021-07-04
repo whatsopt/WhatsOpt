@@ -21,4 +21,9 @@ class ParameterTest < ActiveSupport::TestCase
     p = Parameter.new(variable: @var, init: "nan")
     assert p.valid?
   end
+
+  test "could be a numpy operation" do
+    p = Parameter.new(variable: @var, init: "np.zeros(2,3)")
+    assert p.valid?
+  end
 end

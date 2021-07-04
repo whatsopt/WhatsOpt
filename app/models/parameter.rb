@@ -29,6 +29,7 @@ class Parameter < ApplicationRecord
 
     def _is_well_formed(name, val)
       return true if val.blank? || val=="nan"
+      return true if val =~ /^np\.(.*)/  # authorize numpy whatever operations
       return true if /^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$/.match?(val)
       # nan values are accepted in order to accept parameters generated from pushed OpenMDAO code
       # example CICAV BWB analysis
