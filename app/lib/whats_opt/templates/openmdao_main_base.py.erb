@@ -12,17 +12,21 @@ from openmdao.api import <%= @impl.nonlinear_solver.name %>
 from openmdao.api import <%= @impl.linear_solver.name %>
 from openmdao import __version__ as OPENMDAO_VERSION
 
+<% if @remote -%>
+from thrift import Thrift
+from thrift.transport import TSocket
+from thrift.transport import TTransport
+from thrift.protocol import TBinaryProtocol
+<% if @mda.is_root? -%>
+from <%= @server_module %>.<%= @mda.py_full_modulename %> import <%= @mda.py_classname %>
+<% end -%>
+<% end -%>
 <% @mda.sub_analyses.each do |a| -%>
 from <%= a.py_full_modulename %> import <%= a.py_classname %>
 <% end -%>
 <% @mda.all_plain_disciplines.each do |disc| -%>
 <% unless @remote || !(@check_only || disc.local?(@remote_ip)) -%>
 from <%= disc.py_full_modulename %> import <%= disc.py_classname %> 
-<% end -%>
-<% end -%>
-<% if @remote -%>
-<% @mda.sub_analyses.each do |disc| -%>
-from <%= @server_module %>.sub_analysis_proxy import <%= disc.py_classname %>Proxy
 <% end -%>
 <% end -%>
 <% @mda.all_plain_disciplines.each do |disc| -%>
@@ -32,6 +36,18 @@ from <%= @server_module %>.remote_discipline import Remote<%= disc.py_classname 
 <% end -%>
 
 class <%= @mda.py_classname %>FactoryBase():
+
+    def __init__(self):
+<% if @remote && @mda.is_root? %>    
+        socket = TSocket.TSocket('<%= @server_host %>', <%= @server_port %>)
+        transport = TTransport.TBufferedTransport(socket)
+        protocol = TBinaryProtocol.TBinaryProtocol(transport)
+        self._thrift_client = <%= @mda.py_classname %>.Client(protocol)
+        transport.open()
+<% else %>
+        pass
+<% end %>
+
     """ 
     A  factory for all plain disciplines of <%= @mda.name %> analysis.
 
@@ -40,11 +56,16 @@ class <%= @mda.py_classname %>FactoryBase():
     """
 <% @mda.all_plain_disciplines.each do |disc| %>
     def create_<%= disc.snake_modulename %>(self):
-<% if @remote || !(@check_only || disc.local?(@remote_ip)) -%>
+<% if !(@check_only || disc.local?(@remote_ip)) -%>
         """ 
         <%= disc.py_classname %> is expected to be run on remote host <%= disc.host %>.
         """
         return Remote<%= disc.py_classname %>()
+<% elsif @remote -%>
+        """ 
+        <%= disc.py_classname %> is expected to be run on remote <%= @server_host %>.
+        """
+        return Remote<%= disc.py_classname %>(thrift_client=self._thrift_client)
 <% else -%>
         return <%= disc.py_classname %>()
 <% end -%>
