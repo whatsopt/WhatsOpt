@@ -26,7 +26,7 @@ from <%= @server_module %>.remote_discipline import Remote<%= disc.py_classname 
 
 class <%= @mda.py_classname %>FactoryBase():
     """ 
-    A  factory for all plain disciplines of <%= @mda.name %> analysis.
+    A factory for all plain disciplines of <%= @mda.name %> analysis.
 
     User can override methods in a subclass to take control over disciplines creation 
     and pass that subclass to the analysis constructor.
@@ -45,17 +45,15 @@ class <%= @mda.py_classname %>FactoryBase():
 
 class <%= @mda.py_classname %>Base(<%= @impl.parallel_group ? "om.ParallelGroup" : "om.Group" %>):
     """ An OpenMDAO base component to encapsulate <%= @mda.py_classname %> MDA """
-    def __init__(self, factory=None, **kwargs):
+    def __init__(self, factory=<%= @mda.py_classname %>FactoryBase()):
         """
         Parameters
         ----------
             factory: Subclass of <%= @mda.py_classname %>Factory 
-            Used to control discipline creation (default None)
+            Used to control disciplines creation (default to <%= @mda.py_classname %>FactoryBase)
         """
-        super(). __init__(**kwargs)
+        super(). __init__()
         self._factory = factory
-        if self._factory is None:
-            self._factory = <%= @mda.py_classname %>FactoryBase()
 
         self.nonlinear_solver = <%= @impl.nonlinear_solver.name %>()
 <% unless @impl.nonlinear_solver.runonce? -%>
