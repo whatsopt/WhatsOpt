@@ -20,7 +20,7 @@ from .discipline_proxy import <%= disc.py_classname %>Proxy
 class Remote<%= disc.py_classname %>(<%= disc.py_classname %>):
     """ An OpenMDAO base component to encapsulate <%= disc.py_classname %> discipline """
 
-    def __init__(self, thrift_client = None, *args, **kwargs):
+    def __init__(self, thrift_client=None, *args, **kwargs):
         super(Remote<%= disc.py_classname %>, self).__init__(*args, **kwargs)
         self._manage_connection = False
         if thrift_client is None:

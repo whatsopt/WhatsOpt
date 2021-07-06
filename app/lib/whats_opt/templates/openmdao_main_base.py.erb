@@ -11,7 +11,6 @@ from openmdao.api import <%= @impl.nonlinear_solver.name %>
 <% end -%>
 from openmdao.api import <%= @impl.linear_solver.name %>
 from openmdao import __version__ as OPENMDAO_VERSION
-
 <% if @remote -%>
 from thrift import Thrift
 from thrift.transport import TSocket
@@ -21,65 +20,56 @@ from thrift.protocol import TBinaryProtocol
 from <%= @server_module %>.<%= @mda.py_full_modulename %> import <%= @mda.py_classname %>
 <% end -%>
 <% end -%>
+
 <% @mda.sub_analyses.each do |a| -%>
 from <%= a.py_full_modulename %> import <%= a.py_classname %>
 <% end -%>
+
 <% @mda.all_plain_disciplines.each do |disc| -%>
-<% unless @remote || !(@check_only || disc.local?(@remote_ip)) -%>
+<% if (@remote) -%>
+from <%= @server_module %>.remote_discipline import Remote<%= disc.py_classname %>
+<% elsif @check_only || disc.local?(@remote_ip) -%>
 from <%= disc.py_full_modulename %> import <%= disc.py_classname %> 
-<% end -%>
-<% end -%>
-<% @mda.all_plain_disciplines.each do |disc| -%>
-<% if @remote || !(@check_only || disc.local?(@remote_ip)) -%>
+<% else %>
 from <%= @server_module %>.remote_discipline import Remote<%= disc.py_classname %>
 <% end -%>
 <% end -%>
 
 class <%= @mda.py_classname %>FactoryBase():
-
-    def __init__(self):
-<% if @remote && @mda.is_root? %>    
-        socket = TSocket.TSocket('<%= @server_host %>', <%= @server_port %>)
-        transport = TTransport.TBufferedTransport(socket)
-        protocol = TBinaryProtocol.TBinaryProtocol(transport)
-        self._thrift_client = <%= @mda.py_classname %>.Client(protocol)
-        transport.open()
-<% else %>
-        pass
-<% end %>
-
     """ 
     A  factory for all plain disciplines of <%= @mda.name %> analysis.
 
     User can override methods in a subclass to take control over disciplines creation 
     and pass that subclass to the analysis constructor.
     """
+
+    def __init__(self, thrift_client=None, **kwargs):
+        self._thrift_client = thrift_client
+
 <% @mda.all_plain_disciplines.each do |disc| %>
     def create_<%= disc.snake_modulename %>(self):
-<% if !(@check_only || disc.local?(@remote_ip)) -%>
+<% if @remote -%>
+        """ 
+        <%= @mda.py_classname %> is expected to be run on remote host <%= "#{@server_host}:#{@server_port}" %>.
+        """
+        return Remote<%= disc.py_classname %>(thrift_client=self._thrift_client)
+<% elsif (@check_only || disc.local?(@remote_ip)) -%>
+        return <%= disc.py_classname %>()
+<% else -%>
         """ 
         <%= disc.py_classname %> is expected to be run on remote host <%= disc.host %>.
         """
         return Remote<%= disc.py_classname %>()
-<% elsif @remote -%>
-        """ 
-        <%= disc.py_classname %> is expected to be run on remote <%= @server_host %>.
-        """
-        return Remote<%= disc.py_classname %>(thrift_client=self._thrift_client)
-<% else -%>
-        return <%= disc.py_classname %>()
 <% end -%>
 <% end %>
 
 class <%= @mda.py_classname %>Base(<%= @impl.parallel_group ? "om.ParallelGroup" : "om.Group" %>):
     """ An OpenMDAO base component to encapsulate <%= @mda.py_classname %> MDA """
-    def __init__(self, factory=<%= @mda.py_classname %>FactoryBase(), thrift_client=None, **kwargs):
-        super(<%= @mda.py_classname %>Base, self). __init__(**kwargs)
-
+    def __init__(self, factory=None, thrift_client=None, **kwargs):
+        super(). __init__(**kwargs)
         self._factory = factory
-<% if @remote %>
-        self._thrift_client = thrift_client
-<% end -%>
+        if self._factory is None:
+            self._factory = <%= @mda.py_classname %>FactoryBase(thrift_client)
 
         self.nonlinear_solver = <%= @impl.nonlinear_solver.name %>()
 <% unless @impl.nonlinear_solver.runonce? -%>
