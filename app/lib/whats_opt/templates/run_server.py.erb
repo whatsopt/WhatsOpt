@@ -4,16 +4,10 @@ from thrift.transport import TTransport
 from thrift.protocol import TBinaryProtocol
 from thrift.server import TServer
 
-from <%= @mda.py_full_modulename %> import <%= @mda.py_classname %>Factory
+from <%= @mda.py_full_modulename %> import <%= @mda.py_classname %>Factory as Factory
 from <%= @server_module %>.<%= @mda.py_modulename %> import <%= @mda.py_classname %> as <%= @mda.camelname %>Service
 from <%= @server_module %>.<%= @mda.py_modulename %>_conversions import *
 from <%= @server_module %>.remote_discipline import *
-
-class Factory(<%= @mda.py_classname %>Factory):
-<% @mda.all_plain_disciplines.each do |disc| %>
-    def create_<%= disc.basename %>(self):
-        return super().create_<%= disc.basename %>()
-<% end %>
 
 class <%= @mda.camelname %>Handler:
 
@@ -30,7 +24,6 @@ class <%= @mda.camelname %>Handler:
         print("Ping!")
 
     def shutdown(self):
-        self._transport.close()
         print("Shutting down <%= @mda.py_classname %> server...")
         exit(0)
 

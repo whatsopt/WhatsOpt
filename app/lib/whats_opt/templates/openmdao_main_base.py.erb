@@ -11,24 +11,13 @@ from openmdao.api import <%= @impl.nonlinear_solver.name %>
 <% end -%>
 from openmdao.api import <%= @impl.linear_solver.name %>
 from openmdao import __version__ as OPENMDAO_VERSION
-<% if @remote -%>
-from thrift import Thrift
-from thrift.transport import TSocket
-from thrift.transport import TTransport
-from thrift.protocol import TBinaryProtocol
-<% if @mda.is_root? -%>
-from <%= @server_module %>.<%= @mda.py_full_modulename %> import <%= @mda.py_classname %>
-<% end -%>
-<% end -%>
 
 <% @mda.sub_analyses.each do |a| -%>
 from <%= a.py_full_modulename %> import <%= a.py_classname %>
 <% end -%>
 
 <% @mda.all_plain_disciplines.each do |disc| -%>
-<% if (@remote) -%>
-from <%= @server_module %>.remote_discipline import Remote<%= disc.py_classname %>
-<% elsif @check_only || disc.local?(@remote_ip) -%>
+<% if @check_only || disc.local?(@remote_ip) -%>
 from <%= disc.py_full_modulename %> import <%= disc.py_classname %> 
 <% else %>
 from <%= @server_module %>.remote_discipline import Remote<%= disc.py_classname %>
@@ -42,18 +31,9 @@ class <%= @mda.py_classname %>FactoryBase():
     User can override methods in a subclass to take control over disciplines creation 
     and pass that subclass to the analysis constructor.
     """
-
-    def __init__(self, thrift_client=None, **kwargs):
-        self._thrift_client = thrift_client
-
 <% @mda.all_plain_disciplines.each do |disc| %>
     def create_<%= disc.snake_modulename %>(self):
-<% if @remote -%>
-        """ 
-        <%= @mda.py_classname %> is expected to be run on remote host <%= "#{@server_host}:#{@server_port}" %>.
-        """
-        return Remote<%= disc.py_classname %>(thrift_client=self._thrift_client)
-<% elsif (@check_only || disc.local?(@remote_ip)) -%>
+<% if (@check_only || disc.local?(@remote_ip)) -%>
         return <%= disc.py_classname %>()
 <% else -%>
         """ 
@@ -65,11 +45,17 @@ class <%= @mda.py_classname %>FactoryBase():
 
 class <%= @mda.py_classname %>Base(<%= @impl.parallel_group ? "om.ParallelGroup" : "om.Group" %>):
     """ An OpenMDAO base component to encapsulate <%= @mda.py_classname %> MDA """
-    def __init__(self, factory=None, thrift_client=None, **kwargs):
+    def __init__(self, factory=None, **kwargs):
+        """
+        Parameters
+        ----------
+            factory: Subclass of <%= @mda.py_classname %>Factory 
+            Used to control discipline creation (default None)
+        """
         super(). __init__(**kwargs)
         self._factory = factory
         if self._factory is None:
-            self._factory = <%= @mda.py_classname %>FactoryBase(thrift_client)
+            self._factory = <%= @mda.py_classname %>FactoryBase()
 
         self.nonlinear_solver = <%= @impl.nonlinear_solver.name %>()
 <% unless @impl.nonlinear_solver.runonce? -%>
