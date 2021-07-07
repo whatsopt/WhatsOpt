@@ -35,26 +35,11 @@ pb.driver.options['run_parallel'] = options.parallel
 case_recorder_filename = '<%= @sqlite_filename %>'
 recorder = om.SqliteRecorder(case_recorder_filename)
 pb.driver.add_recorder(recorder)
-<% unless @impl.nonlinear_solver.runonce? -%>
-pb.model.nonlinear_solver.options['err_on_non_converge'] = True
-<% end -%>
+pb.driver.recording_options['includes'] = ['*']
+
 <%- @mda.design_variables.each do |dv| %>
 pb.model.add_design_var('<%= dv.name %>', lower=<%= dv.lower_py_value %>, upper=<%= dv.upper_py_value %><%= @impl.use_units && !dv.units.blank? ? ", units='#{dv.units}'":"" %>)<% end %>
-<% if @mda.objective_variables.size > 0 || @mda.responses_of_interest.size > 0 -%>
-<% @mda.min_objective_variables.each do |voi| %>
-pb.model.add_objective('<%= voi.name %>'<%= @impl.use_units && !voi.units.blank? ? ", units='#{voi.units}'":"" %>)<% end %>
-<% @mda.max_objective_variables.each do |voi| %>
-pb.model.add_objective('<%= voi.name %>', scaler=-1.<%= @impl.use_units && !voi.units.blank? ? ", units='#{voi.units}'":"" %>)<% end %>
-<% @mda.ineq_constraint_variables.each do |voi| %>
-pb.model.add_constraint('<%= voi.name %>', upper=0.<%= @impl.use_units && !voi.units.blank? ? ", units='#{voi.units}'":"" %>)<% end %>
-<% @mda.eq_constraint_variables.each do |voi| %>
-pb.model.add_constraint('<%= voi.name %>', equals=0.<%= @impl.use_units && !voi.units.blank? ? ", units='#{voi.units}'":"" %>)<% end %>
-<% @mda.responses_of_interest.each do |voi| %>
-pb.model.add_objective('<%= voi.name %>'<%= @impl.use_units && !voi.units.blank? ? ", units='#{voi.units}'":"" %>)<% end %>
-<% else -%>
-<% @mda.response_variables.each do |voi| %>
-pb.model.add_objective('<%= voi.name %>'<%= @impl.use_units && !voi.units.blank? ? ", units='#{voi.units}'":"" %>)<% end %>
-<% end -%>
+
 pb.setup()
 initialize(pb)
 

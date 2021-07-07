@@ -44,11 +44,9 @@ pb.driver.opt_settings['<%= k %>'] = <%= v %>
 pb.driver.options['debug_print'] = []
 
 case_recorder_filename = '<%= @sqlite_filename %>'
-print(case_recorder_filename)
 recorder = om.SqliteRecorder(case_recorder_filename)
-# pb.add_recorder(recorder)
 pb.driver.add_recorder(recorder)
-pb.model.add_recorder(recorder)
+pb.driver.recording_options['includes'] = ['*']
 
 <% unless @driver.onerasego? -%>
 # Derivatives are compute via finite-difference method
@@ -57,21 +55,16 @@ pb.model.approx_totals(method='fd', step=1e-6, form='central')
 <% end -%>
 <%- @mda.design_variables.each do |dv| %>
 pb.model.add_design_var('<%= dv.name %>', lower=<%= dv.lower_py_value %>, upper=<%= dv.upper_py_value %><%= @impl.use_units && !dv.units.blank? ? ", units='#{dv.units}'":"" %>)<% end -%>
-
 <% @mda.min_objective_variables.each do |voi| %>
 pb.model.add_objective('<%= voi.name %>'<%= @impl.use_units && !voi.units.blank? ? ", units='#{voi.units}'":"" %>)<% end -%>
-
 <% @mda.max_objective_variables.each do |voi| %>
 pb.model.add_objective('<%= voi.name %>', scaler=-1<%= @impl.use_units && !voi.units.blank? ? ", units='#{voi.units}'":"" %>)<% end -%>
-
 <% @mda.ineq_constraint_variables.each do |voi| %>
 pb.model.add_constraint('<%= voi.name %>', upper=0.<%= @impl.use_units && !voi.units.blank? ? ", units='#{voi.units}'":"" %>)<% end -%>
-
 <% @mda.eq_constraint_variables.each do |voi| %>
 pb.model.add_constraint('<%= voi.name %>', equals=0.<%= @impl.use_units && !voi.units.blank? ? ", units='#{voi.units}'":"" %>)<% end -%>
 
 pb.setup()
-
 initialize(pb)
 
 pb.run_driver()
