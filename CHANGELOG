@@ -7,6 +7,14 @@
   WhatsOpt generates an OpenMDAO code which specify units. Units should be recognise by OpenMDAO.
   see <a href="https://openmdao.org/newdocs/versions/latest/features/units.html">Units definitions</a></li>
   <li>User can see the analysis identifier in the title</li>
+  <li>Refactoring of OpenMDAO generated code:
+  <ul>
+    <li>User can derive <code>AnalysisFactory</code> to control disciplines creation</li>
+    <li>Generated use standard recommended OpenMDAO import <code>import openmdao.api as om</code>.
+    <strong>This requires upgrading to wop 1.15.4</strong></li>
+    <li>Fix bugs related to Thrift generated code in presence of nested analyses</li>
+  </ul>
+  </li>
 </ul>
 
 <h3>1.15.0 (25/06/2021)</h3>

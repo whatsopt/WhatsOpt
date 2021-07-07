@@ -101,6 +101,10 @@ class Discipline < ApplicationRecord
     true  # default to local
   end
 
+  def host
+    has_endpoint? ? endpoint.host : "localhost"
+  end
+
   def path
     if has_sub_analysis?
       sub_analysis.path

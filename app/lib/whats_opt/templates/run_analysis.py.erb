@@ -1,7 +1,7 @@
 # DO NOT EDIT unless you know what you are doing
 # analysis_id: <%= @mda.id %>
 
-from openmdao.api import Problem
+import openmdao.api as om
 from run_parameters_init import initialize
 <% if @remote -%>
 from <%= @server_module %>.<%= @mda.py_modulename %>_proxy import <%= @mda.py_classname %>Proxy as <%= @mda.py_classname %>
@@ -9,7 +9,7 @@ from <%= @server_module %>.<%= @mda.py_modulename %>_proxy import <%= @mda.py_cl
 from <%= @mda.py_modulename %> import <%= @mda.py_classname %>
 <% end -%>
 
-pb = Problem(<%= @mda.py_classname %>())
+pb = om.Problem(<%= @mda.py_classname %>())
 pb.setup()
 initialize(pb)
 

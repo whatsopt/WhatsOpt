@@ -1,14 +1,21 @@
 from optparse import OptionParser
-from openmdao.api import Problem
-from openmdao.api import NonlinearBlockGS, ScipyKrylov
+import openmdao.api as om
 # from openmdao_extensions.reckless_nonlinear_block_gs import RecklessNonlinearBlockGS
 from <%= @mda.py_full_modulename %>_base import <%= @mda.py_classname %>Base, <%= @mda.py_classname %>FactoryBase
 
 
+class <%= @mda.py_classname %>Factory(<%= @mda.py_classname %>FactoryBase):
+    """ 
+    A factory to create disciplines of <%= @mda.py_classname %> analysis.
+    One can override create methods from the base class 
+    to handle disciplines creation as needed.
+    """
+    pass
+
 class <%= @mda.py_classname %>(<%= @mda.py_classname %>Base):
     """ An OpenMDAO component to encapsulate <%= @mda.py_classname %> analysis """
-    def __init__(self, **kwargs):
-        super(<%= @mda.py_classname %>, self).__init__(**kwargs)
+    def __init__(self, factory=<%= @mda.py_classname %>Factory()):
+        super().__init__(factory)
 
         # Example of manual solver adjusments (imports should be adjusted accordingly)
         # self.nonlinear_solver = NewtonSolver()
@@ -16,12 +23,7 @@ class <%= @mda.py_classname %>(<%= @mda.py_classname %>Base):
         # self.linear_solver = DirectSolver()
 
     def setup(self):
-        super(<%= @mda.py_classname %>, self).setup()
-
-
-class <%= @mda.py_classname %>Factory(<%= @mda.py_classname %>FactoryBase):
-    """ A factory to create disciplines of <%= @mda.py_classname %> analysis """
-    pass
+        super().setup()
 
 
 if __name__ == "__main__":
@@ -30,7 +32,7 @@ if __name__ == "__main__":
                       help="display N2 openmdao viewer")
     (options, args) = parser.parse_args()
 
-    problem = Problem()
+    problem = om.Problem()
     problem.model = <%= @mda.py_classname %>()
 
     problem.setup()

@@ -5,10 +5,9 @@ from numpy import nan
 from os import path
 from importlib import import_module
 from yaml import load, FullLoader
-from openmdao.api import <%= @dimpl.implicit_component ? "ImplicitComponent" : "ExplicitComponent" %>
+import openmdao.api as om
 
-
-class <%= @discipline.py_classname %>Base(<%= @dimpl.implicit_component ? "ImplicitComponent" : "ExplicitComponent" %>):
+class <%= @discipline.py_classname %>Base(<%= @dimpl.implicit_component ? "om.ImplicitComponent" : "om.ExplicitComponent" %>):
     """ An OpenMDAO base component to encapsulate <%= @discipline.py_classname %> discipline """
 
     def __init__(self, **kwargs):

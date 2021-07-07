@@ -13,23 +13,17 @@ from .remote_discipline import Remote<%= disc.py_classname %>
 
 class <%= @mda.py_classname %>Proxy(<%= @mda.py_classname %>Original):
     
-    def __init__(self):
-        super(<%= @mda.py_classname %>Proxy, self).__init__()
-<% if @remote %>    
-        transport = TSocket.TSocket('<%= @server_host %>', <%= @server_port %>)
-        transport = TTransport.TBufferedTransport(transport)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        socket = TSocket.TSocket('<%= @server_host %>', <%= @server_port %>)
+        transport = TTransport.TBufferedTransport(socket)
         protocol = TBinaryProtocol.TBinaryProtocol(transport)
         self._thrift_client = <%= @mda.py_classname %>.Client(protocol)
         transport.open()
-<% end %>
 
 <% @mda.all_plain_disciplines.each do |disc| %>
     def create_<%= disc.basename %>(self):
-<% if @remote -%>
         return Remote<%= disc.py_classname %>(self._thrift_client)        
-<% else -%>
-        return super(<%= @mda.py_classname %>Proxy, self).create_<%= disc.basename %>()
-<% end -%>
 <% end %>
 
 <% unless @server_host.blank? %> 

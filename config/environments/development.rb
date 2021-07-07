@@ -75,5 +75,5 @@ Rails.application.configure do
   # Allow request on any host running the rails server
   config.hosts.clear
 
-  config.web_console.whitelisted_ips = ['134.212.16.16', '134.212.26.254', '192.168.99.1', '172.18.0.1']
+  config.web_console.whitelisted_ips = ['134.212.27.183', '134.212.16.16', '134.212.26.254', '192.168.99.1', '172.18.0.1']
 end

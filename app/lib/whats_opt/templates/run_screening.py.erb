@@ -6,7 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from run_parameters_init import initialize
 
-from openmdao.api import Problem, SqliteRecorder, CaseReader
+import openmdao.api as om
 from openmdao_extensions.salib_doe_driver import SalibDOEDriver
 
 from SALib.analyze import morris
@@ -32,7 +32,7 @@ parser.add_option("-p", "--parallel",
                   help="run doe in parallel")
 (options, args) = parser.parse_args()
 
-pb = Problem(<%= @mda.py_classname %>())
+pb = om.Problem(<%= @mda.py_classname %>())
 sa_method_name='Morris'
 sa_doe_options={'n_trajs': 10, 'n_levels': 4}
 if options.sobol:
@@ -43,7 +43,7 @@ pb.driver = SalibDOEDriver(sa_method_name=sa_method_name, sa_doe_options=sa_doe_
 pb.driver.options['run_parallel'] = options.parallel
 
 case_recorder_filename = '<%= @sqlite_filename %>'        
-recorder = SqliteRecorder(case_recorder_filename)
+recorder = om.SqliteRecorder(case_recorder_filename)
 pb.driver.add_recorder(recorder)
 
 pb.model.nonlinear_solver.options['err_on_non_converge'] = True
@@ -73,7 +73,7 @@ pb.run_driver()
 <% if @mda.response_variables.size < 10 %>
 if options.batch  or options.parallel:
     exit(0)
-reader = CaseReader(case_recorder_filename)
+reader = om.CaseReader(case_recorder_filename)
 cases = reader.list_cases('driver', recurse=False)
 n = len(cases)
 data = {'inputs': {}, 'outputs': {} }

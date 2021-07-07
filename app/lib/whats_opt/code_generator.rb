@@ -52,7 +52,7 @@ module WhatsOpt
 
     def _generate(filename, template_filename, gendir)
       template = File.join(@template_dir, template_filename)
-      Rails.logger.info "Creating #{filename} from #{File.basename(template)}"
+      Rails.logger.info "Creating #{filename} from #{File.basename(template)} in #{gendir}"
       filepath = File.join(gendir, filename) if gendir
       result = _comment_header(filepath)
       result += _run_template(template)
