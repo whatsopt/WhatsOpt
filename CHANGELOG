@@ -2,18 +2,27 @@
 
 <h3>1.16.0 (??)</h3>
 <ul>
-  <li>User can compare an analysis to another viewing diff like information</li>
-  <li>User can generate an OpenMDAO code enforcing the usage of units. By ticking the use units check box,
-  WhatsOpt generates an OpenMDAO code which specify units. Units should be recognise by OpenMDAO.
+  <li>User can compare an analysis to another viewing diff-like information</li>
+  <li>User can generate an OpenMDAO code enforcing the usage of units. By ticking the use units check box,<br/>
+  WhatsOpt generates an OpenMDAO code which specifies units. Units should be recognised by OpenMDAO.<br/>
   see <a href="https://openmdao.org/newdocs/versions/latest/features/units.html">Units definitions</a></li>
   <li>User can see the analysis identifier in the title</li>
   <li>Refactoring of OpenMDAO generated code:
-  <ul>
-    <li>User can derive <code>AnalysisFactory</code> to control disciplines creation</li>
-    <li>Generated use standard recommended OpenMDAO import <code>import openmdao.api as om</code>.
-    <strong>This requires upgrading to wop 1.15.4</strong></li>
-    <li>Fix bugs related to Thrift generated code in presence of nested analyses</li>
-  </ul>
+    <ul>
+      <li>User can derive <code>AnalysisFactory</code> to control disciplines creation</li>
+      <li>Generated use standard recommended OpenMDAO import <code>import openmdao.api as om</code>.
+      <strong>This requires upgrading to wop 1.15.4</strong></li>
+      <li>Fix bugs related to Thrift generated code in presence of nested analyses</li>
+    </ul>
+  </li>
+  <li>Bug fixes:
+    <ul>
+      <li>Fix bug when reassigning sub analysis</li>
+      <li>Prevent from creating empty sub analysis</li>
+      <li>Fix solver <code>maxiter</code> option configuration</li>
+      <li>Fix run scripts driver recording. <strong>Generated code with WhatsOpt>= 1.15.2 should be uploaded<br/>
+      with wop>=1.16.0</strong></li>
+    </ul>
   </li>
 </ul>
 
