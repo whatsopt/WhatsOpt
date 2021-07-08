@@ -32,8 +32,8 @@ class ParameterTest < ActiveSupport::TestCase
     assert p.valid?
   end
 
-  test "could be a numpy operation" do
+  test "could not be a numpy operation" do
     p = Parameter.new(variable: @var, init: "np.zeros(2,3)")
-    assert p.valid?
+    assert_not p.valid?
   end
 end
