@@ -301,4 +301,48 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
     # assert_equal "mu", conn_to_test.from.distributions[0].options.first.name
     # assert_equal "0.0", conn_to_test.from.distributions[0].options.first.value
   end
+
+  test "should connection as various constraint role" do
+    conn = connections(:aero_y2_driver)
+    var = conn.from
+    assert "response", conn.role
+    assert_nil var.parameter
+
+    update_attrs = { role: "constraint" }
+    put api_v1_connection_url(conn, connection: update_attrs), as: :json, headers: @auth_headers
+    var.reload
+    assert_equal "constraint", var.main_role
+
+    update_attrs = { parameter_attributes: { lower: "-1" } }
+    put api_v1_connection_url(conn, connection: update_attrs), as: :json, headers: @auth_headers
+    var.reload
+    assert_equal "-1", var.parameter.lower
+
+    update_attrs = { parameter_attributes: { upper: "1" } }
+    put api_v1_connection_url(conn, connection: update_attrs), as: :json, headers: @auth_headers
+    var.reload
+    assert_equal "1", var.parameter.upper
+
+    update_attrs = { role: "pos_constraint" }
+    put api_v1_connection_url(conn, connection: update_attrs), as: :json, headers: @auth_headers
+    var.reload
+    assert_equal "pos_constraint", var.main_role
+    assert_nil var.parameter
+
+    update_attrs = { parameter_attributes: { lower: "2" }  }
+    put api_v1_connection_url(conn, connection: update_attrs), as: :json, headers: @auth_headers
+    var.reload
+    assert_equal "2", var.parameter.lower
+
+    update_attrs = { role: "eq_constraint" }
+    put api_v1_connection_url(conn, connection: update_attrs), as: :json, headers: @auth_headers
+    var.reload
+    assert_equal "eq_constraint", var.main_role
+    assert_nil var.parameter
+
+    update_attrs = { parameter_attributes: { init: "3" }  }
+    put api_v1_connection_url(conn, connection: update_attrs), as: :json, headers: @auth_headers
+    var.reload
+    assert_equal "3", var.parameter.init
+  end
 end
