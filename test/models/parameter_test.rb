@@ -21,4 +21,19 @@ class ParameterTest < ActiveSupport::TestCase
     p = Parameter.new(variable: @var, init: "nan")
     assert p.valid?
   end
+
+  test "could be inf" do
+    p = Parameter.new(variable: @var, init: "inf")
+    assert p.valid?
+  end
+
+  test "could be -inf" do
+    p = Parameter.new(variable: @var, init: "-inf")
+    assert p.valid?
+  end
+
+  test "could not be a numpy operation" do
+    p = Parameter.new(variable: @var, init: "np.zeros(2,3)")
+    assert_not p.valid?
+  end
 end

@@ -1,12 +1,13 @@
 <h1>CHANGELOG</h1>
 
-<h3>1.16.0 (??)</h3>
+<h3>1.15.3 (09/07/2021)</h3>
 <ul>
   <li>User can compare an analysis to another viewing diff-like information</li>
   <li>User can generate an OpenMDAO code enforcing the usage of units. By ticking the use units check box,<br/>
   WhatsOpt generates an OpenMDAO code which specifies units. Units should be recognised by OpenMDAO.<br/>
   see <a href="https://openmdao.org/newdocs/versions/latest/features/units.html">Units definitions</a></li>
   <li>User can see the analysis identifier in the title</li>
+  <li>User can specify bounded constraints: either eq (c==init), neg (c<=lower), pos (c>=upper) or bounded constraint (lower<=c<=upper)</li>
   <li>Refactoring of OpenMDAO generated code:
     <ul>
       <li>User can derive <code>AnalysisFactory</code> to control disciplines creation</li>
@@ -29,7 +30,7 @@
 <h3>1.15.0 (25/06/2021)</h3>
 <ul>
   <li>User can export GEMSEO code (require wop 1.14.0):
-    <ul> 
+    <ul>
       <li>Export GEMSEO code from WhatsOpt analysis (aka wop pull --gemseo <id>)</li>
       <li>Update code from OpenMDAO to GEMSEO and back (aka wop update --gemseo/--openmdao)</li>
       <li><strong>Important Note</strong>: This is an initial limited version using GEMSEO

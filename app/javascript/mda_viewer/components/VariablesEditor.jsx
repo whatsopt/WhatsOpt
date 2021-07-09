@@ -22,10 +22,12 @@ function _computeRoleSelection(conn) {
     { id: 'min_objective', text: 'Min Objective' },
     { id: 'max_objective', text: 'Max Objective' },
     { id: 'ineq_constraint', text: 'Neg Constraint' },
+    { id: 'pos_constraint', text: 'Pos Constraint' },
     { id: 'eq_constraint', text: 'Eq Constraint' },
+    { id: 'constraint', text: 'Constraint' },
     { id: 'state_var', text: 'State Variable' }];
   if (conn.role === 'parameter' || conn.role === 'design_var' || conn.role === 'uncertain_var') {
-    options.splice(3); // remove outpuyts and state vars
+    options.splice(3); // remove outputs and state vars
   } else if (conn.role !== 'state_var') {
     options.splice(options.length - 1, 1); // remove state_var
     options.splice(0, 3); // remove inputs
@@ -236,6 +238,10 @@ function EditableCell({
       || id === 'ref' || id === 'ref0' || id === 'res_ref')
       || (role === 'state_var' && id === 'init')
       || (role === 'response' && id === 'init')
+      || (role === 'ineq_constraint' && id === 'upper')
+      || (role === 'pos_constraint' && id === 'lower')
+      || (role === 'eq_constraint' && id === 'init')
+      || (role === 'constraint' && (id === 'lower' || id === 'upper'))
       || (role === 'parameter' && (id === 'init' || id === 'lower' || id === 'upper'))
       || (role === 'design_var' && (id === 'init' || id === 'lower' || id === 'upper'))
       || (role === 'uncertain_var' && (id === 'init' || id === 'uq'));

@@ -117,6 +117,9 @@ class Connection < ApplicationRecord
           c.update!(role: params[:role])
         end
         role = params[:role]
+        if WhatsOpt::Variable::CONSTRAINT_ROLES.include?(role)  # reset bounds in case of contraninst role
+          params[:parameter_attributes] = { init: "", lower: "", upper: "" }
+        end
         params = params.except(:role)
       end
       role ||= Connection.where(from_id: from_id).first.role

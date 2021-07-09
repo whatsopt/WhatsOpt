@@ -84,10 +84,18 @@ class <%= @mda.py_classname %>DOEScenarioBase(DOEScenario):
             **kwargs,
         )
 
-        <% @mda.ineq_constraint_variables.each do |voi| %>
-        self.add_constraint('<%= voi.name %>', "ineq")<% end %>
+        <% @mda.neg_constraint_variables.each do |voi| %>
+        self.add_ineq_constraint('<%= voi.name %>', value=<%= voi.cstr_upper_py_value %>)<% end -%>
+
+        <% @mda.pos_constraint_variables.each do |voi| %>
+        self.add_ineq_constraint('<%= voi.name %>', value=<%= voi.cstr_lower_py_value %>, positive=True)<% end -%>
+        
+        <% @mda.constraint_variables.each do |voi| %>
+        self.add_ineq_constraint('<%= voi.name %>', value=<%= voi.cstr_upper_py_value %>)
+        self.add_ineq_constraint('<%= voi.name %>', value=<%= voi.cstr_lower_py_value %>, positive=True)<% end -%>
+        
         <% @mda.eq_constraint_variables.each do |voi| %>
-        self.add_constraint('<%= voi.name %>', "eq")<% end %>
+        self.add_eq_constraint('<%= voi.name %>', value=<%= voi.cstr_init_py_value %>)<% end -%>
 
     def _init_base_grammar(self, name):
         name = "DOEScenario"
@@ -126,7 +134,7 @@ class <%= @mda.py_classname %>MDOScenarioBase(MDOScenario):
             **kwargs,
         )
 
-        <% @mda.ineq_constraint_variables.each do |voi| %>
+        <% @mda.neg_constraint_variables.each do |voi| %>
         self.add_constraint('<%= voi.name %>', "ineq")<% end %>
         <% @mda.eq_constraint_variables.each do |voi| %>
         self.add_constraint('<%= voi.name %>', "eq")<% end %>

@@ -48,11 +48,23 @@ module WhatsOpt
     end
 
     def lower_py_value
-      "-sys.float_info.max"
+      "-inf"
     end
 
     def upper_py_value
-      "sys.float_info.max"
+      "inf"
+    end
+
+    def cstr_init_py_value
+      "0.0"
+    end
+
+    def cstr_lower_py_value
+      "-inf"
+    end
+
+    def cstr_upper_py_value
+      "inf"
     end
 
     def scaling_ref_py_value

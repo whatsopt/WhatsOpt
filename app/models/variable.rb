@@ -127,6 +127,26 @@ class Variable < ApplicationRecord
     parameter&.upper.blank? ? super : parameter.upper
   end
 
+  def cstr_init_py_value
+    parameter&.init.blank? ? "0.0" : parameter.init
+  end
+
+  def cstr_lower_py_value
+    if main_role == WhatsOpt::Variable::CONSTRAINT_ROLE
+      parameter&.lower.blank? ? super : parameter.lower
+    else
+      parameter&.lower.blank? ? "0.0" : parameter.lower
+    end
+  end
+
+  def cstr_upper_py_value
+    if main_role == WhatsOpt::Variable::CONSTRAINT_ROLE
+      parameter&.upper.blank? ? super : parameter.upper
+    else
+      parameter&.upper.blank? ? "0.0" : parameter.upper
+    end
+  end
+
   def scaling_ref_py_value
     scaling&.ref.blank? ? super : scaling.ref
   end
