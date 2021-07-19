@@ -10,15 +10,6 @@ class <%= @discipline.py_classname %>(<%= @discipline.py_classname %>Base):
     <% @discipline.output_variables.numeric.each do |var_out| %>
         outputs['<%= var_out.py_varname %>'] = <%= var_out.default_py_value %> <% end %>  
 
-# WhatsOpt docking mechanism: .whatsopt_dock.yml file should contain <%= @discipline.py_modulename %> entry, like
-#   <%= @discipline.py_modulename %>:
-#     module: <python.module.name>
-#     class: <ClassName>
-# 
-# then _impl field (= ClassName instance) is available, remove default implementation above, 
-# uncomment and adapt the line below as needed
-#        self._impl.compute(inputs, outputs)
-
 # Reminder of inputs 
 #   <% @discipline.input_variables.numeric.each do |var_in| %>
 #       inputs['<%= var_in.py_varname %>'] -> shape: <%= var_in.shape -%>, type: <%= var_in.type -%>

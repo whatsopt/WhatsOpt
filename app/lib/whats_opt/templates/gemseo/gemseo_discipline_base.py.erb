@@ -13,9 +13,7 @@ class <%= @discipline.py_classname %>Base(MDODiscipline):
 
     def __init__(self, **kwargs):
         self.comp_dir = "./"
-        super(<%= @discipline.py_classname %>Base, self).__init__(grammar_type=MDODiscipline.SIMPLE_GRAMMAR_TYPE, **kwargs)
-        self._initialize_impl()
-
+        super().__init__(grammar_type=MDODiscipline.SIMPLE_GRAMMAR_TYPE, **kwargs)
 
     def _instantiate_grammars(self, input_grammar_file, output_grammar_file, grammar_type=MDODiscipline.JSON_GRAMMAR_TYPE):
         self.default_inputs = {
@@ -30,18 +28,6 @@ class <%= @discipline.py_classname %>Base(MDODiscipline):
         self.input_grammar.initialize_from_base_dict(self.default_inputs)
         self.output_grammar = JSONGrammar("<%= @discipline.py_classname %>")
         self.output_grammar.initialize_from_base_dict(self.default_outputs)
-
-    def _initialize_impl(self):
-        self._impl = None
-        dockconf = path.join(path.dirname(__file__), ".whatsopt_dock.yml")
-        if path.exists(dockconf):
-            with open(dockconf) as dockfile:
-                dock = load(dockfile, Loader=FullLoader)
-                impl = dock.get("<%= @discipline.py_modulename %>")
-                if impl:
-                    module = import_module(impl['module'])
-                    self._impl = getattr(module, impl['class'])()
-
 
     def _run(self):
     <% @discipline.input_variables.each do |var| %>
