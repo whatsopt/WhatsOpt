@@ -24,13 +24,13 @@ class <%= @mda.py_classname %>MDABase(MDAJacobi):
         super().__init__(disciplines, **mda_options)
 
     def _instantiate_grammars(self, input_grammar_file, output_grammar_file, grammar_type=MDODiscipline.JSON_GRAMMAR_TYPE):
-        self.default_inputs = {
-        <% @mda.input_variables.each do |var| %>
+        self.default_inputs = {<% @mda.input_variables.each do |var| %>
             '<%= var.py_varname %>': np.atleast_1d(<%= var.init_py_value %>),<% end -%>
+
         }
-        self.default_outputs = {
-        <% @mda.output_variables.each do |var| %>
+        self.default_outputs = {<% @mda.output_variables.each do |var| %>
             '<%= var.py_varname %>': np.atleast_1d(<%= var.init_py_value %>),<% end -%>
+
         }
         self.input_grammar = JSONGrammar("<%= @discipline.py_classname %>")
         self.input_grammar.initialize_from_base_dict(self.default_inputs)
@@ -49,15 +49,12 @@ class <%= @mda.py_classname %>DesignSpace(DesignSpace):
     def __init__(self):
         super().__init__()
 
-        # Initial solution
-        <% @mda.input_variables.each do |dv| %>
-        <%= dv.name %> = np.atleast_1d(<%= dv.init_py_value %>)
-        <% end -%>
+        # Initial solution<% @mda.input_variables.each do |dv| %>
+        <%= dv.name %> = np.atleast_1d(<%= dv.init_py_value %>)<% end -%>
 
-        # Design variables
-        <% @mda.design_variables.each do |dv| %>
-        self.add_variable("<%= dv.name %>", <%= dv.dim %>, l_b=<%= dv.lower_py_value %>, u_b=<%= dv.upper_py_value %>, value=<%= dv.name %>)  
-        <% end -%>
+
+        # Design variables<% @mda.design_variables.each do |dv| %>
+        self.add_variable("<%= dv.name %>", <%= dv.dim %>, l_b=<%= dv.lower_py_value %>, u_b=<%= dv.upper_py_value %>, value=<%= dv.name %>)<% end -%>
 
 
 class <%= @mda.py_classname %>DOEScenarioBase(DOEScenario):
@@ -83,19 +80,6 @@ class <%= @mda.py_classname %>DOEScenarioBase(DOEScenario):
             self._name,
             **kwargs,
         )
-        <% @mda.neg_constraint_variables.each do |voi| %>
-        self.add_constraint('<%= voi.name %>', constraint_type="ineq", value=<%= voi.cstr_upper_py_value %>)<% end -%>
-
-        <% @mda.pos_constraint_variables.each do |voi| %>
-        self.add_constraint('<%= voi.name %>', constraint_type="ineq", value=<%= voi.cstr_lower_py_value %>, positive=True)<% end -%>
-
-        <% @mda.constraint_variables.each do |voi| %>
-        self.add_constraint('<%= voi.name %>', constraint_type="ineq", value=<%= voi.cstr_upper_py_value %>)
-        self.add_constraint('<%= voi.name %>', constraint_type="ineq", value=<%= voi.cstr_lower_py_value %>, positive=True)<% end -%>
-
-        <% @mda.eq_constraint_variables.each do |voi| %>
-        self.add_constraint('<%= voi.name %>', value=<%= voi.cstr_init_py_value %>)<% end -%>
-
 
     def _init_base_grammar(self, name):
         name = "DOEScenario"
@@ -133,17 +117,14 @@ class <%= @mda.py_classname %>MDOScenarioBase(MDOScenario):
             self._name,
             **kwargs,
         )
-
         <% @mda.neg_constraint_variables.each do |voi| %>
         self.add_constraint('<%= voi.name %>', constraint_type="ineq", value=<%= voi.cstr_upper_py_value %>)<% end -%>
-
         <% @mda.pos_constraint_variables.each do |voi| %>
         self.add_constraint('<%= voi.name %>', constraint_type="ineq", value=<%= voi.cstr_lower_py_value %>, positive=True)<% end -%>
-
         <% @mda.constraint_variables.each do |voi| %>
         self.add_constraint('<%= voi.name %>', constraint_type="ineq", value=<%= voi.cstr_upper_py_value %>)
-        self.add_constraint('<%= voi.name %>', constraint_type="ineq", value=<%= voi.cstr_lower_py_value %>, positive=True)<% end -%>
 
+        self.add_constraint('<%= voi.name %>', constraint_type="ineq", value=<%= voi.cstr_lower_py_value %>, positive=True)<% end -%>
         <% @mda.eq_constraint_variables.each do |voi| %>
         self.add_constraint('<%= voi.name %>', value=<%= voi.cstr_init_py_value %>)<% end -%>
 

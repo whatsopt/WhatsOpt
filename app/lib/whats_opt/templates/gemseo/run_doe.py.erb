@@ -11,6 +11,9 @@ parser.add_option("-n", "--ncases", type="int",
 configure_logger()
 
 scenario = <%= @mda.py_classname %>DOEScenario()
+<% @mda.response_variables.each do |voi| %>
+scenario.add_observable('<%= voi.name %>')<% end -%>
+
 
 scenario.execute(input_data={"max_iter": 10, "algo": "OT_LHS", "n_samples": options.n_cases })
 

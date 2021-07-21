@@ -18,6 +18,7 @@
   </li>
   <li>Bug fixes:
     <ul>
+      <li>Fix GEMSEO code generation to record all responses</li>
       <li>Fix bug when reassigning sub analysis</li>
       <li>Prevent from creating empty sub analysis</li>
       <li>Fix solver <code>maxiter</code> option configuration</li>
