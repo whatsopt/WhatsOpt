@@ -117,7 +117,7 @@ gem "active_model_serializers", "~> 0.10.12"
 gem "sucker_punch"
 
 # Zip
-gem "rubyzip"
+gem "rubyzip", "~>2.3.0"
 
 # UI
 gem "popper" # bootstrap dependency
