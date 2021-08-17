@@ -1,6 +1,6 @@
 <h1>CHANGELOG</h1>
 
-<h3>1.15.3 (09/07/2021)</h3>
+<h3>1.16.0 (31/08/2021)</h3>
 <ul>
   <li>User can compare an analysis to another viewing diff-like information</li>
   <li>User can generate an OpenMDAO code enforcing the usage of units. By ticking the use units check box,<br/>
@@ -8,9 +8,10 @@
   see <a href="https://openmdao.org/newdocs/versions/latest/features/units.html">Units definitions</a></li>
   <li>User can see the analysis identifier in the title</li>
   <li>User can specify bounded constraints: either eq (c==init), neg (c<=lower), pos (c>=upper) or bounded constraint (lower<=c<=upper)</li>
+  <li>User can upload results generated with GEMSEO framework (require wop >= 1.17)</li>
   <li>Refactoring of OpenMDAO generated code:
     <ul>
-      <li>User can derive <code>AnalysisFactory</code> to control disciplines creation</li>
+      <li>User can subclass <code>AnalysisFactory</code> to control disciplines creation</li>
       <li>Generated use standard recommended OpenMDAO import <code>import openmdao.api as om</code>.
       <strong>This requires upgrading to wop 1.15.4</strong></li>
       <li>Fix bugs related to Thrift generated code in presence of nested analyses</li>
