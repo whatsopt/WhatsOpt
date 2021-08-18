@@ -8,12 +8,11 @@
   see <a href="https://openmdao.org/newdocs/versions/latest/features/units.html">Units definitions</a></li>
   <li>User can see the analysis identifier in the title</li>
   <li>User can specify bounded constraints: either eq (c==init), neg (c<=lower), pos (c>=upper) or bounded constraint (lower<=c<=upper)</li>
-  <li>User can upload results generated with GEMSEO framework (require wop >= 1.17)</li>
+  <li>User can upload results generated with GEMSEO framework (requires wop>=1.17.0)</li>
   <li>Refactoring of OpenMDAO generated code:
     <ul>
       <li>User can subclass <code>AnalysisFactory</code> to control disciplines creation</li>
-      <li>Generated use standard recommended OpenMDAO import <code>import openmdao.api as om</code>.
-      <strong>This requires upgrading to wop 1.15.4</strong></li>
+      <li>Generated use standard recommended OpenMDAO import <code>import openmdao.api as om</code> (requires wop>=1.15.4)</li>
       <li>Fix bugs related to Thrift generated code in presence of nested analyses</li>
     </ul>
   </li>
@@ -23,8 +22,7 @@
       <li>Fix bug when reassigning sub analysis</li>
       <li>Prevent from creating empty sub analysis</li>
       <li>Fix solver <code>maxiter</code> option configuration</li>
-      <li>Fix run scripts driver recording. <strong>Generated code with WhatsOpt>= 1.15.2 should be uploaded<br/>
-      with wop>=1.16.0</strong></li>
+      <li>Fix run scripts driver recording (Generated results with WhatsOpt>= 1.15.2 require upload with wop>=1.16.0)</li>
     </ul>
   </li>
 </ul>
