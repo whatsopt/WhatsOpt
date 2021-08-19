@@ -7,6 +7,8 @@ class User < ActiveRecord::Base
   devise :ldap_authenticatable if APP_CONFIG["enable_ldap"]
   devise :trackable, :validatable, :timeoutable, :recoverable
 
+  has_many :journals, dependent: :destroy
+
   validates :login, :email, presence: true
   validate :password_complexity, on: :update  # Only used by devise on password reset by the user
 

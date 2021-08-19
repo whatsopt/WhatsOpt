@@ -30,6 +30,8 @@ class Api::V1::DisciplineControllerTest < ActionDispatch::IntegrationTest
     resp = JSON.parse(response.body)
     assert_equal "TestDiscipline", resp["name"]
     assert_equal @mda.id, Discipline.last.analysis.id
+    journal = Journal.last
+    assert_equal 1, journal.details.size
   end
 
   test "should update a discipline with sub analysis" do
@@ -40,6 +42,8 @@ class Api::V1::DisciplineControllerTest < ActionDispatch::IntegrationTest
           discipline: { type: "mda",
                         analysis_discipline_attributes: { discipline_id: @disc.id, analysis_id: @submda.id }
           } }, as: :json, headers: @auth_headers
+        journal = Journal.last
+        assert_equal 1, journal.details.size      
       end
     end
     assert_response :success
@@ -102,6 +106,8 @@ class Api::V1::DisciplineControllerTest < ActionDispatch::IntegrationTest
     assert_equal 1, @disc.position
     assert_equal 2, @disc2.position
     patch api_v1_discipline_url(@disc), params: { discipline: {  name: "NewName", type: "function", position: 2 } }, as: :json, headers: @auth_headers
+    journal = Journal.last
+    assert_equal 3, journal.details.size
     assert_response :success
     get api_v1_discipline_url(@disc), as: :json, headers: @auth_headers
     assert_response :success
@@ -119,6 +125,8 @@ class Api::V1::DisciplineControllerTest < ActionDispatch::IntegrationTest
     assert_difference("Discipline.count", -1) do
       delete api_v1_discipline_url(@disc), as: :json, headers: @auth_headers
       assert_response :success
+      journal = Journal.last
+      assert_equal 1, journal.details.size 
       vars = @disc.analysis.driver.variables.reload.map(&:name)
       drivervar_count = vars.size
       assert_equal initial_drivervar_count, drivervar_count

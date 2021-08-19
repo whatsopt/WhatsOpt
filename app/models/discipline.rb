@@ -43,6 +43,10 @@ class Discipline < ApplicationRecord
   scope :by_position, -> { order(position: :asc) }
   scope :of_analysis, -> (analysis_id) { where(analysis_id: analysis_id) }
 
+  def journalized_attribute_names
+    ["name", "type", "position"]
+  end
+
   def analysis_discipline_invalid?(attrs)
     Rails.logger.info "FIND ANALYSIS #{Analysis.find(attrs["analysis_id"]).nil?}"
     Rails.logger.info "DISC #{attrs["discipline_id"].to_i != id}"
@@ -113,7 +117,7 @@ class Discipline < ApplicationRecord
     end
   end
 
-  def update_discipline(params)
+  def update_discipline!(params)
     if params[:position]
       insert_at(params[:position])
     end

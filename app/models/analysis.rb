@@ -30,6 +30,8 @@ class Analysis < ApplicationRecord
 
   has_one :design_project_filing, dependent: :destroy
 
+  has_many :journals, dependent: :destroy
+
   scope :owned_by, ->(user) { with_role(:owner, user) }
   scope :of_project, -> (project) { joins(:design_project_filings).where(design_project_filing: { design_project: project }) }
   scope :latest, ->() { order(updated_at: :desc) }
@@ -712,6 +714,24 @@ class Analysis < ApplicationRecord
     # end
     # Rails.logger.info mda.build_edges.inspect
     mda
+  end
+
+  def init_journal(user)
+    @current_journal ||= Journal.new(user: user)
+  end
+
+  # Returns the current journal or nil if it's not initialized
+  def current_journal
+    @current_journal
+  end
+
+  # Clears the current journal
+  def clear_journal
+    @current_journal = nil
+  end
+
+  def journalized_attribute_names
+    ["name"]
   end
 
   private
