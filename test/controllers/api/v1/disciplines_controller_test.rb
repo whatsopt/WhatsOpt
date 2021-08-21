@@ -5,6 +5,7 @@ require "test_helper"
 class Api::V1::DisciplineControllerTest < ActionDispatch::IntegrationTest
   setup do
     @auth_headers = { "Authorization" => "Token " + TEST_API_KEY }
+    @user1 = users(:user1)
     @mda = analyses(:cicav)
     @disc = disciplines(:geometry)
     @disc2 = disciplines(:aerodynamics)
@@ -32,6 +33,8 @@ class Api::V1::DisciplineControllerTest < ActionDispatch::IntegrationTest
     assert_equal @mda.id, Discipline.last.analysis.id
     journal = Journal.last
     assert_equal 1, journal.details.size
+    assert_equal @mda, journal.analysis
+    assert_equal @user1, journal.user
   end
 
   test "should update a discipline with sub analysis" do

@@ -11,6 +11,7 @@ import ConnectionsEditor from 'mda_viewer/components/ConnectionsEditor';
 import VariablesEditor from 'mda_viewer/components/VariablesEditor';
 import OpenmdaoImplEditor from 'mda_viewer/components/OpenmdaoImplEditor';
 import ExportPanel from 'mda_viewer/components/ExportPanel';
+import HistoryPanel from 'mda_viewer/components/HistoryPanel';
 import ComparisonPanel from 'mda_viewer/components/ComparisonPanel';
 import DistributionModals from 'mda_viewer/components/DistributionModals';
 
@@ -770,7 +771,7 @@ class MdaViewer extends React.Component {
             <li className="nav-item">
               <a
                 className="nav-link"
-                id="exports-tab"
+                id="diff-tab"
                 data-toggle="tab"
                 href="#diffs"
                 role="tab"
@@ -778,6 +779,19 @@ class MdaViewer extends React.Component {
                 aria-selected="false"
               >
                 Compare...
+              </a>
+            </li>
+            <li className="nav-item">
+              <a
+                className="nav-link"
+                id="history-tab"
+                data-toggle="tab"
+                href="#history"
+                role="tab"
+                aria-controls="history"
+                aria-selected="false"
+              >
+                History
               </a>
             </li>
           </ul>
@@ -795,6 +809,9 @@ class MdaViewer extends React.Component {
             </div>
             <div className="tab-pane fade" id="diffs" role="tabpanel" aria-labelledby="diffs-tab">
               <ComparisonPanel api={this.api} mdaId={db.mda.id} />
+            </div>
+            <div className="tab-pane fade" id="history" role="tabpanel" aria-labelledby="history-tab">
+              <HistoryPanel api={this.api} mdaId={db.mda.id} />
             </div>
           </div>
         </div>

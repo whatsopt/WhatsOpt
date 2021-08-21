@@ -162,7 +162,7 @@ ActiveRecord::Schema.define(version: 2021_08_18_142023) do
   create_table "journal_details", force: :cascade do |t|
     t.integer "journal_id", default: 0, null: false
     t.string "entity_type", limit: 30, default: "", null: false
-    t.string "entity_id", limit: 30, default: "", null: false
+    t.string "entity_name", limit: 30, default: "", null: false
     t.string "entity_attr", limit: 30, default: "", null: false
     t.string "action", limit: 30, default: "", null: false
     t.string "old_value"

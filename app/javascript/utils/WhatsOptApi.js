@@ -108,6 +108,13 @@ class WhatsOptApi {
       .catch((error) => console.log(error));
   }
 
+  getAnalysisHistory(mdaId, callback) {
+    const path = `/analyses/${mdaId}/journal`;
+    axios.get(this.apiUrl(path))
+      .then(callback)
+      .catch((error) => console.log(error));
+  }
+
   updateAnalysis(mdaId, mdaAttrs, callback, onError) {
     const path = `/analyses/${mdaId}`;
     axios.put(this.apiUrl(path), { analysis: mdaAttrs })

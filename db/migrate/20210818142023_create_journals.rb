@@ -12,7 +12,7 @@ class CreateJournals < ActiveRecord::Migration[6.1]
     create_table :journal_details do |t|
       t.column "journal_id", :integer, :default => 0, :null => false
       t.column "entity_type", :string, :limit => 30, :default => "", :null => false
-      t.column "entity_id", :string, :limit => 30, :default => "", :null => false
+      t.column "entity_name", :string, :limit => 30, :default => "", :null => false
       t.column "entity_attr", :string, :limit => 30, :default => "", :null => false
       t.column "action", :string, :limit => 30, :default => "", :null => false
       t.column "old_value", :string

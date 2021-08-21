@@ -16,7 +16,7 @@ class Journal < ApplicationRecord
     details <<
       JournalDetail.new(
         entity_type: 'Discipline',
-        entity_id: disc.id,
+        entity_name: disc.name,
         entity_attr: "name",
         action: action,
         key => disc.name
@@ -28,16 +28,16 @@ class Journal < ApplicationRecord
       before = old_attrs[attr_name]
       after = disc.send(attr_name)
       unless before == after || (before.blank? && after.blank?)
-        add_change_detail('Discipline', disc.id, attr_name, before, after)
+        add_change_detail('Discipline', disc.name, attr_name, before, after)
       end
     end
   end
 
-  def add_change_detail(entity_type, entity_id, entity_attr, old_value, value)
+  def add_change_detail(entity_type, entity_name, entity_attr, old_value, value)
     details <<
       JournalDetail.new(
         entity_type: entity_type,
-        entity_id: entity_id,
+        entity_name: entity_name,
         entity_attr: entity_attr,
         action: CHANGE_ACTION,
         old_value: old_value,

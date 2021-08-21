@@ -717,7 +717,7 @@ class Analysis < ApplicationRecord
   end
 
   def init_journal(user)
-    @current_journal ||= Journal.new(user: user)
+    @current_journal ||= Journal.new(analysis: self, user: user)
   end
 
   # Returns the current journal or nil if it's not initialized
