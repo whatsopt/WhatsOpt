@@ -9,8 +9,8 @@ class DaylyChangeLog extends React.PureComponent {
       const { details } = change;
       const changes = details.map((elt, i) => {
         let chg = '';
-        if (elt.action === 'add') {
-          chg += `add new ${elt.entity_type} ${elt.value}`;
+        if (elt.action === 'add' || elt.action === 'copy') {
+          chg += `${elt.action} new ${elt.entity_type} ${elt.value}`;
         }
         if (elt.action === 'remove') {
           chg += `remove ${elt.entity_type} ${elt.old_value}`;

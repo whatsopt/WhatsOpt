@@ -62,7 +62,7 @@ class Variable < ApplicationRecord
   before_save :mark_dependents_for_removal
 
   def journalized_attribute_names
-    [:name, :type, :shape, :desc, :units]
+    ["name", "type", "shape", "desc", "units"]
   end
 
   def is_uncertain?

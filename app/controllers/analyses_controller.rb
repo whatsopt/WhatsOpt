@@ -2,7 +2,7 @@
 
 class AnalysesController < ApplicationController
   before_action :set_mda, only: [:show, :edit, :update, :destroy]
-  before_action :save_journal, only: [:create, :update, :destroy]
+  after_action :save_journal, only: [:create, :update, :destroy]
 
   # GET /mdas
   def index

@@ -15,7 +15,7 @@ class Api::V1::ConnectionsController < Api::ApiController
     begin
       conns = @mda.create_connections!(from_disc, to_disc, names)
       conns.each do |conn|
-        @journal.journalize(conn.from, Journal::ADD_ACTION)
+        @journal.journalize(conn, Journal::ADD_ACTION)
       end
       json_response conns, :created
     rescue Analysis::AncestorUpdateError => e
@@ -39,7 +39,7 @@ class Api::V1::ConnectionsController < Api::ApiController
 
   # DELETE /api/v1/connections/1
   def destroy
-    @journal.journalize(@connection.from, Journal::REMOVE_ACTION)
+    @journal.journalize(@connection, Journal::REMOVE_ACTION)
     begin
       @mda.destroy_connection!(@connection)
       head :no_content
