@@ -15,7 +15,7 @@ class Api::V1::DisciplinesController < Api::ApiController
     authorize mda
     @discipline = mda.disciplines.create!(discipline_params)
     @journal = @discipline.analysis.init_journal(current_user)
-    @journal.journalize_discipline(@discipline, Journal::ADD_ACTION)
+    @journal.journalize(@discipline, Journal::ADD_ACTION)
     json_response @discipline, :created
   end
 
@@ -23,7 +23,7 @@ class Api::V1::DisciplinesController < Api::ApiController
   def update
     old_attrs = @discipline.attributes
     @discipline.update_discipline!(discipline_params)
-    @journal.journalize_discipline_changes(@discipline, old_attrs)
+    @journal.journalize_changes(@discipline, old_attrs)
     head :no_content
   rescue AnalysisDiscipline::AlreadyDefinedError => e
       json_response({ message: e.message }, :unprocessable_entity)
@@ -33,26 +33,24 @@ class Api::V1::DisciplinesController < Api::ApiController
   def destroy
     # @discipline.destroy!
     @discipline.analysis.destroy_discipline!(@discipline)
-    @journal.journalize_discipline(@discipline, Journal::REMOVE_ACTION)
+    @journal.journalize(@discipline, Journal::REMOVE_ACTION)
     head :no_content
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
     def set_discipline
       @discipline = Discipline.find(params[:id])
-      @journal = @discipline.analysis.init_journal(current_user)
       authorize @discipline
+      @journal = @discipline.analysis.init_journal(current_user)
     end
 
-    def save_journal
-      @journal.save
-    end
-
-    # Never trust parameters from the scary internet, only allow the white list through.
     def discipline_params
       params.require(:discipline).permit(:name, :analysis_id, :type, :position, 
                                          endpoint_attributes: [:id, :host, :port, :_destroy],
                                          analysis_discipline_attributes: [:discipline_id, :analysis_id])
+    end
+
+    def save_journal
+      @journal.save
     end
 end

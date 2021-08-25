@@ -44,6 +44,10 @@ class Analysis < ApplicationRecord
   validates :name, presence: true, allow_blank: false
   validates :name, format: { with: /\A[a-zA-Z][_\.a-zA-Z0-9\s]*\z/, message: "%{value} is not a valid analysis name." }
 
+  def journalized_attribute_names
+    ["name"]
+  end
+
   def driver
     @driver ||= disciplines.driver.take
   end
@@ -466,6 +470,7 @@ class Analysis < ApplicationRecord
   end
 
   def create_connections!(from_disc, to_disc, names, sub_analysis_check: true)
+    conns = []
     Analysis.transaction do
       names.each do |name|
         conn = Connection.create_connection!(from_disc, to_disc, name, sub_analysis_check)
@@ -473,8 +478,10 @@ class Analysis < ApplicationRecord
           inner_driver_variable = driver.variables.find_by(name: name)
           parent.add_upstream_connection!(inner_driver_variable, super_discipline)
         end
+        conns << conn
       end
     end
+    conns
   end
 
   def update_connections!(conn, params, down_check = true, up_check = true)

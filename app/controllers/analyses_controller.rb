@@ -2,6 +2,7 @@
 
 class AnalysesController < ApplicationController
   before_action :set_mda, only: [:show, :edit, :update, :destroy]
+  before_action :save_journal, only: [:create, :update, :destroy]
 
   # GET /mdas
   def index
@@ -42,11 +43,15 @@ class AnalysesController < ApplicationController
         @orig_mda = Analysis.find(params[:mda_id])
         authorize @orig_mda
         @mda = @orig_mda.create_copy!
+        action = Journal::COPY_ACTION
       else
         @mda = Analysis.new(mda_params)
         authorize @mda
+        action = Journal::ADD_ACTION
       end
       if @mda.save
+        @journal = @mda.init_journal(current_user)
+        @journal.journalize(@mda, action)
         @mda.set_owner(current_user)
         @mda.copy_membership(@orig_mda) if @orig_mda
         if @mda.disciplines.nodes.empty?
@@ -84,9 +89,14 @@ class AnalysesController < ApplicationController
     def set_mda
       @mda = Analysis.find(params[:id])
       authorize @mda
+      @journal = @mda.init_journal(current_user)
     end
 
     def mda_params
       params.require(:analysis).permit(:name, :public, design_project: [:id])
+    end
+    
+    def save_journal
+      @journal&.save
     end
 end

@@ -9,26 +9,31 @@ class Journal < ApplicationRecord
   ADD_ACTION = :add
   CHANGE_ACTION = :change 
   REMOVE_ACTION = :remove
-  ACTIONS = [ADD_ACTION, CHANGE_ACTION, REMOVE_ACTION] 
+  COPY_ACTION = :copy
+  ACTIONS = [ADD_ACTION, CHANGE_ACTION, REMOVE_ACTION, COPY_ACTION] 
 
-  def journalize_discipline(disc, action)
+  def save(*args)
+    details.empty? ? false : super()
+  end
+
+  def journalize(journalized, action, copy_from: nil)
     key = (action == REMOVE_ACTION ? :old_value : :value)
     details <<
       JournalDetail.new(
-        entity_type: 'Discipline',
-        entity_name: disc.name,
+        entity_type: journalized.class.name,
+        entity_name: journalized.name,
         entity_attr: "name",
         action: action,
-        key => disc.name
+        key => journalized.name
       )
   end
 
-  def journalize_discipline_changes(disc, old_attrs)
-    disc.journalized_attribute_names.each do |attr_name|
+  def journalize_changes(journalized, old_attrs)
+    journalized.journalized_attribute_names.each do |attr_name|
       before = old_attrs[attr_name]
-      after = disc.send(attr_name)
+      after = journalized.send(attr_name)
       unless before == after || (before.blank? && after.blank?)
-        add_change_detail('Discipline', disc.name, attr_name, before, after)
+        add_change_detail(journalized.class.name, journalized.name, attr_name, before, after)
       end
     end
   end
