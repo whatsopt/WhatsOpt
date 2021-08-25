@@ -270,7 +270,7 @@ class Analysis < ApplicationRecord
   end
 
   def build_nodes
-    disciplines.by_position.map do |d|
+    disciplines.includes(:endpoint).by_position.map do |d|
       # node = { id: d.id.to_s, type: d.type, name: d.name, endpoint: d.endpoint }
       node = ActiveModelSerializers::SerializableResource.new(d).as_json
       # TODO: if XDSM v2 accepted migrate database to take into account XDSM v2 new types
@@ -294,7 +294,7 @@ class Analysis < ApplicationRecord
       _edges.update(Hash[disc_ids.collect { |item| [[id, item], []] }])
     end
     disc_ids.each do |from_id|
-      conns = Connection.joins(:from).where(variables: { discipline_id: from_id, active: active }).order("variables.name")
+      conns = Connection.joins(:from).where(variables: { discipline_id: from_id, active: active }).order("variables.name").includes(:from, to: :discipline)
       conns.each do |conn|
         _edges[[from_id, conn.to.discipline.id]] << conn
       end
@@ -311,7 +311,7 @@ class Analysis < ApplicationRecord
   end
 
   def build_var_infos
-    res = disciplines.map do |d|
+    res = disciplines.includes(variables: [:parameter, :scaling, :distributions]).map do |d|
       inputs = ActiveModelSerializers::SerializableResource.new(d.input_variables,
                                                                 each_serializer: VariableSerializer)
       outputs = ActiveModelSerializers::SerializableResource.new(d.output_variables,
