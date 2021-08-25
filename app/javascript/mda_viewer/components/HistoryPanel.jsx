@@ -73,7 +73,7 @@ function formatByDate(history) {
     }
   }
   const changelog = [];
-  for (const date of Object.keys(byDate).sort()) {
+  for (const date of Object.keys(byDate).sort().reverse()) {
     const change = { date, details: byDate[date] };
     changelog.push(change);
   }
