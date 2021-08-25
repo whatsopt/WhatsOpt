@@ -30,7 +30,7 @@ class Analysis < ApplicationRecord
 
   has_one :design_project_filing, dependent: :destroy
 
-  has_many :journals, dependent: :destroy
+  has_many :journals, -> { includes([:details, :user]).order(created_on: :asc) }, dependent: :destroy
 
   scope :owned_by, ->(user) { with_role(:owner, user) }
   scope :of_project, -> (project) { joins(:design_project_filings).where(design_project_filing: { design_project: project }) }
