@@ -10,7 +10,7 @@ class DaylyChangeLog extends React.PureComponent {
       const changes = details.map((elt, i) => {
         let chg = '';
         if (elt.action === 'add' || elt.action === 'copy') {
-          chg += `${elt.action} new ${elt.entity_type} ${elt.value}`;
+          chg += `${elt.action} ${elt.entity_type} ${elt.value}`;
         }
         if (elt.action === 'remove') {
           chg += `remove ${elt.entity_type} ${elt.old_value}`;
@@ -31,7 +31,7 @@ class DaylyChangeLog extends React.PureComponent {
             newval = 'sub-analysis';
           }
 
-          chg += `change ${elt.entity_type} ${elt.entity_name} ${elt.entity_attr} from ${oldval} to ${newval}`;
+          chg += `change ${elt.entity_type} ${elt.entity_name} ${elt.entity_attr} from '${oldval}' to '${newval}'`;
         }
         return (
           <span key={change.at + chg}>
@@ -43,6 +43,7 @@ class DaylyChangeLog extends React.PureComponent {
       return (
         <li key={change.at}>
           {text}
+          {changes}
         </li>
       );
     });

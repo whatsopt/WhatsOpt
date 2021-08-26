@@ -333,7 +333,6 @@ class MdaViewer extends React.Component {
       () => {
         this.api.getAnalysis(mda.id, false,
           () => {
-            console.log('MDA UPDATED');
             const newState = update(this.state, {
               mdaEdited: { $set: false },
               mda: {

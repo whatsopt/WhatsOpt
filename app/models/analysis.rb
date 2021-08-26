@@ -45,7 +45,7 @@ class Analysis < ApplicationRecord
   validates :name, format: { with: /\A[a-zA-Z][_\.a-zA-Z0-9\s]*\z/, message: "%{value} is not a valid analysis name." }
 
   def journalized_attribute_names
-    ["name"]
+    ["name", "note_text", "design_project_name"]
   end
 
   def driver
@@ -222,6 +222,17 @@ class Analysis < ApplicationRecord
 
   def design_project
     design_project_filing&.design_project
+  end
+
+  # journalized
+  def design_project_name
+    name = design_project_filing&.design_project&.name
+    name.nil? ? "" : name
+  end
+
+  # journalized
+  def note_text  
+    note.to_plain_text
   end
 
   def to_whatsopt_ui_json
@@ -418,7 +429,7 @@ class Analysis < ApplicationRecord
     else
       dp = DesignProject.find(design_project_id)
       dpf = self.design_project_filing || self.build_design_project_filing
-      dpf.update(design_project: dp)
+      dpf.update!(design_project: dp)
     end
   end
 
@@ -735,10 +746,6 @@ class Analysis < ApplicationRecord
   # Clears the current journal
   def clear_journal
     @current_journal = nil
-  end
-
-  def journalized_attribute_names
-    ["name"]
   end
 
   private
