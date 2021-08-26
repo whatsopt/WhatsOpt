@@ -111,10 +111,12 @@ class Operation < ApplicationRecord
           distAttr.update(id: nil)
           distAttr[:options_attributes].map { |optAttr| optAttr.update(id: nil) }
         }
+        varattr[:parameter_attributes] = {} unless varattr[:parameter_attributes]        
         varattr[:parameter_attributes].merge!(lower: "", upper: "")
       end
       if varattrs.keys.include?(c.variable.name)
         if varattr[:io_mode] == WhatsOpt::Variable::IN
+          varattr[:parameter_attributes] = {} unless varattr[:parameter_attributes]
           varattr[:parameter_attributes][:lower] = [c.values.min, varattr[:parameter_attributes][:lower].to_f].min.to_s
           varattr[:parameter_attributes][:upper] = [c.values.max, varattr[:parameter_attributes][:lower].to_f].max.to_s
         end
