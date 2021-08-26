@@ -40,7 +40,7 @@ class Api::V1::DisciplinesController < Api::ApiController
   private
     def set_discipline
       @discipline = Discipline.find(params[:id])
-      authorize @discipline.analysis, update?
+      authorize @discipline.analysis, :update?
       @journal = @discipline.analysis.init_journal(current_user)
     end
 
