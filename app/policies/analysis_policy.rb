@@ -23,7 +23,7 @@ class AnalysisPolicy < ApplicationPolicy
   end
 
   def operate?
-    APP_CONFIG["enable_remote_operations"] && update?
+    APP_CONFIG["enable_remote_operations"] && destroy?
   end
 
   def edit?

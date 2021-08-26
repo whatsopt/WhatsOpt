@@ -19,7 +19,7 @@ class Api::V1::OperationsController < Api::ApiController
         mda.set_all_parameters_as_decision_variables
         mda.set_owner(current_user)
       end
-      authorize mda
+      authorize mda, :destroy?
       @operation = Operation.build_operation(mda, ope_params)
       @operation.save!
       render json: @operation, status: :created
