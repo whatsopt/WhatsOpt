@@ -28,6 +28,7 @@ Rails.application.routes.draw do
         end
         resource :openmdao_impl, only: [:show, :update]
         resource :parameterization, only: [:update]
+        resource :journal, only: [:show]        
         post 'openmdao_checking', to: 'openmdao_checking#create' 
         get 'exports/new'
         get 'comparisons/new'

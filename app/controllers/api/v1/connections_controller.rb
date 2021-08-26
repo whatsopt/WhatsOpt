@@ -1,15 +1,22 @@
 # frozen_string_literal: true
 
 class Api::V1::ConnectionsController < Api::ApiController
+  before_action :set_connection, only: [:update, :destroy]
+  after_action :save_journal, only: [:create, :update, :destroy]
+
   # POST /api/v1/connections
   def create
-    mda = Analysis.find(params[:mda_id])
-    authorize mda
+    @mda = Analysis.find(params[:mda_id])
+    authorize @mda
+    @journal = @mda.init_journal(current_user)
     names = connection_create_params[:names]
-    from_disc = mda.disciplines.find(connection_create_params[:from])
-    to_disc = mda.disciplines.find(connection_create_params[:to])
+    from_disc = @mda.disciplines.find(connection_create_params[:from])
+    to_disc = @mda.disciplines.find(connection_create_params[:to])
     begin
-      conns = mda.create_connections!(from_disc, to_disc, names)
+      conns = @mda.create_connections!(from_disc, to_disc, names)
+      conns.each do |conn|
+        @journal.journalize(conn, Journal::ADD_ACTION)
+      end
       json_response conns, :created
     rescue Analysis::AncestorUpdateError => e
       json_response({ message: e }, :unprocessable_entity)
@@ -20,10 +27,10 @@ class Api::V1::ConnectionsController < Api::ApiController
 
   # PUT /api/v1/connections/1
   def update
-    connection = Connection.find(params[:id])
-    authorize connection.analysis
     begin
-      connection.analysis.update_connections!(connection, connection_update_params)
+      old_attrs = @connection.from.attributes
+      @mda.update_connections!(@connection, connection_update_params)
+      @journal.journalize_changes(@connection.from, old_attrs)
       head :no_content
     rescue WhatsOpt::Variable::BadShapeAttributeError => e
       json_response({ message: e }, :unprocessable_entity)
@@ -32,10 +39,9 @@ class Api::V1::ConnectionsController < Api::ApiController
 
   # DELETE /api/v1/connections/1
   def destroy
-    connection = Connection.find(params[:id])
-    authorize connection.analysis
+    @journal.journalize(@connection, Journal::REMOVE_ACTION)
     begin
-      connection.analysis.destroy_connection!(connection)
+      @mda.destroy_connection!(@connection)
       head :no_content
     rescue Analysis::AncestorUpdateError => e
       json_response({ message: e }, :unprocessable_entity)
@@ -45,6 +51,17 @@ class Api::V1::ConnectionsController < Api::ApiController
   end
 
   private
+    def set_connection
+      @connection = Connection.find(params[:id])
+      @mda = @connection.analysis
+      authorize @mda
+      @journal = @mda.init_journal(current_user)
+    end
+
+    def save_journal
+      @journal&.save
+    end
+
     def check_duplicates(mda, name)
       vouts = Variable.of_analysis(mda).where(name: name, io_mode: WhatsOpt::Variable::OUT)
       if vouts.count > 1

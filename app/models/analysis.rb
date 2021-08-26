@@ -30,6 +30,8 @@ class Analysis < ApplicationRecord
 
   has_one :design_project_filing, dependent: :destroy
 
+  has_many :journals, -> { includes([:details, :user]).order(created_on: :asc) }, dependent: :destroy
+
   scope :owned_by, ->(user) { with_role(:owner, user) }
   scope :of_project, -> (project) { joins(:design_project_filings).where(design_project_filing: { design_project: project }) }
   scope :latest, ->() { order(updated_at: :desc) }
@@ -41,6 +43,10 @@ class Analysis < ApplicationRecord
 
   validates :name, presence: true, allow_blank: false
   validates :name, format: { with: /\A[a-zA-Z][_\.a-zA-Z0-9\s]*\z/, message: "%{value} is not a valid analysis name." }
+
+  def journalized_attribute_names
+    ["name"]
+  end
 
   def driver
     @driver ||= disciplines.driver.take
@@ -264,7 +270,7 @@ class Analysis < ApplicationRecord
   end
 
   def build_nodes
-    disciplines.by_position.map do |d|
+    disciplines.includes(:endpoint).by_position.map do |d|
       # node = { id: d.id.to_s, type: d.type, name: d.name, endpoint: d.endpoint }
       node = ActiveModelSerializers::SerializableResource.new(d).as_json
       # TODO: if XDSM v2 accepted migrate database to take into account XDSM v2 new types
@@ -288,7 +294,7 @@ class Analysis < ApplicationRecord
       _edges.update(Hash[disc_ids.collect { |item| [[id, item], []] }])
     end
     disc_ids.each do |from_id|
-      conns = Connection.joins(:from).where(variables: { discipline_id: from_id, active: active }).order("variables.name")
+      conns = Connection.joins(:from).where(variables: { discipline_id: from_id, active: active }).order("variables.name").includes(:from, to: :discipline)
       conns.each do |conn|
         _edges[[from_id, conn.to.discipline.id]] << conn
       end
@@ -305,7 +311,7 @@ class Analysis < ApplicationRecord
   end
 
   def build_var_infos
-    res = disciplines.map do |d|
+    res = disciplines.includes(variables: [:parameter, :scaling, :distributions]).map do |d|
       inputs = ActiveModelSerializers::SerializableResource.new(d.input_variables,
                                                                 each_serializer: VariableSerializer)
       outputs = ActiveModelSerializers::SerializableResource.new(d.output_variables,
@@ -464,6 +470,7 @@ class Analysis < ApplicationRecord
   end
 
   def create_connections!(from_disc, to_disc, names, sub_analysis_check: true)
+    conns = []
     Analysis.transaction do
       names.each do |name|
         conn = Connection.create_connection!(from_disc, to_disc, name, sub_analysis_check)
@@ -471,8 +478,10 @@ class Analysis < ApplicationRecord
           inner_driver_variable = driver.variables.find_by(name: name)
           parent.add_upstream_connection!(inner_driver_variable, super_discipline)
         end
+        conns << conn
       end
     end
+    conns
   end
 
   def update_connections!(conn, params, down_check = true, up_check = true)
@@ -712,6 +721,24 @@ class Analysis < ApplicationRecord
     # end
     # Rails.logger.info mda.build_edges.inspect
     mda
+  end
+
+  def init_journal(user)
+    @current_journal ||= Journal.new(analysis: self, user: user)
+  end
+
+  # Returns the current journal or nil if it's not initialized
+  def current_journal
+    @current_journal
+  end
+
+  # Clears the current journal
+  def clear_journal
+    @current_journal = nil
+  end
+
+  def journalized_attribute_names
+    ["name"]
   end
 
   private

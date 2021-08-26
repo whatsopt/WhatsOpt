@@ -1,0 +1,8 @@
+singleton_add_disc:
+  journal: singleton_journal
+  entity_type: Discipline
+  entity_name: SingletonDiscipline
+  entity_attr: name
+  action: add
+  old_value: ""
+  value: SingletonDiscipline

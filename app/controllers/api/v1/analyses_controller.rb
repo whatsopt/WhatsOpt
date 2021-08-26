@@ -2,6 +2,7 @@
 
 class Api::V1::AnalysesController < Api::ApiController
   before_action :set_mda, only: [:show, :update]
+  after_action :save_journal, only: [:create, :update]
 
   # GET /api/v1/mdas
   def index
@@ -53,6 +54,8 @@ class Api::V1::AnalysesController < Api::ApiController
       @mda = create_nested_analysis
       @mda.set_owner(current_user)
       authorize @mda
+      @journal = @mda.init_journal(current_user)
+      @journal.journalize(@mda, Journal::ADD_ACTION)
       json_response @mda, :created
     end
   end
@@ -68,7 +71,9 @@ class Api::V1::AnalysesController < Api::ApiController
       if mda_params[:design_project_id]
         @mda.update_design_project!(mda_params[:design_project_id])
       end
+      old_attrs = @mda.attributes
       @mda.update!(mda_params.except(:design_project_id))
+      @journal.journalize_changes(@mda, old_attrs)
     end
     head :no_content
   end
@@ -83,6 +88,11 @@ class Api::V1::AnalysesController < Api::ApiController
     def set_mda
       @mda = Analysis.find(params[:id])
       authorize @mda
+      @journal = @mda.init_journal(current_user)
+    end
+
+    def save_journal
+      @journal&.save
     end
 
     def mda_params

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_27_063744) do
+ActiveRecord::Schema.define(version: 2021_08_18_142023) do
 
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
@@ -141,6 +141,25 @@ ActiveRecord::Schema.define(version: 2021_06_27_063744) do
     t.datetime "ended_at"
     t.string "sqlite_filename"
     t.integer "log_count", default: 0
+  end
+
+  create_table "journal_details", force: :cascade do |t|
+    t.integer "journal_id", default: 0, null: false
+    t.string "entity_type", limit: 30, default: "", null: false
+    t.string "entity_name", limit: 30, default: "", null: false
+    t.string "entity_attr", limit: 30, default: "", null: false
+    t.string "action", limit: 30, default: "", null: false
+    t.string "old_value"
+    t.string "value"
+    t.index ["journal_id"], name: "index_journal_details_on_journal_id"
+  end
+
+  create_table "journals", force: :cascade do |t|
+    t.integer "analysis_id", default: 0, null: false
+    t.integer "user_id", default: 0, null: false
+    t.datetime "created_on", null: false
+    t.index ["analysis_id"], name: "index_journals_on_analysis_id"
+    t.index ["user_id"], name: "index_journals_on_user_id"
   end
 
   create_table "meta_model_prototypes", force: :cascade do |t|

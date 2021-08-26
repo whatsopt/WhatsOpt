@@ -61,6 +61,10 @@ class Variable < ApplicationRecord
   after_initialize :set_defaults, unless: :persisted?
   before_save :mark_dependents_for_removal
 
+  def journalized_attribute_names
+    ["name", "type", "shape", "desc", "units"]
+  end
+
   def is_uncertain?
     !distributions.empty?
   end

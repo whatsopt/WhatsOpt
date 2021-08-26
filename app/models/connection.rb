@@ -57,6 +57,11 @@ class Connection < ApplicationRecord
     end
   end
 
+  # used in journal details
+  def name  
+    "#{from.discipline.name}.#{from.name} -> #{to.discipline.name}.#{to.name}"
+  end
+
   def self.create_connection!(from_disc, to_disc, name, sub_analysis_check = true)
     Connection.transaction do
       if sub_analysis_check
