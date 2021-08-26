@@ -43,7 +43,6 @@ class DaylyChangeLog extends React.PureComponent {
       return (
         <li key={change.at}>
           {text}
-          {changes}
         </li>
       );
     });
@@ -115,7 +114,7 @@ class HistoryPanel extends React.Component {
       <div className="editor-section">
         <div className="editor-section-label">Changes</div>
         <ul className="editor-section">
-          {items}
+          {items.length > 0 ? items : 'No recorded change'}
         </ul>
       </div>
     );
