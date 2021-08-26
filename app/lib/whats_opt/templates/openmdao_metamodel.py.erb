@@ -17,7 +17,7 @@ class <%= @discipline.py_classname %>(<%= @discipline.py_classname %>Base):
     """ An OpenMDAO metamodel for <%= @discipline.py_classname %> discipline """
 		
     def __init__(self, *args, **kwargs):
-        super(<%= @discipline.py_classname %>, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.url = "<%= @whatsopt_url %>/api/v1/meta_models/<%= @discipline.meta_model.id %>"
         self.session = requests.Session()  
         urlinfos = urlparse(self.url)

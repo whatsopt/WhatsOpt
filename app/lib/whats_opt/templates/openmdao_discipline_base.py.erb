@@ -11,7 +11,7 @@ class <%= @discipline.py_classname %>Base(<%= @dimpl.implicit_component ? "om.Im
     """ An OpenMDAO base component to encapsulate <%= @discipline.py_classname %> discipline """
 
     def __init__(self, **kwargs):
-        super(<%= @discipline.py_classname %>Base, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self._impl = None
         dockconf = path.join(path.dirname(__file__), ".whatsopt_dock.yml")
         if path.exists(dockconf):
