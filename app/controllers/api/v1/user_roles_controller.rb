@@ -8,13 +8,20 @@ class Api::V1::UserRolesController < Api::ApiController
       case params[:query][:select]
       when "members"
         json_response policy_scope(User).with_any_role(name: :member, resource: mda)
+      when "co_owners"
+        json_response policy_scope(User).with_any_role(name: :co_owner, resource: mda)
       when "member_candidates"
         allUsers = policy_scope(User).all
         readers = mda.readers
         users = allUsers - readers
         json_response users
+      when "co_owner_candidates"
+        allUsers = policy_scope(User).all
+        updaters = mda.updaters
+        users = allUsers - updaters
+        json_response users
       else
-        json_response({ message: 'Bad query: should select "members" or "member_candidates' }, :unprocessable_entity)
+        json_response({ message: 'Bad query: should select "members", "co_owners", "member_candidates" or "co_owner_candidates"'  }, :unprocessable_entity)
       end
     else
       json_response policy_scope(User)
@@ -25,7 +32,7 @@ class Api::V1::UserRolesController < Api::ApiController
   def update
     user = User.find(params[:id])
     mda = Analysis.find(params[:user][:analysis_id])
-    authorize mda
+    authorize mda, :destroy?
     if params[:user][:role]
       if params[:user][:role] == "member"
         mda.add_member user
