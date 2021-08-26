@@ -12,7 +12,7 @@ class Api::V1::DisciplinesController < Api::ApiController
   # POST /api/v1/{mda_id}/disciplines
   def create
     mda = Analysis.find(params[:mda_id])
-    authorize mda
+    authorize mda, :update?
     @discipline = mda.disciplines.create!(discipline_params)
     @journal = @discipline.analysis.init_journal(current_user)
     @journal.journalize(@discipline, Journal::ADD_ACTION)
@@ -40,7 +40,7 @@ class Api::V1::DisciplinesController < Api::ApiController
   private
     def set_discipline
       @discipline = Discipline.find(params[:id])
-      authorize @discipline
+      authorize @discipline.analysis, update?
       @journal = @discipline.analysis.init_journal(current_user)
     end
 

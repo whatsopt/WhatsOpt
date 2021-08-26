@@ -31,7 +31,7 @@ class AnalysisPolicy < ApplicationPolicy
   end
 
   def update?
-    (@user.admin? || @user.has_role?(:owner, @record))
+    (@user.admin? || @user.has_role?(:owner, @record) || @user.has_role?(:co_owner, @record))
   end
 
   def destroy?

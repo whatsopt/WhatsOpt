@@ -7,7 +7,7 @@ class Api::V1::ConnectionsController < Api::ApiController
   # POST /api/v1/connections
   def create
     @mda = Analysis.find(params[:mda_id])
-    authorize @mda
+    authorize @mda, update?
     @journal = @mda.init_journal(current_user)
     names = connection_create_params[:names]
     from_disc = @mda.disciplines.find(connection_create_params[:from])
@@ -54,7 +54,7 @@ class Api::V1::ConnectionsController < Api::ApiController
     def set_connection
       @connection = Connection.find(params[:id])
       @mda = @connection.analysis
-      authorize @mda
+      authorize @mda, update?
       @journal = @mda.init_journal(current_user)
     end
 
