@@ -38,6 +38,16 @@ module Ownable
 
   def remove_member(user)
     _remove_role(user, :member)
+    _remove_role(user, :co_owner)
+  end
+
+  def add_co_owner(user)
+    _add_role(user, :co_owner) unless user == self.owner
+    _add_role(user, :member) unless user == self.owner
+  end
+
+  def remove_co_owner(user)
+    _remove_role(user, :co_owner)
   end
 
   def copy_membership(ownable_src)

@@ -5,63 +5,108 @@ import UserSelector from './UserSelector';
 import ProjectSelector from './ProjectSelector';
 import AnalysisNoteEditor from './AnalysisNoteEditor';
 
-class MemberList extends React.PureComponent {
+class UserList extends React.PureComponent {
   render() {
-    const { members, onAnalysisMemberDelete } = this.props;
-    const logins = members.map((member) => member.login);
-    const memberItems = logins.map((login, i) => (
-      <span key={members[i].id} className="btn-group m-1" role="group">
+    const { users, userRole, onUserDelete } = this.props;
+    const logins = users.map((user) => user.login);
+    const userItems = logins.map((login, i) => (
+      <span key={users[i].id} className="btn-group m-1" role="group">
         <button type="button" className="btn">{login}</button>
-        <button type="button" className="btn text-danger" onClick={() => onAnalysisMemberDelete(members[i])}>
+        <button type="button" className="btn text-danger" onClick={() => onUserDelete(users[i], userRole)}>
           <i className="fa fa-times" />
         </button>
       </span>
     ));
 
-    return (<span className="mb-3">{memberItems}</span>);
+    return (<span className="mb-3">{userItems}</span>);
   }
 }
 
-MemberList.propTypes = {
-  members: PropTypes.array.isRequired,
-  onAnalysisMemberDelete: PropTypes.func.isRequired,
+UserList.propTypes = {
+  users: PropTypes.array.isRequired,
+  userRole: PropTypes.string.isRequired,
+  onUserDelete: PropTypes.func.isRequired,
+};
+
+class TeamSelector extends React.PureComponent {
+  render() {
+    const {
+      users, userRole, onUserSearch, onUserSelected, onUserDelete,
+    } = this.props;
+    let title = 'Users';
+    if (userRole === 'member') {
+      title = 'Members';
+    }
+    if (userRole === 'co_owner') {
+      title = 'Co-Owners';
+    }
+    return (
+      <>
+        <div className="editor-section">
+          <span className="form-inline">
+            <div>
+              { title }
+              <span className="ml-1 mr-3 badge badge-info">
+                {users.length}
+              </span>
+            </div>
+            <UserSelector
+              userRole={userRole}
+              onUserSearch={onUserSearch}
+              onUserSelected={onUserSelected}
+            />
+          </span>
+        </div>
+        <div className="editor-section">
+          <UserList
+            userRole={userRole}
+            users={users}
+            onUserDelete={onUserDelete}
+          />
+        </div>
+      </>
+    );
+  }
+}
+
+TeamSelector.propTypes = {
+  users: PropTypes.array.isRequired,
+  userRole: PropTypes.string.isRequired,
+  onUserSearch: PropTypes.func.isRequired,
+  onUserSelected: PropTypes.func.isRequired,
+  onUserDelete: PropTypes.func.isRequired,
 };
 
 class AnalysisEditor extends React.PureComponent {
   render() {
     let teamMembers = null;
     const {
-      analysisPublic, analysisMembers,
-      onAnalysisMemberSearch, onAnalysisMemberSelected, onAnalysisMemberDelete, onAnalysisUpdate,
+      analysisPublic, analysisMembers, analysisCoOwners,
+      onAnalysisUserSearch, onAnalysisUserSelected, onAnalysisUserDelete, onAnalysisUpdate,
       newAnalysisName, onAnalysisNameChange, onAnalysisNoteChange, onAnalysisPublicChange,
       mdaId, note, onProjectSearch, onProjectSelected, mdaProject,
     } = this.props;
     if (!analysisPublic) {
       teamMembers = (
-        <>
-          <div className="editor-section">
-            <span className="form-inline">
-              <div>
-                Team Members
-                <span className="ml-1 mr-3 badge badge-info">
-                  {analysisMembers.length}
-                </span>
-              </div>
-              <UserSelector
-                onMemberSearch={onAnalysisMemberSearch}
-                onMemberSelected={onAnalysisMemberSelected}
-              />
-            </span>
-          </div>
-          <div className="editor-section">
-            <MemberList
-              members={analysisMembers}
-              onAnalysisMemberDelete={onAnalysisMemberDelete}
-            />
-          </div>
-        </>
+        <TeamSelector
+          users={analysisMembers}
+          userRole="member"
+          onUserSearch={onAnalysisUserSearch}
+          onUserSelected={onAnalysisUserSelected}
+          onUserDelete={onAnalysisUserDelete}
+        />
       );
     }
+
+    const coOwners = (
+      <TeamSelector
+        users={analysisCoOwners}
+        userRole="co_owner"
+        onUserSearch={onAnalysisUserSearch}
+        onUserSelected={onAnalysisUserSelected}
+        onUserDelete={onAnalysisUserDelete}
+      />
+    );
 
     return (
       <div className="container-fluid">
@@ -105,6 +150,14 @@ class AnalysisEditor extends React.PureComponent {
             <button type="submit" className="btn btn-primary ml-3">Save</button>
           </form>
         </div>
+        <hr />
+        <div className="editor-section">
+          <div className="editor-section-label">
+            Collaboration
+          </div>
+        </div>
+        {coOwners}
+        <hr />
         <div className="editor-section">
           <div className="editor-section-label">Privacy</div>
           <form className="form" onSubmit={onAnalysisUpdate}>
@@ -135,13 +188,14 @@ AnalysisEditor.propTypes = {
   newAnalysisName: PropTypes.string.isRequired,
   analysisPublic: PropTypes.bool.isRequired,
   analysisMembers: PropTypes.array.isRequired,
+  analysisCoOwners: PropTypes.array.isRequired,
   onAnalysisUpdate: PropTypes.func.isRequired,
   onAnalysisNameChange: PropTypes.func.isRequired,
   onAnalysisNoteChange: PropTypes.func.isRequired,
   onAnalysisPublicChange: PropTypes.func.isRequired,
-  onAnalysisMemberSearch: PropTypes.func.isRequired,
-  onAnalysisMemberSelected: PropTypes.func.isRequired,
-  onAnalysisMemberDelete: PropTypes.func.isRequired,
+  onAnalysisUserSearch: PropTypes.func.isRequired,
+  onAnalysisUserSelected: PropTypes.func.isRequired,
+  onAnalysisUserDelete: PropTypes.func.isRequired,
   onProjectSearch: PropTypes.func.isRequired,
   onProjectSelected: PropTypes.func.isRequired,
 };

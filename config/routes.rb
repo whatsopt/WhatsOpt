@@ -38,7 +38,7 @@ Rails.application.routes.draw do
       resources :users, only: [:update] do
         resource :api_key
       end
-      resources :user_roles, only: [:index, :update]  
+      resources :user_roles, only: [:index, :update, :destroy]  
       resource :versioning, only: [:show]  
       resources :optimizations
       resources :design_projects, only: [:index]

@@ -16,3 +16,8 @@ user3:
   login: charles
   email: charles.smith@onera.fr
   api_key: FriendlyApiKeyUser3
+
+user4:
+  login: davina
+  email: davina.davis@onera.fr
+  api_key: FriendlyApiKeyUser4

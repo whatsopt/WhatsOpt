@@ -70,23 +70,30 @@ class WhatsOptApi {
       .catch((error) => console.log(error));
   }
 
-  getMemberCandidates(mdaId, callback) {
-    const path = `/user_roles?query[analysis_id]=${mdaId}&query[select]=member_candidates`;
+  getUsers(mdaId, role, callback) {
+    const path = `/user_roles?query[analysis_id]=${mdaId}&query[select]=${role}`;
     axios.get(this.apiUrl(path))
       .then(callback)
       .catch((error) => console.log(error));
   }
 
-  addMember(userId, mdaId, callback) {
-    const path = `/user_roles/${userId}`;
-    axios.put(this.apiUrl(path), { user: { analysis_id: mdaId, role: 'member' } })
+  getUserCandidates(mdaId, role, callback) {
+    const path = `/user_roles?query[analysis_id]=${mdaId}&query[select]=${role}_candidates`;
+    axios.get(this.apiUrl(path))
       .then(callback)
       .catch((error) => console.log(error));
   }
 
-  removeMember(userId, mdaId, callback) {
+  addUser(userId, mdaId, role, callback) {
     const path = `/user_roles/${userId}`;
-    axios.put(this.apiUrl(path), { user: { analysis_id: mdaId, role: 'none' } })
+    axios.put(this.apiUrl(path), { user_role: { analysis_id: mdaId, role } })
+      .then(callback)
+      .catch((error) => console.log(error));
+  }
+
+  removeUser(userId, mdaId, role, callback) {
+    const path = `/user_roles/${userId}`;
+    axios.delete(this.apiUrl(path), { data: { user_role: { analysis_id: mdaId, role } } })
       .then(callback)
       .catch((error) => console.log(error));
   }

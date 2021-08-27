@@ -12,6 +12,7 @@ class Api::V1::MetaModelsControllerTest < ActionDispatch::IntegrationTest
     @auth_headers2 = { "Authorization" => "Token " + @user2.api_key }
     @user3 = users(:user3)
     @auth_headers3 = { "Authorization" => "Token " + @user3.api_key }
+    @user4 = users(:user4)
   end
 
   teardown do
@@ -72,7 +73,7 @@ class Api::V1::MetaModelsControllerTest < ActionDispatch::IntegrationTest
     assert_equal @user3, mda.owner
     assert_equal @mda.public, mda.public
     assert_equal @mda.design_project, mda.design_project
-    assert_equal [@user1], mda.members  # user1 owner of cicav
+    assert_equal [], mda.members  # cicav is public
 
     assert_equal 2, mda.design_variables.count
     assert_equal 1, mda.response_variables.count
