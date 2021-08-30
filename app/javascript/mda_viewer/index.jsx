@@ -544,7 +544,7 @@ class MdaViewer extends React.Component {
         );
       }
 
-      const analysisPermissionsEditable = (mda.owner === currentUser);
+      const analysisPermissionsEditable = (mda.owner.id === currentUser.id);
 
       return (
         <div>
