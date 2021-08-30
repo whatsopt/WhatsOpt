@@ -50,6 +50,10 @@ users_roles14:
   user: user1
   role: member_singleton_mm_role
 
+users_roles15:
+  user: user3
+  role: owner_singleton_uq_role
+
 users_roles_optim_ackley2d:
   user: user1
   role: owner_optim_ackley2d_role
@@ -61,3 +65,11 @@ users_roles_cicav_project:
 users_roles_empty_project:
   user: user1
   role: owner_empty_project_role
+
+users_roles_coowner:
+  user: user4
+  role: coowner_cicav_mda_role
+
+users_roles_member2:
+  user: user4
+  role: member2_cicav_mda_role

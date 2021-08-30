@@ -169,7 +169,7 @@ class AnalysesControllerTest < ActionDispatch::IntegrationTest
     assert_equal user2, copy.owner
     assert_equal @cicav.public, copy.public
     assert_equal @cicav.design_project, copy.design_project
-    assert_equal [user1, user3], copy.members  # user1 owner of cicav, user3 member of cicav
+    assert_equal [], copy.members  # cicav public
   end
 
   test "should make a copy of a nested analysis" do

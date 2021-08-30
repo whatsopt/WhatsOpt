@@ -10,9 +10,7 @@ class OperationPolicy < ApplicationPolicy
   end
 
   def create?
-    enable_remote_operations? && (@user.admin? || @record.analysis.public ||
-                           @user.has_role?(:owner, @record.analysis) ||
-                           @user.has_role?(:member, @record.analysis))
+    enable_remote_operations? && @user.has_role?(:owner, @record.analysis)
   end
 
   def update?

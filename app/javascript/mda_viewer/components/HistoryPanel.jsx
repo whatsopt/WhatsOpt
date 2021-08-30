@@ -10,7 +10,7 @@ class DaylyChangeLog extends React.PureComponent {
       const changes = details.map((elt, i) => {
         let chg = '';
         if (elt.action === 'add' || elt.action === 'copy') {
-          chg += `${elt.action} new ${elt.entity_type} ${elt.value}`;
+          chg += `${elt.action} ${elt.entity_type} ${elt.value}`;
         }
         if (elt.action === 'remove') {
           chg += `remove ${elt.entity_type} ${elt.old_value}`;
@@ -31,7 +31,7 @@ class DaylyChangeLog extends React.PureComponent {
             newval = 'sub-analysis';
           }
 
-          chg += `change ${elt.entity_type} ${elt.entity_name} ${elt.entity_attr} from ${oldval} to ${newval}`;
+          chg += `change ${elt.entity_type} ${elt.entity_name} ${elt.entity_attr} from '${oldval}' to '${newval}'`;
         }
         return (
           <span key={change.at + chg}>
@@ -115,7 +115,7 @@ class HistoryPanel extends React.Component {
       <div className="editor-section">
         <div className="editor-section-label">Changes</div>
         <ul className="editor-section">
-          {items}
+          {items.length > 0 ? items : 'No recorded change'}
         </ul>
       </div>
     );

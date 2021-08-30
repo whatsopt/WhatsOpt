@@ -17,8 +17,8 @@ class UserSelector extends React.Component {
 
   handleSearch(query) {
     this.setState({ isLoading: true });
-    const { onMemberSearch } = this.props;
-    onMemberSearch(query, (options) => {
+    const { onUserSearch, userRole } = this.props;
+    onUserSearch(query, userRole, (options) => {
       // const opts = options.map((login, i) => { return { id: i, login: login }; });
       this.setState({ isLoading: false, options });
     });
@@ -26,8 +26,8 @@ class UserSelector extends React.Component {
 
   handleChange(selected) {
     if (selected.length) {
-      const { onMemberSelected } = this.props;
-      onMemberSelected(selected);
+      const { onUserSelected, userRole } = this.props;
+      onUserSelected(selected, userRole);
       this.typeaheadRef.current.clear();
     }
   }
@@ -53,8 +53,9 @@ class UserSelector extends React.Component {
 }
 
 UserSelector.propTypes = {
-  onMemberSearch: PropTypes.func.isRequired,
-  onMemberSelected: PropTypes.func.isRequired,
+  userRole: PropTypes.string.isRequired,
+  onUserSearch: PropTypes.func.isRequired,
+  onUserSelected: PropTypes.func.isRequired,
 };
 
 export default UserSelector;

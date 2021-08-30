@@ -45,7 +45,7 @@ class Analysis < ApplicationRecord
   validates :name, format: { with: /\A[a-zA-Z][_\.a-zA-Z0-9\s]*\z/, message: "%{value} is not a valid analysis name." }
 
   def journalized_attribute_names
-    ["name"]
+    ["name", "note_text", "design_project_name"]
   end
 
   def driver
@@ -224,10 +224,22 @@ class Analysis < ApplicationRecord
     design_project_filing&.design_project
   end
 
+  # journalized
+  def design_project_name
+    name = design_project_filing&.design_project&.name
+    name.nil? ? "" : name
+  end
+
+  # journalized
+  def note_text  
+    note.to_plain_text
+  end
+
   def to_whatsopt_ui_json
     {
       id: id,
       name: name,
+      owner: UserSerializer.new(owner),
       project: design_project || { id: -1, name: "" },
       note: note.blank? ? "":note.to_s,
 
@@ -403,6 +415,11 @@ class Analysis < ApplicationRecord
   def update!(mda_params)
     super
     if mda_params.key? :public
+      if mda_params[:public] == false  # private mda -> coowners should be members
+        self.co_owners.each do |co_owner|
+          self.add_member(co_owner)
+        end
+      end
       descendants.each do |inner|
         inner.update_column(:public, mda_params[:public])
       end
@@ -418,7 +435,7 @@ class Analysis < ApplicationRecord
     else
       dp = DesignProject.find(design_project_id)
       dpf = self.design_project_filing || self.build_design_project_filing
-      dpf.update(design_project: dp)
+      dpf.update!(design_project: dp)
     end
   end
 
@@ -735,10 +752,6 @@ class Analysis < ApplicationRecord
   # Clears the current journal
   def clear_journal
     @current_journal = nil
-  end
-
-  def journalized_attribute_names
-    ["name"]
   end
 
   private

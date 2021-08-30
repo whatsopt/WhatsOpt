@@ -53,7 +53,7 @@ class AnalysesController < ApplicationController
         @journal = @mda.init_journal(current_user)
         @journal.journalize(@mda, action)
         @mda.set_owner(current_user)
-        @mda.copy_membership(@orig_mda) if @orig_mda
+        @mda.copy_membership(@orig_mda) unless !@orig_mda || @orig_mda.public
         if @mda.disciplines.nodes.empty?
           redirect_to edit_mda_url(@mda)
         else
