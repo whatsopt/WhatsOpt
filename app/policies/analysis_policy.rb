@@ -23,7 +23,7 @@ class AnalysisPolicy < ApplicationPolicy
   end
 
   def operate?
-    APP_CONFIG["enable_remote_operations"] && update?
+    APP_CONFIG["enable_remote_operations"] && destroy?
   end
 
   def edit?
@@ -31,7 +31,7 @@ class AnalysisPolicy < ApplicationPolicy
   end
 
   def update?
-    (@user.admin? || @user.has_role?(:owner, @record))
+    (@user.admin? || @user.has_role?(:owner, @record) || @user.has_role?(:co_owner, @record))
   end
 
   def destroy?

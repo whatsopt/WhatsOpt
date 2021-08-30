@@ -68,10 +68,13 @@ class Api::V1::AnalysesController < Api::ApiController
       authorize(fromAnalysis, :show?)
       @mda.import!(fromAnalysis, import[:disciplines])
     else
+      old_attrs = @mda.attributes.merge!({
+        "note_text" => @mda.note.to_plain_text,
+        "design_project_name" => @mda.design_project&.name
+      })
       if mda_params[:design_project_id]
         @mda.update_design_project!(mda_params[:design_project_id])
       end
-      old_attrs = @mda.attributes
       @mda.update!(mda_params.except(:design_project_id))
       @journal.journalize_changes(@mda, old_attrs)
     end

@@ -33,7 +33,9 @@ const reorder = (list, startIndex, endIndex) => {
 class MdaViewer extends React.Component {
   constructor(props) {
     super(props);
-    const { api, members, mda } = this.props;
+    const {
+      api, members, coOwners, currentUser, mda,
+    } = this.props;
     this.api = api;
     const { isEditing } = this.props;
     const filter = { fr: undefined, to: undefined };
@@ -42,7 +44,9 @@ class MdaViewer extends React.Component {
       filter,
       isEditing,
       mda: props.mda,
+      currentUser,
       analysisMembers: members,
+      analysisCoOwners: coOwners,
       newAnalysisName: mda.name,
       newDisciplineName: '',
       analysisNote: '',
@@ -56,9 +60,9 @@ class MdaViewer extends React.Component {
     this.handleAnalysisNameChange = this.handleAnalysisNameChange.bind(this);
     this.handleAnalysisNoteChange = this.handleAnalysisNoteChange.bind(this);
     this.handleAnalysisPublicChange = this.handleAnalysisPublicChange.bind(this);
-    this.handleAnalysisMemberSearch = this.handleAnalysisMemberSearch.bind(this);
-    this.handleAnalysisMemberCreate = this.handleAnalysisMemberCreate.bind(this);
-    this.handleAnalysisMemberDelete = this.handleAnalysisMemberDelete.bind(this);
+    this.handleAnalysisUserSearch = this.handleAnalysisUserSearch.bind(this);
+    this.handleAnalysisUserCreate = this.handleAnalysisUserCreate.bind(this);
+    this.handleAnalysisUserDelete = this.handleAnalysisUserDelete.bind(this);
     this.handleAnalysisUpdate = this.handleAnalysisUpdate.bind(this);
     this.handleDisciplineNameChange = this.handleDisciplineNameChange.bind(this);
     this.handleDisciplineCreate = this.handleDisciplineCreate.bind(this);
@@ -292,32 +296,43 @@ class MdaViewer extends React.Component {
     return false;
   }
 
-  handleAnalysisMemberSearch(query, callback) {
+  handleAnalysisUserSearch(query, role, callback) {
     // TODO: query could be used to filter user on server side
     const { mda } = this.state;
-    this.api.getMemberCandidates(mda.id,
+    this.api.getUserCandidates(mda.id, role,
       (response) => {
         callback(response.data);
       });
   }
 
-  handleAnalysisMemberCreate(selected) {
+  handleAnalysisUserCreate(selected, role) {
     const { mda } = this.state;
     if (selected.length) {
-      this.api.addMember(selected[0].id, mda.id,
+      this.api.addUser(selected[0].id, mda.id, role,
         () => {
-          const newState = update(this.state, { analysisMembers: { $push: selected } });
-          this.setState(newState);
+          // const newState = update(this.state, { analysisMembers: { $push: selected } });
+          // this.setState(newState);
+          this.api.getUsers(mda.id, 'members', (response) => {
+            this.setState({ analysisMembers: response.data });
+          });
+          this.api.getUsers(mda.id, 'co_owners', (response) => {
+            this.setState({ analysisCoOwners: response.data });
+          });
         });
     }
   }
 
-  handleAnalysisMemberDelete(user) {
-    const { mda, analysisMembers } = this.state;
-    this.api.removeMember(user.id, mda.id, () => {
-      const idx = analysisMembers.indexOf(user);
-      const newState = update(this.state, { analysisMembers: { $splice: [[idx, 1]] } });
-      this.setState(newState);
+  handleAnalysisUserDelete(user, role) {
+    const { mda } = this.state;
+    this.api.removeUser(user.id, mda.id, role, () => {
+      // const idx = analysisMembers.indexOf(user);
+      // const newState = update(this.state, { analysisMembers: { $splice: [[idx, 1]] } });
+      this.api.getUsers(mda.id, 'members', (response) => {
+        this.setState({ analysisMembers: response.data });
+      });
+      this.api.getUsers(mda.id, 'co_owners', (response) => {
+        this.setState({ analysisCoOwners: response.data });
+      });
     });
   }
 
@@ -333,7 +348,6 @@ class MdaViewer extends React.Component {
       () => {
         this.api.getAnalysis(mda.id, false,
           () => {
-            console.log('MDA UPDATED');
             const newState = update(this.state, {
               mdaEdited: { $set: false },
               mda: {
@@ -435,8 +449,9 @@ class MdaViewer extends React.Component {
 
   render() {
     const {
-      mda, useScaling, errors, isEditing, filter, implEdited, mdaEdited,
-      newAnalysisName, analysisMembers, selectedConnectionNames, newDisciplineName,
+      mda, currentUser, useScaling, errors, isEditing, filter, implEdited, mdaEdited,
+      newAnalysisName, analysisMembers, analysisCoOwners,
+      selectedConnectionNames, newDisciplineName,
     } = this.state;
     const errs = errors.map(
       // eslint-disable-next-line react/no-array-index-key
@@ -503,7 +518,10 @@ class MdaViewer extends React.Component {
             As this analysis is already operated,
             {' '}
             <strong>your edition access is limited</strong>
-            . If you need full edition access either restart with a copy of the analysis
+            .
+            <br />
+            {' '}
+            If you need full edition access either restart with a copy of the analysis
             or discard existing operation results.
             <button type="button" className="close" data-dismiss="alert" aria-label="Close">
               <span aria-hidden="true">&times;</span>
@@ -525,6 +543,8 @@ class MdaViewer extends React.Component {
           </span>
         );
       }
+
+      const analysisPermissionsEditable = (mda.owner === currentUser);
 
       return (
         <div>
@@ -630,14 +650,16 @@ class MdaViewer extends React.Component {
                 note={db.mda.note}
                 newAnalysisName={newAnalysisName}
                 analysisPublic={mda.public}
+                analysisPermissionsEditable={analysisPermissionsEditable}
                 analysisMembers={analysisMembers}
+                analysisCoOwners={analysisCoOwners}
                 onAnalysisUpdate={this.handleAnalysisUpdate}
                 onAnalysisNameChange={this.handleAnalysisNameChange}
                 onAnalysisNoteChange={this.handleAnalysisNoteChange}
                 onAnalysisPublicChange={this.handleAnalysisPublicChange}
-                onAnalysisMemberSearch={this.handleAnalysisMemberSearch}
-                onAnalysisMemberSelected={this.handleAnalysisMemberCreate}
-                onAnalysisMemberDelete={this.handleAnalysisMemberDelete}
+                onAnalysisUserSearch={this.handleAnalysisUserSearch}
+                onAnalysisUserSelected={this.handleAnalysisUserCreate}
+                onAnalysisUserDelete={this.handleAnalysisUserDelete}
                 onProjectSearch={this.handleProjectSearch}
                 onProjectSelected={this.handleProjectSelected}
               />
@@ -824,7 +846,10 @@ MdaViewer.propTypes = {
   isEditing: PropTypes.bool.isRequired,
   api: PropTypes.object.isRequired,
   members: PropTypes.array,
+  coOwners: PropTypes.array,
+  currentUser: PropTypes.object.isRequired,
   mda: PropTypes.shape({
+    owner: PropTypes.object.isRequired,
     name: PropTypes.string.isRequired,
     public: PropTypes.bool.isRequired,
     note: PropTypes.string.isRequired,
@@ -840,6 +865,7 @@ MdaViewer.propTypes = {
 };
 MdaViewer.defaultProps = {
   members: [],
+  coOwners: [],
 };
 
 export default MdaViewer;

@@ -49,6 +49,10 @@ member_singleton_mm_role:
   name: member
   resource: singleton_mm (Analysis)    
 
+owner_singleton_uq_role:
+  name: owner
+  resource: singleton_uq (Analysis)  
+
 owner_optim_ackley2d_role:
   name: owner
   resource: optim_ackley2d (Optimization) 
@@ -60,3 +64,11 @@ owner_cicav_project_role:
 owner_empty_project_role:
   name: owner
   resource: empty_project(DesignProject)
+
+coowner_cicav_mda_role:
+  name: co_owner
+  resource: cicav (Analysis)
+
+member2_cicav_mda_role:
+  name: member
+  resource: cicav (Analysis)
