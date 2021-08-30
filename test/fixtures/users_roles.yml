@@ -50,6 +50,10 @@ users_roles14:
   user: user1
   role: member_singleton_mm_role
 
+users_roles15:
+  user: user3
+  role: owner_singleton_uq_role
+
 users_roles_optim_ackley2d:
   user: user1
   role: owner_optim_ackley2d_role

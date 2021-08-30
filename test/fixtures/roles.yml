@@ -49,6 +49,10 @@ member_singleton_mm_role:
   name: member
   resource: singleton_mm (Analysis)    
 
+owner_singleton_uq_role:
+  name: owner
+  resource: singleton_uq (Analysis)  
+
 owner_optim_ackley2d_role:
   name: owner
   resource: optim_ackley2d (Optimization) 
