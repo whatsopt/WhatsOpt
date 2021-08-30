@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const apiKey = mdaViewerElt.data('api-key');
   const members = mdaViewerElt.data('members');
   const coOwners = mdaViewerElt.data('co-owners');
+  const currentUser = mdaViewerElt.data('current-user');
 
   const api = new WhatsOptApi(csrfToken, apiKey, relativeUrlRoot);
 
@@ -24,5 +25,6 @@ document.addEventListener('DOMContentLoaded', () => {
     api={api}
     members={members}
     coOwners={coOwners}
+    currentUser={currentUser}
   />, mdaViewerElt[0]);
 });

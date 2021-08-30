@@ -7,12 +7,15 @@ import AnalysisNoteEditor from './AnalysisNoteEditor';
 
 class UserList extends React.PureComponent {
   render() {
-    const { users, userRole, onUserDelete } = this.props;
+    const {
+      users, userRole, onUserDelete, editEnabled,
+    } = this.props;
     const logins = users.map((user) => user.login);
+
     const userItems = logins.map((login, i) => (
       <span key={users[i].id} className="btn-group m-1" role="group">
         <button type="button" className="btn">{login}</button>
-        <button type="button" className="btn text-danger" onClick={() => onUserDelete(users[i], userRole)}>
+        <button type="button" className="btn text-danger" disabled={!editEnabled} onClick={() => onUserDelete(users[i], userRole)}>
           <i className="fa fa-times" />
         </button>
       </span>
@@ -26,12 +29,13 @@ UserList.propTypes = {
   users: PropTypes.array.isRequired,
   userRole: PropTypes.string.isRequired,
   onUserDelete: PropTypes.func.isRequired,
+  editEnabled: PropTypes.bool.isRequired,
 };
 
 class TeamSelector extends React.PureComponent {
   render() {
     const {
-      users, userRole, onUserSearch, onUserSelected, onUserDelete,
+      users, userRole, onUserSearch, onUserSelected, onUserDelete, editEnabled,
     } = this.props;
     let title = 'Users';
     if (userRole === 'member') {
@@ -39,6 +43,16 @@ class TeamSelector extends React.PureComponent {
     }
     if (userRole === 'co_owner') {
       title = 'Co-Owners';
+    }
+    let userSelector;
+    if (editEnabled) {
+      userSelector = (
+        <UserSelector
+          userRole={userRole}
+          onUserSearch={onUserSearch}
+          onUserSelected={onUserSelected}
+        />
+      );
     }
     return (
       <>
@@ -50,11 +64,7 @@ class TeamSelector extends React.PureComponent {
                 {users.length}
               </span>
             </div>
-            <UserSelector
-              userRole={userRole}
-              onUserSearch={onUserSearch}
-              onUserSelected={onUserSelected}
-            />
+            {userSelector}
           </span>
         </div>
         <div className="editor-section">
@@ -62,6 +72,7 @@ class TeamSelector extends React.PureComponent {
             userRole={userRole}
             users={users}
             onUserDelete={onUserDelete}
+            editEnabled={editEnabled}
           />
         </div>
       </>
@@ -75,13 +86,14 @@ TeamSelector.propTypes = {
   onUserSearch: PropTypes.func.isRequired,
   onUserSelected: PropTypes.func.isRequired,
   onUserDelete: PropTypes.func.isRequired,
+  editEnabled: PropTypes.bool.isRequired,
 };
 
 class AnalysisEditor extends React.PureComponent {
   render() {
     let teamMembers = null;
     const {
-      analysisPublic, analysisMembers, analysisCoOwners,
+      analysisPublic, analysisMembers, analysisCoOwners, analysisPermissionsEditable,
       onAnalysisUserSearch, onAnalysisUserSelected, onAnalysisUserDelete, onAnalysisUpdate,
       newAnalysisName, onAnalysisNameChange, onAnalysisNoteChange, onAnalysisPublicChange,
       mdaId, note, onProjectSearch, onProjectSelected, mdaProject,
@@ -94,6 +106,7 @@ class AnalysisEditor extends React.PureComponent {
           onUserSearch={onAnalysisUserSearch}
           onUserSelected={onAnalysisUserSelected}
           onUserDelete={onAnalysisUserDelete}
+          editEnabled={analysisPermissionsEditable}
         />
       );
     }
@@ -105,6 +118,7 @@ class AnalysisEditor extends React.PureComponent {
         onUserSearch={onAnalysisUserSearch}
         onUserSelected={onAnalysisUserSelected}
         onUserDelete={onAnalysisUserDelete}
+        editEnabled={analysisPermissionsEditable}
       />
     );
 
@@ -154,12 +168,18 @@ class AnalysisEditor extends React.PureComponent {
         <div className="editor-section">
           <div className="editor-section-label">
             Collaboration
+            {' '}
+            <small>(allow edit access to the users listed below)</small>
           </div>
         </div>
         {coOwners}
         <hr />
         <div className="editor-section">
-          <div className="editor-section-label">Privacy</div>
+          <div className="editor-section-label">
+            Privacy
+            {' '}
+            <small>(when restricted, allow read only access to the users listed below)</small>
+          </div>
           <form className="form" onSubmit={onAnalysisUpdate}>
             <div className="form-group form-check">
               <label htmlFor="public" className="form-check-label">
@@ -169,6 +189,7 @@ class AnalysisEditor extends React.PureComponent {
                   defaultChecked={!analysisPublic}
                   id="public"
                   onChange={onAnalysisPublicChange}
+                  disabled={!analysisPermissionsEditable}
                 />
                 Restricted Access
               </label>
@@ -187,6 +208,7 @@ AnalysisEditor.propTypes = {
   mdaProject: PropTypes.object.isRequired,
   newAnalysisName: PropTypes.string.isRequired,
   analysisPublic: PropTypes.bool.isRequired,
+  analysisPermissionsEditable: PropTypes.bool.isRequired,
   analysisMembers: PropTypes.array.isRequired,
   analysisCoOwners: PropTypes.array.isRequired,
   onAnalysisUpdate: PropTypes.func.isRequired,

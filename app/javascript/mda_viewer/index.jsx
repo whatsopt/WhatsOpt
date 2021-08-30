@@ -34,7 +34,7 @@ class MdaViewer extends React.Component {
   constructor(props) {
     super(props);
     const {
-      api, members, coOwners, mda,
+      api, members, coOwners, currentUser, mda,
     } = this.props;
     this.api = api;
     const { isEditing } = this.props;
@@ -44,6 +44,7 @@ class MdaViewer extends React.Component {
       filter,
       isEditing,
       mda: props.mda,
+      currentUser,
       analysisMembers: members,
       analysisCoOwners: coOwners,
       newAnalysisName: mda.name,
@@ -305,7 +306,7 @@ class MdaViewer extends React.Component {
   }
 
   handleAnalysisUserCreate(selected, role) {
-    const { mda, analysisMembers, analysisCoOwners } = this.state;
+    const { mda } = this.state;
     if (selected.length) {
       this.api.addUser(selected[0].id, mda.id, role,
         () => {
@@ -322,7 +323,7 @@ class MdaViewer extends React.Component {
   }
 
   handleAnalysisUserDelete(user, role) {
-    const { mda, analysisMembers, analysisCoOwners } = this.state;
+    const { mda } = this.state;
     this.api.removeUser(user.id, mda.id, role, () => {
       // const idx = analysisMembers.indexOf(user);
       // const newState = update(this.state, { analysisMembers: { $splice: [[idx, 1]] } });
@@ -448,7 +449,7 @@ class MdaViewer extends React.Component {
 
   render() {
     const {
-      mda, useScaling, errors, isEditing, filter, implEdited, mdaEdited,
+      mda, currentUser, useScaling, errors, isEditing, filter, implEdited, mdaEdited,
       newAnalysisName, analysisMembers, analysisCoOwners,
       selectedConnectionNames, newDisciplineName,
     } = this.state;
@@ -542,6 +543,8 @@ class MdaViewer extends React.Component {
           </span>
         );
       }
+
+      const analysisPermissionsEditable = (mda.owner === currentUser);
 
       return (
         <div>
@@ -647,6 +650,7 @@ class MdaViewer extends React.Component {
                 note={db.mda.note}
                 newAnalysisName={newAnalysisName}
                 analysisPublic={mda.public}
+                analysisPermissionsEditable={analysisPermissionsEditable}
                 analysisMembers={analysisMembers}
                 analysisCoOwners={analysisCoOwners}
                 onAnalysisUpdate={this.handleAnalysisUpdate}
@@ -843,7 +847,9 @@ MdaViewer.propTypes = {
   api: PropTypes.object.isRequired,
   members: PropTypes.array,
   coOwners: PropTypes.array,
+  currentUser: PropTypes.object.isRequired,
   mda: PropTypes.shape({
+    owner: PropTypes.object.isRequired,
     name: PropTypes.string.isRequired,
     public: PropTypes.bool.isRequired,
     note: PropTypes.string.isRequired,

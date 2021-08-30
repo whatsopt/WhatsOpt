@@ -239,6 +239,7 @@ class Analysis < ApplicationRecord
     {
       id: id,
       name: name,
+      owner: UserSerializer.new(owner),
       project: design_project || { id: -1, name: "" },
       note: note.blank? ? "":note.to_s,
 
@@ -414,6 +415,11 @@ class Analysis < ApplicationRecord
   def update!(mda_params)
     super
     if mda_params.key? :public
+      if mda_params[:public] == false  # private mda -> coowners should be members
+        self.co_owners.each do |co_owner|
+          self.add_member(co_owner)
+        end
+      end
       descendants.each do |inner|
         inner.update_column(:public, mda_params[:public])
       end
