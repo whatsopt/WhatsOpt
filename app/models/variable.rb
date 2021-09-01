@@ -14,7 +14,7 @@ class Variable < ApplicationRecord
   DEFAULT_IOMODE = IN
 
   self.inheritance_column = :disable_inheritance
-  belongs_to :discipline
+  belongs_to :discipline, touch: true
 
   has_one :parameter, dependent: :destroy
   has_one :scaling, dependent: :destroy

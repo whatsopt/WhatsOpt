@@ -13,14 +13,26 @@
                     class: "custom-select", id: "designProjectScope") %>
   </div>
 
-  <div class="btn-group btn-group-toggle mr-4" data-toggle="buttons">
+  <div class="btn-group btn-group-toggle mr-2" data-toggle="buttons">
     <label class="btn btn-secondary <%= is_user_setting?('analyses_query', 'all') ? 'active':'' %>"  >
       <input type="radio" name="query_all" id="all" data-analyses-query="all" autocomplete="off" <%= is_user_setting?('analyses_query', 'all') ? 'checked':'' %> /> All
     </label>
-    <label class="btn btn-secondary <%= is_user_setting?('analyses_query', 'mine')?'active':'' %>">
-      <input type="radio" name="query_mine" id="mine" data-analyses-query="mine" autocomplete="off" <%= is_user_setting?("analyses_query", "mine")?"checked":"" %>/> Mine
+    <label class="btn btn-secondary <%= is_user_setting?('analyses_query', 'mine')? 'active':'' %>">
+      <input type="radio" name="query_mine" id="mine" data-analyses-query="mine" autocomplete="off" <%= is_user_setting?("analyses_query", "mine")? 'checked':'' %>/> Mine
     </label>
   </div>
+
+  <div class="btn-group btn-group-toggle mr-4" data-toggle="buttons">
+    <label class="btn btn-secondary <%= is_user_setting?('analyses_order', 'oldest') ? 'active':'' %>"  >
+      <input type="radio" name="order_oldest" id="oldest" data-analyses-order="oldest" 
+             autocomplete="off" <%= is_user_setting?('analyses_order', 'oldest') ? 'checked':'' %> /> Oldest
+    </label>
+    <label class="btn btn-secondary <%= is_user_setting?('analyses_order', 'newest')? 'active':'' %>">
+      <input type="radio" name="order_newest" id="newest" data-analyses-order="newest" 
+            autocomplete="off" <%= is_user_setting?("analyses_order", "newest")? 'checked':'' %>/> Newest
+    </label>
+  </div>
+
 
   <%= link_to 'New', new_mda_path, class: "btn btn-primary" %>
 </div>
@@ -33,19 +45,25 @@
 <script>
   let relRoot = "<%= Rails.application.config.action_controller.relative_url_root %>";
 
-  $("input[data-analyses-query]").on('click', function() {
+  function setAnalysesListSettings() {
+    
     let query = $(this).data("analyses-query");
+    let order = $(this).data("analyses-order");
+    console.log(order);
     $.ajax({
       type: "PATCH",
       xhrFields: { withCredentials: true },
       headers: {'Authorization': 'Token <%= current_user.api_key%>'},
       url: relRoot+'/api/v1/users/<%= current_user.id%>',
-      data: {user: {settings: {analyses_query: query}}},
+      data: { user: { settings: { analyses_query: query, analyses_order: order } } },
       success: function() {
         $.getScript(this.href);
       }
     })
-  });
+  }
+
+  $("input[data-analyses-query]").on('click', setAnalysesListSettings);
+  $("input[data-analyses-order]").on('click', setAnalysesListSettings);
 
   $("#designProjectScope").on('click', function(e) {
     let design_project_id = this.value;
