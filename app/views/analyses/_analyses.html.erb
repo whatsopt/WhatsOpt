@@ -1,5 +1,5 @@
 <p>
-<table class="table table-striped">
+<table id="analyses" class="table table-striped">
 
   <thead>
     <tr>
@@ -31,13 +31,13 @@
         <td><%= badges(mda) %></td>
         <td><%= time_ago_in_words(mda.updated_at)%> ago</td>
         <td>
-          <%= link_to_final_operations_if_authorized(mda, current_user) %>
           <% unless Operation.done(mda).empty? %>
             <%= link_to mda_operations_path(mda), 
               class: "btn btn-sm", title: "List Operations" do %>
               <i class="fas fa-ellipsis-v"></i> 
             <% end %>
           <% end %>
+          <%= link_to_final_operations_if_authorized(mda, current_user) %>
         </td>
         <td>
           <% if policy(mda).create? %>

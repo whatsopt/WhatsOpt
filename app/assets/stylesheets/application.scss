@@ -31,6 +31,12 @@ body {
   height: 100%;
 }
 
+table#analyses td {
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .main-container {
   padding-top: 20px;
   padding-bottom: 20px;

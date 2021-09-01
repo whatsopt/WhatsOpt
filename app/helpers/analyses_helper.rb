@@ -31,7 +31,7 @@ module AnalysesHelper
     raw(res)
   end
   
-  def link_to_final_operations_if_authorized(analysis, user, nb=3)
+  def link_to_final_operations_if_authorized(analysis, user, nb=1)
     res = ""
     Operation.final.done(analysis).newest.first(nb).each do |ope|
       res += '<span style="margin: 0px 5px">'
@@ -41,6 +41,10 @@ module AnalysesHelper
         res += ope.name
       end
       res += "</span>"
+    end
+    count = Operation.final.done(analysis).count
+    if count > nb
+      res += `<span style="margin: 0px 5px">#{count-nb} more...</span>`
     end
     raw(res)
   end
