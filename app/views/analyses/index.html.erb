@@ -49,7 +49,6 @@
     
     let query = $(this).data("analyses-query");
     let order = $(this).data("analyses-order");
-    console.log(order);
     $.ajax({
       type: "PATCH",
       xhrFields: { withCredentials: true },
