@@ -31,9 +31,9 @@ module AnalysesHelper
     raw(res)
   end
   
-  def link_to_final_operations_if_authorized(analysis, user, nb=3)
+  def link_to_final_operations_if_authorized(analysis, user, nb=2)
     res = ""
-    Operation.final.done(analysis).latest.first(nb).each do |ope|
+    Operation.final.done(analysis).newest.first(nb).each do |ope|
       res += '<span style="margin: 0px 5px">'
       if policy(analysis).show?
         res += link_to ope.name, operation_path(ope)
@@ -41,6 +41,12 @@ module AnalysesHelper
         res += ope.name
       end
       res += "</span>"
+    end
+    count = Operation.done(analysis).count
+    if count > nb
+      name = ' (+' + (count-nb).to_s + ')'
+      # res += link_to name, mda_operations_path(analysis), title: "List Operations" 
+      res += name
     end
     raw(res)
   end

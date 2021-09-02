@@ -22,6 +22,7 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should create a new connection and related variables" do
+    updated_at = @mda.updated_at
     assert_difference("Variable.count", 2) do
       assert_difference("Connection.count", 1) do
         post api_v1_mda_connections_url(mda_id: @mda.id,
@@ -32,6 +33,8 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
     end
     conn = Connection.last
     assert_equal WhatsOpt::Variable::STATE_VAR_ROLE, conn.role
+    @mda.reload
+    assert_not_equal updated_at, @mda.updated_at
   end
 
   test "should create no new connection if connection already exists" do

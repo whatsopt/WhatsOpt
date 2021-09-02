@@ -3,28 +3,23 @@
 # Assumption: only one owner
 module Ownable
   def owner
-    owners = User.with_role_for_instance(:owner, self)
-    owners.take
+    @owner ||= User.with_role_for_instance(:owner, self).take
   end
 
   def readers
-    readers = User.with_role_for_instance(:owner, self)
-    readers |= members
-    readers
+    @readers ||= User.with_role_for_instance(:owner, self) | members
   end
 
   def updaters
-    updaters = User.with_role_for_instance(:owner, self)
-    updaters |= co_owners
-    updaters
+    @updaters ||= User.with_role_for_instance(:owner, self) | co_owners
   end
 
   def members
-    User.with_role_for_instance(:member, self)
+    @members ||= User.with_role_for_instance(:member, self)
   end
 
   def co_owners
-    User.with_role_for_instance(:co_owner, self)
+    @co_owners ||= User.with_role_for_instance(:co_owner, self)
   end
 
   def set_owner(user)

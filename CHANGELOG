@@ -4,6 +4,7 @@
 <ul>
   <li>User can browse analysis changes history (add/remove/renaming of disciplines, connections/variables)</li>
   <li>User can specify co-owners to allow them to edit the analysis</li>
+  <li>User can sort analyses the most recently updated first (Newest button)</li>
 </ul>
 
 <h3>1.16.0 (24/08/2021)</h3>

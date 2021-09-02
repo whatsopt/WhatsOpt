@@ -24,7 +24,7 @@ class Analysis < ApplicationRecord
   has_many :meta_model_prototypes, foreign_key: :prototype_id, dependent: :destroy
   has_many :meta_models, through: :meta_model_prototypes, inverse_of: :prototype
 
-  has_many :operations, dependent: :destroy
+  has_many :operations, -> { includes(:job) }, dependent: :destroy
 
   has_one :openmdao_impl, class_name: "OpenmdaoAnalysisImpl", dependent: :destroy
 
@@ -34,7 +34,7 @@ class Analysis < ApplicationRecord
 
   scope :owned_by, ->(user) { with_role(:owner, user) }
   scope :of_project, -> (project) { joins(:design_project_filings).where(design_project_filing: { design_project: project }) }
-  scope :latest, ->() { order(updated_at: :desc) }
+  scope :newest, ->() { order(updated_at: :desc) }
 
   after_save :refresh_connections, unless: Proc.new { self.disciplines.count < 2 }
   after_save :ensure_ancestry_for_sub_analyses
