@@ -41,7 +41,7 @@ Rails.application.routes.draw do
       resources :user_roles, only: [:index, :update, :destroy]  
       resource :versioning, only: [:show]  
       resources :optimizations
-      resources :design_projects, only: [:index]
+      resources :design_projects, only: [:index, :show, :create]
     end
   end
 

@@ -59,11 +59,15 @@ owner_optim_ackley2d_role:
 
 owner_cicav_project_role:
   name: owner
-  resource: cicav_project(DesignProject)
+  resource: cicav_project (DesignProject)
 
 owner_empty_project_role:
   name: owner
-  resource: empty_project(DesignProject)
+  resource: empty_project (DesignProject)
+
+owner_nested_mda_project_role:
+  name: owner
+  resource: nested_mda_project (DesignProject)
 
 coowner_cicav_mda_role:
   name: co_owner

@@ -29,7 +29,7 @@ class AnalysesControllerTest < ActionDispatch::IntegrationTest
     get mdas_url(design_project_id: project.id)
     assert_redirected_to mdas_url
     get mdas_url
-    assert_select "tbody>tr", count: 1
+    assert_select "tbody>tr", count: 3
   end
 
   test "should get new" do

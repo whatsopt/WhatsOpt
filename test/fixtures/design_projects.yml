@@ -5,3 +5,7 @@ cicav_project:
 empty_project:
   name: "Empty Project"
   description: "Project without analysis"
+
+nested_mda_project:
+  name: "Nested MDA Project"
+  description: "A project with a nested analysis"
