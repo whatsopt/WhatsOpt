@@ -100,7 +100,6 @@ class Api::V1::AnalysesController < Api::ApiController
 
     def mda_params
       params.require(:analysis).permit(
-        :with_sub_analyses,
         :name,
         :note,
         :design_project_id,
