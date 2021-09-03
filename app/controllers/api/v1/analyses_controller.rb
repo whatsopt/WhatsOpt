@@ -24,7 +24,9 @@ class Api::V1::AnalysesController < Api::ApiController
       render json: @mda.to_whatsopt_ui_json
     elsif params[:format] == "xdsm"
       render json: @mda.to_xdsm_json
-    else
+    elsif params[:format]  == "wopjson"  # wop pull --json
+      json_response @mda, :ok, serializer: AnalysisAttrsSerializer
+    else # Analysis public REST API
       json_response @mda
     end
   end
@@ -100,7 +102,6 @@ class Api::V1::AnalysesController < Api::ApiController
 
     def mda_params
       params.require(:analysis).permit(
-        :with_sub_analyses,
         :name,
         :note,
         :design_project_id,

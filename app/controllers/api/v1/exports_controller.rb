@@ -42,7 +42,9 @@ class Api::V1::ExportsController < Api::ApiController
         json_response({ message: "CMDOWS validation error: #{e}" }, :bad_request)
       end
       send_data content, filename: filename, type:  "application/xml"
-    elsif format == "mdajson"
+    elsif format == "mdajson"  # wop pull --json
+      # TODO: Deprecated in favor of GET /analyses/1.mdajson
+      # to be suppress when taken into account in wop
       json_response mda, :ok, serializer: AnalysisAttrsSerializer
     else
       json_response({ message: "Export format #{format} not known" }, :bad_request)
