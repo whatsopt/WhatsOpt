@@ -13,3 +13,7 @@ cicav_mm2_project_filing:
 nested_mda_project_filing:
   analysis: outermda
   design_project: nested_mda_project
+
+nested_mda_project2_filing:
+  analysis: singleton_mm
+  design_project: nested_mda_project

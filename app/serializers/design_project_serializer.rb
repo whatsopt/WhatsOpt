@@ -1,13 +1,9 @@
 # frozen_string_literal: true
 
 class DesignProjectSerializer < ActiveModel::Serializer
-  attributes :name, :created_at, :owner_email, :description, :analyses_attributes
+  attributes :name, :created_at, :owner_email, :description
 
-  def analyses_attributes
-    object.analyses.map do |mda|
-      AnalysisAttrsSerializer.new(mda)
-    end
-  end
+  has_many :analyses
 
   def owner_email
     object.owner.email

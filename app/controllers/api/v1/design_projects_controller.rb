@@ -26,8 +26,13 @@ class Api::V1::DesignProjectsController < Api::ApiController
   # GET /api/v1/design_projects/1
   def show
     @project = DesignProject.find(params[:id])
-    authorize @project 
-    json_response @project  # wop pull --json
+    if params[:format]  == "wopjson"  # wop pull --json
+      authorize @project, :destroy?   # only owner can export a project
+      json_response @project, :ok, serializer: DesignProjectAttrsSerializer
+    else # Design project public REST API
+      authorize @project
+      json_response @project
+    end
   end
 
 private

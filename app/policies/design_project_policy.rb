@@ -16,11 +16,11 @@ class DesignProjectPolicy < ApplicationPolicy
   end
 
   def edit?
-    update?
+    destroy?
   end
 
   def update?
-    (@user.admin? || @user.has_role?(:owner, @record))
+    destroy?
   end
 
   def destroy?
