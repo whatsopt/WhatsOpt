@@ -2,7 +2,7 @@
 
 require "test_helper"
 
-class Api::V1::JournalControllerTest < ActionDispatch::IntegrationTest
+class Api::V1::JournalsControllerTest < ActionDispatch::IntegrationTest
 
   setup do
     @user1 = users(:user1)
