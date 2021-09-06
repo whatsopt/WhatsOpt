@@ -53,4 +53,6 @@ Rails.application.routes.draw do
   root to: redirect('users/sign_in')
 
   mount Rswag::Api::Engine => '/api_doc'
+
+  mount ActionCable.server => '/cable'
 end

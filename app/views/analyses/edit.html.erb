@@ -1,3 +1,12 @@
+<div id="appearance-board"
+     data-mda="<%= @mda.to_whatsopt_ui_json %>" 
+     data-is-editing="true" 
+     data-api-key="<%=current_user.api_key%>" 
+     data-members="<%= @mda.members.map{|m| UserSerializer.new(m) }.to_json %>"
+     data-co-owners="<%= @mda.co_owners.map{|c| UserSerializer.new(c) }.to_json %>"
+     data-current-user="<%= UserSerializer.new(current_user).to_json %>">
+</div>
+
 <div id="mda-viewer" 
      data-mda="<%= @mda.to_whatsopt_ui_json %>" 
      data-is-editing="true" 
@@ -7,4 +16,5 @@
      data-current-user="<%= UserSerializer.new(current_user).to_json %>">
 </div>
 
+<%= javascript_pack_tag 'appearance' %>
 <%= javascript_pack_tag 'mda_viewer_application' %>
