@@ -54,6 +54,8 @@ class Api::V1::DesignProjectsControllerTest < ActionDispatch::IntegrationTest
         assert_response :success
       end
     end
+    proj = DesignProject.last
+    assert_equal 3, proj.analyses.count
   end
 
   test "should create a project with nested analyses" do
@@ -68,6 +70,8 @@ class Api::V1::DesignProjectsControllerTest < ActionDispatch::IntegrationTest
         assert_response :success
       end
     end
+    proj = DesignProject.last
+    assert_equal 2, proj.analyses.count   # the sub analyse innermda not attached to a project
   end
 
 

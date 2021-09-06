@@ -16,6 +16,7 @@ class Api::V1::DesignProjectsController < Api::ApiController
       journal = mda.init_journal(current_user)
       journal.journalize(mda, Journal::ADD_ACTION)
       journal.save!
+      @project.analyses << mda
     end
     @project.set_owner(current_user)
     authorize @project
