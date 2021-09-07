@@ -546,6 +546,15 @@ class MdaViewer extends React.Component {
 
       const analysisPermissionsEditable = (mda.owner.id === currentUser.id);
 
+      let restricted;
+      if (!db.mda.public) {
+        restricted = (<i className="fas fa-user-secret" title="Analysis with restricted access" />);
+      }
+      let co_owned;
+      if (analysisCoOwners.length > 0) {
+        co_owned = (<i className="fas fa-users-cog" title="Analysis has co-owners" />);
+      }
+
       return (
         <div>
           <form className="button_to" method="get" action={this.api.url(`/analyses/${mda.id}`)}>
@@ -565,6 +574,10 @@ class MdaViewer extends React.Component {
               (#
               {mda.id}
               )
+              {' '}
+              {restricted}
+              {' '}
+              {co_owned}
             </small>
           </h1>
           {warningIfOperated}
