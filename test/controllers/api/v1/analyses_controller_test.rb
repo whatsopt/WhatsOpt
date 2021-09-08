@@ -45,7 +45,7 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should create a mda" do
-    post api_v1_mdas_url, params: { analysis: { name: "TestMda" } }, as: :json, headers: @auth_headers
+    post api_v1_mdas_url, params: { analysis: { name: "TestMda" }, requested_at: Time.now }, as: :json, headers: @auth_headers
     assert_response :success
   end
 
@@ -77,7 +77,7 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update a mda" do
-    put api_v1_mda_url(@mda), params: { analysis: { name: "TestNewName" } }, as: :json, headers: @auth_headers
+    put api_v1_mda_url(@mda), params: { analysis: { name: "TestNewName"}, requested_at: Time.now }, as: :json, headers: @auth_headers
     assert_response :success
     get api_v1_mda_url(@mda), as: :json, headers: @auth_headers
     assert_response :success
@@ -158,11 +158,11 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
   test "should update descendants attributes" do
     @outer = analyses(:outermda)
     public = true
-    patch api_v1_mda_url(@outer), params: { analysis: { public: public } }, as: :json, headers: @auth_headers
+    patch api_v1_mda_url(@outer), params: { analysis: { public: public }, requested_at: Time.now }, as: :json, headers: @auth_headers
     @inner = analyses(:innermda)
     assert_equal public, @inner.public
     public = false
-    patch api_v1_mda_url(@outer), params: { analysis: { public: public } }, as: :json, headers: @auth_headers
+    patch api_v1_mda_url(@outer), params: { analysis: { public: public }, requested_at: Time.now }, as: :json, headers: @auth_headers
     assert_equal public, @inner.reload.public
   end
 
@@ -180,7 +180,7 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     # beforeConnsNb = Connection.of_analysis(@mda).size
     mda2 = analyses(:innermda)
     disc = disciplines(:innermda_discipline)
-    put api_v1_mda_url(@mda), params: { analysis: { import: { analysis: mda2.id, disciplines: [disc.id] } } },
+    put api_v1_mda_url(@mda), params: { analysis: { import: { analysis: mda2.id, disciplines: [disc.id] } }, requested_at: Time.now },
         as: :json, headers: @auth_headers
     @mda.reload
     newDisc = @mda.disciplines.last
@@ -208,7 +208,7 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     orig_count = @mda.disciplines.count
     mda2 = analyses(:singleton_mm)
     disc = disciplines(:disc_singleton_mm)
-    put api_v1_mda_url(@mda), params: { analysis: { import: { analysis: mda2.id, disciplines: [disc.id] } } },
+    put api_v1_mda_url(@mda), params: { analysis: { import: { analysis: mda2.id, disciplines: [disc.id] } }, requested_at: Time.now },
       as: :json, headers: @auth_headers
     @mda.reload
     assert_equal orig_count + 1, @mda.disciplines.count
@@ -224,18 +224,18 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     orig_count = @mda.disciplines.count
     mda2 = analyses(:outermda)
     disc = disciplines(:outermda_innermda_discipline)
-    put api_v1_mda_url(@mda), params: { analysis: { import: { analysis: mda2.id, disciplines: [disc.id] } } },
+    put api_v1_mda_url(@mda), params: { analysis: { import: { analysis: mda2.id, disciplines: [disc.id] } }, requested_at: Time.now },
       as: :json, headers: @auth_headers
     @mda.reload
     assert_equal orig_count + 1, @mda.disciplines.count
   end
 
   test "should recreate analysis with imports" do
-    post api_v1_mdas_url, params: { analysis: { name: "Test" } }, as: :json, headers: @auth_headers
+    post api_v1_mdas_url, params: { analysis: { name: "Test" }, requested_at: Time.now }, as: :json, headers: @auth_headers
     assert_response :success
     mda = Analysis.last
     ids = @mda.disciplines.nodes.map(&:id)
-    put api_v1_mda_url(mda), params: { analysis: { import: { analysis: @mda.id, disciplines: ids } } },
+    put api_v1_mda_url(mda), params: { analysis: { import: { analysis: @mda.id, disciplines: ids } }, requested_at: Time.now },
         as: :json, headers: @auth_headers
     assert_response :success
     assert_equal @mda.disciplines.count, mda.disciplines.count
@@ -249,11 +249,11 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should create a discipline without renamed out variables" do
-    post api_v1_mdas_url, params: { analysis: { name: "Test" } }, as: :json, headers: @auth_headers
+    post api_v1_mdas_url, params: { analysis: { name: "Test" }, requested_at: Time.now }, as: :json, headers: @auth_headers
     assert_response :success
     mda = Analysis.last
     disc = @mda.disciplines.nodes.first
-    put api_v1_mda_url(mda), params: { analysis: { import: { analysis: @mda.id, disciplines: [disc.id, disc.id, disc.id] } } },
+    put api_v1_mda_url(mda), params: { analysis: { import: { analysis: @mda.id, disciplines: [disc.id, disc.id, disc.id] } }, requested_at: Time.now },
         as: :json, headers: @auth_headers
     assert_response :success
     assert_equal 4, mda.disciplines.count
@@ -262,30 +262,10 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     assert_equal disc.input_variables.map(&:name), Discipline.last.input_variables.map(&:name)
   end
 
-  test "should destroy a metamodel analysis" do
-    mm = analyses(:singleton_mm)
-    assert_difference("Analysis.count", -1) do
-      mm.destroy!
-    end
-    mm = analyses(:cicav_metamodel2_analysis)
-    assert_difference("Analysis.count", -1) do
-      mm.destroy!
-    end
-  end
-
-  test "should not destroy a metamodel analysis when prototype in use" do
-    mm = analyses(:cicav_metamodel_analysis)
-    assert_difference("Analysis.count", 0) do
-      assert_raise Discipline::ForbiddenRemovalError do
-        mm.destroy
-      end
-    end
-  end
-
   test "should file an analysis in a project reference" do
     proj = design_projects(:empty_project)
     assert_nil @mda2.design_project
-    put api_v1_mda_url(@mda2), params: { analysis: { design_project_id: proj.id } },
+    put api_v1_mda_url(@mda2), params: { analysis: { design_project_id: proj.id }, requested_at: Time.now },
       as: :json, headers: @auth_headers2  # should be as user2 who is owner of mda2
     assert_response :success
     assert_equal proj, @mda2.reload.design_project
@@ -293,7 +273,7 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
 
   test "should update a project reference" do
     proj = design_projects(:empty_project)
-    put api_v1_mda_url(@mda), params: { analysis: { design_project_id: proj.id } }, as: :json, headers: @auth_headers
+    put api_v1_mda_url(@mda), params: { analysis: { design_project_id: proj.id }, requested_at: Time.now }, as: :json, headers: @auth_headers
     assert_response :success
     assert_equal proj, @mda.reload.design_project
   end
