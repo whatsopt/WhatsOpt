@@ -20,5 +20,10 @@ module ExceptionHandler
       json_response({ message: e.message }, :forbidden)
     end
 
+    rescue_from Api::StaleObjectError do |e|
+      Rails.logger.error "Stale Object: " + e.message
+      json_response({ message: e.message }, :conflict)
+    end
+
   end
 end
