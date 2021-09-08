@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const coOwners = mdaViewerElt.data('co-owners');
   const currentUser = mdaViewerElt.data('current-user');
 
-  const api = new WhatsOptApi(csrfToken, apiKey, relativeUrlRoot);
+  const api = new WhatsOptApi(csrfToken, apiKey, relativeUrlRoot, mda.updated_at);
 
   ReactDOM.render(<MdaViewer
     mda={mda}

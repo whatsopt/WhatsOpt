@@ -27,9 +27,10 @@ function _pollStatus(fn, check, callback, timeout, interval) {
 }
 
 class WhatsOptApi {
-  constructor(csrfToken, apiKey, relativeUrlRoot) {
+  constructor(csrfToken, apiKey, relativeUrlRoot, requested_at) {
     this.csrfToken = csrfToken;
     this.apiKey = apiKey;
+    this.requested_at = requested_at || Date.now();
     axios.defaults.headers.common['X-CSRF-Token'] = csrfToken;
     axios.defaults.headers.common.Accept = 'application/json';
     axios.defaults.headers.common.Authorization = `Token ${apiKey}`;
@@ -111,7 +112,14 @@ class WhatsOptApi {
       path += '.whatsopt_ui';
     }
     axios.get(this.apiUrl(path))
-      .then(callback)
+      .then((response) => {
+        // Here we set the update time of the MDA as we requested it
+        // This field is used to implement optimistic lock on the mda 
+        // when co_owners do concurrent editing
+        this.requested_at = response.data.updated_at;
+        console.log(this.requested_at);
+        callback(response);
+      })
       .catch((error) => console.log(error));
   }
 
@@ -124,7 +132,7 @@ class WhatsOptApi {
 
   updateAnalysis(mdaId, mdaAttrs, callback, onError) {
     const path = `/analyses/${mdaId}`;
-    axios.put(this.apiUrl(path), { analysis: mdaAttrs })
+    axios.put(this.apiUrl(path), { analysis: mdaAttrs, requested_at: this.requested_at })
       .then(callback)
       .catch(onError);
   }
@@ -151,21 +159,27 @@ class WhatsOptApi {
 
   createDiscipline(mdaId, disciplineAttributes, callback, onError) {
     const path = `/analyses/${mdaId}/disciplines`;
-    axios.post(this.apiUrl(path), { discipline: disciplineAttributes })
+    axios.post(this.apiUrl(path), {
+      discipline: disciplineAttributes,
+      requested_at: this.requested_at,
+    })
       .then(callback)
       .catch(onError);
   }
 
   updateDiscipline(discId, disciplineAttributes, callback, onError) {
     const path = `/disciplines/${discId}`;
-    axios.put(this.apiUrl(path), { discipline: disciplineAttributes })
+    axios.put(this.apiUrl(path), {
+      discipline: disciplineAttributes,
+      requested_at: this.requested_at,
+    })
       .then(callback)
       .catch(onError);
   }
 
   deleteDiscipline(discId, callback) {
     const path = `/disciplines/${discId}`;
-    axios.delete(this.apiUrl(path))
+    axios.delete(this.apiUrl(path), { data: {requested_at: this.requested_at}})
       .then(callback)
       .catch((error) => console.log(error));
   }
@@ -187,21 +201,31 @@ class WhatsOptApi {
 
   createConnection(mdaId, connectionAttributes, callback, onError) {
     const path = `/analyses/${mdaId}/connections`;
-    axios.post(this.apiUrl(path), { connection: connectionAttributes })
+    axios.post(this.apiUrl(path), {
+      connection: connectionAttributes,
+      requested_at: this.requested_at,
+    })
       .then(callback)
       .catch(onError);
   }
 
   updateConnection(connectionId, connectionAttributes, callback, onError) {
     const path = `/connections/${connectionId}`;
-    axios.put(this.apiUrl(path), { connection: connectionAttributes })
+    axios.put(this.apiUrl(path), {
+      connection: connectionAttributes,
+      requested_at: this.requested_at
+    })
       .then(callback)
       .catch(onError);
   }
 
   deleteConnection(connectionId, callback, onError) {
     const path = `/connections/${connectionId}`;
-    axios.delete(this.apiUrl(path))
+    axios.delete(this.apiUrl(path, {
+      data: {
+        requested_at: this.requested_at,
+      },
+    }))
       .then(callback)
       .catch(onError);
   }

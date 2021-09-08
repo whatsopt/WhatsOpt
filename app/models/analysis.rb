@@ -239,6 +239,7 @@ class Analysis < ApplicationRecord
     {
       id: id,
       name: name,
+      updated_at: updated_at,
       owner: UserSerializer.new(owner),
       project: design_project || { id: -1, name: "" },
       note: note.blank? ? "":note.to_s,
@@ -256,7 +257,10 @@ class Analysis < ApplicationRecord
   end
 
   def to_xdsm_json
-    to_xdsm.to_json
+    mda_update = to_xdsm
+    mda_update.update!(updated_at: updated_at)
+    p mda_update
+    mda_update.to_json
   end
 
   def to_xdsm(name = "root")

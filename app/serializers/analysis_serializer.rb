@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class AnalysisSerializer < ActiveModel::Serializer
-  attributes :id, :name, :created_at, :owner_email, :notes
+  attributes :id, :name, :created_at, :owner_email, :notes, :updated_at
 
   def owner_email
     object.owner.email
