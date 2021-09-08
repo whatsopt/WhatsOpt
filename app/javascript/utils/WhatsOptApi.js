@@ -171,8 +171,8 @@ class WhatsOptApi {
       .catch(onError);
   }
 
-  updateDiscipline(discId, disciplineAttributes, callback, onError) {
-    const path = `/disciplines/${discId}`;
+  updateDiscipline(mdaId, discId, disciplineAttributes, callback, onError) {
+    const path = `/analyses/${mdaId}/disciplines/${discId}`;
     axios.put(this.apiUrl(path), {
       discipline: disciplineAttributes,
       requested_at: this.requested_at,
@@ -181,11 +181,15 @@ class WhatsOptApi {
       .catch(onError);
   }
 
-  deleteDiscipline(discId, callback) {
-    const path = `/disciplines/${discId}`;
-    axios.delete(this.apiUrl(path), { data: {requested_at: this.requested_at}})
+  deleteDiscipline(mdaId, discId, callback, onError) {
+    const path = `/analyses/${mdaId}/disciplines/${discId}`;
+    axios.delete(this.apiUrl(path), {
+      data: {
+        requested_at: this.requested_at
+      },
+    })
       .then(callback)
-      .catch((error) => console.log(error));
+      .catch(onError);
   }
 
   getAnalysisCandidates(callback, allAnalysis) {
@@ -213,18 +217,18 @@ class WhatsOptApi {
       .catch(onError);
   }
 
-  updateConnection(connectionId, connectionAttributes, callback, onError) {
-    const path = `/connections/${connectionId}`;
+  updateConnection(mdaId, connectionId, connectionAttributes, callback, onError) {
+    const path = `/analyses/${mdaId}/connections/${connectionId}`;
     axios.put(this.apiUrl(path), {
       connection: connectionAttributes,
-      requested_at: this.requested_at
+      requested_at: this.requested_at,
     })
       .then(callback)
       .catch(onError);
   }
 
-  deleteConnection(connectionId, callback, onError) {
-    const path = `/connections/${connectionId}`;
+  deleteConnection(mdaId, connectionId, callback, onError) {
+    const path = `/analyses/${mdaId}/connections/${connectionId}`;
     axios.delete(this.apiUrl(path, {
       data: {
         requested_at: this.requested_at,

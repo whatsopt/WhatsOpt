@@ -18,7 +18,7 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     analyses = JSON.parse(response.body)
     assert_equal 4, analyses.size # user1 owns 4 analyses
     mda = analyses[0]
-    assert_equal ["created_at", "id", "name"], mda.keys.sort
+    assert_equal ["created_at", "id", "name", "updated_at"], mda.keys.sort
   end
 
   test "should get only all authorized mdas" do
@@ -27,7 +27,7 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     analyses = JSON.parse(response.body)
     assert_equal Analysis.count-2, analyses.size # ALL - {user2 private, one sub-analysis}
     mda = analyses[0]
-    assert_equal ["created_at", "id", "name"], mda.keys.sort
+    assert_equal ["created_at", "id", "name", "updated_at"], mda.keys.sort
   end
 
   test "should get analyses by project name substring" do

@@ -26,7 +26,7 @@ class Api::V1::ApiMdaUpdaterControllerTest < ActionDispatch::IntegrationTest
     assert_response :conflict
 
     @submda = analyses(:singleton)
-    put api_v1_discipline_url(@geometry), params: { 
+    put api_v1_mda_discipline_url(@geometry), params: { 
         discipline: { type: "mda",
                       analysis_discipline_attributes: { discipline_id: @geometry.id, analysis_id: @submda.id }
         }, requested_at: @past_reqtime }, as: :json, headers: @auth_headers
