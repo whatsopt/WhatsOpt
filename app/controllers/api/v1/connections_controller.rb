@@ -59,6 +59,15 @@ class Api::V1::ConnectionsController < Api::V1::ApiMdaUpdaterController
       @mda = @connection.analysis
       authorize @mda, :update?
       @journal = @mda.init_journal(current_user)
+    rescue ActiveRecord::RecordNotFound => e  # likely to occur on concurrent update
+      begin
+        @mda = Analysis.find(params[:mda_id])
+        authorize @mda, :update?
+        check_mda_update   # raise StaleObjectError
+        raise e            # otherwise re-raise
+      rescue ActiveRecord::RecordNotFound => e1
+        raise e
+      end
     end
 
     def save_journal

@@ -29,7 +29,7 @@ class Api::V1::DisciplinesController < Api::V1::ApiMdaUpdaterController
     @journal.journalize_changes(@discipline, old_attrs)
     head :no_content
   rescue AnalysisDiscipline::AlreadyDefinedError => e
-      json_response({ message: e.message }, :unprocessable_entity)
+    json_response({ message: e.message }, :unprocessable_entity)
   end
 
   # DELETE /api/v1/disciplines/1
@@ -46,6 +46,15 @@ class Api::V1::DisciplinesController < Api::V1::ApiMdaUpdaterController
       @mda = @discipline.analysis
       authorize @mda, :update?
       @journal = @mda.init_journal(current_user)
+    rescue ActiveRecord::RecordNotFound => e  # likely to occur on concurrent update
+      begin
+        @mda = Analysis.find(params[:mda_id])
+        authorize @mda, :update?
+        check_mda_update   # raise StaleObjectError
+        raise e            # otherwise re-raise
+      rescue ActiveRecord::RecordNotFound => e1
+        raise e
+      end
     end
 
     def discipline_params

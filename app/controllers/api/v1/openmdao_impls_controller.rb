@@ -5,7 +5,7 @@ class Api::V1::OpenmdaoImplsController <  Api::V1::ApiMdaUpdaterController
   def show
     @mda = Analysis.find(params[:mda_id])
     authorize @mda
-    @impl = mda.openmdao_impl ||= OpenmdaoAnalysisImpl.new
+    @impl = @mda.openmdao_impl ||= OpenmdaoAnalysisImpl.new
     json_response @impl
   end
 
