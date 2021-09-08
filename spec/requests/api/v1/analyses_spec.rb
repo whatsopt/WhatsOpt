@@ -18,9 +18,10 @@ describe "analyses", type: :request do
             properties: {
               id: { type: :integer },
               name: { type: :string },
-              created_at: { type: :string, format: :"date-time" }
+              created_at: { type: :string, format: :"date-time" },
+              updated_at: { type: :string, format: :"date-time" }
             },
-            required: [ "id", "name", "created_at" ]
+            required: [ "id", "name", "created_at", "updated_at" ]
           }
 
         let(:Authorization) { "Token FriendlyApiKey" }

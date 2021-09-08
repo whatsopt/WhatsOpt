@@ -257,10 +257,7 @@ class Analysis < ApplicationRecord
   end
 
   def to_xdsm_json
-    mda_update = to_xdsm
-    mda_update.update!(updated_at: updated_at)
-    p mda_update
-    mda_update.to_json
+    to_xdsm.to_json
   end
 
   def to_xdsm(name = "root")

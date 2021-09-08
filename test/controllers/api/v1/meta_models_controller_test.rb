@@ -25,7 +25,7 @@ class Api::V1::MetaModelsControllerTest < ActionDispatch::IntegrationTest
     mms = JSON.parse(response.body)
     assert_equal 2, mms.count  # out of 2 primary mm, one is private for user3 and user1 member
     assert_equal ["id", "reference_analysis"], mms.first.keys.sort
-    assert_equal ["created_at", "id", "name", "notes", "owner_email"], mms.first["reference_analysis"].keys.sort
+    assert_equal ["created_at", "id", "name", "notes", "owner_email", "updated_at"], mms.first["reference_analysis"].keys.sort
   end
 
   test "should get list of metamodels for user2" do
@@ -49,7 +49,7 @@ class Api::V1::MetaModelsControllerTest < ActionDispatch::IntegrationTest
     mminfos = JSON.parse(response.body)
     assert_equal ["id", "reference_analysis", "surrogate_kind", "xlabels", "ylabels"], mminfos.keys.sort
     ref = mminfos["reference_analysis"]
-    assert_equal ["created_at", "id", "name", "notes", "owner_email"], ref.keys.sort
+    assert_equal ["created_at", "id", "name", "notes", "owner_email", "updated_at"], ref.keys.sort
     assert_equal "", ref["notes"]
     assert_equal ["x1", "z[0]", "z[1]"], mminfos["xlabels"]
     assert_equal ["obj"], mminfos["ylabels"]

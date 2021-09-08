@@ -41,7 +41,7 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     get api_v1_mda_url(analyses(:cicav)), as: :json, headers: @auth_headers
     assert_response :success
     mda = JSON.parse(response.body)
-    assert_equal ["created_at", "id", "name", "notes", "owner_email"], mda.keys.sort
+    assert_equal ["created_at", "id", "name", "notes", "owner_email", "updated_at"], mda.keys.sort
   end
 
   test "should create a mda" do
