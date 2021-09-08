@@ -1,18 +1,20 @@
 # frozen_string_literal: true
 
-class Api::V1::OpenmdaoImplsController < Api::ApiController
+class Api::V1::OpenmdaoImplsController <  Api::V1::ApiMdaUpdaterController
+
   def show
-    mda = Analysis.find(params[:mda_id])
-    authorize mda
+    @mda = Analysis.find(params[:mda_id])
+    authorize @mda
     @impl = mda.openmdao_impl ||= OpenmdaoAnalysisImpl.new
     json_response @impl
   end
 
   # PUT/PATCH /api/v1/analysis/{mda_id}/openmdao_analysis_impl
   def update
-    mda = Analysis.find(params[:mda_id])
-    authorize mda
-    @impl = mda.openmdao_impl ||= OpenmdaoAnalysisImpl.new
+    @mda = Analysis.find(params[:mda_id])
+    check_mda_update
+    authorize @mda
+    @impl = @mda.openmdao_impl ||= OpenmdaoAnalysisImpl.new
     @impl.update_impl(impl_params)
     @impl.save!
     head :no_content

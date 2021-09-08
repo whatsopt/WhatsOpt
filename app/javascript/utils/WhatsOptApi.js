@@ -117,7 +117,6 @@ class WhatsOptApi {
         // This field is used to implement optimistic lock on the mda 
         // when co_owners do concurrent editing
         this.requested_at = response.data.updated_at;
-        console.log(this.requested_at);
         callback(response);
       })
       .catch((error) => console.log(error));
@@ -146,15 +145,20 @@ class WhatsOptApi {
 
   importDiscipline(fromMdaId, discId, toMdaId, callback, onError) {
     const path = `/analyses/${toMdaId}`;
-    axios.put(this.apiUrl(path), {
-      analysis: {
-        import: {
-          analysis: fromMdaId, disciplines: [discId],
+    this.getAnalysis(toMdaId, false, (response) => {
+      const { updated_at } = response.data;
+      console.log(response);
+      axios.put(this.apiUrl(path), {
+        analysis: {
+          import: {
+            analysis: fromMdaId, disciplines: [discId],
+          },
         },
-      },
-    })
-      .then(callback)
-      .catch(onError);
+        requested_at: updated_at,
+      })
+        .then(callback)
+        .catch(onError);
+    });
   }
 
   createDiscipline(mdaId, disciplineAttributes, callback, onError) {
@@ -267,11 +271,20 @@ class WhatsOptApi {
       .catch((error) => console.log(error));
   }
 
-  updateOpenmdaoImpl(mdaId, implAttrs, callback) {
+  updateOpenmdaoImpl(mdaId, implAttrs, callback, onError) {
     const path = `/analyses/${mdaId}/openmdao_impl`;
-    axios.patch(this.apiUrl(path), { openmdao_impl: implAttrs })
-      .then(callback)
-      .catch((error) => console.log(error));
+    axios.patch(this.apiUrl(path), {
+      openmdao_impl: implAttrs,
+      requested_at: this.requested_at,
+    })
+      .then(this.getAnalysis(mdaId, false, (response) => {
+        // Here we set the update time of the MDA as we requested it
+        // This field is used to implement optimistic lock on the mda 
+        // when co_owners do concurrent editing
+        this.requested_at = response.data.updated_at;
+        callback();
+      }))
+      .catch(onError);
   }
 
   createMetaModel(opeId, mmAttrs, callback, onError) {

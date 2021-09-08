@@ -4,7 +4,7 @@ class OpenmdaoAnalysisImpl < ActiveRecord::Base
   NONLINEAR_SOLVERS = %w[NonlinearBlockGS RecklessNonlinearBlockGS NonlinearBlockJac NonlinearRunOnce NewtonSolver BroydenSolver].freeze
   LINEAR_SOLVERS    = %w[LinearBlockGS LinearBlockJac LinearRunOnce DirectSolver PETScKrylov ScipyKrylov LinearUserDefined].freeze
 
-  belongs_to :analysis
+  belongs_to :analysis, touch: true
   belongs_to :nonlinear_solver, -> { where name: NONLINEAR_SOLVERS }, class_name: "Solver"
   belongs_to :linear_solver, -> { where name: LINEAR_SOLVERS }, class_name: "Solver"
 

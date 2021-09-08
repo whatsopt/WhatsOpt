@@ -383,6 +383,11 @@ class MdaViewer extends React.Component {
           mda: { impl: { openmdao: { $set: oImpl } } },
         });
         this.setState(newState);
+      },
+      (error) => {
+        const message = error.response.data.message || 'Error: Update failed';
+        const newState = update(this.state, { errors: { $set: [message] } });
+        this.setState(newState);
       });
   }
 
@@ -860,7 +865,7 @@ MdaViewer.propTypes = {
   api: PropTypes.object.isRequired,
   members: PropTypes.array,
   coOwners: PropTypes.array,
-  currentUser: PropTypes.object.isRequired,
+  currentUser: PropTypes.object,
   mda: PropTypes.shape({
     owner: PropTypes.object.isRequired,
     name: PropTypes.string.isRequired,
@@ -877,6 +882,7 @@ MdaViewer.propTypes = {
   }).isRequired,
 };
 MdaViewer.defaultProps = {
+  currentUser: null,
   members: [],
   coOwners: [],
 };
