@@ -221,25 +221,6 @@ class Plotter extends React.Component {
     $('#plots').tab('show');
   }
 
-  initializeSelection(inputs, outputs) {
-    const i = inputs.length;
-    const o = outputs.length;
-
-    const sel = [];
-    if (i + o < 10 && i * o < 50) {
-      sel.push(...inputs, ...outputs);
-    } else {
-      const obj = inputs.find((c) => this.db.isObjective(c));
-      const cstrs = outputs.filter((c) => this.db.isConstraint(c));
-      if (obj) {
-        sel.push(...inputs.slice(0, 5), obj, ...cstrs.slice(0, 4));
-      } else {
-        sel.push(...inputs.slice(0, 5), ...this.outputVarCases.slice(0, 5));
-      }
-    }
-    return sel;
-  }
-
   handleSelectionChange(event) {
     const { target } = event;
     const { selection } = this.state;
@@ -261,6 +242,25 @@ class Plotter extends React.Component {
       ope.id,
       (response) => { console.log(response.data); },
     );
+  }
+
+  initializeSelection(inputs, outputs) {
+    const i = inputs.length;
+    const o = outputs.length;
+
+    const sel = [];
+    if (i + o < 10 && i * o < 50) {
+      sel.push(...inputs, ...outputs);
+    } else {
+      const obj = inputs.find((c) => this.db.isObjective(c));
+      const cstrs = outputs.filter((c) => this.db.isConstraint(c));
+      if (obj) {
+        sel.push(...inputs.slice(0, 5), obj, ...cstrs.slice(0, 4));
+      } else {
+        sel.push(...inputs.slice(0, 5), ...this.outputVarCases.slice(0, 5));
+      }
+    }
+    return sel;
   }
 
   activateTab(event, active) {
@@ -345,7 +345,7 @@ class Plotter extends React.Component {
               aria-controls="plots"
               data-toggle="tab"
               aria-selected="true"
-              onClick={(e) => this.activateTab(e, 'plots')}
+              onClick={(e) => this.activateTab(e, PLOTS_TAB)}
             >
               Plots
             </a>
@@ -360,7 +360,7 @@ class Plotter extends React.Component {
               aria-controls="variables"
               data-toggle="tab"
               aria-selected="false"
-              onClick={(e) => this.activateTab(e, 'variables')}
+              onClick={(e) => this.activateTab(e, VARIABLES_TAB)}
             >
               Variables
             </a>
