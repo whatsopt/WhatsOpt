@@ -16,7 +16,7 @@ class Journal < ApplicationRecord
     details.empty? ? false : super()
   end
 
-  def journalize(journalized, action, copy_from: nil)
+  def journalize(journalized, action, copy_what: nil)
     key = (action == REMOVE_ACTION ? :old_value : :value)
     details <<
       JournalDetail.new(
@@ -24,7 +24,7 @@ class Journal < ApplicationRecord
         entity_name: journalized.name,
         entity_attr: "name",
         action: action,
-        key => journalized.name
+        key => "#{journalized.name}#{copy_what}"
       )
   end
 

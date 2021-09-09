@@ -71,6 +71,12 @@ class Api::V1::AnalysesController < Api::V1::ApiMdaUpdaterController
       fromAnalysis = Analysis.find(import[:analysis])
       authorize(fromAnalysis, :show?)
       @mda.import!(fromAnalysis, import[:disciplines])
+      info = fromAnalysis.disciplines
+                    .filter{|d| import[:disciplines].include?(d.id.to_s)}
+                    .map{|d| d.name}
+                    .join(", ")
+      what_info = "[#{info}]"
+      @journal.journalize(fromAnalysis, Journal::COPY_ACTION, copy_what: what_info)
     else
       old_attrs = @mda.attributes.merge!({
         "note_text" => @mda.note.to_plain_text,
