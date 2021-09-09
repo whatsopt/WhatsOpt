@@ -114,7 +114,7 @@ class WhatsOptApi {
     axios.get(this.apiUrl(path))
       .then((response) => {
         // Here we set the update time of the MDA as we requested it
-        // This field is used to implement optimistic lock on the mda 
+        // This field is used to implement optimistic lock on the mda
         // when co_owners do concurrent editing
         this.requested_at = response.data.updated_at;
         callback(response);
@@ -185,7 +185,7 @@ class WhatsOptApi {
     const path = `/analyses/${mdaId}/disciplines/${discId}`;
     axios.delete(this.apiUrl(path), {
       data: {
-        requested_at: this.requested_at
+        requested_at: this.requested_at,
       },
     })
       .then(callback)
@@ -283,7 +283,7 @@ class WhatsOptApi {
     })
       .then(this.getAnalysis(mdaId, false, (response) => {
         // Here we set the update time of the MDA as we requested it
-        // This field is used to implement optimistic lock on the mda 
+        // This field is used to implement optimistic lock on the mda
         // when co_owners do concurrent editing
         this.requested_at = response.data.updated_at;
         callback();
