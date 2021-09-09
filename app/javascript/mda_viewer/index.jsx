@@ -124,8 +124,7 @@ class MdaViewer extends React.Component {
   }
 
   handleConnectionChange(connId, connAttrs) {
-    // console.log('Change variable connection '+connId+ ' with '+JSON.stringify(connAttrs));
-
+    const { mda } = this.state;
     // parameter
     const cAttrs = JSON.parse(JSON.stringify(connAttrs));
     if (connAttrs.init || connAttrs.init === '') {
@@ -156,7 +155,7 @@ class MdaViewer extends React.Component {
     delete cAttrs.res_ref;
 
     if (Object.keys(cAttrs).length !== 0) {
-      this.api.updateConnection(connId, cAttrs,
+      this.api.updateConnection(mda.id, connId, cAttrs,
         () => {
           this.renderXdsm();
         },
@@ -169,7 +168,8 @@ class MdaViewer extends React.Component {
   }
 
   handleConnectionDelete(connId) {
-    this.api.deleteConnection(connId,
+    const { mda } = this.state;
+    this.api.deleteConnection(mda.id, connId,
       () => { this.renderXdsm(); },
       (error) => {
         const message = error.response.data.message || 'Error: Update failed';
@@ -209,8 +209,7 @@ class MdaViewer extends React.Component {
       const newState = update(this.state, { mda: { nodes: { $set: items } } });
       this.setState(newState);
     }
-    console.log(discAttrs);
-    this.api.updateDiscipline(node.id, discAttrs,
+    this.api.updateDiscipline(mda.id, node.id, discAttrs,
       () => { this.renderXdsm(); },
       (error) => {
         const message = error.response.data.message || 'Error: Update failed';
@@ -220,12 +219,17 @@ class MdaViewer extends React.Component {
   }
 
   handleDisciplineDelete(node) {
-    const { filter } = this.state;
-    this.api.deleteDiscipline(node.id, () => {
+    const { filter, mda } = this.state;
+    this.api.deleteDiscipline(mda.id, node.id, () => {
       if (filter.fr === node.id || filter.to === node.id) {
         this.handleFilterChange({ fr: undefined, to: undefined });
       }
       this.renderXdsm();
+    },
+    (error) => {
+      const message = error.response.data.message || 'Error: Delete failed';
+      const newState = update(this.state, { errors: { $set: [message] } });
+      this.setState(newState);
     });
   }
 
@@ -382,6 +386,11 @@ class MdaViewer extends React.Component {
           implEdited: { $set: false },
           mda: { impl: { openmdao: { $set: oImpl } } },
         });
+        this.setState(newState);
+      },
+      (error) => {
+        const message = error.response.data.message || 'Error: Update failed';
+        const newState = update(this.state, { errors: { $set: [message] } });
         this.setState(newState);
       });
   }
@@ -546,6 +555,15 @@ class MdaViewer extends React.Component {
 
       const analysisPermissionsEditable = (mda.owner.id === currentUser.id);
 
+      let restricted;
+      if (!db.mda.public) {
+        restricted = (<i className="fas fa-user-secret" title="Analysis with restricted access" />);
+      }
+      let co_owned;
+      if (analysisCoOwners.length > 0) {
+        co_owned = (<i className="fas fa-users-cog" title="Analysis has co-owners" />);
+      }
+
       return (
         <div>
           <form className="button_to" method="get" action={this.api.url(`/analyses/${mda.id}`)}>
@@ -565,6 +583,10 @@ class MdaViewer extends React.Component {
               (#
               {mda.id}
               )
+              {' '}
+              {restricted}
+              {' '}
+              {co_owned}
             </small>
           </h1>
           {warningIfOperated}
@@ -847,7 +869,7 @@ MdaViewer.propTypes = {
   api: PropTypes.object.isRequired,
   members: PropTypes.array,
   coOwners: PropTypes.array,
-  currentUser: PropTypes.object.isRequired,
+  currentUser: PropTypes.object,
   mda: PropTypes.shape({
     owner: PropTypes.object.isRequired,
     name: PropTypes.string.isRequired,
@@ -864,6 +886,7 @@ MdaViewer.propTypes = {
   }).isRequired,
 };
 MdaViewer.defaultProps = {
+  currentUser: null,
   members: [],
   coOwners: [],
 };

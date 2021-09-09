@@ -45,10 +45,14 @@ paths:
                     created_at:
                       type: string
                       format: date-time
+                    updated_at:
+                      type: string
+                      format: date-time
                   required:
                   - id
                   - name
                   - created_at
+                  - updated_at
   "/api/v1/analyses/{id}":
     get:
       summary: Get analysis details
@@ -387,6 +391,9 @@ components:
         name:
           type: string
         created_at:
+          type: string
+          format: date-time
+        updated_at:
           type: string
           format: date-time
         owner_email:

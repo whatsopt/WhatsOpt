@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
-class Api::V1::AnalysesController < Api::ApiController
+class Api::V1::AnalysesController < Api::V1::ApiMdaUpdaterController
   before_action :set_mda, only: [:show, :update]
+  before_action :check_mda_update, only: [:update]
+
   after_action :save_journal, only: [:create, :update]
 
   # GET /api/v1/mdas

@@ -239,6 +239,7 @@ class Analysis < ApplicationRecord
     {
       id: id,
       name: name,
+      updated_at: updated_at,
       owner: UserSerializer.new(owner),
       project: design_project || { id: -1, name: "" },
       note: note.blank? ? "":note.to_s,

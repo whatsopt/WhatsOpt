@@ -167,6 +167,8 @@ class AnalysisEditor extends React.PureComponent {
         <hr />
         <div className="editor-section">
           <div className="editor-section-label">
+            <i className="fas fa-users-cog" title="Analysis has co-owners" />
+            {' '}
             Collaboration
             {' '}
             <small>(allow edit access to the users listed below)</small>
@@ -176,6 +178,8 @@ class AnalysisEditor extends React.PureComponent {
         <hr />
         <div className="editor-section">
           <div className="editor-section-label">
+            <i className="fas fa-user-secret" title="Analysis with restricted access" />
+            {' '}
             Privacy
             {' '}
             <small>(when restricted, allow read only access to the users listed below)</small>

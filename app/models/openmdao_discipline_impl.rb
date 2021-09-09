@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class OpenmdaoDisciplineImpl < ActiveRecord::Base
-  belongs_to :discipline
+  belongs_to :discipline, touch: true
 
   after_initialize :_ensure_default_impl
 

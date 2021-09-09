@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+class Api::StaleObjectError < StandardError
+end
+
 class Api::ApiController < ActionController::Base
   include Response
   include ExceptionHandler

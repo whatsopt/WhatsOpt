@@ -1,12 +1,15 @@
 # frozen_string_literal: true
 
-class Api::V1::ConnectionsController < Api::ApiController
+class Api::V1::ConnectionsController < Api::V1::ApiMdaUpdaterController
   before_action :set_connection, only: [:update, :destroy]
+  before_action :check_mda_update, only: [:update, :destroy]
+
   after_action :save_journal, only: [:create, :update, :destroy]
 
   # POST /api/v1/connections
   def create
     @mda = Analysis.find(params[:mda_id])
+    check_mda_update
     authorize @mda, :update?
     @journal = @mda.init_journal(current_user)
     names = connection_create_params[:names]
@@ -56,6 +59,15 @@ class Api::V1::ConnectionsController < Api::ApiController
       @mda = @connection.analysis
       authorize @mda, :update?
       @journal = @mda.init_journal(current_user)
+    rescue ActiveRecord::RecordNotFound => e  # likely to occur on concurrent update
+      begin
+        @mda = Analysis.find(params[:mda_id])
+        authorize @mda, :update?
+        check_mda_update   # raise StaleObjectError
+        raise e            # otherwise re-raise
+      rescue ActiveRecord::RecordNotFound => e1
+        raise e
+      end
     end
 
     def save_journal

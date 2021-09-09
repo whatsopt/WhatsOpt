@@ -211,4 +211,24 @@ class AnalysisTest < ActiveSupport::TestCase
     assert_equal design_projects(:cicav_project), @mda.design_project
     assert_nil analyses(:fast).design_project
   end
+
+  test "should destroy a metamodel analysis" do
+    mm = analyses(:singleton_mm)
+    assert_difference("Analysis.count", -1) do
+      mm.destroy!
+    end
+    mm = analyses(:cicav_metamodel2_analysis)
+    assert_difference("Analysis.count", -1) do
+      mm.destroy!
+    end
+  end
+
+  test "should not destroy a metamodel analysis when prototype in use" do
+    mm = analyses(:cicav_metamodel_analysis)
+    assert_difference("Analysis.count", 0) do
+      assert_raise Discipline::ForbiddenRemovalError do
+        mm.destroy
+      end
+    end
+  end
 end
