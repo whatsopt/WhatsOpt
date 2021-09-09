@@ -229,11 +229,11 @@ class WhatsOptApi {
 
   deleteConnection(mdaId, connectionId, callback, onError) {
     const path = `/analyses/${mdaId}/connections/${connectionId}`;
-    axios.delete(this.apiUrl(path, {
+    axios.delete(this.apiUrl(path), {
       data: {
         requested_at: this.requested_at,
       },
-    }))
+    })
       .then(callback)
       .catch(onError);
   }
