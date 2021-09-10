@@ -22,13 +22,13 @@ class Operation < ApplicationRecord
   class ForbiddenRemovalError < StandardError; end
 
   belongs_to :analysis
-  has_many :options, as: :optionizable, dependent: :destroy
+  has_many :options, as: :optionizable, dependent: :delete_all
   accepts_nested_attributes_for :options, reject_if: proc { |attr| attr["name"].blank? }, allow_destroy: true
 
-  has_one :job, dependent: :destroy
+  has_one :job, dependent: :delete
 
   # when optimization / doe
-  has_many :cases, -> { joins(:variable).order("name ASC") }, dependent: :destroy
+  has_many :cases, -> { joins(:variable).order("name ASC") }, dependent: :delete_all
   # when meta model building operation
   has_one :meta_model
   # when derived from doe

@@ -4,7 +4,7 @@ class Journal < ApplicationRecord
 
   belongs_to :analysis
   belongs_to :user
-  has_many :details, class_name: "JournalDetail", dependent: :destroy
+  has_many :details, class_name: "JournalDetail", dependent: :delete_all
 
   ADD_ACTION = :add
   CHANGE_ACTION = :change 

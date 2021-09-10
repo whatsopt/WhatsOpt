@@ -14,14 +14,14 @@ class Variable < ApplicationRecord
   DEFAULT_IOMODE = IN
 
   self.inheritance_column = :disable_inheritance
-  belongs_to :discipline, touch: true
+  belongs_to :discipline
 
-  has_one :parameter, dependent: :destroy
-  has_one :scaling, dependent: :destroy
-  has_many :distributions, dependent: :destroy
+  has_one :parameter, dependent: :delete
+  has_one :scaling, dependent: :delete
+  has_many :distributions, dependent: :delete_all
 
-  has_one  :incoming_connection, -> { includes :from }, class_name: "Connection", foreign_key: "to_id", dependent: :destroy
-  has_many :outgoing_connections, -> { includes :to }, class_name: "Connection", foreign_key: "from_id", dependent: :destroy
+  has_one  :incoming_connection, -> { includes :from }, class_name: "Connection", foreign_key: "to_id", dependent: :delete
+  has_many :outgoing_connections, -> { includes :to }, class_name: "Connection", foreign_key: "from_id", dependent: :delete_all
   has_many :cases
 
   has_one :surrogate, dependent: :destroy
