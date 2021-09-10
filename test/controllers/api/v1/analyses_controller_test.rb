@@ -136,6 +136,42 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     assert_equal @user1, inner.owner
   end
 
+  test "should get XDSM without saving nested analysis" do
+    assert_difference("Discipline.count", 0) do
+      assert_difference("Analysis.count", 0) do
+        assert_difference("AnalysisDiscipline.count", 0) do
+        mda_attrs =
+          { "name": "Outer", "disciplines_attributes": [
+            { "name": "__DRIVER__", "variables_attributes": [
+              { "name": "x", "io_mode": "out", "type": "Float", "shape": "1", "units": "", "desc": "",
+                    "parameter_attributes": { "init": "2.0" } },
+              { "name": "y", "io_mode": "in", "type": "Float", "shape": "1", "units": "" }] },
+            { "name": "InnerDiscipline", "sub_analysis_attributes":
+              { "name": "InnerDiscipline", "disciplines_attributes": [
+                { "name": "__DRIVER__", "variables_attributes": [
+                    { "name": "x", "io_mode": "out", "type": "Float", "shape": "1", "units": "",  "desc": "",
+                        "parameter_attributes": { "init": "2.0" } },
+                    { "name": "y", "io_mode": "in", "type": "Float", "shape": "1", "units": "",  "desc": "" }] },
+                { "name": "Disc", "variables_attributes": [
+                  { "name": "x", "io_mode": "in", "type": "Float", "shape": "1", "units": "",  "desc": "",
+                    "parameter_attributes": { "init": "2.0" } },
+                  { "name": "y", "io_mode": "out", "type": "Float", "shape": "1", "units": "",  "desc": "" }
+                ] }
+              ] }
+            }
+          ] }
+        post api_v1_mdas_url(format: :xdsm, analysis: mda_attrs), as: :json, headers: @auth_headers
+        assert_response :success
+        resp = JSON.parse(response.body)
+        assert_equal ["root", "InnerDiscipline"], resp.keys
+        end
+      end
+    end
+    ActiveRecord::Base.connected_to(role: :writing, shard: :scratch) do
+      assert_equal 0, Analysis.count
+    end 
+  end
+
   test "should create nested sellar analysis" do
     mda_attrs = JSON.parse(sample_file("nested_sellar.json").read.chomp)
     assert_difference("AnalysisDiscipline.count", 1) do

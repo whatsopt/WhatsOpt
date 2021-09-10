@@ -49,7 +49,7 @@ class Api::V1::AnalysesController < Api::V1::ApiMdaUpdaterController
               Rails.logger.debug ">>> XDSM depth=#{mda.depth}"
               mda.to_xdsm_json
             end
-            # raise ActiveRecord::Rollback
+            raise ActiveRecord::Rollback  # no need to keep saved analyses in scratch database
           end
         end
       end
