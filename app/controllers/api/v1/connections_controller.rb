@@ -5,6 +5,7 @@ class Api::V1::ConnectionsController < Api::V1::ApiMdaUpdaterController
   before_action :check_mda_update, only: [:update, :destroy]
 
   after_action :save_journal, only: [:create, :update, :destroy]
+  after_action :touch_mda, only: [:create, :update, :destroy]
 
   # POST /api/v1/connections
   def create
@@ -71,7 +72,7 @@ class Api::V1::ConnectionsController < Api::V1::ApiMdaUpdaterController
     end
 
     def save_journal
-      @journal&.save
+      @journal.save
     end
 
     def check_duplicates(mda, name)
@@ -91,4 +92,5 @@ class Api::V1::ConnectionsController < Api::V1::ApiMdaUpdaterController
                                          scaling_attributes: [:id, :_destroy, :ref, :ref0, :res_ref],
                                          distributions_attributes: [:id, :_destroy, :kind, options_attributes: [:id, :_destroy, :name, :value]])
     end
+
 end

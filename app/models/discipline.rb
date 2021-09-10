@@ -23,7 +23,7 @@ class Discipline < ApplicationRecord
   has_one :sub_analysis, through: :analysis_discipline, source: :analysis
   has_one :meta_model, dependent: :destroy
 
-  belongs_to :analysis, touch: true
+  belongs_to :analysis
   acts_as_list scope: :analysis, top_of_list: 0
 
   has_one :openmdao_impl, class_name: "OpenmdaoDisciplineImpl", dependent: :destroy

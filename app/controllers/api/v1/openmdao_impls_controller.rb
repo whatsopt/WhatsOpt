@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class Api::V1::OpenmdaoImplsController <  Api::V1::ApiMdaUpdaterController
+  after_action :touch_mda, only: [ :update ]
 
   def show
     @mda = Analysis.find(params[:mda_id])

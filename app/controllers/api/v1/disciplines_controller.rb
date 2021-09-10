@@ -5,6 +5,7 @@ class Api::V1::DisciplinesController < Api::V1::ApiMdaUpdaterController
   before_action :check_mda_update, only: [:update, :destroy]
 
   after_action :save_journal, only: [:create, :update, :destroy]
+  after_action :touch_mda, only: [:create, :update, :destroy]
 
   # GET /api/v1/disciplines/1
   def show

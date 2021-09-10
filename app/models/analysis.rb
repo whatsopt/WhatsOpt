@@ -745,6 +745,10 @@ class Analysis < ApplicationRecord
     @current_journal ||= Journal.new(analysis: self, user: user)
   end
 
+  def save_journal
+    current_journal&.save  # journal is optional
+  end
+  
   # Returns the current journal or nil if it's not initialized
   def current_journal
     @current_journal
