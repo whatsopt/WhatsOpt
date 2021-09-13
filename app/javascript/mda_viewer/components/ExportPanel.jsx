@@ -51,9 +51,13 @@ class ExportPanel extends React.Component {
       },
       (error) => {
         console.log(error);
+        let text = 'Sorry something went wrong!';
+        if (error.response.data.message) {
+          text += `<br\\>${error.response.data.message}`;
+        }
         dataConfirmModal.confirm({
           title: 'Oups!',
-          text: 'Sorry something went wrong!',
+          text,
           commit: 'Ok',
           commitClass: 'btn-primary',
           cancelClass: 'd-none',
