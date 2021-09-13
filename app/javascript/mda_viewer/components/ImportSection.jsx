@@ -14,6 +14,7 @@ class ImportSection extends React.Component {
     this.mdaId = mdaId;
     this.handleAnalysisSearch = this.handleAnalysisSearch.bind(this);
     this.handleAnalysisSelected = this.handleAnalysisSelected.bind(this);
+    this.handleImport = this.handleImport.bind(this);
   }
 
   handleAnalysisSearch(callback) {
@@ -38,25 +39,11 @@ class ImportSection extends React.Component {
       });
   }
 
-  handleImport(disc) {
-    const { onDisciplineImport } = this.props;
+  handleImport(discId) {
+    const { onDisciplineImport, mdaId } = this.props;
     const { selected } = this.state;
     const [selection] = selected;
-
-    this.api.importDiscipline(selection.id, disc.id, this.mdaId,
-      onDisciplineImport,
-      (error) => {
-        console.log(error);
-        /* global dataConfirmModal */
-        dataConfirmModal.confirm({
-          title: 'Oups!',
-          text: 'Sorry something went wrong!',
-          commit: 'Ok',
-          commitClass: 'btn-primary',
-          cancelClass: 'd-none',
-          onConfirm: () => { },
-        });
-      });
+    onDisciplineImport(selection.id, discId, mdaId);
   }
 
   render() {
@@ -69,7 +56,7 @@ class ImportSection extends React.Component {
           <button
             className="btn btn-primary"
             type="button"
-            onClick={() => this.handleImport(disc)}
+            onClick={() => this.handleImport(disc.id)}
           >
             {label}
           </button>

@@ -82,6 +82,7 @@ class MdaViewer extends React.Component {
     this.handleProjectSearch = this.handleProjectSearch.bind(this);
     this.handleProjectSelected = this.handleProjectSelected.bind(this);
     this.renderXdsm = this.renderXdsm.bind(this);
+    this.displayError = this.displayError.bind(this);
   }
 
   handleFilterChange(filter) {
@@ -118,11 +119,7 @@ class MdaViewer extends React.Component {
       this.setState(newState);
       // console.log("NEW CONNECTION RESET");
       this.renderXdsm();
-    }, (error) => {
-      const message = error.response.data.message || 'Error: Creation failed';
-      const newState = update(this.state, { errors: { $set: [message] } });
-      this.setState(newState);
-    });
+    }, this.displayError);
   }
 
   handleConnectionChange(connId, connAttrs) {
@@ -158,26 +155,16 @@ class MdaViewer extends React.Component {
 
     if (Object.keys(cAttrs).length !== 0) {
       this.api.updateConnection(mda.id, connId, cAttrs,
-        () => {
-          this.renderXdsm();
-        },
-        (error) => {
-          const message = error.response.data.message || 'Error: Update failed';
-          const newState = update(this.state, { errors: { $set: [message] } });
-          this.setState(newState);
-        });
+        this.renderXdsm,
+        this.displayError);
     }
   }
 
   handleConnectionDelete(connId) {
     const { mda } = this.state;
     this.api.deleteConnection(mda.id, connId,
-      () => { this.renderXdsm(); },
-      (error) => {
-        const message = error.response.data.message || 'Error: Update failed';
-        const newState = update(this.state, { errors: { $set: [message] } });
-        this.setState(newState);
-      });
+      this.renderXdsm,
+      this.displayError);
   }
 
   // *** Disciplines ************************************************************
@@ -191,15 +178,13 @@ class MdaViewer extends React.Component {
         this.setState(newState);
         this.renderXdsm();
       },
-      (error) => {
-        const message = error.response.data.message || 'Error: Update failed';
-        const newState = update(this.state, { errors: { $set: [message] } });
-        this.setState(newState);
-      });
+      this.displayError);
   }
 
-  handleDisciplineImport() {
-    this.renderXdsm();
+  handleDisciplineImport(mdaFromId, discId, mdaId) {
+    this.api.importDiscipline(mdaFromId, discId, mdaId,
+      this.renderXdsm,
+      this.displayError);
   }
 
   handleDisciplineNameChange(event) {
@@ -216,12 +201,8 @@ class MdaViewer extends React.Component {
       this.setState(newState);
     }
     this.api.updateDiscipline(mda.id, node.id, discAttrs,
-      () => { this.renderXdsm(); },
-      (error) => {
-        const message = error.response.data.message || 'Error: Update failed';
-        const newState = update(this.state, { errors: { $set: [message] } });
-        this.setState(newState);
-      });
+      this.renderXdsm,
+      this.displayError);
   }
 
   handleDisciplineDelete(node) {
@@ -232,11 +213,7 @@ class MdaViewer extends React.Component {
       }
       this.renderXdsm();
     },
-    (error) => {
-      const message = error.response.data.message || 'Error: Delete failed';
-      const newState = update(this.state, { errors: { $set: [message] } });
-      this.setState(newState);
-    });
+    this.displayError);
   }
 
   handleSubAnalysisSearch(callback) {
@@ -302,7 +279,7 @@ class MdaViewer extends React.Component {
         const newState = update(this.state, { mda: { public: { $set: !mda.public } } });
         this.setState(newState);
       },
-      (error) => { console.log(error); });
+      this.displayError);
     return false;
   }
 
@@ -320,8 +297,6 @@ class MdaViewer extends React.Component {
     if (selected.length) {
       this.api.addUser(selected[0].id, mda.id, role,
         () => {
-          // const newState = update(this.state, { analysisMembers: { $push: selected } });
-          // this.setState(newState);
           this.api.getUsers(mda.id, 'members', (response) => {
             this.setState({ analysisMembers: response.data });
           });
@@ -335,8 +310,6 @@ class MdaViewer extends React.Component {
   handleAnalysisUserDelete(user, role) {
     const { mda } = this.state;
     this.api.removeUser(user.id, mda.id, role, () => {
-      // const idx = analysisMembers.indexOf(user);
-      // const newState = update(this.state, { analysisMembers: { $splice: [[idx, 1]] } });
       this.api.getUsers(mda.id, 'members', (response) => {
         this.setState({ analysisMembers: response.data });
       });
@@ -369,11 +342,7 @@ class MdaViewer extends React.Component {
             this.setState(newState);
           });
       },
-      (error) => {
-        const message = error.response.data.message || 'Error: Update failed';
-        const newState = update(this.state, { errors: { $set: [message] } });
-        this.setState(newState);
-      });
+      this.displayError);
   }
 
   handleErrorClose(index) {
@@ -394,11 +363,7 @@ class MdaViewer extends React.Component {
         });
         this.setState(newState);
       },
-      (error) => {
-        const message = error.response.data.message || 'Error: Update failed';
-        const newState = update(this.state, { errors: { $set: [message] } });
-        this.setState(newState);
-      });
+      this.displayError);
   }
 
   handleOpenmdaoImplChange(openmdaoImpl) {
@@ -440,6 +405,12 @@ class MdaViewer extends React.Component {
     }, this);
     // console.log(JSON.stringify({ selected: newSelected, errors: errors }));
     return { selected: newSelected, errors };
+  }
+
+  displayError(error) {
+    const message = error.response.data.message || 'Error: Operation failed';
+    const newState = update(this.state, { errors: { $set: [message] } });
+    this.setState(newState);
   }
 
   renderXdsm() {
@@ -701,7 +672,6 @@ class MdaViewer extends React.Component {
                 limited={db.mda.operated}
                 onDisciplineNameChange={this.handleDisciplineNameChange}
                 onSubAnalysisSearch={this.handleSubAnalysisSearch}
-                onSubAnalysisSelected={this.handleSubAnalysisSelected}
                 onDisciplineCreate={this.handleDisciplineCreate}
                 onDisciplineDelete={this.handleDisciplineDelete}
                 onDisciplineUpdate={this.handleDisciplineUpdate}
