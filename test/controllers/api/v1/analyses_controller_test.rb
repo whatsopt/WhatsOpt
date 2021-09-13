@@ -9,6 +9,7 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     @mda = analyses(:cicav)
     @mda2 = analyses(:fast)
     @auth_headers2 = { "Authorization" => "Token " + TEST_API_KEY + "User2" }
+    @auth_headers3 = { "Authorization" => "Token " + TEST_API_KEY + "User3" }
     @disc = @mda.disciplines.nodes.first
   end
 
@@ -214,31 +215,27 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
 
   test "should import a discipline from another analysis" do
     # beforeConnsNb = Connection.of_analysis(@mda).size
+    mda = analyses(:singleton)
     mda2 = analyses(:innermda)
     disc = disciplines(:innermda_discipline)
-    put api_v1_mda_url(@mda), params: { analysis: { import: { analysis: mda2.id, disciplines: [disc.id] } }, requested_at: Time.now },
-        as: :json, headers: @auth_headers
-    @mda.reload
-    newDisc = @mda.disciplines.last
+    put api_v1_mda_url(mda), params: { analysis: { import: { analysis: mda2.id, disciplines: [disc.id] } }, requested_at: Time.now },
+        as: :json, headers: @auth_headers3
+    assert_response :success
+    mda.reload
+    newDisc = mda.disciplines.last
     assert_equal disc.name, newDisc.name
-    assert_equal 12, Connection.of_analysis(@mda).count
-    # Connection.of_analysis(@mda).each do |conn|
+    assert_equal 7, Connection.of_analysis(mda).count
+    # Connection.of_analysis(mda).each do |conn|
     #   puts "Connection #{conn.from.name} from #{conn.from.discipline.name} to #{conn.to.discipline.name}"
     # end
-    #
-    # Connection z from __DRIVER__ to Aerodynamics
-    # Connection z from __DRIVER__ to Geometry
-    # Connection z from __DRIVER__ to PlainDiscipline
-    # Connection x1 from __DRIVER__ to Geometry
+    # Connection u from __DRIVER__ to SingletonDiscipline
     # Connection x2 from __DRIVER__ to PlainDiscipline
     # Connection y1 from __DRIVER__ to PlainDiscipline
-    # Connection obj from Geometry to __DRIVER__
-    # Connection yg from Geometry to Aerodynamics
-    # Connection ya from Aerodynamics to Geometry
-    # Connection y2 from Aerodynamics to __DRIVER__
+    # Connection z from __DRIVER__ to PlainDiscipline
+    # Connection v from SingletonDiscipline to __DRIVER__
     # Connection y from PlainDiscipline to __DRIVER__
-    # Connection y2_dup from PlainDiscipline to __DRIVER__
-  end
+    # Connection y2 from PlainDiscipline to __DRIVER__ 
+ end
 
   test "should import a metamodel" do
     orig_count = @mda.disciplines.count
@@ -257,13 +254,24 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should import a sub-analysis" do
+    mda = analyses(:singleton)
+    orig_count = mda.disciplines.count
+    mda2 = analyses(:outermda)
+    disc = disciplines(:outermda_innermda_discipline)
+    put api_v1_mda_url(mda), params: { analysis: { import: { analysis: mda2.id, disciplines: [disc.id] } }, requested_at: Time.now },
+      as: :json, headers: @auth_headers3
+    assert_response :success
+    mda.reload
+    assert_equal orig_count + 1, mda.disciplines.count
+  end
+
+  test "should not import a sub-analysis if var already produced" do
     orig_count = @mda.disciplines.count
     mda2 = analyses(:outermda)
     disc = disciplines(:outermda_innermda_discipline)
     put api_v1_mda_url(@mda), params: { analysis: { import: { analysis: mda2.id, disciplines: [disc.id] } }, requested_at: Time.now },
       as: :json, headers: @auth_headers
-    @mda.reload
-    assert_equal orig_count + 1, @mda.disciplines.count
+    assert_response :unprocessable_entity  # y2 aleready produced
   end
 
   test "should recreate analysis with imports" do
@@ -284,18 +292,14 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test "should create a discipline without renamed out variables" do
+  test "should not create a discipline with same out variables" do
     post api_v1_mdas_url, params: { analysis: { name: "Test" }, requested_at: Time.now }, as: :json, headers: @auth_headers
     assert_response :success
     mda = Analysis.last
     disc = @mda.disciplines.nodes.first
-    put api_v1_mda_url(mda), params: { analysis: { import: { analysis: @mda.id, disciplines: [disc.id, disc.id, disc.id] } }, requested_at: Time.now },
+    put api_v1_mda_url(mda), params: { analysis: { import: { analysis: @mda.id, disciplines: [disc.id, disc.id] } }, requested_at: Time.now },
         as: :json, headers: @auth_headers
-    assert_response :success
-    assert_equal 4, mda.disciplines.count
-    assert_equal [disc.name, disc.name, disc.name], mda.disciplines.nodes.map(&:name)
-    assert_equal disc.output_variables.map { |v| v.name+"_dup_dup" }, Discipline.last.output_variables.map(&:name)
-    assert_equal disc.input_variables.map(&:name), Discipline.last.input_variables.map(&:name)
+    assert_response :unprocessable_entity
   end
 
   test "should file an analysis in a project reference" do
