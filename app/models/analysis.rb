@@ -447,12 +447,10 @@ class Analysis < ApplicationRecord
       Analysis.transaction do
         discipline_ids.each do |discId|
           disc = Discipline.find(discId)
-          # p "***************************************** IMPORT #{disc.name}"
           # check consistency
           if disc && fromAnalysis.disciplines.where(id: discId)
             discattrs = disc.prepare_attributes_for_import!(variables, driver)
             attrs = { disciplines_attributes: [discattrs] }
-            # p "ATTRS", attrs
             self.update!(attrs)
             new_disc = self.disciplines.reload.last
             if disc.is_pure_metamodel?
