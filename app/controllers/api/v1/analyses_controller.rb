@@ -46,10 +46,11 @@ class Api::V1::AnalysesController < Api::V1::ApiMdaUpdaterController
               Rails.logger.debug ">>> XDSM request cache miss"
               Rails.logger.debug ">>> XDSM creation..."
               mda = create_nested_analysis
+              mda.init_journal(current_user)
               Rails.logger.debug ">>> XDSM depth=#{mda.depth}"
               mda.to_xdsm_json
             end
-            # raise ActiveRecord::Rollback
+            raise ActiveRecord::Rollback  # no need to keep saved analyses in scratch database
           end
         end
       end
@@ -106,7 +107,7 @@ class Api::V1::AnalysesController < Api::V1::ApiMdaUpdaterController
     end
 
     def save_journal
-      @journal&.save
+      @mda&.save_journal  # optional when requesting xdsm
     end
 
     def mda_params

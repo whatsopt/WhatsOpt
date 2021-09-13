@@ -4,10 +4,9 @@ class Connection < ApplicationRecord
   include WhatsOpt::PythonUtils
 
   before_validation :_ensure_role_presence
-  # before_destroy :delete_driver_variables!
 
-  belongs_to :from, -> { includes(:discipline) }, class_name: "Variable", touch: true
-  belongs_to :to, -> { includes(:discipline) }, class_name: "Variable", touch: true
+  belongs_to :from, -> { includes(:discipline) }, class_name: "Variable"
+  belongs_to :to, -> { includes(:discipline) }, class_name: "Variable"
 
   validates :from, presence: true
   validates :to, presence: true

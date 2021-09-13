@@ -15,4 +15,12 @@ class Api::V1::ApiMdaUpdaterController < Api::ApiController
     raise "Cannot check mda update: Request time unknown. Set 'requested_at' parameter." if params[:requested_at].nil?
     DateTime.parse(params[:requested_at])
   end
+
+  def touch_mda
+    @mda.touch
+  end
+
+  def save_journal
+    @mda.save_journal
+  end
 end

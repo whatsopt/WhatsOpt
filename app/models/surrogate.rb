@@ -33,7 +33,7 @@ class Surrogate < ApplicationRecord
   belongs_to :meta_model
   belongs_to :variable
 
-  has_many :options, as: :optionizable, dependent: :destroy
+  has_many :options, as: :optionizable, dependent: :delete_all
   accepts_nested_attributes_for :options, reject_if: proc { |attr| attr["name"].blank? }, allow_destroy: true
 
   validates :meta_model, presence: true

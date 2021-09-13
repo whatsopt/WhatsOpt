@@ -100,6 +100,6 @@ class AnalysesController < ApplicationController
     end
     
     def save_journal
-      @journal&.save
+      @mda.save_journal
     end
 end
