@@ -74,13 +74,6 @@ class Api::V1::ConnectionsController < Api::V1::ApiMdaUpdaterController
       @journal&.save
     end
 
-    def check_duplicates(mda, name)
-      vouts = Variable.of_analysis(mda).where(name: name, io_mode: WhatsOpt::Variable::OUT)
-      if vouts.count > 1
-        raise VariableDuplicateError.new("Variable #{name} is duplicated: ids=#{vouts.map(&:id)}. Please call WhatsOpt administrator.")
-      end
-    end
-
     def connection_create_params
       params.require(:connection).permit(:from, :to, names: [])
     end

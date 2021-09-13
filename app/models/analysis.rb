@@ -442,6 +442,7 @@ class Analysis < ApplicationRecord
 
   def import!(fromAnalysis, discipline_ids)
     # do not import from self
+    new_discs = []
     if fromAnalysis.id != id
       Analysis.transaction do
         discipline_ids.each do |discId|
@@ -453,18 +454,20 @@ class Analysis < ApplicationRecord
             attrs = { disciplines_attributes: [discattrs] }
             # p "ATTRS", attrs
             self.update!(attrs)
-            newDisc = self.disciplines.reload.last
+            new_disc = self.disciplines.reload.last
             if disc.is_pure_metamodel?
-              newDisc.meta_model = disc.meta_model.create_copy!(self, newDisc)
+              new_disc.meta_model = disc.meta_model.create_copy!(self, new_disc)
             end
             if disc.has_sub_analysis?
-              newDisc.sub_analysis = disc.sub_analysis.create_copy!(self)
+              new_disc.sub_analysis = disc.sub_analysis.create_copy!(self)
             end
-            newDisc.save!
+            new_disc.save!
+            new_discs << new_disc
           end
         end
       end
     end
+    new_discs
   end
 
   def create_copy!(parent = nil, super_disc = nil)
