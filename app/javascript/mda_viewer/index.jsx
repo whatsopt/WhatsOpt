@@ -699,6 +699,7 @@ class MdaViewer extends React.Component {
                 onDisciplineCreate={this.handleDisciplineCreate}
                 onDisciplineDelete={this.handleDisciplineDelete}
                 onDisciplineUpdate={this.handleDisciplineUpdate}
+                onDisciplineImport={this.renderXdsm}
               />
             </div>
             <div className="tab-pane fade" id="connections" role="tabpanel" aria-labelledby="connections-tab">

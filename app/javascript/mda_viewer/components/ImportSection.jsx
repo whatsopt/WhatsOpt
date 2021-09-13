@@ -39,23 +39,15 @@ class ImportSection extends React.Component {
   }
 
   handleImport(disc) {
+    const { onDisciplineImport } = this.props;
     const { selected } = this.state;
     const [selection] = selected;
 
     this.api.importDiscipline(selection.id, disc.id, this.mdaId,
-      () => {
-        /* global dataConfirmModal */
-        dataConfirmModal.confirm({
-          title: 'Import done!',
-          text: `Discipline ${disc.name} imported`,
-          commit: 'Ok',
-          commitClass: 'btn-primary',
-          cancelClass: 'd-none',
-          onConfirm: () => { },
-        });
-      },
+      onDisciplineImport,
       (error) => {
         console.log(error);
+        /* global dataConfirmModal */
         dataConfirmModal.confirm({
           title: 'Oups!',
           text: 'Sorry something went wrong!',
@@ -109,6 +101,7 @@ class ImportSection extends React.Component {
 ImportSection.propTypes = {
   api: PropTypes.object.isRequired,
   mdaId: PropTypes.number.isRequired,
+  onDisciplineImport: PropTypes.func.isRequired,
 };
 
 export default ImportSection;

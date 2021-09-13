@@ -320,6 +320,7 @@ class DisciplinesEditor extends React.Component {
       onDisciplineUpdate, onDisciplineDelete,
       onSubAnalysisSearch,
       onDisciplineCreate, onDisciplineNameChange,
+      onDisciplineImport,
     } = this.props;
     let disciplines = nodes.map((node, i) => (
       <Discipline
@@ -383,7 +384,7 @@ class DisciplinesEditor extends React.Component {
           </form>
         </div>
         <hr />
-        <ImportSection api={api} mdaId={mdaId} />
+        <ImportSection api={api} mdaId={mdaId} onDisciplineImport={onDisciplineImport} />
       </div>
     );
   }
@@ -400,6 +401,7 @@ DisciplinesEditor.propTypes = {
   onDisciplineCreate: PropTypes.func.isRequired,
   onDisciplineNameChange: PropTypes.func.isRequired,
   onSubAnalysisSearch: PropTypes.func.isRequired,
+  onDisciplineImport: PropTypes.func.isRequired,
 };
 
 DisciplinesEditor.defaultProps = {
