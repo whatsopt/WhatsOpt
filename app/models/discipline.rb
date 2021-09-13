@@ -192,7 +192,6 @@ class Discipline < ApplicationRecord
     # remove driver connections as new ones from new disc will take place
     analysis_driver.variables.outs.each do |driver_var|
       if self.variables.outs.where(name: driver_var.name).take
-        # p "Remove Driver #{driver_var.name} #{driver_var.io_mode} connection"
         driver_var.destroy!
       end
     end
@@ -201,26 +200,18 @@ class Discipline < ApplicationRecord
     outvars = analysis_variables.where.not(discipline_id: analysis_driver.id)
       .where(io_mode: WhatsOpt::Variable::OUT)
       .joins(:outgoing_connections).pluck(:name).uniq
-    # p "EXISTING OUTVARS", outvars
-    # p "NEW DISC VARS", self.variables.pluck(:name).uniq
-    # remove from new discipline outvars already present in the analysis
     vars = self.variables
       .where.not(io_mode: WhatsOpt::Variable::OUT)
       .or(self.variables.where.not(name: outvars))
 
     duplicates = self.variables.where(io_mode: WhatsOpt::Variable::OUT).where(name: outvars)
-    vardupattrs = ActiveModelSerializers::SerializableResource.new(duplicates,
-                                                                   each_serializer: VariableSerializer).as_json
-    vardupattrs.each do |varattr|
-      # p "varattr = #{varattr[:name]}"
-      while outvars.include?(varattr[:name]) do
-        varattr[:name] << suffix
-      end
+    if duplicates.size > 0
+      vout = duplicates.first
+      raise Connection::VariableAlreadyProducedError.new "Imported discipline produces variable #{vout.name} which is already produced by #{vout.discipline.name} discipline."
     end
 
     varattrs = ActiveModelSerializers::SerializableResource.new(vars,
-          each_serializer: VariableSerializer).as_json + vardupattrs
-    # p "VARS", vars.map(&:name)
+          each_serializer: VariableSerializer).as_json 
     {
       name: self.name,
       type: self.type,

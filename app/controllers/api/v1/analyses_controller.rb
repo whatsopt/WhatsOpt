@@ -91,6 +91,8 @@ class Api::V1::AnalysesController < Api::V1::ApiMdaUpdaterController
       @journal.journalize_changes(@mda, old_attrs)
     end
     head :no_content
+  rescue Connection::VariableAlreadyProducedError => e
+    json_response({ message: e }, :unprocessable_entity)
   end
 
   protected
