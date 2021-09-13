@@ -45,6 +45,15 @@ module Ownable
     _remove_role(user, :co_owner)
   end
 
+  def copy_ownership(ownable_src)
+    ownable_src.readers.each do |r|
+      self.add_member(r) unless r == ownable_src.owner
+    end
+    ownable_src.updaters.each do |u|
+      self.add_co_owner(u) unless u == ownable_src.owner
+    end
+  end
+
   def copy_membership(ownable_src)
     ownable_src.readers.each do |r|
       self.add_member(r) 

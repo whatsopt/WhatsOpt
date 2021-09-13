@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import AnalysisSelector from './AnalysisSelector';
+import ImportSection from './ImportSection';
 
 // mapping with XDSMjs type values
 const DISCIPLINE = 'analysis';
@@ -313,6 +314,7 @@ class DisciplinesEditor extends React.Component {
   render() {
     const { nodes } = this.state;
     const {
+      api, mdaId,
       name,
       limited,
       onDisciplineUpdate, onDisciplineDelete,
@@ -361,7 +363,7 @@ class DisciplinesEditor extends React.Component {
           </DragDropContext>
         </div>
         <div className="editor-section">
-          <form className="form" onSubmit={onDisciplineCreate}>
+          <form className="form-inline" onSubmit={onDisciplineCreate}>
             <div className="form-group">
               <div className="row">
                 <div className="col-3">
@@ -380,12 +382,16 @@ class DisciplinesEditor extends React.Component {
             <button type="submit" className="btn btn-primary ml-3" disabled={limited}>Add</button>
           </form>
         </div>
+        <hr />
+        <ImportSection api={api} mdaId={mdaId} />
       </div>
     );
   }
 }
 
 DisciplinesEditor.propTypes = {
+  api: PropTypes.object.isRequired,
+  mdaId: PropTypes.number.isRequired,
   name: PropTypes.string.isRequired,
   nodes: PropTypes.array.isRequired,
   limited: PropTypes.bool,

@@ -54,14 +54,13 @@ class ComparisonPanel extends React.Component {
   }
 
   handleAnalysisSearch(callback) {
-    const allAnalyses = true;
     this.api.getAnalysisCandidates(
       (response) => {
         const options = response.data
           .filter((analysis) => analysis.id !== this.mdaId)
           .map((analysis) => ({ id: analysis.id, label: `#${analysis.id} ${analysis.name}` }));
         callback(options);
-      }, allAnalyses,
+      }, 'all',
     );
   }
 
