@@ -13,6 +13,12 @@ class Api::V1::DisciplineControllerTest < ActionDispatch::IntegrationTest
     @submda2 = analyses(:sub_analysis)
   end
 
+  test "should get disciplines" do
+    get api_v1_mda_disciplines_url(@mda), as: :json, headers: @auth_headers
+    assert_response :success
+    resp = JSON.parse(response.body)
+    assert_equal ["Geometry", "Propulsion", "Aerodynamics"], resp.map{|d| d["name"]}
+  end
 
   test "should create discipline in given mda" do
     assert_difference("Discipline.count") do

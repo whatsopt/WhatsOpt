@@ -1,17 +1,20 @@
 # frozen_string_literal: true
 
 class Api::V1::DisciplinesController < Api::V1::ApiMdaUpdaterController
-  before_action :set_discipline, only: [:show, :update, :destroy]
+  before_action :set_discipline, only: [:update, :destroy]
   before_action :check_mda_update, only: [:update, :destroy]
 
   after_action :save_journal, only: [:create, :update, :destroy]
 
-  # GET /api/v1/disciplines/1
-  def show
-    json_response @discipline
+  # GET /api/v1/analyses/{mda_id}/disciplines/1
+  def index
+    @mda = Analysis.find(params[:mda_id])
+    authorize @mda, :show?
+    disciplines =  policy_scope(Discipline).where(analysis: @mda) 
+    json_response disciplines
   end
 
-  # POST /api/v1/{mda_id}/disciplines
+  # POST /api/v1/analyses/{mda_id}/disciplines
   def create
     @mda = Analysis.find(params[:mda_id])
     check_mda_update
@@ -22,7 +25,7 @@ class Api::V1::DisciplinesController < Api::V1::ApiMdaUpdaterController
     json_response @discipline, :created
   end
 
-  # PATCH/PUT /api/v1/disciplines/1
+  # PATCH/PUT /api/v1/analyses/{mda_id}/disciplines/1
   def update
     old_attrs = @discipline.attributes
     @discipline.update_discipline!(discipline_params)
@@ -32,7 +35,7 @@ class Api::V1::DisciplinesController < Api::V1::ApiMdaUpdaterController
     json_response({ message: e.message }, :unprocessable_entity)
   end
 
-  # DELETE /api/v1/disciplines/1
+  # DELETE /api/v1/analyses/{mda_id}/disciplines/1
   def destroy
     # @discipline.destroy!
     @mda.destroy_discipline!(@discipline)

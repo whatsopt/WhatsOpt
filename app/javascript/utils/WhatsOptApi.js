@@ -143,6 +143,13 @@ class WhatsOptApi {
       .catch((error) => console.log(error));
   }
 
+  getDisciplines(mdaId, callback) {
+    const path = `/analyses/${mdaId}/disciplines`;
+    axios.get(this.apiUrl(path))
+      .then(callback)
+      .catch((error) => console.log(error));
+  }
+
   importDiscipline(fromMdaId, discId, toMdaId, callback, onError) {
     const path = `/analyses/${toMdaId}`;
     this.getAnalysis(toMdaId, false, (response) => {
@@ -192,9 +199,14 @@ class WhatsOptApi {
       .catch(onError);
   }
 
-  getAnalysisCandidates(callback, allAnalysis) {
-    const all = allAnalysis ? '?all=true' : ''; // otherwise default to mine only
-    const path = `/analyses${all}`;
+  getAnalysisCandidates(callback, query) {
+    let option = '';
+    if (query === 'all') {
+      option = '?all=true';
+    } else if (query === 'owned') {
+      option = '?owned=true';
+    }
+    const path = `/analyses${option}`;
     axios.get(this.apiUrl(path))
       .then(callback)
       .catch((error) => console.log(error));

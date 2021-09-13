@@ -35,7 +35,7 @@ class Api::V1::AnalysesController < Api::V1::ApiMdaUpdaterController
 
   # POST /api/v1/mdas
   def create
-    if params[:format] == "xdsm"
+    if params[:format] == "xdsm"  # wop show <openmdao_pb.py>
       skip_authorization
       xdsm = nil
       original_connection = Analysis.remove_connection
@@ -54,7 +54,7 @@ class Api::V1::AnalysesController < Api::V1::ApiMdaUpdaterController
         end
       end
       json_response xdsm, :ok
-    else
+    else # wop push
       @mda = create_nested_analysis
       @mda.set_owner(current_user)
       authorize @mda
@@ -66,18 +66,19 @@ class Api::V1::AnalysesController < Api::V1::ApiMdaUpdaterController
 
   # PUT/PATCH /api/v1/mdas/1
   def update
-    import = mda_params[:import]
+    import = mda_params[:import]   # import/export disicplines
     if import
       fromAnalysis = Analysis.find(import[:analysis])
       authorize(fromAnalysis, :show?)
-      @mda.import!(fromAnalysis, import[:disciplines])
-      info = fromAnalysis.disciplines
-                    .filter{|d| import[:disciplines].include?(d.id.to_s)}
-                    .map{|d| d.name}
-                    .join(", ")
+      new_discs = @mda.import!(fromAnalysis, import[:disciplines])
+      new_discs.filter{|d| d.has_sub_analysis?}.each do |disc|
+        disc.sub_analysis.set_owner(current_user)
+        disc.sub_analysis.copy_ownership(@mda)
+      end
+      info = new_discs.map{|d| d.name}.join(", ")
       what_info = "[#{info}]"
       @journal.journalize(fromAnalysis, Journal::COPY_ACTION, copy_what: what_info)
-    else
+    else  # update analysis proper attributes
       old_attrs = @mda.attributes.merge!({
         "note_text" => @mda.note.to_plain_text,
         "design_project_name" => @mda.design_project&.name
