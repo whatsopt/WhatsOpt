@@ -66,6 +66,7 @@ class MdaViewer extends React.Component {
     this.handleAnalysisUpdate = this.handleAnalysisUpdate.bind(this);
     this.handleDisciplineNameChange = this.handleDisciplineNameChange.bind(this);
     this.handleDisciplineCreate = this.handleDisciplineCreate.bind(this);
+    this.handleDisciplineImport = this.handleDisciplineImport.bind(this);
     this.handleDisciplineUpdate = this.handleDisciplineUpdate.bind(this);
     this.handleDisciplineDelete = this.handleDisciplineDelete.bind(this);
     this.handleSubAnalysisSearch = this.handleSubAnalysisSearch.bind(this);
@@ -80,6 +81,7 @@ class MdaViewer extends React.Component {
     this.handleOpenmdaoImplReset = this.handleOpenmdaoImplReset.bind(this);
     this.handleProjectSearch = this.handleProjectSearch.bind(this);
     this.handleProjectSelected = this.handleProjectSelected.bind(this);
+    this.renderXdsm = this.renderXdsm.bind(this);
   }
 
   handleFilterChange(filter) {
@@ -194,6 +196,10 @@ class MdaViewer extends React.Component {
         const newState = update(this.state, { errors: { $set: [message] } });
         this.setState(newState);
       });
+  }
+
+  handleDisciplineImport() {
+    this.renderXdsm();
   }
 
   handleDisciplineNameChange(event) {
@@ -699,7 +705,7 @@ class MdaViewer extends React.Component {
                 onDisciplineCreate={this.handleDisciplineCreate}
                 onDisciplineDelete={this.handleDisciplineDelete}
                 onDisciplineUpdate={this.handleDisciplineUpdate}
-                onDisciplineImport={this.renderXdsm}
+                onDisciplineImport={this.handleDisciplineImport}
               />
             </div>
             <div className="tab-pane fade" id="connections" role="tabpanel" aria-labelledby="connections-tab">
