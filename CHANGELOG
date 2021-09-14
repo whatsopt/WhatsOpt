@@ -7,21 +7,25 @@
   <li>User as a co-owner is warned if a concurrent occured when editing a given analysis</li>
   <li>User can sort analyses the most recently updated first (Newest button)</li>
   <li>User as a owner can import/export a project (and all its analyses) as a json format (see wop push/pull --json -p)
+  <li>User can directly import a discipline frome another analysis in edition mode</li>
+  <li>User can get standalone html through the WhastOpt GUI (Export Html)</li>
 </ul>
 
 <h3>1.16.0 (24/08/2021)</h3>
 <ul>
   <li>User can compare an analysis to another viewing diff-like information</li>
-  <li>User can generate an OpenMDAO code enforcing the usage of units. By ticking the use units check box,<br/>
-  WhatsOpt generates an OpenMDAO code which specifies units. Units should be recognised by OpenMDAO.<br/>
-  see <a href="https://openmdao.org/newdocs/versions/latest/features/units.html">Units definitions</a></li>
+  <li>User can generate an OpenMDAO code enforcing the usage of units. By ticking the use units check box,<br />
+    WhatsOpt generates an OpenMDAO code which specifies units. Units should be recognised by OpenMDAO.<br />
+    see <a href="https://openmdao.org/newdocs/versions/latest/features/units.html">Units definitions</a></li>
   <li>User can see the analysis identifier in the title</li>
-  <li>User can specify bounded constraints: either eq (c==init), neg (c<=lower), pos (c>=upper) or bounded constraint (lower<=c<=upper)</li>
+  <li>User can specify bounded constraints: either eq (c==init), neg (c<=lower), pos (c>=upper) or bounded constraint
+      (lower<=c<=upper)< /li>
   <li>User can upload results generated with GEMSEO framework (requires wop>=1.17.0)</li>
   <li>Refactoring of OpenMDAO generated code:
     <ul>
       <li>User can subclass <code>AnalysisFactory</code> to control disciplines creation</li>
-      <li>Generated use standard recommended OpenMDAO import <code>import openmdao.api as om</code> (requires wop>=1.15.4)</li>
+      <li>Generated use standard recommended OpenMDAO import <code>import openmdao.api as om</code> (requires
+        wop>=1.15.4)</li>
       <li>Fix bugs related to Thrift generated code in presence of nested analyses</li>
     </ul>
   </li>
@@ -31,7 +35,8 @@
       <li>Fix bug when reassigning sub analysis</li>
       <li>Prevent from creating empty sub analysis</li>
       <li>Fix solver <code>maxiter</code> option configuration</li>
-      <li>Fix run scripts driver recording (generated results with WhatsOpt>=1.15.2 requires upload with wop>=1.16.0)</li>
+      <li>Fix run scripts driver recording (generated results with WhatsOpt>=1.15.2 requires upload with wop>=1.16.0)
+      </li>
     </ul>
   </li>
 </ul>
@@ -94,8 +99,8 @@
 
 <h3>1.11.0 (29/09/2020)</h3>
 <ul>
-  <li>When user copies or create a metamodel, new analysis gets 
-  same project and members access than the original analysis</li>
+  <li>When user copies or create a metamodel, new analysis gets
+    same project and members access than the original analysis</li>
   <li>User can pull (dump) analysis in pushable (load) json format</li>
   <li>Admin can deactivate a user account</li>
   <li>Fix remote operations (operate button)</li>
@@ -105,10 +110,10 @@
 
 <h3>1.10.0 (03/07/2020)</h3>
 <ul>
-  <li>User can organize analyses within design projects: an analysis belongs to one design project and 
-  a design project has many analyses.</li>
-  <li>User can filter analyses by design project</li> 
-  <li>User can see some qualitative information (tags) in the analyses list: 
+  <li>User can organize analyses within design projects: an analysis belongs to one design project and
+    a design project has many analyses.</li>
+  <li>User can filter analyses by design project</li>
+  <li>User can see some qualitative information (tags) in the analyses list:
     <ul>
       <li>OPTIM: an objective variable is defined</li>
       <li>MM: analysis created as a metamodel container</li>
@@ -125,8 +130,8 @@
 <ul>
   <li>User can set non scalar input variables as uncertain variables and set corresponding distributions</li>
   <li>User is warned when he wants to edit an analysis with results</li>
-  <li>User can push any OpenMDAO problem (even with connect calls or unpromoted variables) code 
-      with <code>wop push -x</code> command for reverse-engineering dispay only</code>
+  <li>User can push any OpenMDAO problem (even with connect calls or unpromoted variables) code
+    with <code>wop push -x</code> command for reverse-engineering dispay only</code>
   <li>User can push or show with a level of sub-analysis nesting (--depth option, default is 3, no limit with 0)
   <li>Fixes: sub-analyses fixes, name validity checking, variables table fixes</li>
   <li>Implementation: upgrade gems and javascript modules</li>
@@ -177,10 +182,10 @@
 <h3>1.3.0 (14/10/2019)</h3>
 <ul>
   <li>The user can distribute disciplines on different hosts.</li>
-  <li>Parameter initialization is in a separate file 'run_parameters_init.py' 
-  to let the user make parameters study without round trip to WhatsOpt.<br/>
-  Parameters in the end can be uploaded to WhatsOpt application 
-  through the command: wop upload 'run_parameters_init.py'
+  <li>Parameter initialization is in a separate file 'run_parameters_init.py'
+    to let the user make parameters study without round trip to WhatsOpt.<br />
+    Parameters in the end can be uploaded to WhatsOpt application
+    through the command: wop upload 'run_parameters_init.py'
   </li>
   <li>The user can copy an analysis.</li>
   <li>fix bug to take into account solvers options in run scripts.</li>
@@ -197,10 +202,10 @@
 
 <h3>1.1.0 (28/08/2019)</h3>
 <ul>
-  <li>Add a service to upload csv data file as an DOE operation result of an existing analysis; 
-  otherwise create the corresponding 'ad hoc' analysis</li>
+  <li>Add a service to upload csv data file as an DOE operation result of an existing analysis;
+    otherwise create the corresponding 'ad hoc' analysis</li>
   <li>Add a service to create a kriging metamodel using SMT toolbox from a DOE result and the corresponding
-  one-discipline analysis to allow further operations.</li>
+    one-discipline analysis to allow further operations.</li>
 </ul>
 
 <h3>1.0.0 (17/06/2019)</h3>
@@ -223,7 +228,7 @@
 
 <h3>0.14.1 (09/04/2019)</h3>
 <ul>
-  <li>Add OpenMDAO tab for analysis edition: 
+  <li>Add OpenMDAO tab for analysis edition:
     <ul>
       <li>allow to set nonlinear and linear solvers options</li>
       <li>allow to set analysis as a parallel group</li>
@@ -233,8 +238,8 @@
 
 <h3>0.14.0 (28/03/2019)</h3>
 <ul>
-  <li>Scatterplots, parallel coodinates display DOE dots with different color 
-  regarding MDA convergence success: blue for success, amber for failure</li>
+  <li>Scatterplots, parallel coodinates display DOE dots with different color
+    regarding MDA convergence success: blue for success, amber for failure</li>
   <li>openmdao_extensions (0.3.0): implement SMT and SALib drivers as DOEDriver with custom generators</li>
   <li>wop upload (0.9.3): add --dry-run, upload doe success/failure</li>
   <li>Preparing internet deployment on ether: authentication, restrict scope to analysis, deployment automaqtion</li>
@@ -243,7 +248,7 @@
 <h3>0.13.2 (12/02/2019)</h3>
 <ul>
   <li>wop update (0.8.1): fix performance issue, fix --server option</li>
-  <li>Refactoring: split WhatsOpt/python in separate repos: 
+  <li>Refactoring: split WhatsOpt/python in separate repos:
     <ul>
       <li>openmdao_extensions: custom solvers and drivers</li>
       <li>WhatsOpt-CLI: WhatsOpt command line interface a.k.a. wop</li>
@@ -256,13 +261,13 @@
 <h3>0.13.1 (04/02/2019)</h3>
 <ul>
   <li>Operation run scripts and operation running require OpenDMAO 2.5+</li>
-  <li>wop update (0.8.0):</li> 
-    <ul>
-      <li>By default update only analysis code (i.e. *_base.py)</li>
-      <li>run_analysis is generated once initially (have to be removed)</li>
-      <li>Operation run script generated when --run-ops is set</li>
-      <li>Thrift server only generated when --server is set</li>
-    </ul>
+  <li>wop update (0.8.0):</li>
+  <ul>
+    <li>By default update only analysis code (i.e. *_base.py)</li>
+    <li>run_analysis is generated once initially (have to be removed)</li>
+    <li>Operation run script generated when --run-ops is set</li>
+    <li>Thrift server only generated when --server is set</li>
+  </ul>
   </li>
 </ul>
 
@@ -285,7 +290,7 @@
 <ul>
   <li>Improve operation management: list view, renaming, timing
   <li>Retrieve initial values when using wop push</li>
-  <li>Fix result display error when a variable is removed</li> 
+  <li>Fix result display error when a variable is removed</li>
   <li>Implement native result load in ruby</li>
   <li>Update ruby 2.5.3, ror 5.2.1 and dependencies</li>
   <li>Export variables of a given analysis as a csv file</li>
@@ -319,17 +324,17 @@
 <h3>0.10.0 (31/08/2018)</h3>
 <ul>
   <li>Manage operation options for lhs doe or slsqp optimizer:
-     <ul>
-       <li>LHS: number of sampling points</li>
-       <li>SLSQP: objective tolerance, convergence display and numbe max of iterations</li>
-     </ul> 
+    <ul>
+      <li>LHS: number of sampling points</li>
+      <li>SLSQP: objective tolerance, convergence display and numbe max of iterations</li>
+    </ul>
   </li>
 </ul>
 
 <h3>0.9.5 (23/08/2018)</h3>
 <ul>
-  <li>Manage restricted access to an analysis: owner is able to select team members 
-  with read access permission to the given analysis
+  <li>Manage restricted access to an analysis: owner is able to select team members
+    with read access permission to the given analysis
   </li>
 </ul>
 
@@ -366,8 +371,8 @@
 
 <h3>0.8.1 (10/05/2018)</h3>
 <ul>
-  <li>Implement variable role selection: 
-  design var. or parameter, min/max objective, eq/ineq constraint, response or state variable.
+  <li>Implement variable role selection:
+    design var. or parameter, min/max objective, eq/ineq constraint, response or state variable.
   <li>Implement run_optimization script generation</li>
   <li>Add line plot for displaying optimization operations</li>
   <li>Add delete button for operations</li>
@@ -377,7 +382,7 @@
 <ul>
   <li>Plot data from analysis operations with plotly: parallel coordinates, scatterplot matrix</li>
   <li>Implementation wop upload command: allow to upload sqlite database generated by run_scatterplot or
-  run_screening script</li>
+    run_screening script</li>
 </ul>
 
 <h3>0.7.1 (09/04/2018)</h3>
@@ -514,8 +519,8 @@
 
 <h3>0.2.1 (28/08/2017)</h3>
 <ul>
-  <li>Improve MDA connections import (Xn : input from user to discipline n, 
-  Yn: output from discipline n to user, Ynm : from discipline to discipline m) </li>
+  <li>Improve MDA connections import (Xn : input from user to discipline n,
+    Yn: output from discipline n to user, Ynm : from discipline to discipline m) </li>
   <li>Automate deployment</li>
   <li>Bug fixes</li>
 </ul>
@@ -528,7 +533,7 @@
 
 <h3>0.1.0 (04/07/2017)</h3>
 <ul>
-	<li>Display and import Multi Disciplinary Analyses from CICAV Excel template file</li>
-	<li>Display Notebooks as static HTML</li>
+  <li>Display and import Multi Disciplinary Analyses from CICAV Excel template file</li>
+  <li>Display Notebooks as static HTML</li>
   <li>Link to JupyterHub server</li>
 </ul>
