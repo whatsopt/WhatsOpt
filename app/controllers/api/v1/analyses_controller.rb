@@ -22,9 +22,9 @@ class Api::V1::AnalysesController < Api::V1::ApiMdaUpdaterController
 
   # GET /api/v1/mda/1
   def show
-    if params[:format] == "whatsopt_ui"
+    if params[:format] == "whatsopt_ui"  # WhatsOpt App
       render json: @mda.to_whatsopt_ui_json
-    elsif params[:format] == "xdsm"
+    elsif params[:format] == "xdsm"      # wop show
       render json: @mda.to_xdsm_json
     elsif params[:format]  == "wopjson"  # wop pull --json
       json_response @mda, :ok, serializer: AnalysisAttrsSerializer

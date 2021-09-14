@@ -14,7 +14,7 @@ OpenMDAOLogLine.propTypes = {
   line: PropTypes.string.isRequired,
 };
 
-function saveAsPng() {
+function _saveAsPng() {
   const elt = select('svg').node();
   const bbox = elt.getBBox();
   saveSvgAsPng.saveSvgAsPng(elt, 'xdsm.png', {
@@ -57,8 +57,6 @@ function _exportCsvVariables(connections) {
 class ToolBar extends React.Component {
   constructor(props) {
     super(props);
-    this.api = props.api;
-
     this.state = {
       checked: false,
       loading: false,
@@ -66,21 +64,16 @@ class ToolBar extends React.Component {
       log: [],
     };
 
-    this.saveAsPng = saveAsPng.bind(this);
-    this.getStatus = this.getStatus.bind(this);
-    this.exportCsv = this.exportCsv.bind(this);
+    this._getStatus = this._getStatus.bind(this);
+    this._exportCsv = this._exportCsv.bind(this);
   }
 
-  componentDidMount() {
-    // this.getStatus();
-  }
-
-  getStatus() {
-    const { mdaId } = this.props;
+  _getStatus() {
+    const { api, mdaId } = this.props;
     const { checked } = this.state;
     if (!checked) {
       this.setState({ loading: true });
-      this.api.openmdaoChecking(
+      api.openmdaoChecking(
         mdaId,
         (response) => {
           this.setState({
@@ -94,14 +87,14 @@ class ToolBar extends React.Component {
     }
   }
 
-  exportCsv() {
+  _exportCsv() {
     const { db } = this.props;
     const connections = db.computeConnections();
     _exportCsvVariables(connections);
   }
 
   render() {
-    const { mdaId } = this.props;
+    const { api, mdaId } = this.props;
     const {
       log, statusOk, checked, loading,
     } = this.state;
@@ -118,9 +111,12 @@ class ToolBar extends React.Component {
       btnStatusClass = 'btn btn-info';
       btnIcon = <i className="fa fa-cog fa-spin" />;
     }
-    const base = `/analyses/${mdaId}/exports/new`;
-    const hrefOm = this.api.url(`${base}.openmdao`);
-    const hrefCd = this.api.url(`${base}.cmdows`);
+    // analysis_exports controller
+    const exportBase = `/analyses/${mdaId}/exports/new`;
+    const hrefOm = api.url(`${exportBase}.openmdao`);
+    const hrefGemseo = api.url(`${exportBase}.gemseo?with_server=false`);
+    const hrefCmdows = api.url(`${exportBase}.cmdows`);
+    const hrefHtml = api.url(`${exportBase}.html`);
     return (
       <div>
         <div className="btn-toolbar" role="toolbar">
@@ -131,21 +127,24 @@ class ToolBar extends React.Component {
               data-toggle="collapse"
               data-target="#collapseListing"
               aria-expanded="false"
-              onClick={this.getStatus}
+              onClick={this._getStatus}
             >
               {btnIcon}
             </button>
-            <a className="btn btn-primary" href={hrefOm}>Export OpenMDAO</a>
+            <a className="btn btn-primary" href={hrefOm}>Export Openmdao</a>
           </div>
           <div className="btn-group mr-2" role="group">
-            <a className="btn btn-primary" href={hrefCd}>Export Cmdows</a>
+            <a className="btn btn-primary" href={hrefGemseo}>Export Gemseo</a>
+          </div>
+          <div className="btn-group mr-2" role="group">
+            <a className="btn btn-primary" href={hrefCmdows}>Export Cmdows</a>
           </div>
           <div className="btn-group mr-2" role="group">
             <button
               type="button"
               className="btn btn-primary"
               href="#"
-              onClick={this.exportCsv}
+              onClick={this._exportCsv}
             >
               Export Csv
             </button>
@@ -154,10 +153,13 @@ class ToolBar extends React.Component {
             <button
               type="button"
               className="btn btn-primary"
-              onClick={this.saveAsPng}
+              onClick={_saveAsPng}
             >
               Export Image
             </button>
+          </div>
+          <div className="btn-group mr-2" role="group">
+            <a className="btn btn-primary" href={hrefHtml}>Export Html</a>
           </div>
         </div>
         <div className="collapse" id="collapseListing">

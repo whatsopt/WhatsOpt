@@ -415,7 +415,7 @@ class MdaViewer extends React.Component {
 
   renderXdsm() {
     const { mda } = this.state;
-    this.api.getAnalysis(mda.id, true,
+    this.api.getAnalysis(mda.id, 'whatsopt_ui',
       (response) => {
         const newState = update(this.state,
           {

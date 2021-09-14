@@ -106,17 +106,20 @@ class WhatsOptApi {
       .catch((error) => console.log(error));
   }
 
-  getAnalysis(mdaId, xdsmFormat, callback) {
+  // format: whatsopt_ui, xdsm, wopjson or false
+  getAnalysis(mdaId, format, callback) {
     let path = `/analyses/${mdaId}`;
-    if (xdsmFormat) {
-      path += '.whatsopt_ui';
+    if (format) {
+      path += `.${format}`;
     }
     axios.get(this.apiUrl(path))
       .then((response) => {
         // Here we set the update time of the MDA as we requested it
         // This field is used to implement optimistic lock on the mda
         // when co_owners do concurrent editing
-        this.requested_at = response.data.updated_at;
+        if (format === 'whatsopt_ui') {
+          this.requested_at = response.data.updated_at;
+        }
         callback(response);
       })
       .catch((error) => console.log(error));

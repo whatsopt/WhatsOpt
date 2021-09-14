@@ -3,13 +3,14 @@
 require "whats_opt/cmdows_generator"
 require "whats_opt/openmdao_generator"
 
+# Used by wop
 class Api::V1::ExportsController < Api::ApiController
   def new
     mda_id = params[:mda_id]
     format = params[:format]
-    with_server = !!params[:with_server]
-    with_runops = !!params[:with_runops]
-    with_unittests = !!params[:with_unittests]
+    with_server = (params[:with_server] == "true")
+    with_runops = (params[:with_runops] == "true")
+    with_unittests = (params[:with_unittests] == "true")
     with_run=true
 
     user_agent = request.headers["User-Agent"]
@@ -31,20 +32,9 @@ class Api::V1::ExportsController < Api::ApiController
       rescue WhatsOpt::Gemseo::Generator::NotYetImplementedError => e
         json_response({ message: "GEMSEO export failure: #{e}" }, :bad_request)
       end
-    elsif format == "cmdows"
-      cmdowsgen = WhatsOpt::CmdowsGenerator.new(mda)
-      content, filename = cmdowsgen.generate
-      begin
-        cmdowsgen.valid?
-      rescue WhatsOpt::CmdowsGenerator::CmdowsValidationError => e
-        Rails.logger.warn "CMDOWS export warning: CMDOWS validation error"
-        Rails.logger.warn "CMDOWS export warning: #{e}"
-        json_response({ message: "CMDOWS validation error: #{e}" }, :bad_request)
-      end
-      send_data content, filename: filename, type:  "application/xml"
     elsif format == "mdajson"  # wop pull --json
-      # TODO: Deprecated in favor of GET /analyses/1.mdajson
-      # to be suppress when taken into account in wop
+      # TODO: Deprecated in favor of GET /analyses/1.wopjson
+      # to be suppress when taken into account in wop>1.18
       json_response mda, :ok, serializer: AnalysisAttrsSerializer
     else
       json_response({ message: "Export format #{format} not known" }, :bad_request)
