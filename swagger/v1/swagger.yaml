@@ -14,11 +14,11 @@ servers:
   description: External production server
 - url: https://selene.onecert.fr/whatsopt
   description: Internal production server
-- url: http://rdri206h.onecert.fr/whatsopt
+- url: https://erebe.onecert.fr/whatsopt
   description: Internal staging server
-- url: http://endymion:3000
+- url: http://persephone:3000
   description: Development server
-- url: http://192.168.99.100:3000
+- url: http://localhost:3000
   description: Docker development server
 paths:
   "/api/v1/analyses":
