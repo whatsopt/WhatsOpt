@@ -56,11 +56,11 @@ class User < ActiveRecord::Base
   end
 
   def destroy
-    update_attributes(deactivated: true) unless deactivated
+    update(deactivated: true) unless deactivated
   end
 
   def destroy!
-    update_attributes!(deactivated: true) unless deactivated
+    update!(deactivated: true) unless deactivated
   end
 
   private

@@ -13,4 +13,22 @@ class UserTest < ActiveSupport::TestCase
     user = User.create!(login: "Test", email: "fdsfd@onera.fr", password: "too_simple", password_confirmation: "too_simple")
     user.update(password: "too_simple", password_confirmation: "too_simple")
   end
+
+  test "should deactivate when destroying" do
+    user1 = users(:user1)
+    assert_equal false, !!user1.deactivated
+    user1.destroy
+    assert_equal 1, User.where(id: user1.id).count
+    user1.reload
+    assert_equal true, user1.deactivated
+  end
+
+  test "should deactivate when destroying!" do
+    user1 = users(:user1)
+    assert_equal false, !!user1.deactivated
+    user1.destroy!
+    assert_equal 1, User.where(id: user1.id).count
+    user1.reload
+    assert_equal true, user1.deactivated
+  end
 end
