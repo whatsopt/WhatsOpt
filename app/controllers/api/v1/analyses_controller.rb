@@ -90,7 +90,7 @@ class Api::V1::AnalysesController < Api::V1::ApiMdaUpdaterController
       @mda.update!(mda_params.except(:design_project_id))
       @journal.journalize_changes(@mda, old_attrs)
     end
-    head :no_content
+    json_response @mda
   rescue Connection::VariableAlreadyProducedError => e
     json_response({ message: e }, :unprocessable_entity)
   end
