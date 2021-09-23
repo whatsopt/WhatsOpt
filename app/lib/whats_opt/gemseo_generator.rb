@@ -3,8 +3,8 @@
 require "whats_opt/code_generator"
 require "whats_opt/server_generator"
 
-module WhatsOpt::Gemseo
-  class Generator < WhatsOpt::CodeGenerator
+module WhatsOpt
+  class GemseoGenerator < WhatsOpt::CodeGenerator
     DEFAULT_DOE_DRIVER = :smt_doe_lhs
     DEFAULT_OPTIMIZATION_DRIVER = :scipy_optimizer_slsqp
 

@@ -23,15 +23,25 @@ class Api::V1::ExportsController < Api::ApiController
                                         with_server: with_server, with_runops: with_runops, with_unittests: with_unittests)
       send_data content, filename: filename
     elsif format == "gemseo"
-      ggen = WhatsOpt::Gemseo::Generator.new(mda, whatsopt_url: whatsopt_url,
+      ggen = WhatsOpt::GemseoGenerator.new(mda, whatsopt_url: whatsopt_url,
                                              api_key: current_user.api_key, remote_ip: request.remote_ip)
       begin
         content, filename = ggen.generate(user_agent: user_agent, with_run: with_run,
                                           with_server: with_server, with_runops: with_runops, with_unittests: with_unittests)
         send_data content, filename: filename                          
-      rescue WhatsOpt::Gemseo::Generator::NotYetImplementedError => e
+      rescue WhatsOpt::GemseoGenerator::NotYetImplementedError => e
         json_response({ message: "GEMSEO export failure: #{e}" }, :bad_request)
       end
+    # elsif format == "egmdo"  # wop pull --egmdo
+    #   eggen = WhatsOpt::EgmdoGenerator.new(mda, whatsopt_url: whatsopt_url,
+    #                                        api_key: current_user.api_key, remote_ip: request.remote_ip)
+    #   begin
+    #     content, filename = ggen.generate(user_agent: user_agent, with_run: with_run,
+    #                                       with_server: with_server, with_runops: with_runops, with_unittests: with_unittests)
+    #     send_data content, filename: filename                          
+    #   rescue WhatsOpt::EgmdoGenerator::NotYetImplementedError => e
+    #     json_response({ message: "EGMDO export failure: #{e}" }, :bad_request)
+    #   end
     elsif format == "mdajson"  # wop pull --json
       # TODO: Deprecated in favor of GET /analyses/1.wopjson
       # to be suppress when taken into account in wop>1.18
