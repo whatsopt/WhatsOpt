@@ -5,22 +5,9 @@ require "whats_opt/gemseo_generator"
 require "tmpdir"
 
 class GemseoGeneratorTest < ActiveSupport::TestCase
-  def thrift?
-    @found ||= find_executable("thrift")
-  end
-
   def setup
     @mda = analyses(:cicav)
     @ggen = WhatsOpt::GemseoGenerator.new(@mda)
-  end
-
-  test "should generate gemseo component for a given discipline in mda" do
-    Dir.mktmpdir do |dir|
-      disc = @mda.disciplines[0]
-      filepath = @ggen._generate_discipline disc, dir
-      assert File.exist?(filepath)
-      assert_match(/(\w+)_base\.py/, filepath)
-    end
   end
 
   test "should generate gemseo process for an mda" do
@@ -61,20 +48,6 @@ class GemseoGeneratorTest < ActiveSupport::TestCase
                 "cicav_base.py", "geometry.py", "geometry_base.py", "propulsion.py", "propulsion_base.py",
                 "run_analysis.py", "run_doe.py", "run_optimization.py", "run_parameters_init.py"]
     _assert_file_generation expected, with_server: false
-  end
-
-  test "should generate gemseo mda zip file" do
-    zippath = Tempfile.new("test_mda_file.zip")
-    File.open(zippath, "wb") do |f|
-      content, _ = @ggen.generate with_server: false
-      f.write content
-    end
-    assert File.exist?(zippath)
-    Zip::File.open(zippath) do |zip|
-      zip.each do |entry|
-        assert entry.file?
-      end
-    end
   end
 
 end

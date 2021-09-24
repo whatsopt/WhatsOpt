@@ -14,38 +14,14 @@ module WhatsOpt
     class NotYetImplementedError < StandardError
     end
 
-    def initialize(mda, server_host: nil, driver_name: nil, driver_options: {},
-                   whatsopt_url: "", api_key: "", remote_ip: "")
+    def initialize(mda)
       super(mda)
       @prefix = "gemseo"
-      @server_host = server_host
-      @remote = !server_host.nil?
-      @whatsopt_url = whatsopt_url
-      @api_key = api_key
-      @remote_ip = remote_ip
-      @check_only = false
-    end
-
-    def run(method = "analysis", sqlite_filename = nil)
-      ok, lines = false, []
-      Dir.mktmpdir("run_#{@mda.basename}_#{method}") do |dir|
-        dir='/tmp' # for debug
-        begin
-          _generate_code(dir, sqlite_filename: sqlite_filename)
-        rescue ServerGenerator::ThriftError => e
-          ok = false
-          lines = e.to_s.lines.map(&:chomp)
-        else
-          ok, log = _run_mda(dir, method)
-          lines = log.lines.map(&:chomp)
-        end
-      end
-      return ok, lines
     end
 
     # sqlite_filename: nil, with_run: true, with_server: true, with_runops: true
     def _generate_code(gendir, options = {})
-      opts = { with_server: true, with_run: true, with_unittests: false }.merge(options)
+      opts = { with_server: false, with_run: true, with_unittests: false }.merge(options)
       @mda.disciplines.nodes.each do |disc|
         if disc.has_sub_analysis?
           raise NotYetImplementedError.new("Cannot generate code for sub_analysis #{disc.name}")
