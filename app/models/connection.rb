@@ -17,7 +17,7 @@ class Connection < ApplicationRecord
   scope :from_discipline, ->(discipline_id) { joins(from: :discipline).where(variables: { discipline_id: discipline_id }) }
   scope :to_discipline, ->(discipline_id) { joins(to: :discipline).where(variables: { discipline_id: discipline_id }) }
   scope :with_role, ->(role) { where(role: role) }
-
+  
   class SubAnalysisVariableNotFoundError < StandardError
   end
 

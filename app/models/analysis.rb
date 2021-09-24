@@ -88,6 +88,16 @@ class Analysis < ApplicationRecord
     @params = variables.with_role(WhatsOpt::Variable::OUTPUT_ROLES)
   end
 
+  def coupling_variables 
+    # TODO: see if it can be optimize using SQL
+    unless @couplings 
+      conns = Connection.of_analysis(self).select{|c| !c.driverish?}
+      # FIXME: only scalar couplings are handled at the moment for EGMDO
+      @couplings = conns.map(&:from).uniq.select(&:is_scalar?)
+    end
+    @couplings
+  end
+
   def design_variables
     @desvars = variables.with_role(WhatsOpt::Variable::DESIGN_VAR_ROLE)
   end
@@ -110,10 +120,6 @@ class Analysis < ApplicationRecord
 
   def has_decision_variables?
     has_uncertain_input_variables? || has_design_variables?
-  end
-
-  def input_variables
-    @params = variables.with_role(WhatsOpt::Variable::INPUT_ROLES)
   end
 
   def min_objective_variables
