@@ -2,7 +2,7 @@
 
 require "whats_opt/cmdows_generator"
 require "whats_opt/openmdao_generator"
-require "whats_opt/gemseo/generator"
+require "whats_opt/gemseo_generator"
 
 # Used by the browser
 class AnalysisExportsController < ApplicationController
@@ -25,13 +25,12 @@ class AnalysisExportsController < ApplicationController
       send_data content, filename: filename
 
     elsif format == "gemseo"
-      ggen = WhatsOpt::Gemseo::Generator.new(mda, whatsopt_url: whatsopt_url,
-                                             api_key: current_user.api_key, remote_ip: request.remote_ip)
+      ggen = WhatsOpt::GemseoGenerator.new(mda)
       begin
         content, filename = ggen.generate(with_run: with_run,
                                           with_server: with_server, with_runops: with_runops, with_unittests: with_unittests)
         send_data content, filename: filename                          
-      rescue WhatsOpt::Gemseo::Generator::NotYetImplementedError => e
+      rescue WhatsOpt::GemseoGenerator::NotYetImplementedError => e
         Rails.logger.warn "GEMSEO export error: #{e}"
         redirect_to mda_url(mda), alert: "GEMSEO export failed: #{e}"
       end
