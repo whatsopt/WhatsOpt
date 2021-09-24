@@ -34,9 +34,9 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     end
   end
 
-  def _assert_file_generation(expected, with_server: true, with_runops: true, with_run: true, with_unittests: false)
+  def _assert_file_generation(expected, with_server: false, with_egmdo: false, with_runops: true, with_run: true, with_unittests: false)
     Dir.mktmpdir do |dir|
-      @ogen._generate_code(dir, with_server: with_server, with_runops: with_runops, with_run: with_run, with_unittests: with_unittests)
+      @ogen._generate_code(dir, with_server: with_server, with_egmdo: with_egmdo, with_runops: with_runops, with_run: with_run, with_unittests: with_unittests)
       dirpath = Pathname.new(dir)
       basenames = @ogen.genfiles.map { |f| Pathname.new(f).relative_path_from(dirpath).to_s }.sort
       expected = (expected).sort
@@ -49,15 +49,25 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
                 "cicav_base.py", "geometry.py", "geometry_base.py", "propulsion.py", "propulsion_base.py",
                 "run_analysis.py", "run_doe.py", "run_optimization.py", "run_parameters_init.py",
                 "run_screening.py"]
-    _assert_file_generation expected, with_server: false
+    _assert_file_generation expected
   end
+
+  test "should maintain a list of generated filepaths with egmdo" do
+    expected = ["__init__.py", "aerodynamics.py", "aerodynamics_base.py", "cicav.py",
+                "cicav_base.py", "egmdo/doe_factory.py", "egmdo/gp_factory.py", "geometry.py", 
+                "geometry_base.py", "propulsion.py", "propulsion_base.py",
+                "run_analysis.py", "run_doe.py", "run_optimization.py", "run_parameters_init.py",
+                "run_screening.py"]
+    _assert_file_generation expected, with_egmdo: true
+  end
+
   test "should maintain a list of generated filepaths without server and without optim" do
     obj = disciplines(:geometry).output_variables.where(name: "obj")
     Connection.where(from: obj).update(role: WhatsOpt::Variable::RESPONSE_ROLE)
     expected = ["__init__.py", "aerodynamics.py", "aerodynamics_base.py", "cicav.py",
                 "cicav_base.py", "geometry.py", "geometry_base.py", "propulsion.py", "propulsion_base.py",
                 "run_analysis.py", "run_doe.py", "run_parameters_init.py", "run_screening.py"]
-    _assert_file_generation expected, with_server: false
+    _assert_file_generation expected
   end
 
   test "should maintain a list of generated filepaths with unittests" do
@@ -65,7 +75,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
                 "cicav_base.py", "geometry.py", "geometry_base.py", "propulsion.py", "propulsion_base.py",
                 "run_analysis.py", "run_doe.py", "run_optimization.py", "run_parameters_init.py", "run_screening.py"] +
                 ["test_aerodynamics.py", "test_geometry.py", "test_propulsion.py"]
-    _assert_file_generation expected, with_server: false, with_unittests: true
+    _assert_file_generation expected, with_unittests: true
   end
 
   test "should maintain a list of generated filepaths with optimization" do
@@ -73,7 +83,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
                 "cicav_base.py", "geometry.py", "geometry_base.py", "propulsion.py", "propulsion_base.py",
                 "run_analysis.py", "run_doe.py", "run_optimization.py", "run_parameters_init.py",
                 "run_screening.py"]
-    _assert_file_generation expected, with_server: false
+    _assert_file_generation expected
   end
 
   test "should maintain a list of generated filepaths with server" do
@@ -82,12 +92,12 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
                 "cicav_base.py", "geometry.py", "geometry_base.py", "propulsion.py", "propulsion_base.py",
                 "run_analysis.py", "run_doe.py", "run_optimization.py", "run_parameters_init.py",
                 "run_screening.py"] + ["run_server.py",
-                  "server/__init__.py", "server/analysis.thrift", "server/cicav/__init__.py",
-                  "server/cicav/Cicav-remote", "server/cicav/Cicav.py",
-                  "server/cicav/constants.py", "server/cicav_conversions.py",
-                  "server/cicav_proxy.py", "server/cicav/ttypes.py",
-                  "server/discipline_proxy.py", "server/remote_discipline.py"]
-    _assert_file_generation expected
+                "server/__init__.py", "server/analysis.thrift", "server/cicav/__init__.py",
+                "server/cicav/Cicav-remote", "server/cicav/Cicav.py",
+                "server/cicav/constants.py", "server/cicav_conversions.py",
+                "server/cicav_proxy.py", "server/cicav/ttypes.py",
+                "server/discipline_proxy.py", "server/remote_discipline.py"]
+    _assert_file_generation expected, with_server: true
   end
 
   test "should generate openmdao mda zip file" do

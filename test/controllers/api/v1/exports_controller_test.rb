@@ -37,4 +37,10 @@ class Api::V1::ExportsControllerTest < ActionDispatch::IntegrationTest
     assert_response :bad_request
   end
 
+  test "should dump analysis as egmdo method code" do
+    mda = analyses(:cicav)
+    get api_v1_mda_exports_new_url(mda, format: :openmdao, with_egmdo: "true"), as: :json, headers: @auth_headers
+    assert_response :success
+  end
+
 end

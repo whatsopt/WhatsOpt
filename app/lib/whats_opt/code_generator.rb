@@ -17,6 +17,7 @@ module WhatsOpt
       @template_dir = File.join(File.dirname(__FILE__), "templates")
       @genfiles = []
       @server_module = "server"
+      @egmdo_module = "egmdo"
       @server_host = "localhost"
       @server_port = 31400
       @generator = self

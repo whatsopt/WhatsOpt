@@ -18,6 +18,7 @@ module WhatsOpt
       @server_host = server_host
       @remote = !server_host.nil?
       @sgen = WhatsOpt::ServerGenerator.new(mda, server_host, remote_ip)
+      @eggen = WhatsOpt::EgmdoGenerator.new(mda)
       @sqlite_filename = "cases.sqlite"
       @driver_name = driver_name.to_sym if driver_name
       @driver_options = driver_options
@@ -94,9 +95,8 @@ module WhatsOpt
       Open3.popen2e(PYTHON, script, "--batch", &block)
     end
 
-    # sqlite_filename: nil, with_run: true, with_server: true, with_runops: true
     def _generate_code(gendir, options = {})
-      opts = { with_server: true, with_run: true, with_unittests: false }.merge(options)
+      opts = { with_server: true, with_egmdo: false, with_run: true, with_unittests: false }.merge(options)
       @mda.disciplines.nodes.each do |disc|
         if disc.has_sub_analysis?
           _generate_sub_analysis(disc, gendir, opts)
@@ -110,6 +110,10 @@ module WhatsOpt
       if opts[:with_server] || (!@check_only && @mda.has_remote_discipline?(@remote_ip))
         @sgen._generate_code(gendir, @server_host)
         @genfiles += @sgen.genfiles
+      end
+      if opts[:with_egmdo]
+        @eggen._generate_code(gendir)
+        @genfiles += @eggen.genfiles
       end
       @genfiles
     end

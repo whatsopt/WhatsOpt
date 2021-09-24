@@ -1,0 +1,48 @@
+import numpy as np
+import openmdao.api as om
+import subprocess
+from smt.surrogate_models import KRG
+import pickle
+
+
+class GpFactory:
+<%- @mda.plain_disciplines.each do |disc| -%>
+<% disc.output_variables.each do |v| %>
+    @staticmethod
+    def create_gp_<%= disc.snake_modulename %>_<%= v.name %>():
+        # read the DoE and create the GP
+        cr = om.CaseReader(f"sellar_<%= disc.snake_modulename %>_doe.sqlite")
+        driver_cases = cr.list_cases("driver")
+        case = cr.get_case(driver_cases[0])
+        n_DoE = len(driver_cases)
+        dim=<%= disc.variables.map(&:dim).inject(0, :+) %>
+        DoE = np.zeros((n_DoE, dim))
+        
+        for i in range(n_DoE):
+            case = cr.get_case(driver_cases[i])
+<%- index=0 -%>
+<%- (disc.input_variables + disc.output_variables).each_with_index do |var, i| -%>
+            DoE[i, <%= index %>:<%= index + var.dim %>] = case.outputs['<%= var.name %>']
+<%- index = index + var.dim -%>
+<%- end -%>
+
+        # save the DoE for futur enrichement
+        np.save("DoE_<%= disc.snake_modulename %>.npy", DoE)
+
+        # create the gp surrogate model
+        input_dim=<%= disc.input_variables.map(&:dim).inject(0, :+) %>
+        gp = KRG(theta0=[1e-2] * input_dim, print_global=False)
+        gp.set_training_values(DoE[:, 0:-1], DoE[:, -1])
+        gp.train()
+        filename = "gp_<%= disc.snake_modulename %>.pkl"
+        f = open(filename, "wb")
+        pickle.dump(gp, f)
+        f.close()
+<%- end %>
+<%- end %>
+
+if __name__ == "__main__":
+<% @mda.plain_disciplines.each do |disc| %>
+    <%- disc.output_variables.each do |v| %>
+    DoeFactory.create_doe_<%= disc.py_classname %>(4)<%- end %>
+<% end %>

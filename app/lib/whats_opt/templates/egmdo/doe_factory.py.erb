@@ -1,0 +1,34 @@
+import numpy as np
+from numpy import nan, inf
+
+import openmdao.api as om
+from openmdao_extensions.smt_doe_driver import SmtDOEDriver
+
+class DoeFactory:
+
+    def __init__(self, discipline_factory):
+        self.factory = discipline_factory
+
+<% @mda.plain_disciplines.each do |disc| %>
+    def create_doe_<%= disc.snake_modulename %>(self, n_cases):
+        pb = om.Problem()
+        pb.model.add_subsystem("<%= disc.py_classname %>", self.factory.create_<%= disc.snake_modulename %>(), promotes=['*'])
+        pb.driver = SmtDOEDriver(
+            sampling_method_name="LHS",
+            n_cases=n_cases,
+            sampling_method_options={"criterion": "ese"},
+        )
+
+        case_recorder_filename = "sellar_<%= disc.snake_modulename %>_doe.sqlite"
+        recorder = om.SqliteRecorder(case_recorder_filename)
+        pb.driver.add_recorder(recorder)
+        pb.driver.recording_options["includes"] = ["*"]
+
+        <%- disc.input_variables.each do |v| %>
+        pb.model.add_design_var('<%= v.name %>', lower=<%= v.lower_py_value %>, upper=<%= v.upper_py_value %>)<% end %>
+
+        pb.setup()
+        pb.run_driver()
+        pb.cleanup()
+<% end %>
+
