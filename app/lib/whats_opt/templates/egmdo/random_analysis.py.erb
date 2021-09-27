@@ -10,12 +10,11 @@ from openmdao_extensions.reckless_nonlinear_block_gs import RecklessNonlinearBlo
 from openmdao.api import <%= @impl.nonlinear_solver.name %>
 <% end -%>
 from openmdao.api import <%= @impl.linear_solver.name %>
-
 from openmdao_extensions.smt_doe_driver import SmtDOEDriver
 from openmdao_extensions.openturns_doe_driver import OpenturnsDOEDriver
-
 <%- @mda.plain_disciplines.each do |disc| -%>
-<% disc.output_variables.each do |v| %>
+<%- disc.output_variables.each do |v| %>
+<%- if disc.has_out_coupling? %>
 class <%= disc.py_classname %>RandomDiscipline(om.ExplicitComponent):
     """ An OpenMDAO base component to encapsulate <%= disc.py_classname %> discipline """
 
@@ -24,27 +23,27 @@ class <%= disc.py_classname %>RandomDiscipline(om.ExplicitComponent):
 <% disc.output_variables.each do |v|%>        
         with open("gp_<%= disc.snake_modulename %>_<%= v.py_varname %>.pkl", 'rb') as f:
             self.gp_<%= v.py_varname %> = pickle.load(f) 
-<% end %>
+<%- end %>
 
-<% unless disc.variables.empty? -%>
+<%- unless disc.variables.empty? -%>
     def setup(self):
-<% disc.input_variables.numeric.each do |var| -%>
+<% disc.input_variables.numeric.each do |var| %>
         self.add_input('<%= var.py_varname %>', val=<%= var.init_py_value %>, desc='<%= var.escaped_desc %>'<%= @impl.use_units && !var.units.blank? ? ", units='#{var.units}'":"" %>)<%- end %>
-<% disc.output_coupling_variables.each do |var| -%>
-        self.add_input('_xi_<%= var.py_varname %>', val=<%= var.init_py_value %>)<%- end %>
+<% disc.output_coupling_variables.each do |var| %>
+        self.add_input('_xi_<%= var.py_varname %>', val=0.0)<%- end %>
 <% disc.output_variables.numeric.each do |var| -%>
 <% if var.scaling.blank? -%>
         self.add_output('<%= var.py_varname %>', val=<%= var.init_py_value %>, desc='<%= var.escaped_desc %>'<%= @impl.use_units && !var.units.blank? ? ", units='#{var.units}'":"" %>)
 <% else -%>
         self.add_output('<%= var.py_varname %>', val=<%= var.init_py_value %>, desc='<%= var.escaped_desc %>',
                         ref=<%= var.scaling_ref_py_value %>, ref0=<%= var.scaling_ref0_py_value %>, res_ref=<%= var.scaling_res_ref_py_value %><%= @impl.use_units && !var.units.blank? ? ", units='#{var.units}'":"" %>)
-<% end -%>
-<% end -%>
-<% end -%>
+<%- end -%>
+<%- end -%>
+<%- end -%>
 
     def compute(self, inputs, outputs):
         inputs_gp = np.array([])
-        for name in sorted(inputs.keys())):
+        for name in sorted(inputs.keys()):
             if not name == '_xi_<%= v.py_varname %>': 
                 inputs_gp = np.concatenate((inputs_gp, inputs[name]))
         inputs_gp = np.atleast_2d(inputs_gp)    
@@ -52,16 +51,12 @@ class <%= disc.py_classname %>RandomDiscipline(om.ExplicitComponent):
         sigma = np.sqrt(self.gp_<%= v.py_varname %>.predict_variances(inputs_gp))
         mean = self.gp_<%= v.py_varname %>.predict_values(inputs_gp)
         outputs['<%= v.py_varname %>'] = mean +  inputs['_xi_<%= v.py_varname %>'] * sigma 
-<% end %>
-
-<% end %>
-<% end %>
-
-
+<%- end -%><%- end -%><%- end %><%- end -%>
 class <%= @mda.py_classname %>RandomAnalysis(<%= @impl.parallel_group ? "om.ParallelGroup" : "om.Group" %>):
     """ An OpenMDAO base component to encapsulate <%= @mda.py_classname %> random MDA """
-    def __init__(self, *args, **kwargs):
-        super(). __init__(*args, **kwargs)
+    def __init__(self, discipline_factory, **kwargs):
+        super(). __init__(**kwargs)
+        self.factory = discipline_factory
 
         self.nonlinear_solver = <%= @impl.nonlinear_solver.name %>()
 <% unless @impl.nonlinear_solver.runonce? -%>
@@ -84,19 +79,22 @@ class <%= @mda.py_classname %>RandomAnalysis(<%= @impl.parallel_group ? "om.Para
 <% @mda.coupling_variables.each do |cv| %>
         self.set_input_defaults('_xi_<%= cv.name %>', val=<%= cv.init_py_value %>)<% end -%>
 
-<% @mda.disciplines.nodes.each do |d| %>
-        self.add_subsystem('<%= d.py_classname %>Random', <%= d.py_classname %>RandomDiscipline(),
-                           promotes=[<%= d.variables.map(&:py_varname).map{|v| "'#{v}'"}.join(', ') %>])<% end -%>
+<% @mda.disciplines.nodes.each do |disc| %>
+<%- if disc.has_out_coupling? -%>
+        disc = <%= disc.py_classname %>RandomDiscipline()
+<%- else -%>
+        disc = self.factory.create_<%= disc.snake_modulename %>()
+<%- end -%>
+        self.add_subsystem('<%= disc.py_classname %>Random', disc, promotes=['*'])<%- end %>
 
-
-def run_doe(n_cases, parallel=False):
-    pb = om.Problem(<%= @mda.py_classname %>RandomAnalysis())
+def run_doe(discipline_factory, design_vars, n_cases, parallel=False):
+    pb = om.Problem(<%= @mda.py_classname %>RandomAnalysis(discipline_factory))
     dists = []
     <% @mda.coupling_variables.each do |uv| %>
     # _xi_<%= uv.py_varname %> 
     dists.append(ot.Normal(0.0, 1.0))<% end %>
 
-    <% dim = Analysis.vars_dim(@mda.coupling_variables) -%>
+    <%- dim = Analysis.vars_dim(@mda.coupling_variables) -%>
     # Dependency between variables can be specified by choosing a specific copula
     copula = ot.IndependentCopula(<%= dim %>)  # default to no dependency
 
@@ -104,18 +102,16 @@ def run_doe(n_cases, parallel=False):
     pb.driver = OpenturnsDOEDriver(n_samples=n_cases, distribution=comp_dist)
     pb.driver.options['run_parallel'] = parallel
 
-    case_recorder_filename = '<%= @mda.py_classname %>_random_mda_doe.sqlite'        
+    case_recorder_filename = '<%= @mda.snake_modulename %>_random_mda_doe.sqlite'        
     recorder = om.SqliteRecorder(case_recorder_filename)
     pb.driver.add_recorder(recorder)
     pb.driver.recording_options['includes'] = ['*']
 
-    # uncertain variable input are taken as design_variables to get recorded by driver recorder
-    <%- @mda.coupling_variables.each do |dv| %>
+    # uncertain variable input are taken as design_variables to get recorded by driver recorder<%- @mda.coupling_variables.each do |dv| %>
     pb.model.add_design_var('_xi_<%= dv.py_varname %>', lower=<%= dv.lower_py_value %>, upper=<%= dv.upper_py_value %>)<% end %>
     pb.setup()  
-    <%- @mda.input_variables.each do |param| -%>
-    pb['<%= param.py_varname %>'] = <%= param.init_py_value %>
-    <%- end -%>
+    for name, val in design_vars.items():
+        pb[name] = val
     <%- @mda.coupling_variables.each do |param| -%>
     pb['_xi_<%= param.py_varname %>'] = 0.0
     <%- end -%>
@@ -123,25 +119,25 @@ def run_doe(n_cases, parallel=False):
     pb.cleanup()
 
 
-def random_mda(n_doe_pce):
+def run_random_mda(discipline_factory, design_vars, n_doe_pce):
     #run the random MDA n times to create a doe
-    run_doe(n_doe_pce)
+    run_doe(discipline_factory, design_vars, n_doe_pce)
 
     # open the doe to create the PCE
-    cr = om.CaseReader('<%= @mda.py_classname %>_random_mda_doe.sqlite')
+    cr = om.CaseReader('<%= @mda.snake_modulename %>_random_mda_doe.sqlite')
     driver_cases = cr.list_cases('driver')
     case = cr.get_case(driver_cases[0])
     n_doe = len(driver_cases)
     n_des_var = len(case.get_design_vars()) 
-    doe = np.zeros((n_doe, n_des_var+1))
+    doe = np.zeros((n_doe, n_des_var + 1))
     des_var_names = sorted(case.get_design_vars())
-    obj_var_names = sorted(<%= @mda.objective_variables.map(&:name) %>) #truc bizarre : case.get_objectives est vide et get_responses aussi...
+    obj_var_name = "<%= @mda.objective_variables.map(&:name).first %>"
     coupling_var_doe = np.zeros((n_doe, <%= @mda.coupling_variables.size %>))
     for i in range(n_doe):
         case = cr.get_case(driver_cases[i])
         for j in range(n_des_var):
             doe[i, j] = case.outputs[des_var_names[j]]   
-        doe[i, -1] = case[obj_var_names[0]]<%- @mda.coupling_variables.each_with_index do |cv, j| %>
+        doe[i, -1] = case[obj_var_name]<%- @mda.coupling_variables.each_with_index do |cv, j| %>
         coupling_var_doe[i, <%= j %>] = case['<%= cv.py_varname %>']<%- end %>
 
     print(case.outputs.keys())

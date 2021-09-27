@@ -15,6 +15,7 @@ module WhatsOpt
     def _generate_code(gendir, options = {})
       egmdo_dir = File.join(gendir, @egmdo_module)
       Dir.mkdir(egmdo_dir) unless File.exist?(egmdo_dir)
+      _generate("algorithms.py", "egmdo/algorithms.py.erb", egmdo_dir)
       _generate("doe_factory.py", "egmdo/doe_factory.py.erb", egmdo_dir)
       _generate("gp_factory.py", "egmdo/gp_factory.py.erb", egmdo_dir)
       _generate("random_analysis.py", "egmdo/random_analysis.py.erb", egmdo_dir)

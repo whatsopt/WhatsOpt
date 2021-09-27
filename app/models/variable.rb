@@ -124,11 +124,29 @@ class Variable < ApplicationRecord
   end
 
   def lower_py_value
-    parameter&.lower.blank? ? super : parameter.lower
+    if parameter&.lower.blank?
+      if io_mode == WhatsOpt::Variable::IN 
+        vout = Variable.of_analysis(discipline.analysis).where(name: v.name, io_mode: OUT).take
+        vout.lower_py_value
+      else
+        super 
+      end
+    else 
+      parameter.lower
+    end
   end
 
   def upper_py_value
-    parameter&.upper.blank? ? super : parameter.upper
+    if parameter&.upper.blank?
+      if io_mode == WhatsOpt::Variable::IN 
+        vout = Variable.of_analysis(discipline.analysis).where(name: v.name, io_mode: OUT).take
+        vout.upper_py_value
+      else
+        super 
+      end
+    else 
+      parameter.upper
+    end
   end
 
   def cstr_init_py_value

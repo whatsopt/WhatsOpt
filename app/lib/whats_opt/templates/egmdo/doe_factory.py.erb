@@ -1,5 +1,6 @@
 import numpy as np
 from numpy import nan, inf
+import matplotlib.pyplot as plt
 
 import openmdao.api as om
 from openmdao_extensions.smt_doe_driver import SmtDOEDriver
@@ -7,28 +8,121 @@ from openmdao_extensions.smt_doe_driver import SmtDOEDriver
 class DoeFactory:
 
     def __init__(self, discipline_factory):
-        self.factory = discipline_factory
+        self. discipline_factory = discipline_factory
 
-<% @mda.plain_disciplines.each do |disc| %>
+<% @mda.plain_disciplines.each do |disc| -%>
+<% if disc.has_out_coupling? -%>
+    @staticmethod
+    def doe_recorder_filename(mda_name, disc_name):
+        return f"{mda_name}_{disc_name}_doe.sqlite"
+
+    @staticmethod
+    def doe_numpy_filename(mda_name, disc_name):
+        return f"{mda_name}_{disc_name}_doe.npy"
+
     def create_doe_<%= disc.snake_modulename %>(self, n_cases):
         pb = om.Problem()
-        pb.model.add_subsystem("<%= disc.py_classname %>", self.factory.create_<%= disc.snake_modulename %>(), promotes=['*'])
+        pb.model.add_subsystem("<%= disc.py_classname %>", self.discipline_factory.create_<%= disc.snake_modulename %>(), promotes=['*'])
         pb.driver = SmtDOEDriver(
             sampling_method_name="LHS",
             n_cases=n_cases,
             sampling_method_options={"criterion": "ese"},
         )
 
-        case_recorder_filename = "sellar_<%= disc.snake_modulename %>_doe.sqlite"
-        recorder = om.SqliteRecorder(case_recorder_filename)
+        recorder = om.SqliteRecorder(self.doe_recorder_filename("<%= @mda.snake_modulename %>", "<%= disc.snake_modulename %>"))
         pb.driver.add_recorder(recorder)
         pb.driver.recording_options["includes"] = ["*"]
-
         <%- disc.input_variables.each do |v| %>
-        pb.model.add_design_var('<%= v.name %>', lower=<%= v.lower_py_value %>, upper=<%= v.upper_py_value %>)<% end %>
+        <%- refvar = @mda.variable(v.name) -%>
+        <%- lower = refvar.lower_py_value=="-inf" ? "-50." : refvar.lower_py_value -%>
+        <%- upper = refvar.upper_py_value=="inf" ? "50." : refvar.upper_py_value -%>
+        pb.model.add_design_var('<%= v.name %>', lower=<%= lower %>, upper=<%= upper %>)<% end %>
 
         pb.setup()
         pb.run_driver()
         pb.cleanup()
+
+        # read the doe
+        cr = om.CaseReader(self.doe_recorder_filename("<%= @mda.snake_modulename %>", "<%= disc.snake_modulename %>"))
+        driver_cases = cr.list_cases("driver")
+        case = cr.get_case(driver_cases[0])
+        n_doe = len(driver_cases)
+        dim=<%= disc.variables.map(&:dim).inject(0, :+) %>
+        doe = np.zeros((n_doe, dim))
+        
+        for i in range(n_doe):
+            case = cr.get_case(driver_cases[i])
+<%- index = 0 -%>
+<%- (disc.input_variables + disc.output_variables).each_with_index do |var, i| -%>
+            doe[i, <%= index %>:<%= index + var.dim %>] = case.outputs['<%= var.name %>']
+<%- index = index + var.dim -%>
+<%- end -%>
+        # save the DoE for futur enrichement
+        np.save(self.doe_numpy_filename("<%= @mda.snake_modulename %>", "<%= disc.snake_modulename %>"), doe)
+
+        print(doe)
+        plt.plot(doe[:,0], doe[:, 2], 'o')
+        plt.show()
+
+
+    def update_doe_<%= disc.snake_modulename %>(self, des_var, coup_var):
+        # open the disciplinary DoE
+        doe = np.load(self.doe_numpy_filename("<%= @mda.snake_modulename %>", "<%= disc.snake_modulename %>"))
+        new_doe = np.zeros((doe.shape[0] + 1, doe.shape[1]))
+        new_doe[:doe.shape[0], :] = doe
+
+        # open the sqlite dictionnary to find the index of the variables
+        cr = om.CaseReader(self.doe_recorder_filename("<%= @mda.snake_modulename %>", "<%= disc.snake_modulename %>"))
+        driver_cases = cr.list_cases('driver')
+        case = cr.get_case(driver_cases[0])
+        n_des_var = len(case.get_design_vars()) 
+        des_var_names = sorted(case.get_design_vars())
+
+        # print("des_var_names=", des_var_names)
+        dim_des_var = [0]
+        for i in range(n_des_var):
+            dim_des_var.append(len(case.get_design_vars()[des_var_names[i]]))
+
+        problem = om.Problem(self.discipline_factory.create_<%= disc.snake_modulename %>())
+        problem.setup()
+
+        <% disc.design_variables.each do |var| %>
+        problem['<%= var.py_varname %>'] = des_var['<%= var.py_varname %>']<% end %>
+        <% disc.input_coupling_variables.each do |var| %>
+        problem['<%= var.py_varname %>'] = coup_var['<%= var.py_varname %>']<% end %>
+
+        # run the analysis
+        problem.run_model()
+
+        list_inputs = problem.model.list_inputs()
+        # update the DoE with the new inputs and update the inputs of the problem with 
+        # the correct value of the coupling variables
+
+        for inp in list_inputs:
+            name = inp[0]
+            ind = des_var_names.index(name)
+            start = int(np.array(dim_des_var[:ind + 1]).sum())
+            # we look for inp in the dict coup_var
+            if name in coup_var: 
+                new_doe[-1, start:start + dim_des_var[ind + 1]] = coup_var[name]
+            else:
+                new_doe[-1, start:start + dim_des_var[ind + 1]] = des_var[name]
+
+        <%- count = disc.output_variables.size %>
+        <% disc.output_variables.each_with_index do |var, i| %>
+        new_doe[-1, -<%= count - i %>] = problem.model.list_outputs()[<%= i %>][1]['val']<%- end %>
+
+        # save the DoE 
+        np.save(self.doe_numpy_filename("<%= @mda.snake_modulename %>", "<%= disc.snake_modulename %>"), new_doe)
+
+        return new_doe
 <% end %>
 
+<% end -%>
+
+def create_all_does(discipline_factory, n_cases=4):
+<% @mda.plain_disciplines.each do |disc| -%>
+<% if disc.has_out_coupling? -%>
+    DoeFactory(discipline_factory).create_doe_<%= disc.snake_modulename %>(n_cases)
+<% end -%>
+<% end %>

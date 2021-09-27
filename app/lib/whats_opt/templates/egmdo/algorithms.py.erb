@@ -1,0 +1,86 @@
+import sys
+import numpy as np
+import pickle
+import matplotlib.pyplot as plt
+from smt.surrogate_models import KRG
+
+from egmdo.random_analysis import run_random_mda
+from egmdo.doe_factory import DoeFactory
+from egmdo.gp_factory import GpFactory
+
+def enrich_gp(gp_factory, design_vars, coupling_vars,  disc_index):
+    for k in range(len(disc_index)):
+    <% @mda.coupling_variables.each_with_index do |cv, i| %>
+        <% disc = cv.discipline %>
+        if disc_index[k]==<%= i %>:
+            gp_factory.update_gp_<%= disc.snake_modulename %>_<%= cv.py_varname %>(design_vars, coupling_vars)
+    <%- end -%>
+
+def run_egmda(discipline_factory, design_vars, n_doe_pce=500, epsilon_coeff_var=1e-3, n_iter_max=10, gp_factory=None):    
+    convergence = False
+    n_iter = 0
+    cv_mean = []
+    cv_coeff_var = []
+
+    if not gp_factory:
+        gp_factory = GpFactory(DoeFactory(discipline_factory))
+
+    gp_factory.create_all_gps()
+
+    while (not convergence) and (n_iter < n_iter_max):
+        # run random MDA
+        doe, disc_index, coupling_var_doe = run_random_mda(discipline_factory, design_vars, n_doe_pce)
+
+        # FIXME: NOT GENERIC figures for the Sellar 
+        fig = plt.figure()
+        plt.plot(coupling_var_doe[:, 0], coupling_var_doe[:, 1],'+')
+        with open("gp_disc1_y1.pkl",'rb') as f:
+            gp_1 = pickle.load(f)
+        with open("gp_disc2_y2.pkl",'rb') as f:
+            gp_2 = pickle.load(f)
+
+        b_min_1 = 0  #  coupling_var_doe[:, 1].min()
+        b_max_1 = 25 #  coupling_var_doe[:, 1].max()
+        b_min_2 = 0  #  coupling_var_doe[:, 0].min()
+        b_max_2 = 25 #  coupling_var_doe[:, 0].max()
+
+        inputs_gp1 = np.zeros((100, 4))        
+        inputs_gp1[:, 0] = design_vars['x']
+        inputs_gp1[:, 1] = np.linspace(b_min_1,b_max_1,100)
+        inputs_gp1[:, 2] = design_vars['z'][0]
+        inputs_gp1[:, 3] = design_vars['z'][1]
+        mean_gp_1 = gp_1.predict_values(inputs_gp1)
+        std_gp_1 = np.sqrt(gp_1.predict_variances(inputs_gp1))
+        plt.plot(mean_gp_1, inputs_gp1[:,1],'b')
+        plt.plot(mean_gp_1 + 3*std_gp_1,inputs_gp1[:, 1],'b--')
+        plt.plot(mean_gp_1 - 3*std_gp_1,inputs_gp1[:, 1],'b--')
+
+        inputs_gp2 = np.zeros((100, 3))
+        inputs_gp2[:, 0] = np.linspace(b_min_2, b_max_2,100)
+        inputs_gp2[:, 1] = design_vars['z'][0]
+        inputs_gp2[:, 2] = design_vars['z'][1]
+        mean_gp_2 = gp_2.predict_values(inputs_gp2)
+        std_gp_2 = np.sqrt(gp_2.predict_variances(inputs_gp2))
+        plt.plot(inputs_gp2[:, 0], mean_gp_2, 'r')
+        plt.plot(inputs_gp2[:, 0], mean_gp_2 + 3*std_gp_2, 'r--')
+        plt.plot(inputs_gp2[:, 0], mean_gp_2 - 3*std_gp_2, 'r--')
+        plt.show()
+        # end figure
+
+        mean = doe[:, -1].mean()
+        coeff_var = doe[:, -1].std()/mean
+        cv_mean.append(mean)
+        cv_coeff_var.append(coeff_var)
+
+        # compute convergence criterion 
+        convergence = (coeff_var <= epsilon_coeff_var)
+        coupling_vars_values = coupling_var_doe.mean(axis=0)
+        coupling_vars = {}
+        coupling_vars['y1'] = coupling_vars_values[0]
+        coupling_vars['y2'] = coupling_vars_values[1]      
+
+        # improve the disciplinary gp given by disc_index
+        enrich_gp(gp_factory, design_vars, coupling_vars, [disc_index])
+        n_iter += 1
+
+    return coupling_vars, cv_mean, cv_coeff_var

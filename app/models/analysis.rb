@@ -81,11 +81,11 @@ class Analysis < ApplicationRecord
   end
 
   def input_variables
-    @params = variables.with_role(WhatsOpt::Variable::INPUT_ROLES)
+    @input_variables = variables.with_role(WhatsOpt::Variable::INPUT_ROLES)
   end
 
   def output_variables
-    @params = variables.with_role(WhatsOpt::Variable::OUTPUT_ROLES)
+    @output_variables = variables.with_role(WhatsOpt::Variable::OUTPUT_ROLES)
   end
 
   def coupling_variables 
@@ -239,6 +239,10 @@ class Analysis < ApplicationRecord
   # journalized
   def note_text  
     note.to_plain_text
+  end
+
+  def variable(varname)
+    Variable.of_analysis(id).where(name: varname, io_mode: WhatsOpt::Variable::OUT).take
   end
 
   def to_whatsopt_ui_json

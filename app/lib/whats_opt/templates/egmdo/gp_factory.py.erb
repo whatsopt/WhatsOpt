@@ -1,39 +1,43 @@
+import os
 import numpy as np
-import openmdao.api as om
-import subprocess
-from smt.surrogate_models import KRG
 import pickle
+from smt.surrogate_models import KRG
+from egmdo.doe_factory import DoeFactory
 
 class GpFactory:
+
+    def __init__(self, doe_factory):
+        self.doe_factory = doe_factory
+
 <%- @mda.plain_disciplines.each do |disc| -%>
 <% disc.output_variables.each do |v| %>
-    @staticmethod
-    def create_gp_<%= disc.snake_modulename %>_<%= v.py_varname %>():
-        # read the doe and create the GP
-        cr = om.CaseReader(f"sellar_<%= disc.snake_modulename %>_doe.sqlite")
-        driver_cases = cr.list_cases("driver")
-        case = cr.get_case(driver_cases[0])
-        n_doe = len(driver_cases)
-        dim=<%= disc.variables.map(&:dim).inject(0, :+) %>
-        doe = np.zeros((n_doe, dim))
-        
-        for i in range(n_doe):
-            case = cr.get_case(driver_cases[i])
-<%- index = 0 -%>
-<%- (disc.input_variables + disc.output_variables).each_with_index do |var, i| -%>
-            doe[i, <%= index %>:<%= index + var.dim %>] = case.outputs['<%= var.name %>']
-<%- index = index + var.dim -%>
-<%- end -%>
-
-        # save the DoE for futur enrichement
-        np.save("doe_<%= disc.snake_modulename %>.npy", doe)
+    def create_gp_<%= disc.snake_modulename %>_<%= v.py_varname %>(self, n_cases=4):
+        # load or create the DoE 
+        doe_file = self.doe_factory.doe_numpy_filename("<%= @mda.snake_modulename %>", "<%= disc.snake_modulename %>")
+        if (not os.path.exists(doe_file)):
+            self.doe_factory.create_doe_<%= disc.snake_modulename %>(n_cases)
+        doe = np.load(doe_file)
 
         # create the gp surrogate model
         input_dim=<%= disc.input_variables.map(&:dim).inject(0, :+) %>
         gp = KRG(theta0=[1e-2] * input_dim, print_global=False)
-        gp.set_training_values(doe[:, 0:-1], doe[:, -1])
+        <%- outdim = Analysis.vars_dim(disc.output_variables) %>
+        gp.set_training_values(doe[:, 0:-<%= outdim %>], doe[:, -<%= outdim %>:])
         gp.train()
         with open("gp_<%= disc.snake_modulename %>_<%= v.py_varname %>.pkl", "wb") as f:
             pickle.dump(gp, f)
+
+    def update_gp_<%= disc.snake_modulename %>_<%= v.py_varname %>(self, design_vars, coupling_vars):
+        new_doe = self.doe_factory.update_doe_<%= disc.snake_modulename %>(design_vars, coupling_vars)
+        self.create_gp_<%= disc.snake_modulename %>_<%= v.py_varname %>()
+        return new_doe
+
 <%- end %>
 <%- end %>
+
+    def create_all_gps(self, n_cases=4):
+    <%- @mda.plain_disciplines.each do |disc| -%>
+    <% disc.output_variables.each do |v| %>
+    <%- if disc.has_out_coupling? -%>
+        self.create_gp_<%= disc.snake_modulename %>_<%= v.py_varname %>(n_cases)<%- end %><%- end %><%- end %>
+
