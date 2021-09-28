@@ -50,7 +50,7 @@ jobs:
           mkdir -p install
           tar zxf thrift.tar.gz -C ${PWD}/thrift --strip-components=1
           cd thrift
-          ./configure --prefix=${PWD}/../install --without-c_glib --without-csharp --without-python --without-netstd --without-erlang --without-rs --without-swift --without-dotnetcore --without-cpp --without-ruby --without-nodejs --without-py3 --without-go --without-php --without-java
+          ./configure --prefix=${PWD}/../install --without-c_glib --without-csharp --without-python --without-netstd --without-erlang --without-rs --without-swift --without-dotnetcore --without-cpp --without-ruby --without-nodejs --without-py3 --without-go --without-php --without-java --without-haskell
           make
           make install
           cd ..
