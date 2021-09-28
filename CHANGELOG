@@ -1,14 +1,14 @@
 <h1>CHANGELOG</h1>
 
-<h3>1.17.0 (30/09/2021)</h3>
+<h3>1.17.0 (28/09/2021)</h3>
 <ul>
   <li>User can browse analysis changes history (add/remove/renaming of disciplines, connections/variables)</li>
   <li>User can specify co-owners to allow them to edit the analysis</li>
   <li>User as a co-owner is warned if a concurrent occured when editing a given analysis</li>
-  <li>User can sort analyses the most recently updated first (Newest button)</li>
-  <li>User as a owner can import/export a project (and all its analyses) as a json format (see wop push/pull --json -p)
+  <li>User can sort analyses the most recently updated first ('Newest' button)</li>
+  <li>User as a owner can import/export a project (and all its analyses) as a json format (see wop push/pull --json -p)</li>
   <li>User can directly import a discipline frome another analysis in edition mode</li>
-  <li>User can get standalone html through the WhastOpt GUI (Export Html)</li>
+  <li>User can get standalone html through the WhastOpt GUI ('Export Html' button)</li>
 </ul>
 
 <h3>1.16.0 (24/08/2021)</h3>
