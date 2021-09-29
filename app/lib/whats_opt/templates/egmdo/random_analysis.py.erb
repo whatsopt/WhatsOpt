@@ -18,10 +18,10 @@ from openmdao_extensions.openturns_doe_driver import OpenturnsDOEDriver
 class <%= disc.py_classname %>RandomDiscipline(om.ExplicitComponent):
     """ An OpenMDAO base component to encapsulate <%= disc.py_classname %> discipline """
 
-    def __init__(self, **kwargs):
+    def __init__(self, gp_factory, **kwargs):
         super().__init__(**kwargs)
 <% disc.output_variables.each do |v|%>        
-        with open("gp_<%= disc.snake_modulename %>_<%= v.py_varname %>.pkl", 'rb') as f:
+        with open(gp_factory.gp_filename("<%= disc.snake_modulename %>", "<%= v.py_varname %>"), 'rb') as f:
             self.gp_<%= v.py_varname %> = pickle.load(f) 
 <%- end %>
 
@@ -54,9 +54,10 @@ class <%= disc.py_classname %>RandomDiscipline(om.ExplicitComponent):
 <%- end -%><%- end -%><%- end %><%- end -%>
 class <%= @mda.py_classname %>RandomAnalysis(<%= @impl.parallel_group ? "om.ParallelGroup" : "om.Group" %>):
     """ An OpenMDAO base component to encapsulate <%= @mda.py_classname %> random MDA """
-    def __init__(self, discipline_factory, **kwargs):
+    def __init__(self, discipline_factory, gp_factory, **kwargs):
         super(). __init__(**kwargs)
-        self.factory = discipline_factory
+        self.disc_factory = discipline_factory
+        self.gp_factory = gp_factory
 
         self.nonlinear_solver = <%= @impl.nonlinear_solver.name %>()
 <% unless @impl.nonlinear_solver.runonce? -%>
@@ -81,14 +82,16 @@ class <%= @mda.py_classname %>RandomAnalysis(<%= @impl.parallel_group ? "om.Para
 
 <% @mda.disciplines.nodes.each do |disc| %>
 <%- if disc.has_out_coupling? -%>
-        disc = <%= disc.py_classname %>RandomDiscipline()
+        name = '<%= disc.py_classname %>Random'
+        disc = <%= disc.py_classname %>RandomDiscipline(self.gp_factory)
 <%- else -%>
-        disc = self.factory.create_<%= disc.snake_modulename %>()
+        name = '<%= disc.py_classname %>'
+        disc = self.disc_factory.create_<%= disc.snake_modulename %>()
 <%- end -%>
-        self.add_subsystem('<%= disc.py_classname %>Random', disc, promotes=['*'])<%- end %>
+        self.add_subsystem(name, disc, promotes=['*'])<%- end %>
 
-def run_doe(discipline_factory, design_vars, n_cases, parallel=False):
-    pb = om.Problem(<%= @mda.py_classname %>RandomAnalysis(discipline_factory))
+def run_doe(discipline_factory, gp_factory, design_vars, n_cases, parallel=False):
+    pb = om.Problem(<%= @mda.py_classname %>RandomAnalysis(discipline_factory, gp_factory))
     dists = []
     <% @mda.coupling_variables.each do |uv| %>
     # _xi_<%= uv.py_varname %> 
@@ -119,9 +122,9 @@ def run_doe(discipline_factory, design_vars, n_cases, parallel=False):
     pb.cleanup()
 
 
-def run_random_mda(discipline_factory, design_vars, n_doe_pce):
-    #run the random MDA n times to create a doe
-    run_doe(discipline_factory, design_vars, n_doe_pce)
+def run_random_mda(discipline_factory, gp_factory, design_vars, n_doe_pce):
+    # run the random MDA n times to create a doe
+    run_doe(discipline_factory, gp_factory, design_vars, n_doe_pce)
 
     # open the doe to create the PCE
     cr = om.CaseReader('<%= @mda.snake_modulename %>_random_mda_doe.sqlite')

@@ -1,0 +1,28 @@
+import numpy as np
+from optparse import OptionParser
+
+from run_parameters_init import initialize
+from <%= @mda.snake_modulename %> import <%= @mda.py_classname %>Factory
+from egmdo.algorithms import run_egmda
+
+parser = OptionParser()
+parser.add_option("-b", "--batch",
+                  action="store_true", dest="batch", default=False,
+                  help="do not plot anything")
+(options, args) = parser.parse_args()
+
+discipline_factory = <%= @mda.py_classname %>Factory()
+
+design_vars = {}
+initialize(design_vars)
+
+coupling_vars, cv_mean, cv_coeff_var = run_egmda(
+    discipline_factory,
+    design_vars,
+    n_doe_pce=500,
+    epsilon_coeff_var=1e-4,
+    n_iter_max=10,
+    plot=(not options.batch),
+    trace=False,
+)
+print(coupling_vars, cv_mean, cv_coeff_var)

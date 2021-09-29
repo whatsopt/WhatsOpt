@@ -16,57 +16,63 @@ def enrich_gp(gp_factory, design_vars, coupling_vars,  disc_index):
             gp_factory.update_gp_<%= disc.snake_modulename %>_<%= cv.py_varname %>(design_vars, coupling_vars)
     <%- end -%>
 
-def run_egmda(discipline_factory, design_vars, n_doe_pce=500, epsilon_coeff_var=1e-3, n_iter_max=10, gp_factory=None):    
+def run_egmda(discipline_factory, design_vars,
+              n_doe_pce=500, epsilon_coeff_var=1e-3, n_iter_max=10,
+              gp_factory=None, plot=None, trace=None, plot_range=[0, 25]):
     convergence = False
     n_iter = 0
     cv_mean = []
     cv_coeff_var = []
 
     if not gp_factory:
-        gp_factory = GpFactory(DoeFactory(discipline_factory))
+        gp_factory = GpFactory(DoeFactory(discipline_factory, plot))
 
     gp_factory.create_all_gps()
 
     while (not convergence) and (n_iter < n_iter_max):
         # run random MDA
-        doe, disc_index, coupling_var_doe = run_random_mda(discipline_factory, design_vars, n_doe_pce)
+        doe, disc_index, coupling_var_doe = run_random_mda(discipline_factory, gp_factory, design_vars, n_doe_pce)
+<%- if @mda.coupling_variables.count == 2 -%>
+        if (plot):
+            plt.plot(coupling_var_doe[:, 0], coupling_var_doe[:, 1],'+')
+<%- [0, 1].each_with_index do |i| -%>
+            b_min_<%= i %> = plot_range[0]
+            b_max_<%= i %> = plot_range[1]
+<%- end %>
+<%- @mda.coupling_variables.each_with_index do |cv, i| -%>
+<%- disc = cv.discipline -%>
+            with open(gp_factory.gp_filename("<%= disc.snake_modulename %>", "<%= cv.py_varname %>"),'rb') as f:
+                gp_<%= i %> = pickle.load(f)
 
-        # FIXME: NOT GENERIC figures for the Sellar 
-        fig = plt.figure()
-        plt.plot(coupling_var_doe[:, 0], coupling_var_doe[:, 1],'+')
-        with open("gp_disc1_y1.pkl",'rb') as f:
-            gp_1 = pickle.load(f)
-        with open("gp_disc2_y2.pkl",'rb') as f:
-            gp_2 = pickle.load(f)
+            inputs_gp<%= i %> = np.zeros((100, <%= disc.input_variables.map(&:dim).inject(0, :+) %>)) 
+<%- index = 0 -%>
+<%- disc.input_variables.each_with_index do |var, j| -%>
+<%- if @mda.coupling_variables.map(&:name).include?(var.name) -%>
+            inputs_gp<%= i %>[:, <%= index %>] = np.linspace(b_min_<%= i %>, b_max_<%= i %>, 100)
+<%- else -%>
+            inputs_gp<%= i %>[:, <%= index %>:<%= index + var.dim %> ] = design_vars['<%= var.name %>']
+<%- end -%>
+<%- index = index + var.dim -%>
+<%- end -%>
+            mean_gp_<%= i %> = gp_<%= i %>.predict_values(inputs_gp<%= i %>)
+            std_gp_<%= i %> = np.sqrt(gp_<%= i %>.predict_variances(inputs_gp<%= i %>))
+<%- if i == 0 -%>
+            plt.plot(mean_gp_0, inputs_gp0[:, 1], 'b')
+            plt.plot(mean_gp_0 + 3*std_gp_0, inputs_gp0[:, 1], "b--")
+            plt.plot(mean_gp_0 - 3*std_gp_0, inputs_gp0[:, 1], "b--")
+<%- else -%>
+            plt.plot(inputs_gp1[:, 0], mean_gp_1, 'r')
+            plt.plot(inputs_gp1[:, 0], mean_gp_1 + 3*std_gp_1, "r--")
+            plt.plot(inputs_gp1[:, 0], mean_gp_1 - 3*std_gp_1, "r--")
+<%- end -%>
+<%- end -%>
+            plt.show()
 
-        b_min_1 = 0  #  coupling_var_doe[:, 1].min()
-        b_max_1 = 25 #  coupling_var_doe[:, 1].max()
-        b_min_2 = 0  #  coupling_var_doe[:, 0].min()
-        b_max_2 = 25 #  coupling_var_doe[:, 0].max()
+<% else %>
+    if (plot):
+        print("Plotting disabled! Plotting requires 2 couplings from surrogates, got <% @mda.coupling_variables.count %>)")
 
-        inputs_gp1 = np.zeros((100, 4))        
-        inputs_gp1[:, 0] = design_vars['x']
-        inputs_gp1[:, 1] = np.linspace(b_min_1,b_max_1,100)
-        inputs_gp1[:, 2] = design_vars['z'][0]
-        inputs_gp1[:, 3] = design_vars['z'][1]
-        mean_gp_1 = gp_1.predict_values(inputs_gp1)
-        std_gp_1 = np.sqrt(gp_1.predict_variances(inputs_gp1))
-        plt.plot(mean_gp_1, inputs_gp1[:,1],'b')
-        plt.plot(mean_gp_1 + 3*std_gp_1,inputs_gp1[:, 1],'b--')
-        plt.plot(mean_gp_1 - 3*std_gp_1,inputs_gp1[:, 1],'b--')
-
-        inputs_gp2 = np.zeros((100, 3))
-        inputs_gp2[:, 0] = np.linspace(b_min_2, b_max_2,100)
-        inputs_gp2[:, 1] = design_vars['z'][0]
-        inputs_gp2[:, 2] = design_vars['z'][1]
-        mean_gp_2 = gp_2.predict_values(inputs_gp2)
-        std_gp_2 = np.sqrt(gp_2.predict_variances(inputs_gp2))
-        plt.plot(inputs_gp2[:, 0], mean_gp_2, 'r')
-        plt.plot(inputs_gp2[:, 0], mean_gp_2 + 3*std_gp_2, 'r--')
-        plt.plot(inputs_gp2[:, 0], mean_gp_2 - 3*std_gp_2, 'r--')
-        plt.show()
-        # end figure
-
+<%- end -%>
         mean = doe[:, -1].mean()
         coeff_var = doe[:, -1].std()/mean
         cv_mean.append(mean)
@@ -76,8 +82,9 @@ def run_egmda(discipline_factory, design_vars, n_doe_pce=500, epsilon_coeff_var=
         convergence = (coeff_var <= epsilon_coeff_var)
         coupling_vars_values = coupling_var_doe.mean(axis=0)
         coupling_vars = {}
-        coupling_vars['y1'] = coupling_vars_values[0]
-        coupling_vars['y2'] = coupling_vars_values[1]      
+<%- @mda.coupling_variables.each_with_index do |cv, i| -%>
+        coupling_vars['<%= cv.py_varname %>'] = coupling_vars_values[<%= i %>]
+<%- end -%>      
 
         # improve the disciplinary gp given by disc_index
         enrich_gp(gp_factory, design_vars, coupling_vars, [disc_index])
