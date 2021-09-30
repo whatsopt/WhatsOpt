@@ -18,7 +18,7 @@ def enrich_gp(gp_factory, design_vars, coupling_vars,  disc_index):
 
 def run_egmda(discipline_factory, design_vars,
               n_doe_pce=500, epsilon_coeff_var=1e-3, n_iter_max=10,
-              gp_factory=None, plot=None, trace=None, plot_range=[0, 25]):
+              gp_factory=None, plot=None, plot_range=[0, 50]):
     convergence = False
     n_iter = 0
     cv_mean = []
@@ -69,8 +69,8 @@ def run_egmda(discipline_factory, design_vars,
             plt.show()
 
 <% else %>
-    if (plot):
-        print("Plotting disabled! Plotting requires 2 couplings from surrogates, got <% @mda.coupling_variables.count %>)")
+        if (plot):
+            print("Plotting disabled! Plotting requires 2 couplings from surrogates, got <% @mda.coupling_variables.count %>)")
 
 <%- end -%>
         mean = doe[:, -1].mean()
@@ -86,8 +86,9 @@ def run_egmda(discipline_factory, design_vars,
         coupling_vars['<%= cv.py_varname %>'] = coupling_vars_values[<%= i %>]
 <%- end -%>      
 
-        # improve the disciplinary gp given by disc_index
-        enrich_gp(gp_factory, design_vars, coupling_vars, [disc_index])
-        n_iter += 1
+        if not convergence:
+            # improve the disciplinary gp given by disc_index
+            enrich_gp(gp_factory, design_vars, coupling_vars, [disc_index])
+            n_iter += 1
 
     return coupling_vars, cv_mean, cv_coeff_var

@@ -1,6 +1,3 @@
-# DO NOT EDIT unless you know what you are doing
-# analysis_id: <%= @mda.id %>
-
 import numpy as np
 from numpy import nan, inf
 import matplotlib.pyplot as plt
@@ -10,27 +7,37 @@ import openmdao.api as om
 from openmdao_extensions.smt_doe_driver import SmtDOEDriver
 <% if @remote -%>
 from <%= @server_module %>.<%= @mda.py_modulename %>_proxy import <%= @mda.py_classname %>Proxy as <%= @mda.py_classname %>
+<% elsif @egmdo %>
+from <%= @egmdo_module %>.<%= @mda.py_modulename %>_egmda import <%= @mda.py_classname %>Egmda as <%= @mda.py_classname %>
 <% else -%>
 from <%= @mda.py_modulename %> import <%= @mda.py_classname %>
 <% end -%>
 from optparse import OptionParser
 
 parser = OptionParser()
-parser.add_option("-b", "--batch",
-                  action="store_true", dest="batch", default=False,
-                  help="do not plot anything")
+parser.add_option("--plot",
+                  action="store_true", dest="plot", default=False,
+                  help="Display scatter plots")
 parser.add_option("-n", "--ncases", type="int",
                   dest="n_cases", default=<%= @driver.options[:nbpts]%>,
                   help="number of samples")
-parser.add_option("-p", "--parallel", default=False,
+<%- if not @egmdo -%>
+parser.add_option("--parallel", default=False,
                   action="store_true",
                   help="run doe in parallel")
+<% end %>
 (options, args) = parser.parse_args()
 
+<%- if @egmdo -%>
+pb = om.Problem(<%= @mda.py_classname %>(plot=options.plot))
+<%- else -%>
 pb = om.Problem(<%= @mda.py_classname %>())
+<%- end -%>
 pb.driver = SmtDOEDriver(sampling_method_name='LHS', n_cases=options.n_cases,
                          sampling_method_options={'criterion': 'ese'})
+<%- if not @egmdo -%>
 pb.driver.options['run_parallel'] = options.parallel
+<%- end -%>
 
 case_recorder_filename = '<%= @sqlite_filename %>'
 recorder = om.SqliteRecorder(case_recorder_filename)
@@ -45,51 +52,53 @@ initialize(pb)
 
 pb.run_driver()
 
-<% if (@mda.response_dim * @mda.design_var_dim) < 10 %>
-if options.batch or options.parallel:
-    exit(0)
-reader = om.CaseReader(case_recorder_filename)
-cases = reader.list_cases('driver')
-n = len(cases)
-data = {'inputs': {}, 'outputs': {}}
-<% @mda.design_variables.each do |dv| %>
-data['inputs']['<%= dv.name %>'] = np.zeros((n,)+<%= dv.shape=="1"?"(1,)":dv.shape %>)<% end %>
-<% @mda.response_variables.each do |r| %>
-data['outputs']['<%= r.name %>'] = np.zeros((n,)+<%= r.shape=="1"?"(1,)":r.shape %>)<% end %>
+<%- if (@mda.response_dim * @mda.design_var_dim) < 10 -%>
+if options.plot:
+    reader = om.CaseReader(case_recorder_filename)
+    cases = reader.list_cases('driver')
+    n = len(cases)
+    data = {'inputs': {}, 'outputs': {}}
+    <% @mda.design_variables.each do |dv| %>
+    data['inputs']['<%= dv.name %>'] = np.zeros((n,)+<%= dv.shape=="1"?"(1,)":dv.shape %>)<% end %>
+    <% @mda.response_variables.each do |r| %>
+    data['outputs']['<%= r.name %>'] = np.zeros((n,)+<%= r.shape=="1"?"(1,)":r.shape %>)<% end %>
 
-for i in range(len(cases)):
-    case = reader.get_case(cases[i])
-<% @mda.design_variables.each do |dv| -%>
-    data['inputs']['<%= dv.name %>'][i, :] = case.outputs['<%= dv.name %>']
-<% end -%>
-<% @mda.response_variables.each do |r| -%>
-    data['outputs']['<%= r.name %>'][i, :] = case.outputs['<%= r.name %>']
-<% end -%>
+    for i in range(len(cases)):
+        case = reader.get_case(cases[i])
+    <% @mda.design_variables.each do |dv| -%>
+        data['inputs']['<%= dv.name %>'][i, :] = case.outputs['<%= dv.name %>']
+    <% end -%>
+    <% @mda.response_variables.each do |r| -%>
+        data['outputs']['<%= r.name %>'][i, :] = case.outputs['<%= r.name %>']
+    <% end -%>
 
-<% row = 0 -%>
-<% @mda.response_variables.each_with_index do |r, j| -%>
+    <% row = 0 -%>
+    <% @mda.response_variables.each_with_index do |r, j| -%>
 
-output = data['outputs']['<%= r.name %>'].reshape(-1)
-<% (0...r.dim).each do |kj| -%>
-<% col = 0 -%>
-<% @mda.design_variables.each_with_index do |dv, i| -%>
+    output = data['outputs']['<%= r.name %>'].reshape(-1)
+    <% (0...r.dim).each do |kj| -%>
+    <% col = 0 -%>
+    <% @mda.design_variables.each_with_index do |dv, i| -%>
 
-input = data['inputs']['<%= dv.name %>'].reshape(-1)
-<% (0...dv.dim).each do |ki| -%>
-plt.subplot(<%= @mda.response_dim %>, <%= @mda.design_var_dim %>, <%= @mda.design_var_dim*row+col+1 %>)
-plt.plot(input[<%= ki %>::<%= dv.dim %>], output[<%= kj %>::<%= r.dim %>], '.')
-<% if col == 0 -%>
-plt.ylabel('<%= r.dim==1?"#{r.name}":"#{r.name} #{kj}" %>')
-<% end -%>
-<% if true or row == @mda.output_dim-1 -%>
-plt.xlabel('<%= dv.dim==1?"#{dv.name}":"#{dv.name} #{ki}" %>')
-<% end -%>
-<% col += 1 -%>
-<% end -%>
-<% end -%>
-<% row += 1 -%>
-<% end -%>
+    input = data['inputs']['<%= dv.name %>'].reshape(-1)
+    <% (0...dv.dim).each do |ki| -%>
+    plt.subplot(<%= @mda.response_dim %>, <%= @mda.design_var_dim %>, <%= @mda.design_var_dim*row+col+1 %>)
+    plt.plot(input[<%= ki %>::<%= dv.dim %>], output[<%= kj %>::<%= r.dim %>], '.')
+    <% if col == 0 -%>
+    plt.ylabel('<%= r.dim==1?"#{r.name}":"#{r.name} #{kj}" %>')
+    <% end -%>
+    <% if true or row == @mda.output_dim-1 -%>
+    plt.xlabel('<%= dv.dim==1?"#{dv.name}":"#{dv.name} #{ki}" %>')
+    <% end -%>
+    <% col += 1 -%>
+    <% end -%>
+    <% end -%>
+    <% row += 1 -%>
+    <% end -%>
 
-<% end -%>
-plt.show()
+    <% end -%>
+    plt.show()
+<%- else -%>
+if options.plot:
+    print("Scatter plots disabled. Too many variables to display.")
 <% end -%>

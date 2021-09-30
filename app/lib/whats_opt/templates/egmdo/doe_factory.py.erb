@@ -109,7 +109,7 @@ class DoeFactory:
         # run the analysis
         problem.run_model()
 
-        list_inputs = problem.model.list_inputs()
+        list_inputs = problem.model.list_inputs(out_stream=None)
         # update the DoE with the new inputs and update the inputs of the problem with 
         # the correct value of the coupling variables
 
@@ -125,7 +125,7 @@ class DoeFactory:
 
         <%- count = disc.output_variables.size %>
         <% disc.output_variables.each_with_index do |var, i| %>
-        new_doe[-1, -<%= count - i %>] = problem.model.list_outputs()[<%= i %>][1]['val']<%- end %>
+        new_doe[-1, -<%= count - i %>] = problem.model.list_outputs(out_stream=None)[<%= i %>][1]['val']<%- end %>
 
         # save the DoE 
         np.save(self.doe_numpy_filename("<%= disc.snake_modulename %>"), new_doe)

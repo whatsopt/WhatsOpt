@@ -651,7 +651,8 @@ class Analysis < ApplicationRecord
     end
   end
 
-  def self.build_analysis(ope_attrs, outvar_count_hint = 1)
+
+  def self.build_from_doe_ope(ope_attrs, outvar_count_hint = 1)
     disc_name = "#{ope_attrs[:name].camelize}"
     name = "#{disc_name}Analysis"
     disc_vars = Variable.get_varattrs_from_caseattrs(ope_attrs[:cases], outvar_count_hint)
@@ -669,7 +670,7 @@ class Analysis < ApplicationRecord
     )
   end
 
-  def self.build_metamodel_analysis(ope, varnames = nil)
+  def self.build_from_metamodel_ope(ope, varnames = nil)
     name = "#{ope.analysis.name.camelize}MetaModel"
     metamodel_varattrs = ope.build_metamodel_varattrs(varnames)
     driver_vars = metamodel_varattrs.map do |v|

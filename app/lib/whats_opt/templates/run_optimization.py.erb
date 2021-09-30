@@ -1,22 +1,22 @@
-# DO NOT EDIT unless you know what you are doing
-# analysis_id: <%= @mda.id %>
-
 import numpy as np
 from numpy import nan, inf
 # import matplotlib
 # matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from run_parameters_init import initialize
+<% if @driver.onerasego? %>
+from openmdao_extensions.onera_sego_driver import OneraSegoDriver
+<% end %>
 
 import openmdao.api as om
 <% if @remote -%>
-from openmdao_extensions.onera_sego_driver import OneraSegoDriver
 from <%= @server_module %>.<%= @mda.py_modulename %>_proxy import <%= @mda.py_classname %>Proxy as <%= @mda.py_classname %>
+<% elsif @egmdo %>
+from <%= @egmdo_module %>.<%= @mda.py_modulename %>_egmda import <%= @mda.py_classname %>Egmda as <%= @mda.py_classname %>
 <% else -%>
 from <%= @mda.py_modulename %> import <%= @mda.py_classname %>
 <% end -%>
 
-<%= ERB.new(File.read(File.join(@template_dir, 'options_partial.py.erb')), nil, nil, eoutvar='_sub01').result(binding) %>
 pb = om.Problem(<%= @mda.py_classname %>())
 
 <% if @driver.pyoptsparse? -%>
@@ -75,9 +75,6 @@ pb.run_driver()
 
 <%- @mda.design_variables.each do |dv| %>
 print("<%= dv.name %>= {}".format(pb['<%= dv.name %>']))<% end %>
-
-if options.batch:
-    exit(0)
 
 # reader = om.CaseReader(case_recorder_filename)
 # cases = reader.list_cases('problem')
