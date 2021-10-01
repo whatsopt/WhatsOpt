@@ -65,38 +65,36 @@ if options.plot:
 
     for i in range(len(cases)):
         case = reader.get_case(cases[i])
-    <% @mda.design_variables.each do |dv| -%>
+    <%- @mda.design_variables.each do |dv| -%>
         data['inputs']['<%= dv.name %>'][i, :] = case.outputs['<%= dv.name %>']
-    <% end -%>
-    <% @mda.response_variables.each do |r| -%>
+    <%- end %>
+    <%- @mda.response_variables.each do |r| -%>
         data['outputs']['<%= r.name %>'][i, :] = case.outputs['<%= r.name %>']
-    <% end -%>
+    <%- end %>
 
-    <% row = 0 -%>
-    <% @mda.response_variables.each_with_index do |r, j| -%>
-
+    <%- row = 0 -%>
+    <%- @mda.response_variables.each_with_index do |r, j| -%>
     output = data['outputs']['<%= r.name %>'].reshape(-1)
-    <% (0...r.dim).each do |kj| -%>
-    <% col = 0 -%>
-    <% @mda.design_variables.each_with_index do |dv, i| -%>
-
+    <%- (0...r.dim).each do |kj| -%>
+    <%- col = 0 -%>
+    <%- @mda.design_variables.each_with_index do |dv, i| %>
     input = data['inputs']['<%= dv.name %>'].reshape(-1)
-    <% (0...dv.dim).each do |ki| -%>
+    <%- (0...dv.dim).each do |ki| -%>
     plt.subplot(<%= @mda.response_dim %>, <%= @mda.design_var_dim %>, <%= @mda.design_var_dim*row+col+1 %>)
     plt.plot(input[<%= ki %>::<%= dv.dim %>], output[<%= kj %>::<%= r.dim %>], '.')
-    <% if col == 0 -%>
+    <%- if col == 0 -%>
     plt.ylabel('<%= r.dim==1?"#{r.name}":"#{r.name} #{kj}" %>')
-    <% end -%>
-    <% if true or row == @mda.output_dim-1 -%>
+    <%- end -%>
+    <%- if true or row == @mda.output_dim-1 -%>
     plt.xlabel('<%= dv.dim==1?"#{dv.name}":"#{dv.name} #{ki}" %>')
-    <% end -%>
-    <% col += 1 -%>
-    <% end -%>
-    <% end -%>
-    <% row += 1 -%>
-    <% end -%>
+    <%- end -%>
+    <%- col += 1 -%>
+    <%- end -%>
+    <%- end -%>
+    <%- row += 1 -%>
+    <%- end -%>
 
-    <% end -%>
+    <%- end -%>
     plt.show()
 <%- else -%>
 if options.plot:

@@ -54,10 +54,10 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
 
   test "should maintain a list of generated filepaths with egmdo" do
     expected = ["__init__.py", "aerodynamics.py", "aerodynamics_base.py", "cicav.py",
-                "cicav_base.py", "egmdo/doe_factory.py", "egmdo/__init__.py", "egmdo/gp_factory.py", "egmdo/random_analysis.py",
-                "geometry.py", "geometry_base.py", "propulsion.py", "propulsion_base.py",
-                "run_analysis.py", "run_doe.py", "run_optimization.py", "run_parameters_init.py",
-                "run_screening.py"]
+                "cicav_base.py", "egmdo/__init__.py", "egmdo/algorithms.py", "egmdo/cicav_egmda.py", "egmdo/doe_factory.py", 
+                "egmdo/gp_factory.py", "egmdo/random_analysis.py", "geometry.py", "geometry_base.py", 
+                "propulsion.py", "propulsion_base.py", "run_analysis.py", "run_doe.py", "run_egdoe.py", 
+                "run_egmda.py", "run_egmdo.py", "run_optimization.py", "run_parameters_init.py", "run_screening.py"]
     _assert_file_generation expected, with_egmdo: true
   end
 
@@ -90,7 +90,8 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     skip "Apache Thrift not installed" unless thrift?
     expected = ["__init__.py", "aerodynamics.py", "aerodynamics_base.py", "cicav.py",
                 "cicav_base.py", "geometry.py", "geometry_base.py", "propulsion.py", "propulsion_base.py",
-                "run_analysis.py", "run_doe.py", "run_optimization.py", "run_parameters_init.py",
+                "run_analysis.py", "run_doe.py", 
+                "run_optimization.py", "run_parameters_init.py",
                 "run_screening.py"] + ["run_server.py",
                 "server/__init__.py", "server/analysis.thrift", "server/cicav/__init__.py",
                 "server/cicav/Cicav-remote", "server/cicav/Cicav.py",

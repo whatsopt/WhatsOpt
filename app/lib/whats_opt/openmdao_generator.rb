@@ -53,7 +53,7 @@ module WhatsOpt
     def run(method = "analysis", sqlite_filename = nil)
       ok, lines = false, []
       Dir.mktmpdir("run_#{@mda.basename}_#{method}") do |dir|
-        # dir='/tmp/DRY' # for debug
+        dir='/tmp' # for debug
         begin
           _generate_code(dir, sqlite_filename: sqlite_filename)
         rescue ServerGenerator::ThriftError => e
@@ -69,7 +69,7 @@ module WhatsOpt
 
     def monitor(method = "analysis", sqlite_filename = nil, &block)
       Dir.mktmpdir("run_#{@mda.basename}_#{method}") do |dir|
-        # dir="/tmp/DRY" # for debug
+        # dir="/tmp" # for debug
         _generate_code dir, sqlite_filename: sqlite_filename
         _monitor_mda(dir, method, &block)
       end
@@ -85,7 +85,7 @@ module WhatsOpt
     def _run_mda(dir, method)
       script = File.join(dir, "run_#{method}.py")
       Rails.logger.info "#{PYTHON} #{script}"
-      stdouterr, status = Open3.capture2e(PYTHON, script, "--batch")
+      stdouterr, status = Open3.capture2e(PYTHON, script)
       return status.success?, stdouterr
     end
 
@@ -96,6 +96,7 @@ module WhatsOpt
     end
 
     def _generate_code(gendir, options = {})
+      # gendir='/tmp' # for debug
       opts = { with_server: true, with_egmdo: false, with_run: true, with_unittests: false }.merge(options)
       @mda.disciplines.nodes.each do |disc|
         if disc.has_sub_analysis?

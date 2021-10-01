@@ -22,7 +22,8 @@ class EgmdoGeneratorTest < ActiveSupport::TestCase
       @eggen._generate_code dir
       rootdir = Pathname.new(dir)
       filenames = @eggen.genfiles.map { |f| Pathname.new(f).relative_path_from(rootdir).to_s }.sort
-      expected = ["egmdo/__init__.py", "egmdo/algorithms.py", "egmdo/doe_factory.py", "egmdo/gp_factory.py", "egmdo/random_analysis.py"]
+      expected = ["egmdo/__init__.py", "egmdo/algorithms.py", "egmdo/cicav_egmda.py", "egmdo/doe_factory.py", 
+                  "egmdo/gp_factory.py", "egmdo/random_analysis.py", "run_egdoe.py", "run_egmda.py", "run_egmdo.py"]
       assert_equal expected.sort, filenames
     end
   end
@@ -35,7 +36,8 @@ class EgmdoGeneratorTest < ActiveSupport::TestCase
     end
     assert File.exist?(zippath)
     Zip::File.open(zippath) do |zip|
-      expected = ["egmdo/__init__.py", "egmdo/algorithms.py", "egmdo/doe_factory.py", "egmdo/gp_factory.py", "egmdo/random_analysis.py"]
+      expected = ["egmdo/__init__.py", "egmdo/algorithms.py",  "egmdo/cicav_egmda.py", "egmdo/doe_factory.py", "egmdo/gp_factory.py", 
+                  "egmdo/random_analysis.py", "run_egdoe.py", "run_egmda.py", "run_egmdo.py"]
       assert_equal expected.sort, zip.map { |entry| entry.name }.sort
     end
   end
