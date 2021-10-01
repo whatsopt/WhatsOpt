@@ -81,11 +81,21 @@ class Analysis < ApplicationRecord
   end
 
   def input_variables
-    @params = variables.with_role(WhatsOpt::Variable::INPUT_ROLES)
+    @input_variables = variables.with_role(WhatsOpt::Variable::INPUT_ROLES)
   end
 
   def output_variables
-    @params = variables.with_role(WhatsOpt::Variable::OUTPUT_ROLES)
+    @output_variables = variables.with_role(WhatsOpt::Variable::OUTPUT_ROLES)
+  end
+
+  def coupling_variables 
+    # TODO: see if it can be optimize using SQL
+    unless @couplings 
+      conns = Connection.of_analysis(self).select{|c| !c.driverish?}
+      # FIXME: only scalar couplings are handled at the moment for EGMDO
+      @couplings = conns.map(&:from).uniq.select(&:is_scalar?)
+    end
+    @couplings
   end
 
   def design_variables
@@ -110,10 +120,6 @@ class Analysis < ApplicationRecord
 
   def has_decision_variables?
     has_uncertain_input_variables? || has_design_variables?
-  end
-
-  def input_variables
-    @params = variables.with_role(WhatsOpt::Variable::INPUT_ROLES)
   end
 
   def min_objective_variables
@@ -233,6 +239,10 @@ class Analysis < ApplicationRecord
   # journalized
   def note_text  
     note.to_plain_text
+  end
+
+  def variable(varname)
+    Variable.of_analysis(id).where(name: varname, io_mode: WhatsOpt::Variable::OUT).take
   end
 
   def to_whatsopt_ui_json
@@ -641,7 +651,8 @@ class Analysis < ApplicationRecord
     end
   end
 
-  def self.build_analysis(ope_attrs, outvar_count_hint = 1)
+
+  def self.build_from_doe_ope(ope_attrs, outvar_count_hint = 1)
     disc_name = "#{ope_attrs[:name].camelize}"
     name = "#{disc_name}Analysis"
     disc_vars = Variable.get_varattrs_from_caseattrs(ope_attrs[:cases], outvar_count_hint)
@@ -659,7 +670,7 @@ class Analysis < ApplicationRecord
     )
   end
 
-  def self.build_metamodel_analysis(ope, varnames = nil)
+  def self.build_from_metamodel_ope(ope, varnames = nil)
     name = "#{ope.analysis.name.camelize}MetaModel"
     metamodel_varattrs = ope.build_metamodel_varattrs(varnames)
     driver_vars = metamodel_varattrs.map do |v|

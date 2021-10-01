@@ -63,6 +63,26 @@ class Discipline < ApplicationRecord
     variables.outs
   end
 
+  def input_coupling_variables
+    couplings = analysis.coupling_variables.map(&:name)
+    input_variables.select{|v| couplings.include?(v.name)}
+  end
+
+  def design_variables
+    desvars = analysis.design_variables.map(&:name)
+    input_variables.select{|v| desvars.include?(v.name)}
+  end
+
+  def output_coupling_variables
+    couplings = analysis.coupling_variables.map(&:name)
+    output_variables.select{|v| couplings.include?(v.name)}
+  end
+
+  def has_out_coupling?
+    couplings = analysis.coupling_variables.map(&:name)
+    !output_variables.select{|v| couplings.include?(v.name)}.empty?
+  end
+
   def is_driver?
     type == WhatsOpt::Discipline::NULL_DRIVER
   end

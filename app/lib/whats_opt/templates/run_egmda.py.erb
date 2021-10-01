@@ -1,0 +1,20 @@
+import numpy as np
+from optparse import OptionParser
+
+import openmdao.api as om
+from run_parameters_init import initialize
+from optparse import OptionParser
+
+parser = OptionParser()
+parser.add_option("--plot",
+                  action="store_true", dest="plot", default=False,
+                  help="When 2D, display mean and confidence intervals of coupling variables")
+(options, args) = parser.parse_args()
+
+pb = om.Problem(<%= @mda.py_classname %>(plot=options.plot))
+pb.setup()
+initialize(pb)
+
+pb.run_model()
+pb.model.list_inputs(print_arrays=False)
+pb.model.list_outputs(print_arrays=False)

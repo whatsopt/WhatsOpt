@@ -1,0 +1,94 @@
+import numpy as np
+from numpy import nan, inf
+
+import openmdao.api as om
+from run_parameters_init import initialize
+from <%= @mda.snake_modulename %> import <%= @mda.py_classname %>Factory as DisciplineFactory
+from egmdo.random_analysis import <%= @mda.py_classname %>RandomAnalysis
+from egmdo.doe_factory import DoeFactory
+from egmdo.gp_factory import GpFactory
+from egmdo.algorithms import run_egmda
+
+class <%= @mda.py_classname %>EgDiscipline(om.ExplicitComponent):
+    """ An OpenMDAO base component to encapsulate <%= @mda.py_classname %> discipline """
+
+    def __init__(self, discipline_factory=None, gp_factory=None, 
+                 n_doe_pce=500, epsilon_coeff_var=1e-3, n_iter_max=10,
+                 plot=False, plot_range=[0, 50]):
+        super().__init__()
+        self.plot=plot
+        self.n_doe_pce = n_doe_pce
+        self.epsilon_coeff_var = epsilon_coeff_var
+        self.n_iter_max = n_iter_max
+        self.plot = plot
+        self.plot_range = plot_range
+        self.discipline_factory = discipline_factory
+        if not discipline_factory:
+            self.discipline_factory = DisciplineFactory()
+        self.gp_factory = gp_factory
+        if not gp_factory:
+            self.gp_factory = GpFactory(DoeFactory(self.discipline_factory, plot=plot))
+        
+    def setup(self):
+<% @mda.input_variables.each do |var| -%>
+        self.add_input('<%= var.py_varname %>', val=<%= var.init_py_value %>, desc='<%= var.escaped_desc %>'<%= @impl.use_units && !var.units.blank? ? ", units='#{var.units}'":"" %>)
+<% end %>
+<% @mda.output_variables.each do |var| -%>
+        self.add_output('<%= var.py_varname %>', val=<%= var.init_py_value %>, desc='<%= var.escaped_desc %>'<%= @impl.use_units && !var.units.blank? ? ", units='#{var.units}'":"" %>)
+<% end %>
+
+    def compute(self, inputs, outputs):
+        design_vars={}
+<% @mda.input_variables.each do |var| -%>
+        design_vars['<%= var.name %>'] = inputs['<%= var.name %>']
+<% end %>
+        coupling_vars, cv_mean, cv_coeff_var = run_egmda(
+            self.discipline_factory,
+            design_vars,
+            n_doe_pce=self.n_doe_pce,  
+            epsilon_coeff_var=self.epsilon_coeff_var,
+            n_iter_max=self.n_iter_max,
+            plot=self.plot,
+            plot_range=self.plot_range,
+            gp_factory=self.gp_factory
+        )
+        pb = om.Problem(<%= @mda.py_classname %>RandomAnalysis(self.discipline_factory, self.gp_factory))
+        pb.model.nonlinear_solver.options['err_on_non_converge'] = False
+        pb.model.linear_solver.options['err_on_non_converge'] = False
+        pb.setup()
+<% @mda.input_variables.each do |var| -%>
+        pb['<%= var.name %>'] = inputs['<%= var.name %>']
+<% end %>
+        pb.run_model()
+<% @mda.output_variables.each do |var| -%>
+        outputs['<%= var.name %>'] = pb['<%= var.name %>']
+<% end %>
+
+
+class <%= @mda.py_classname %>Egmda(om.Group):
+    """ An OpenMDAO base component to encapsulate <%= @mda.py_classname %> EGMDA """
+    def __init__(self, discipline_factory=None, gp_factory=None, 
+                 n_doe_pce=500, epsilon_coeff_var=1e-3, n_iter_max=10,
+                 plot=False, plot_range=[0, 50]):
+        super().__init__()
+        self.n_doe_pce = n_doe_pce
+        self.epsilon_coeff_var = epsilon_coeff_var
+        self.n_iter_max = n_iter_max
+        self.plot = plot
+        self.plot_range = plot_range
+        self.discipline_factory = discipline_factory
+        if not discipline_factory:
+            self.discipline_factory = DisciplineFactory()
+        self.gp_factory = gp_factory
+        if not gp_factory:
+            self.gp_factory = GpFactory(DoeFactory(self.discipline_factory, plot=plot))
+
+    def setup(self):
+<%- @mda.input_variables.each do |dv| -%>
+        self.set_input_defaults('<%= dv.name %>', val=<%= dv.init_py_value %><%= @impl.use_units && !dv.units.blank? ? ", units='#{dv.units}'":"" %>)
+<%- end %>
+        self.add_subsystem('<%= @mda.py_classname %>', <%= @mda.py_classname %>EgDiscipline(self.discipline_factory, self.gp_factory, 
+                                                                               self.n_doe_pce, self.epsilon_coeff_var, self.n_iter_max,
+                                                                               self.plot, self.plot_range),
+                           promotes=[<%= @mda.variables.map(&:py_varname).uniq.map{|v| "'#{v}'"}.join(', ') %>])
+

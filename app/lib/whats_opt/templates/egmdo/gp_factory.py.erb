@@ -1,0 +1,47 @@
+import os
+import numpy as np
+import pickle
+from smt.surrogate_models import KRG
+from egmdo.doe_factory import DoeFactory
+
+class GpFactory:
+
+    def __init__(self, doe_factory):
+        self.doe_factory = doe_factory
+
+    @staticmethod
+    def gp_filename(disc_name, var_name):
+        return f"gp_<%= @mda.snake_modulename %>_{disc_name}_{var_name}.pkl"
+
+<%- @mda.plain_disciplines.each do |disc| -%>
+<% disc.output_variables.each do |v| %>
+    def create_gp_<%= disc.snake_modulename %>_<%= v.py_varname %>(self, n_cases=4):
+        # load or create the DoE 
+        doe_file = self.doe_factory.doe_numpy_filename("<%= disc.snake_modulename %>")
+        if (not os.path.exists(doe_file)):
+            self.doe_factory.create_doe_<%= disc.snake_modulename %>(n_cases)
+        doe = np.load(doe_file)
+
+        # create the gp surrogate model
+        input_dim=<%= disc.input_variables.map(&:dim).inject(0, :+) %>
+        gp = KRG(theta0=[1e-2] * input_dim, print_global=False)
+        <%- outdim = Analysis.vars_dim(disc.output_variables) -%>
+        gp.set_training_values(doe[:, 0:-<%= outdim %>], doe[:, -<%= outdim %>:])
+        gp.train()
+        with open(self.gp_filename("<%= disc.snake_modulename %>", "<%= v.py_varname %>"), "wb") as f:
+            pickle.dump(gp, f)
+
+    def update_gp_<%= disc.snake_modulename %>_<%= v.py_varname %>(self, design_vars, coupling_vars):
+        new_doe = self.doe_factory.update_doe_<%= disc.snake_modulename %>(design_vars, coupling_vars)
+        self.create_gp_<%= disc.snake_modulename %>_<%= v.py_varname %>()
+        return new_doe
+
+<%- end %>
+<%- end %>
+
+    def create_all_gps(self, n_cases=4):
+    <%- @mda.plain_disciplines.each do |disc| -%>
+    <% disc.output_variables.each do |v| %>
+    <%- if disc.has_out_coupling? -%>
+        self.create_gp_<%= disc.snake_modulename %>_<%= v.py_varname %>(n_cases)<%- end %><%- end %><%- end %>
+

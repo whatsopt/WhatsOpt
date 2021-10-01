@@ -17,6 +17,7 @@ module WhatsOpt
       @template_dir = File.join(File.dirname(__FILE__), "templates")
       @genfiles = []
       @server_module = "server"
+      @egmdo_module = "egmdo"
       @server_host = "localhost"
       @server_port = 31400
       @generator = self
@@ -28,7 +29,7 @@ module WhatsOpt
       stringio = nil
       @genfiles = []
       Dir.mktmpdir("#{prefix}_#{@mda.basename}_") do |dir|
-        # dir='/tmp/test'
+        # dir='/tmp'
         zip_rootpath = Pathname.new(dir)
         zip_filename = File.basename(dir) + ".zip"
         _generate_code(dir, options)

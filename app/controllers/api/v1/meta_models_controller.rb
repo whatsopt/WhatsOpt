@@ -16,7 +16,7 @@ class Api::V1::MetaModelsController < Api::ApiController
   # POST /api/v1/operations/{operation_id}/meta_models
   def create
     ope = Operation.find(params[:operation_id])
-    mda = Analysis.build_metamodel_analysis(ope, meta_model_params[:variables])
+    mda = Analysis.build_from_metamodel_ope(ope, meta_model_params[:variables])
     authorize mda
     if mda.save
       driver = MetaModel.get_driver_from_metamodel_kind(meta_model_params[:kind])

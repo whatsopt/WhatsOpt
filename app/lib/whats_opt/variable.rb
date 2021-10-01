@@ -82,7 +82,7 @@ module WhatsOpt
     end
 
     def is_scalar?
-      ndim == 0
+      type != STRING_T && ndim == 0
     end
 
     def is_out?

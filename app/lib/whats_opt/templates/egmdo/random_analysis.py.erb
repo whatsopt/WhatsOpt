@@ -1,0 +1,169 @@
+import numpy as np
+from numpy import nan, inf
+import pickle
+import openturns as ot
+
+import openmdao.api as om
+<% if @impl.nonlinear_solver.reckless? -%>
+from openmdao_extensions.reckless_nonlinear_block_gs import RecklessNonlinearBlockGS
+<% else -%>
+from openmdao.api import <%= @impl.nonlinear_solver.name %>
+<% end -%>
+from openmdao.api import <%= @impl.linear_solver.name %>
+from openmdao_extensions.smt_doe_driver import SmtDOEDriver
+from openmdao_extensions.openturns_doe_driver import OpenturnsDOEDriver
+<%- @mda.plain_disciplines.each do |disc| -%>
+<%- disc.output_variables.each do |v| %>
+<%- if disc.has_out_coupling? %>
+class <%= disc.py_classname %>RandomDiscipline(om.ExplicitComponent):
+    """ An OpenMDAO base component to encapsulate <%= disc.py_classname %> discipline """
+
+    def __init__(self, gp_factory, **kwargs):
+        super().__init__(**kwargs)
+<% disc.output_variables.each do |v|%>        
+        with open(gp_factory.gp_filename("<%= disc.snake_modulename %>", "<%= v.py_varname %>"), 'rb') as f:
+            self.gp_<%= v.py_varname %> = pickle.load(f) 
+<%- end %>
+
+<%- unless disc.variables.empty? -%>
+    def setup(self):
+<% disc.input_variables.numeric.each do |var| %>
+        self.add_input('<%= var.py_varname %>', val=<%= var.init_py_value %>, desc='<%= var.escaped_desc %>'<%= @impl.use_units && !var.units.blank? ? ", units='#{var.units}'":"" %>)<%- end %>
+<% disc.output_coupling_variables.each do |var| %>
+        self.add_input('_xi_<%= var.py_varname %>', val=0.0)<%- end %>
+<% disc.output_variables.numeric.each do |var| -%>
+<% if var.scaling.blank? -%>
+        self.add_output('<%= var.py_varname %>', val=<%= var.init_py_value %>, desc='<%= var.escaped_desc %>'<%= @impl.use_units && !var.units.blank? ? ", units='#{var.units}'":"" %>)
+<% else -%>
+        self.add_output('<%= var.py_varname %>', val=<%= var.init_py_value %>, desc='<%= var.escaped_desc %>',
+                        ref=<%= var.scaling_ref_py_value %>, ref0=<%= var.scaling_ref0_py_value %>, res_ref=<%= var.scaling_res_ref_py_value %><%= @impl.use_units && !var.units.blank? ? ", units='#{var.units}'":"" %>)
+<%- end -%>
+<%- end -%>
+<%- end -%>
+
+    def compute(self, inputs, outputs):
+        inputs_gp = np.array([])
+        for name in sorted(inputs.keys()):
+            if not name == '_xi_<%= v.py_varname %>': 
+                inputs_gp = np.concatenate((inputs_gp, inputs[name]))
+        inputs_gp = np.atleast_2d(inputs_gp)    
+<% disc.output_variables.each_with_index do |v|%>        
+        sigma = np.sqrt(self.gp_<%= v.py_varname %>.predict_variances(inputs_gp))
+        mean = self.gp_<%= v.py_varname %>.predict_values(inputs_gp)
+        outputs['<%= v.py_varname %>'] = mean +  inputs['_xi_<%= v.py_varname %>'] * sigma 
+<%- end -%><%- end -%><%- end %><%- end -%>
+class <%= @mda.py_classname %>RandomAnalysis(<%= @impl.parallel_group ? "om.ParallelGroup" : "om.Group" %>):
+    """ An OpenMDAO base component to encapsulate <%= @mda.py_classname %> random MDA """
+    def __init__(self, discipline_factory, gp_factory, **kwargs):
+        super(). __init__(**kwargs)
+        self.disc_factory = discipline_factory
+        self.gp_factory = gp_factory
+
+        self.nonlinear_solver = <%= @impl.nonlinear_solver.name %>()
+<% unless @impl.nonlinear_solver.runonce? -%>
+        self.nonlinear_solver.options['atol'] = <%= @impl.nonlinear_solver.atol %>
+        self.nonlinear_solver.options['rtol'] = <%= @impl.nonlinear_solver.rtol %>
+        self.nonlinear_solver.options['err_on_non_converge'] = <%= @impl.to_code(:nonlinear_solver, :err_on_non_converge) %>
+        self.nonlinear_solver.options['iprint'] = <%= @impl.linear_solver.iprint %>
+        self.nonlinear_solver.options['maxiter'] = <%= @impl.nonlinear_solver.maxiter %>
+<% end -%>
+
+        self.linear_solver = <%= @impl.linear_solver.name %>()
+        self.linear_solver.options['atol'] = <%= @impl.linear_solver.atol %>
+        self.linear_solver.options['rtol'] = <%= @impl.linear_solver.rtol %>
+        self.linear_solver.options['err_on_non_converge'] = <%= @impl.to_code(:linear_solver, :err_on_non_converge) %>
+        self.linear_solver.options['iprint'] = <%= @impl.linear_solver.iprint %>
+        self.linear_solver.options['maxiter'] = <%= @impl.linear_solver.maxiter %>
+
+    def setup(self):<% @mda.input_variables.each do |dv| %>
+        self.set_input_defaults('<%= dv.name %>', val=<%= dv.init_py_value %><%= @impl.use_units && !dv.units.blank? ? ", units='#{dv.units}'":"" %>)<% end -%>
+<% @mda.coupling_variables.each do |cv| %>
+        self.set_input_defaults('_xi_<%= cv.name %>', val=0.0)<% end -%>
+
+<% @mda.disciplines.nodes.each do |disc| %>
+<%- if disc.has_out_coupling? -%>
+        name = '<%= disc.py_classname %>Random'
+        disc = <%= disc.py_classname %>RandomDiscipline(self.gp_factory)
+<%- else -%>
+        name = '<%= disc.py_classname %>'
+        disc = self.disc_factory.create_<%= disc.snake_modulename %>()
+<%- end -%>
+        self.add_subsystem(name, disc, promotes=['*'])<%- end %>
+
+def run_doe(discipline_factory, gp_factory, design_vars, n_cases, parallel=False):
+    pb = om.Problem(<%= @mda.py_classname %>RandomAnalysis(discipline_factory, gp_factory))
+    dists = []
+    <% @mda.coupling_variables.each do |uv| %>
+    # _xi_<%= uv.py_varname %> 
+    dists.append(ot.Normal(0.0, 1.0))<% end %>
+
+    <%- dim = Analysis.vars_dim(@mda.coupling_variables) -%>
+    # Dependency between variables can be specified by choosing a specific copula
+    copula = ot.IndependentCopula(<%= dim %>)  # default to no dependency
+
+    comp_dist = ot.ComposedDistribution(dists, copula)
+    pb.driver = OpenturnsDOEDriver(n_samples=n_cases, distribution=comp_dist)
+    pb.driver.options['run_parallel'] = parallel
+
+    case_recorder_filename = '<%= @mda.snake_modulename %>_random_mda_doe.sqlite'        
+    recorder = om.SqliteRecorder(case_recorder_filename)
+    pb.driver.add_recorder(recorder)
+    pb.driver.recording_options['includes'] = ['*']
+
+    # uncertain variable input are taken as design_variables to get recorded by driver recorder<%- @mda.coupling_variables.each do |dv| %>
+    pb.model.add_design_var('_xi_<%= dv.py_varname %>', lower=<%= dv.lower_py_value %>, upper=<%= dv.upper_py_value %>)<% end %>
+    pb.setup()  
+    for name, val in design_vars.items():
+        pb[name] = val
+    <%- @mda.coupling_variables.each do |param| -%>
+    pb['_xi_<%= param.py_varname %>'] = 0.0
+    <%- end -%>
+    pb.run_driver()
+    pb.cleanup()
+
+
+def run_random_mda(discipline_factory, gp_factory, design_vars, n_doe_pce):
+    # run the random MDA n times to create a doe
+    run_doe(discipline_factory, gp_factory, design_vars, n_doe_pce)
+
+    # open the doe to create the PCE
+    cr = om.CaseReader('<%= @mda.snake_modulename %>_random_mda_doe.sqlite')
+    driver_cases = cr.list_cases('driver')
+    case = cr.get_case(driver_cases[0])
+    n_doe = len(driver_cases)
+    n_des_var = len(case.get_design_vars()) 
+    doe = np.zeros((n_doe, n_des_var + 1))
+    des_var_names = sorted(case.get_design_vars())
+    obj_var_name = "<%= @mda.objective_variables.map(&:name).first %>"
+    coupling_var_doe = np.zeros((n_doe, <%= @mda.coupling_variables.size %>))
+    for i in range(n_doe):
+        case = cr.get_case(driver_cases[i])
+        for j in range(n_des_var):
+            doe[i, j] = case.outputs[des_var_names[j]]   
+        doe[i, -1] = case[obj_var_name]<%- @mda.coupling_variables.each_with_index do |cv, j| %>
+        coupling_var_doe[i, <%= j %>] = case['<%= cv.py_varname %>']<%- end %>
+
+    print(case.outputs.keys())
+    print("estimated mean of the output=", doe[:, -1].mean())
+    print("estimated coeff of var of the output=", doe[:, -1].std()/doe[:, -1].mean())
+
+    # Polynomial chaos expansion metamodel (peut-on utiliser l'appel à la méthode sur le serveur de Whatsopt?)
+    # degree of the expansion 
+    degree = 3
+    distribution = ot.Normal(n_des_var)
+    basis = [ot.StandardDistributionPolynomialFactory(distribution.getMarginal(i)) for i in range(n_des_var)]
+    enumerateFunction = ot.LinearEnumerateFunction(n_des_var)
+    productBasis = ot.OrthogonalProductPolynomialFactory(basis, enumerateFunction)
+    adaptiveStrategy = ot.FixedStrategy(productBasis, enumerateFunction.getStrataCumulatedCardinal(degree))
+    projectionStrategy = ot.LeastSquaresStrategy()
+    algo = ot.FunctionalChaosAlgorithm(doe[:,0:-1], np.atleast_2d(doe[:,-1]).T, distribution, adaptiveStrategy, projectionStrategy)
+    algo.run()
+    result = algo.getResult()
+
+    # sensitivity analysis
+    sensitivityAnalysis = ot.FunctionalChaosSobolIndices(result)
+    first_order = [sensitivityAnalysis.getSobolIndex(i) for i in range(n_des_var)]
+    print("first order Sobol indices=", first_order)
+    print("sum of the first order Sobol indices=", np.array(first_order).sum())
+    print("disciplinary GP to enrich=", des_var_names[np.array(first_order).argmax()])
+    return doe, np.array(first_order).argmax(), coupling_var_doe
