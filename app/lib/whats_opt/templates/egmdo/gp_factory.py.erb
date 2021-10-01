@@ -14,6 +14,7 @@ class GpFactory:
         return f"gp_<%= @mda.snake_modulename %>_{disc_name}_{var_name}.pkl"
 
 <%- @mda.plain_disciplines.each do |disc| -%>
+<%- if disc.openmdao_impl&.egmdo_surrogate -%>
 <% disc.output_variables.each do |v| %>
     def create_gp_<%= disc.snake_modulename %>_<%= v.py_varname %>(self, n_cases=4):
         # load or create the DoE 
@@ -35,13 +36,14 @@ class GpFactory:
         new_doe = self.doe_factory.update_doe_<%= disc.snake_modulename %>(design_vars, coupling_vars)
         self.create_gp_<%= disc.snake_modulename %>_<%= v.py_varname %>()
         return new_doe
-
-<%- end %>
-<%- end %>
+<%- end -%>
+<%- end -%>
+<%- end -%>
 
     def create_all_gps(self, n_cases=4):
-    <%- @mda.plain_disciplines.each do |disc| -%>
-    <% disc.output_variables.each do |v| %>
-    <%- if disc.has_out_coupling? -%>
-        self.create_gp_<%= disc.snake_modulename %>_<%= v.py_varname %>(n_cases)<%- end %><%- end %><%- end %>
-
+    <%- @mda.egmdo_random_variables.each do |v| -%>
+        self.create_gp_<%= v.discipline.snake_modulename %>_<%= v.py_varname %>(n_cases)
+    <%- end -%>
+    <%- if @mda.disciplines.select{|d| d.openmdao_impl&.egmdo_surrogate?}.empty? -%>
+        pass
+    <%- end -%>

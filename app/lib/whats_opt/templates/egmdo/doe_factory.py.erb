@@ -6,7 +6,6 @@ import openmdao.api as om
 from openmdao_extensions.smt_doe_driver import SmtDOEDriver
 
 class DoeFactory:
-
     def __init__(self, discipline_factory, plot=False):
         self.discipline_factory = discipline_factory
         self.plot = plot
@@ -19,8 +18,8 @@ class DoeFactory:
     def doe_numpy_filename(disc_name):
         return f"doe_<%= @mda.snake_modulename %>_{disc_name}.npy"
 
-<% @mda.plain_disciplines.each do |disc| -%>
-<% if disc.has_out_coupling? -%>
+<%- @mda.plain_disciplines.each do |disc| -%>
+<%- if disc.openmdao_impl&.egmdo_surrogate? -%>
     def create_doe_<%= disc.snake_modulename %>(self, n_cases, plot=False):
         pb = om.Problem()
         pb.model.add_subsystem("<%= disc.py_classname %>", self.discipline_factory.create_<%= disc.snake_modulename %>(), promotes=['*'])
@@ -80,7 +79,6 @@ class DoeFactory:
 <%- end -%>
             plt.show()
 
-
     def update_doe_<%= disc.snake_modulename %>(self, design_vars, coupling_vars):
         # open the disciplinary DoE
         doe = np.load(self.doe_numpy_filename("<%= disc.snake_modulename %>"))
@@ -131,13 +129,15 @@ class DoeFactory:
         np.save(self.doe_numpy_filename("<%= disc.snake_modulename %>"), new_doe)
 
         return new_doe
-<% end %>
-
-<% end -%>
+<%- end -%>
+<%- end -%>
 
 def create_all_does(discipline_factory, n_cases=4):
-<% @mda.plain_disciplines.each do |disc| -%>
-<% if disc.has_out_coupling? -%>
+<%- @mda.plain_disciplines.each do |disc| -%>
+<%- if disc.openmdao_impl&.egmdo_surrogate -%>
     DoeFactory(discipline_factory).create_doe_<%= disc.snake_modulename %>(n_cases)
-<% end -%>
-<% end %>
+<%- end -%>
+<%- end -%>
+<%- if @mda.disciplines.select{|d| d.openmdao_impl&.egmdo_surrogate}.empty? -%>
+    pass
+<%- end -%>

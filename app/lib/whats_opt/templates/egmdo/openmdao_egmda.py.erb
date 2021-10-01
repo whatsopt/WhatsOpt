@@ -87,8 +87,10 @@ class <%= @mda.py_classname %>Egmda(om.Group):
 <%- @mda.input_variables.each do |dv| -%>
         self.set_input_defaults('<%= dv.name %>', val=<%= dv.init_py_value %><%= @impl.use_units && !dv.units.blank? ? ", units='#{dv.units}'":"" %>)
 <%- end %>
-        self.add_subsystem('<%= @mda.py_classname %>', <%= @mda.py_classname %>EgDiscipline(self.discipline_factory, self.gp_factory, 
-                                                                               self.n_doe_pce, self.epsilon_coeff_var, self.n_iter_max,
-                                                                               self.plot, self.plot_range),
-                           promotes=[<%= @mda.variables.map(&:py_varname).uniq.map{|v| "'#{v}'"}.join(', ') %>])
+        self.add_subsystem('<%= @mda.py_classname %>', 
+                           <%= @mda.py_classname %>EgDiscipline(
+                                self.discipline_factory, self.gp_factory, 
+                                self.n_doe_pce, self.epsilon_coeff_var, self.n_iter_max,
+                                self.plot, self.plot_range),
+                           promotes=[<%= (@mda.input_variables+@mda.output_variables).map(&:py_varname).uniq.map{|v| "'#{v}'"}.join(', ') %>])
 

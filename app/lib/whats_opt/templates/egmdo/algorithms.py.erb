@@ -10,8 +10,8 @@ from egmdo.gp_factory import GpFactory
 
 def enrich_gp(gp_factory, design_vars, coupling_vars,  disc_index):
     for k in range(len(disc_index)):
-    <% @mda.coupling_variables.each_with_index do |cv, i| %>
-        <% disc = cv.discipline %>
+    <%- @mda.egmdo_random_variables.each_with_index do |cv, i| -%>
+        <%- disc = cv.discipline -%>
         if disc_index[k]==<%= i %>:
             gp_factory.update_gp_<%= disc.snake_modulename %>_<%= cv.py_varname %>(design_vars, coupling_vars)
     <%- end -%>
@@ -32,14 +32,15 @@ def run_egmda(discipline_factory, design_vars,
     while (not convergence) and (n_iter < n_iter_max):
         # run random MDA
         doe, disc_index, coupling_var_doe = run_random_mda(discipline_factory, gp_factory, design_vars, n_doe_pce)
-<%- if @mda.coupling_variables.count == 2 -%>
+<% random_vars =  @mda.egmdo_random_variables %>
+<%- if random_vars.count == 2 && random_vars.first.discipline != random_vars.second.discipline -%>
         if (plot):
             plt.plot(coupling_var_doe[:, 0], coupling_var_doe[:, 1],'+')
 <%- [0, 1].each_with_index do |i| -%>
             b_min_<%= i %> = plot_range[0]
             b_max_<%= i %> = plot_range[1]
 <%- end %>
-<%- @mda.coupling_variables.each_with_index do |cv, i| -%>
+<%- random_vars.each_with_index do |cv, i| -%>
 <%- disc = cv.discipline -%>
             with open(gp_factory.gp_filename("<%= disc.snake_modulename %>", "<%= cv.py_varname %>"),'rb') as f:
                 gp_<%= i %> = pickle.load(f)
@@ -47,7 +48,7 @@ def run_egmda(discipline_factory, design_vars,
             inputs_gp<%= i %> = np.zeros((100, <%= disc.input_variables.map(&:dim).inject(0, :+) %>)) 
 <%- index = 0 -%>
 <%- disc.input_variables.each_with_index do |var, j| -%>
-<%- if @mda.coupling_variables.map(&:name).include?(var.name) -%>
+<%- if random_vars.map(&:name).include?(var.name) -%>
             inputs_gp<%= i %>[:, <%= index %>] = np.linspace(b_min_<%= i %>, b_max_<%= i %>, 100)
 <%- else -%>
             inputs_gp<%= i %>[:, <%= index %>:<%= index + var.dim %> ] = design_vars['<%= var.name %>']
@@ -69,8 +70,9 @@ def run_egmda(discipline_factory, design_vars,
             plt.show()
 
 <% else %>
+<% random_vars =  @mda.egmdo_random_variables %>
         if (plot):
-            print("Plotting disabled! Plotting requires 2 couplings from surrogates, got <% @mda.coupling_variables.count %>)")
+            print("Plotting disabled! Plotting requires 2 couplings from surrogates, got <% random_vars.count %>)")
 
 <%- end -%>
         mean = doe[:, -1].mean()
