@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_01_150747) do
+ActiveRecord::Schema.define(version: 2021_10_01_132142) do
 
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
@@ -194,6 +194,7 @@ ActiveRecord::Schema.define(version: 2021_09_01_150747) do
     t.boolean "implicit_component"
     t.boolean "support_derivatives"
     t.integer "discipline_id"
+    t.boolean "egmdo_surrogate", default: false, null: false
     t.index ["discipline_id"], name: "index_openmdao_discipline_impls_on_discipline_id"
   end
 

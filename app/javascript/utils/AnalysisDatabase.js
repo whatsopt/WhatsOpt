@@ -122,6 +122,20 @@ class AnalysisDatabase {
     return this.constraints;
   }
 
+  shouldBeBounded(conn) {
+    console.log(this.mda.impl.openmdao.components);
+    const surrogateIds = this.mda.impl.openmdao.components.nodes
+      .filter((node) => node.egmdo_surrogate)
+      .map((node) => `${node.discipline_id}`);
+    console.log(surrogateIds);
+    let shouldBeBounded = false;
+    console.log(conn.to);
+    for (const id of conn.to) {
+      shouldBeBounded = shouldBeBounded || (surrogateIds.indexOf(id) > -1);
+    }
+    return shouldBeBounded;
+  }
+
   computeConnections(filter) {
     let { edges } = this;
     let nodeSelected = filter && filter.fr && (filter.fr === filter.to);
@@ -192,6 +206,7 @@ class AnalysisDatabase {
         fromId: conn.fr,
         toIds: conn.to,
         uq: infos.uq,
+        shouldBeBounded: this.shouldBeBounded(conn),
       };
       return val;
     });

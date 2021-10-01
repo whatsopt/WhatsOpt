@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_01_150747) do
+ActiveRecord::Schema.define(version: 2021_10_01_132142) do
 
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
@@ -52,6 +52,13 @@ ActiveRecord::Schema.define(version: 2021_09_01_150747) do
     t.index ["ancestry"], name: "index_analyses_on_ancestry"
   end
 
+  create_table "analyses_design_projects", id: false, force: :cascade do |t|
+    t.integer "design_project_id", null: false
+    t.integer "analysis_id", null: false
+    t.index ["analysis_id", "design_project_id"], name: "index_analysis_id_design_project_id"
+    t.index ["design_project_id", "analysis_id"], name: "index_design_project_id_analysis_id"
+  end
+
   create_table "analysis_disciplines", force: :cascade do |t|
     t.integer "discipline_id"
     t.integer "analysis_id"
@@ -78,6 +85,15 @@ ActiveRecord::Schema.define(version: 2021_09_01_150747) do
     t.integer "variable_id"
     t.integer "coord_index", default: -1
     t.text "values"
+  end
+
+  create_table "components", force: :cascade do |t|
+    t.integer "discipline_id"
+    t.boolean "has_derivatives", default: false
+    t.boolean "is_implicit", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["discipline_id"], name: "index_components_on_discipline_id"
   end
 
   create_table "connections", force: :cascade do |t|
@@ -194,6 +210,7 @@ ActiveRecord::Schema.define(version: 2021_09_01_150747) do
     t.boolean "implicit_component"
     t.boolean "support_derivatives"
     t.integer "discipline_id"
+    t.boolean "egmdo_surrogate", default: false, null: false
     t.index ["discipline_id"], name: "index_openmdao_discipline_impls_on_discipline_id"
   end
 
@@ -228,9 +245,9 @@ ActiveRecord::Schema.define(version: 2021_09_01_150747) do
   end
 
   create_table "parameters", force: :cascade do |t|
-    t.text "init"
-    t.text "lower"
-    t.text "upper"
+    t.string "init", default: ""
+    t.string "lower", default: ""
+    t.string "upper", default: ""
     t.integer "variable_id"
   end
 
@@ -316,7 +333,6 @@ ActiveRecord::Schema.define(version: 2021_09_01_150747) do
     t.index ["discipline_id"], name: "index_variables_on_discipline_id"
   end
 
-  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "analysis_disciplines", "analyses"
   add_foreign_key "analysis_disciplines", "disciplines"
 end

@@ -58,6 +58,7 @@ function _getOpenmdaoImpl(formData) {
         discipline_id: discId,
         implicit_component: openmdaoComps[discId].implicit,
         support_derivatives: openmdaoComps[discId].derivatives,
+        egmdo_surrogate: openmdaoComps[discId].surrogate,
       });
     }
   }
@@ -133,6 +134,7 @@ class OpenmdaoImplEditor extends React.Component {
         properties: {
           implicit: { type: 'boolean', title: 'Implicit component', default: node.implicit_component },
           derivatives: { type: 'boolean', title: 'Support derivatives', default: node.support_derivatives },
+          surrogate: { type: 'boolean', title: 'EGMDO surrogate', default: node.egmdo_surrogate },
         },
       };
     });
@@ -160,6 +162,7 @@ class OpenmdaoImplEditor extends React.Component {
       formData.components[`${node.discipline_id}`] = {
         implicit: node.implicit_component,
         derivatives: node.support_derivatives,
+        surrogate: node.egmdo_surrogate,
       };
     });
 

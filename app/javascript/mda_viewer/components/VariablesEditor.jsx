@@ -244,7 +244,8 @@ function EditableCell({
       || (role === 'constraint' && (id === 'lower' || id === 'upper'))
       || (role === 'parameter' && (id === 'init' || id === 'lower' || id === 'upper'))
       || (role === 'design_var' && (id === 'init' || id === 'lower' || id === 'upper'))
-      || (role === 'uncertain_var' && (id === 'init' || id === 'uq'));
+      || (role === 'uncertain_var' && (id === 'init' || id === 'uq'))
+      || (connections[index].shouldBeBounded && (id === 'lower' || id === 'upper'));
     if (isEditable) {
       return (
         <RIEInput

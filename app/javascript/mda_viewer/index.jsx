@@ -30,6 +30,24 @@ const reorder = (list, startIndex, endIndex) => {
   return result;
 };
 
+function _check_and_set_new_openmdao_impl(old_impl, new_impl) {
+  new_impl.components.nodes.forEach((node, i) => {
+    if (node.egmdo_surrogate && node.egmdo_surrogate
+      !== old_impl.components.nodes[i].egmdo_surrogate) {
+      // eslint-disable-next-line no-param-reassign
+      node.implicit_component = false;
+      // eslint-disable-next-line no-param-reassign
+      node.support_derivatives = false;
+    }
+    if ((node.implicit_component && node.implicit_component
+        !== old_impl.components.nodes[i].implicit_component)
+      || (node.support_derivatives && node.support_derivatives
+        !== old_impl.components.nodes[i].support_derivatives)) {
+      // eslint-disable-next-line no-param-reassign
+      node.egmdo_surrogate = false;
+    }
+  });
+}
 class MdaViewer extends React.Component {
   constructor(props) {
     super(props);
@@ -368,10 +386,12 @@ class MdaViewer extends React.Component {
 
   handleOpenmdaoImplChange(openmdaoImpl) {
     let newState;
-    const { mda } = this.state;
+    const { mda, implEdited } = this.state;
     if (deepIsEqual(mda.impl.openmdao, openmdaoImpl)) {
       newState = update(this.state, { implEdited: { $set: false } });
     } else if (mda.impl.openmdao.components.use_scaling === openmdaoImpl.components.use_scaling) {
+      const oldImpl = implEdited || JSON.parse(JSON.stringify(mda.impl.openmdao));
+      _check_and_set_new_openmdao_impl(oldImpl, openmdaoImpl);
       newState = update(this.state, { implEdited: { $set: openmdaoImpl } });
     } else {
       newState = update(this.state, { useScaling: { $set: openmdaoImpl.components.use_scaling } });
@@ -380,7 +400,9 @@ class MdaViewer extends React.Component {
   }
 
   handleOpenmdaoImplReset() {
-    const newState = update(this.state, { implEdited: { $set: false } });
+    const newState = update(this.state, {
+      implEdited: { $set: false },
+    });
     this.setState(newState);
   }
 
