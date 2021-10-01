@@ -14,7 +14,6 @@ from openmdao_extensions.smt_doe_driver import SmtDOEDriver
 from openmdao_extensions.openturns_doe_driver import OpenturnsDOEDriver
 <%- @mda.plain_disciplines.each do |disc| -%>
 <%- if disc.openmdao_impl&.egmdo_surrogate -%>
-<%- disc.output_variables.each do |v| -%>
 
 class <%= disc.py_classname %>RandomDiscipline(om.ExplicitComponent):
     """ An OpenMDAO base component to encapsulate <%= disc.py_classname %> discipline """
@@ -29,7 +28,7 @@ class <%= disc.py_classname %>RandomDiscipline(om.ExplicitComponent):
     def setup(self):
 <%- disc.input_variables.numeric.each do |var| %>
         self.add_input('<%= var.py_varname %>', val=<%= var.init_py_value %>, desc='<%= var.escaped_desc %>'<%= @impl.use_units && !var.units.blank? ? ", units='#{var.units}'":"" %>)<%- end %>
-<%- disc.output_coupling_variables.each do |var| %>
+<%- disc.output_variables.each do |var| %>
         self.add_input('_xi_<%= var.py_varname %>', val=0.0)<%- end %>
 <%- disc.output_variables.numeric.each do |var| -%>
 <%- if var.scaling.blank? -%>
@@ -39,12 +38,15 @@ class <%= disc.py_classname %>RandomDiscipline(om.ExplicitComponent):
                         ref=<%= var.scaling_ref_py_value %>, ref0=<%= var.scaling_ref0_py_value %>, res_ref=<%= var.scaling_res_ref_py_value %><%= @impl.use_units && !var.units.blank? ? ", units='#{var.units}'":"" %>)
 <%- end -%>
 <%- end -%>
-<%- end -%>
 
     def compute(self, inputs, outputs):
         inputs_gp = np.array([])
+        random_inputs = []
+<% disc.output_variables.each_with_index do |v| %>
+        random_inputs.append('_xi_<%= v.py_varname %>')
+<% end %>
         for name in sorted(inputs.keys()):
-            if not name == '_xi_<%= v.py_varname %>': 
+            if name not in random_inputs: 
                 inputs_gp = np.concatenate((inputs_gp, inputs[name]))
         inputs_gp = np.atleast_2d(inputs_gp)    
 <% disc.output_variables.each_with_index do |v|%>        
@@ -82,8 +84,12 @@ class <%= @mda.py_classname %>RandomAnalysis(<%= @impl.parallel_group ? "om.Para
 
     def setup(self):<% @mda.input_variables.each do |dv| %>
         self.set_input_defaults('<%= dv.name %>', val=<%= dv.init_py_value %><%= @impl.use_units && !dv.units.blank? ? ", units='#{dv.units}'":"" %>)<% end -%>
-<%- @mda.egmdo_random_variables.each do |v| %>
+<%- @mda.plain_disciplines.each do |disc| %>
+<% if disc.openmdao_impl&.egmdo_surrogate %>
+<% disc.output_variables.each do |v| %>
         self.set_input_defaults('_xi_<%= v.name %>', val=0.0)
+<%- end -%>
+<%- end -%>
 <%- end -%>
 
 <%- @mda.plain_disciplines.each do |disc| -%>
@@ -104,7 +110,7 @@ def run_doe(discipline_factory, gp_factory, design_vars, n_cases, parallel=False
     <% dim = 0 %>
     <%- @mda.plain_disciplines.each do |disc| -%>
     <%- if disc.openmdao_impl&.egmdo_surrogate -%>
-    <%- disc.output_coupling_variables.each do |param| -%>
+    <%- disc.output_variables.each do |param| -%>
     # _xi_<%= param.py_varname %> 
     dists.append(ot.Normal(0.0, 1.0))
     <%- dim = dim + 1 -%>
@@ -127,7 +133,7 @@ def run_doe(discipline_factory, gp_factory, design_vars, n_cases, parallel=False
     # uncertain variable input are taken as design_variables to get recorded by driver recorder
     <%- @mda.plain_disciplines.each do |disc| -%>
     <%- if disc.openmdao_impl&.egmdo_surrogate -%>
-    <%- disc.output_coupling_variables.each do |dv| -%>
+    <%- disc.output_variables.each do |dv| -%>
     pb.model.add_design_var('_xi_<%= dv.py_varname %>', lower=<%= dv.lower_py_value %>, upper=<%= dv.upper_py_value %>)
     <%- end -%>
     <%- end -%>
@@ -137,7 +143,7 @@ def run_doe(discipline_factory, gp_factory, design_vars, n_cases, parallel=False
         pb[name] = val
     <%- @mda.plain_disciplines.each do |disc| -%>
     <%- if disc.openmdao_impl&.egmdo_surrogate -%>
-    <%- disc.output_coupling_variables.each do |param| -%>
+    <%- disc.output_variables.each do |param| -%>
     pb['_xi_<%= param.py_varname %>'] = 0.0
     <%- end -%>
     <%- end -%>

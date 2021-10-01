@@ -70,9 +70,8 @@ def run_egmda(discipline_factory, design_vars,
             plt.show()
 
 <% else %>
-<% random_vars =  @mda.egmdo_random_variables %>
         if (plot):
-            print("Plotting disabled! Plotting requires 2 couplings from surrogates, got <% random_vars.count %>)")
+            print("Plotting disabled! Plotting requires 2 couplings from surrogates, got <%= random_vars.count %>)")
 
 <%- end -%>
         mean = doe[:, -1].mean()
