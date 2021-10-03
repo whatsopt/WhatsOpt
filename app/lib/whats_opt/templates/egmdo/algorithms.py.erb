@@ -80,7 +80,7 @@ def run_egmda(discipline_factory, design_vars,
         cv_coeff_var.append(coeff_var)
 
         # compute convergence criterion 
-        convergence = (coeff_var <= epsilon_coeff_var)
+        convergence = (np.abs(coeff_var) <= epsilon_coeff_var)
         coupling_vars_values = coupling_var_doe.mean(axis=0)
         coupling_vars = {}
 <%- @mda.coupling_variables.each_with_index do |cv, i| -%>

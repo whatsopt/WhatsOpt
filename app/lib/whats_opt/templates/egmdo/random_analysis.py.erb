@@ -52,7 +52,7 @@ class <%= disc.py_classname %>RandomDiscipline(om.ExplicitComponent):
 <% disc.output_variables.each_with_index do |v|%>        
         sigma = np.sqrt(self.gp_<%= v.py_varname %>.predict_variances(inputs_gp))
         mean = self.gp_<%= v.py_varname %>.predict_values(inputs_gp)
-        outputs['<%= v.py_varname %>'] = mean +  inputs['_xi_<%= v.py_varname %>'] * sigma 
+        outputs['<%= v.py_varname %>'] = mean + inputs['_xi_<%= v.py_varname %>'] * sigma 
 <%- end -%>
 <%- end -%>
 <%- end -%>
