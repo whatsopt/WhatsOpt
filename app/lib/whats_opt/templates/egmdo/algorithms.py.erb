@@ -15,10 +15,21 @@ def enrich_gp(gp_factory, design_vars, coupling_vars,  disc_index):
         if disc_index[k]==<%= i %>:
             gp_factory.update_gp_<%= disc.snake_modulename %>_<%= cv.py_varname %>(design_vars, coupling_vars)
     <%- end -%>
+    <%- if @mda.egmdo_random_variables.blank? -%>
+        pass
+    <%- end -%>
 
 def run_egmda(discipline_factory, design_vars,
               n_doe_pce=500, epsilon_coeff_var=1e-3, n_iter_max=10,
               gp_factory=None, plot=None, plot_range=[0, 50]):
+    <%- if @mda.disciplines.select{|d| d.openmdao_impl&.egmdo_surrogate}.blank? -%>
+    print("Error: You have to select at least one discipline as surrogate then update the EGMDO code and retry.")
+    exit(-1)
+    <%- end -%>
+    <%- unless @mda.has_objective? -%>
+    print("Error: You have to select an objective variable then update the EGMDO code and retry.")
+    exit(-1)
+    <%- end -%>
     convergence = False
     n_iter = 0
     cv_mean = []

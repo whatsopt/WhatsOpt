@@ -34,8 +34,12 @@ class DoeFactory:
         pb.driver.recording_options["includes"] = ["*"]
         <%- disc.input_variables.each do |v| %>
         <%- refvar = @mda.variable(v.name) -%>
-        <%- lower = refvar.lower_py_value=="-inf" ? "-50." : refvar.lower_py_value -%>
-        <%- upper = refvar.upper_py_value=="inf" ? "50." : refvar.upper_py_value -%>
+        <% lower = refvar.lower_py_value %>
+        <% upper = refvar.upper_py_value %>
+        <%- if lower=="-inf" || upper=="inf" -%>
+        print("Error: You have to specify bounds for '<%= v.name %>' variable then update the EGMDO code and retry.")
+        exit(-1)
+        <% end %>
         pb.model.add_design_var('<%= v.name %>', lower=<%= lower %>, upper=<%= upper %>)<% end %>
 
         pb.setup()
