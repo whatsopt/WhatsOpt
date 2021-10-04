@@ -8,13 +8,15 @@ from egmdo.random_analysis import run_random_mda
 from egmdo.doe_factory import DoeFactory
 from egmdo.gp_factory import GpFactory
 
-def enrich_gp(gp_factory, design_vars, coupling_vars,  disc_index):
-    for k in range(len(disc_index)):
-    <%- @mda.egmdo_random_variables.each_with_index do |cv, i| -%>
-        <%- disc = cv.discipline -%>
-        if disc_index[k]==<%= i %>:
-            gp_factory.update_gp_<%= disc.snake_modulename %>_<%= cv.py_varname %>(design_vars, coupling_vars)
+def enrich_gp(gp_factory, design_vars, coupling_vars,  max_effect_varnames):
+    for k in range(len(max_effect_varnames)):
+    <%- @mda.egmdo_random_disciplines.each_with_index do |disc| -%>
+    <% disc.output_variables.each do |v| %>
+        if max_effect_varnames[k] == '<%= v.name %>':
+            print("Enrich GP of discipline '<%= disc.name %>'")
+            gp_factory.update_gp_<%= disc.snake_modulename %>_<%= v.py_varname %>(design_vars, coupling_vars)
     <%- end -%>
+    <%- end -%>    
     <%- if @mda.egmdo_random_variables.blank? -%>
         pass
     <%- end -%>
@@ -22,7 +24,7 @@ def enrich_gp(gp_factory, design_vars, coupling_vars,  disc_index):
 def run_egmda(discipline_factory, design_vars,
               n_doe_pce=500, epsilon_coeff_var=1e-3, n_iter_max=10,
               gp_factory=None, plot=None, plot_range=[0, 50]):
-    <%- if @mda.disciplines.select{|d| d.openmdao_impl&.egmdo_surrogate}.blank? -%>
+    <%- if @mda.plain_disciplines.select{|d| d.openmdao_impl&.egmdo_surrogate}.blank? -%>
     print("Error: You have to select at least one discipline as surrogate then update the EGMDO code and retry.")
     exit(-1)
     <%- end -%>
@@ -42,7 +44,7 @@ def run_egmda(discipline_factory, design_vars,
 
     while (not convergence) and (n_iter < n_iter_max):
         # run random MDA
-        doe, disc_index, coupling_var_doe = run_random_mda(discipline_factory, gp_factory, design_vars, n_doe_pce)
+        doe, max_effect_varname, coupling_var_doe = run_random_mda(discipline_factory, gp_factory, design_vars, n_doe_pce)
 <% random_vars =  @mda.egmdo_random_variables %>
 <%- if random_vars.count == 2 && random_vars.first.discipline != random_vars.second.discipline -%>
         if (plot):
@@ -98,9 +100,14 @@ def run_egmda(discipline_factory, design_vars,
         coupling_vars['<%= cv.py_varname %>'] = coupling_vars_values[<%= i %>]
 <%- end -%>      
 
-        if not convergence:
-            # improve the disciplinary gp given by disc_index
-            enrich_gp(gp_factory, design_vars, coupling_vars, [disc_index])
-            n_iter += 1
+        if convergence:
+            print(f"Converged at {design_vars}")
+        else:
+            print(f"NOT converged at {design_vars}")
+            # improve the disciplinary gp given by the random variable name
+            enrich_gp(gp_factory, design_vars, coupling_vars, [max_effect_varname])
+
+        n_iter += 1
+        print(f"**************** Iteration {n_iter}/{n_iter_max} done **********************************************")
 
     return coupling_vars, cv_mean, cv_coeff_var

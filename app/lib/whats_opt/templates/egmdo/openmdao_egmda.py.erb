@@ -55,6 +55,8 @@ class <%= @mda.py_classname %>EgDiscipline(om.ExplicitComponent):
         pb = om.Problem(<%= @mda.py_classname %>RandomAnalysis(self.discipline_factory, self.gp_factory))
         pb.model.nonlinear_solver.options['err_on_non_converge'] = False
         pb.model.linear_solver.options['err_on_non_converge'] = False
+        pb.model.nonlinear_solver.options['iprint'] = 0
+        pb.model.linear_solver.options['iprint'] = 0
         pb.setup()
 <% @mda.input_variables.each do |var| -%>
         pb['<%= var.name %>'] = inputs['<%= var.name %>']

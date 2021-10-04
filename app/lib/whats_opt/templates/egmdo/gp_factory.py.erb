@@ -13,8 +13,8 @@ class GpFactory:
     def gp_filename(disc_name, var_name):
         return f"gp_<%= @mda.snake_modulename %>_{disc_name}_{var_name}.pkl"
 
-<%- @mda.plain_disciplines.each do |disc| -%>
-<%- if disc.openmdao_impl&.egmdo_surrogate -%>
+<%- @mda.egmdo_random_disciplines.each do |disc| -%>
+<%- outdim = Analysis.vars_dim(disc.output_variables) -%>
 <% disc.output_variables.each_with_index do |v, i| %>
     def create_gp_<%= disc.snake_modulename %>_<%= v.py_varname %>(self, n_cases=4):
         # load or create the DoE 
@@ -26,7 +26,6 @@ class GpFactory:
         # create the gp surrogate model
         input_dim=<%= disc.input_variables.map(&:dim).inject(0, :+) %>
         gp = KRG(theta0=[1e-2] * input_dim, print_global=False)
-        <%- outdim = Analysis.vars_dim(disc.output_variables) -%>
         gp.set_training_values(doe[:, :-<%= outdim %>], doe[:, -<%= outdim-i %>])
         gp.train()
         with open(self.gp_filename("<%= disc.snake_modulename %>", "<%= v.py_varname %>"), "wb") as f:
@@ -38,16 +37,11 @@ class GpFactory:
         return new_doe
 <%- end -%>
 <%- end -%>
-<%- end -%>
 
     def create_all_gps(self, n_cases=4):
-    <%- @mda.plain_disciplines.each do |disc| -%>
-    <%- if disc.openmdao_impl.egmdo_surrogate -%>
-    <%- disc.output_variables.each do |v| -%>
+    <%- @mda.egmdo_random_variables.each do |v| -%>
         self.create_gp_<%= v.discipline.snake_modulename %>_<%= v.py_varname %>(n_cases)
     <%- end -%>
-    <%- end -%>
-    <%- end -%>
-    <%- if @mda.disciplines.select{|d| d.openmdao_impl&.egmdo_surrogate?}.empty? -%>
+    <%- if @mda.egmdo_random_disciplines.empty? -%>
         pass
     <%- end -%>

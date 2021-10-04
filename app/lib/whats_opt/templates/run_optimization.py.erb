@@ -93,10 +93,13 @@ pb.run_driver()
 <%- @mda.design_variables.each do |dv| %>
 print("<%= dv.name %>= {}".format(pb['<%= dv.name %>']))<% end %>
 
-# reader = om.CaseReader(case_recorder_filename)
-# cases = reader.list_cases('problem')
+# cr = om.CaseReader(case_recorder_filename)
+# sources = cr.list_sources()
+# print(sources)
+
+# cases = cr.list_cases("driver")
 # print(cases)
 
 # for i in range(len(cases)):
-#    obj = cases[i].get_objectives()
-#    print(obj)
+#     obj = cases[i]
+#     print(obj)

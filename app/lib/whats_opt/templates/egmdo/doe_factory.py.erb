@@ -32,15 +32,16 @@ class DoeFactory:
         recorder = om.SqliteRecorder(self.doe_recorder_filename("<%= disc.snake_modulename %>"))
         pb.driver.add_recorder(recorder)
         pb.driver.recording_options["includes"] = ["*"]
-        <%- disc.input_variables.each do |v| %>
+        <%- disc.input_variables.each do |v| -%>
         <%- refvar = @mda.variable(v.name) -%>
-        <% lower = refvar.lower_py_value %>
-        <% upper = refvar.upper_py_value %>
+        <%- lower = refvar.lower_py_value -%>
+        <%- upper = refvar.upper_py_value -%>
         <%- if lower=="-inf" || upper=="inf" -%>
         print("Error: You have to specify bounds for '<%= v.name %>' variable then update the EGMDO code and retry.")
         exit(-1)
-        <% end %>
-        pb.model.add_design_var('<%= v.name %>', lower=<%= lower %>, upper=<%= upper %>)<% end %>
+        <%- end -%>
+        pb.model.add_design_var('<%= v.name %>', lower=<%= lower %>, upper=<%= upper %>)
+        <%- end -%>
 
         pb.setup()
         pb.run_driver()
@@ -48,7 +49,7 @@ class DoeFactory:
 
         # read the doe
         cr = om.CaseReader(self.doe_recorder_filename("<%= disc.snake_modulename %>"))
-        driver_cases = cr.list_cases("driver")
+        driver_cases = cr.list_cases("driver", out_stream=None)
         case = cr.get_case(driver_cases[0])
         n_doe = len(driver_cases)
         dim = <%= disc.variables.map(&:dim).inject(0, :+) %>
@@ -66,19 +67,19 @@ class DoeFactory:
 
         print(doe) 
         if self.plot:
-<%- (disc.output_variables).each_with_index do |var, i| %>
+<%- (disc.output_variables).each_with_index do |var, i| -%>
             for i in range(dim-1):
                 plt.subplot(1, dim-1, i + 1)
                 plt.plot(doe[:, i], doe[:, -1], 'o')
-                if i==0:
+                if i == 0:
                     plt.ylabel('<%= var.name %>')
 <%- v_index = 0 -%>
-<%- (disc.input_variables).each_with_index do |v, j| %>
-    <%- (0...v.dim).each do |j| -%> 
+<%- (disc.input_variables).each_with_index do |v, j| -%>
+<%- (0...v.dim).each do |j| -%> 
                 if i == <%= v_index + j %>:
                     plt.xlabel('<%= v.dim > 1 ? "#{v.name}[#{j}]" : v.name %>')
-    <%- end -%>
-    <%- v_index = v_index + v.dim -%>
+<%- end -%>
+<%- v_index = v_index + v.dim -%>
 <%- end -%>
 <%- end -%>
             plt.show()
@@ -90,8 +91,9 @@ class DoeFactory:
         new_doe[:doe.shape[0], :] = doe
 
         # open the sqlite dictionnary to find the index of the variables
-        cr = om.CaseReader(self.doe_recorder_filename("<%= disc.snake_modulename %>"))
-        driver_cases = cr.list_cases('driver')
+        filename = self.doe_recorder_filename("<%= disc.snake_modulename %>")
+        cr = om.CaseReader(filename)
+        driver_cases = cr.list_cases('driver', out_stream=None)
         case = cr.get_case(driver_cases[0])
         n_design_vars = len(case.get_design_vars()) 
         design_vars_names = sorted(case.get_design_vars())
@@ -103,10 +105,12 @@ class DoeFactory:
 
         problem = om.Problem(self.discipline_factory.create_<%= disc.snake_modulename %>())
         problem.setup()
-        <%- disc.design_variables.each do |var| %>
-        problem['<%= var.py_varname %>'] = design_vars['<%= var.py_varname %>']<%- end %>
-        <%- disc.input_coupling_variables.each do |var| %>
-        problem['<%= var.py_varname %>'] = coupling_vars['<%= var.py_varname %>']<%- end %>
+        <%- disc.design_variables.each do |var| -%>
+        problem['<%= var.py_varname %>'] = design_vars['<%= var.py_varname %>']
+        <%- end -%>
+        <%- disc.input_coupling_variables.each do |var| -%>
+        problem['<%= var.py_varname %>'] = coupling_vars['<%= var.py_varname %>']
+        <%- end -%>
 
         # run the analysis
         problem.run_model()
@@ -125,9 +129,10 @@ class DoeFactory:
             else:
                 new_doe[-1, start:start + dim_design_vars[ind + 1]] = design_vars[name]
 
-        <%- count = disc.output_variables.size %>
-        <% disc.output_variables.each_with_index do |var, i| %>
-        new_doe[-1, -<%= count - i %>] = problem.model.list_outputs(out_stream=None)[<%= i %>][1]['val']<%- end %>
+        <%- count = disc.output_variables.size -%>
+        <% disc.output_variables.each_with_index do |var, i| -%>
+        new_doe[-1, -<%= count - i %>] = problem.model.list_outputs(out_stream=None)[<%= i %>][1]['val']
+        <%- end -%>
 
         # save the DoE 
         np.save(self.doe_numpy_filename("<%= disc.snake_modulename %>"), new_doe)

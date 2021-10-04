@@ -174,9 +174,16 @@ class Analysis < ApplicationRecord
     Variable.vars_dim(vars)
   end
 
-  def egmdo_random_variables
+  def egmdo_random_disciplines
     @egmdo_vars ||= plain_disciplines.inject([]) do |acc, disc|
-      acc = acc + disc.output_coupling_variables if disc.openmdao_impl&.egmdo_surrogate
+      acc << disc if disc.openmdao_impl&.egmdo_surrogate
+      acc
+    end
+  end
+
+  def egmdo_random_variables
+    @egmdo_disciplines ||= plain_disciplines.inject([]) do |acc, disc|
+      acc = acc + disc.output_variables if disc.openmdao_impl&.egmdo_surrogate
       acc
     end
   end
