@@ -1,5 +1,18 @@
 <h1>CHANGELOG</h1>
 
+<h3>1.18.0 (31/10/2021)</h3>
+<ul>
+  <li>User can generate and run EGMDO methods from an analysis (wop update --egmdo):
+    <ul>
+      <li>User should select some disciplines as EGMDO surrogates</li>
+      <li>User should speci a variable as an objective</li>
+      <li>User can use run_egmda.py to run the analysis with surrogates</li>
+      <li>User can use run_egdoe.py to run a doe using the EGMDA</li>
+      <li>User can use run_egmdo.py to run an optimization using the EGMDA</li>
+    </ul>
+  </li>
+</ul>
+
 <h3>1.17.0 (28/09/2021)</h3>
 <ul>
   <li>User can browse analysis changes history (add/remove/renaming of disciplines, connections/variables)</li>
