@@ -160,27 +160,26 @@ module WhatsOpt
       if @driver_name # coming from GUI running remote driver
         @driver = OpenmdaoDriverFactory.new(@driver_name, @driver_options).create_driver
         if @driver.optimization?
-          if @mda.has_objective?
-            @sqlite_filename = options[:sqlite_filename] || "#{@mda.basename}_optimization.sqlite"
-            _generate("run_optimization.py", "run_optimization.py.erb", gendir)
-          else
-            # TODO: generate run_optimization.py with error message
-          end
+          @sqlite_filename = options[:sqlite_filename] || "#{@mda.basename}_optimization.sqlite"
+          _generate("run_optimization.py", "run_optimization.py.erb", gendir)
         end
         if @driver.doe?
           @sqlite_filename = options[:sqlite_filename] || "#{@mda.basename}_doe.sqlite"
           _generate("run_doe.py", "run_doe.py.erb", gendir)
         else
-          # TODO: generate run_doe.py with error message
+          # should be simple run_once driver
+          if @driver.class != WhatsOpt::OpenmdaoRunOnceDriver
+            raise RuntimeError("Ouch! Should be run_once driver got #{@driver.inspect}")  
+          end
         end
-      elsif (options[:with_runops] || @mda.is_root_analysis?) && @mda.has_decision_variables?
+      elsif (options[:with_runops] || @mda.is_root_analysis?)
         @driver = OpenmdaoDriverFactory.new(DEFAULT_DOE_DRIVER).create_driver
         @sqlite_filename = options[:sqlite_filename] || "#{@mda.basename}_doe.sqlite"
         if @mda.uq_mode?
           _generate("run_doe.py", "run_uq_doe.py.erb", gendir)
         else
           _generate("run_doe.py", "run_doe.py.erb", gendir)
-          if @mda.is_root_analysis? && @mda.has_objective?
+          if @mda.is_root_analysis?
             @driver = OpenmdaoDriverFactory.new(DEFAULT_OPTIMIZATION_DRIVER).create_driver
             @sqlite_filename = options[:sqlite_filename] || "#{@mda.basename}_optimization.sqlite"
             _generate("run_optimization.py", "run_optimization.py.erb", gendir)

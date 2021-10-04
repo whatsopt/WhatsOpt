@@ -66,7 +66,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     Connection.where(from: obj).update(role: WhatsOpt::Variable::RESPONSE_ROLE)
     expected = ["__init__.py", "aerodynamics.py", "aerodynamics_base.py", "cicav.py",
                 "cicav_base.py", "geometry.py", "geometry_base.py", "propulsion.py", "propulsion_base.py",
-                "run_analysis.py", "run_doe.py", "run_parameters_init.py", "run_screening.py"]
+                "run_analysis.py", "run_doe.py", "run_optimization.py", "run_parameters_init.py", "run_screening.py"]
     _assert_file_generation expected
   end
 
@@ -238,7 +238,9 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
       dirpath = Pathname.new(dir)
       basenames = ogen.genfiles.map { |f| Pathname.new(f).relative_path_from(dirpath).to_s }.sort
       expected = (["__init__.py", "disc.py", "disc_base.py", "inner/__init__.py", "inner/inner.py", "inner/inner_base.py", "inner/plain_discipline.py",
-        "inner/plain_discipline_base.py", "outer.py", "outer_base.py", "run_analysis.py", "run_doe.py", "run_parameters_init.py", "run_screening.py", "run_server.py", "server/__init__.py", "server/analysis.thrift", "server/discipline_proxy.py", "server/outer/Outer-remote",
+        "inner/plain_discipline_base.py", "outer.py", "outer_base.py", "run_analysis.py", "run_doe.py", "run_optimization.py", 
+        "run_parameters_init.py", "run_screening.py", "run_server.py", "server/__init__.py", "server/analysis.thrift", 
+        "server/discipline_proxy.py", "server/outer/Outer-remote",
         "server/outer/Outer.py", "server/outer/__init__.py", "server/outer/constants.py", "server/outer/ttypes.py",
         "server/outer_conversions.py", "server/outer_proxy.py", "vacant_discipline.py", "vacant_discipline_base.py",
         "server/remote_discipline.py"]).sort

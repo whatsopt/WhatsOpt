@@ -23,7 +23,7 @@ module WhatsOpt
       _generate("run_egdoe.py", "run_doe.py.erb", gendir)
       @sqlite_filename = "#{@mda.basename}_egmdo.sqlite"
       @driver = OpenmdaoDriverFactory.new(:scipy_optimizer_slsqp, {}).create_driver
-       _generate("run_egmdo.py", "run_optimization.py.erb", gendir)
+      _generate("run_egmdo.py", "run_optimization.py.erb", gendir)
       _generate("algorithms.py", "egmdo/algorithms.py.erb", egmdo_dir)
       _generate("doe_factory.py", "egmdo/doe_factory.py.erb", egmdo_dir)
       _generate("gp_factory.py", "egmdo/gp_factory.py.erb", egmdo_dir)

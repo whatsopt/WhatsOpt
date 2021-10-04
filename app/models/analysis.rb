@@ -174,12 +174,23 @@ class Analysis < ApplicationRecord
     Variable.vars_dim(vars)
   end
 
+  def egmdo_random_variables
+    @egmdo_vars ||= plain_disciplines.inject([]) do |acc, disc|
+      acc = acc + disc.output_coupling_variables if disc.openmdao_impl&.egmdo_surrogate
+      acc
+    end
+  end
+
   def plain_disciplines
     disciplines.nodes.select(&:is_plain?)
   end
 
   def sub_analyses
     children.joins(:analysis_discipline)
+  end
+
+  def is_composite?
+    sub_analyses.count != 0
   end
 
   def nesting_depth

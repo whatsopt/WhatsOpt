@@ -2,13 +2,16 @@ openmdao_geometry_impl:
   discipline: geometry
   implicit_component: false
   support_derivatives: false
+  egmdo_surrogate: true
 
 openmdao_aerodynamics_impl:
   discipline: aerodynamics
   implicit_component: false
   support_derivatives: false
+  egmdo_surrogate: true
 
 openmdao_propulsion_impl:
   discipline: propulsion
   implicit_component: false
   support_derivatives: false
+  egmdo_surrogate: false

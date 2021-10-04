@@ -56,16 +56,16 @@ class Discipline < ApplicationRecord
   end
 
   def input_variables
-    variables.ins
+    @input_variables ||= variables.ins
   end
 
   def output_variables
-    variables.outs
+    @output_variables ||= variables.outs
   end
 
   def input_coupling_variables
-    couplings = analysis.coupling_variables.map(&:name)
-    input_variables.select{|v| couplings.include?(v.name)}
+    @couplings ||= analysis.coupling_variables.map(&:name)
+    input_variables.select{|v| @couplings.include?(v.name)}
   end
 
   def design_variables
@@ -74,13 +74,13 @@ class Discipline < ApplicationRecord
   end
 
   def output_coupling_variables
-    couplings = analysis.coupling_variables.map(&:name)
-    output_variables.select{|v| couplings.include?(v.name)}
+    @couplings ||= analysis.coupling_variables.map(&:name)
+    output_variables.select{|v| @couplings.include?(v.name)}
   end
 
   def has_out_coupling?
-    couplings = analysis.coupling_variables.map(&:name)
-    !output_variables.select{|v| couplings.include?(v.name)}.empty?
+    @couplings ||= analysis.coupling_variables.map(&:name)
+    @has_out_coupling ||= output_variables.select{|v| @couplings.include?(v.name)}.empty?
   end
 
   def is_driver?

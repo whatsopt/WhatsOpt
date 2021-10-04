@@ -13,45 +13,52 @@ from openmdao.api import <%= @impl.linear_solver.name %>
 from openmdao_extensions.smt_doe_driver import SmtDOEDriver
 from openmdao_extensions.openturns_doe_driver import OpenturnsDOEDriver
 <%- @mda.plain_disciplines.each do |disc| -%>
-<%- disc.output_variables.each do |v| %>
-<%- if disc.has_out_coupling? %>
+<%- if disc.openmdao_impl&.egmdo_surrogate -%>
+
 class <%= disc.py_classname %>RandomDiscipline(om.ExplicitComponent):
     """ An OpenMDAO base component to encapsulate <%= disc.py_classname %> discipline """
-
     def __init__(self, gp_factory, **kwargs):
         super().__init__(**kwargs)
-<% disc.output_variables.each do |v|%>        
+<%- disc.output_variables.each do |v| -%>        
         with open(gp_factory.gp_filename("<%= disc.snake_modulename %>", "<%= v.py_varname %>"), 'rb') as f:
             self.gp_<%= v.py_varname %> = pickle.load(f) 
 <%- end %>
 
 <%- unless disc.variables.empty? -%>
     def setup(self):
-<% disc.input_variables.numeric.each do |var| %>
+<%- disc.input_variables.numeric.each do |var| %>
         self.add_input('<%= var.py_varname %>', val=<%= var.init_py_value %>, desc='<%= var.escaped_desc %>'<%= @impl.use_units && !var.units.blank? ? ", units='#{var.units}'":"" %>)<%- end %>
-<% disc.output_coupling_variables.each do |var| %>
+<%- disc.output_variables.each do |var| %>
         self.add_input('_xi_<%= var.py_varname %>', val=0.0)<%- end %>
-<% disc.output_variables.numeric.each do |var| -%>
-<% if var.scaling.blank? -%>
+<%- disc.output_variables.numeric.each do |var| -%>
+<%- if var.scaling.blank? -%>
         self.add_output('<%= var.py_varname %>', val=<%= var.init_py_value %>, desc='<%= var.escaped_desc %>'<%= @impl.use_units && !var.units.blank? ? ", units='#{var.units}'":"" %>)
-<% else -%>
+<%- else -%>
         self.add_output('<%= var.py_varname %>', val=<%= var.init_py_value %>, desc='<%= var.escaped_desc %>',
                         ref=<%= var.scaling_ref_py_value %>, ref0=<%= var.scaling_ref0_py_value %>, res_ref=<%= var.scaling_res_ref_py_value %><%= @impl.use_units && !var.units.blank? ? ", units='#{var.units}'":"" %>)
-<%- end -%>
 <%- end -%>
 <%- end -%>
 
     def compute(self, inputs, outputs):
         inputs_gp = np.array([])
+        random_inputs = []
+<% disc.output_variables.each_with_index do |v| %>
+        random_inputs.append('_xi_<%= v.py_varname %>')
+<% end %>
         for name in sorted(inputs.keys()):
-            if not name == '_xi_<%= v.py_varname %>': 
+            if name not in random_inputs: 
                 inputs_gp = np.concatenate((inputs_gp, inputs[name]))
         inputs_gp = np.atleast_2d(inputs_gp)    
 <% disc.output_variables.each_with_index do |v|%>        
         sigma = np.sqrt(self.gp_<%= v.py_varname %>.predict_variances(inputs_gp))
         mean = self.gp_<%= v.py_varname %>.predict_values(inputs_gp)
-        outputs['<%= v.py_varname %>'] = mean +  inputs['_xi_<%= v.py_varname %>'] * sigma 
-<%- end -%><%- end -%><%- end %><%- end -%>
+        outputs['<%= v.py_varname %>'] = mean + inputs['_xi_<%= v.py_varname %>'] * sigma 
+<%- end -%>
+<%- end -%>
+<%- end -%>
+<%- end -%>
+
+
 class <%= @mda.py_classname %>RandomAnalysis(<%= @impl.parallel_group ? "om.ParallelGroup" : "om.Group" %>):
     """ An OpenMDAO base component to encapsulate <%= @mda.py_classname %> random MDA """
     def __init__(self, discipline_factory, gp_factory, **kwargs):
@@ -77,27 +84,40 @@ class <%= @mda.py_classname %>RandomAnalysis(<%= @impl.parallel_group ? "om.Para
 
     def setup(self):<% @mda.input_variables.each do |dv| %>
         self.set_input_defaults('<%= dv.name %>', val=<%= dv.init_py_value %><%= @impl.use_units && !dv.units.blank? ? ", units='#{dv.units}'":"" %>)<% end -%>
-<% @mda.coupling_variables.each do |cv| %>
-        self.set_input_defaults('_xi_<%= cv.name %>', val=0.0)<% end -%>
+<%- @mda.plain_disciplines.each do |disc| %>
+<% if disc.openmdao_impl&.egmdo_surrogate %>
+<% disc.output_variables.each do |v| %>
+        self.set_input_defaults('_xi_<%= v.name %>', val=0.0)
+<%- end -%>
+<%- end -%>
+<%- end -%>
 
-<% @mda.disciplines.nodes.each do |disc| %>
-<%- if disc.has_out_coupling? -%>
+<%- @mda.plain_disciplines.each do |disc| -%>
+<%- if disc.openmdao_impl&.egmdo_surrogate -%>
         name = '<%= disc.py_classname %>Random'
         disc = <%= disc.py_classname %>RandomDiscipline(self.gp_factory)
 <%- else -%>
         name = '<%= disc.py_classname %>'
         disc = self.disc_factory.create_<%= disc.snake_modulename %>()
 <%- end -%>
-        self.add_subsystem(name, disc, promotes=['*'])<%- end %>
+        self.add_subsystem(name, disc, promotes=['*'])
+<%- end -%>
+
 
 def run_doe(discipline_factory, gp_factory, design_vars, n_cases, parallel=False):
     pb = om.Problem(<%= @mda.py_classname %>RandomAnalysis(discipline_factory, gp_factory))
     dists = []
-    <% @mda.coupling_variables.each do |uv| %>
-    # _xi_<%= uv.py_varname %> 
-    dists.append(ot.Normal(0.0, 1.0))<% end %>
+    <% dim = 0 %>
+    <%- @mda.plain_disciplines.each do |disc| -%>
+    <%- if disc.openmdao_impl&.egmdo_surrogate -%>
+    <%- disc.output_variables.each do |param| -%>
+    # _xi_<%= param.py_varname %> 
+    dists.append(ot.Normal(0.0, 1.0))
+    <%- dim = dim + 1 -%>
+    <%- end -%>
+    <%- end -%>
+    <%- end -%>
 
-    <%- dim = Analysis.vars_dim(@mda.coupling_variables) -%>
     # Dependency between variables can be specified by choosing a specific copula
     copula = ot.IndependentCopula(<%= dim %>)  # default to no dependency
 
@@ -110,13 +130,23 @@ def run_doe(discipline_factory, gp_factory, design_vars, n_cases, parallel=False
     pb.driver.add_recorder(recorder)
     pb.driver.recording_options['includes'] = ['*']
 
-    # uncertain variable input are taken as design_variables to get recorded by driver recorder<%- @mda.coupling_variables.each do |dv| %>
-    pb.model.add_design_var('_xi_<%= dv.py_varname %>', lower=<%= dv.lower_py_value %>, upper=<%= dv.upper_py_value %>)<% end %>
+    # uncertain variable input are taken as design_variables to get recorded by driver recorder
+    <%- @mda.plain_disciplines.each do |disc| -%>
+    <%- if disc.openmdao_impl&.egmdo_surrogate -%>
+    <%- disc.output_variables.each do |dv| -%>
+    pb.model.add_design_var('_xi_<%= dv.py_varname %>', lower=<%= dv.lower_py_value %>, upper=<%= dv.upper_py_value %>)
+    <%- end -%>
+    <%- end -%>
+    <%- end -%>
     pb.setup()  
     for name, val in design_vars.items():
         pb[name] = val
-    <%- @mda.coupling_variables.each do |param| -%>
+    <%- @mda.plain_disciplines.each do |disc| -%>
+    <%- if disc.openmdao_impl&.egmdo_surrogate -%>
+    <%- disc.output_variables.each do |param| -%>
     pb['_xi_<%= param.py_varname %>'] = 0.0
+    <%- end -%>
+    <%- end -%>
     <%- end -%>
     pb.run_driver()
     pb.cleanup()
