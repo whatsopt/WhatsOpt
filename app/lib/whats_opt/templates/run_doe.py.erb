@@ -44,8 +44,17 @@ recorder = om.SqliteRecorder(case_recorder_filename)
 pb.driver.add_recorder(recorder)
 pb.driver.recording_options['includes'] = ['*']
 
-<%- @mda.design_variables.each do |dv| %>
-pb.model.add_design_var('<%= dv.name %>', lower=<%= dv.lower_py_value %>, upper=<%= dv.upper_py_value %><%= @impl.use_units && !dv.units.blank? ? ", units='#{dv.units}'":"" %>)<% end %>
+<%- if @mda.design_variables.empty? -%>
+print("Error: You have to select some design variables then update the run_doe.py script and retry.")
+exit(-1)
+<%- end -%>
+<%- @mda.design_variables.each do |dv| -%>
+<%- if dv.lower_py_value == "-inf" ||  dv.upper_py_value == "inf" -%>
+print("Error: You have to set bounds to the '<%= dv.name %>' design variable then update the run_doe.py script and retry.")
+exit(-1)
+<%- end -%>
+pb.model.add_design_var('<%= dv.name %>', lower=<%= dv.lower_py_value %>, upper=<%= dv.upper_py_value %><%= @impl.use_units && !dv.units.blank? ? ", units='#{dv.units}'":"" %>)
+<%- end -%>
 
 pb.setup()
 initialize(pb)
@@ -59,9 +68,9 @@ if options.plot:
     n = len(cases)
     data = {'inputs': {}, 'outputs': {}}
     <% @mda.design_variables.each do |dv| %>
-    data['inputs']['<%= dv.name %>'] = np.zeros((n,)+<%= dv.shape=="1"?"(1,)":dv.shape %>)<% end %>
+    data['inputs']['<%= dv.name %>'] = np.zeros((n,)+<%= dv.shape=="1" ? "(1,)":dv.shape %>)<% end %>
     <% @mda.response_variables.each do |r| %>
-    data['outputs']['<%= r.name %>'] = np.zeros((n,)+<%= r.shape=="1"?"(1,)":r.shape %>)<% end %>
+    data['outputs']['<%= r.name %>'] = np.zeros((n,)+<%= r.shape=="1" ? "(1,)":r.shape %>)<% end %>
 
     for i in range(len(cases)):
         case = reader.get_case(cases[i])
