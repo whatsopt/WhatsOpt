@@ -2,10 +2,10 @@
 
 <h3>1.18.0 (31/10/2021)</h3>
 <ul>
-  <li>User can generate and run EGMDO methods from an analysis (wop update --egmdo):
+  <li>User can generate and run EGMDO related methods from an analysis (wop update --egmdo):
     <ul>
       <li>User should select some disciplines as EGMDO surrogates</li>
-      <li>User should speci a variable as an objective</li>
+      <li>User should specify a variable as an objective</li>
       <li>User can use run_egmda.py to run the analysis with surrogates</li>
       <li>User can use run_egdoe.py to run a doe using the EGMDA</li>
       <li>User can use run_egmdo.py to run an optimization using the EGMDA</li>
@@ -19,7 +19,8 @@
   <li>User can specify co-owners to allow them to edit the analysis</li>
   <li>User as a co-owner is warned if a concurrent occured when editing a given analysis</li>
   <li>User can sort analyses the most recently updated first ('Newest' button)</li>
-  <li>User as a owner can import/export a project (and all its analyses) as a json format (see wop push/pull --json -p)</li>
+  <li>User as a owner can import/export a project (and all its analyses) as a json format (see wop push/pull --json -p)
+  </li>
   <li>User can directly import a discipline frome another analysis in edition mode</li>
   <li>User can get standalone html through the WhastOpt GUI ('Export Html' button)</li>
 </ul>
