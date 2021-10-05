@@ -3,7 +3,9 @@
 class Api::V1::ApiMdaUpdaterController < Api::ApiController
   def check_mda_update
     errmsg = "Analysis has been updated concurrently by another user. Please refresh and retry."
-    raise Api::StaleObjectError.new(errmsg) if current_update_time > (request_time + 1.second)
+    # Tolerance +5s: concurrent edit may be unnoticed but prevent from same user rapid updates being rejected
+    # p "COMPARE >>>>>>>>> #{current_update_time} > #{request_time + 5.seconds} "
+    raise Api::StaleObjectError.new(errmsg) if current_update_time > (request_time + 5.seconds)
   end
   
   def current_update_time
