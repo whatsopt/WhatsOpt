@@ -27,7 +27,7 @@ class <%= @discipline.py_classname %>(<%= @discipline.py_classname %>Base):
 #        self._impl.compute(inputs, outputs)
 
 # Reminder of inputs:<% @discipline.input_variables.numeric.each do |var_in| %>
-#       inputs['<%= var_in.py_varname %>'] -> shape: <%= var_in.shape -%>, type: <%= var_in.type -%><% end %>
+#        <%= var_in.py_shortname %> = inputs['<%= var_in.py_varname %>']  # shape: <%= var_in.shape -%>, type: <%= var_in.type -%><% end %>
 
 # To declare partial derivatives computation
 #

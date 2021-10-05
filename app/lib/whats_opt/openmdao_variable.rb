@@ -17,6 +17,14 @@ module WhatsOpt
       self.name.tr("./()", "_")
     end
 
+    def py_shortname
+      if self.py_varname =~ /^.*:(\w+)$/
+        $1
+      else
+        self.py_varname
+      end
+    end
+
     def py_desc
       desc = self.desc
       desc += " (#{self.units})"
