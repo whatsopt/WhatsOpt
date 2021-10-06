@@ -8,12 +8,18 @@ class <%= @discipline.py_classname %>(<%= @discipline.py_classname %>Base):
         """ <%= @discipline.py_classname %> computation """
         # Here comes discipline resolution code
         # (python function or module, external software calls...)
-        <%- if @discipline.output_variables.numeric.empty? -%>
+
+<%- if @discipline.output_variables.numeric.empty? -%>
         pass
-        <%- else -%><%- @discipline.output_variables.numeric.each do |var_out| -%>
+<%- else -%>
+<%- @discipline.input_variables.numeric.each do |var_in| -%>
+        <%= var_in.py_shortname %> = inputs['<%= var_in.py_varname %>']  # shape: <%= var_in.shape %>, type: <%= var_in.type %>
+<%- end -%>
+
+<%- @discipline.output_variables.numeric.each do |var_out| -%>
         outputs['<%= var_out.py_varname %>'] = <%= var_out.default_py_value %>
-        <%- end %>
-        <%- end -%>
+<%- end -%>
+<%- end -%>
 
 # WhatsOpt docking mechanism: .whatsopt_dock.yml file should contain
 # <%= @discipline.py_modulename %> entry, like:
