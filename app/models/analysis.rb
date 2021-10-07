@@ -102,6 +102,14 @@ class Analysis < ApplicationRecord
     @desvars = variables.with_role(WhatsOpt::Variable::DESIGN_VAR_ROLE)
   end
 
+  def parameters
+    @parameters = variables.with_role(WhatsOpt::Variable::PARAMETER_ROLE)
+  end
+
+  def is_parameter?(varname)
+    parameters.map(&:name).include?(varname)
+  end
+
   def has_design_variables?
     @has_desvars = !design_variables.empty?
   end
