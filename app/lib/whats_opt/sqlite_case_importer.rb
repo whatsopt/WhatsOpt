@@ -38,7 +38,10 @@ module WhatsOpt
             cases[absname.split(".")[-1]] = values
           end
           JSON.parse(row[2], allow_nan: true).each do |absname, values|
-            cases[absname.split(".")[-1]] = values
+            splitnames = absname.split(".")
+            unless splitnames[0] == '_auto_ivc' # ignore auto ivc outputs variables
+              cases[splitnames[-1]] = values
+            end
           end
           _insert_values(cases)
           @num_cases += 1

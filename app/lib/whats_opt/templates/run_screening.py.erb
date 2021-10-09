@@ -18,9 +18,9 @@ from <%= @mda.py_modulename %> import <%= @mda.py_classname %>
 
 from optparse import OptionParser
 parser = OptionParser()
-parser.add_option("-b", "--batch",
-                  action="store_true", dest="batch", default=False,
-                  help="do not plot anything")
+parser.add_option("--plot",
+                  action="store_true", dest="plot", default=False,
+                  help="Display scatter plots")
 parser.add_option("-s", "--sobol",
                   action="store_true", dest="sobol", default=False,
                   help="do not plot anything")
@@ -53,17 +53,18 @@ initialize(pb)
 pb.run_driver()        
 
 <% if @mda.response_variables.size < 10 %>
-if options.batch  or options.parallel:
+if !options.plot or options.parallel:
     exit(0)
+    
 reader = om.CaseReader(case_recorder_filename)
 cases = reader.list_cases('driver', recurse=False)
 n = len(cases)
 data = {'inputs': {}, 'outputs': {} }
 <% @mda.design_variables.each do |dv| -%>
-data['inputs']['<%= dv.name %>'] = np.zeros((n,)+<%= dv.shape=="1"?"(1,)":dv.shape %>)
+data['inputs']['<%= dv.name %>'] = np.zeros((n,)+<%= dv.shape=="1" ? "(1,)" : dv.shape %>)
 <% end -%>
 <% @mda.response_variables.each do |r| -%>
-data['outputs']['<%= r.name %>'] = np.zeros((n,)+<%= r.shape=="1"?"(1,)":r.shape %>)
+data['outputs']['<%= r.name %>'] = np.zeros((n,)+<%= r.shape=="1" ? "(1,)" : r.shape %>)
 <% end -%>
 
 for i in range(len(cases)):

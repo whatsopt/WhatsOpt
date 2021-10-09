@@ -14,9 +14,6 @@ from <%= @mda.py_modulename %> import <%= @mda.py_classname %>
 <% end %>
 from optparse import OptionParser
 parser = OptionParser()
-parser.add_option("-b", "--batch",
-                  action="store_true", dest="batch", default=False,
-                  help="do not plot anything")
 parser.add_option("-n", "--ncases", type="int",
                   dest="n_cases", default=<%= @driver.options[:nbpts]%>,
                   help="number of samples")

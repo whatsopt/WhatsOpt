@@ -15,7 +15,7 @@ def to_thrift_<%= disc.snake_modulename%>_input(inputs):
     <% if var.ndim > 0 %>
     ins.<%= var.name %> = inputs['<%= var.thrift_name %>'].tolist()
     <% else %>
-    ins.<%= var.name %> = <%= var.type=="Integer"?"int":"float"%>(inputs['<%= var.name %>'])
+    ins.<%= var.name %> = <%= var.type=="Integer" ? "int" : "float"%>(inputs['<%= var.name %>'])
     <% end %><% end %>
     return ins
 
@@ -30,7 +30,7 @@ def to_thrift_<%= disc.snake_modulename%>_output(outputs):
     <% if var.ndim > 0 %>
     output.<%= var.name %> = outputs['<%= var.name %>'].tolist()
     <% else %>
-    output.<%= var.name %> = <%= var.type=="Integer"?"int":"float"%>(outputs['<%= var.name %>'])
+    output.<%= var.name %> = <%= var.type=="Integer" ? "int" : "float"%>(outputs['<%= var.name %>'])
     <% end %><% end %>
     return output
 <% end -%>

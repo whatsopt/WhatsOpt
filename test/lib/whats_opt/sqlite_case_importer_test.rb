@@ -43,6 +43,14 @@ class SqliteCaseImporterTest < ActiveSupport::TestCase
     @cr = WhatsOpt::SqliteCaseImporter.new(filename)
     assert @cr.is_valid_sqlite_db(filename)
     assert_equal "SMT_DOE_LHS", @cr.driver_name
-    assert @cr.num_cases > 0
+    assert_equal 10, @cr.num_cases
+  end
+
+  test "detect remote operation upload bug" do
+    filename = @doe = sample_file("bug_upload.sqlite").path
+    @cr = WhatsOpt::SqliteCaseImporter.new(filename)
+    assert @cr.is_valid_sqlite_db(filename)
+    assert_equal "SMT_DOE_LHS", @cr.driver_name
+    assert_equal 50, @cr.num_cases
   end
 end

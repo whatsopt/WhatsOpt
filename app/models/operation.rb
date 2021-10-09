@@ -356,7 +356,11 @@ class Operation < ApplicationRecord
                              .joins(discipline: :analysis)
                              .where(analyses: { id: analysis.id })
                              .take
-      cases.build(variable_id: var[vname].id, coord_index: c[:coord_index], values: c[:values])
+      if var[vname]
+        cases.build(variable_id: var[vname].id, coord_index: c[:coord_index], values: c[:values])
+      else
+        Rails.logger.warn "Variable '{vname}' unknown related cases data are ignored."
+      end
     end
   end
 
