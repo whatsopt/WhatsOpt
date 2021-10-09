@@ -92,7 +92,7 @@ module WhatsOpt
     def _monitor_mda(dir, method, &block)
       script = File.join(dir, "run_#{method}.py")
       Rails.logger.info "#{PYTHON} #{script}"
-      Open3.popen2e(PYTHON, script, "--batch", &block)
+      Open3.popen2e(PYTHON, script, &block)
     end
 
     def _generate_code(gendir, options = {})
@@ -162,14 +162,13 @@ module WhatsOpt
         if @driver.optimization?
           @sqlite_filename = options[:sqlite_filename] || "#{@mda.basename}_optimization.sqlite"
           _generate("run_optimization.py", "run_optimization.py.erb", gendir)
-        end
-        if @driver.doe?
+        elsif @driver.doe?
           @sqlite_filename = options[:sqlite_filename] || "#{@mda.basename}_doe.sqlite"
           _generate("run_doe.py", "run_doe.py.erb", gendir)
         else
           # should be simple run_once driver
           if @driver.class != WhatsOpt::OpenmdaoRunOnceDriver
-            raise RuntimeError("Ouch! Should be run_once driver got #{@driver.inspect}")  
+            raise RuntimeError.new("Ouch! Should be run_once driver got #{@driver.inspect}")  
           end
         end
       elsif (options[:with_runops] || @mda.is_root_analysis?)
