@@ -270,8 +270,8 @@ class Plotter extends React.Component {
 
   render() {
     const { ope, mda, uqMode } = this.props;
-    const isOptim = (ope.category === 'optimization');
-    const isDoe = (ope.category === 'doe');
+    const isOptim = (ope.category === 'optimization' || 'egmdo');
+    const isDoe = (ope.category === 'doe' || 'egdoe');
     const { selection, inputVarCases } = this.state;
     const cases = { i: inputVarCases, o: this.outputVarCases, c: this.couplingVarCases };
     const selCases = {

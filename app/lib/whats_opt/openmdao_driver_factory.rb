@@ -57,7 +57,9 @@ module WhatsOpt
                     pyoptsparse_optimizer_snopt: { tol: "Major feasibility tolerance",
                                                   maxiter: "Major iterations limit" },
                     onerasego_optimizer_segomoe: { maxiter: "maxiter", ncluster: "n_clusters",
-                                                  optimizer: "optimizer", doedim: "size_doe" }
+                                                   optimizer: "optimizer", doedim: "size_doe" },
+                    onerasego_optimizer_egmdo: { maxiter: "maxiter", ncluster: "n_clusters",
+                                                 optimizer: "optimizer", doedim: "size_doe" }
                    }
 
     # optimizer specific settings
@@ -72,6 +74,14 @@ module WhatsOpt
           @opt_settings[OPT_SETTINGS[@algoname][k]] = @options[k]
           @options.delete(k)
         end
+      end
+    end
+
+    def algo_option
+      if onerasego?
+        "SEGOMOE"
+      else
+        super
       end
     end
 
@@ -104,6 +114,7 @@ module WhatsOpt
     DEFAULT_OPTIONS = {
       runonce: {},
       smt_doe_lhs: { nbpts: 50 },
+      smt_doe_egdoe: { nbpts: 50 },
       scipy_optimizer_cobyla: {},
       scipy_optimizer_bfgs: {},
       scipy_optimizer_slsqp: { tol: 1e-6, maxiter: 100, disp: true },
@@ -113,7 +124,8 @@ module WhatsOpt
       pyoptsparse_optimizer_psqp: {},
       pyoptsparse_optimizer_nsga2: {},
       pyoptsparse_optimizer_snopt: { tol: 1e-6, maxiter: 100 },
-      onerasego_optimizer_segomoe: { maxiter: 100, ncluster: 1, optimizer: "slsqp" }
+      onerasego_optimizer_segomoe: { maxiter: 100, ncluster: 1, optimizer: "slsqp" },
+      onerasego_optimizer_egmdo: { maxiter: 100, ncluster: 1, optimizer: "slsqp" }
     }
     ALGO_NAMES = DEFAULT_OPTIONS.keys.sort
 

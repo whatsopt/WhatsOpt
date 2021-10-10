@@ -18,6 +18,7 @@ LogLine.propTypes = {
 
 const OPTTYPES = {
   smt_doe_lhs_nbpts: 'integer',
+  smt_doe_egdoe_nbpts: 'integer',
   scipy_optimizer_slsqp_tol: 'number',
   scipy_optimizer_slsqp_disp: 'boolean',
   scipy_optimizer_slsqp_maxiter: 'integer',
@@ -26,9 +27,13 @@ const OPTTYPES = {
   onerasego_optimizer_segomoe_ncluster: 'integer',
   onerasego_optimizer_segomoe_maxiter: 'integer',
   onerasego_optimizer_segomoe_optimizer: 'string',
+  onerasego_optimizer_egmdo_ncluster: 'integer',
+  onerasego_optimizer_egmdo_maxiter: 'integer',
+  onerasego_optimizer_egmdo_optimizer: 'string',
 };
 const OPTDEFAULTS = {
   smt_doe_lhs_nbpts: 50,
+  smt_doe_egdoe_nbpts: 50,
   scipy_optimizer_slsqp_tol: 1e-6,
   scipy_optimizer_slsqp_maxiter: 100,
   scipy_optimizer_slsqp_disp: true,
@@ -37,6 +42,9 @@ const OPTDEFAULTS = {
   onerasego_optimizer_segomoe_maxiter: 100,
   onerasego_optimizer_segomoe_ncluster: 1,
   onerasego_optimizer_segomoe_optimizer: 'slsqp',
+  onerasego_optimizer_egmdo_maxiter: 100,
+  onerasego_optimizer_egmdo_ncluster: 1,
+  onerasego_optimizer_egmdo_optimizer: 'slsqp',
 };
 
 const SCHEMA = {
@@ -47,7 +55,9 @@ const SCHEMA = {
     driver: {
       type: 'string',
       title: 'Driver',
-      enum: ['runonce', 'smt_doe_lhs',
+      enum: ['runonce',
+        'smt_doe_lhs',
+        'smt_doe_egdoe',
         'scipy_optimizer_cobyla',
         'scipy_optimizer_bfgs',
         'scipy_optimizer_slsqp',
@@ -58,9 +68,11 @@ const SCHEMA = {
         'pyoptsparse_optimizer_nsga2',
         'pyoptsparse_optimizer_snopt',
         'onerasego_optimizer_segomoe',
+        'onerasego_optimizer_egmdo',
       ],
       enumNames: ['RunOnce',
         'SMT - LHS',
+        'SMT - LHS on EGMDA',
         'Scipy - COBYLA',
         'Scipy - BFGS',
         'Scipy - SLSQP',
@@ -70,7 +82,9 @@ const SCHEMA = {
         // "pyOptSparse - PSQP",
         'pyOptSparse - NSGA2',
         'pyOptSparse - SNOPT',
-        'Onera - SEGOMOE'],
+        'Onera - SEGOMOE',
+        'Onera - SEGOMOE on EGMDA',
+      ],
       default: 'runonce',
     },
     // "setSolverOptions": {"type": "boolean", "title": "Set solvers options", "default": false},
@@ -105,6 +119,22 @@ const SCHEMA = {
                   title: 'Number of sampling points',
                   type: OPTTYPES.smt_doe_lhs_nbpts,
                   default: OPTDEFAULTS.smt_doe_lhs_nbpts,
+                },
+              },
+            },
+          },
+        },
+        {
+          properties: {
+            driver: { enum: ['smt_doe_egdoe'] },
+            smt_doe_egdoe: {
+              title: 'Options for SMT LHS on EGMDA',
+              type: 'object',
+              properties: {
+                smt_doe_egdoe_nbpts: {
+                  title: 'Number of sampling points',
+                  type: OPTTYPES.smt_doe_egdoe_nbpts,
+                  default: OPTDEFAULTS.smt_doe_egdoe_nbpts,
                 },
               },
             },
@@ -179,6 +209,35 @@ const SCHEMA = {
                   title: 'Internal optimizer used for enrichment step',
                   type: OPTTYPES.onerasego_optimizer_segomoe_optimizer,
                   default: OPTDEFAULTS.onerasego_optimizer_segomoe_optimizer,
+                  enum: ['cobyla', 'slsqp'],
+                  enumNames: ['COBYLA', 'SLSQP'],
+                },
+              },
+            },
+          },
+        },
+        {
+          properties: {
+            driver: { enum: ['onerasego_optimizer_egmdo'] },
+            onerasego_optimizer_egmdo: {
+              title: 'Options for Onera SEGO+EGMDA optimizer',
+              type: 'object',
+              properties: {
+                onerasego_optimizer_egmdo_maxiter: {
+                  title: 'Number max of iterations to run',
+                  type: OPTTYPES.onerasego_optimizer_egmdo_maxiter,
+                  default: OPTDEFAULTS.onerasego_optimizer_egmdo_maxiter,
+                },
+                onerasego_optimizer_egmdo_ncluster: {
+                  title:
+                    'Number of clusters used for objective and constraints surrogate mixture models (0: automatic)',
+                  type: OPTTYPES.onerasego_optimizer_egmdo_ncluster,
+                  default: OPTDEFAULTS.onerasego_optimizer_egmdo_ncluster,
+                },
+                onerasego_optimizer_egmdo_optimizer: {
+                  title: 'Internal optimizer used for enrichment step',
+                  type: OPTTYPES.onerasego_optimizer_egmdo_optimizer,
+                  default: OPTDEFAULTS.onerasego_optimizer_egmdo_optimizer,
                   enum: ['cobyla', 'slsqp'],
                   enumNames: ['COBYLA', 'SLSQP'],
                 },

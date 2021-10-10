@@ -8,11 +8,14 @@ require "whats_opt/sqlite_case_importer"
 class Operation < ApplicationRecord
   CAT_RUNONCE = "analysis"
   CAT_OPTIMISATION = "optimization"
+  CAT_EGMDO = "egmdo"
   CAT_DOE = "doe"
+  CAT_EGDOE = "egdoe"
   CAT_SENSITIVITY_DOE = "sensitivity_doe"
   CAT_SENSITIVITY = "sensitivity_analysis"
   CAT_METAMODEL = "metamodel"
-  CATEGORIES = [CAT_RUNONCE, CAT_OPTIMISATION,
+  CATEGORIES = [CAT_RUNONCE, CAT_OPTIMISATION, 
+                CAT_EGDOE, CAT_EGMDO,
                 CAT_DOE, CAT_SENSITIVITY_DOE,
                 CAT_SENSITIVITY, CAT_METAMODEL].freeze
 
@@ -170,6 +173,10 @@ class Operation < ApplicationRecord
       case driver
       when "runonce"
         CAT_RUNONCE
+      when /egmdo/
+        CAT_EGMDO
+      when /egdoe/
+        CAT_EGDOE
       when /optimizer/, /slsqp/, /scipy/, /pyoptsparse/
         CAT_OPTIMISATION
       when /_metamodel_/

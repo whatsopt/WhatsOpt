@@ -17,8 +17,9 @@ module WhatsOpt
       @prefix = "openmdao"
       @server_host = server_host
       @remote = !server_host.nil?
-      @sgen = WhatsOpt::ServerGenerator.new(mda, server_host, remote_ip)
-      @eggen = WhatsOpt::EgmdoGenerator.new(mda)
+      @sgen = WhatsOpt::ServerGenerator.new(mda, server_host: server_host, remote_ip: remote_ip)
+      @eggen = WhatsOpt::EgmdoGenerator.new(mda, remote_operation: @remote, 
+                                            driver_name: driver_name, driver_options: driver_options)
       @sqlite_filename = "cases.sqlite"
       @driver_name = driver_name.to_sym if driver_name
       @driver_options = driver_options
@@ -69,7 +70,7 @@ module WhatsOpt
 
     def monitor(method = "analysis", sqlite_filename = nil, &block)
       Dir.mktmpdir("run_#{@mda.basename}_#{method}") do |dir|
-        # dir="/tmp" # for debug
+        dir="/tmp" # for debug
         _generate_code dir, sqlite_filename: sqlite_filename
         _monitor_mda(dir, method, &block)
       end
@@ -112,8 +113,8 @@ module WhatsOpt
         @sgen._generate_code(gendir, @server_host)
         @genfiles += @sgen.genfiles
       end
-      if opts[:with_egmdo]
-        @eggen._generate_code(gendir)
+      if opts[:with_egmdo] || @driver_name =~ /egmdo|egdoe/
+        @eggen._generate_code(gendir, opts)
         @genfiles += @eggen.genfiles
       end
       @genfiles
