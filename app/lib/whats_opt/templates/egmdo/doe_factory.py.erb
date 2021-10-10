@@ -135,7 +135,7 @@ class DoeFactory:
                 new_doe[-1, start:start + dim_design_vars[ind + 1]] = design_vars[name]
 
         <%- count = disc.output_variables.size -%>
-        <% disc.output_variables.each_with_index do |var, i| -%>
+        <%- disc.output_variables.each_with_index do |var, i| -%>
         new_doe[-1, -<%= count - i %>] = problem.model.list_outputs(out_stream=None)[<%= i %>][1]['val']
         <%- end -%>
 
