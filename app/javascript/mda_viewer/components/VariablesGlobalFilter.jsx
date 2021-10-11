@@ -15,11 +15,10 @@ function VariablesGlobalFilter({
     setGlobalFilter(val || undefined);
   }, 200);
 
+  const active = (value !== '');
   let color = 'grey'; // inactive
-  let active = 'true';
-  if (value !== '') {
+  if (active) {
     color = '#007bff'; // active
-    active = false;
   }
   return (
     <div className="input-group mb-3">
