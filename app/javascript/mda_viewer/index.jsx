@@ -576,7 +576,7 @@ class MdaViewer extends React.Component {
             Edit
             {' '}
             {mdaProjectLink}
-            {mda.name}
+            <a href={this.api.url(`/analyses/${mda.id}`)}>{mda.name}</a>
             {' '}
             <small>
               (#

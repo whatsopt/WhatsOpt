@@ -328,7 +328,10 @@ class Plotter extends React.Component {
           {' '}
           on
           {' '}
-          {mda.name}
+          <a href={this.api.url(`/analyses/${mda.id}`)}>{mda.name}</a>
+          <small>
+            {` (#${mda.id})`}
+          </small>
         </h1>
 
         <div className="btn-group mr-2  float-right" role="group">
@@ -395,6 +398,7 @@ class Plotter extends React.Component {
 Plotter.propTypes = {
   api: PropTypes.object.isRequired,
   mda: PropTypes.shape({
+    id: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
   }).isRequired,
   ope: PropTypes.shape({

@@ -483,7 +483,10 @@ class Runner extends React.Component {
         <h1>
           Operation on
           {' '}
-          {mda.name}
+          <a href={this.api.url(`/analyses/${mda.id}`)}>{mda.name}</a>
+          <small>
+            {` (#${mda.id})`}
+          </small>
         </h1>
         <h2>Specification</h2>
         <div className="editor-section col-4">
