@@ -103,7 +103,7 @@ class <%= @mda.py_classname %>RandomAnalysis(<%= @impl.parallel_group ? "om.Para
 <%- end -%>
 
 
-def run_doe(discipline_factory, gp_factory, design_vars, n_cases, parallel=False):
+def run_doe(discipline_factory, gp_factory, design_vars, n_cases, out_sqlitefilename, parallel=False):
     pb = om.Problem(<%= @mda.py_classname %>RandomAnalysis(discipline_factory, gp_factory))
     dists = []
     <% dim = 0 %>
@@ -120,13 +120,12 @@ def run_doe(discipline_factory, gp_factory, design_vars, n_cases, parallel=False
     pb.driver = OpenturnsDOEDriver(n_samples=n_cases, distribution=comp_dist)
     pb.driver.options['run_parallel'] = parallel
 
-    case_recorder_filename = '<%= @mda.snake_modulename %>_random_mda_doe.sqlite'        
-    recorder = om.SqliteRecorder(case_recorder_filename)
+    recorder = om.SqliteRecorder(out_sqlitefilename)
     pb.driver.add_recorder(recorder)
     pb.driver.recording_options['includes'] = ['*']
 
-    if os.path.exists(case_recorder_filename):
-        os.remove(case_recorder_filename)
+    if os.path.exists(out_sqlitefilename):
+        os.remove(out_sqlitefilename)
 
     # uncertain variable input are taken as design_variables to get recorded by driver recorder
     <%- @mda.egmdo_random_variables.each do |dv| -%>
@@ -142,12 +141,13 @@ def run_doe(discipline_factory, gp_factory, design_vars, n_cases, parallel=False
     pb.cleanup()
 
 
-def run_random_mda(discipline_factory, gp_factory, design_vars, n_doe_pce):
+def run_random_mda(discipline_factory, gp_factory, design_vars, n_doe_pce, outdir='.'):
     # run the random MDA n times to create a doe
-    run_doe(discipline_factory, gp_factory, design_vars, n_doe_pce)
+    outfile = os.path.join(outdir, '<%= @mda.snake_modulename %>_random_mda_doe.sqlite')
+    run_doe(discipline_factory, gp_factory, design_vars, n_doe_pce, outfile)
 
     # open the doe to create the PCE
-    cr = om.CaseReader('<%= @mda.snake_modulename %>_random_mda_doe.sqlite')
+    cr = om.CaseReader(outfile)
     driver_cases = cr.list_cases('driver', out_stream=None)
     case = cr.get_case(driver_cases[0])
     n_doe = len(driver_cases)

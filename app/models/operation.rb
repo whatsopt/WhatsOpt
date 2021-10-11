@@ -260,9 +260,11 @@ class Operation < ApplicationRecord
   end
 
   def perform
-    ogen = WhatsOpt::OpenmdaoGenerator.new(analysis, server_host: host, driver_name: driver, driver_options: option_hash)
-    sqlite_filename = File.join(Dir.tmpdir, "#{SecureRandom.urlsafe_base64}.sqlite")
-    tmplog_filename = File.join(Dir.tmpdir, "#{SecureRandom.urlsafe_base64}.log")
+    outdir = Dir.tmpdir # "/tmp/TEST"
+    ogen = WhatsOpt::OpenmdaoGenerator.new(analysis, server_host: host, driver_name: driver, 
+                                           driver_options: option_hash, outdir: outdir)
+    sqlite_filename = File.join(outdir, "#{SecureRandom.urlsafe_base64}.sqlite")
+    tmplog_filename = File.join(outdir, "#{SecureRandom.urlsafe_base64}.log")
     FileUtils.touch(tmplog_filename) # ensure logfile existence
     Rails.logger.info sqlite_filename
     job = self.job || create_job
@@ -272,7 +274,7 @@ class Operation < ApplicationRecord
     Dir.mktmpdir("sqlite") do |_dir|
       lines = ""
       count = 0
-      status = ogen.monitor(category, sqlite_filename) do |stdin, stdouterr, wait_thr|
+      status = ogen.monitor(category, sqlite_filename, outdir) do |stdin, stdouterr, wait_thr|
         Rails.logger.info "JOB STATUS = RUNNING"
         job.update(status: :RUNNING, pid: wait_thr.pid)
         stdin.close

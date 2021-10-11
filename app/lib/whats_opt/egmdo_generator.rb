@@ -5,12 +5,12 @@ require "whats_opt/code_generator"
 module WhatsOpt
   class EgmdoGenerator < CodeGenerator
 
-    def initialize(mda, remote_operation: false, driver_name: nil, driver_options: {})
+    def initialize(mda, remote_operation: false, outdir: ".", driver_name: nil, driver_options: {})
       super(mda)
       @remote = remote_operation
+      @outdir = outdir
       @driver_name = driver_name.to_sym if driver_name
       @driver_options = driver_options
-      @driver = OpenmdaoDriverFactory.new(@driver_name, @driver_options).create_driver
       @prefix = "egmdo"
       @impl = @mda.openmdao_impl || OpenmdaoAnalysisImpl.new
       @egmdo = true

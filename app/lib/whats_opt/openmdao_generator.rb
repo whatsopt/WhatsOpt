@@ -11,19 +11,21 @@ module WhatsOpt
     class DisciplineNotFoundException < StandardError
     end
 
-    def initialize(mda, server_host: nil, driver_name: nil, driver_options: {},
+    def initialize(mda, server_host: nil, driver_name: nil, driver_options: {}, outdir: ".",
                    whatsopt_url: "", api_key: "", remote_ip: "")
       super(mda)
       @prefix = "openmdao"
       @server_host = server_host
       @remote = !server_host.nil?
+      @outdir = outdir
+
       @sgen = WhatsOpt::ServerGenerator.new(mda, server_host: server_host, remote_ip: remote_ip)
-      @eggen = WhatsOpt::EgmdoGenerator.new(mda, remote_operation: @remote, 
+      @eggen = WhatsOpt::EgmdoGenerator.new(mda, remote_operation: @remote, outdir: outdir,
                                             driver_name: driver_name, driver_options: driver_options)
       @sqlite_filename = "cases.sqlite"
       @driver_name = driver_name.to_sym if driver_name
       @driver_options = driver_options
-      @root_modulepath = nil
+
       @impl = @mda.openmdao_impl || OpenmdaoAnalysisImpl.new
       @whatsopt_url = whatsopt_url
       @api_key = api_key
@@ -68,10 +70,10 @@ module WhatsOpt
       return ok, lines
     end
 
-    def monitor(method = "analysis", sqlite_filename = nil, &block)
+    def monitor(method = "analysis", sqlite_filename = nil, outdir = ".", &block)
       Dir.mktmpdir("run_#{@mda.basename}_#{method}") do |dir|
         dir="/tmp" # for debug
-        _generate_code dir, sqlite_filename: sqlite_filename
+        _generate_code dir, sqlite_filename: sqlite_filename, outdir: outdir
         _monitor_mda(dir, method, &block)
       end
     end

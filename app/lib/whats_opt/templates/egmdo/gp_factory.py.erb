@@ -6,12 +6,12 @@ from egmdo.doe_factory import DoeFactory
 
 class GpFactory:
 
-    def __init__(self, doe_factory):
+    def __init__(self, doe_factory, outdir="."):
         self.doe_factory = doe_factory
+        self.outdir = outdir
 
-    @staticmethod
-    def gp_filename(disc_name, var_name):
-        return f"gp_<%= @mda.snake_modulename %>_{disc_name}_{var_name}.pkl"
+    def gp_filename(self, disc_name, var_name):
+        return os.path.join(self.outdir, f"gp_<%= @mda.snake_modulename %>_{disc_name}_{var_name}.pkl")
 
 <%- @mda.egmdo_random_disciplines.each do |disc| -%>
 <%- outdim = Analysis.vars_dim(disc.output_variables) -%>
