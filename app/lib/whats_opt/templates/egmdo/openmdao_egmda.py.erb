@@ -13,7 +13,7 @@ class <%= @mda.py_classname %>EgDiscipline(om.ExplicitComponent):
     """ An OpenMDAO base component to encapsulate <%= @mda.py_classname %> discipline """
 
     def __init__(self, discipline_factory=None, gp_factory=None, 
-                 n_doe_pce=500, epsilon_coeff_var=1e-3, n_iter_max=10,
+                 n_doe_pce=500, epsilon_coeff_var=1e-3, n_iter_max=10, outdir=".",
                  plot=False, plot_range=[0, 50]):
         super().__init__()
         self.plot=plot
@@ -22,12 +22,13 @@ class <%= @mda.py_classname %>EgDiscipline(om.ExplicitComponent):
         self.n_iter_max = n_iter_max
         self.plot = plot
         self.plot_range = plot_range
+        self.outdir=outdir
         self.discipline_factory = discipline_factory
         if not discipline_factory:
             self.discipline_factory = DisciplineFactory()
         self.gp_factory = gp_factory
         if not gp_factory:
-            self.gp_factory = GpFactory(DoeFactory(self.discipline_factory, plot=plot))
+            self.gp_factory = GpFactory(DoeFactory(self.discipline_factory, plot=plot, outdir=outdir), outdir=outdir)
         
     def setup(self):
 <% @mda.input_variables.each do |var| -%>
@@ -50,7 +51,8 @@ class <%= @mda.py_classname %>EgDiscipline(om.ExplicitComponent):
             n_iter_max=self.n_iter_max,
             plot=self.plot,
             plot_range=self.plot_range,
-            gp_factory=self.gp_factory
+            gp_factory=self.gp_factory,
+            outdir=self.outdir
         )
         pb = om.Problem(<%= @mda.py_classname %>RandomAnalysis(self.discipline_factory, self.gp_factory))
         pb.model.nonlinear_solver.options['err_on_non_converge'] = False
@@ -70,7 +72,7 @@ class <%= @mda.py_classname %>EgDiscipline(om.ExplicitComponent):
 class <%= @mda.py_classname %>Egmda(om.Group):
     """ An OpenMDAO base component to encapsulate <%= @mda.py_classname %> EGMDA """
     def __init__(self, discipline_factory=None, gp_factory=None, 
-                 n_doe_pce=500, epsilon_coeff_var=1e-3, n_iter_max=10,
+                 n_doe_pce=500, epsilon_coeff_var=1e-3, n_iter_max=10, outdir='<%= @outdir %>',
                  plot=False, plot_range=[0, 50]):
         super().__init__()
         self.n_doe_pce = n_doe_pce
@@ -78,12 +80,13 @@ class <%= @mda.py_classname %>Egmda(om.Group):
         self.n_iter_max = n_iter_max
         self.plot = plot
         self.plot_range = plot_range
+        self.outdir = outdir
         self.discipline_factory = discipline_factory
         if not discipline_factory:
             self.discipline_factory = DisciplineFactory()
         self.gp_factory = gp_factory
         if not gp_factory:
-            self.gp_factory = GpFactory(DoeFactory(self.discipline_factory, plot=plot))
+            self.gp_factory = GpFactory(DoeFactory(self.discipline_factory, plot=plot, outdir=outdir), outdir=outdir)
 
     def setup(self):
 <%- @mda.input_variables.each do |dv| -%>
@@ -91,8 +94,9 @@ class <%= @mda.py_classname %>Egmda(om.Group):
 <%- end %>
         self.add_subsystem('<%= @mda.py_classname %>', 
                            <%= @mda.py_classname %>EgDiscipline(
-                                self.discipline_factory, self.gp_factory, 
-                                self.n_doe_pce, self.epsilon_coeff_var, self.n_iter_max,
-                                self.plot, self.plot_range),
+                                discipline_factory=self.discipline_factory, gp_factory=self.gp_factory, 
+                                n_doe_pce=self.n_doe_pce, epsilon_coeff_var=self.epsilon_coeff_var, 
+                                n_iter_max=self.n_iter_max, outdir=self.outdir,
+                                plot=self.plot, plot_range=self.plot_range),
                            promotes=[<%= (@mda.input_variables+@mda.output_variables).map(&:py_varname).uniq.map{|v| "'#{v}'"}.join(', ') %>])
 

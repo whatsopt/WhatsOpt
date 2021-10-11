@@ -8,11 +8,14 @@ require "whats_opt/sqlite_case_importer"
 class Operation < ApplicationRecord
   CAT_RUNONCE = "analysis"
   CAT_OPTIMISATION = "optimization"
+  CAT_EGMDO = "egmdo"
   CAT_DOE = "doe"
+  CAT_EGDOE = "egdoe"
   CAT_SENSITIVITY_DOE = "sensitivity_doe"
   CAT_SENSITIVITY = "sensitivity_analysis"
   CAT_METAMODEL = "metamodel"
-  CATEGORIES = [CAT_RUNONCE, CAT_OPTIMISATION,
+  CATEGORIES = [CAT_RUNONCE, CAT_OPTIMISATION, 
+                CAT_EGDOE, CAT_EGMDO,
                 CAT_DOE, CAT_SENSITIVITY_DOE,
                 CAT_SENSITIVITY, CAT_METAMODEL].freeze
 
@@ -170,6 +173,10 @@ class Operation < ApplicationRecord
       case driver
       when "runonce"
         CAT_RUNONCE
+      when /egmdo/
+        CAT_EGMDO
+      when /egdoe/
+        CAT_EGDOE
       when /optimizer/, /slsqp/, /scipy/, /pyoptsparse/
         CAT_OPTIMISATION
       when /_metamodel_/
@@ -253,9 +260,11 @@ class Operation < ApplicationRecord
   end
 
   def perform
-    ogen = WhatsOpt::OpenmdaoGenerator.new(analysis, server_host: host, driver_name: driver, driver_options: option_hash)
-    sqlite_filename = File.join(Dir.tmpdir, "#{SecureRandom.urlsafe_base64}.sqlite")
-    tmplog_filename = File.join(Dir.tmpdir, "#{SecureRandom.urlsafe_base64}.log")
+    outdir = Dir.tmpdir # "/tmp/TEST"
+    ogen = WhatsOpt::OpenmdaoGenerator.new(analysis, server_host: host, driver_name: driver, 
+                                           driver_options: option_hash, outdir: outdir)
+    sqlite_filename = File.join(outdir, "#{SecureRandom.urlsafe_base64}.sqlite")
+    tmplog_filename = File.join(outdir, "#{SecureRandom.urlsafe_base64}.log")
     FileUtils.touch(tmplog_filename) # ensure logfile existence
     Rails.logger.info sqlite_filename
     job = self.job || create_job
@@ -265,7 +274,7 @@ class Operation < ApplicationRecord
     Dir.mktmpdir("sqlite") do |_dir|
       lines = ""
       count = 0
-      status = ogen.monitor(category, sqlite_filename) do |stdin, stdouterr, wait_thr|
+      status = ogen.monitor(category, sqlite_filename, outdir) do |stdin, stdouterr, wait_thr|
         Rails.logger.info "JOB STATUS = RUNNING"
         job.update(status: :RUNNING, pid: wait_thr.pid)
         stdin.close

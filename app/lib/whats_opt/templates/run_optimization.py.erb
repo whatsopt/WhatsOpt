@@ -9,15 +9,22 @@ from openmdao_extensions.onera_sego_driver import OneraSegoDriver
 <% end %>
 
 import openmdao.api as om
-<% if @remote -%>
-from <%= @server_module %>.<%= @mda.py_modulename %>_proxy import <%= @mda.py_classname %>Proxy as <%= @mda.py_classname %>
-<% elsif @egmdo %>
+<% if @egmdo %>
 from <%= @egmdo_module %>.<%= @mda.py_modulename %>_egmda import <%= @mda.py_classname %>Egmda as <%= @mda.py_classname %>
+<%- if @remote -%>
+from <%= @server_module %>.<%= @mda.py_modulename %>_proxy import <%= @mda.py_classname %>Proxy
+<% end %>
+<% elsif @remote -%>
+from <%= @server_module %>.<%= @mda.py_modulename %>_proxy import <%= @mda.py_classname %>Proxy as <%= @mda.py_classname %>
 <% else -%>
 from <%= @mda.py_modulename %> import <%= @mda.py_classname %>
 <% end -%>
 
+<% if @egmdo && @remote %>
+pb = om.Problem(<%= @mda.py_classname %>(discipline_factory=<%= @mda.py_classname %>Proxy()))
+<% else %>
 pb = om.Problem(<%= @mda.py_classname %>())
+<% end %>
 
 <% if @driver.pyoptsparse? -%>
 class NamedPyOptSparseDriver(om.pyOptSparseDriver):

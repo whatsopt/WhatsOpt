@@ -1,3 +1,4 @@
+import os
 import sys
 import numpy as np
 import pickle
@@ -21,7 +22,7 @@ def enrich_gp(gp_factory, design_vars, coupling_vars,  max_effect_varnames):
         pass
     <%- end -%>
 
-def run_egmda(discipline_factory, design_vars,
+def run_egmda(discipline_factory, design_vars, outdir=".",
               n_doe_pce=500, epsilon_coeff_var=1e-3, n_iter_max=10,
               gp_factory=None, plot=None, plot_range=[0, 50]):
     <%- if @mda.plain_disciplines.select{|d| d.openmdao_impl&.egmdo_surrogate}.blank? -%>
@@ -37,14 +38,16 @@ def run_egmda(discipline_factory, design_vars,
     cv_mean = []
     cv_coeff_var = []
 
+    if not os.path.exists(outdir):
+        os.makedirs(outdir, exist_ok=True)
     if not gp_factory:
-        gp_factory = GpFactory(DoeFactory(discipline_factory, plot))
+        gp_factory = GpFactory(DoeFactory(discipline_factory, outdir, plot), outdir)
 
     gp_factory.create_all_gps()
 
     while (not convergence) and (n_iter < n_iter_max):
         # run random MDA
-        doe, max_effect_varname, coupling_var_doe = run_random_mda(discipline_factory, gp_factory, design_vars, n_doe_pce)
+        doe, max_effect_varname, coupling_var_doe = run_random_mda(discipline_factory, gp_factory, design_vars, n_doe_pce, outdir)
 <% random_vars =  @mda.egmdo_random_variables %>
 <%- if random_vars.count == 2 && random_vars.first.discipline != random_vars.second.discipline -%>
         if (plot):
