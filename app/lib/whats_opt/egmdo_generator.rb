@@ -40,10 +40,10 @@ module WhatsOpt
         end
       else
         @sqlite_filename = "#{@mda.basename}_egdoe.sqlite"
-        @driver = OpenmdaoDriverFactory.new(:smt_doe_lhs, {smt_doe_lhs_nbpts: 50}).create_driver
+        @driver = OpenmdaoDriverFactory.new(DEFAULT_DOE_DRIVER).create_driver
         _generate("run_egdoe.py", "run_doe.py.erb", gendir)
         @sqlite_filename = "#{@mda.basename}_egmdo.sqlite"
-        @driver = OpenmdaoDriverFactory.new(:scipy_optimizer_slsqp, {}).create_driver
+        @driver = OpenmdaoDriverFactory.new(@impl.optimization_driver).create_driver
         _generate("run_egmdo.py", "run_optimization.py.erb", gendir)
       end
     end

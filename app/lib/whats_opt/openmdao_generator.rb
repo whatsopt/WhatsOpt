@@ -5,8 +5,6 @@ require "whats_opt/server_generator"
 
 module WhatsOpt
   class OpenmdaoGenerator < CodeGenerator
-    DEFAULT_DOE_DRIVER = :smt_doe_lhs
-    DEFAULT_OPTIMIZATION_DRIVER = :scipy_optimizer_slsqp
 
     class DisciplineNotFoundException < StandardError
     end
@@ -182,7 +180,7 @@ module WhatsOpt
         else
           _generate("run_doe.py", "run_doe.py.erb", gendir)
           if @mda.is_root_analysis?
-            @driver = OpenmdaoDriverFactory.new(DEFAULT_OPTIMIZATION_DRIVER).create_driver
+            @driver = OpenmdaoDriverFactory.new(@impl.optimization_driver).create_driver
             @sqlite_filename = options[:sqlite_filename] || "#{@mda.basename}_optimization.sqlite"
             _generate("run_optimization.py", "run_optimization.py.erb", gendir)
           end

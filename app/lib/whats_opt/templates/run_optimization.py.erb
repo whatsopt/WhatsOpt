@@ -20,11 +20,11 @@ from <%= @server_module %>.<%= @mda.py_modulename %>_proxy import <%= @mda.py_cl
 from <%= @mda.py_modulename %> import <%= @mda.py_classname %>
 <% end -%>
 
-<% if @egmdo && @remote %>
+<%- if @egmdo && @remote -%>
 pb = om.Problem(<%= @mda.py_classname %>(discipline_factory=<%= @mda.py_classname %>Proxy()))
-<% else %>
+<%- else -%>
 pb = om.Problem(<%= @mda.py_classname %>())
-<% end %>
+<%- end -%>
 
 <% if @driver.pyoptsparse? -%>
 class NamedPyOptSparseDriver(om.pyOptSparseDriver):
@@ -40,14 +40,16 @@ class NamedScipyOptimizeDriver(om.ScipyOptimizeDriver):
         return '<%= "scipy_optimizer_#{@driver.algo_option.downcase}" %>'
 pb.driver = NamedScipyOptimizeDriver()
 <% end -%>
+
 pb.driver.options['optimizer'] = '<%= @driver.algo_option %>'
-<% @driver.options.each do |k, v|%>
+<%- @driver.options.each do |k, v| -%>
 pb.driver.options['<%= k %>'] = <%= v %>
-<% end -%>
-<% @driver.opt_settings.each do |k, v|%>
+<%- end -%>
+<%- @driver.opt_settings.each do |k, v| -%>
 pb.driver.opt_settings['<%= k %>'] = <%= v %>
-<% end -%>
-#pb.driver.options['debug_print'] = ['desvars','ln_cons','nl_cons','objs', 'totals']
+<%- end -%>
+
+# pb.driver.options['debug_print'] = ['desvars','ln_cons','nl_cons','objs', 'totals']
 pb.driver.options['debug_print'] = []
 
 case_recorder_filename = '<%= @sqlite_filename %>'
@@ -60,7 +62,6 @@ pb.driver.recording_options['includes'] = ['*']
 # to be commented out if partial derivatives are declared
 pb.model.approx_totals(method='fd', step=1e-6, form='central')
 <% end -%>
-
 <%- if @mda.design_variables.empty? -%>
 print("Error: You have to select some design variables then update (-r) update the run_optimization.py script and retry.")
 exit(-1)

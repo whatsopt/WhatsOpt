@@ -5,7 +5,7 @@ module WhatsOpt
     attr_reader :lib, :algo, :options
 
     def initialize(algoname, options)
-      @algoname = algoname
+      @algoname = algoname.to_sym
       @algoname =~ /^(\w+)_(\w+)$/
       @lib, @algo = $1, $2
       @options = {}
@@ -133,7 +133,7 @@ module WhatsOpt
     end
 
     def initialize(algoname = :scipy_optimizer_slsqp, options_hash = {})
-      @algoname = algoname
+      @algoname = algoname.to_sym
       _initialize_options_dict(options_hash)
     end
 

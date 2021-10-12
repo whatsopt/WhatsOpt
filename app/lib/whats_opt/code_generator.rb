@@ -7,6 +7,8 @@ require "pathname"
 module WhatsOpt
   class CodeGenerator
     PYTHON = APP_CONFIG["python_cmd"] || "python"
+    DEFAULT_DOE_DRIVER = :smt_doe_lhs
+    DEFAULT_OPTIMIZATION_DRIVER = :scipy_optimizer_slsqp
 
     attr_accessor :genfiles, :prefix
 
