@@ -63,12 +63,11 @@ function _getOpenmdaoImpl(formData) {
     }
   }
   const openmdaoImpl = {
-    components: {
-      parallel_group: formData.components.parallel_group,
-      use_scaling: formData.components.use_scaling,
-      use_units: formData.components.use_units,
-      nodes,
-    },
+    parallel_group: formData.components.parallel_group,
+    use_scaling: formData.components.use_scaling,
+    use_units: formData.components.use_units,
+    optimization_driver: 'scipy_optimizer_slsqp',
+    nodes,
     nonlinear_solver: { ...formData.nonlinear_solver },
     linear_solver: { ...formData.linear_solver },
   };
@@ -107,7 +106,7 @@ class OpenmdaoImplEditor extends React.Component {
   render() {
     // console.log("BEFORE", this.props.formData);
     const { impl, db } = this.props;
-    const { nodes } = impl.components;
+    const { nodes } = impl;
 
     // Schema and Form data for components
     // schema
@@ -146,14 +145,14 @@ class OpenmdaoImplEditor extends React.Component {
       uiSchema.components.use_scaling = { 'ui:disabled': true };
     }
 
-    // formData: components.nodes -> components.disc1, components.disc2
+    // formData: nodes -> components.disc1, components.disc2
     const nonlinearSolver = impl.nonlinear_solver;
     const linearSolver = impl.linear_solver;
     const formData = {
       components: {
-        use_units: impl.components.use_units,
-        use_scaling: impl.components.use_scaling,
-        parallel_group: impl.components.parallel_group,
+        use_units: impl.use_units,
+        use_scaling: impl.use_scaling,
+        parallel_group: impl.parallel_group,
       },
       nonlinear_solver: { ...nonlinearSolver },
       linear_solver: { ...linearSolver },
@@ -223,7 +222,10 @@ class OpenmdaoImplEditor extends React.Component {
 OpenmdaoImplEditor.propTypes = {
   db: PropTypes.object.isRequired,
   impl: PropTypes.shape({
-    components: PropTypes.object.isRequired,
+    use_units: PropTypes.bool.isRequired,
+    use_scaling: PropTypes.bool.isRequired,
+    parallel_group: PropTypes.bool.isRequired,
+    nodes: PropTypes.array.isRequired,
     nonlinear_solver: PropTypes.object.isRequired,
     linear_solver: PropTypes.object.isRequired,
   }).isRequired,

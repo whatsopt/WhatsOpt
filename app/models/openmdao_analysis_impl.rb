@@ -24,15 +24,14 @@ class OpenmdaoAnalysisImpl < ActiveRecord::Base
   def update_impl(impl_attrs)
     nonlinear_solver.update(impl_attrs[:nonlinear_solver]) if impl_attrs.key?(:nonlinear_solver)
     linear_solver.update(impl_attrs[:linear_solver]) if impl_attrs.key?(:linear_solver)
-    if impl_attrs[:components]
-      parallel = impl_attrs[:components][:parallel_group]
-      self.parallel_group = parallel unless parallel.nil?
-      use_units = impl_attrs[:components][:use_units]
-      self.use_units = use_units unless use_units.nil?
-      # update openmdao discipline impls
-      impl_attrs[:components][:nodes]&.each do |dattr|
-        OpenmdaoDisciplineImpl.where(discipline_id: dattr[:discipline_id]).update(dattr.except(:discipline_id))
-      end
+    parallel = impl_attrs[:parallel_group]
+    self.parallel_group = parallel unless parallel.nil?
+    use_units = impl_attrs[:use_units]
+    self.use_units = use_units unless use_units.nil?
+    optimization_driver = impl_attrs[:optimization_driver]
+    self.optimization_driver = optimization_driver unless optimization_driver.nil?
+    impl_attrs[:nodes]&.each do |dattr|
+      OpenmdaoDisciplineImpl.where(discipline_id: dattr[:discipline_id]).update(dattr.except(:discipline_id))
     end
   end
 
@@ -56,9 +55,10 @@ class OpenmdaoAnalysisImpl < ActiveRecord::Base
 
   private
     def _ensure_default_impl
-      self.parallel_group = false if parallel_group.nil?
+      self.parallel_group = false if parallel_group.blank?
       self.nonlinear_solver ||= Solver.new(name: "NonlinearBlockGS")
       self.linear_solver ||= Solver.new(name: "ScipyKrylov")
-      self.use_units = false if use_units.nil?
+      self.use_units = false if use_units.blank?
+      self.optimization_driver = :scipy_optimizer_slsqp if optimization_driver.blank?
     end
 end

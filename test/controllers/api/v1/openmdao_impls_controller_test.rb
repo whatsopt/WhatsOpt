@@ -15,7 +15,7 @@ class Api::V1::OpenmdaoImplsControllerTest < ActionDispatch::IntegrationTest
 
   test "should update openmdao impl parallel flag" do
     refute @mda.openmdao_impl.parallel_group
-    put api_v1_mda_openmdao_impl_url(@mda), params: { openmdao_impl: { components: { parallel_group: true } }, requested_at: Time.now },
+    put api_v1_mda_openmdao_impl_url(@mda), params: { openmdao_impl: { parallel_group: true }, requested_at: Time.now },
                                             as: :json, headers: @auth_headers
     assert_response :success
     @mda.reload
@@ -24,11 +24,20 @@ class Api::V1::OpenmdaoImplsControllerTest < ActionDispatch::IntegrationTest
 
   test "should update openmdao impl use_units flag" do
     refute @mda.openmdao_impl.use_units
-    put api_v1_mda_openmdao_impl_url(@mda), params: { openmdao_impl: { components: { use_units: true } }, requested_at: Time.now },
+    put api_v1_mda_openmdao_impl_url(@mda), params: { openmdao_impl: { use_units: true }, requested_at: Time.now },
                                             as: :json, headers: @auth_headers
     assert_response :success
     @mda.reload
     assert @mda.openmdao_impl.use_units
+  end
+
+  test "should update openmdao impl optim driver" do
+    refute @mda.openmdao_impl.use_units
+    put api_v1_mda_openmdao_impl_url(@mda), params: { openmdao_impl: { optimization_driver: :onerasego_optimizer_segomoe }, requested_at: Time.now },
+                                            as: :json, headers: @auth_headers
+    assert_response :success
+    @mda.reload
+    assert_equal "onerasego_optimizer_segomoe", @mda.openmdao_impl.optimization_driver
   end
 
 end

@@ -123,7 +123,7 @@ class AnalysisDatabase {
   }
 
   shouldBeBounded(conn) {
-    const surrogateIds = this.mda.impl.openmdao.components.nodes
+    const surrogateIds = this.mda.impl.openmdao.nodes
       .filter((node) => node.egmdo_surrogate)
       .map((node) => `${node.discipline_id}`);
     let shouldBeBounded = false;
