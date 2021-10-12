@@ -2,6 +2,56 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Form from 'react-jsonschema-form-bs4';
 
+const SCHEMA_GENERAL = {
+  type: 'object',
+  properties: {
+    general: {
+      type: 'object',
+      title: 'General',
+      properties: {
+        use_units: { type: 'boolean', title: 'Use units' },
+        use_scaling: { type: 'boolean', title: 'Use scaling' },
+        parallel_group: { type: 'boolean', title: 'Parallel Group (MPI)' },
+        driver: {
+          type: 'object',
+          title: 'Driver',
+          properties: {
+            optimization: {
+              type: 'string',
+              title: 'Optimization',
+              enum: [
+                'scipy_optimizer_cobyla',
+                'scipy_optimizer_bfgs',
+                'scipy_optimizer_slsqp',
+                'pyoptsparse_optimizer_conmin',
+                // "pyoptsparse_optimizer_fsqp",
+                'pyoptsparse_optimizer_slsqp',
+                // "pyoptsparse_optimizer_psqp",
+                'pyoptsparse_optimizer_nsga2',
+                'pyoptsparse_optimizer_snopt',
+                'onerasego_optimizer_segomoe',
+              ],
+              enumNames: [
+                'Scipy - COBYLA',
+                'Scipy - BFGS',
+                'Scipy - SLSQP',
+                'pyOptSparse - CONMIN',
+                // "pyOptSparse - FSQP",
+                'pyOptSparse - SLSQP',
+                // "pyOptSparse - PSQP",
+                'pyOptSparse - NSGA2',
+                'pyOptSparse - SNOPT',
+                'Onera - SEGOMOE',
+              ],
+              default: 'scipy_optimizer_slsqp',
+            },
+          },
+        },
+      },
+    },
+  },
+};
+
 const SCHEMA_NONLINEAR_SOLVER = {
   type: 'object',
   properties: {
@@ -49,6 +99,7 @@ const SCHEMA_LINEAR_SOLVER = {
 };
 
 function _getOpenmdaoImpl(formData) {
+  console.log(formData);
   const openmdaoComps = formData.components;
   const nodes = [];
   for (const discId in openmdaoComps) {
@@ -63,10 +114,10 @@ function _getOpenmdaoImpl(formData) {
     }
   }
   const openmdaoImpl = {
-    parallel_group: formData.components.parallel_group,
-    use_scaling: formData.components.use_scaling,
-    use_units: formData.components.use_units,
-    optimization_driver: 'scipy_optimizer_slsqp',
+    parallel_group: formData.general.parallel_group,
+    use_scaling: formData.general.use_scaling,
+    use_units: formData.general.use_units,
+    optimization_driver: formData.general.driver.optimization,
     nodes,
     nonlinear_solver: { ...formData.nonlinear_solver },
     linear_solver: { ...formData.linear_solver },
@@ -114,13 +165,9 @@ class OpenmdaoImplEditor extends React.Component {
       type: 'object',
       properties: {
         components: {
-          title: 'Group',
           type: 'object',
-          properties: {
-            use_units: { type: 'boolean', title: 'Use units' },
-            use_scaling: { type: 'boolean', title: 'Use scaling' },
-            parallel_group: { type: 'boolean', title: 'Parallel Execution (MPI)' },
-          },
+          title: 'Components',
+          properties: {},
         },
       },
     };
@@ -139,21 +186,23 @@ class OpenmdaoImplEditor extends React.Component {
     });
     // UI schema
     const uiSchema = {
-      components: { 'ui:order': ['use_units', 'use_scaling', 'parallel_group', '*'] },
+      general: { 'ui:order': ['use_units', 'use_scaling', 'parallel_group', 'driver'] },
     };
     if (db.isScaled()) {
-      uiSchema.components.use_scaling = { 'ui:disabled': true };
+      uiSchema.general.use_scaling = { 'ui:disabled': true };
     }
 
     // formData: nodes -> components.disc1, components.disc2
     const nonlinearSolver = impl.nonlinear_solver;
     const linearSolver = impl.linear_solver;
     const formData = {
-      components: {
+      general: {
         use_units: impl.use_units,
         use_scaling: impl.use_scaling,
         parallel_group: impl.parallel_group,
+        driver: { optimization: impl.optimization_driver },
       },
+      components: {},
       nonlinear_solver: { ...nonlinearSolver },
       linear_solver: { ...linearSolver },
     };
@@ -172,7 +221,7 @@ class OpenmdaoImplEditor extends React.Component {
           <div className="col-md-3">
             <Form
               key={reset}
-              schema={schema}
+              schema={SCHEMA_GENERAL}
               formData={formData}
               uiSchema={uiSchema}
               onChange={(data) => this.handleChange(data)}
@@ -182,6 +231,20 @@ class OpenmdaoImplEditor extends React.Component {
               <div>
                 <button type="submit" className="btn btn-primary">Save</button>
                 <button type="button" className="ml-1 btn btn-secondary" onClick={this.handleReset}>Reset</button>
+              </div>
+            </Form>
+          </div>
+          <div className="col-md-3">
+            <Form
+              key={reset}
+              schema={schema}
+              formData={formData}
+              onChange={(data) => this.handleChange(data)}
+              onSubmit={(data) => this.handleSubmit(data)}
+              liveValidate
+            >
+              <div>
+                <button type="submit" className="d-none btn btn-primary">Save</button>
               </div>
             </Form>
           </div>
@@ -223,8 +286,9 @@ OpenmdaoImplEditor.propTypes = {
   db: PropTypes.object.isRequired,
   impl: PropTypes.shape({
     use_units: PropTypes.bool.isRequired,
-    use_scaling: PropTypes.bool.isRequired,
     parallel_group: PropTypes.bool.isRequired,
+    use_scaling: PropTypes.bool.isRequired,
+    optimization_driver: PropTypes.string.isRequired,
     nodes: PropTypes.array.isRequired,
     nonlinear_solver: PropTypes.object.isRequired,
     linear_solver: PropTypes.object.isRequired,
