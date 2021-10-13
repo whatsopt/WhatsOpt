@@ -136,6 +136,9 @@ class WhatsOptApi {
     const path = `/analyses/${mdaId}`;
     axios.put(this.apiUrl(path), { analysis: mdaAttrs, requested_at: this.requested_at })
       .then((response) => {
+        // Here we set the update time of the MDA as we requested it
+        // This field is used to implement optimistic lock on the mda
+        // when co_owners do concurrent editing
         this.requested_at = response.data.updated_at;
         callback(response);
       })
@@ -160,7 +163,6 @@ class WhatsOptApi {
     const path = `/analyses/${toMdaId}`;
     this.getAnalysis(toMdaId, false, (response) => {
       const { updated_at } = response.data;
-      console.log(response);
       axios.put(this.apiUrl(path), {
         analysis: {
           import: {
@@ -299,7 +301,7 @@ class WhatsOptApi {
       openmdao_impl: implAttrs,
       requested_at: this.requested_at,
     })
-      .then(this.getAnalysis(mdaId, false, (response) => {
+      .then(() => this.getAnalysis(mdaId, false, (response) => {
         // Here we set the update time of the MDA as we requested it
         // This field is used to implement optimistic lock on the mda
         // when co_owners do concurrent editing
