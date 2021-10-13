@@ -2,6 +2,7 @@
 
 <h3>1.18.0 (31/10/2021)</h3>
 <ul>
+  <li>User can select optimizer in OpenMDAOi tab to generate appropriate run_optimization.py code</li> 
   <li>User can generate and run EGMDO related methods from an analysis (wop update --egmdo):
     <ul>
       <li>User should select some disciplines as EGMDO surrogates</li>
