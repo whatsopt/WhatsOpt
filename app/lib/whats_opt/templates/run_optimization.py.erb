@@ -1,24 +1,20 @@
 import numpy as np
 from numpy import nan, inf
-# import matplotlib
-# matplotlib.use('Agg')
-import matplotlib.pyplot as plt
-from run_parameters_init import initialize
-<% if @driver.onerasego? %>
-from openmdao_extensions.onera_sego_driver import OneraSegoDriver
-<% end %>
-
 import openmdao.api as om
-<% if @egmdo %>
+<%- if @driver.onerasego? -%>
+from openmdao_extensions.onera_sego_driver import OneraSegoDriver
+<%- end -%>
+<%- if @egmdo -%>
 from <%= @egmdo_module %>.<%= @mda.py_modulename %>_egmda import <%= @mda.py_classname %>Egmda as <%= @mda.py_classname %>
 <%- if @remote -%>
 from <%= @server_module %>.<%= @mda.py_modulename %>_proxy import <%= @mda.py_classname %>Proxy
-<% end %>
-<% elsif @remote -%>
+<%- end -%>
+<%- elsif @remote -%>
 from <%= @server_module %>.<%= @mda.py_modulename %>_proxy import <%= @mda.py_classname %>Proxy as <%= @mda.py_classname %>
-<% else -%>
+<%- else -%>
 from <%= @mda.py_modulename %> import <%= @mda.py_classname %>
-<% end -%>
+<%- end -%>
+from run_parameters_init import initialize
 
 <%- if @egmdo && @remote -%>
 pb = om.Problem(<%= @mda.py_classname %>(discipline_factory=<%= @mda.py_classname %>Proxy()))
@@ -26,20 +22,20 @@ pb = om.Problem(<%= @mda.py_classname %>(discipline_factory=<%= @mda.py_classnam
 pb = om.Problem(<%= @mda.py_classname %>())
 <%- end -%>
 
-<% if @driver.pyoptsparse? -%>
+<%- if @driver.pyoptsparse? -%>
 class NamedPyOptSparseDriver(om.pyOptSparseDriver):
     def _get_name(self):
         return '<%= "pyoptsparse_optimizer_#{@driver.algo_option.downcase}" %>'
 
 pb.driver = NamedPyOptSparseDriver()
-<% elsif @driver.onerasego? -%>
+<%- elsif @driver.onerasego? -%>
 pb.driver = OneraSegoDriver()
-<% else -%>
+<%- else -%>
 class NamedScipyOptimizeDriver(om.ScipyOptimizeDriver):
     def _get_name(self):
         return '<%= "scipy_optimizer_#{@driver.algo_option.downcase}" %>'
 pb.driver = NamedScipyOptimizeDriver()
-<% end -%>
+<%- end -%>
 
 pb.driver.options['optimizer'] = '<%= @driver.algo_option %>'
 <%- @driver.options.each do |k, v| -%>

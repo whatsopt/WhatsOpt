@@ -218,7 +218,7 @@ class OpenmdaoImplEditor extends React.Component {
     return (
       <div className="editor-section">
         <div className="row">
-          <div className="col-md-3">
+          <div className="col-md-2">
             <Form
               key={reset}
               schema={SCHEMA_GENERAL}
@@ -234,7 +234,7 @@ class OpenmdaoImplEditor extends React.Component {
               </div>
             </Form>
           </div>
-          <div className="col-md-3">
+          <div className="col-md-2">
             <Form
               key={reset}
               schema={schema}
