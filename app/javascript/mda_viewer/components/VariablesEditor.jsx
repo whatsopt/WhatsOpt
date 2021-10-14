@@ -29,7 +29,7 @@ function _computeRoleSelection(conn) {
   if (conn.role === 'parameter' || conn.role === 'design_var' || conn.role === 'uncertain_var') {
     options.splice(3); // remove outputs and state vars
   } else {
-    options.splice(options.length - 1, 1); // remove state_var
+    // options.splice(options.length - 1, 1); // remove state_var
     options.splice(0, 3); // remove inputs
   }
   return options;
