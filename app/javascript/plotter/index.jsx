@@ -270,8 +270,8 @@ class Plotter extends React.Component {
 
   render() {
     const { ope, mda, uqMode } = this.props;
-    const isOptim = (ope.category === 'optimization' || 'egmdo');
-    const isDoe = (ope.category === 'doe' || 'egdoe');
+    const isOptim = (ope.category === 'optimization' || ope.category === 'egmdo');
+    const isDoe = (ope.category === 'doe' || ope.category === 'egdoe');
     const { selection, inputVarCases } = this.state;
     const cases = { i: inputVarCases, o: this.outputVarCases, c: this.couplingVarCases };
     const selCases = {
@@ -398,7 +398,7 @@ class Plotter extends React.Component {
 Plotter.propTypes = {
   api: PropTypes.object.isRequired,
   mda: PropTypes.shape({
-    id: PropTypes.string.isRequired,
+    id: PropTypes.number.isRequired,
     name: PropTypes.string.isRequired,
   }).isRequired,
   ope: PropTypes.shape({
