@@ -1,7 +1,14 @@
 
 <div class="btn-toolbar float-right">
 
-  <div class="input-group  mr-2">
+  <div class="spinner d-flex justify-content-center text-success mt-1 mr-2">
+    <strong class="spinner mr-2">Loading...</strong>
+    <div class="spinner spinner-border text-success" role="status">
+      <span class="sr-only">Loading...</span>
+    </div>
+  </div>
+
+  <div class="input-group mr-2">
     <div class="input-group-prepend">
       <label class="input-group-text" for="designProjectScope">Design Project</label>
     </div>
@@ -44,39 +51,67 @@
 <% content_for :document_ready do %>
 <script>
   let relRoot = "<%= Rails.application.config.action_controller.relative_url_root %>";
-
+  let SPINNER_TIMEOUT = 1500; //ms
   function setAnalysesListSettings() {
     
     let query = $(this).data("analyses-query");
     let order = $(this).data("analyses-order");
+    let timeout;
     $.ajax({
       type: "PATCH",
       xhrFields: { withCredentials: true },
       headers: {'Authorization': 'Token <%= current_user.api_key%>'},
       url: relRoot+'/api/v1/users/<%= current_user.id%>',
       data: { user: { settings: { analyses_query: query, analyses_order: order } } },
+      beforeSend: function( xhr ) { 
+        timeout = setTimeout(function() {
+          $(".spinner").show();
+        }, SPINNER_TIMEOUT);
+      },
       success: function() {
-        $.getScript(this.href);
+        $.getScript(this.href, function() {
+          if (timeout) { clearTimeout(timeout); }
+          $(".spinner").hide();
+        });
       }
-    })
+    });
   }
 
   $("input[data-analyses-query]").on('click', setAnalysesListSettings);
   $("input[data-analyses-order]").on('click', setAnalysesListSettings);
 
+  let current_design_project_id = "<%= current_user.analyses_scope_design_project_id %>";
+
   $("#designProjectScope").on('click', function(e) {
     let design_project_id = this.value;
-    $.ajax({
-      type: "PATCH",
-      xhrFields: { withCredentials: true },
-      headers: {'Authorization': 'Token <%= current_user.api_key%>'},
-      url: relRoot+'/api/v1/users/<%= current_user.id%>',
-      data: {user: {settings: {analyses_scope_design_project_id: design_project_id}}},
-      success: function() {
-        $.getScript(this.href);
-      }
-    })
+    let timeout;
+    if (design_project_id !== current_design_project_id) {
+      $.ajax({
+        type: "PATCH",
+        xhrFields: { withCredentials: true },
+        headers: {'Authorization': 'Token <%= current_user.api_key%>'},
+        url: relRoot+'/api/v1/users/<%= current_user.id%>',
+        data: {user: {settings: {analyses_scope_design_project_id: design_project_id}}},
+        beforeSend: function( xhr ) {         
+          timeout = setTimeout(function() {
+            $(".spinner").show();
+          }, SPINNER_TIMEOUT);
+        },
+        success: function() {
+          $.getScript(this.href, function() {
+            if (timeout) { clearTimeout(timeout); console.log("CLEAR");}
+            $(".spinner").hide();
+          });
+        }
+      }).always(function() {
+        current_design_project_id = design_project_id;
+      });
+    }
   });
+  
+  // hide spinner
+  $(".spinner").hide();
+
 </script>
 <% end %>
 
