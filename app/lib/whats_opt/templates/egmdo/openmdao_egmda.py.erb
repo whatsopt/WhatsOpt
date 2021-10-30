@@ -7,7 +7,7 @@ from <%= @mda.snake_modulename %> import <%= @mda.py_classname %>Factory as Disc
 from egmdo.random_analysis import <%= @mda.py_classname %>RandomAnalysis
 from egmdo.doe_factory import DoeFactory
 from egmdo.gp_factory import GpFactory
-from egmdo.algorithms import run_egmda
+from egmdo.algorithm import run_egmda
 
 class <%= @mda.py_classname %>EgDiscipline(om.ExplicitComponent):
     """ An OpenMDAO base component to encapsulate <%= @mda.py_classname %> discipline """
