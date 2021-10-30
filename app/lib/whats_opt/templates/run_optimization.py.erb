@@ -16,8 +16,15 @@ from <%= @mda.py_modulename %> import <%= @mda.py_classname %>
 <%- end -%>
 from run_parameters_init import initialize
 
-<%- if @egmdo && @remote -%>
+<%- if @egmdo %>
+# Options: discipline_factory=None, gp_factory=None, 
+# n_doe_pce=500, epsilon_coeff_var=1e-3, threshold_coeff_var=1e-3, n_iter_max=10, 
+# outdir=".", plot=False, plot_range=[0, 50]
+<%- if @remote -%>
 pb = om.Problem(<%= @mda.py_classname %>(discipline_factory=<%= @mda.py_classname %>Proxy()))
+<%- else -%>
+pb = om.Problem(<%= @mda.py_classname %>())
+<%- end -%>
 <%- else -%>
 pb = om.Problem(<%= @mda.py_classname %>())
 <%- end -%>
@@ -53,11 +60,14 @@ recorder = om.SqliteRecorder(case_recorder_filename)
 pb.driver.add_recorder(recorder)
 pb.driver.recording_options['includes'] = ['*']
 
-<% unless @driver.onerasego? -%>
-# Derivatives are compute via finite-difference method
-# to be commented out if partial derivatives are declared
+<%- unless @driver.onerasego? -%>
+<%- unless @egmdo -%>
+# Derivatives are computed via finite-difference method
+# line below to be commented out if partial derivatives are declared
 pb.model.approx_totals(method='fd', step=1e-6, form='central')
-<% end -%>
+<%- end -%>
+<%- end -%>
+
 <%- if @mda.design_variables.empty? -%>
 print("Error: You have to select some design variables then update (-r) update the run_optimization.py script and retry.")
 exit(-1)
@@ -85,7 +95,7 @@ pb.model.add_constraint('<%= voi.name %>', lower=<%= voi.cstr_lower_py_value %><
 <%- @mda.eq_constraint_variables.each do |voi| -%>
 pb.model.add_constraint('<%= voi.name %>', equals=<%= voi.cstr_init_py_value %><%= @impl.use_units && !voi.units.blank? ? ", units='#{voi.units}'":"" %>)
 <%- end -%>
-<%- @mda.constraint_variables.each do |voi| -%>
+<%- @mda.bounded_constraint_variables.each do |voi| -%>
 pb.model.add_constraint('<%= voi.name %>', lower=<%= voi.cstr_lower_py_value %>, upper=<%= voi.cstr_upper_py_value %><%= @impl.use_units && !voi.units.blank? ? ", units='#{voi.units}'":"" %>)
 <%- end -%>
 

@@ -3,7 +3,8 @@ from <%= @discipline.py_full_modulename %>_base import <%= @discipline.py_classn
 
 
 class <%= @discipline.py_classname %>(<%= @discipline.py_classname %>Base):
-    """ An OpenMDAO component to encapsulate <%= @discipline.py_classname %> discipline """
+    """ A class to encapsulate <%= @discipline.py_classname %> discipline """
+
     def compute(self, inputs, outputs):
         """ <%= @discipline.py_classname %> computation """
         # Here comes discipline resolution code
@@ -21,6 +22,13 @@ class <%= @discipline.py_classname %>(<%= @discipline.py_classname %>Base):
 <%- end -%>
 <%- end -%>
 
+<% if @dimpl.support_derivatives -%>
+    def compute_partials(self, inputs, partials):
+        """ Jacobian for <%= @discipline.py_classname %> """
+<% @discipline.output_variables.numeric.each do |var_out| %><% @discipline.input_variables.numeric.each do |var_in| %>
+        partials['<%= var_out.py_varname %>', '<%= var_in.py_varname %>'] = np.zeros((<%= var_out.dim %>, <%= var_in.dim %>))<% end %><% end %>
+<% end -%>
+
 # WhatsOpt docking mechanism: .whatsopt_dock.yml file should contain
 # <%= @discipline.py_modulename %> entry, like:
 #   <%= @discipline.py_modulename %>:
@@ -34,14 +42,3 @@ class <%= @discipline.py_classname %>(<%= @discipline.py_classname %>Base):
 
 # Reminder of inputs:<% @discipline.input_variables.numeric.each do |var_in| %>
 #        <%= var_in.py_shortname %> = inputs['<%= var_in.py_varname %>']  # shape: <%= var_in.shape -%>, type: <%= var_in.type -%><% end %>
-
-# To declare partial derivatives computation
-#
-#    def setup(self):
-#        super(<%= @discipline.py_classname %>, self).setup()
-#        self.declare_partials('*', '*')
-#
-#    def compute_partials(self, inputs, partials):
-#        """ Jacobian for <%= @discipline.py_classname %> """
-#<% @discipline.output_variables.numeric.each do |var_out| %><% @discipline.input_variables.numeric.each do |var_in| %>
-#        partials['<%= var_out.py_varname %>', '<%= var_in.py_varname %>'] = np.zeros((<%= var_out.dim %>, <%= var_in.dim %>))<% end %><% end %>
