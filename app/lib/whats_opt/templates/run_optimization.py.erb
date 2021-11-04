@@ -61,9 +61,9 @@ pb.driver.add_recorder(recorder)
 pb.driver.recording_options['includes'] = ['*']
 
 <%- unless @driver.onerasego? -%>
-<%- unless @egmdo -%>
-# Derivatives are computed via finite-difference method
-# line below to be commented out if partial derivatives are declared
+<%- unless @impl.support_derivatives? || (@egmdo && @impl.egmdo_support_derivatives?) -%>
+# Derivatives are computed via finite-difference method.
+# Line below to be commented out if all disciplines declare partial derivatives.
 pb.model.approx_totals(method='fd', step=1e-6, form='central')
 <%- end -%>
 <%- end -%>

@@ -53,6 +53,18 @@ class OpenmdaoAnalysisImpl < ActiveRecord::Base
     oimpl_copy
   end
 
+  def egmdo_support_derivatives?
+    analysis.all_plain_disciplines
+      .select{|d| !d.openmdao_impl.egmdo_surrogate && !d.openmdao_impl.support_derivatives} 
+      .empty?
+  end
+
+  def support_derivatives?
+    analysis.all_plain_disciplines
+      .select{|d| !d.openmdao_impl.support_derivatives} 
+      .empty?
+  end
+
   private
     def _ensure_default_impl
       self.parallel_group = false if parallel_group.blank?
