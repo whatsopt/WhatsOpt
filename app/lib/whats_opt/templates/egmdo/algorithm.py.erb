@@ -23,7 +23,7 @@ def enrich_gp(gp_factory, design_vars, coupling_vars,  max_effect_varnames):
     <%- end -%>
 
 def run_egmda(discipline_factory, design_vars, outdir=".",
-              n_doe_pce=500, epsilon_coeff_var=1e-3, n_iter_max=10,
+              n_doe_pce=500, epsilon_coeff_var=1e-3, threshold_coeff_var=1e-3, n_iter_max=10,
               gp_factory=None, plot=None, plot_range=[0, 50]):
     <%- if @mda.plain_disciplines.select{|d| d.openmdao_impl&.egmdo_surrogate}.blank? -%>
     print("Error: You have to select at least one discipline as a surrogate then update the EGMDO code and retry.")
@@ -47,7 +47,9 @@ def run_egmda(discipline_factory, design_vars, outdir=".",
 
     while (not convergence) and (n_iter < n_iter_max):
         # run random MDA
-        doe, max_effect_varname, coupling_var_doe = run_random_mda(discipline_factory, gp_factory, design_vars, n_doe_pce, outdir)
+        coeff_var, max_effect_varname, coupling_var_doe = run_random_mda(discipline_factory, gp_factory, 
+                                                                         design_vars, n_doe_pce, outdir,
+                                                                         threshold_coeff_var)
 <% random_vars =  @mda.egmdo_random_variables %>
 <%- if random_vars.count == 2 && random_vars.first.discipline != random_vars.second.discipline -%>
         if (plot):
@@ -90,10 +92,6 @@ def run_egmda(discipline_factory, design_vars, outdir=".",
             print("Plotting disabled! Plotting requires 2 couplings from surrogates, got <%= random_vars.count %>)")
 
 <%- end -%>
-        mean = doe[:, -1].mean()
-        coeff_var = doe[:, -1].std()/mean
-        cv_mean.append(mean)
-        cv_coeff_var.append(coeff_var)
 
         # compute convergence criterion 
         convergence = (np.abs(coeff_var) <= epsilon_coeff_var)

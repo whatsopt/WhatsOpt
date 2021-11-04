@@ -2,7 +2,7 @@ import numpy as np
 from <%= @discipline.py_full_modulename %>_base import <%= @discipline.py_classname %>Base
 
 class <%= @discipline.py_classname %>(<%= @discipline.py_classname %>Base):
-    """ An OpenMDAO component to encapsulate <%= @discipline.py_classname %> discipline """
+    """ A class to encapsulate <%= @discipline.py_classname %> discipline """
 		
     def compute(self, inputs, outputs):
         """ <%= @discipline.py_classname %> computation """

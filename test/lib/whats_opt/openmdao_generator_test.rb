@@ -54,7 +54,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
 
   test "should maintain a list of generated filepaths with egmdo" do
     expected = ["__init__.py", "aerodynamics.py", "aerodynamics_base.py", "cicav.py",
-                "cicav_base.py", "egmdo/__init__.py", "egmdo/algorithms.py", "egmdo/cicav_egmda.py", "egmdo/doe_factory.py", 
+                "cicav_base.py", "egmdo/__init__.py", "egmdo/algorithm.py", "egmdo/cicav_egmda.py", "egmdo/doe_factory.py", 
                 "egmdo/gp_factory.py", "egmdo/random_analysis.py", "geometry.py", "geometry_base.py", 
                 "propulsion.py", "propulsion_base.py", "run_analysis.py", "run_doe.py", "run_egdoe.py", 
                 "run_egmda.py", "run_egmdo.py", "run_optimization.py", "run_parameters_init.py", "run_screening.py"]
