@@ -22,7 +22,7 @@ module WhatsOpt
       Dir.mkdir(egmdo_dir) unless File.exist?(egmdo_dir)
       _generate("#{@mda.basename}_egmda.py", "egmdo/openmdao_egmda.py.erb", egmdo_dir)
       _generate("run_egmda.py", "run_analysis.py.erb", gendir)
-      _generate("algorithm.py", "egmdo/algorithm.py.erb", egmdo_dir)
+      _generate("algorithms.py", "egmdo/algorithms.py.erb", egmdo_dir)
       _generate("doe_factory.py", "egmdo/doe_factory.py.erb", egmdo_dir)
       _generate("gp_factory.py", "egmdo/gp_factory.py.erb", egmdo_dir)
       _generate("random_analysis.py", "egmdo/random_analysis.py.erb", egmdo_dir)
