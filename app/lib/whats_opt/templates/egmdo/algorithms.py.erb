@@ -4,10 +4,131 @@ import numpy as np
 import pickle
 import matplotlib.pyplot as plt
 from smt.surrogate_models import KRG
+import openturns as ot
+import openmdao.api as om
+from openmdao_extensions.smt_doe_driver import SmtDOEDriver
+from openmdao_extensions.openturns_doe_driver import OpenturnsDOEDriver
 
-from egmdo.random_analysis import run_random_mda
+from egmdo.random_analysis import <%= @mda.py_classname %>RandomAnalysis
+ 
 from egmdo.doe_factory import DoeFactory
 from egmdo.gp_factory import GpFactory
+
+def compute_doe(discipline_factory, gp_factory, design_vars, n_cases, out_sqlitefilename, parallel=False):
+    pb = om.Problem(<%= @mda.py_classname %>RandomAnalysis(discipline_factory, gp_factory))
+    dists = []
+    <% dim = 0 %>
+    <%- @mda.egmdo_random_variables.each do |param| -%>
+    # _xi_<%= param.py_varname %> 
+    dists.append(ot.Normal(0.0, 1.0))
+    <%- dim = dim + 1 -%>
+    <%- end -%>
+
+    # Dependency between variables can be specified by choosing a specific copula
+    copula = ot.IndependentCopula(<%= dim %>)  # default to no dependency
+
+    comp_dist = ot.ComposedDistribution(dists, copula)
+    pb.driver = OpenturnsDOEDriver(n_samples=n_cases, distribution=comp_dist)
+    pb.driver.options['run_parallel'] = parallel
+
+    recorder = om.SqliteRecorder(out_sqlitefilename)
+    pb.driver.add_recorder(recorder)
+    pb.driver.recording_options['includes'] = ['*']
+
+    if os.path.exists(out_sqlitefilename):
+        os.remove(out_sqlitefilename)
+
+    # uncertain variable input are taken as design_variables to get recorded by driver recorder
+    <%- @mda.egmdo_random_variables.each do |dv| -%>
+    pb.model.add_design_var('_xi_<%= dv.py_varname %>', lower=<%= dv.lower_py_value %>, upper=<%= dv.upper_py_value %>)
+    <%- end -%>
+    pb.setup()  
+    for name, val in design_vars.items():
+        pb[name] = val
+    <%- @mda.egmdo_random_variables.each do |param| -%>
+    pb['_xi_<%= param.py_varname %>'] = 0.0
+    <%- end -%>
+    pb.run_driver()
+    pb.cleanup()
+
+
+def compute_random_mda(discipline_factory, gp_factory, design_vars, n_doe_pce, outdir='.'):
+    # run the random MDA n times to create a doe
+    outfile = os.path.join(outdir, '<%= @mda.snake_modulename %>_random_mda_doe.sqlite')
+    compute_doe(discipline_factory, gp_factory, design_vars, n_doe_pce, outfile)
+    return outfile
+
+
+def analyze_sensitivity(outfile, threshold_coeff_var=1e-3):
+    # quantities of interest
+    qoi_names = []
+<%- @mda.constraint_variables.each do |c| -%>
+    qoi_names.append("<%= c.name %>")
+<%- end -%>
+    qoi_names.append("<%= @mda.objective_variables.first.py_varname %>")
+
+    # open the doe to create the PCE
+    cr = om.CaseReader(outfile)
+    driver_cases = cr.list_cases('driver', out_stream=None)
+    case = cr.get_case(driver_cases[0])
+    n_doe = len(driver_cases)
+    n_des_var = len(case.get_design_vars()) 
+    doe = np.zeros((n_doe, n_des_var + len(qoi_names)))
+    des_var_names = sorted(case.get_design_vars())
+
+    coupling_var_doe = np.zeros((n_doe, <%= @mda.coupling_variables.size %>))
+    for i in range(n_doe):
+        case = cr.get_case(driver_cases[i])
+        for j in range(n_des_var):
+            doe[i, j] = case.outputs[des_var_names[j]]   
+        doe[i, -1] = case["<%= @mda.objective_variables.first.py_varname %>"]
+<% nb_cstrs = @mda.constraint_variables.size %>
+<%- @mda.constraint_variables.each_with_index do |cstr_var, k| -%>        
+        doe[i, <%= -(nb_cstrs+1)+k %>] = case["<%= cstr_var.py_varname %>"]
+<%- end -%>
+<%- @mda.coupling_variables.each_with_index do |cv, j| -%>
+        coupling_var_doe[i, <%= j %>] = case["<%= cv.py_varname %>"]
+<%- end -%>
+    print("Estimated mean of the output = ", doe[:, -1].mean())
+    print("Estimated coeff of var of the output = ", doe[:, -1].std()/doe[:, -1].mean())
+
+    # Polynomial chaos expansion metamodel
+    # Determination of the most uncertain variable between the n constraints and the objective function
+    # Warning : the constraints values tend towards 0 thus their coef of var tends towards +inf. 
+    # We use a threshold to compute with standard deviation and not with coef of var  
+    mean = doe[:, <%= -nb_cstrs-1 %>:].mean(axis=0)
+    std =  doe[:, <%= -nb_cstrs-1 %>:].std(axis=0)
+    # Threshold
+    ind = abs(mean) < threshold_coeff_var
+    cv = std/abs(mean)
+    cv[ind] = std[ind]
+    max_cv = cv.max()
+    index = cv.argmax()
+    
+    print(f"The most uncertain QoI is '{qoi_names[index]}' with mean = {mean[index]} and estimated coeff of var = {max_cv}")
+
+    # degree of the expansion 
+    degree = 3
+    distribution = ot.Normal(n_des_var)
+    basis = [ot.StandardDistributionPolynomialFactory(distribution.getMarginal(i)) for i in range(n_des_var)]
+    enumerateFunction = ot.LinearEnumerateFunction(n_des_var)
+    productBasis = ot.OrthogonalProductPolynomialFactory(basis, enumerateFunction)
+    adaptiveStrategy = ot.FixedStrategy(productBasis, enumerateFunction.getStrataCumulatedCardinal(degree))
+    projectionStrategy = ot.LeastSquaresStrategy()
+    algo = ot.FunctionalChaosAlgorithm(doe[:, 0:-len(qoi_names)], np.atleast_2d(doe[:, -(len(qoi_names)-index)]).T, 
+                                       distribution, adaptiveStrategy, projectionStrategy)
+    algo.run()
+    result = algo.getResult()
+
+    # sensitivity analysis
+    sensitivityAnalysis = ot.FunctionalChaosSobolIndices(result)
+    first_order = [sensitivityAnalysis.getSobolIndex(i) for i in range(n_des_var)]
+    print("First order Sobol indices =", first_order)
+    print("Sum of the first order Sobol indices =", np.array(first_order).sum())
+    max_effect_varname = des_var_names[np.array(first_order).argmax()][4:]  # remove prefix _xi_
+    print(f"Most relevant variable = '{max_effect_varname}'")
+    return max_cv, max_effect_varname, coupling_var_doe
+
 
 def enrich_gp(gp_factory, design_vars, coupling_vars,  max_effect_varnames):
     for k in range(len(max_effect_varnames)):
@@ -22,7 +143,8 @@ def enrich_gp(gp_factory, design_vars, coupling_vars,  max_effect_varnames):
         pass
     <%- end -%>
 
-def run_egmda(discipline_factory, design_vars, outdir=".",
+
+def solve_egmda(discipline_factory, design_vars, outdir=".",
               n_doe_pce=500, epsilon_coeff_var=1e-3, threshold_coeff_var=1e-3, n_iter_max=10,
               gp_factory=None, plot=None, plot_range=[0, 50]):
     <%- if @mda.plain_disciplines.select{|d| d.openmdao_impl&.egmdo_surrogate}.blank? -%>
@@ -46,10 +168,10 @@ def run_egmda(discipline_factory, design_vars, outdir=".",
     gp_factory.create_all_gps()
 
     while (not convergence) and (n_iter < n_iter_max):
-        # run random MDA
-        coeff_var, max_effect_varname, coupling_var_doe = run_random_mda(discipline_factory, gp_factory, 
-                                                                         design_vars, n_doe_pce, outdir,
-                                                                         threshold_coeff_var)
+        outfile = compute_random_mda(discipline_factory, gp_factory, 
+                                     design_vars, n_doe_pce, outdir)
+        coeff_var, max_effect_varname, coupling_var_doe = analyze_sensitivity(outfile, threshold_coeff_var)
+
 <% random_vars =  @mda.egmdo_random_variables %>
 <%- if random_vars.count == 2 && random_vars.first.discipline != random_vars.second.discipline -%>
         if (plot):
