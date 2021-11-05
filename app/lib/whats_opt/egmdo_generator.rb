@@ -12,7 +12,7 @@ module WhatsOpt
       @driver_name = driver_name.to_sym if driver_name
       @driver_options = driver_options
       @prefix = "egmdo"
-      @impl = @mda.openmdao_impl || OpenmdaoAnalysisImpl.new
+      @impl = @mda.openmdao_impl || OpenmdaoAnalysisImpl.new(analysis: @mda)
       @egmdo = true
     end
 

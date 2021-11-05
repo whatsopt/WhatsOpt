@@ -61,7 +61,9 @@ class OpenmdaoAnalysisImpl < ActiveRecord::Base
 
   def support_derivatives?
     analysis.all_plain_disciplines
-      .select{|d| !d.openmdao_impl.support_derivatives} 
+      .select{|d| 
+        !d.openmdao_impl.support_derivatives
+      } 
       .empty?
   end
 

@@ -15,3 +15,33 @@ openmdao_propulsion_impl:
   implicit_component: false
   support_derivatives: false
   egmdo_surrogate: false
+
+fast_discipline_impl:
+  discipline: fast_discipline
+  implicit_component: false
+  support_derivatives: false
+  egmdo_surrogate: false
+
+outermda_discipline_impl:
+  discipline: outermda_discipline
+  implicit_component: false
+  support_derivatives: false
+  egmdo_surrogate: false
+
+outermda_vacant_discipline_impl:
+  discipline: outermda_vacant_discipline
+  implicit_component: false
+  support_derivatives: false
+  egmdo_surrogate: false
+
+innermda_discipline_impl:
+  discipline: innermda_discipline
+  implicit_component: false
+  support_derivatives: false
+  egmdo_surrogate: false
+
+disc_cicav_metamodel_impl:
+  discipline: disc_cicav_metamodel
+  implicit_component: false
+  support_derivatives: false
+  egmdo_surrogate: false

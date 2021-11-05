@@ -24,7 +24,7 @@ module WhatsOpt
       @driver_name = driver_name.to_sym if driver_name
       @driver_options = driver_options
 
-      @impl = @mda.openmdao_impl || OpenmdaoAnalysisImpl.new
+      @impl = @mda.openmdao_impl || OpenmdaoAnalysisImpl.new(analysis: @mda)
       @whatsopt_url = whatsopt_url
       @api_key = api_key
       @remote_ip = remote_ip

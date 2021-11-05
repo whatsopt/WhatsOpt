@@ -5,3 +5,35 @@ openmdao_cicav_impl:
   linear_solver_id: <%= ActiveRecord::FixtureSet.identify(:scipy_krylov) %>
   use_units: false
   optimization_driver: scipy_optimizer_slsqp
+
+openmdao_fast_impl:
+  analysis: fast
+  parallel_group: false
+  nonlinear_solver_id: <%= ActiveRecord::FixtureSet.identify(:nlbgs) %>
+  linear_solver_id: <%= ActiveRecord::FixtureSet.identify(:scipy_krylov) %>
+  use_units: false
+  optimization_driver: scipy_optimizer_slsqp
+
+openmdao_outer_impl:
+  analysis: OUTER
+  parallel_group: false
+  nonlinear_solver_id: <%= ActiveRecord::FixtureSet.identify(:nlbgs) %>
+  linear_solver_id: <%= ActiveRecord::FixtureSet.identify(:scipy_krylov) %>
+  use_units: false
+  optimization_driver: scipy_optimizer_slsqp
+
+openmdao_inner_impl:
+  analysis: INNER
+  parallel_group: false
+  nonlinear_solver_id: <%= ActiveRecord::FixtureSet.identify(:nlbgs) %>
+  linear_solver_id: <%= ActiveRecord::FixtureSet.identify(:scipy_krylov) %>
+  use_units: false
+  optimization_driver: scipy_optimizer_slsqp
+
+openmdao_cicav_metamodel_analysis_impl:
+  analysis: cicav_metamodel_analysis
+  parallel_group: false
+  nonlinear_solver_id: <%= ActiveRecord::FixtureSet.identify(:nlbgs) %>
+  linear_solver_id: <%= ActiveRecord::FixtureSet.identify(:scipy_krylov) %>
+  use_units: false
+  optimization_driver: scipy_optimizer_slsqp
