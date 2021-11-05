@@ -465,6 +465,9 @@ class Analysis < ApplicationRecord
         inner.update_column(:public, mda_params[:public])
       end
     end
+    if super_discipline && mda_params[:name]
+      super_discipline.update!(name: self.name)
+    end
   end
 
   def update_design_project!(design_project_id)

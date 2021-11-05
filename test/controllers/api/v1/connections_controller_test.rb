@@ -158,13 +158,13 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
         mda = conn.from.discipline.analysis
         delete api_v1_mda_connection_url(mda.id, conn), params: {requested_at: Time.now}, as: :json, headers: @auth_headers
         assert_response :unprocessable_entity
-        assert_equal "Connection y has to be suppressed in InnerMdaDiscipline sub-analysis first",
+        assert_equal "Connection y has to be suppressed in INNER sub-analysis first",
                      JSON.parse(response.body)["message"]
         conn = connections(:outermda_driver_x2_innermda_disc)
         mda = conn.from.discipline.analysis
         delete api_v1_mda_connection_url(mda.id, conn), params: {requested_at: Time.now}, as: :json, headers: @auth_headers
         assert_response :unprocessable_entity
-        assert_equal "Connection x2 has to be suppressed in InnerMdaDiscipline sub-analysis first",
+        assert_equal "Connection x2 has to be suppressed in INNER sub-analysis first",
                      JSON.parse(response.body)["message"]
       end
     end
