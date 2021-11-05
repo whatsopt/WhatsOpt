@@ -169,4 +169,18 @@ class Api::V1::DisciplineControllerTest < ActionDispatch::IntegrationTest
       end
     end
   end
+
+  test "when renaming super-discipline, sub-analysis should be renamed" do
+    mda = analyses(:outermda)
+    sub_mda = analyses(:innermda)
+    super_disc = disciplines(:outermda_innermda_discipline)
+    assert_equal sub_mda.name, super_disc.name
+    patch api_v1_mda_discipline_url(mda, super_disc), params: { discipline: {  name: "NewName" }, requested_at: Time.now }, 
+                                                  as: :json, headers: @auth_headers
+    assert_response :success
+    super_disc.reload
+    sub_mda.reload
+    assert_equal "NewName", super_disc.name
+    assert_equal sub_mda.name, super_disc.name
+  end
 end
