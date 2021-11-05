@@ -148,6 +148,7 @@ class Discipline < ApplicationRecord
         analysis_discipline.destroy
       elsif type == WhatsOpt::Discipline::ANALYSIS
         self.sub_analysis.parent = self.analysis
+        self.sub_analysis.name = self.name
         self.sub_analysis.save!
       end
     end

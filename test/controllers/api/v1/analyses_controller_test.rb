@@ -336,4 +336,17 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     expected = sample_file("outer_mda.json").read.chomp
     assert_equal expected, resp.to_json.to_s
   end
+
+  test "when renaming sub_analysis, super_discipline should be renamed" do
+    sub_mda = analyses(:innermda)
+    super_disc = disciplines(:outermda_innermda_discipline)
+    assert_equal sub_mda.name, super_disc.name
+    put api_v1_mda_url(sub_mda), params: { analysis: { name: "NewName"}, requested_at: Time.now }, 
+                              as: :json, headers: @auth_headers
+    assert_response :success
+    super_disc.reload
+    sub_mda.reload
+    assert_equal "NewName", sub_mda.name
+    assert_equal sub_mda.name, super_disc.name
+  end
 end

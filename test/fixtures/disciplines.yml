@@ -53,7 +53,7 @@ outermda_discipline:
   position: 1
 
 outermda_innermda_discipline:
-  name: InnerMdaDiscipline
+  name: INNER
   type: mda
   analysis: outermda
   position: 2
