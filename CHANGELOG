@@ -1,5 +1,15 @@
 <h1>CHANGELOG</h1>
 
+<h3>1.18.1 (18/11/2021)</h3>
+<ul>
+  <li>Scripts run_analysis.py and run_optimization are deprecated, and will be renamed in future versions 
+    <ul>
+      <li>run_analysis.py will be renamed run_mda.py</li>
+      <li>run_optimization.py will be renamed run_mdo.py</li>
+    </ul>
+  </li>
+</ul>
+
 <h3>1.18.0 (05/11/2021)</h3>
 <ul>
   <li>User can select optimizer in OpenMDAO tab to generate appropriate run_optimization.py code</li>
