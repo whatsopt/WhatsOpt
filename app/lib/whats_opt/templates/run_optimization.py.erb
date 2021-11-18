@@ -69,7 +69,7 @@ pb.model.approx_totals(method='fd', step=1e-6, form='central')
 <%- end -%>
 
 <%- if @mda.design_variables.empty? -%>
-print("Error: You have to select some design variables then update (-r) update the run_optimization.py script and retry.")
+print("Error: You have to select some design variables then update (-r) update the run_mdo.py script and retry.")
 exit(-1)
 <%- end -%>
 <%- @mda.design_variables.each do |dv| -%>

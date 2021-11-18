@@ -1,0 +1,9 @@
+def warning():
+    print("**********************************************************************************")
+    print("* Warning: 'run_analysis.py' is deprecated and will be renamed in future versions.")
+    print("* Instead, please use 'run_mda.py' ('run_analysis.py' renaming).")
+    print("**********************************************************************************")
+
+import os
+exec(open(os.path.join(os.path.dirname(__file__), "run_mda.py")).read())
+warning()

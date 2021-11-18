@@ -140,7 +140,7 @@ module WhatsOpt
       gendir = File.join(gendir, mda.basename)
       Dir.mkdir(gendir) unless Dir.exist?(gendir)
 
-      # generate only analaysis code: no script , no server
+      # generate only analysis code: no script , no server
       opts = options.merge(with_run: false, with_server: false, with_runops: false)
       sub_ogen._generate_code(gendir, opts)
       @genfiles += sub_ogen.genfiles
@@ -156,13 +156,15 @@ module WhatsOpt
     def _generate_run_scripts(gendir, options = {})
       if options[:with_run]
         _generate("run_parameters_init.py", "run_parameters_init.py.erb", gendir)
-        _generate("run_analysis.py", "run_analysis.py.erb", gendir)
+        _generate("run_analysis.py", "run_analysis_deprecated.py.erb", gendir)
+        _generate("run_mda.py", "run_analysis.py.erb", gendir)
       end
       if @driver_name # coming from GUI running remote driver
         @driver = OpenmdaoDriverFactory.new(@driver_name, @driver_options).create_driver
         if @driver.optimization?
           @sqlite_filename = options[:sqlite_filename] || "#{@mda.basename}_optimization.sqlite"
-          _generate("run_optimization.py", "run_optimization.py.erb", gendir)
+          _generate("run_optimization.py", "run_optimization_deprecated.py.erb", gendir)
+          _generate("run_mdo.py", "run_optimization.py.erb", gendir)
         elsif @driver.doe?
           @sqlite_filename = options[:sqlite_filename] || "#{@mda.basename}_doe.sqlite"
           _generate("run_doe.py", "run_doe.py.erb", gendir)
@@ -182,7 +184,8 @@ module WhatsOpt
           if @mda.is_root_analysis?
             @driver = OpenmdaoDriverFactory.new(@impl.optimization_driver).create_driver
             @sqlite_filename = options[:sqlite_filename] || "#{@mda.basename}_optimization.sqlite"
-            _generate("run_optimization.py", "run_optimization.py.erb", gendir)
+            _generate("run_optimization.py", "run_optimization_deprecated.py.erb", gendir)
+            _generate("run_mdo.py", "run_optimization.py.erb", gendir)
           end
         end
       end
