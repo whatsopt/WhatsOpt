@@ -1,5 +1,5 @@
 import openmdao.api as om
-from run_parameters_init import initialize
+from mda_init import initialize
 <% if @egmdo %>
 from <%= @egmdo_module %>.<%= @mda.py_modulename %>_egmda import <%= @mda.py_classname %>Egmda as <%= @mda.py_classname %>
 <%- if @remote -%>

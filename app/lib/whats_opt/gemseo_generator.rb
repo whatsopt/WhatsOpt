@@ -59,7 +59,8 @@ module WhatsOpt
     # options: with_runops: true, with_run: true
     def _generate_run_scripts(gendir, options = {})
       if options[:with_run]
-        _generate("run_parameters_init.py", "run_parameters_init.py.erb", gendir)
+        _generate("run_parameters_init.py", "run_parameters_init_deprecated.py.erb", gendir)
+        _generate("mda_init.py", "run_parameters_init.py.erb", gendir)
         _generate("run_analysis.py", "run_analysis_deprecated.py.erb", gendir)
         _generate("run_mda.py", "gemseo/run_analysis.py.erb", gendir)
       end
