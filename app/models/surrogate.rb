@@ -102,7 +102,7 @@ class Surrogate < ApplicationRecord
     y = proxy.predict_values(x)
   rescue => exception
     # puts "#{exception} on surrogate #{id}"
-    Rails.logger.warn "SURROGATE PREDICT: #{exception} on surrogate #{id}: #{exception}"
+    Rails.logger.warn "SURROGATE PREDICT: #{exception} on surrogate #{id}: #{exception.message}"
     update(status: STATUS_FAILED)
     raise
   else
