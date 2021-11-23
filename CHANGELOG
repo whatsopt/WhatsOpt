@@ -1,8 +1,14 @@
 <h1>CHANGELOG</h1>
 
+<h3>1.19.0 (23/11/2021)</h3>
+<ul>
+  <li>The script run_parameters_init.py is deprecated, and will be renamed mda_init.py in future versions</li>
+  <li><strong>WhatsOpt requires minimal wop version 1.20.0</strong></li>
+</ul>
+
 <h3>1.18.1 (18/11/2021)</h3>
 <ul>
-  <li>Scripts run_analysis.py and run_optimization are deprecated, and will be renamed in future versions 
+  <li>The scripts run_analysis.py and run_optimization.py are deprecated, and will be renamed in future versions
     <ul>
       <li>run_analysis.py will be renamed run_mda.py</li>
       <li>run_optimization.py will be renamed run_mdo.py</li>
@@ -16,15 +22,15 @@
   <li>User can generate and run EGMDO related methods from an analysis (wop update --egmdo):
     <ul>
       <li>User should select some disciplines as EGMDO surrogates</li>
-      <li>User should specify at least a variable as an objective. Constraints variables are 
-          also taken into to qualify the EGMDA convergence.
+      <li>User should specify at least a variable as an objective. Constraints variables are
+        also taken into to qualify the EGMDA convergence.
       </li>
       <li>User can use run_egmda.py to run the analysis with surrogates</li>
       <li>User can use run_egdoe.py to run a doe using the EGMDA</li>
       <li>User can use run_egmdo.py to run an optimization using the EGMDA</li>
       <li>User can use gradient optimizer efficiently provided he or she implements analytic derivatives
-          for non EGMDO surrogates disciplines (for EGMDO surrogate ones, derivatives are implemented 
-          using Kriging analytic derivatives provided by SMT).
+        for non EGMDO surrogates disciplines (for EGMDO surrogate ones, derivatives are implemented
+        using Kriging analytic derivatives provided by SMT).
       </li>
     </ul>
   </li>
