@@ -65,6 +65,8 @@ class Api::V1::MetaModelsController < Api::ApiController
       json_response({ message: "Format not valid. Should be in #{MetaModel::FORMATS}, "\
                                "but found #{params[:meta_model][:format]}" }, :bad_request)
     end
+  rescue MetaModel::PredictionError => err
+    json_response({ message: "Prediction error: #{err.message}" }, :bad_request)
   end
 
   private

@@ -111,7 +111,7 @@ class MetaModel < ApplicationRecord
     end
     res
   rescue => e
-    Rails.logger.warn "METAMODEL in ##{analysis.id} #{analysis.name}: Cannot make prediction for #{values}, error: #{e}"
+    Rails.logger.warn "METAMODEL PREDICT ERROR in ##{analysis.id} #{analysis.name}: Cannot make prediction for #{values}, error: #{e}"
     raise PredictionError.new("Cannot make prediction for #{values}, error: #{e}")
   end
 

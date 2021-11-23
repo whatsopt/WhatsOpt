@@ -100,9 +100,6 @@ class Surrogate < ApplicationRecord
   def predict(x)
     train unless trained?
     y = proxy.predict_values(x)
-  rescue WhatsOpt::Services::SurrogateException => exc
-    Rails.logger.warn "SURROGATE TRAIN: #{exc} on surrogate #{id}: #{exc.msg}"
-    self.status = STATUS_FAILED
   rescue => exception
     # puts "#{exception} on surrogate #{id}"
     Rails.logger.warn "SURROGATE PREDICT: #{exception} on surrogate #{id}: #{exception}"
