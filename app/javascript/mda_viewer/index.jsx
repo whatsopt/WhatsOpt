@@ -687,11 +687,9 @@ class MdaViewer extends React.Component {
             </div>
             <div className="tab-pane fade" id="disciplines" role="tabpanel" aria-labelledby="disciplines-tab">
               <DisciplinesEditor
-                mdaId={db.mda.id}
+                db={db}
                 api={this.api}
                 name={newDisciplineName}
-                nodes={db.nodes}
-                limited={db.mda.operated}
                 onDisciplineNameChange={this.handleDisciplineNameChange}
                 onSubAnalysisSearch={this.handleSubAnalysisSearch}
                 onDisciplineCreate={this.handleDisciplineCreate}

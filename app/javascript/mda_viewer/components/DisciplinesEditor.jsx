@@ -146,10 +146,18 @@ class Discipline extends React.Component {
       isEditing, discType, discHost, discPort, discName, selected,
     } = this.state;
     const {
-      node, onSubAnalysisSearch, index, limited,
+      node, onSubAnalysisSearch, index, limited, connected,
     } = this.props;
-
-    const not_editable = (discType === METAMODEL);
+    let { type } = node;
+    if (type === XDSMJS_ANALYSIS) {
+      type = ANALYSIS;
+    }
+    if (type === XDSMJS_DISCIPLINE) {
+      type = DISCIPLINE;
+    }
+    const not_editable = (type === METAMODEL);
+    const sub_analysable = (type === DISCIPLINE && !connected);
+    const type_changeable = sub_analysable || type === ANALYSIS;
 
     if (isEditing) {
       let deploymentOrSubAnalysis;
@@ -218,6 +226,7 @@ class Discipline extends React.Component {
                     id="type"
                     value={discType}
                     onChange={this.handleSelectChange}
+                    disabled={!type_changeable}
                   >
                     <option value={DISCIPLINE}>Discipline</option>
                     <option value={ANALYSIS}>Sub-Analysis</option>
@@ -264,7 +273,7 @@ class Discipline extends React.Component {
               className="d-inline btn btn-light btn-sm ml-2"
               title="Edit"
               onClick={this.handleEdit}
-              disabled={limited && not_editable}
+              disabled={limited || not_editable}
             >
               <i className="fa fa-edit" />
             </button>
@@ -280,6 +289,7 @@ Discipline.propTypes = {
   index: PropTypes.number.isRequired,
   subAnalysisOption: PropTypes.number,
   limited: PropTypes.bool.isRequired,
+  connected: PropTypes.bool.isRequired,
   onDisciplineUpdate: PropTypes.func.isRequired,
   onDisciplineDelete: PropTypes.func.isRequired,
   onSubAnalysisSearch: PropTypes.func.isRequired,
@@ -288,8 +298,8 @@ Discipline.defaultProps = { subAnalysisOption: -1 };
 class DisciplinesEditor extends React.Component {
   constructor(props) {
     super(props);
-    const { nodes } = this.props;
-    this.state = { nodes: nodes.slice(1) };
+    const { db } = this.props;
+    this.state = { nodes: db.getDisciplines() };
 
     this.onDragEnd = this.onDragEnd.bind(this);
   }
@@ -308,20 +318,23 @@ class DisciplinesEditor extends React.Component {
   // Take into account in this.state of discipline changes coming
   // from Discipline components that should arrive through new props
   static getDerivedStateFromProps(nextProps) {
-    return { nodes: nextProps.nodes.slice(1) };
+    return { nodes: nextProps.db.getDisciplines() };
   }
 
   render() {
     const { nodes } = this.state;
     const {
-      api, mdaId,
+      db, api,
       name,
-      limited,
       onDisciplineUpdate, onDisciplineDelete,
       onSubAnalysisSearch,
       onDisciplineCreate, onDisciplineNameChange,
       onDisciplineImport,
     } = this.props;
+
+    const mdaId = db.mda.id;
+    const limited = db.mda.operated;
+
     let disciplines = nodes.map((node, i) => (
       <Discipline
         key={node.id}
@@ -329,6 +342,7 @@ class DisciplinesEditor extends React.Component {
         index={i}
         node={node}
         limited={limited}
+        connected={db.isConnected(node.id)}
         onDisciplineUpdate={onDisciplineUpdate}
         onDisciplineDelete={onDisciplineDelete}
         onSubAnalysisSearch={onSubAnalysisSearch}
@@ -391,21 +405,15 @@ class DisciplinesEditor extends React.Component {
 }
 
 DisciplinesEditor.propTypes = {
+  db: PropTypes.object.isRequired,
   api: PropTypes.object.isRequired,
-  mdaId: PropTypes.number.isRequired,
   name: PropTypes.string.isRequired,
-  nodes: PropTypes.array.isRequired,
-  limited: PropTypes.bool,
   onDisciplineUpdate: PropTypes.func.isRequired,
   onDisciplineDelete: PropTypes.func.isRequired,
   onDisciplineCreate: PropTypes.func.isRequired,
   onDisciplineNameChange: PropTypes.func.isRequired,
   onSubAnalysisSearch: PropTypes.func.isRequired,
   onDisciplineImport: PropTypes.func.isRequired,
-};
-
-DisciplinesEditor.defaultProps = {
-  limited: false,
 };
 
 export default DisciplinesEditor;
