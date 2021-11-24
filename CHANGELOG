@@ -1,5 +1,10 @@
 <h1>CHANGELOG</h1>
 
+<h3>1.19.1 (??/11/2021)</h3>
+<ul>
+  <li>Bubble up prediction error from surrogate server to provide relevant error message</li>
+</ul>
+
 <h3>1.19.0 (23/11/2021)</h3>
 <ul>
   <li>The script run_parameters_init.py is deprecated, and will be renamed mda_init.py in future versions</li>
