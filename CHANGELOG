@@ -1,8 +1,9 @@
 <h1>CHANGELOG</h1>
 
-<h3>1.19.1 (??/11/2021)</h3>
+<h3>1.19.x (??/11/2021)</h3>
 <ul>
   <li>Bubble up prediction error from surrogate server to provide relevant error message</li>
+  <li>Enable sub-analysis attachment only when discipline has no connection (to avoid inconsistencies)</li>
 </ul>
 
 <h3>1.19.0 (23/11/2021)</h3>
