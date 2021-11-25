@@ -20,7 +20,9 @@ class <%= @discipline.py_classname %>Base(<%= @dimpl.implicit_component ? "om.Im
                         ref=<%= var.scaling_ref_py_value %>, ref0=<%= var.scaling_ref0_py_value %>, res_ref=<%= var.scaling_res_ref_py_value %><%= @impl.use_units && !var.units.blank? ? ", units='#{var.units}'":"" %>)
 <% end -%>
 <% end -%>
+
 <% if @dimpl.support_derivatives -%>
+    def setup_partials(self):
         self.declare_partials('*', '*')
 <% end -%>
 <% else -%>
