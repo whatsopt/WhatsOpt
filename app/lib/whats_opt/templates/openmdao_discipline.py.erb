@@ -10,7 +10,7 @@ class <%= @discipline.py_classname %>(<%= @discipline.py_classname %>Base):
         # Here comes discipline resolution code
         # (python function or module, external software calls...)
 
-<%- if @discipline.output_variables.numeric.empty? -%>
+<%- if @discipline.input_variables.numeric.empty? && @discipline.output_variables.numeric.empty? -%>
         pass
 <%- else -%>
 <%- @discipline.input_variables.numeric.each do |var_in| -%>
@@ -28,17 +28,3 @@ class <%= @discipline.py_classname %>(<%= @discipline.py_classname %>Base):
 <% @discipline.output_variables.numeric.each do |var_out| %><% @discipline.input_variables.numeric.each do |var_in| %>
         partials['<%= var_out.py_varname %>', '<%= var_in.py_varname %>'] = np.zeros((<%= var_out.dim %>, <%= var_in.dim %>))<% end %><% end %>
 <% end -%>
-
-# WhatsOpt docking mechanism: .whatsopt_dock.yml file should contain
-# <%= @discipline.py_modulename %> entry, like:
-#   <%= @discipline.py_modulename %>:
-#     module: <python.module.name>
-#     class: <ClassName>
-#
-# then _impl field (= ClassName instance) is available,
-# remove default implementation above,
-# uncomment and adapt the line below as needed
-#        self._impl.compute(inputs, outputs)
-
-# Reminder of inputs:<% @discipline.input_variables.numeric.each do |var_in| %>
-#        <%= var_in.py_shortname %> = inputs['<%= var_in.py_varname %>']  # shape: <%= var_in.shape -%>, type: <%= var_in.type -%><% end %>
