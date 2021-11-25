@@ -24,12 +24,6 @@ class Api::V1::ApiMdaUpdaterControllerTest < ActionDispatch::IntegrationTest
         discipline: { name: "TestDiscipline", type: "analysis" 
       }, requested_at: @past_reqtime}, as: :json, headers: @auth_headers
     assert_response :conflict
-
-    @submda = analyses(:singleton)
-    put api_v1_mda_discipline_url(@geometry), params: { 
-        discipline: { type: "mda",
-                      analysis_discipline_attributes: { discipline_id: @geometry.id, analysis_id: @submda.id }
-        }, requested_at: @past_reqtime }, as: :json, headers: @auth_headers
   end
 
   test "should raise an error on concurrent connection operation on an analysis" do
@@ -43,6 +37,22 @@ class Api::V1::ApiMdaUpdaterControllerTest < ActionDispatch::IntegrationTest
     put api_v1_mda_openmdao_impl_url(@mda), params: { openmdao_impl: { components: { use_units: true } }, requested_at: @past_reqtime},
     as: :json, headers: @auth_headers
     assert_response :conflict
+  end
+
+  test "should not raise conflict when previous update was an error" do
+    time_ok = Time.now
+    time_update = @mda.updated_at
+    post api_v1_mda_connections_url(mda_id: @mda.id, requested_at: time_ok, 
+                                   connection: { from: @geometry.id, to: @aerodynamics.id, names: ["ya"] }),
+                                   as: :json, headers: @auth_headers
+    assert_response :unprocessable_entity
+    @mda.reload 
+    assert_equal time_update, @mda.updated_at
+    post api_v1_mda_connections_url(mda_id: @mda.id, requested_at: time_ok, 
+                                   connection: { from: @geometry.id, to: @aerodynamics.id, names: ["toto"] }),
+                                   as: :json, headers: @auth_headers
+    assert_response :success
+    
   end
 
 end

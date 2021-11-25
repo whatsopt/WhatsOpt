@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class Api::V1::ApiMdaUpdaterController < Api::ApiController
+
   def check_mda_update
     errmsg = "Analysis has been updated concurrently by another user. Please refresh and retry."
     # Tolerance +5s: concurrent edit may be unnoticed but prevent from same user rapid updates being rejected
@@ -19,10 +20,14 @@ class Api::V1::ApiMdaUpdaterController < Api::ApiController
   end
 
   def touch_mda
-    @mda.touch
+    unless @disable_touch_mda_action
+      @mda.touch
+    end
   end
 
   def save_journal
-    @mda.save_journal
+    unless @disable_save_journal_action
+      @mda.save_journal
+    end
   end
 end
