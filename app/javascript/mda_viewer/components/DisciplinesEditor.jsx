@@ -308,7 +308,7 @@ class DisciplinesEditor extends React.Component {
     if (!result.destination) {
       return;
     }
-    const { nodes, onDisciplineUpdate } = this.props;
+    const { db: { nodes }, onDisciplineUpdate } = this.props;
     onDisciplineUpdate(
       nodes[result.source.index + 1],
       { position: result.destination.index + 1 },
