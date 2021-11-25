@@ -7,14 +7,14 @@ require "whats_opt/sqlite_case_importer"
 
 class Operation < ApplicationRecord
   CAT_RUNONCE = "analysis"
-  CAT_OPTIMISATION = "optimization"
+  CAT_OPTIMIZATION = "optimization"
   CAT_EGMDO = "egmdo"
   CAT_DOE = "doe"
   CAT_EGDOE = "egdoe"
   CAT_SENSITIVITY_DOE = "sensitivity_doe"
   CAT_SENSITIVITY = "sensitivity_analysis"
   CAT_METAMODEL = "metamodel"
-  CATEGORIES = [CAT_RUNONCE, CAT_OPTIMISATION, 
+  CATEGORIES = [CAT_RUNONCE, CAT_OPTIMIZATION, 
                 CAT_EGDOE, CAT_EGMDO,
                 CAT_DOE, CAT_SENSITIVITY_DOE,
                 CAT_SENSITIVITY, CAT_METAMODEL].freeze
@@ -64,7 +64,7 @@ class Operation < ApplicationRecord
     operation._build_cases(ope_attrs[:cases]) if ope_attrs[:cases]
     opecat = operation.category
     case opecat
-    when CAT_DOE, CAT_SENSITIVITY_DOE, CAT_OPTIMISATION
+    when CAT_DOE, CAT_SENSITIVITY_DOE, CAT_OPTIMIZATION
       operation.build_job(status: :DONE_OFFLINE)
       operation.build_derived_operations
     when CAT_METAMODEL
@@ -178,7 +178,7 @@ class Operation < ApplicationRecord
       when /egdoe/
         CAT_EGDOE
       when /optimizer/, /slsqp/, /scipy/, /pyoptsparse/
-        CAT_OPTIMISATION
+        CAT_OPTIMIZATION
       when /_metamodel_/
         CAT_METAMODEL
       when /_doe_morris/, /doe_sobol/
@@ -189,7 +189,7 @@ class Operation < ApplicationRecord
         CAT_DOE
       else
         if !analysis.objective_variables.empty?
-          CAT_OPTIMISATION
+          CAT_OPTIMIZATION
         else
           CAT_DOE
         end

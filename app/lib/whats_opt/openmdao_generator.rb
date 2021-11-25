@@ -31,6 +31,20 @@ module WhatsOpt
       @check_only = false
     end
 
+    def to_run_method(category)
+      case category.to_s
+      when Operation::CAT_RUNONCE 
+        "mda"
+      when Operation::CAT_DOE, Operation::CAT_EGDOE
+        "doe"
+      when Operation::CAT_OPTIMIZATION, Operation::CAT_EGMDO
+        "mdo" 
+      else 
+        Rails.logger.error "Operation category #{category} has no run method equivalent"
+        "Unknown_operation_for_category_#{category}"
+      end
+    end
+
     def check_mda_setup
       ok, lines = false, []
       @mda.set_as_root_module
@@ -51,9 +65,9 @@ module WhatsOpt
       return ok, lines
     end
 
-    def run(method = "analysis", sqlite_filename = nil)
+    def run(category = Operation::CAT_RUNONCE, sqlite_filename = nil)
       ok, lines = false, []
-      Dir.mktmpdir("run_#{@mda.basename}_#{method}") do |dir|
+      Dir.mktmpdir("run_#{@mda.basename}_#{category}") do |dir|
         dir='/tmp' # for debug
         begin
           _generate_code(dir, sqlite_filename: sqlite_filename)
@@ -61,6 +75,7 @@ module WhatsOpt
           ok = false
           lines = e.to_s.lines.map(&:chomp)
         else
+          method = self.to_run_method(category)
           ok, log = _run_mda(dir, method)
           lines = log.lines.map(&:chomp)
         end
@@ -68,10 +83,11 @@ module WhatsOpt
       return ok, lines
     end
 
-    def monitor(method = "analysis", sqlite_filename = nil, outdir = ".", &block)
-      Dir.mktmpdir("run_#{@mda.basename}_#{method}") do |dir|
+    def monitor(category = Operation::CAT_RUNONCE, sqlite_filename = nil, outdir = ".", &block)
+      Dir.mktmpdir("run_#{@mda.basename}_#{category}") do |dir|
         dir="/tmp" # for debug
         _generate_code dir, sqlite_filename: sqlite_filename, outdir: outdir
+        method = self.to_run_method(category)
         _monitor_mda(dir, method, &block)
       end
     end
