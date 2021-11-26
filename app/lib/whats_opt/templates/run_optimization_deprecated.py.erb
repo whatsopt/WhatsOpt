@@ -1,9 +1,0 @@
-def warning():
-    print("***************************************************************************************")
-    print("* Warning: 'run_optimization.py' is deprecated and will be removed in future versions.")
-    print("* Instead please use 'run_mdo.py' ('run_optimization.py' renaming).")
-    print("***************************************************************************************")
-
-import os
-exec(open(os.path.join(os.path.dirname(__file__), "run_mdo.py")).read())
-warning()
