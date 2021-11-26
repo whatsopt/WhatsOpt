@@ -30,7 +30,7 @@ module WhatsOpt
       if @driver_name
         @driver = OpenmdaoDriverFactory.new(@driver_name, @driver_options).create_driver
         if @driver.optimization?
-          @sqlite_filename = options[:sqlite_filename] || "#{@mda.basename}_optimization.sqlite"
+          @sqlite_filename = options[:sqlite_filename] || "#{@mda.basename}_mdo.sqlite"
           _generate("run_egmdo.py", "run_mdo.py.erb", gendir)
         elsif @driver.doe?
           @sqlite_filename = options[:sqlite_filename] || "#{@mda.basename}_doe.sqlite"

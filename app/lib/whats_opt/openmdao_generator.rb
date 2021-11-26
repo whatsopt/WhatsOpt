@@ -177,7 +177,7 @@ module WhatsOpt
       if @driver_name # coming from GUI running remote driver
         @driver = OpenmdaoDriverFactory.new(@driver_name, @driver_options).create_driver
         if @driver.optimization?
-          @sqlite_filename = options[:sqlite_filename] || "#{@mda.basename}_optimization.sqlite"
+          @sqlite_filename = options[:sqlite_filename] || "#{@mda.basename}_mdo.sqlite"
           _generate("run_mdo.py", "run_mdo.py.erb", gendir)
         elsif @driver.doe?
           @sqlite_filename = options[:sqlite_filename] || "#{@mda.basename}_doe.sqlite"
@@ -197,7 +197,7 @@ module WhatsOpt
           _generate("run_doe.py", "run_doe.py.erb", gendir)
           if @mda.is_root_analysis?
             @driver = OpenmdaoDriverFactory.new(@impl.optimization_driver).create_driver
-            @sqlite_filename = options[:sqlite_filename] || "#{@mda.basename}_optimization.sqlite"
+            @sqlite_filename = options[:sqlite_filename] || "#{@mda.basename}_mdo.sqlite"
             _generate("run_mdo.py", "run_mdo.py.erb", gendir)
           end
         end
