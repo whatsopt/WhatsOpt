@@ -59,13 +59,13 @@ module WhatsOpt
     # options: with_runops: true, with_run: true
     def _generate_run_scripts(gendir, options = {})
       if options[:with_run]
-        _generate("mda_init.py", "run_parameters_init.py.erb", gendir)
-        _generate("run_mda.py", "gemseo/run_analysis.py.erb", gendir)
+        _generate("mda_init.py", "mda_init.py.erb", gendir)
+        _generate("run_mda.py", "gemseo/run_mda.py.erb", gendir)
       end
       if (options[:with_runops] || @mda.is_root_analysis?) && @mda.has_decision_variables?
         if @mda.is_root_analysis? && @mda.has_objective?
           _generate("run_doe.py", "gemseo/run_doe.py.erb", gendir)
-          _generate("run_mdo.py", "gemseo/run_optimization.py.erb", gendir)
+          _generate("run_mdo.py", "gemseo/run_mdo.py.erb", gendir)
         end
       end
     end

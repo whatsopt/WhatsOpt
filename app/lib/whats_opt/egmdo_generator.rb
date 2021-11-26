@@ -21,7 +21,7 @@ module WhatsOpt
       egmdo_dir = File.join(gendir, @egmdo_module)
       Dir.mkdir(egmdo_dir) unless File.exist?(egmdo_dir)
       _generate("#{@mda.basename}_egmda.py", "egmdo/openmdao_egmda.py.erb", egmdo_dir)
-      _generate("run_egmda.py", "run_analysis.py.erb", gendir)
+      _generate("run_egmda.py", "run_mda.py.erb", gendir)
       _generate("algorithms.py", "egmdo/algorithms.py.erb", egmdo_dir)
       _generate("doe_factory.py", "egmdo/doe_factory.py.erb", egmdo_dir)
       _generate("gp_factory.py", "egmdo/gp_factory.py.erb", egmdo_dir)
@@ -31,7 +31,7 @@ module WhatsOpt
         @driver = OpenmdaoDriverFactory.new(@driver_name, @driver_options).create_driver
         if @driver.optimization?
           @sqlite_filename = options[:sqlite_filename] || "#{@mda.basename}_optimization.sqlite"
-          _generate("run_egmdo.py", "run_optimization.py.erb", gendir)
+          _generate("run_egmdo.py", "run_mdo.py.erb", gendir)
         elsif @driver.doe?
           @sqlite_filename = options[:sqlite_filename] || "#{@mda.basename}_doe.sqlite"
           _generate("run_egdoe.py", "run_doe.py.erb", gendir)
@@ -44,7 +44,7 @@ module WhatsOpt
         _generate("run_egdoe.py", "run_doe.py.erb", gendir)
         @sqlite_filename = "#{@mda.basename}_egmdo.sqlite"
         @driver = OpenmdaoDriverFactory.new(@impl.optimization_driver).create_driver
-        _generate("run_egmdo.py", "run_optimization.py.erb", gendir)
+        _generate("run_egmdo.py", "run_mdo.py.erb", gendir)
       end
     end
 
