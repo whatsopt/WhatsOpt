@@ -65,7 +65,8 @@ def analyze_sensitivity(outfile, threshold_coeff_var=1e-3):
 <%- @mda.constraint_variables.each do |c| -%>
     qoi_names.append("<%= c.name %>")
 <%- end -%>
-    qoi_names.append("<%= @mda.objective_variables.first.py_varname %>")
+    obj_name = "<%= @mda.objective_variables&.first.py_varname %>"
+    qoi_names.append(obj_name)
 
     # open the doe to create the PCE
     cr = om.CaseReader(outfile)
@@ -81,7 +82,7 @@ def analyze_sensitivity(outfile, threshold_coeff_var=1e-3):
         case = cr.get_case(driver_cases[i])
         for j in range(n_des_var):
             doe[i, j] = case.outputs[des_var_names[j]]   
-        doe[i, -1] = case["<%= @mda.objective_variables.first.py_varname %>"]
+        doe[i, -1] = case[obj_name]
 <% nb_cstrs = @mda.constraint_variables.size %>
 <%- @mda.constraint_variables.each_with_index do |cstr_var, k| -%>        
         doe[i, <%= -(nb_cstrs+1)+k %>] = case["<%= cstr_var.py_varname %>"]

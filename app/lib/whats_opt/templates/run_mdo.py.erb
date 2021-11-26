@@ -69,17 +69,21 @@ pb.model.approx_totals(method='fd', step=1e-6, form='central')
 <%- end -%>
 
 <%- if @mda.design_variables.empty? -%>
-print("Error: You have to select some design variables then update (-r) update the run_mdo.py script and retry.")
+print("Error: You have to specify some design variables then update the run_<%= @egmdo ? "eg" : "" %>mdo.py script and retry.")
 exit(-1)
 <%- end -%>
 <%- @mda.design_variables.each do |dv| -%>
 <%- if dv.lower_py_value == "-inf" ||  dv.upper_py_value == "inf" -%>
-print("Error: You have to set bounds to the '<%= dv.name %>' design variable then update the run_optimization.py script code and retry.")
+print("Error: You have to set bounds to the '<%= dv.name %>' design variable then update the run_<%= @egmdo ? "eg" : "" %>mdo.py script code and retry.")
 exit(-1)
 <%- end -%>
 pb.model.add_design_var('<%= dv.name %>', lower=<%= dv.lower_py_value %>, upper=<%= dv.upper_py_value %><%= @impl.use_units && !dv.units.blank? ? ", units='#{dv.units}'":"" %>)
 <%- end -%>
 
+<%- if @mda.objective_variables.empty? -%>
+print("Error: You have to specify an optimization objective then update the run_<%= @egmdo ? "eg" : "" %>mdo.py script and retry.")
+exit(-1)
+<% end %>
 <% @mda.min_objective_variables.each do |voi| -%>
 pb.model.add_objective('<%= voi.name %>'<%= @impl.use_units && !voi.units.blank? ? ", units='#{voi.units}'":"" %>)
 <%- end -%>

@@ -54,7 +54,7 @@ pb.driver.add_recorder(recorder)
 pb.driver.recording_options['includes'] = ['*']
 
 <%- if @mda.design_variables.empty? -%>
-print("Error: You have to select some design variables then update the run_doe.py script and retry.")
+print("Error: You have to specify some design variables then update the run_doe.py script and retry.")
 exit(-1)
 <%- end -%>
 <%- @mda.design_variables.each do |dv| -%>
