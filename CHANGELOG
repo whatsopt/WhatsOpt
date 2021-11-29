@@ -6,17 +6,21 @@
   <li>Enable sub-analysis attachment only when discipline has no connection (to avoid inconsistencies)</li>
   <li>Remove deprecated scripts: run_analysis.py, run_optimization.py and run_parameters_init.py</li>
   <li>Remove WhatsOpt docking mechanism (at least for now, wait for actual need)</li>
+  <li>Fix template option settings for DirectSolver</li>
+  <li>Use setup_partials to declare OpenMDAO partial derivatives</li>
 </ul>
 
 <h3>1.19.0 (23/11/2021)</h3>
 <ul>
-  <li>The script run_parameters_init.py is deprecated, and will be renamed mda_init.py in future versions</li>
+  <li>The script <strong>run_parameters_init.py is deprecated</strong>, and will be renamed mda_init.py in future
+    versions</li>
   <li><strong>WhatsOpt requires minimal wop version 1.20.0</strong></li>
 </ul>
 
 <h3>1.18.1 (18/11/2021)</h3>
 <ul>
-  <li>The scripts run_analysis.py and run_optimization.py are deprecated, and will be renamed in future versions
+  <li>The scripts <strong>run_analysis.py and run_optimization.py are deprecated</strong>, and will be renamed in future
+    versions
     <ul>
       <li>run_analysis.py will be renamed run_mda.py</li>
       <li>run_optimization.py will be renamed run_mdo.py</li>
