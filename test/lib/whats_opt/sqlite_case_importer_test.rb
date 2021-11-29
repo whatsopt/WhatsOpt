@@ -6,7 +6,7 @@ require "whats_opt/sqlite_case_importer"
 class SqliteCaseImporterTest < ActiveSupport::TestCase
   def setup
     @filename = @doe = sample_file("sellar_doe.sqlite").path
-    @optim = sample_file("sellar_optimization.sqlite").path
+    @optim = sample_file("sellar_mdo.sqlite").path
   end
 
   test "should detect valid sqlite db" do

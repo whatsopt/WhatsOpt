@@ -93,6 +93,24 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     assert_equal @mda.disciplines.count, resp["nodes"].size
   end
 
+
+  test "should get analysis as json" do
+    get api_v1_mda_url(@mda, format: :wopjson), as: :json, headers: @auth_headers
+    assert_response :success
+    resp = JSON.parse(response.body)
+    expected = sample_file("cicav_mda.json").read.chomp
+    assert_equal expected, resp.to_json.to_s
+  end
+
+  test "should get nested analysis as json" do
+    mda = analyses(:outermda)
+    get api_v1_mda_url(mda, format: :wopjson), as: :json, headers: @auth_headers
+    assert_response :success
+    resp = JSON.parse(response.body)
+    expected = sample_file("outer_mda.json").read.chomp
+    assert_equal expected, resp.to_json.to_s
+  end
+
   test "should create nested analysis" do
     assert_difference("Discipline.count", 4) do
       assert_difference("Analysis.count", 2) do

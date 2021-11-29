@@ -34,7 +34,7 @@ dists.append(ot.<%= uv.distribution_py(i) %>)<%- end %><%- end %>
 copula = ot.IndependentCopula(<%= dim %>)  # default to no dependency
 # # Normal copula
 # R = ot.CorrelationMatrix(<%= dim %>)
-# R[i, j] = ... where 0<=i<j<<%= dim %> to specify dependency between var(i) and var(j)
+# R[i, j] = ... where 0 <= i < j < <%= dim %> to specify dependency between var(i) and var(j)
 # copula = ot.NormalCopula(R)
 
 comp_dist = ot.ComposedDistribution(dists, copula)
@@ -46,7 +46,7 @@ recorder = om.SqliteRecorder(case_recorder_filename)
 pb.driver.add_recorder(recorder)
 pb.driver.recording_options['includes'] = ['*']
 
-# uncertain variable input are taken as design_variables to get recorded by driver recorder
+# Uncertain variable input are taken as design_variables to get recorded by driver recorder
 <%- @mda.uncertain_input_variables.each do |dv| %>
 pb.model.add_design_var('<%= dv.name %>', lower=<%= dv.lower_py_value %>, upper=<%= dv.upper_py_value %>)<% end %>
 

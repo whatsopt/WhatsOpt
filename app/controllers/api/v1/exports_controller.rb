@@ -32,10 +32,6 @@ class Api::V1::ExportsController < Api::ApiController
       rescue WhatsOpt::GemseoGenerator::NotYetImplementedError => e
         json_response({ message: "GEMSEO export failure: #{e}" }, :bad_request)
       end
-    elsif format == "mdajson"  # wop pull --json
-      # TODO: Deprecated in favor of GET /analyses/1.wopjson
-      # to be suppress when taken into account in wop>1.18
-      json_response mda, :ok, serializer: AnalysisAttrsSerializer
     else
       json_response({ message: "Export format #{format} not known" }, :bad_request)
     end

@@ -51,24 +51,21 @@ module WhatsOpt
     end
 
     def _generate_main(gendir, options = {})
-      _generate(@mda.py_filename, "gemseo/gemseo_main.py.erb", gendir)
-      _generate(@mda.py_basefilename, "gemseo/gemseo_main_base.py.erb", gendir)
+      _generate(@mda.py_filename, "gemseo/gemseo_analysis.py.erb", gendir)
+      _generate(@mda.py_basefilename, "gemseo/gemseo_analysis_base.py.erb", gendir)
       _generate("__init__.py", "__init__.py.erb", gendir)
     end
 
     # options: with_runops: true, with_run: true
     def _generate_run_scripts(gendir, options = {})
       if options[:with_run]
-        _generate("run_parameters_init.py", "run_parameters_init_deprecated.py.erb", gendir)
-        _generate("mda_init.py", "run_parameters_init.py.erb", gendir)
-        _generate("run_analysis.py", "run_analysis_deprecated.py.erb", gendir)
-        _generate("run_mda.py", "gemseo/run_analysis.py.erb", gendir)
+        _generate("mda_init.py", "mda_init.py.erb", gendir)
+        _generate("run_mda.py", "gemseo/run_mda.py.erb", gendir)
       end
       if (options[:with_runops] || @mda.is_root_analysis?) && @mda.has_decision_variables?
         if @mda.is_root_analysis? && @mda.has_objective?
           _generate("run_doe.py", "gemseo/run_doe.py.erb", gendir)
-          _generate("run_optimization.py", "run_optimization_deprecated.py.erb", gendir)
-          _generate("run_mdo.py", "gemseo/run_optimization.py.erb", gendir)
+          _generate("run_mdo.py", "gemseo/run_mdo.py.erb", gendir)
         end
       end
     end

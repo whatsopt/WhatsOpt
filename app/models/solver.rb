@@ -9,6 +9,10 @@ class Solver < ActiveRecord::Base
     name == "NonlinearRunOnce" || name == "LinearRunOnce"
   end
 
+  def direct?
+    name == "DirectSolver"
+  end
+
   def reckless?
     name == "RecklessNonlinearBlockGS"
   end
