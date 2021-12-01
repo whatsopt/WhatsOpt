@@ -7,7 +7,7 @@
   <li>Remove deprecated scripts: run_analysis.py, run_optimization.py and run_parameters_init.py</li>
   <li>Remove WhatsOpt docking mechanism (at least for now, wait for actual need)</li>
   <li>Fix template option settings for DirectSolver</li>
-  <li>Use setup_partials to declare OpenMDAO partial derivatives</li>
+  <li>Use setup_partials to declare OpenMDAO partial derivatives (default finite differences method)</li>
   <li>Fix sub-analysis copy in presence of sub-sub-analysis</li>
   <li>Allow to delete upstream connection of a sub_analysis when this one
     not connected by the corresponding variable anymore</li>
