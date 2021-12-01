@@ -244,6 +244,15 @@ class Discipline < ApplicationRecord
     }
   end
 
+  def is_sub_analysis_connected_by?(var) 
+    if has_sub_analysis?
+      sub_driver = sub_analysis.driver
+      !(sub_driver.variables.where(name: var.name, io_mode: var.reflected_io_mode).empty?)
+    else 
+      false
+    end
+  end
+
   private
     def set_defaults
       self.type = WhatsOpt::Discipline::DISCIPLINE if type.blank?

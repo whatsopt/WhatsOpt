@@ -198,7 +198,7 @@ class Connection < ApplicationRecord
 
   def destroy_connection!(sub_analysis_check = true)
     Connection.transaction do
-      if sub_analysis_check && from.discipline.has_sub_analysis?
+      if sub_analysis_check && from.discipline.is_sub_analysis_connected_by?(from) 
         if from.outgoing_connections.count == 1
           if to.discipline.is_driver?
             raise CannotRemoveConnectionError.new "Connection #{from.name} has to be suppressed" \
@@ -209,7 +209,7 @@ class Connection < ApplicationRecord
         else
           _delete
         end
-      elsif sub_analysis_check && to.discipline.has_sub_analysis?
+      elsif sub_analysis_check && to.discipline.is_sub_analysis_connected_by?(to) 
         if from.discipline.is_driver?
           raise CannotRemoveConnectionError.new "Connection #{from.name} has to be suppressed" \
             " in #{to.discipline.name} sub-analysis first"

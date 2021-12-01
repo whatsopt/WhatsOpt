@@ -64,4 +64,10 @@ class DisciplineTest < ActiveSupport::TestCase
     assert outermda, innermda.ancestors
     assert innermda.name, disc.name
   end
+
+  test "should check sub_analysis connection" do
+    disc = disciplines(:outermda_innermda_discipline)
+    var = disc.variables.where(name: "z").take
+    assert disc.is_sub_analysis_connected_by?(var)
+  end
 end
