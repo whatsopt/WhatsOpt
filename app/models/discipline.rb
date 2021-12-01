@@ -200,9 +200,6 @@ class Discipline < ApplicationRecord
       self.meta_model.build_copy(mda, disc_copy)
       disc_copy.save!
     end
-    # if self.has_sub_analysis?
-    #   self.sub_analysis.create_copy!(mda, disc_copy)
-    # end
     disc_copy.openmdao_impl = self.openmdao_impl&.build_copy
 
     # disc_copy.save!
