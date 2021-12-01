@@ -21,10 +21,8 @@ class <%= @discipline.py_classname %>Base(<%= @dimpl.implicit_component ? "om.Im
 <% end -%>
 <% end -%>
 
-<% if @dimpl.support_derivatives -%>
     def setup_partials(self):
-        self.declare_partials('*', '*')
-<% end -%>
+        self.declare_partials('*', '*', method='<%= @dimpl.support_derivatives ? "exact" : "fd" %>')
 <% else -%>
     pass
 <% end -%>

@@ -60,14 +60,6 @@ recorder = om.SqliteRecorder(case_recorder_filename)
 pb.driver.add_recorder(recorder)
 pb.driver.recording_options['includes'] = ['*']
 
-<%- unless @driver.onerasego? -%>
-<%- unless @impl.support_derivatives? || (@egmdo && @impl.egmdo_support_derivatives?) -%>
-# Derivatives are computed via finite-difference method.
-# Line below to be commented out if all disciplines declare partial derivatives.
-pb.model.approx_totals(method='fd', step=1e-6, form='central')
-<%- end -%>
-<%- end -%>
-
 <%- if @mda.design_variables.empty? -%>
 print("Error: You have to specify some design variables then update the run_<%= @egmdo ? "eg" : "" %>mdo.py script and retry.")
 exit(-1)
