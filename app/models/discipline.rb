@@ -182,26 +182,30 @@ class Discipline < ApplicationRecord
     self.type = Discipline::ANALYSIS
     self.name = innermda.name
     self.save!
-    self.build_analysis_discipline(analysis: innermda)
+    ad = self.build_analysis_discipline(analysis: innermda)
     innermda.parent = self.analysis
     innermda.save!
+    ad
   end
 
-  def create_copy!(mda)
+  def build_copy(mda)
     disc_copy = self.dup
     self.variables.each do |var|
       disc_copy.variables << var.build_copy
     end
     mda.disciplines << disc_copy
+
     if self.is_pure_metamodel?
-      self.meta_model.create_copy!(mda, disc_copy)
+      # Special case when metamodel: discipline has to be saved
+      self.meta_model.build_copy(mda, disc_copy)
+      disc_copy.save!
     end
-    if self.has_sub_analysis?
-      self.sub_analysis.create_copy!(mda, disc_copy)
-    end
+    # if self.has_sub_analysis?
+    #   self.sub_analysis.create_copy!(mda, disc_copy)
+    # end
     disc_copy.openmdao_impl = self.openmdao_impl&.build_copy
 
-    disc_copy.save!
+    # disc_copy.save!
     disc_copy
   end
 
@@ -238,6 +242,15 @@ class Discipline < ApplicationRecord
       type: self.type,
       variables_attributes: varattrs  # .map {|att| att.except(:parameter_attributes, :scaling)}
     }
+  end
+
+  def is_sub_analysis_connected_by?(var) 
+    if has_sub_analysis?
+      sub_driver = sub_analysis.driver
+      !(sub_driver.variables.where(name: var.name, io_mode: var.reflected_io_mode).empty?)
+    else 
+      false
+    end
   end
 
   private

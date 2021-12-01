@@ -497,7 +497,7 @@ class Analysis < ApplicationRecord
             self.update!(attrs)
             new_disc = self.disciplines.reload.last
             if disc.is_pure_metamodel?
-              new_disc.meta_model = disc.meta_model.create_copy!(self, new_disc)
+              new_disc.meta_model = disc.meta_model.build_copy(self, new_disc)
             end
             if disc.has_sub_analysis?
               new_disc.sub_analysis = disc.sub_analysis.create_copy!(self)
@@ -512,7 +512,7 @@ class Analysis < ApplicationRecord
   end
 
   def create_copy!(parent = nil, super_disc = nil)
-    mda_copy = nil
+    mda_copy = 
     Analysis.transaction do  # metamodel and subanalysis are saved, rollback if problem
       mda_copy = Analysis.create!(name: name, public: public) do |copy|
         copy.parent_id = parent.id if parent
@@ -521,12 +521,23 @@ class Analysis < ApplicationRecord
       end
       mda_copy.disciplines.first.delete  # remove default driver
       self.disciplines.each do |disc|
-        disc.create_copy!(mda_copy)
+        disc.build_copy(mda_copy)
       end
+      self.disciplines.each_with_index do |disc, i|
+        if disc.has_sub_analysis?
+          disc.sub_analysis.create_copy!(mda_copy, mda_copy.disciplines[i])
+        end
+      end
+
       mda_copy.save!
       if super_disc
+        # A super discipline is specified this a sub_analysis, save it here
+        # As discipline is not already saved (ie) is a new record) it is used
+        # connections from sub_analysis will not be reported as they are already
+        # copied from the original analysis at the super_discipline level
         super_disc.build_analysis_discipline(analysis: mda_copy)
       end
+      mda_copy.reload
     end
     mda_copy
   end

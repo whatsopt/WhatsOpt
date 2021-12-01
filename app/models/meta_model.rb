@@ -65,7 +65,7 @@ class MetaModel < ApplicationRecord
     end
   end
 
-  def create_copy!(mda = nil, discipline = nil)
+  def build_copy(mda = nil, discipline = nil)
     mm_copy = self.dup
     # if no prototype it is a primary created meta_model
     # so the prototype of the copy is the analysis of this metamodel

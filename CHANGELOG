@@ -8,6 +8,9 @@
   <li>Remove WhatsOpt docking mechanism (at least for now, wait for actual need)</li>
   <li>Fix template option settings for DirectSolver</li>
   <li>Use setup_partials to declare OpenMDAO partial derivatives</li>
+  <li>Fix sub-analysis copy in presence of sub-sub-analysis</li>
+  <li>Allow to delete upstream connection of a sub_analysis when this one
+    not connected by the corresponding variable anymore</li>
 </ul>
 
 <h3>1.19.0 (23/11/2021)</h3>

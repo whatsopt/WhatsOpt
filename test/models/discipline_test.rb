@@ -42,10 +42,10 @@ class DisciplineTest < ActiveSupport::TestCase
     end
   end
 
-  test "should copy and predict with metamodel" do
+  test "should copy a metamodel" do
     disc = disciplines(:disc_cicav_metamodel)
     mda = analyses(:singleton)
-    copy = disc.create_copy!(mda)
+    copy = disc.build_copy(mda)
     assert :metamodel, copy.type
     assert copy.is_pure_metamodel?
   end
@@ -63,5 +63,11 @@ class DisciplineTest < ActiveSupport::TestCase
     assert innermda.has_parent?
     assert outermda, innermda.ancestors
     assert innermda.name, disc.name
+  end
+
+  test "should check sub_analysis connection" do
+    disc = disciplines(:outermda_innermda_discipline)
+    var = disc.variables.where(name: "z").take
+    assert disc.is_sub_analysis_connected_by?(var)
   end
 end
