@@ -1,7 +1,10 @@
 # frozen_string_literal: true
 
 class AnalysisDiscipline < ApplicationRecord
-  before_save :report_connections!
+
+  # When it is a copy no need to report connections as 
+  # they are supposed to be handled properly in the original analysis
+  before_save :report_connections!, unless: :copy_inprogress?
   before_destroy :detach_analysis!
 
   belongs_to :discipline
@@ -9,9 +12,16 @@ class AnalysisDiscipline < ApplicationRecord
 
   class AlreadyDefinedError < StandardError; end
 
+  def copy_inprogress?
+    # copy is detected by checking that discipline is a new record.
+    # When created due to sub analysis attachment the discipline
+    # is already saved in database
+    discipline.new_record?
+  end
+
 private
 
-  # When saving analysis_discipline we ensiure we propagate sub driver's
+  # When saving analysis_discipline we ensure we propagate sub driver's
   # connections to parent analysis.
   def report_connections!
     unless analysis&.new_record?

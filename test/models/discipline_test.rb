@@ -42,10 +42,10 @@ class DisciplineTest < ActiveSupport::TestCase
     end
   end
 
-  test "should copy and predict with metamodel" do
+  test "should copy a metamodel" do
     disc = disciplines(:disc_cicav_metamodel)
     mda = analyses(:singleton)
-    copy = disc.create_copy!(mda)
+    copy = disc.build_copy(mda)
     assert :metamodel, copy.type
     assert copy.is_pure_metamodel?
   end
