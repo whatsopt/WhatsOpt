@@ -90,8 +90,8 @@ def analyze_sensitivity(outfile, threshold_coeff_var=1e-3):
 <%- @mda.coupling_variables.each_with_index do |cv, j| -%>
         coupling_var_doe[i, <%= j %>] = case["<%= cv.py_varname %>"]
 <%- end -%>
-    print("Estimated mean of the output = ", doe[:, -1].mean())
-    print("Estimated coeff of var of the output = ", doe[:, -1].std()/doe[:, -1].mean())
+    print(f"Estimated mean of '{obj_name}' = {doe[:, -1].mean()}", )
+    print(f"Estimated coeff of variation of '{obj_name}' = {doe[:, -1].std()/doe[:, -1].mean()}")
 
     # Polynomial chaos expansion metamodel
     # Determination of the most uncertain variable between the n constraints and the objective function
