@@ -28,8 +28,8 @@ class <%= @mda.py_classname %>FactoryBase():
     """ 
     A factory for all plain disciplines of <%= @mda.name %> analysis.
 
-    User can override methods in a subclass to take control over disciplines creation 
-    and pass that subclass to the analysis constructor.
+    One can override methods in a subclass to take control over disciplines creation 
+    and pass that subclass to the analysis constructor as a factory argument.
     """
 <% @mda.all_plain_disciplines.each do |disc| %>
     def create_<%= disc.snake_modulename %>(self):
@@ -45,15 +45,10 @@ class <%= @mda.py_classname %>FactoryBase():
 
 class <%= @mda.py_classname %>Base(<%= @impl.parallel_group ? "om.ParallelGroup" : "om.Group" %>):
     """ An OpenMDAO base component to encapsulate <%= @mda.py_classname %> MDA """
-    def __init__(self, factory=<%= @mda.py_classname %>FactoryBase()):
-        """
-        Parameters
-        ----------
-            factory: Subclass of <%= @mda.py_classname %>Factory 
-            Used to control disciplines creation (default to <%= @mda.py_classname %>FactoryBase)
-        """
-        super(). __init__()
-        self._factory = factory
+
+    def initialize(self):
+        self.options.declare('factory', default=<%= @mda.py_classname %>FactoryBase(), 
+                             types=<%= @mda.py_classname %>FactoryBase)
 
         self.nonlinear_solver = <%= @impl.nonlinear_solver.name %>()
 <% unless @impl.nonlinear_solver.runonce? -%>
@@ -85,10 +80,10 @@ class <%= @mda.py_classname %>Base(<%= @impl.parallel_group ? "om.ParallelGroup"
         User can override this method in a subclass 
         to take control over <%= a.py_classname %> sub analysis creation.
         """
-        return <%= a.py_classname %>(factory=self._factory)
+        return <%= a.py_classname %>(factory=self.options["factory"])
 <% end -%>
 <% @mda.plain_disciplines.each do |disc| %>
     def create_<%= disc.basename %>(self):
-        return self._factory.create_<%= disc.snake_modulename %>()
+        return self.options["factory"].create_<%= disc.snake_modulename %>()
 <% end %>
 
