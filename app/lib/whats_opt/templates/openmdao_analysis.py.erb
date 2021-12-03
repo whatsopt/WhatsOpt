@@ -5,25 +5,39 @@ from <%= @mda.py_full_modulename %>_base import <%= @mda.py_classname %>Base, <%
 
 
 class <%= @mda.py_classname %>Factory(<%= @mda.py_classname %>FactoryBase):
-    """ 
-    A factory to create disciplines of <%= @mda.py_classname %> analysis.
-    One can override create methods from the base class 
-    to handle disciplines creation as needed.
-    """
-    pass
+    """ A factory to create disciplines of <%= @mda.py_classname %> analysis. """
+
+    # One can override here create methods from the base class to take control over disciplines creation
+    # then pass an instance of this class as the 'factory' argument of the constructor (see run_*.py scripts),
+    # example: my_analysis = <%= @mda.py_classname %>(factory=<%= @mda.py_classname %>Factory())
+
 
 class <%= @mda.py_classname %>(<%= @mda.py_classname %>Base):
-    """ An OpenMDAO component to encapsulate <%= @mda.py_classname %> analysis """
-    def __init__(self, factory=<%= @mda.py_classname %>Factory()):
-        super().__init__(factory)
+    """ An OpenMDAO Group to encapsulate <%= @mda.py_classname %> analysis 
+    see https://openmdao.org/newdocs/versions/latest/features/core_features/working_with_groups/main.html
+    """
+    # One can override here default behaviour provided by WhatsOpt in the base class.
 
-        # Example of manual solver adjusments (imports should be adjusted accordingly)
-        # self.nonlinear_solver = NewtonSolver()
-        # self.nonlinear_solver.options['maxiter'] = 20
-        # self.linear_solver = DirectSolver()
+    # def initialize():
+    # Here one can adjust component initialization 
 
-    def setup(self):
-        super().setup()
+    # Example adding options 
+    # see https://openmdao.org/newdocs/versions/latest/features/core_features/working_with_components/options.html
+    #
+    #     self.options.declare("n_engines", types=int)
+
+    # Example of manual solver adjusments (imports should be adjusted accordingly)
+    # see https://openmdao.org/newdocs/versions/latest/features/core_features/controlling_solver_behavior/main.html
+    # 
+    #     self.nonlinear_solver = NewtonSolver()
+    #     self.nonlinear_solver.options['maxiter'] = 20
+    #     self.linear_solver = DirectSolver()
+
+    # def setup(self):
+    #     super().setup()
+    #
+    # As an example, here if needs be, one can add code to adjust 
+    # setup (done in parent base class) regarding options defined in initialize  
 
 
 if __name__ == "__main__":
