@@ -23,7 +23,7 @@ class <%= @discipline.py_classname %>Base(<%= @dimpl.implicit_component ? "om.Im
 <% end -%>
 <% end -%>
 
-<%- if @discipline.input_variables.numeric.empty? || @discipline.output_variables.numeric.empty? -%>
+<%- unless @discipline.input_variables.numeric.empty? || @discipline.output_variables.numeric.empty? -%>
     def setup_partials(self):
         self.declare_partials('*', '*', method='<%= @dimpl.support_derivatives ? "exact" : "fd" %>')
 <% end -%>
