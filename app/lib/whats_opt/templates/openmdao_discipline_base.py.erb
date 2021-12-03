@@ -5,7 +5,9 @@ from numpy import nan, inf
 import openmdao.api as om
 
 class <%= @discipline.py_classname %>Base(<%= @dimpl.implicit_component ? "om.ImplicitComponent" : "om.ExplicitComponent" %>):
-    """ An OpenMDAO base component to encapsulate <%= @discipline.py_classname %> discipline """
+    """ An OpenMDAO base component to encapsulate <%= @discipline.py_classname %> discipline. 
+    This class defines inputs and outputs of the discipline and declare partials.
+    """
 
 <% unless @discipline.variables.empty? -%>
     def setup(self):
@@ -21,8 +23,10 @@ class <%= @discipline.py_classname %>Base(<%= @dimpl.implicit_component ? "om.Im
 <% end -%>
 <% end -%>
 
+<%- if @discipline.input_variables.numeric.empty? || @discipline.output_variables.numeric.empty? -%>
     def setup_partials(self):
         self.declare_partials('*', '*', method='<%= @dimpl.support_derivatives ? "exact" : "fd" %>')
+<% end -%>
 <% else -%>
     pass
 <% end -%>
