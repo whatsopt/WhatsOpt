@@ -11,6 +11,9 @@
   <li>Fix sub-analysis copy in presence of sub-sub-analysis</li>
   <li>Allow to delete upstream connection of a sub_analysis when this one
     not connected by the corresponding variable anymore</li>
+  <li>Fix generated code for analysis to use initialize() method following OpenMDAO way of initializing instances 
+      (instead of __init__(), actually previous implementation was error-prone as it did not pass 
+       the **kwargs argument to parent classes). 
 </ul>
 
 <h3>1.19.0 (23/11/2021)</h3>
