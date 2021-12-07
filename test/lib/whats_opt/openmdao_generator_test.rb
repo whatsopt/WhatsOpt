@@ -249,6 +249,22 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     end
   end
 
+  test "should run nested mda once" do
+    skip_if_parallel
+    skip "Apache Thrift not installed" unless thrift?
+    mda = analyses(:outermda)
+    ogen = WhatsOpt::OpenmdaoGenerator.new(mda)
+    Dir.mktmpdir do |dir|
+      ogen._generate_code dir
+      pid = spawn("#{WhatsOpt::OpenmdaoGenerator::PYTHON} #{File.join(dir, 'run_server.py')}", [:out] => "/dev/null")
+      @ogen_remote = WhatsOpt::OpenmdaoGenerator.new(mda, server_host: "localhost", driver_name: "runonce")
+      ok, log = @ogen_remote.run
+      assert(ok, log)
+      Process.kill("TERM", pid)
+      Process.waitpid pid
+    end
+  end
+
   test "should generate metamodel code" do
     skip "Apache Thrift not installed" unless thrift?
     mda = analyses(:cicav_metamodel_analysis)
