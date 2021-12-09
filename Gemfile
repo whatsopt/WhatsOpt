@@ -87,7 +87,7 @@ gem "tzinfo-data"  # , platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 # required in dev but seems to be required also in production
 gem "highline"
 
-source "https://rails-assets.org" do
+source "http://insecure.rails-assets.org" do
   gem "rails-assets-tether", ">= 1.1.0"
 end
 
