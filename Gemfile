@@ -12,7 +12,7 @@ gem "puma", "~> 4.1"
 # Use SCSS for stylesheets
 gem "sass-rails", ">= 6"
 # Use Uglifier as compressor for JavaScript assets
-gem "terser"
+gem "uglifier", ">= 1.3.0"
 # Transpile app-like JavaScript. Read more: https://github.com/rails/webpacker
 gem "webpacker", "~> 5.0"
 # See https://github.com/rails/execjs#readme for more supported runtimes
@@ -85,10 +85,6 @@ gem "tzinfo-data"  # , platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 # required in dev but seems to be required also in production
 gem "highline"
 
-source "http://insecure.rails-assets.org" do
-  gem "rails-assets-tether", ">= 1.1.0"
-end
-
 # Use jquery as the JavaScript library
 gem "jquery-rails"
 gem "jquery-ui-rails"
@@ -122,6 +118,7 @@ gem "popper" # bootstrap dependency
 gem "bootstrap", "~> 4.0"
 gem "font_awesome5_rails"
 gem "data-confirm-modal"
+gem 'tether-rails'
 
 # thrift
 gem "thrift", "~>0.13.0"
