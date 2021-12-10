@@ -71,11 +71,11 @@ class <%= @mda.py_classname %>Base(<%= @impl.parallel_group ? "om.ParallelGroup"
     def setup(self):<% @mda.input_variables.each do |dv| %>
         self.set_input_defaults('<%= dv.name %>', val=<%= dv.init_py_value %><%= @impl.use_units && !dv.units.blank? ? ", units='#{dv.units}'":"" %>)<% end -%>
 <% @mda.disciplines.nodes.each do |d| %>
-        self.add_subsystem('<%= d.py_classname %>', self.create_<%= d.basename %>(),
+        self.add_subsystem('<%= d.py_modulename %>', self.create_<%= d.basename %>(),
                            promotes=[<%= d.variables.map(&:py_varname).map{|v| "'#{v}'"}.join(', ') %>])<% end -%>
 
 <% @mda.sub_analyses.each do |a| %>
-    def create_<%= a.basename %>(self):
+    def create_<%= a.py_modulename %>(self):
         """ 
         User can override this method in a subclass 
         to take control over <%= a.py_classname %> sub analysis creation.
@@ -83,7 +83,7 @@ class <%= @mda.py_classname %>Base(<%= @impl.parallel_group ? "om.ParallelGroup"
         return <%= a.py_classname %>(factory=self.options["factory"])
 <% end -%>
 <% @mda.plain_disciplines.each do |disc| %>
-    def create_<%= disc.basename %>(self):
+    def create_<%= disc.py_modulename %>(self):
         return self.options["factory"].create_<%= disc.snake_modulename %>()
 <% end %>
 
