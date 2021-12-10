@@ -2,7 +2,7 @@
 # sure you lock down to a specific version, not to `latest`!
 # See https://github.com/phusion/passenger-docker/blob/master/Changelog.md for
 # a list of version numbers.
-FROM phusion/passenger-customizable:1.0.12
+FROM phusion/passenger-customizable:2.0.1
 # Or, instead of the 'full' variant, use one of these:
 #FROM phusion/passenger-ruby23:<VERSION>
 #FROM phusion/passenger-ruby24:<VERSION>
@@ -23,7 +23,7 @@ RUN apt-get update -y \
 	&& apt-get install -y libsm6 libxext6
 
 # Thrift
-ENV THRIFT_VERSION 0.13.0
+ENV THRIFT_VERSION 0.15.0
 
 RUN buildDeps=" \
 	automake \
@@ -66,9 +66,9 @@ RUN buildDeps=" \
 #   Ruby support
 #RUN /pd_build/ruby-2.3.*.sh
 #RUN /pd_build/ruby-2.4.*.sh
-# RUN /pd_build/ruby-2.5.*.sh \
-# 	&& bash -lc 'rvm install ruby-2.5.3' \
-# 	&& bash -lc 'rvm --default use ruby-2.5.3'
+RUN /pd_build/ruby-3.0.2.sh \
+	&& bash -lc 'rvm install ruby-3.0.2' \
+	&& bash -lc 'rvm --default use ruby-3.0.2'
 #RUN /pd_build/ruby-2.6.*.sh
 #RUN /pd_build/jruby-9.2.*.sh
 #   Python support.
@@ -106,9 +106,9 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 RUN mkdir -p /whatsopt 
 WORKDIR /whatsopt
 
-COPY Gemfile Gemfile.lock ./ 
+COPY Gemfile ./ 
 
-RUN bundle config without staging production \
+RUN bundle config without staging,production \
 	&& bundle install --jobs 20 --retry 5
 
 COPY . ./
