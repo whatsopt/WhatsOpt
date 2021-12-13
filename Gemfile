@@ -1,11 +1,9 @@
 # frozen_string_literal: true
 
 source "https://rubygems.org"
+git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-git_source(:github) do |repo_name|
-  repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?("/")
-  "https://github.com/#{repo_name}.git"
-end
+#ruby '3.0.3'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem "rails", "~> 6.1"
@@ -87,10 +85,6 @@ gem "tzinfo-data"  # , platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 # required in dev but seems to be required also in production
 gem "highline"
 
-source "https://rails-assets.org" do
-  gem "rails-assets-tether", ">= 1.1.0"
-end
-
 # Use jquery as the JavaScript library
 gem "jquery-rails"
 gem "jquery-ui-rails"
@@ -124,6 +118,7 @@ gem "popper" # bootstrap dependency
 gem "bootstrap", "~> 4.0"
 gem "font_awesome5_rails"
 gem "data-confirm-modal"
+gem 'tether-rails'
 
 # thrift
 gem "thrift", "~>0.13.0"

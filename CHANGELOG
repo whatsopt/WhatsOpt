@@ -15,6 +15,7 @@
       (instead of __init__(), actually previous implementation was error-prone as it did not pass 
        the **kwargs argument to parent classes). 
   <li>The python formatter <a href="https://black.readthedocs.io">black</a> is passed on the generated code.</li>
+  <li>Upgrade web stack: Ruby 3.0.3, Passenger 6.0.12</li>
 </ul>
 
 <h3>1.19.0 (23/11/2021)</h3>
