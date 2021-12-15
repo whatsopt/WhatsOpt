@@ -1,20 +1,21 @@
 <h1>CHANGELOG</h1>
 
-<h3>1.20.x (??/12/2021)</h3>
+<h3>1.20.0 (15/12/2021)</h3>
 <ul>
   <li>Bubble up prediction error from surrogate server to provide relevant error message</li>
   <li>Enable sub-analysis attachment only when discipline has no connection (to avoid inconsistencies)</li>
-  <li>Remove deprecated scripts: run_analysis.py, run_optimization.py and run_parameters_init.py</li>
+  <li>Allow to delete upstream connection of a sub_analysis when this one not connected by the corresponding variable
+    anymore</li>
+  <li>Use <code>setup_partials</code> to declare OpenMDAO partial derivatives (default finite differences method)</li>
+  <li>The python formatter <a href="https://black.readthedocs.io">black</a> is passed on the generated code.</li>
+  <li>Remove deprecated scripts: <code>run_analysis.py</code>, <code>run_optimization.py</code> and
+    <code>run_parameters_init.py</code></li>
   <li>Remove WhatsOpt docking mechanism (at least for now, wait for actual need)</li>
   <li>Fix template option settings for DirectSolver</li>
-  <li>Use setup_partials to declare OpenMDAO partial derivatives (default finite differences method)</li>
   <li>Fix sub-analysis copy in presence of sub-sub-analysis</li>
-  <li>Allow to delete upstream connection of a sub_analysis when this one
-    not connected by the corresponding variable anymore</li>
   <li>Fix generated code for analysis to use initialize() method following OpenMDAO way of initializing instances
-    (instead of __init__(), actually previous implementation was error-prone as it did not pass
-    the **kwargs argument to parent classes).
-  <li>The python formatter <a href="https://black.readthedocs.io">black</a> is passed on the generated code.</li>
+    (instead of <code>__init__()</code>, actually previous implementation was error-prone as it did not pass
+    the <code>**kwargs</code> argument to parent classes).
   <li>Tech. upgrade: Ruby 3.0.3, Passenger 6.0.12, Apache thrift 0.15.0, ruby dependencies, javascript dependencies</li>
 </ul>
 
@@ -135,7 +136,7 @@
   <li>Tech: update RoR backend</li>
 </ul>
 
-<h3>1.14.0 (28/04/2020)</h3>
+<h3>1.14.0 (28/04/2021)</h3>
 <ul>
   <li>User can view Sobol indices using heatmaps.</li>
   <li>User can reset his/her password through email request.</li>
