@@ -17,7 +17,7 @@ jobs:
       - name: Setup Ruby and install gems
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '2.7'
+          ruby-version: '3.0'
           bundler-cache: true
 
       - name: Set up Python 3.8
@@ -37,12 +37,12 @@ jobs:
         uses: actions/cache@v2
         with:
           path: install
-          key: ${{ runner.os }}-thrift-0.13.0-cache-v3
+          key: ${{ runner.os }}-thrift-0.15.0-cache-v1
 
       - name: Make Thrift Compiler
         if: steps.cache-thrift.outputs.cache-hit != 'true'
         run: |
-          export THRIFT_VERSION=0.13.0
+          export THRIFT_VERSION=0.15.0
           export buildDeps="automake bison curl flex g++ libboost-dev libboost-filesystem-dev libboost-program-options-dev libboost-system-dev libboost-test-dev  libevent-dev libssl-dev libtool make pkg-config"
           sudo apt-get install -y --no-install-recommends $buildDeps && sudo rm -rf /var/lib/apt/lists/*
           curl -sSL "http://apache.mirrors.spacedump.net/thrift/$THRIFT_VERSION/thrift-$THRIFT_VERSION.tar.gz" -o thrift.tar.gz
@@ -66,7 +66,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v1
         with:
-          node-version: 12.18.3
+          node-version: 14.18.2
       - name: Find yarn cache location
         id: yarn-cache
         run: echo "::set-output name=dir::$(yarn cache dir)"
