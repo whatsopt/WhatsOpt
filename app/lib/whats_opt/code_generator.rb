@@ -56,11 +56,12 @@ module WhatsOpt
       ERB.new(File.read(File.join(@template_dir, file))).result(binding)
     end
 
-    def _generate(filename, template_filename, gendir)
+    def _generate(filename, template_filename, gendir, no_comment: false)
       template = File.join(@template_dir, template_filename)
       Rails.logger.info "Creating #{filename} from #{File.basename(template)} in #{gendir}"
       filepath = File.join(gendir, filename) if gendir
-      result = _comment_header(filepath)
+      result = ""
+      result += _comment_header(filepath) unless no_comment
       result += _run_template(template)
       fh = File.open(filepath, "w:utf-8")
       fh.print result

@@ -13,6 +13,7 @@ module WhatsOpt
                    whatsopt_url: "", api_key: "", remote_ip: "")
       super(mda, pkg_format: pkg_format)
       @prefix = "openmdao"
+      @framework = "openmdao"
       @server_host = server_host
       @remote = !server_host.nil?
       @outdir = outdir
@@ -136,6 +137,9 @@ module WhatsOpt
         @eggen._generate_code(gendir, opts)
         @genfiles += @eggen.genfiles
       end
+      if @pkg_format && @framework == 'openmdao'
+        _generate_package_files(gendir)
+      end
       @genfiles
     end
 
@@ -217,5 +221,12 @@ module WhatsOpt
       @discipline = discipline  # @discipline used in template
       _generate("test_#{discipline.py_filename}", "test_discipline.py.erb", tests_dir)
     end
+
+    def _generate_package_files(gendir)
+      _generate(".gitignore", "package/gitignore.erb", gendir, no_comment: true)
+      _generate("README.md", "package/README.md.erb", gendir, no_comment: true)
+      _generate("setup.py", "package/setup.py.erb", gendir)
+    end
+
   end
 end

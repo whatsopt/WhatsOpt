@@ -63,6 +63,15 @@ class User < ActiveRecord::Base
     update!(deactivated: true) unless deactivated
   end
 
+  def name_from_email
+    email =~ /(.*)@.*/
+    name = $1
+    if name =~ /(\w+)\.(\w+)/
+      name = "#{$1.capitalize} #{$2.capitalize}"
+    end
+    name
+  end
+
   private
     def generate_api_key
       begin
