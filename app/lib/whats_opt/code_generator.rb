@@ -12,7 +12,7 @@ module WhatsOpt
 
     attr_accessor :genfiles, :prefix
 
-    def initialize(mda)
+    def initialize(mda, pkg_format: false)
       @prefix = "code"
       @comment_delimiters = { begin: '"""', end: '"""' }
       @mda = mda
@@ -22,6 +22,8 @@ module WhatsOpt
       @egmdo_module = "egmdo"
       @server_host = "localhost"
       @server_port = 31400
+      @pkg_format = pkg_format
+      @pkg_prefix = "#{@mda.py_modulename}." if @pkg_format
       @generator = self
     end
 

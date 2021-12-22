@@ -17,13 +17,14 @@ class Api::V1::ExportsController < Api::ApiController
     user_agent = request.headers["User-Agent"]
     mda = Analysis.find(mda_id)
     authorize mda
-    if format == "openmdao"
-      ogen = WhatsOpt::OpenmdaoGenerator.new(mda, whatsopt_url: whatsopt_url,
+    case format 
+    when "openmdao", "openmdao_pkg" 
+      ogen = WhatsOpt::OpenmdaoGenerator.new(mda, whatsopt_url: whatsopt_url, pkg_format: (format == "openmdao_pkg"),
                                              api_key: current_user.api_key, remote_ip: request.remote_ip)
       content, filename = ogen.generate(user_agent: user_agent, with_run: with_run, with_server: with_server, 
                                         with_egmdo: with_egmdo, with_runops: with_runops, with_unittests: with_unittests)
       send_data content, filename: filename
-    elsif format == "gemseo"
+    when "gemseo", "gemseo_pkg"
       ggen = WhatsOpt::GemseoGenerator.new(mda)
       begin
         content, filename = ggen.generate(user_agent: user_agent, with_run: with_run, with_server: with_server, 

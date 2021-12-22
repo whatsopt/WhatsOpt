@@ -54,10 +54,12 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
 
   test "should maintain a list of generated filepaths with egmdo" do
     expected = ["__init__.py", "aerodynamics.py", "aerodynamics_base.py", "cicav.py",
-                "cicav_base.py", "egmdo/__init__.py", "egmdo/algorithms.py", "egmdo/cicav_egmda.py", "egmdo/doe_factory.py", 
-                "egmdo/gp_factory.py", "egmdo/random_analysis.py", "geometry.py", "geometry_base.py", "mda_init.py", 
-                "propulsion.py", "propulsion_base.py", "run_mda.py", "run_mdo.py", "run_doe.py", "run_egdoe.py", 
-                "run_egmda.py", "run_egmdo.py", "run_screening.py"]
+                "cicav_base.py", "geometry.py", "geometry_base.py", "mda_init.py", 
+                "propulsion.py", "propulsion_base.py", "run_mda.py", "run_mdo.py", "run_doe.py", "run_egdoe.py"] + [
+                "egmdo/__init__.py", "egmdo/algorithms.py", "egmdo/cicav_egmda.py", "egmdo/doe_factory.py", 
+                "egmdo/gp_factory.py", "egmdo/random_analysis.py", 
+                "run_egmda.py", "run_egmdo.py", "run_screening.py"
+                ]
     _assert_file_generation expected, with_egmdo: true
   end
 
@@ -76,7 +78,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
                 "cicav_base.py", "geometry.py", "geometry_base.py", "mda_init.py", 
                 "propulsion.py", "propulsion_base.py",
                 "run_mda.py", "run_mdo.py", "run_doe.py", "run_screening.py"] +
-                ["test_aerodynamics.py", "test_geometry.py", "test_propulsion.py"]
+                ["tests/test_aerodynamics.py", "tests/test_geometry.py", "tests/test_propulsion.py"]
     _assert_file_generation expected, with_unittests: true
   end
 
@@ -99,6 +101,34 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
                 "server/cicav_proxy.py", "server/cicav/ttypes.py",
                 "server/discipline_proxy.py", "server/remote_discipline.py"]
     _assert_file_generation expected, with_server: true
+  end
+
+  test "should maintain a list of generated filepaths in package mode" do
+    skip "Apache Thrift not installed" unless thrift?
+    pkg_expected = ["__init__.py", "aerodynamics.py", "aerodynamics_base.py", "cicav.py",
+                "cicav_base.py", "geometry.py", "geometry_base.py", "propulsion.py", "propulsion_base.py"] + 
+                ["egmdo/__init__.py", "egmdo/algorithms.py", "egmdo/cicav_egmda.py", "egmdo/doe_factory.py", 
+                "egmdo/gp_factory.py", "egmdo/random_analysis.py"] +
+                ["server/__init__.py", "server/analysis.thrift", "server/cicav/__init__.py",
+                "server/cicav/Cicav-remote", "server/cicav/Cicav.py",
+                "server/cicav/constants.py", "server/cicav_conversions.py",
+                "server/cicav_proxy.py", "server/cicav/ttypes.py",
+                "server/discipline_proxy.py", "server/remote_discipline.py"] 
+    pkg_name = @mda.py_modulename
+    pkg_expected = pkg_expected.map{|f| "#{pkg_name}/#{f}"}
+    expected = pkg_expected + ["mda_init.py", "run_mda.py", "run_mdo.py", 
+      "run_doe.py", "run_screening.py", "run_server.py", 
+      "run_egdoe.py", "run_egmda.py", "run_egmdo.py"] +
+      ["tests/test_aerodynamics.py", "tests/test_geometry.py", "tests/test_propulsion.py"]
+
+    @ogen_pkg = WhatsOpt::OpenmdaoGenerator.new(@mda, pkg_format: true)
+    Dir.mktmpdir do |dir|
+      @ogen_pkg._generate_code(dir, with_server: true, with_egmdo: true, with_runops: true, with_run: true, with_unittests: true)
+      dirpath = Pathname.new(dir)
+      basenames = @ogen_pkg.genfiles.map { |f| Pathname.new(f).relative_path_from(dirpath).to_s }.sort
+      expected = (expected).sort
+      assert_equal expected, basenames
+    end
   end
 
   test "should generate openmdao mda zip file" do

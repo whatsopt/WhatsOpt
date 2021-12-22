@@ -14,6 +14,12 @@ class Api::V1::ExportsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test "should dump nested analysis as openmdao code package" do
+    mda = analyses(:outermda)
+    get api_v1_mda_exports_new_url(mda, format: :openmdao_pkg), as: :json, headers: @auth_headers
+    assert_response :success
+  end
+
   test "should not dump nested analysis as gemseo code and return an error" do
     mda = analyses(:outermda)
     get api_v1_mda_exports_new_url(mda, format: :gemseo), as: :json, headers: @auth_headers

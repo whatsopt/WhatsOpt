@@ -5,8 +5,8 @@ require "whats_opt/code_generator"
 module WhatsOpt
   class EgmdoGenerator < CodeGenerator
 
-    def initialize(mda, remote_operation: false, outdir: ".", driver_name: nil, driver_options: {})
-      super(mda)
+    def initialize(mda, pkg_format: false, remote_operation: false, outdir: ".", driver_name: nil, driver_options: {})
+      super(mda, pkg_format: pkg_format)
       @remote = remote_operation
       @outdir = outdir
       @driver_name = driver_name.to_sym if driver_name
@@ -18,7 +18,9 @@ module WhatsOpt
 
     # sqlite_filename: nil, with_run: true, with_server: true, with_runops: true
     def _generate_code(gendir, options = {})
-      egmdo_dir = File.join(gendir, @egmdo_module)
+      pkg_dir = @pkg_format ? File.join(gendir, @mda.py_modulename) : gendir
+      Dir.mkdir(pkg_dir) unless Dir.exist?(pkg_dir)
+      egmdo_dir = File.join(pkg_dir, @egmdo_module)
       Dir.mkdir(egmdo_dir) unless File.exist?(egmdo_dir)
       _generate("#{@mda.basename}_egmda.py", "egmdo/openmdao_egmda.py.erb", egmdo_dir)
       _generate("run_egmda.py", "run_mda.py.erb", gendir)

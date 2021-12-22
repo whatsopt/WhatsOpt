@@ -9,16 +9,16 @@ module WhatsOpt
     class DisciplineNotFoundException < StandardError
     end
 
-    def initialize(mda, server_host: nil, driver_name: nil, driver_options: {}, outdir: ".",
+    def initialize(mda, pkg_format: false, server_host: nil, driver_name: nil, driver_options: {}, outdir: ".",
                    whatsopt_url: "", api_key: "", remote_ip: "")
-      super(mda)
+      super(mda, pkg_format: pkg_format)
       @prefix = "openmdao"
       @server_host = server_host
       @remote = !server_host.nil?
       @outdir = outdir
 
-      @sgen = WhatsOpt::ServerGenerator.new(mda, server_host: server_host, remote_ip: remote_ip)
-      @eggen = WhatsOpt::EgmdoGenerator.new(mda, remote_operation: @remote, outdir: outdir,
+      @sgen = WhatsOpt::ServerGenerator.new(mda, pkg_format: pkg_format, server_host: server_host, remote_ip: remote_ip)
+      @eggen = WhatsOpt::EgmdoGenerator.new(mda, pkg_format: pkg_format, remote_operation: @remote, outdir: outdir,
                                             driver_name: driver_name, driver_options: driver_options)
       @sqlite_filename = "cases.sqlite"
       @driver_name = driver_name.to_sym if driver_name
@@ -115,15 +115,18 @@ module WhatsOpt
     def _generate_code(gendir, options = {})
       # gendir='/tmp' # for debug
       opts = { with_server: true, with_egmdo: false, with_run: true, with_unittests: false }.merge(options)
+      pkg_dir = @pkg_format ? File.join(gendir, @mda.py_modulename) : gendir
+      Dir.mkdir(pkg_dir) unless Dir.exist?(pkg_dir)
+
       @mda.disciplines.nodes.each do |disc|
         if disc.has_sub_analysis?
-          _generate_sub_analysis(disc, gendir, opts)
+          _generate_sub_analysis(disc, pkg_dir, opts)
         else
-          _generate_discipline(disc, gendir, opts)
+          _generate_discipline(disc, pkg_dir, opts)
           _generate_test_scripts(disc, gendir) if opts[:with_unittests]
         end
       end
-      _generate_main(gendir, opts)
+      _generate_main(pkg_dir, opts)
       _generate_run_scripts(gendir, opts)
       if opts[:with_server] || (!@check_only && @mda.has_remote_discipline?(@remote_ip))
         @sgen._generate_code(gendir, @server_host)
@@ -151,7 +154,7 @@ module WhatsOpt
     # options: sqlite_filename=nil
     def _generate_sub_analysis(super_discipline, gendir, options = {})
       mda = super_discipline.sub_analysis
-      sub_ogen = OpenmdaoGenerator.new(mda, server_host: @server_host, remote_ip: @remote_ip,
+      sub_ogen = OpenmdaoGenerator.new(mda, server_host: @server_host, remote_ip: @remote_ip, pkg_format: false,
         driver_name: @driver_name, driver_options: @driver_options)
       gendir = File.join(gendir, mda.basename)
       Dir.mkdir(gendir) unless Dir.exist?(gendir)
@@ -209,8 +212,10 @@ module WhatsOpt
     end
 
     def _generate_test_scripts(discipline, gendir)
+      tests_dir = File.join(gendir, "tests")
+      Dir.mkdir(tests_dir) unless File.exist?(tests_dir)
       @discipline = discipline  # @discipline used in template
-      _generate("test_#{discipline.py_filename}", "test_discipline.py.erb", gendir)
+      _generate("test_#{discipline.py_filename}", "test_discipline.py.erb", tests_dir)
     end
   end
 end

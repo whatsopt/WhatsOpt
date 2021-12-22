@@ -9,10 +9,10 @@ import openmdao.api as om
 from openmdao_extensions.smt_doe_driver import SmtDOEDriver
 from openmdao_extensions.openturns_doe_driver import OpenturnsDOEDriver
 
-from egmdo.random_analysis import <%= @mda.py_classname %>RandomAnalysis
+from <%= @pkg_prefix %>egmdo.random_analysis import <%= @mda.py_classname %>RandomAnalysis
  
-from egmdo.doe_factory import DoeFactory
-from egmdo.gp_factory import GpFactory
+from <%= @pkg_prefix %>egmdo.doe_factory import DoeFactory
+from <%= @pkg_prefix %>egmdo.gp_factory import GpFactory
 
 def compute_doe(discipline_factory, gp_factory, design_vars, n_cases, out_sqlitefilename, parallel=False):
     pb = om.Problem(<%= @mda.py_classname %>RandomAnalysis(discipline_factory, gp_factory))

@@ -4,10 +4,10 @@ from thrift.transport import TTransport
 from thrift.protocol import TBinaryProtocol
 from thrift.server import TServer
 
-from <%= @mda.py_full_modulename %> import <%= @mda.py_classname %>Factory as Factory
-from <%= @server_module %>.<%= @mda.py_modulename %> import <%= @mda.py_classname %> as <%= @mda.camelname %>Service
-from <%= @server_module %>.<%= @mda.py_modulename %>_conversions import *
-from <%= @server_module %>.remote_discipline import *
+from <%= @pkg_prefix %><%= @mda.py_full_modulename %> import <%= @mda.py_classname %>Factory as Factory
+from <%= @pkg_prefix %><%= @server_module %>.<%= @mda.py_modulename %> import <%= @mda.py_classname %> as <%= @mda.camelname %>Service
+from <%= @pkg_prefix %><%= @server_module %>.<%= @mda.py_modulename %>_conversions import *
+from <%= @pkg_prefix %><%= @server_module %>.remote_discipline import *
 
 class <%= @mda.camelname %>Handler:
 
