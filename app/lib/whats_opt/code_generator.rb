@@ -22,9 +22,12 @@ module WhatsOpt
       @egmdo_module = "egmdo"
       @server_host = "localhost"
       @server_port = 31400
-      @pkg_format = pkg_format
-      @pkg_prefix = "#{@mda.py_modulename}." if @pkg_format
+      @pkg_prefix = pkg_format ? "#{@mda.root.py_modulename}." : ""
       @generator = self
+    end
+
+    def package_dir?
+      !@pkg_prefix.blank? && @mda.is_root?
     end
 
     # options: with_run: true, with_server: false, with_runops: true, user_agent: nil, sqlite_filename: nil

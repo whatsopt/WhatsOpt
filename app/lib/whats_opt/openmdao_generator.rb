@@ -116,7 +116,7 @@ module WhatsOpt
     def _generate_code(gendir, options = {})
       # gendir='/tmp' # for debug
       opts = { with_server: true, with_egmdo: false, with_run: true, with_unittests: false }.merge(options)
-      pkg_dir = @pkg_format ? File.join(gendir, @mda.py_modulename) : gendir
+      pkg_dir = package_dir? ? File.join(gendir, @mda.py_modulename) : gendir
       Dir.mkdir(pkg_dir) unless Dir.exist?(pkg_dir)
 
       @mda.disciplines.nodes.each do |disc|
@@ -137,7 +137,7 @@ module WhatsOpt
         @eggen._generate_code(gendir, opts)
         @genfiles += @eggen.genfiles
       end
-      if @pkg_format && @framework == 'openmdao'
+      if package_dir? && @framework == 'openmdao'
         _generate_package_files(gendir)
       end
       @genfiles
@@ -158,8 +158,8 @@ module WhatsOpt
     # options: sqlite_filename=nil
     def _generate_sub_analysis(super_discipline, gendir, options = {})
       mda = super_discipline.sub_analysis
-      sub_ogen = OpenmdaoGenerator.new(mda, server_host: @server_host, remote_ip: @remote_ip, pkg_format: false,
-        driver_name: @driver_name, driver_options: @driver_options)
+      sub_ogen = OpenmdaoGenerator.new(mda, server_host: @server_host, remote_ip: @remote_ip, 
+        pkg_format: !@pkg_prefix.blank?, driver_name: @driver_name, driver_options: @driver_options)
       gendir = File.join(gendir, mda.basename)
       Dir.mkdir(gendir) unless Dir.exist?(gendir)
 
@@ -224,7 +224,7 @@ module WhatsOpt
 
     def _generate_package_files(gendir)
       _generate(".gitignore", "package/gitignore.erb", gendir, no_comment: true)
-      _generate("README.md", "package/README.md.erb", gendir, no_comment: true)
+      _generate("README", "package/README.erb", gendir, no_comment: true)
       _generate("setup.py", "package/setup.py.erb", gendir)
     end
 

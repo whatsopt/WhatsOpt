@@ -20,7 +20,7 @@ module WhatsOpt
     end
 
     def _generate_code(gendir, options = {})
-      pkg_dir = @pkg_format ? File.join(gendir, @mda.py_modulename) : gendir
+      pkg_dir = package_dir? ? File.join(gendir, @mda.py_modulename) : gendir
       Dir.mkdir(pkg_dir) unless Dir.exist?(pkg_dir)
       server_dir = File.join(pkg_dir, @server_module)
       Dir.mkdir(server_dir) unless File.exist?(server_dir)

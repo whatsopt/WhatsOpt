@@ -18,7 +18,7 @@ module WhatsOpt
 
     # sqlite_filename: nil, with_run: true, with_server: true, with_runops: true
     def _generate_code(gendir, options = {})
-      pkg_dir = @pkg_format ? File.join(gendir, @mda.py_modulename) : gendir
+      pkg_dir = package_dir? ? File.join(gendir, @mda.py_modulename) : gendir
       Dir.mkdir(pkg_dir) unless Dir.exist?(pkg_dir)
       egmdo_dir = File.join(pkg_dir, @egmdo_module)
       Dir.mkdir(egmdo_dir) unless File.exist?(egmdo_dir)

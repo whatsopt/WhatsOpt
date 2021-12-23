@@ -119,7 +119,8 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     expected = pkg_expected + ["mda_init.py", "run_mda.py", "run_mdo.py", 
       "run_doe.py", "run_screening.py", "run_server.py", 
       "run_egdoe.py", "run_egmda.py", "run_egmdo.py"] +
-      ["tests/test_aerodynamics.py", "tests/test_geometry.py", "tests/test_propulsion.py"]
+      ["tests/test_aerodynamics.py", "tests/test_geometry.py", "tests/test_propulsion.py"] +
+      [".gitignore", "README", "setup.py"]
 
     @ogen_pkg = WhatsOpt::OpenmdaoGenerator.new(@mda, pkg_format: true)
     Dir.mktmpdir do |dir|
@@ -288,6 +289,22 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
       ogen._generate_code dir
       pid = spawn("#{WhatsOpt::OpenmdaoGenerator::PYTHON} #{File.join(dir, 'run_server.py')}", [:out] => "/dev/null")
       @ogen_remote = WhatsOpt::OpenmdaoGenerator.new(mda, server_host: "localhost", driver_name: "runonce")
+      ok, log = @ogen_remote.run
+      assert(ok, log)
+      Process.kill("TERM", pid)
+      Process.waitpid pid
+    end
+  end
+
+  test "should run packaged nested mda once" do
+    skip_if_parallel
+    skip "Apache Thrift not installed" unless thrift?
+    mda = analyses(:outermda)
+    ogen = WhatsOpt::OpenmdaoGenerator.new(mda, pkg_format: true)
+    Dir.mktmpdir do |dir|
+      ogen._generate_code dir
+      pid = spawn("#{WhatsOpt::OpenmdaoGenerator::PYTHON} #{File.join(dir, 'run_server.py')}", [:out] => "/dev/null")
+      @ogen_remote = WhatsOpt::OpenmdaoGenerator.new(mda, pkg_format: true, server_host: "localhost", driver_name: "runonce")
       ok, log = @ogen_remote.run
       assert(ok, log)
       Process.kill("TERM", pid)
