@@ -1,5 +1,13 @@
 <h1>CHANGELOG</h1>
 
+<h3>1.21.0 (??/01/2022)</h3>
+<ul>
+  <li>User can generate OpenDMAO in package mode, meaning the analysis code is generate under
+    analysis name directory and related <code>setup.py</code>code> file is generated to allow to build
+    the corresponding Python package.
+  </li>
+</ul>
+
 <h3>1.20.0 (15/12/2021)</h3>
 <ul>
   <li>Bubble up prediction error from surrogate server to provide relevant error message</li>
@@ -9,7 +17,8 @@
   <li>Use <code>setup_partials</code> to declare OpenMDAO partial derivatives (default finite differences method)</li>
   <li>The python formatter <a href="https://black.readthedocs.io">black</a> is passed on the generated code.</li>
   <li>Remove deprecated scripts: <code>run_analysis.py</code>, <code>run_optimization.py</code> and
-    <code>run_parameters_init.py</code></li>
+    <code>run_parameters_init.py</code>
+  </li>
   <li>Remove WhatsOpt docking mechanism (at least for now, wait for actual need)</li>
   <li>Fix template option settings for DirectSolver</li>
   <li>Fix sub-analysis copy in presence of sub-sub-analysis</li>
