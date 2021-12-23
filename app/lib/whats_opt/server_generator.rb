@@ -10,8 +10,8 @@ module WhatsOpt
     class ThriftError < StandardError
     end
 
-    def initialize(mda, server_host: nil, remote_ip: "")
-      super(mda)
+    def initialize(mda, server_host: nil, remote_ip: "", pkg_format: false)
+      super(mda, pkg_format: pkg_format)
       @server_host = server_host
       @remote = !server_host.nil?
       @prefix = "remote_server"
@@ -20,7 +20,9 @@ module WhatsOpt
     end
 
     def _generate_code(gendir, options = {})
-      server_dir = File.join(gendir, @server_module)
+      pkg_dir = package_dir? ? File.join(gendir, @mda.py_modulename) : gendir
+      Dir.mkdir(pkg_dir) unless Dir.exist?(pkg_dir)
+      server_dir = File.join(pkg_dir, @server_module)
       Dir.mkdir(server_dir) unless File.exist?(server_dir)
       ok, log = _generate_with_thrift(server_dir)
       @comment_delimiters = { begin: '"""', end: '"""' }

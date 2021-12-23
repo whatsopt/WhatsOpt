@@ -3,8 +3,8 @@ from thrift.transport import TSocket
 from thrift.transport import TTransport
 from thrift.protocol import TBinaryProtocol
 
-from <%= @server_module %>.<%= @mda.py_full_modulename %> import <%= @mda.py_classname %>
-from <%= @mda.py_full_modulename %> import <%= @mda.py_classname %> as <%= @mda.py_classname %>Original
+from <%= @pkg_prefix %><%= @server_module %>.<%= @mda.py_full_modulename %> import <%= @mda.py_classname %>
+from <%= @pkg_prefix %><%= @mda.py_full_modulename %> import <%= @mda.py_classname %> as <%= @mda.py_classname %>Original
 <% @mda.all_plain_disciplines.each do |disc| %>
 <% if !disc.local?(@remote_ip) or @remote %>
 from .remote_discipline import Remote<%= disc.py_classname %>

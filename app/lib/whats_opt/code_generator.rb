@@ -12,7 +12,7 @@ module WhatsOpt
 
     attr_accessor :genfiles, :prefix
 
-    def initialize(mda)
+    def initialize(mda, pkg_format: false)
       @prefix = "code"
       @comment_delimiters = { begin: '"""', end: '"""' }
       @mda = mda
@@ -22,7 +22,12 @@ module WhatsOpt
       @egmdo_module = "egmdo"
       @server_host = "localhost"
       @server_port = 31400
+      @pkg_prefix = pkg_format ? "#{@mda.root.py_modulename}." : ""
       @generator = self
+    end
+
+    def package_dir?
+      !@pkg_prefix.blank? && @mda.is_root?
     end
 
     # options: with_run: true, with_server: false, with_runops: true, user_agent: nil, sqlite_filename: nil
@@ -54,11 +59,12 @@ module WhatsOpt
       ERB.new(File.read(File.join(@template_dir, file))).result(binding)
     end
 
-    def _generate(filename, template_filename, gendir)
+    def _generate(filename, template_filename, gendir, no_comment: false)
       template = File.join(@template_dir, template_filename)
       Rails.logger.info "Creating #{filename} from #{File.basename(template)} in #{gendir}"
       filepath = File.join(gendir, filename) if gendir
-      result = _comment_header(filepath)
+      result = ""
+      result += _comment_header(filepath) unless no_comment
       result += _run_template(template)
       fh = File.open(filepath, "w:utf-8")
       fh.print result

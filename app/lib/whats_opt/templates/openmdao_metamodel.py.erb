@@ -11,7 +11,7 @@ WHATSOPT_DIRNAME = os.path.join(os.path.expanduser('~'), '.whatsopt')
 API_KEY_FILENAME = os.path.join(WHATSOPT_DIRNAME, 'api_key')
 <% end %>
 
-from <%= @discipline.py_full_modulename %>_base import <%= @discipline.py_classname %>Base
+from <%= @pkg_prefix %><%= @discipline.py_full_modulename %>_base import <%= @discipline.py_classname %>Base
 
 class <%= @discipline.py_classname %>(<%= @discipline.py_classname %>Base):
     """ An OpenMDAO metamodel for <%= @discipline.py_classname %> discipline """

@@ -1,22 +1,27 @@
+import unittest
 import numpy as np
 import openmdao.api as om
-from <%= @discipline.analysis.py_full_modulename %> import <%= @discipline.analysis.py_classname %>
-from <%= @discipline.py_full_modulename %> import <%= @discipline.py_classname %>
+from <%= @pkg_prefix %><%= @discipline.analysis.py_full_modulename %> import <%= @discipline.analysis.py_classname %>Factory
+from <%= @pkg_prefix %><%= @discipline.py_full_modulename %> import <%= @discipline.py_classname %>
 
-class Test<%= @discipline.py_classname %>(<%= @discipline.analysis.py_classname %>):
+class Test<%= @discipline.py_classname %>(om.Group):
+    def __init__(self, factory, **kwargs): 
+        super().__init__(**kwargs)
+        self.factory = factory
 
     def setup(self): 
-        indeps = self.add_subsystem('indeps', om.IndepVarComp(), promotes=['*'])
-<% @discipline.input_variables.numeric.each do |input| %>
-        indeps.add_output('<%= input.name %>', <%= input.init_py_value %>)
-<% end -%>
+        self.add_subsystem('<%= @discipline.py_modulename %>', self.factory.create_<%= @discipline.snake_modulename %>(), 
+                           promotes=[<%= @discipline.variables.map(&:py_varname).map{|v| "'#{v}'"}.join(', ') %>])
 
-        self.add_subsystem('<%= @discipline.py_classname %>', self.create_<%= @discipline.basename %>(), promotes=[<%= @discipline.variables.map(&:py_varname).map{|v| "'#{v}'"}.join(', ') %>])
+class <%= @discipline.py_classname %>Test(unittest.TestCase):
+
+    def test_<%= @discipline.py_classname %>(self):
+        factory = <%= @discipline.analysis.py_classname %>Factory()
+        pb = om.Problem(Test<%= @discipline.py_classname %>(factory=factory))
+        pb.setup()  
+        pb.run_model()   
+        pb.model.list_inputs(print_arrays=False)
+        pb.model.list_outputs(print_arrays=False)
 
 if __name__=='__main__':
-  pb = om.Problem(Test<%= @discipline.py_classname %>())
-  pb.setup()  
-
-  pb.run_model()   
-  pb.model.list_inputs(print_arrays=False)
-  pb.model.list_outputs(print_arrays=False)
+    unittest.main()

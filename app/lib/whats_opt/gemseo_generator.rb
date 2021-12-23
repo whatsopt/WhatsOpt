@@ -17,6 +17,7 @@ module WhatsOpt
     def initialize(mda)
       super(mda)
       @prefix = "gemseo"
+      @framework = "gemseo"
     end
 
     # sqlite_filename: nil, with_run: true, with_server: true, with_runops: true

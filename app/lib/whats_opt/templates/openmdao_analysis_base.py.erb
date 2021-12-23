@@ -13,14 +13,14 @@ from openmdao.api import <%= @impl.linear_solver.name %>
 from openmdao import __version__ as OPENMDAO_VERSION
 
 <% @mda.sub_analyses.each do |a| -%>
-from <%= a.py_full_modulename %> import <%= a.py_classname %>
+from <%= @pkg_prefix %><%= a.py_full_modulename %> import <%= a.py_classname %>
 <% end -%>
 
 <% @mda.all_plain_disciplines.each do |disc| -%>
 <% if @check_only || disc.local?(@remote_ip) -%>
-from <%= disc.py_full_modulename %> import <%= disc.py_classname %> 
+from <%= @pkg_prefix %><%= disc.py_full_modulename %> import <%= disc.py_classname %> 
 <% else %>
-from <%= @server_module %>.remote_discipline import Remote<%= disc.py_classname %>
+from <%= @pkg_prefix %><%= @server_module %>.remote_discipline import Remote<%= disc.py_classname %>
 <% end -%>
 <% end -%>
 
