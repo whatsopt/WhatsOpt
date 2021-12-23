@@ -124,7 +124,7 @@ module WhatsOpt
           _generate_sub_analysis(disc, pkg_dir, opts)
         else
           _generate_discipline(disc, pkg_dir, opts)
-          _generate_test_scripts(disc, gendir) if opts[:with_unittests]
+          _generate_test_scripts(disc, pkg_dir) if opts[:with_unittests]
         end
       end
       _generate_main(pkg_dir, opts)

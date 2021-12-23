@@ -109,6 +109,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
                 "cicav_base.py", "geometry.py", "geometry_base.py", "propulsion.py", "propulsion_base.py"] + 
                 ["egmdo/__init__.py", "egmdo/algorithms.py", "egmdo/cicav_egmda.py", "egmdo/doe_factory.py", 
                 "egmdo/gp_factory.py", "egmdo/random_analysis.py"] +
+                ["tests/test_aerodynamics.py", "tests/test_geometry.py", "tests/test_propulsion.py"] +
                 ["server/__init__.py", "server/analysis.thrift", "server/cicav/__init__.py",
                 "server/cicav/Cicav-remote", "server/cicav/Cicav.py",
                 "server/cicav/constants.py", "server/cicav_conversions.py",
@@ -119,7 +120,6 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     expected = pkg_expected + ["mda_init.py", "run_mda.py", "run_mdo.py", 
       "run_doe.py", "run_screening.py", "run_server.py", 
       "run_egdoe.py", "run_egmda.py", "run_egmdo.py"] +
-      ["tests/test_aerodynamics.py", "tests/test_geometry.py", "tests/test_propulsion.py"] +
       [".gitignore", "README", "setup.py"]
 
     @ogen_pkg = WhatsOpt::OpenmdaoGenerator.new(@mda, pkg_format: true)
