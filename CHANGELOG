@@ -6,6 +6,8 @@
     analysis name directory and related <code>setup.py</code>code> file is generated to allow to build
     the corresponding Python package.
   </li>
+  <li>Fix update egmdo error when no objective is selected</li>
+  <li>Fix sqlite upload by making the whatsopt factory option not recordable</li>
 </ul>
 
 <h3>1.20.0 (15/12/2021)</h3>
