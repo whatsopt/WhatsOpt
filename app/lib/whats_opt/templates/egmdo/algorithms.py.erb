@@ -65,7 +65,7 @@ def analyze_sensitivity(outfile, threshold_coeff_var=1e-3):
 <%- @mda.constraint_variables.each do |c| -%>
     qoi_names.append("<%= c.name %>")
 <%- end -%>
-    obj_name = "<%= @mda.objective_variables&.first.py_varname %>"
+    obj_name = "<%= @mda.objective_variables&.first&.py_varname %>"
     qoi_names.append(obj_name)
 
     # open the doe to create the PCE
