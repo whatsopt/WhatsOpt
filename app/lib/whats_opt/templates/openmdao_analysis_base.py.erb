@@ -48,7 +48,7 @@ class <%= @mda.py_classname %>Base(<%= @impl.parallel_group ? "om.ParallelGroup"
 
     def initialize(self):
         self.options.declare('factory', default=<%= @mda.py_classname %>FactoryBase(), 
-                             types=object)
+                             types=object, recordable=False)
 
         self.nonlinear_solver = <%= @impl.nonlinear_solver.name %>()
 <% unless @impl.nonlinear_solver.runonce? -%>
