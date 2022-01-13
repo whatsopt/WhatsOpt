@@ -42,14 +42,14 @@ class <%= disc.py_classname %>RandomDiscipline(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         inputs_gp = np.array([])
         random_inputs = []
-<% disc.output_variables.each_with_index do |v| %>
+<% disc.output_variables.each do |v| %>
         random_inputs.append('_xi_<%= v.py_varname %>')
 <% end %>
         for name in sorted(inputs.keys()):
             if name not in random_inputs: 
                 inputs_gp = np.concatenate((inputs_gp, inputs[name]))
         inputs_gp = np.atleast_2d(inputs_gp)    
-<% disc.output_variables.each_with_index do |v|%>        
+<% disc.output_variables.each do |v|%>
         sigma = np.sqrt(self.gp_<%= v.py_varname %>.predict_variances(inputs_gp))
         mean = self.gp_<%= v.py_varname %>.predict_values(inputs_gp)
         outputs['<%= v.py_varname %>'] = mean + inputs['_xi_<%= v.py_varname %>'] * sigma 
@@ -69,7 +69,7 @@ class <%= disc.py_classname %>RandomDiscipline(om.ExplicitComponent):
         inputs_gp = np.array([])
         random_inputs = []
 
-<%- disc.output_variables.each_with_index do |v| -%>
+<%- disc.output_variables.each do |v| -%>
         random_inputs.append('_xi_<%= v.py_varname %>')
 <%- end -%>
 
@@ -77,8 +77,9 @@ class <%= disc.py_classname %>RandomDiscipline(om.ExplicitComponent):
             if name not in random_inputs: 
                 inputs_gp = np.concatenate((inputs_gp, inputs[name]))
         inputs_gp = np.atleast_2d(inputs_gp)
+
+<%- disc.output_variables.each do |v| -%>
         i = 0
-<%- disc.output_variables.each_with_index do |v| -%>        
         sigma = np.sqrt(self.gp_<%= v.py_varname %>.predict_variances(inputs_gp))
         d_sigma = self.gp_<%= v.py_varname %>.predict_variance_derivatives(inputs_gp)/(2.0*sigma)
         for name in sorted(inputs.keys()):
