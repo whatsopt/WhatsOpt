@@ -2,7 +2,7 @@
 # sure you lock down to a specific version, not to `latest`!
 # See https://github.com/phusion/passenger-docker/blob/master/Changelog.md for
 # a list of version numbers.
-FROM phusion/passenger-customizable:2.0.1
+FROM phusion/passenger-customizable:2.1.0
 # Or, instead of the 'full' variant, use one of these:
 #FROM phusion/passenger-ruby23:<VERSION>
 #FROM phusion/passenger-ruby24:<VERSION>
@@ -66,9 +66,9 @@ RUN buildDeps=" \
 #   Ruby support
 #RUN /pd_build/ruby-2.3.*.sh
 #RUN /pd_build/ruby-2.4.*.sh
-RUN /pd_build/ruby-3.0.2.sh \
-	&& bash -lc 'rvm install ruby-3.0.2' \
-	&& bash -lc 'rvm --default use ruby-3.0.2'
+RUN /pd_build/ruby-3.0.3.sh \
+	&& bash -lc 'rvm install ruby-3.0.3' \
+	&& bash -lc 'rvm --default use ruby-3.0.3'
 #RUN /pd_build/ruby-2.6.*.sh
 #RUN /pd_build/jruby-9.2.*.sh
 #   Python support.
@@ -108,7 +108,8 @@ WORKDIR /whatsopt
 
 COPY Gemfile ./ 
 
-RUN bundle config without staging,production \
+RUN gem install bundler:2.2.33 \
+	&& bundle config without staging,production \
 	&& bundle install --jobs 20 --retry 5
 
 COPY . ./
@@ -119,6 +120,8 @@ RUN pip install -e services/whatsopt_server/optimizer_store/oneramdao/doe \
 	&& pip install -e services/whatsopt_server/optimizer_store/oneramdao/moe \
 	&& pip install -e services/whatsopt_server/optimizer_store/oneramdao/sego \
 	&& pip install -e services
+
+RUN bundle install
 
 EXPOSE 3000
 
