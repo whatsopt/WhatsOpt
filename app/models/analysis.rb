@@ -187,14 +187,14 @@ class Analysis < ApplicationRecord
   end
 
   def egmdo_random_disciplines
-    @egmdo_vars ||= plain_disciplines.inject([]) do |acc, disc|
+    @egmdo_disciplines ||= plain_disciplines.inject([]) do |acc, disc|
       acc << disc if disc.openmdao_impl&.egmdo_surrogate
       acc
     end
   end
 
   def egmdo_random_variables
-    @egmdo_disciplines ||= plain_disciplines.inject([]) do |acc, disc|
+    @egmdo_vars ||= plain_disciplines.inject([]) do |acc, disc|
       acc = acc + disc.output_variables if disc.openmdao_impl&.egmdo_surrogate
       acc
     end

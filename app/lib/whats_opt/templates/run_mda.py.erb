@@ -11,6 +11,7 @@ from <%= @pkg_prefix %><%= @server_module %>.<%= @mda.py_modulename %>_proxy imp
 from <%= @pkg_prefix %><%= @mda.py_modulename %> import <%= @mda.py_classname %>
 <% end -%>
 <%- if @egmdo -%>
+from openmdao.utils.mpi import MPI
 from optparse import OptionParser
 
 parser = OptionParser()
@@ -21,9 +22,12 @@ parser.add_option("--plot",
 
 # EGMDA options: discipline_factory=None, gp_factory=None, 
 # n_doe_pce=500, epsilon_coeff_var=1e-3, threshold_coeff_var=1e-3, n_iter_max=10, 
-# outdir=".", plot=False, plot_range=[0, 50]
+# parallel=False, outdir=".", plot=False, plot_range=[0, 50]
 <%- if @remote -%>
 pb = om.Problem(<%= @mda.py_classname %>(discipline_factory=<%= @mda.py_classname %>Proxy(), plot=options.plot))
+<%- elsif @egmdo -%>
+parallel = (MPI is not None and MPI.COMM_WORLD.size > 1)
+pb = om.Problem(<%= @mda.py_classname %>(parallel=parallel, plot=options.plot))
 <%- else -%>
 pb = om.Problem(<%= @mda.py_classname %>(plot=options.plot))
 <%- end -%>
@@ -34,5 +38,12 @@ pb.setup()
 initialize(pb)
 
 pb.run_model()
+
+<%- if @egmdo -%>
+if not MPI or (MPI and MPI.COMM_WORLD.rank == 0):
+    pb.model.list_inputs(print_arrays=False)
+    pb.model.list_outputs(print_arrays=False)
+<%- else -%>
 pb.model.list_inputs(print_arrays=False)
 pb.model.list_outputs(print_arrays=False)
+<%- end -%>

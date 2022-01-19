@@ -14,13 +14,14 @@ class <%= @mda.py_classname %>EgDiscipline(om.ExplicitComponent):
 
     def __init__(self, discipline_factory=None, gp_factory=None, 
                  n_doe_pce=500, epsilon_coeff_var=1e-3, threshold_coeff_var=1e-3, n_iter_max=10, 
-                 outdir=".", plot=False, plot_range=[0, 50]):
+                 parallel=False, outdir=".", plot=False, plot_range=[0, 50]):
         super().__init__()
         self.plot=plot
         self.n_doe_pce = n_doe_pce
         self.epsilon_coeff_var = epsilon_coeff_var
         self.threshold_coeff_var = threshold_coeff_var
         self.n_iter_max = n_iter_max
+        self.parallel = parallel
         self.plot = plot
         self.plot_range = plot_range
         self.outdir=outdir
@@ -46,7 +47,7 @@ class <%= @mda.py_classname %>EgDiscipline(om.ExplicitComponent):
         design_vars['<%= var.name %>'] = inputs['<%= var.name %>']
 <% end %>
         # This function enrich the disciplinary surrogate models until the convergence on the fixed point is reached
-        coupling_vars, cv_mean, cv_coeff_var = solve_egmda(
+        solve_egmda(
             self.discipline_factory,
             design_vars,
             n_doe_pce=self.n_doe_pce,  
@@ -56,7 +57,8 @@ class <%= @mda.py_classname %>EgDiscipline(om.ExplicitComponent):
             plot=self.plot,
             plot_range=self.plot_range,
             gp_factory=self.gp_factory,
-            outdir=self.outdir
+            outdir=self.outdir,
+            parallel=self.parallel
         )
 
         # After the convergence we run the problem at the mean value of the disciplinary surrogate models to fill the outputs
@@ -97,12 +99,13 @@ class <%= @mda.py_classname %>Egmda(om.Group):
     """ An OpenMDAO base component to encapsulate <%= @mda.py_classname %> EGMDA """
     def __init__(self, discipline_factory=None, gp_factory=None, 
                  n_doe_pce=500, epsilon_coeff_var=1e-3, threshold_coeff_var=1e-3, n_iter_max=10, 
-                 outdir='<%= @outdir %>', plot=False, plot_range=[0, 50]):
+                 parallel=False, outdir='<%= @outdir %>', plot=False, plot_range=[0, 50]):
         super().__init__()
         self.n_doe_pce = n_doe_pce
         self.epsilon_coeff_var = epsilon_coeff_var
         self.threshold_coeff_var = threshold_coeff_var
         self.n_iter_max = n_iter_max
+        self.parallel = parallel
         self.plot = plot
         self.plot_range = plot_range
         self.outdir = outdir
@@ -121,7 +124,7 @@ class <%= @mda.py_classname %>Egmda(om.Group):
                            <%= @mda.py_classname %>EgDiscipline(
                                 discipline_factory=self.discipline_factory, gp_factory=self.gp_factory, 
                                 n_doe_pce=self.n_doe_pce, epsilon_coeff_var=self.epsilon_coeff_var,
-                                threshold_coeff_var=self.threshold_coeff_var,  
+                                threshold_coeff_var=self.threshold_coeff_var, parallel=self.parallel, 
                                 n_iter_max=self.n_iter_max, outdir=self.outdir,
                                 plot=self.plot, plot_range=self.plot_range),
                            promotes=[<%= (@mda.input_variables+@mda.output_variables).map(&:py_varname).uniq.map{|v| "'#{v}'"}.join(', ') %>])
