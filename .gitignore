@@ -61,6 +61,7 @@ yarn-debug.log*
 
 # Ignore parallel test databases
 db/test.sqlite3-*
+db/test_scratch.sqlite3-*
 
 # Ignore configuration
 config/configuration.yml
