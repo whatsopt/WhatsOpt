@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_10_12_090126) do
+ActiveRecord::Schema.define(version: 2022_01_25_161328) do
 
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
@@ -186,6 +186,7 @@ ActiveRecord::Schema.define(version: 2021_10_12_090126) do
     t.integer "linear_solver_id"
     t.boolean "use_units"
     t.string "optimization_driver"
+    t.string "package_name"
     t.index ["analysis_id"], name: "index_openmdao_analysis_impls_on_analysis_id"
     t.index ["linear_solver_id"], name: "index_openmdao_analysis_impls_on_linear_solver_id"
     t.index ["nonlinear_solver_id"], name: "index_openmdao_analysis_impls_on_nonlinear_solver_id"
