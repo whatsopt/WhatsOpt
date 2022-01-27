@@ -12,6 +12,13 @@ const SCHEMA_GENERAL = {
         use_units: { type: 'boolean', title: 'Use units' },
         use_scaling: { type: 'boolean', title: 'Use scaling' },
         parallel_group: { type: 'boolean', title: 'Parallel Group (MPI)' },
+        packaging: {
+          type: 'object',
+          title: 'Packaging',
+          properties: {
+            package_name: { type: 'string', title: 'Package Name' },
+          },
+        },
         driver: {
           type: 'object',
           title: 'Driver',
@@ -118,6 +125,7 @@ function _getOpenmdaoImpl(formData) {
     use_scaling: formData.general.use_scaling,
     use_units: formData.general.use_units,
     optimization_driver: formData.general.driver.optimization,
+    packaging: formData.general.packaging,
     nodes,
     nonlinear_solver: { ...formData.nonlinear_solver },
     linear_solver: { ...formData.linear_solver },
@@ -186,7 +194,7 @@ class OpenmdaoImplEditor extends React.Component {
     });
     // UI schema
     const uiSchema = {
-      general: { 'ui:order': ['use_units', 'use_scaling', 'parallel_group', 'driver'] },
+      general: { 'ui:order': ['use_units', 'use_scaling', 'parallel_group', 'packaging', 'driver'] },
     };
     if (db.isScaled()) {
       uiSchema.general.use_scaling = { 'ui:disabled': true };
@@ -200,6 +208,7 @@ class OpenmdaoImplEditor extends React.Component {
         use_units: impl.use_units,
         use_scaling: impl.use_scaling,
         parallel_group: impl.parallel_group,
+        packaging: impl.packaging,
         driver: { optimization: impl.optimization_driver },
       },
       components: {},
@@ -289,6 +298,9 @@ OpenmdaoImplEditor.propTypes = {
     parallel_group: PropTypes.bool.isRequired,
     use_scaling: PropTypes.bool.isRequired,
     optimization_driver: PropTypes.string.isRequired,
+    packaging: PropTypes.shape({
+      package_name: PropTypes.string.isRequired,
+    }),
     nodes: PropTypes.array.isRequired,
     nonlinear_solver: PropTypes.object.isRequired,
     linear_solver: PropTypes.object.isRequired,

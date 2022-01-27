@@ -12,6 +12,8 @@ class OpenmdaoAnalysisImpl < ActiveRecord::Base
 
   after_initialize :_ensure_default_impl
 
+  validates :package_name, format: { with: /\A[a-z]+[_a-z0-9]*\z/, message: "should follow PEP8 recommendation for Python package names"}
+
   def delete_related_solvers!
     OpenmdaoAnalysisImpl.transaction do
       ref_count = OpenmdaoAnalysisImpl.where(nonlinear_solver_id: nonlinear_solver.id).count
@@ -30,6 +32,8 @@ class OpenmdaoAnalysisImpl < ActiveRecord::Base
     self.use_units = use_units unless use_units.nil?
     optimization_driver = impl_attrs[:optimization_driver]
     self.optimization_driver = optimization_driver unless optimization_driver.nil?
+    packaging = impl_attrs[:packaging]
+    self.update(package_name: packaging[:package_name]) unless packaging.nil?
     impl_attrs[:nodes]&.each do |dattr|
       OpenmdaoDisciplineImpl.where(discipline_id: dattr[:discipline_id]).update(dattr.except(:discipline_id))
     end
@@ -67,12 +71,15 @@ class OpenmdaoAnalysisImpl < ActiveRecord::Base
       .empty?
   end
 
+  def is_packaged?
+    !self.analysis.root_analysis&.openmdao_impl&.package_name.blank?
+  end
+
   def top_packagename
-    top = self.analysis.root_analysis&.openmdao_impl&.package_name
-    if top.blank?
-      self.analysis.root_analysis.basename
+    if is_packaged?
+      self.analysis.root_analysis.openmdao_impl.package_name
     else
-      top
+      self.analysis.root_analysis.basename
     end
   end
 
