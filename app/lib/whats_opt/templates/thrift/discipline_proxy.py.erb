@@ -1,4 +1,4 @@
-from .<%= @mda.basename %>_conversions import *
+from .<%= @mda.py_modulename %>_conversions import *
 
 <% @mda.all_plain_disciplines.each do |disc| %>
 class <%= disc.camelname %>Proxy():

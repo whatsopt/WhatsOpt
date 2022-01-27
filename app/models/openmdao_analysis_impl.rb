@@ -67,6 +67,15 @@ class OpenmdaoAnalysisImpl < ActiveRecord::Base
       .empty?
   end
 
+  def top_packagename
+    top = self.analysis.root_analysis&.openmdao_impl&.package_name
+    if top.blank?
+      self.analysis.root_analysis.basename
+    else
+      top
+    end
+  end
+
   private
     def _ensure_default_impl
       self.parallel_group = false if parallel_group.blank?

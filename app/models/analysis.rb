@@ -233,6 +233,18 @@ class Analysis < ApplicationRecord
     root
   end
 
+  def modulename
+    self.is_root? && self.openmdao_impl ? "#{self.openmdao_impl.top_packagename}" : super
+  end
+
+  def py_filename
+    self.is_root? && self.openmdao_impl ? "#{self.openmdao_impl.top_packagename}.py" : super
+  end
+
+  def py_basefilename
+    self.is_root? && self.openmdao_impl ? "#{self.openmdao_impl.top_packagename}_base.py" : super
+  end
+
   def has_remote_discipline?(localhost)
     @remote ||= !!all_plain_disciplines.detect { |d| !d.local?(localhost) }
   end

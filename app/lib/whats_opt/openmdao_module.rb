@@ -23,14 +23,18 @@ module WhatsOpt
       namespace.join(".")
     end
 
-    def packagename
+    def sub_packagename
       self.namespace.sub(/^#{Regexp.escape(@@root_modulename)}\.?/, "")
     end
 
-    def full_modulename
-      fmn = packagename
+    def modulename
+      basename
+    end
+
+    def full_modulename(final_name: modulename)
+      fmn = sub_packagename
       fmn += "." unless fmn.blank?
-      fmn += "#{basename}"
+      fmn += "#{final_name}"
       fmn
     end
 
@@ -42,16 +46,16 @@ module WhatsOpt
       snake_modulename.camelize
     end
 
-    def py_modulename
-      basename
+    def py_sub_packagename
+      sub_packagename
     end
 
-    def py_packagename
-      packagename
+    def py_modulename
+      modulename
     end
 
     def py_full_modulename
-      full_modulename
+      full_modulename(final_name: py_modulename)
     end
 
     def set_as_root_module

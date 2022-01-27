@@ -25,7 +25,7 @@ struct <%= disc.camel_modulename %>Output {
 }
 <% end -%>
 
-service <%= @mda.camel_modulename %> {
+service <%= @mda.py_classname %> {
 <% @mda.all_plain_disciplines.each do |disc| -%>
     <%= disc.camel_modulename %>Output compute_<%= disc.snake_modulename %>(1:<%= disc.camel_modulename %>Input input)
 <% end -%>
