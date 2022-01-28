@@ -12,7 +12,9 @@ class OpenmdaoAnalysisImpl < ActiveRecord::Base
 
   after_initialize :_ensure_default_impl
 
-  validates :package_name, format: { with: /\A[a-z]*[_a-z0-9]*\z/, message: "should follow PEP8 recommendation for Python package names"}
+  validates :package_name, presence: true
+  validates :package_name, format: { with: /\A[a-z]+[_a-z0-9]*\z/, message: "should follow PEP8 recommendation for Python package names"}
+  NULL_PACKAGE_NAME = "pkg_place_holder"
 
   def delete_related_solvers!
     OpenmdaoAnalysisImpl.transaction do
@@ -71,12 +73,13 @@ class OpenmdaoAnalysisImpl < ActiveRecord::Base
       .empty?
   end
 
-  def is_packaged?
-    !self.analysis.root_analysis&.openmdao_impl&.package_name.blank?
+  def is_package_specified?
+    pname = self.analysis.root_analysis&.openmdao_impl&.package_name
+    !pname.blank? && pname != NULL_PACKAGE_NAME
   end
 
   def top_packagename
-    if is_packaged?
+    if is_package_specified?
       self.analysis.root_analysis.openmdao_impl.package_name
     else
       self.analysis.root_analysis.basename
@@ -90,6 +93,6 @@ class OpenmdaoAnalysisImpl < ActiveRecord::Base
       self.linear_solver ||= Solver.new(name: "ScipyKrylov")
       self.use_units = false if use_units.blank?
       self.optimization_driver = :scipy_optimizer_slsqp if optimization_driver.blank?
-      self.package_name = "" if package_name.nil?
+      self.package_name = NULL_PACKAGE_NAME if package_name.blank?
     end
 end

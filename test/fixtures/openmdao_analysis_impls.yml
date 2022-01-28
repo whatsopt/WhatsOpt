@@ -14,7 +14,7 @@ openmdao_fast_impl:
   linear_solver_id: <%= ActiveRecord::FixtureSet.identify(:scipy_krylov) %>
   use_units: false
   optimization_driver: scipy_optimizer_slsqp
-  package_name: ""
+  package_name: <%= OpenmdaoAnalysisImpl::NULL_PACKAGE_NAME %>
 
 openmdao_outer_impl:
   analysis: outermda
@@ -32,7 +32,7 @@ openmdao_inner_impl:
   linear_solver_id: <%= ActiveRecord::FixtureSet.identify(:scipy_krylov) %>
   use_units: false
   optimization_driver: scipy_optimizer_slsqp
-  package_name: ""
+  package_name: <%= OpenmdaoAnalysisImpl::NULL_PACKAGE_NAME %>
 
 openmdao_cicav_metamodel_analysis_impl:
   analysis: cicav_metamodel_analysis
@@ -41,4 +41,4 @@ openmdao_cicav_metamodel_analysis_impl:
   linear_solver_id: <%= ActiveRecord::FixtureSet.identify(:scipy_krylov) %>
   use_units: false
   optimization_driver: scipy_optimizer_slsqp
-  package_name: ""
+  package_name: <%= OpenmdaoAnalysisImpl::NULL_PACKAGE_NAME %>
