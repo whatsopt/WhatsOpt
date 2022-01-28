@@ -12,7 +12,7 @@ class OpenmdaoAnalysisImpl < ActiveRecord::Base
 
   after_initialize :_ensure_default_impl
 
-  validates :package_name, format: { with: /\A[a-z]+[_a-z0-9]*\z/, message: "should follow PEP8 recommendation for Python package names"}
+  validates :package_name, format: { with: /\A[a-z]*[_a-z0-9]*\z/, message: "should follow PEP8 recommendation for Python package names"}
 
   def delete_related_solvers!
     OpenmdaoAnalysisImpl.transaction do
@@ -90,5 +90,6 @@ class OpenmdaoAnalysisImpl < ActiveRecord::Base
       self.linear_solver ||= Solver.new(name: "ScipyKrylov")
       self.use_units = false if use_units.blank?
       self.optimization_driver = :scipy_optimizer_slsqp if optimization_driver.blank?
+      self.package_name = "" if package_name.nil?
     end
 end

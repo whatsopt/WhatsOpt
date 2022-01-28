@@ -272,8 +272,8 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
         "inner/inner_base.py", "inner/plain_discipline.py",
         "inner/plain_discipline_base.py", "mda_init.py", "outerpkg.py", "outerpkg_base.py", "run_mda.py", 
         "run_mdo.py", "run_doe.py", "run_screening.py", "run_server.py", "server/__init__.py", 
-        "server/analysis.thrift", "server/discipline_proxy.py", "server/outerpkg/Outerpkg-remote",
-        "server/outerpkg/Outerpkg.py", "server/outerpkg/__init__.py", "server/outerpkg/constants.py", "server/outerpkg/ttypes.py",
+        "server/analysis.thrift", "server/discipline_proxy.py", "server/outerpkg/Outer-remote",
+        "server/outerpkg/Outer.py", "server/outerpkg/__init__.py", "server/outerpkg/constants.py", "server/outerpkg/ttypes.py",
         "server/outerpkg_conversions.py", "server/outerpkg_proxy.py", "vacant_discipline.py", "vacant_discipline_base.py",
         "server/remote_discipline.py"]).sort
       assert_equal expected, basenames
@@ -292,8 +292,8 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
         "outerpkg/inner/inner_base.py", "outerpkg/inner/plain_discipline.py",
         "outerpkg/inner/plain_discipline_base.py", "mda_init.py", "outerpkg/outerpkg.py", "outerpkg/outerpkg_base.py", "run_mda.py", 
         "run_mdo.py", "run_doe.py", "run_screening.py", "run_server.py", "outerpkg/server/__init__.py", 
-        "outerpkg/server/analysis.thrift", "outerpkg/server/discipline_proxy.py", "outerpkg/server/outerpkg/Outerpkg-remote",
-        "outerpkg/server/outerpkg/Outerpkg.py", "outerpkg/server/outerpkg/__init__.py", "outerpkg/server/outerpkg/constants.py", "outerpkg/server/outerpkg/ttypes.py",
+        "outerpkg/server/analysis.thrift", "outerpkg/server/discipline_proxy.py", "outerpkg/server/outerpkg/Outer-remote",
+        "outerpkg/server/outerpkg/Outer.py", "outerpkg/server/outerpkg/__init__.py", "outerpkg/server/outerpkg/constants.py", "outerpkg/server/outerpkg/ttypes.py",
         "outerpkg/server/outerpkg_conversions.py", "outerpkg/server/outerpkg_proxy.py", "outerpkg/vacant_discipline.py", "outerpkg/vacant_discipline_base.py",
         "outerpkg/server/remote_discipline.py"]+
         [".gitignore", "README", "setup.py"]).sort

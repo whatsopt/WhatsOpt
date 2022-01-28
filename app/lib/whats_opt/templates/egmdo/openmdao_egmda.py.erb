@@ -3,7 +3,7 @@ from numpy import nan, inf
 
 import openmdao.api as om
 from mda_init import initialize
-from <%= @pkg_prefix %><%= @mda.snake_modulename %> import <%= @mda.py_classname %>Factory as DisciplineFactory
+from <%= @pkg_prefix %><%= @mda.py_modulename %> import <%= @mda.py_classname %>Factory as DisciplineFactory
 from <%= @pkg_prefix %>egmdo.random_analysis import <%= @mda.py_classname %>RandomAnalysis
 from <%= @pkg_prefix %>egmdo.doe_factory import DoeFactory
 from <%= @pkg_prefix %>egmdo.gp_factory import GpFactory

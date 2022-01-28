@@ -42,7 +42,7 @@ module WhatsOpt
       stdouterr, status = Open3.capture2e(THRIFT_COMPILER, "-out", "#{gendir}", "-gen", "py", thrift_file)
       if status.success?
         modul = @mda.py_modulename
-        klass = @mda.camel_modulename
+        klass = @mda.camelname
         thrift_files = ["__init__.py", "#{modul}/__init__.py", "#{modul}/#{klass}-remote", "#{modul}/#{klass}.py",
                         "#{modul}/constants.py", "#{modul}/ttypes.py"]
         @genfiles += thrift_files.map { |f| File.join(gendir, f) }
