@@ -233,8 +233,12 @@ class Analysis < ApplicationRecord
     root
   end
 
-  def modulename
+  def py_modulename
     self.is_root? && self.openmdao_impl ? "#{self.openmdao_impl.top_packagename}" : super
+  end
+
+  def py_classname
+    self.is_root? && self.openmdao_impl ? "#{self.openmdao_impl.top_packagename.camelize}" : super
   end
 
   def py_filename

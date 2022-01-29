@@ -20,10 +20,6 @@ class OpenmdaoMappingTest < ActiveSupport::TestCase
     assert_equal "prf_cicav", @module.py_modulename
   end
 
-  test "should have a camelname" do
-    assert_equal "PrfCicav", @module.camelname
-  end
-
   test "should modify modulename regarding root_modulename" do
     @outer = analyses(:outermda)
     assert_equal "outerpkg", @outer.py_full_modulename

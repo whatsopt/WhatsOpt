@@ -1,9 +1,9 @@
 from .<%= @mda.py_modulename %>_conversions import *
 
 <% @mda.all_plain_disciplines.each do |disc| %>
-class <%= disc.camelname %>Proxy():
+class <%= disc.py_classname %>Proxy():
     def __init__(self, thrift_client=None):
-        super(<%= disc.camelname %>Proxy, self).__init__()
+        super(<%= disc.py_classname %>Proxy, self).__init__()
         self._thrift_client = thrift_client
         
     def compute(self, inputs, outputs):
