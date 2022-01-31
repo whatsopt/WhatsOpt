@@ -7,7 +7,7 @@ setup(
     author_email='<%= @mda.owner.email %>',
     description='Package <%= @mda.name %> Analysis',
     packages=['<%= @mda.py_modulename %>',
-        <%= @mda.descendants.map {|d| "'#{@mda.py_modulename}.#{d.py_packagename}'"}.join(', ') %>
+        <%= @mda.descendants.map {|d| "'#{@mda.py_modulename}.#{d.py_sub_packagename}'"}.join(', ') %>
     ],
     install_requires=['<%= @framework %>']
 )

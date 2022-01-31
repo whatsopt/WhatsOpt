@@ -27,10 +27,10 @@ module WhatsOpt
       ok, log = _generate_with_thrift(server_dir)
       @comment_delimiters = { begin: '"""', end: '"""' }
       raise ThriftError.new(log) if !ok
-      _generate("#{@mda.basename}_conversions.py", "thrift/analysis_conversions.py.erb", server_dir)
+      _generate("#{@mda.py_modulename}_conversions.py", "thrift/analysis_conversions.py.erb", server_dir)
       _generate("discipline_proxy.py", "thrift/discipline_proxy.py.erb", server_dir)
       if @mda.is_root?
-        _generate("#{@mda.basename}_proxy.py", "thrift/analysis_proxy.py.erb", server_dir) 
+        _generate("#{@mda.py_modulename}_proxy.py", "thrift/analysis_proxy.py.erb", server_dir) 
         _generate("remote_discipline.py", "thrift/remote_discipline.py.erb", server_dir)
         _generate("run_server.py", "thrift/run_server.py.erb", gendir) 
       end
@@ -42,7 +42,7 @@ module WhatsOpt
       stdouterr, status = Open3.capture2e(THRIFT_COMPILER, "-out", "#{gendir}", "-gen", "py", thrift_file)
       if status.success?
         modul = @mda.py_modulename
-        klass = @mda.camel_modulename
+        klass = @mda.py_classname
         thrift_files = ["__init__.py", "#{modul}/__init__.py", "#{modul}/#{klass}-remote", "#{modul}/#{klass}.py",
                         "#{modul}/constants.py", "#{modul}/ttypes.py"]
         @genfiles += thrift_files.map { |f| File.join(gendir, f) }

@@ -270,12 +270,33 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
       basenames = ogen.genfiles.map { |f| Pathname.new(f).relative_path_from(dirpath).to_s }.sort
       expected = (["__init__.py", "disc.py", "disc_base.py", "inner/__init__.py", "inner/inner.py", 
         "inner/inner_base.py", "inner/plain_discipline.py",
-        "inner/plain_discipline_base.py", "mda_init.py", "outer.py", "outer_base.py", "run_mda.py", 
+        "inner/plain_discipline_base.py", "mda_init.py", "outerpkg.py", "outerpkg_base.py", "run_mda.py", 
         "run_mdo.py", "run_doe.py", "run_screening.py", "run_server.py", "server/__init__.py", 
-        "server/analysis.thrift", "server/discipline_proxy.py", "server/outer/Outer-remote",
-        "server/outer/Outer.py", "server/outer/__init__.py", "server/outer/constants.py", "server/outer/ttypes.py",
-        "server/outer_conversions.py", "server/outer_proxy.py", "vacant_discipline.py", "vacant_discipline_base.py",
+        "server/analysis.thrift", "server/discipline_proxy.py", "server/outerpkg/Outerpkg-remote",
+        "server/outerpkg/Outerpkg.py", "server/outerpkg/__init__.py", "server/outerpkg/constants.py", "server/outerpkg/ttypes.py",
+        "server/outerpkg_conversions.py", "server/outerpkg_proxy.py", "vacant_discipline.py", "vacant_discipline_base.py",
         "server/remote_discipline.py"]).sort
+      assert_equal expected, basenames
+    end
+  end
+
+  test "should generate packaged nested group for nested mda" do
+    skip "Apache Thrift not installed" unless thrift?
+    mda = analyses(:outermda)
+    ogen = WhatsOpt::OpenmdaoGenerator.new(mda, pkg_format: true)
+    Dir.mktmpdir do |dir|
+      ogen._generate_code dir
+      dirpath = Pathname.new(dir)
+      basenames = ogen.genfiles.map { |f| Pathname.new(f).relative_path_from(dirpath).to_s }.sort
+      expected = (["outerpkg/__init__.py", "outerpkg/disc.py", "outerpkg/disc_base.py", "outerpkg/inner/__init__.py", "outerpkg/inner/inner.py", 
+        "outerpkg/inner/inner_base.py", "outerpkg/inner/plain_discipline.py",
+        "outerpkg/inner/plain_discipline_base.py", "mda_init.py", "outerpkg/outerpkg.py", "outerpkg/outerpkg_base.py", "run_mda.py", 
+        "run_mdo.py", "run_doe.py", "run_screening.py", "run_server.py", "outerpkg/server/__init__.py", 
+        "outerpkg/server/analysis.thrift", "outerpkg/server/discipline_proxy.py", "outerpkg/server/outerpkg/Outerpkg-remote",
+        "outerpkg/server/outerpkg/Outerpkg.py", "outerpkg/server/outerpkg/__init__.py", "outerpkg/server/outerpkg/constants.py", "outerpkg/server/outerpkg/ttypes.py",
+        "outerpkg/server/outerpkg_conversions.py", "outerpkg/server/outerpkg_proxy.py", "outerpkg/vacant_discipline.py", "outerpkg/vacant_discipline_base.py",
+        "outerpkg/server/remote_discipline.py"]+
+        [".gitignore", "README", "setup.py"]).sort
       assert_equal expected, basenames
     end
   end

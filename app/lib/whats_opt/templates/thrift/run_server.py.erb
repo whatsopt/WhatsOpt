@@ -5,11 +5,11 @@ from thrift.protocol import TBinaryProtocol
 from thrift.server import TServer
 
 from <%= @pkg_prefix %><%= @mda.py_full_modulename %> import <%= @mda.py_classname %>Factory as Factory
-from <%= @pkg_prefix %><%= @server_module %>.<%= @mda.py_modulename %> import <%= @mda.py_classname %> as <%= @mda.camelname %>Service
+from <%= @pkg_prefix %><%= @server_module %>.<%= @mda.py_modulename %> import <%= @mda.py_classname %> as <%= @mda.py_classname %>Service
 from <%= @pkg_prefix %><%= @server_module %>.<%= @mda.py_modulename %>_conversions import *
 from <%= @pkg_prefix %><%= @server_module %>.remote_discipline import *
 
-class <%= @mda.camelname %>Handler:
+class <%= @mda.py_classname %>Handler:
 
     def __init__(self):
         factory = Factory()
@@ -27,7 +27,7 @@ class <%= @mda.camelname %>Handler:
         print("Shutting down <%= @mda.py_classname %> server...")
         exit(0)
 
-    ### <%= @mda.camelname %> interface
+    ### <%= @mda.py_classname %> interface
 <% @mda.all_plain_disciplines.each do |disc| %>
     def compute_<%= disc.snake_modulename %>(self, ins):
 <% if !disc.local?(@remote_ip) -%>
@@ -48,8 +48,8 @@ class <%= @mda.camelname %>Handler:
 <% end -%>
 
 def run_server(port):
-    handler = <%= @mda.camelname %>Handler()
-    processor = <%= @mda.camelname %>Service.Processor(handler)
+    handler = <%= @mda.py_classname %>Handler()
+    processor = <%= @mda.py_classname %>Service.Processor(handler)
     transport = TSocket.TServerSocket('0.0.0.0', port=port)
     tfactory = TTransport.TBufferedTransportFactory()
     pfactory = TBinaryProtocol.TBinaryProtocolFactory()

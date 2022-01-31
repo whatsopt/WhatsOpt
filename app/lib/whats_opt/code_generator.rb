@@ -22,7 +22,11 @@ module WhatsOpt
       @egmdo_module = "egmdo"
       @server_host = "localhost"
       @server_port = 31400
-      @pkg_prefix = pkg_format ? "#{@mda.root.py_modulename}." : ""
+      # TODO: Should be independent from OpenMDAO impl 
+      # (should be something like Python impl) but at the moment
+      # package format (@pkg_prefix) is only implemented (used) with
+      # OpenMDAO Python framework
+      @pkg_prefix = pkg_format ? "#{@mda.openmdao_impl&.top_packagename}." : ""
       @generator = self
     end
 

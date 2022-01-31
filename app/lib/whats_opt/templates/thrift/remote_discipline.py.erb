@@ -1,6 +1,3 @@
-# DO NOT EDIT unless you know what you are doing
-# analysis_id: <%= @mda.id %>
-
 import numpy as np
 
 from thrift import Thrift
@@ -8,7 +5,7 @@ from thrift.transport import TSocket
 from thrift.transport import TTransport
 from thrift.protocol import TBinaryProtocol
 
-from <%= @pkg_prefix %><%= @server_module %>.<%= @mda.py_full_modulename %> import <%= @mda.py_classname %>
+from <%= @pkg_prefix %><%= @server_module %>.<%= @mda.py_modulename %> import <%= @mda.py_classname %>
 <% @mda.all_plain_disciplines.each do |disc| -%>
 from <%= @pkg_prefix %><%= disc.py_full_modulename %> import <%= disc.py_classname %>
 <% end -%>
