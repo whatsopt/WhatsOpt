@@ -2,7 +2,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import update from 'immutability-helper';
-import Form from 'react-jsonschema-form-bs4';
+import Form from '@rjsf/bootstrap-4';
 import deepIsEqual from '../utils/compare';
 
 class LogLine extends React.PureComponent {
@@ -337,7 +337,8 @@ class Runner extends React.Component {
       name: form.name, host: form.host, driver: form.driver, options_attributes: [],
     };
     const { ope } = this.props;
-    this.api.getOperation(ope.id,
+    this.api.getOperation(
+      ope.id,
       (response) => {
         console.log(`resp=${JSON.stringify(response.data)}`);
         const ids = response.data.options.map((opt) => opt.id);
@@ -360,10 +361,14 @@ class Runner extends React.Component {
         this.setState(newState);
         console.log(`opeAttrs=${JSON.stringify(opeAttrs)}`);
 
-        this.api.updateOperation(ope.id, opeAttrs,
-          () => { this._pollOperationJob(data.formData); });
+        this.api.updateOperation(
+          ope.id,
+          opeAttrs,
+          () => { this._pollOperationJob(data.formData); },
+        );
       },
-      (error) => { console.log(error); });
+      (error) => { console.log(error); },
+    );
   }
 
   handleAbort() {
@@ -409,7 +414,8 @@ class Runner extends React.Component {
 
   _pollOperationJob(formData) {
     const { ope } = this.props;
-    this.api.pollOperationJob(ope.id,
+    this.api.pollOperationJob(
+      ope.id,
       (job) => {
         console.log('CHECK');
         console.log(JSON.stringify(job.status));
@@ -425,7 +431,8 @@ class Runner extends React.Component {
       },
       (error) => {
         console.log(error);
-      });
+      },
+    );
   }
 
   render() {

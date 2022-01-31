@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import update from 'immutability-helper';
-import Form from 'react-jsonschema-form-bs4';
+import Form from '@rjsf/bootstrap-4';
 
 import Error from '../../utils/components/Error';
 import LoadingIndicator from '../../utils/components/LoadingIndicator';
@@ -125,7 +125,9 @@ class MetaModelManager extends React.Component {
       }
     }
     console.log(`CREATE with ${JSON.stringify(mmAttrs)}`);
-    api.createMetaModel(opeId, mmAttrs,
+    api.createMetaModel(
+      opeId,
+      mmAttrs,
       (response) => {
         console.log(`Metamodel created ${JSON.stringify(response.data)}`);
         const { data: { operation_id } } = response;
@@ -137,7 +139,8 @@ class MetaModelManager extends React.Component {
         const newState = update(this.state, { errors: { $set: [message] } });
         this.setState(newState);
         this.btnSubmit.removeAttribute('disabled');
-      });
+      },
+    );
   }
 
   render() {
