@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Form from 'react-jsonschema-form-bs4';
+import Form from '@rjsf/bootstrap-4';
 import update from 'immutability-helper';
 
 const NORMAL = 'Normal';
@@ -121,7 +121,8 @@ class DistributionModal extends React.Component {
   componentDidMount() {
     const { conn: { name } } = this.props;
     // eslint-disable-next-line no-undef
-    $(`#distributionListModal-${name}`).on('show.bs.modal',
+    $(`#distributionListModal-${name}`).on(
+      'show.bs.modal',
       () => {
         const { conn: { uq } } = this.props;
         const dists = DistributionModal._uqToState(uq);
@@ -133,14 +134,18 @@ class DistributionModal extends React.Component {
             this.setState({ selected: i });
           });
         }
-      });
+      },
+    );
     // eslint-disable-next-line no-undef
-    $(`#distributionListModal-${name}`).on('hidden.bs.modal',
+    $(`#distributionListModal-${name}`).on(
+      'hidden.bs.modal',
       () => {
         this.visible = false;
-      });
+      },
+    );
     // eslint-disable-next-line no-undef
-    $(`#distributionModal-${name}`).on('show.bs.modal',
+    $(`#distributionModal-${name}`).on(
+      'show.bs.modal',
       () => {
         const { conn: { uq } } = this.props;
         if (uq.length === 1) {
@@ -158,14 +163,17 @@ class DistributionModal extends React.Component {
         const varname = uq.length === 1 ? name : `${name}[${selected}]`;
         // eslint-disable-next-line no-undef
         $(`#distributionModal-${name} .modal-title`).text(`Distribution of ${varname}`);
-      });
+      },
+    );
     // eslint-disable-next-line no-undef
-    $(`#distributionModal-${name}`).on('hidden.bs.modal',
+    $(`#distributionModal-${name}`).on(
+      'hidden.bs.modal',
       () => {
         const { conn: { uq } } = this.props;
         const dists = DistributionModal._uqToState(uq);
         this.setState(dists);
-      });
+      },
+    );
   }
 
   shouldComponentUpdate() {
