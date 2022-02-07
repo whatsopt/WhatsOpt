@@ -86,6 +86,7 @@ jobs:
           cp config/configuration.yml.example config/configuration.yml
           cp config/database.yml.example config/database.yml
           mkdir -p upload/store
+          mkdir -p upload/logs
           RAILS_ENV=test bundle exec rake db:schema:load
           bundle exec rake db:test:prepare
           RAILS_ENV=test bundle exec rake webpacker:compile

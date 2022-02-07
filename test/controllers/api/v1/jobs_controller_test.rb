@@ -14,8 +14,9 @@ class Api::V1::JobsControllerTest < ActionDispatch::IntegrationTest
 
   test "should run a job" do
     assert_enqueued_with(job: OperationJob, args: [@ope]) do
-      post api_v1_operation_job_url(@ope), as: :json, headers: @auth_headers
+      OperationJob.perform_later(@ope)
     end
+    post api_v1_operation_job_url(@ope), as: :json, headers: @auth_headers
   end
 
   test "should kill a running job" do
