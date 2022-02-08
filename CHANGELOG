@@ -1,12 +1,13 @@
 <h1>CHANGELOG</h1>
 
-<h3>1.21.1 (??/02/2022)</h3>
+<h3>1.21.2 (??/02/2022)</h3>
 <ul>
   <li>User can specify a package name which is used for top level module and top level analysis class
   </li>
   <li>EGMDO scripts can be run using MPI to run random MDAs in parallel
-    (will be available when this <a href="https://github.com/OpenMDAO/OpenMDAO/issues/2416">OpenMDAO bug</a> is fixed)
+    (will be available when this <a href="https://github.com/OpenMDAO/OpenMDAO/issues/2434">OpenMDAO bug</a> is fixed)
   </li>
+  <li>Tech. upgrade: Rails 7.0.1</li>
 </ul>
 
 <h3>1.21.0 (18/01/2022)</h3>
