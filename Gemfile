@@ -134,3 +134,10 @@ gem "deepsort"
 
 # Add sprockets with Rails 7
 gem "sprockets-rails"
+
+# Fix io-wait 0.2.0 to deploy in production 
+# (2.0.1 does not work in /var/log/httpd/error_log: You have already activated io-wait 0.2.0, but your Gemfile 
+# requires io-wait 0.2.1. Since io-wait is a default gem, you can either remove your dependency 
+# on it or try updating to a newer version of bundler that supports
+# io-wait as a default gem.)
+gem "io-wait", "0.2.0"
