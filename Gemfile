@@ -6,7 +6,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 #ruby '3.0.3'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem "rails", "~> 6.1"
+gem "rails", "~> 7.0"
 # Use Puma as the app server
 gem "puma", "~> 4.1"
 # Use SCSS for stylesheets
@@ -52,7 +52,7 @@ group :development, :test do
   gem 'simplecov-lcov', require: false
   # rswag
   gem "rspec-rails"
-  gem "rswag-specs"
+  gem "rswag-specs", git: 'https://github.com/rswag/rswag.git', glob: 'rswag-specs/rswag-specs.gemspec'
 end
 
 group :development do
@@ -127,7 +127,17 @@ gem "thrift", "~>0.15.0"
 gem "image_processing", "~> 1.2"
 
 # Document API
-gem "rswag-api"
+gem "rswag-api", git: 'https://github.com/rswag/rswag.git', glob: 'rswag-api/rswag-api.gemspec'
 
 # To cache XDSM json to get XDSM standalone html
 gem "deepsort"
+
+# Add sprockets with Rails 7
+gem "sprockets-rails"
+
+# Fix io-wait 0.2.0 to deploy in production 
+# (2.0.1 does not work in /var/log/httpd/error_log: You have already activated io-wait 0.2.0, but your Gemfile 
+# requires io-wait 0.2.1. Since io-wait is a default gem, you can either remove your dependency 
+# on it or try updating to a newer version of bundler that supports
+# io-wait as a default gem.)
+gem "io-wait", "0.2.0"
