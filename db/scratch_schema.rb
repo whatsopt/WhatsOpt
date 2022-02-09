@@ -10,15 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_02_07_135514) do
-
+ActiveRecord::Schema[7.0].define(version: 2022_02_07_135514) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
     t.string "record_type", null: false
     t.integer "record_id", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["record_type", "record_id", "name"], name: "index_action_text_rich_texts_uniqueness", unique: true
   end
 
@@ -27,7 +26,7 @@ ActiveRecord::Schema.define(version: 2022_02_07_135514) do
     t.string "record_type", null: false
     t.integer "record_id", null: false
     t.integer "blob_id", null: false
-    t.datetime "created_at", null: false
+    t.datetime "created_at", precision: nil, null: false
     t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
     t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
   end
@@ -39,7 +38,7 @@ ActiveRecord::Schema.define(version: 2022_02_07_135514) do
     t.text "metadata"
     t.integer "byte_size", null: false
     t.string "checksum"
-    t.datetime "created_at", null: false
+    t.datetime "created_at", precision: nil, null: false
     t.string "service_name", null: false
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
@@ -52,8 +51,8 @@ ActiveRecord::Schema.define(version: 2022_02_07_135514) do
 
   create_table "analyses", force: :cascade do |t|
     t.string "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.boolean "public", default: true
     t.string "ancestry"
     t.index ["ancestry"], name: "index_analyses_on_ancestry"
@@ -72,11 +71,11 @@ ActiveRecord::Schema.define(version: 2022_02_07_135514) do
     t.string "data_file_name"
     t.string "data_content_type"
     t.bigint "data_file_size"
-    t.datetime "data_updated_at"
+    t.datetime "data_updated_at", precision: nil
     t.string "description"
     t.string "category"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["container_type", "container_id"], name: "index_attachments_on_container_type_and_container_id"
   end
 
@@ -105,15 +104,15 @@ ActiveRecord::Schema.define(version: 2022_02_07_135514) do
   create_table "design_projects", force: :cascade do |t|
     t.string "name"
     t.text "description"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "disciplines", force: :cascade do |t|
     t.string "name"
     t.integer "analysis_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.string "type"
     t.integer "position"
     t.index ["analysis_id"], name: "index_disciplines_on_analysis_id"
@@ -135,8 +134,8 @@ ActiveRecord::Schema.define(version: 2022_02_07_135514) do
 
   create_table "geometry_models", force: :cascade do |t|
     t.string "title"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
   end
 
   create_table "jobs", force: :cascade do |t|
@@ -144,8 +143,8 @@ ActiveRecord::Schema.define(version: 2022_02_07_135514) do
     t.text "log"
     t.integer "pid", default: -1
     t.integer "operation_id"
-    t.datetime "started_at"
-    t.datetime "ended_at"
+    t.datetime "started_at", precision: nil
+    t.datetime "ended_at", precision: nil
     t.string "sqlite_filename"
     t.integer "log_count", default: 0
   end
@@ -164,7 +163,7 @@ ActiveRecord::Schema.define(version: 2022_02_07_135514) do
   create_table "journals", force: :cascade do |t|
     t.integer "analysis_id", default: 0, null: false
     t.integer "user_id", default: 0, null: false
-    t.datetime "created_on", null: false
+    t.datetime "created_on", precision: nil, null: false
     t.index ["analysis_id"], name: "index_journals_on_analysis_id"
     t.index ["user_id"], name: "index_journals_on_user_id"
   end
@@ -180,8 +179,8 @@ ActiveRecord::Schema.define(version: 2022_02_07_135514) do
     t.integer "discipline_id"
     t.integer "operation_id"
     t.string "default_surrogate_kind"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["discipline_id"], name: "index_meta_models_on_discipline_id"
     t.index ["operation_id"], name: "index_meta_models_on_operation_id"
   end
@@ -214,8 +213,8 @@ ActiveRecord::Schema.define(version: 2022_02_07_135514) do
     t.string "driver", default: "runonce"
     t.text "success"
     t.integer "base_operation_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
   end
 
   create_table "optimizations", force: :cascade do |t|
@@ -223,8 +222,8 @@ ActiveRecord::Schema.define(version: 2022_02_07_135514) do
     t.text "config"
     t.text "inputs"
     t.text "outputs"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "options", force: :cascade do |t|
@@ -248,8 +247,8 @@ ActiveRecord::Schema.define(version: 2022_02_07_135514) do
     t.string "name"
     t.string "resource_type"
     t.integer "resource_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["name", "resource_type", "resource_id"], name: "index_roles_on_name_and_resource_type_and_resource_id"
     t.index ["name"], name: "index_roles_on_name"
     t.index ["resource_type", "resource_id"], name: "index_roles_on_resource_type_and_resource_id"
@@ -288,15 +287,15 @@ ActiveRecord::Schema.define(version: 2022_02_07_135514) do
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"
-    t.datetime "reset_password_sent_at"
-    t.datetime "remember_created_at"
+    t.datetime "reset_password_sent_at", precision: nil
+    t.datetime "remember_created_at", precision: nil
     t.integer "sign_in_count", default: 0, null: false
-    t.datetime "current_sign_in_at"
-    t.datetime "last_sign_in_at"
+    t.datetime "current_sign_in_at", precision: nil
+    t.datetime "last_sign_in_at", precision: nil
     t.string "current_sign_in_ip"
     t.string "last_sign_in_ip"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.string "api_key"
     t.text "settings"
     t.boolean "deactivated"
@@ -320,8 +319,8 @@ ActiveRecord::Schema.define(version: 2022_02_07_135514) do
     t.string "shape"
     t.string "units"
     t.string "desc"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.boolean "active", default: true
     t.index ["discipline_id"], name: "index_variables_on_discipline_id"
   end
