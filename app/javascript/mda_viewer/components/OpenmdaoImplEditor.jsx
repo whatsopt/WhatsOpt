@@ -1,6 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+
 import Form from '@rjsf/bootstrap-4';
+// workaround to avoid warning in console
+// https://github.com/rjsf-team/react-jsonschema-form/issues/2648
+// import Form from '@rjsf/core';
 
 const SCHEMA_GENERAL = {
   type: 'object',

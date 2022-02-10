@@ -42,9 +42,6 @@ build/*
 /upload
 
 # Project files
-/rtest
-/wds
-/wpack
 /.settings
 /.tern-project
 /eslint.bat
@@ -52,9 +49,7 @@ build/*
 /public/packs
 /public/packs-test
 /node_modules
-/public/packs
-/public/packs-test
-/node_modules
+/yarn-error.log
 yarn-debug.log*
 .yarn-integrity
 
