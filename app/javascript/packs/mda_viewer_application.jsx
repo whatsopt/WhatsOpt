@@ -1,8 +1,22 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import MdaViewer from 'mda_viewer';
+import { AttachmentUpload } from '@rails/actiontext/app/javascript/actiontext/attachment_upload';
 import WhatsOptApi from '../utils/WhatsOptApi';
-import '@rails/actiontext';
+
+// Workaround from https://github.com/rails/rails/issues/43973
+// import '@rails/actiontext';
+
+// eslint-disable-next-line no-restricted-globals
+addEventListener('trix-attachment-add', (event) => {
+  const { attachment, target } = event;
+
+  if (attachment.file) {
+    const upload = new AttachmentUpload(attachment, target);
+    upload.start();
+  }
+});
+// end of Workaround test
 
 document.addEventListener('DOMContentLoaded', () => {
   const csrfToken = document.getElementsByName('csrf-token')[0].getAttribute('content');
