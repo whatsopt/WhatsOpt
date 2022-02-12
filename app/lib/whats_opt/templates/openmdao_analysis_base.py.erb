@@ -59,8 +59,8 @@ class <%= @mda.py_classname %>Base(<%= @impl.parallel_group ? "om.ParallelGroup"
 <% end -%>
         self.nonlinear_solver.options['iprint'] = <%= @impl.nonlinear_solver.iprint %>
 
-<% unless @impl.linear_solver.runonce? || @impl.linear_solver.direct? -%>
         self.linear_solver = <%= @impl.linear_solver.name %>()
+<% unless @impl.linear_solver.runonce? || @impl.linear_solver.direct? -%>
         self.linear_solver.options['atol'] = <%= @impl.linear_solver.atol %>
         self.linear_solver.options['rtol'] = <%= @impl.linear_solver.rtol %>
         self.linear_solver.options['err_on_non_converge'] = <%= @impl.to_code(:linear_solver, :err_on_non_converge) %>
