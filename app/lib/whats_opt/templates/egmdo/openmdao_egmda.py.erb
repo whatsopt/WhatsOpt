@@ -12,7 +12,7 @@ from <%= @pkg_prefix %>egmdo.algorithms import solve_egmda
 class <%= @mda.py_classname %>EgDiscipline(om.ExplicitComponent):
     """ An OpenMDAO base component to encapsulate <%= @mda.py_classname %> discipline """
 
-    def __init__(self, discipline_factory=None, gp_factory=None, 
+    def __init__(self, discipline_factory, gp_factory, 
                  n_doe_pce=500, epsilon_coeff_var=1e-3, threshold_coeff_var=1e-3, n_iter_max=10, 
                  parallel=False, outdir=".", plot=False, plot_range=[0, 50]):
         super().__init__()
@@ -26,12 +26,8 @@ class <%= @mda.py_classname %>EgDiscipline(om.ExplicitComponent):
         self.plot_range = plot_range
         self.outdir=outdir
         self.discipline_factory = discipline_factory
-        if not discipline_factory:
-            self.discipline_factory = DisciplineFactory()
         self.gp_factory = gp_factory
-        if not gp_factory:
-            self.gp_factory = GpFactory(DoeFactory(self.discipline_factory, plot=plot, outdir=outdir), outdir=outdir)
-        
+         
     def setup(self):
 <% @mda.input_variables.each do |var| -%>
         self.add_input('<%= var.py_varname %>', val=<%= var.init_py_value %>, desc='<%= var.escaped_desc %>'<%= @impl.use_units && !var.units.blank? ? ", units='#{var.units}'":"" %>)
@@ -49,6 +45,7 @@ class <%= @mda.py_classname %>EgDiscipline(om.ExplicitComponent):
         # This function enrich the disciplinary surrogate models until the convergence on the fixed point is reached
         solve_egmda(
             self.discipline_factory,
+            self.gp_factory,
             design_vars,
             n_doe_pce=self.n_doe_pce,  
             epsilon_coeff_var=self.epsilon_coeff_var,
@@ -56,7 +53,6 @@ class <%= @mda.py_classname %>EgDiscipline(om.ExplicitComponent):
             n_iter_max=self.n_iter_max,
             plot=self.plot,
             plot_range=self.plot_range,
-            gp_factory=self.gp_factory,
             outdir=self.outdir,
             parallel=self.parallel
         )

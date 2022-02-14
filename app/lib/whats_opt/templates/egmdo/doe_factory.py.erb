@@ -4,14 +4,18 @@ from numpy import nan, inf
 import matplotlib.pyplot as plt
 
 import openmdao.api as om
-from openmdao.utils.mpi import FakeComm
 from openmdao_extensions.smt_doe_driver import SmtDOEDriver
+from openmdao.utils.mpi import MPI
 
 class DoeFactory:
     def __init__(self, discipline_factory, outdir=".", plot=False):
         self.discipline_factory = discipline_factory
         self.outdir = outdir
         self.plot = plot
+        self.comm = None
+        if MPI:
+            rank = MPI.COMM_WORLD.rank
+            self.comm = MPI.COMM_WORLD.Split(rank) # force to run only on one proc in MPI context  
 
     def doe_recorder_filename(self, disc_name):
         return os.path.join(self.outdir, f"doe_<%= @mda.snake_modulename %>_{disc_name}.sqlite")
@@ -21,8 +25,8 @@ class DoeFactory:
 
 <%- @mda.plain_disciplines.each do |disc| -%>
 <%- if disc.openmdao_impl&.egmdo_surrogate? -%>
-    def create_doe_<%= disc.snake_modulename %>(self, n_cases, plot=False):
-        pb = om.Problem(comm=FakeComm())
+    def create_doe_<%= disc.snake_modulename %>(self, n_cases):
+        pb = om.Problem(comm=self.comm)
         pb.model.add_subsystem("<%= disc.py_classname %>", self.discipline_factory.create_<%= disc.snake_modulename %>(), promotes=['*'])
         pb.driver = SmtDOEDriver(
             sampling_method_name="LHS",
@@ -110,7 +114,7 @@ class DoeFactory:
         for i in range(n_design_vars):
             dim_design_vars.append(len(case.get_design_vars()[design_vars_names[i]]))
 
-        problem = om.Problem(self.discipline_factory.create_<%= disc.snake_modulename %>(), comm=FakeComm())
+        problem = om.Problem(self.discipline_factory.create_<%= disc.snake_modulename %>(), comm=self.comm)
         problem.setup()
         <%- disc.design_variables.each do |var| -%>
         problem['<%= var.py_varname %>'] = design_vars['<%= var.py_varname %>']
