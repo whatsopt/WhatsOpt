@@ -8,6 +8,7 @@ import openturns as ot
 import openmdao.api as om
 from openmdao_extensions.smt_doe_driver import SmtDOEDriver
 from openmdao_extensions.openturns_doe_driver import OpenturnsDOEDriver
+from openmdao.utils.mpi import MPI
 
 from <%= @pkg_prefix %>egmdo.random_analysis import <%= @mda.py_classname %>RandomAnalysis
  
@@ -31,12 +32,20 @@ def compute_doe(discipline_factory, gp_factory, design_vars, n_cases, out_sqlite
     pb.driver = OpenturnsDOEDriver(n_samples=n_cases, distribution=comp_dist)
     pb.driver.options['run_parallel'] = parallel
 
+    if parallel and MPI:
+        if MPI.COMM_WORLD.rank==0:
+            if os.path.exists(f"{out_sqlitefilename}_meta"):
+                os.remove(f"{out_sqlitefilename}_meta")
+        file = f"{out_sqlitefilename}_{MPI.COMM_WORLD.rank}"
+        if os.path.exists(file):
+            os.remove(file)
+    else:
+        if os.path.exists(out_sqlitefilename):
+            os.remove(out_sqlitefilename)
+
     recorder = om.SqliteRecorder(out_sqlitefilename)
     pb.driver.add_recorder(recorder)
     pb.driver.recording_options['includes'] = ['*']
-
-    if os.path.exists(out_sqlitefilename):
-        os.remove(out_sqlitefilename)
 
     # uncertain variable input are taken as design_variables to get recorded by driver recorder
     <%- @mda.egmdo_random_variables.each do |dv| -%>
@@ -52,44 +61,52 @@ def compute_doe(discipline_factory, gp_factory, design_vars, n_cases, out_sqlite
     pb.cleanup()
 
 
-def compute_random_mda(discipline_factory, gp_factory, design_vars, n_doe_pce, outdir='.'):
-    # run the random MDA n times to create a doe
-    outfile = os.path.join(outdir, '<%= @mda.snake_modulename %>_random_mda_doe.sqlite')
-    compute_doe(discipline_factory, gp_factory, design_vars, n_doe_pce, outfile)
-    return outfile
+def read_doe(qoi_names, n_doe_pce, outfile, parallel):
+    if parallel and MPI and MPI.COMM_WORLD.size > 1:
+        files = [f"{outfile}_{rank}" for rank in range(MPI.COMM_WORLD.size)]
+    else:
+        files = [outfile]
+
+    des_var_names = sorted([
+    <%- @mda.egmdo_random_variables.each do |param| -%>
+        '_xi_<%= param.py_varname %>',
+    <%- end -%>
+    ])
+    n_des_var = len(des_var_names)
+    doe = np.zeros((n_doe_pce, n_des_var + len(qoi_names)))
+    coupling_var_doe = np.zeros((n_doe_pce, n_des_var))
+
+    obj_name = qoi_names[0]
+    offset = 0
+    for file in files:
+        cr = om.CaseReader(file)
+        driver_cases = cr.list_cases("driver", out_stream=None)
+        case = cr.get_case(driver_cases[0])
+        n_doe = len(driver_cases)
+        print(f"{file} {n_doe}")
+
+        for k in range(n_doe):
+            i = offset + k
+            case = cr.get_case(driver_cases[k])
+            for j in range(n_des_var):
+                doe[i, j] = case.outputs[des_var_names[j]]   
+            doe[i, -1] = case[obj_name]
+    <% nb_cstrs = @mda.constraint_variables.size %>
+    <%- @mda.constraint_variables.each_with_index do |cstr_var, k| -%>        
+            doe[i, <%= -(nb_cstrs+1)+k %>] = case["<%= cstr_var.py_varname %>"]
+    <%- end -%>
+    <%- @mda.coupling_variables.each_with_index do |cv, j| -%>
+            coupling_var_doe[i, <%= j %>] = case["<%= cv.py_varname %>"]
+    <%- end -%>
+
+        offset += n_doe
+
+    return doe, coupling_var_doe
 
 
-def analyze_sensitivity(outfile, threshold_coeff_var=1e-3):
-    # quantities of interest
-    qoi_names = []
-<%- @mda.constraint_variables.each do |c| -%>
-    qoi_names.append("<%= c.name %>")
-<%- end -%>
-    obj_name = "<%= @mda.objective_variables&.first&.py_varname %>"
-    qoi_names.append(obj_name)
+def analyze_sensitivity(qoi_names, doe, threshold_coeff_var=1e-3):
+    obj_name = qoi_names[0]
 
-    # open the doe to create the PCE
-    cr = om.CaseReader(outfile)
-    driver_cases = cr.list_cases('driver', out_stream=None)
-    case = cr.get_case(driver_cases[0])
-    n_doe = len(driver_cases)
-    n_des_var = len(case.get_design_vars()) 
-    doe = np.zeros((n_doe, n_des_var + len(qoi_names)))
-    des_var_names = sorted(case.get_design_vars())
-
-    coupling_var_doe = np.zeros((n_doe, <%= @mda.coupling_variables.size %>))
-    for i in range(n_doe):
-        case = cr.get_case(driver_cases[i])
-        for j in range(n_des_var):
-            doe[i, j] = case.outputs[des_var_names[j]]   
-        doe[i, -1] = case[obj_name]
-<% nb_cstrs = @mda.constraint_variables.size %>
-<%- @mda.constraint_variables.each_with_index do |cstr_var, k| -%>        
-        doe[i, <%= -(nb_cstrs+1)+k %>] = case["<%= cstr_var.py_varname %>"]
-<%- end -%>
-<%- @mda.coupling_variables.each_with_index do |cv, j| -%>
-        coupling_var_doe[i, <%= j %>] = case["<%= cv.py_varname %>"]
-<%- end -%>
     print(f"Estimated mean of '{obj_name}' = {doe[:, -1].mean()}", )
     print(f"Estimated coeff of variation of '{obj_name}' = {doe[:, -1].std()/doe[:, -1].mean()}")
 
@@ -107,6 +124,13 @@ def analyze_sensitivity(outfile, threshold_coeff_var=1e-3):
     index = cv.argmax()
     
     print(f"The most uncertain QoI is '{qoi_names[index]}' with mean = {mean[index]} and estimated coeff of var = {max_cv}")
+
+    des_var_names = sorted([
+    <%- @mda.egmdo_random_variables.each do |param| -%>
+        '_xi_<%= param.py_varname %>',
+    <%- end -%>
+    ])
+    n_des_var = len(des_var_names)
 
     # degree of the expansion 
     degree = 3
@@ -128,7 +152,7 @@ def analyze_sensitivity(outfile, threshold_coeff_var=1e-3):
     print("Sum of the first order Sobol indices =", np.array(first_order).sum())
     max_effect_varname = des_var_names[np.array(first_order).argmax()][4:]  # remove prefix _xi_
     print(f"Most relevant variable = '{max_effect_varname}'")
-    return max_cv, max_effect_varname, coupling_var_doe
+    return max_cv, max_effect_varname
 
 
 def enrich_gp(gp_factory, design_vars, coupling_vars,  max_effect_varnames):
@@ -145,9 +169,9 @@ def enrich_gp(gp_factory, design_vars, coupling_vars,  max_effect_varnames):
     <%- end -%>
 
 
-def solve_egmda(discipline_factory, design_vars, outdir=".",
-              n_doe_pce=500, epsilon_coeff_var=1e-3, threshold_coeff_var=1e-3, n_iter_max=10,
-              gp_factory=None, plot=None, plot_range=[0, 50]):
+def solve_egmda(discipline_factory, gp_factory, design_vars, outdir=".",
+                n_doe_pce=500, epsilon_coeff_var=1e-3, threshold_coeff_var=1e-3, n_iter_max=10,
+                plot=None, plot_range=[0, 50], parallel=False):
     <%- if @mda.plain_disciplines.select{|d| d.openmdao_impl&.egmdo_surrogate}.blank? -%>
     print("Error: You have to select at least one discipline as a surrogate then update the EGMDO code and retry.")
     exit(-1)
@@ -158,80 +182,107 @@ def solve_egmda(discipline_factory, design_vars, outdir=".",
     <%- end -%>
     convergence = False
     n_iter = 0
-    cv_mean = []
-    cv_coeff_var = []
 
-    if not os.path.exists(outdir):
-        os.makedirs(outdir, exist_ok=True)
-    if not gp_factory:
-        gp_factory = GpFactory(DoeFactory(discipline_factory, outdir, plot), outdir)
+    if not parallel or not MPI or MPI.COMM_WORLD.rank == 0:
+        if not os.path.exists(outdir):
+            os.makedirs(outdir, exist_ok=True)
+        gp_factory.create_all_gps()
+        print(f"***********************************************************************************")
+        
+    if MPI:
+        # Wait for proc 0 create initial gps
+        convergence = MPI.COMM_WORLD.barrier()
 
-    gp_factory.create_all_gps()
-
+    # quantities of interest
+    qoi_names = []
+<%- @mda.constraint_variables.each do |c| -%>
+    qoi_names.append("<%= c.name %>")
+<%- end -%>
+    obj_name = "<%= @mda.objective_variables&.first&.py_varname %>"
+    qoi_names.append(obj_name)
+            
     while (not convergence) and (n_iter < n_iter_max):
-        outfile = compute_random_mda(discipline_factory, gp_factory, 
-                                     design_vars, n_doe_pce, outdir)
-        coeff_var, max_effect_varname, coupling_var_doe = analyze_sensitivity(outfile, threshold_coeff_var)
+
+        if not MPI or (MPI and MPI.COMM_WORLD.rank==0): 
+            print(f"Run random MDA {n_doe_pce} times...")
+        outfile = os.path.join(outdir, '<%= @mda.snake_modulename %>_random_mda_doe.sqlite')
+        compute_doe(discipline_factory, gp_factory, design_vars, n_doe_pce, outfile, parallel)
+
+        if MPI:
+            # Parallel doe file generation is handled by OpenMDAO code
+            # synchronize here to make sure each proc has written its doe file.
+            convergence = MPI.COMM_WORLD.Barrier()
+
+        if not parallel or not MPI or MPI.COMM_WORLD.rank == 0:
+            doe, coupling_var_doe = read_doe(qoi_names, n_doe_pce, outfile, parallel)
+            coeff_var, max_effect_varname = analyze_sensitivity(
+                qoi_names, doe, threshold_coeff_var
+            )
 
 <% random_vars =  @mda.egmdo_random_variables %>
 <%- if random_vars.count == 2 && random_vars.first.discipline != random_vars.second.discipline -%>
-        if (plot):
-            plt.plot(coupling_var_doe[:, 0], coupling_var_doe[:, 1],'+')
+            if (plot):
+                plt.plot(coupling_var_doe[:, 0], coupling_var_doe[:, 1],'+')
 <%- [0, 1].each_with_index do |i| -%>
-            b_min_<%= i %> = plot_range[0]
-            b_max_<%= i %> = plot_range[1]
+                b_min_<%= i %> = plot_range[0]
+                b_max_<%= i %> = plot_range[1]
 <%- end %>
 <%- random_vars.each_with_index do |cv, i| -%>
 <%- disc = cv.discipline -%>
-            with open(gp_factory.gp_filename("<%= disc.snake_modulename %>", "<%= cv.py_varname %>"),'rb') as f:
-                gp_<%= i %> = pickle.load(f)
+                with open(gp_factory.gp_filename("<%= disc.snake_modulename %>", "<%= cv.py_varname %>"),'rb') as f:
+                    gp_<%= i %> = pickle.load(f)
 
-            inputs_gp<%= i %> = np.zeros((100, <%= disc.input_variables.map(&:dim).inject(0, :+) %>)) 
+                inputs_gp<%= i %> = np.zeros((100, <%= disc.input_variables.map(&:dim).inject(0, :+) %>)) 
 <%- index = 0 -%>
 <%- disc.input_variables.each_with_index do |var, j| -%>
 <%- if random_vars.map(&:name).include?(var.name) -%>
-            inputs_gp<%= i %>[:, <%= index %>] = np.linspace(b_min_<%= i %>, b_max_<%= i %>, 100)
+                inputs_gp<%= i %>[:, <%= index %>] = np.linspace(b_min_<%= i %>, b_max_<%= i %>, 100)
 <%- else -%>
-            inputs_gp<%= i %>[:, <%= index %>:<%= index + var.dim %> ] = design_vars['<%= var.name %>']
+                inputs_gp<%= i %>[:, <%= index %>:<%= index + var.dim %> ] = design_vars['<%= var.name %>']
 <%- end -%>
 <%- index = index + var.dim -%>
 <%- end -%>
-            mean_gp_<%= i %> = gp_<%= i %>.predict_values(inputs_gp<%= i %>)
-            std_gp_<%= i %> = np.sqrt(gp_<%= i %>.predict_variances(inputs_gp<%= i %>))
+                mean_gp_<%= i %> = gp_<%= i %>.predict_values(inputs_gp<%= i %>)
+                std_gp_<%= i %> = np.sqrt(gp_<%= i %>.predict_variances(inputs_gp<%= i %>))
 <%- if i == 0 -%>
-            plt.plot(mean_gp_0, inputs_gp0[:, 1], 'b')
-            plt.plot(mean_gp_0 + 3*std_gp_0, inputs_gp0[:, 1], "b--")
-            plt.plot(mean_gp_0 - 3*std_gp_0, inputs_gp0[:, 1], "b--")
+                plt.plot(mean_gp_0, inputs_gp0[:, 1], 'b')
+                plt.plot(mean_gp_0 + 3*std_gp_0, inputs_gp0[:, 1], "b--")
+                plt.plot(mean_gp_0 - 3*std_gp_0, inputs_gp0[:, 1], "b--")
 <%- else -%>
-            plt.plot(inputs_gp1[:, 0], mean_gp_1, 'r')
-            plt.plot(inputs_gp1[:, 0], mean_gp_1 + 3*std_gp_1, "r--")
-            plt.plot(inputs_gp1[:, 0], mean_gp_1 - 3*std_gp_1, "r--")
+                plt.plot(inputs_gp1[:, 0], mean_gp_1, 'r')
+                plt.plot(inputs_gp1[:, 0], mean_gp_1 + 3*std_gp_1, "r--")
+                plt.plot(inputs_gp1[:, 0], mean_gp_1 - 3*std_gp_1, "r--")
 <%- end -%>
 <%- end -%>
-            plt.show()
+                plt.show()
 
 <% else %>
-        if (plot):
-            print("Plotting disabled! Plotting requires 2 couplings from surrogates, got <%= random_vars.count %>)")
+            if (plot):
+                print("Plotting disabled! Plotting requires 2 couplings from surrogates, got <%= random_vars.count %>)")
 
 <%- end -%>
 
-        # compute convergence criterion 
-        convergence = (np.abs(coeff_var) <= epsilon_coeff_var)
-        coupling_vars_values = coupling_var_doe.mean(axis=0)
-        coupling_vars = {}
+            # compute convergence criterion 
+            convergence = (np.abs(coeff_var) <= epsilon_coeff_var)
+            coupling_vars_values = coupling_var_doe.mean(axis=0)
+            coupling_vars = {}
 <%- @mda.coupling_variables.each_with_index do |cv, i| -%>
-        coupling_vars['<%= cv.py_varname %>'] = coupling_vars_values[<%= i %>]
+            coupling_vars['<%= cv.py_varname %>'] = coupling_vars_values[<%= i %>]
 <%- end -%>      
 
-        if convergence:
-            print(f"Converged at {design_vars}")
+            if convergence:
+                print(f"Converged at {design_vars}")
+            else:
+                print(f"NOT converged at {design_vars}")
+                # improve the disciplinary gp given by the random variable name
+                enrich_gp(gp_factory, design_vars, coupling_vars, [max_effect_varname])
+            print(f"**************** Iteration {n_iter}/{n_iter_max} done **********************************************")
         else:
-            print(f"NOT converged at {design_vars}")
-            # improve the disciplinary gp given by the random variable name
-            enrich_gp(gp_factory, design_vars, coupling_vars, [max_effect_varname])
+            convergence = None
 
+        if MPI:
+            convergence = MPI.COMM_WORLD.bcast(convergence, root=0)
+        
         n_iter += 1
-        print(f"**************** Iteration {n_iter}/{n_iter_max} done **********************************************")
+            
 
-    return coupling_vars, cv_mean, cv_coeff_var
