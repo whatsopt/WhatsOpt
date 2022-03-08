@@ -9,7 +9,7 @@ class Api::ApiController < ActionController::Base
   include WhatsOpt::Version
 
   # Authorization
-  include Pundit
+  include Pundit::Authorization
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
   after_action :verify_authorized, except: [:index], unless: :authorized_controller?
   after_action :verify_policy_scoped, only: [:index], unless: :authorized_controller?
