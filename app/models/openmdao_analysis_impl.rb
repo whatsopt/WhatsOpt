@@ -29,11 +29,11 @@ class OpenmdaoAnalysisImpl < ActiveRecord::Base
     nonlinear_solver.update(impl_attrs[:nonlinear_solver]) if impl_attrs.key?(:nonlinear_solver)
     linear_solver.update(impl_attrs[:linear_solver]) if impl_attrs.key?(:linear_solver)
     parallel = impl_attrs[:parallel_group]
-    self.parallel_group = parallel unless parallel.nil?
+    self.update(parallel_group: parallel) unless parallel.nil?
     use_units = impl_attrs[:use_units]
-    self.use_units = use_units unless use_units.nil?
+    self.analysis.update_all_impls(use_units: use_units) unless use_units.nil?
     optimization_driver = impl_attrs[:optimization_driver]
-    self.optimization_driver = optimization_driver unless optimization_driver.nil?
+    self.update(optimization_driver: optimization_driver) unless optimization_driver.nil?
     packaging = impl_attrs[:packaging]
     self.update(package_name: packaging[:package_name]) unless packaging.nil?
     impl_attrs[:nodes]&.each do |dattr|

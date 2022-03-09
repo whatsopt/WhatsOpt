@@ -49,4 +49,16 @@ class Api::V1::OpenmdaoImplsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "onerasego_optimizer_segomoe", @mda.openmdao_impl.optimization_driver
   end
 
+  test "should propagate use_units change" do
+    outermda = analyses(:outermda)
+    oimpl = outermda.openmdao_impl
+    innermda = analyses(:innermda)
+    inner_oimpl = innermda.openmdao_impl
+    refute inner_oimpl.use_units
+    put api_v1_mda_openmdao_impl_url(outermda), params: { openmdao_impl: { use_units: true }, requested_at: Time.now },
+    as: :json, headers: @auth_headers
+    assert_response :success
+    inner_oimpl.reload
+    assert inner_oimpl.use_units
+  end
 end
