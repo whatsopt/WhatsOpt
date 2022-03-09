@@ -25,9 +25,10 @@ module WhatsOpt
       end
     end
 
-    def py_desc
-      desc = self.desc
-      desc += " (#{self.units})"
+    def extended_desc
+      desc = ""
+      desc = self.desc unless self.desc.blank? 
+      desc += " (#{self.units})" unless self.units.blank?
       desc
     end
 
@@ -89,8 +90,8 @@ module WhatsOpt
 
     def escaped_desc
       s = ""
-      unless self.desc.blank?
-        s = self.desc.gsub("'", "\\\\'")
+      unless self.extended_desc.blank?
+        s = self.extended_desc.gsub("'", "\\\\'")
       end
       s
     end
