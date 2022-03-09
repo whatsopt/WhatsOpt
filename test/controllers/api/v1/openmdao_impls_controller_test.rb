@@ -22,13 +22,22 @@ class Api::V1::OpenmdaoImplsControllerTest < ActionDispatch::IntegrationTest
     assert @mda.openmdao_impl.parallel_group
   end
 
-  test "should update openmdao impl use_units flag" do
+  test "should update openmdao impl use_units flag to true" do
     refute @mda.openmdao_impl.use_units
     put api_v1_mda_openmdao_impl_url(@mda), params: { openmdao_impl: { use_units: true }, requested_at: Time.now },
                                             as: :json, headers: @auth_headers
     assert_response :success
     @mda.reload
     assert @mda.openmdao_impl.use_units
+  end
+
+  test "should update openmdao impl use_units flag to false" do
+    @mda.openmdao_impl.update(use_units: true)
+    put api_v1_mda_openmdao_impl_url(@mda), params: { openmdao_impl: { use_units: false }, requested_at: Time.now },
+                                            as: :json, headers: @auth_headers
+    assert_response :success
+    @mda.reload
+    refute @mda.openmdao_impl.use_units
   end
 
   test "should update openmdao impl optim driver" do

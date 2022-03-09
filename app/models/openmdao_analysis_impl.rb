@@ -91,7 +91,7 @@ class OpenmdaoAnalysisImpl < ActiveRecord::Base
       self.parallel_group = false if parallel_group.blank?
       self.nonlinear_solver ||= Solver.new(name: "NonlinearBlockGS")
       self.linear_solver ||= Solver.new(name: "ScipyKrylov")
-      self.use_units = false if use_units.blank?
+      self.use_units = true if use_units.nil?
       self.optimization_driver = :scipy_optimizer_slsqp if optimization_driver.blank?
       self.package_name = NULL_PACKAGE_NAME if package_name.blank?
     end
