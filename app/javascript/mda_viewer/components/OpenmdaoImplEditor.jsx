@@ -1,10 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Form from '@rjsf/bootstrap-4';
 // workaround to avoid warning in console
 // https://github.com/rjsf-team/react-jsonschema-form/issues/2648
-// import Form from '@rjsf/core';
+import Form from '@rjsf/core';
+// instead of
+// import Form from '@rjsf/bootstrap-4';
 
 const SCHEMA_GENERAL = {
   type: 'object',
@@ -198,7 +199,27 @@ class OpenmdaoImplEditor extends React.Component {
     });
     // UI schema
     const uiSchema = {
-      general: { 'ui:order': ['use_units', 'use_scaling', 'parallel_group', 'packaging', 'driver'] },
+      general: {
+        'ui:order': ['use_units', 'use_scaling', 'parallel_group', 'packaging', 'driver'],
+        use_units: {
+          'ui:help': (
+            <div>
+              cf.
+              { }
+              <a href="https://openmdao.org/newdocs/versions/latest/features/units.html" target="_blank" rel="noreferrer">Units definitions</a>
+            </div>
+          ),
+        },
+        use_scaling: {
+          'ui:help': (
+            <div>
+              cf.
+              { }
+              <a href="https://openmdao.org/newdocs/versions/latest/features/core_features/working_with_components/scaling.html" target="_blank" rel="noreferrer">Scaling</a>
+            </div>
+          ),
+        },
+      },
     };
     if (db.isScaled()) {
       uiSchema.general.use_scaling = { 'ui:disabled': true };
