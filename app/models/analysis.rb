@@ -613,6 +613,13 @@ class Analysis < ApplicationRecord
     conn.update_connections!(params)
   end
 
+  def update_all_impls(use_units: true)
+    root_analysis.openmdao_impl.update(use_units: use_units)
+    root_analysis.descendants.each do |child|
+      child.openmdao_impl.update(use_units: use_units)
+    end
+  end
+
   def destroy_connection!(conn, sub_analysis_check: true)
     Analysis.transaction do
       varname = conn.from.name
