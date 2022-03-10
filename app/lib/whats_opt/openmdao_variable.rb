@@ -27,8 +27,10 @@ module WhatsOpt
 
     def extended_desc
       desc = ""
-      desc = self.desc unless self.desc.blank? 
-      desc += " (#{self.units})" unless self.units.blank?
+      unless self.desc.blank?  
+        desc = self.desc 
+        desc += " (#{self.units})" unless self.units.blank?
+      end
       desc
     end
 
