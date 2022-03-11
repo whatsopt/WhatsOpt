@@ -77,6 +77,13 @@ class DoeFactory:
         np.save(self.doe_numpy_filename("<%= disc.snake_modulename %>"), doe)
 
         print(doe) 
+<% input_size = (disc.input_variables).inject(0){|acc, v| acc + v.dim } %>
+<% size_limit = 10 %>
+        input_size = <%= input_size %>
+        plot_disabled = (input_size > <%= size_limit %>)
+        if self.plot and plot_disabled:
+            print(f"Plot disabled as {input_size} is too large (> <%= size_limit %>)")
+<% if input_size < size_limit %>
         if self.plot:
 <%- (disc.output_variables).each_with_index do |var, i| -%>
             for i in range(dim-1):
@@ -94,7 +101,7 @@ class DoeFactory:
 <%- end -%>
 <%- end -%>
             plt.show()
-
+<%- end %>
     def update_doe_<%= disc.snake_modulename %>(self, design_vars, coupling_vars):
         # open the disciplinary DoE
         doe = np.load(self.doe_numpy_filename("<%= disc.snake_modulename %>"))
