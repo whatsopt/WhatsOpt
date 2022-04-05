@@ -200,6 +200,11 @@ class Analysis < ApplicationRecord
     end
   end
 
+  def is_egmdo_random_variable?(v)
+    @egmdo_names ||= egmdo_random_variables.map(&:name)
+    @egmdo_names.includes(v.name)
+  end
+
   def plain_disciplines
     disciplines.nodes.select(&:is_plain?)
   end
