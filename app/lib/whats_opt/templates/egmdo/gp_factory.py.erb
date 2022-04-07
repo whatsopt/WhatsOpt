@@ -43,9 +43,8 @@ class GpFactory:
 <%- end -%>
 
     def create_all_gps(self, n_cases=4):
-    <%- @mda.egmdo_random_variables.each do |v| -%>
-        self.create_gp_<%= v.discipline.snake_modulename %>_<%= v.py_varname %>(n_cases)
+    <%- @mda.egmdo_random_disciplines.each do |disc| -%>
+    <%- disc.output_variables.each do |v| -%>
+        self.create_gp_<%= disc.snake_modulename %>_<%= v.py_varname %>(n_cases)
     <%- end -%>
-    <%- if @mda.egmdo_random_disciplines.empty? -%>
-        pass
     <%- end -%>

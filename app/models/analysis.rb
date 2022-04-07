@@ -93,7 +93,7 @@ class Analysis < ApplicationRecord
     unless @couplings 
       conns = Connection.of_analysis(self).select{|c| !c.driverish?}
       # FIXME: only scalar couplings are handled at the moment for EGMDO
-      @couplings = conns.map(&:from).uniq.select(&:is_scalar?)
+      @couplings = conns.map(&:from).uniq # .select(&:is_scalar?)
     end
     @couplings
   end
@@ -196,13 +196,13 @@ class Analysis < ApplicationRecord
   def egmdo_random_variables
     @egmdo_vars ||= plain_disciplines.inject([]) do |acc, disc|
       acc = acc + disc.output_variables if disc.openmdao_impl&.egmdo_surrogate
-      acc
+      acc.select{|v| coupling_variables.include?(v)}
     end
   end
 
   def is_egmdo_random_variable?(v)
     @egmdo_names ||= egmdo_random_variables.map(&:name)
-    @egmdo_names.includes(v.name)
+    @egmdo_names.include?(v.name)
   end
 
   def plain_disciplines
