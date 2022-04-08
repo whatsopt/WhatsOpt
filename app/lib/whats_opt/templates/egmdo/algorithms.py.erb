@@ -76,9 +76,11 @@ def read_doe(qoi_names, n_doe_pce, outfile, parallel):
     for file in files:
         cr = om.CaseReader(file)
         driver_cases = cr.list_cases("driver", out_stream=None)
-        case = cr.get_case(driver_cases[0])
         n_doe = len(driver_cases)
         print(f"{file} {n_doe}")
+        if n_doe == 0:
+            continue
+        case = cr.get_case(driver_cases[0])
 
         for k in range(n_doe):
             i = offset + k
