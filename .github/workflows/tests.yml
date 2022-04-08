@@ -42,10 +42,10 @@ jobs:
       - name: Make Thrift Compiler
         if: steps.cache-thrift.outputs.cache-hit != 'true'
         run: |
-          export THRIFT_VERSION=0.15.0
+          export THRIFT_VERSION=0.16.0
           export buildDeps="automake bison curl flex g++ libboost-dev libboost-filesystem-dev libboost-program-options-dev libboost-system-dev libboost-test-dev  libevent-dev libssl-dev libtool make pkg-config"
           sudo apt-get install -y --no-install-recommends $buildDeps && sudo rm -rf /var/lib/apt/lists/*
-          curl -sSL "https://dlcdn.apache.org/thrift/$THRIFT_VERSION/thrift-$THRIFT_VERSION.tar.gz" -o thrift.tar.gz
+          curl -sSL "http://archive.apache.org/dist/thrift/$THRIFT_VERSION/thrift-$THRIFT_VERSION.tar.gz" -o thrift.tar.gz
           mkdir -p thrift
           mkdir -p install
           tar zxf thrift.tar.gz -C ${PWD}/thrift --strip-components=1
