@@ -20,13 +20,13 @@ class GpFactory:
         # load or create the DoE 
         doe_file = self.doe_factory.doe_numpy_filename("<%= disc.snake_modulename %>")
         if (not os.path.exists(doe_file)):
-            print(f"Create DOE for <%= disc.snake_modulename %> with {n_cases} samples: {doe_file}")
+            print(f"Create DOE for '<%= disc.name %>' with {n_cases} samples: {doe_file}")
             self.doe_factory.create_doe_<%= disc.snake_modulename %>(n_cases)
         doe = np.load(doe_file)
 
         # create the gp surrogate model
         gp_file = self.gp_filename("<%= disc.snake_modulename %>", "<%= v.py_varname %>")
-        print(f"Build GP for <%= disc.snake_modulename %> : {gp_file}")
+        print(f"Build GP for '<%= disc.name %>' : {gp_file}")
         input_dim=<%= disc.input_variables.map(&:dim).inject(0, :+) %>
         gp = KRG(theta0=[1e-2] * input_dim, print_global=False)
         gp.set_training_values(doe[:, :-<%= outdim %>], doe[:, -<%= outdim-i %>])
@@ -35,7 +35,7 @@ class GpFactory:
             pickle.dump(gp, f)
 
     def update_gp_<%= disc.snake_modulename %>_<%= v.py_varname %>(self, design_vars, coupling_vars):
-        print(f"Update DOE for <%= disc.snake_modulename %>")
+        print(f"Update DOE for '<%= disc.name %>'")
         new_doe = self.doe_factory.update_doe_<%= disc.snake_modulename %>(design_vars, coupling_vars)
         self.create_gp_<%= disc.snake_modulename %>_<%= v.py_varname %>()
         return new_doe
