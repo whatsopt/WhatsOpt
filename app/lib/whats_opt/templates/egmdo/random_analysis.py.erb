@@ -47,7 +47,7 @@ class <%= disc.py_classname %>RandomDiscipline(om.ExplicitComponent):
 <% end %>
         for name in sorted(inputs.keys()):
             if name not in random_inputs: 
-                inputs_gp = np.concatenate((inputs_gp, inputs[name]))
+                inputs_gp = np.concatenate((inputs_gp, inputs[name].flatten()))
         inputs_gp = np.atleast_2d(inputs_gp)    
 <% disc.output_variables.each do |v|%>
         sigma = np.sqrt(self.gp_<%= v.py_varname %>.predict_variances(inputs_gp))
@@ -75,7 +75,7 @@ class <%= disc.py_classname %>RandomDiscipline(om.ExplicitComponent):
 
         for name in sorted(inputs.keys()):
             if name not in random_inputs: 
-                inputs_gp = np.concatenate((inputs_gp, inputs[name]))
+                inputs_gp = np.concatenate((inputs_gp, inputs[name].flatten()))
         inputs_gp = np.atleast_2d(inputs_gp)
 
 <%- disc.output_variables.each do |v| -%>

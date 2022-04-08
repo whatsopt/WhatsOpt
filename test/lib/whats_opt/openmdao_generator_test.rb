@@ -57,7 +57,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
                 "cicav_base.py", "geometry.py", "geometry_base.py", "mda_init.py", 
                 "propulsion.py", "propulsion_base.py", "run_mda.py", "run_mdo.py", "run_doe.py", "run_egdoe.py"] + [
                 "egmdo/__init__.py", "egmdo/algorithms.py", "egmdo/cicav_egmda.py", "egmdo/doe_factory.py", 
-                "egmdo/gp_factory.py", "egmdo/random_analysis.py", 
+                "egmdo/gp_factory.py", "egmdo/random_analysis.py", "egmdo/random_vec_analysis.py",
                 "run_egmda.py", "run_egmdo.py", "run_screening.py"
                 ]
     _assert_file_generation expected, with_egmdo: true
@@ -108,7 +108,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     pkg_expected = ["__init__.py", "aerodynamics.py", "aerodynamics_base.py", "cicav.py",
                 "cicav_base.py", "geometry.py", "geometry_base.py", "propulsion.py", "propulsion_base.py"] + 
                 ["egmdo/__init__.py", "egmdo/algorithms.py", "egmdo/cicav_egmda.py", "egmdo/doe_factory.py", 
-                "egmdo/gp_factory.py", "egmdo/random_analysis.py"] +
+                "egmdo/gp_factory.py", "egmdo/random_analysis.py", "egmdo/random_vec_analysis.py"] +
                 ["tests/test_aerodynamics.py", "tests/test_geometry.py", "tests/test_propulsion.py"] +
                 ["server/__init__.py", "server/analysis.thrift", "server/cicav/__init__.py",
                 "server/cicav/Cicav-remote", "server/cicav/Cicav.py",

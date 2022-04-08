@@ -1,0 +1,167 @@
+import os
+import numpy as np
+from numpy import nan, inf
+import pickle
+
+import openmdao.api as om
+<% if @impl.nonlinear_solver.reckless? -%>
+from openmdao_extensions.reckless_nonlinear_block_gs import RecklessNonlinearBlockGS
+<% else -%>
+from openmdao.api import <%= @impl.nonlinear_solver.name %>
+<% end -%>
+from openmdao.api import NewtonSolver
+from openmdao.api import <%= @impl.linear_solver.name %>
+<%- @mda.egmdo_random_disciplines.each do |disc| -%>
+
+class <%= disc.py_classname %>RandomVecDiscipline(om.ExplicitComponent):
+    """ An OpenMDAO base component to encapsulate <%= disc.py_classname %> discipline """
+    def __init__(self, gp_factory, n_cases=1, **kwargs):
+        super().__init__(**kwargs)
+<%- disc.output_variables.each do |v| -%>        
+        with open(gp_factory.gp_filename("<%= disc.snake_modulename %>", "<%= v.py_varname %>"), 'rb') as f:
+            self.gp_<%= v.py_varname %> = pickle.load(f) 
+<%- end %>
+        self.n_cases = n_cases
+
+<%- unless disc.variables.empty? -%>
+    def setup(self):
+<%- disc.input_variables.numeric.each do |var| %>
+<%- if @mda.is_egmdo_random_variable?(var) -%>
+        <%= var.py_varname %> = np.ones((self.n_cases, <%= var.dim %>)) 
+<%- else -%>
+        <%= var.py_varname %> = <%= var.init_py_value %>
+<%- end -%>
+        self.add_input('<%= var.py_varname %>', val=<%= var.py_varname %>, desc='<%= var.escaped_desc %>'<%= @impl.use_units && !var.units.blank? ? ", units='#{var.units}'":"" %>)<%- end %>
+
+<%- disc.output_variables.each do |var| %>
+<%- if @mda.is_egmdo_random_variable?(var) -%>
+        _xi_<%= var.py_varname %> = np.zeros(self.n_cases) 
+<%- else -%>
+        _xi_<%= var.py_varname %> = 0.0
+<%- end -%>
+        self.add_input('_xi_<%= var.py_varname %>', val=_xi_<%= var.py_varname %>)<%- end %>
+
+<%- disc.output_variables.numeric.each do |var| -%>
+        <%= var.py_varname %> = np.ones((self.n_cases, <%= var.dim %>)) 
+<%- if var.scaling.blank? -%>
+        self.add_output('<%= var.py_varname %>', val=<%= var.py_varname %>, desc='<%= var.escaped_desc %>'<%= @impl.use_units && !var.units.blank? ? ", units='#{var.units}'":"" %>)
+<%- else -%>
+        self.add_output('<%= var.py_varname %>', val=<%= var.py_varname %>, desc='<%= var.escaped_desc %>',
+                        ref=<%= var.scaling_ref_py_value %>, ref0=<%= var.scaling_ref0_py_value %>, res_ref=<%= var.scaling_res_ref_py_value %><%= @impl.use_units && !var.units.blank? ? ", units='#{var.units}'":"" %>)
+<%- end -%>
+<%- end -%>
+
+    def compute(self, inputs, outputs):
+        inputs_gp = np.zeros((self.n_cases, <%= disc.input_variables.map(&:dim).inject(0, :+) %>))
+        random_inputs = [<%= disc.output_variables.map{|v| "'_xi_#{v.py_varname}'"}.join(', ') %>]
+        design_vars = [<%= @mda.design_variables.map{|v| "'#{v.name}'"}.join(', ') %>]
+        coupling_vars = [<%= @mda.coupling_variables.map{|v| "'#{v.name}'"}.join(', ') %>]
+        i = 0
+        for name in sorted(inputs.keys()):
+            if name not in random_inputs: 
+                if name in design_vars:
+                    # design variables should be reshaped
+                    dim = inputs[name].shape[0]
+                    input_temp = np.tile(inputs[name], (self.n_cases, 1))
+                    inputs_gp[:, i:i+dim] = input_temp
+                    i = i + dim
+                elif name in coupling_vars:  
+                    # coupling variables
+                    dim =  inputs[name].shape[1]
+                    inputs_gp[:, i:i+dim] = inputs[name] 
+                    i = i + dim
+
+        inputs_gp = np.atleast_2d(inputs_gp)
+
+<% disc.output_variables.each do |v|%>
+        sigma = np.sqrt(self.gp_<%= v.py_varname %>.predict_variances(inputs_gp))
+        mean = self.gp_<%= v.py_varname %>.predict_values(inputs_gp)
+        outputs['<%= v.py_varname %>'] = mean[:, 0] + inputs['_xi_<%= v.py_varname %>'] * sigma[:, 0] 
+<%- end -%>
+
+<%- end -%>
+<%- end -%>
+
+<%- @mda.plain_disciplines.each do |disc| -%>
+<% if !@mda.egmdo_random_disciplines.include?(disc) %>
+
+class <%= disc.py_classname %>RandomVecDiscipline(om.ExplicitComponent):
+    """ An OpenMDAO base component to encapsulate <%= disc.py_classname %> discipline """
+    def __init__(self, disc, n_cases=1, **kwargs):
+        super().__init__(**kwargs)
+        self.disc = disc
+        self.n_cases = n_cases
+
+<%- unless disc.variables.empty? -%>
+    def setup(self):
+<%- disc.input_variables.numeric.each do |var| %>
+<%- if @mda.is_egmdo_random_variable?(var) -%>
+        <%= var.py_varname %> = np.ones((self.n_cases, <%= var.dim %>)) 
+<%- else -%>
+        <%= var.py_varname %> = <%= var.init_py_value %>
+<%- end -%>
+        self.add_input('<%= var.py_varname %>', val=<%= var.py_varname %>, desc='<%= var.escaped_desc %>'<%= @impl.use_units && !var.units.blank? ? ", units='#{var.units}'":"" %>)<%- end %>
+
+<%- disc.output_variables.numeric.each do |var| -%>
+        <%= var.py_varname %> = np.ones((self.n_cases, <%= var.dim %>)) 
+<%- if var.scaling.blank? -%>
+        self.add_output('<%= var.py_varname %>', val=<%= var.py_varname %>, desc='<%= var.escaped_desc %>'<%= @impl.use_units && !var.units.blank? ? ", units='#{var.units}'":"" %>)
+<%- else -%>
+        self.add_output('<%= var.py_varname %>', val=<%= var.py_varname %>, desc='<%= var.escaped_desc %>',
+                        ref=<%= var.scaling_ref_py_value %>, ref0=<%= var.scaling_ref0_py_value %>, res_ref=<%= var.scaling_res_ref_py_value %><%= @impl.use_units && !var.units.blank? ? ", units='#{var.units}'":"" %>)
+<%- end -%>
+<%- end -%>
+
+    def compute(self, inputs, outputs):
+        self.disc.compute(inputs, outputs)
+
+<%- end -%>
+<%- end -%>
+<%- end -%>
+
+
+class <%= @mda.py_classname %>RandomVecAnalysis(<%= @impl.parallel_group ? "om.ParallelGroup" : "om.Group" %>):
+    """ An OpenMDAO base component to encapsulate <%= @mda.py_classname %> random MDA """
+    def __init__(self, discipline_factory, gp_factory, n_cases=1, **kwargs):
+        super(). __init__(**kwargs)
+        self.disc_factory = discipline_factory
+        self.gp_factory = gp_factory
+        self.n_cases = n_cases
+        
+        # self.nonlinear_solver = NewtonSolver(solve_subsystems=False)
+        self.nonlinear_solver = NonlinearBlockGS()
+
+<% unless @impl.nonlinear_solver.runonce? -%>
+        self.nonlinear_solver.options['atol'] = <%= @impl.nonlinear_solver.atol %>
+        self.nonlinear_solver.options['rtol'] = <%= @impl.nonlinear_solver.rtol %>
+        self.nonlinear_solver.options['err_on_non_converge'] = <%= @impl.to_code(:nonlinear_solver, :err_on_non_converge) %>
+        self.nonlinear_solver.options['iprint'] = <%= @impl.nonlinear_solver.iprint %>
+        self.nonlinear_solver.options['maxiter'] = <%= @impl.nonlinear_solver.maxiter %>
+<% end -%>
+
+        self.linear_solver = <%= @impl.linear_solver.name %>()
+        self.linear_solver.options['atol'] = <%= @impl.linear_solver.atol %>
+        self.linear_solver.options['rtol'] = <%= @impl.linear_solver.rtol %>
+        self.linear_solver.options['err_on_non_converge'] = <%= @impl.to_code(:linear_solver, :err_on_non_converge) %>
+        self.linear_solver.options['iprint'] = <%= @impl.linear_solver.iprint %>
+        self.linear_solver.options['maxiter'] = <%= @impl.linear_solver.maxiter %>
+
+    def setup(self):
+<%- @mda.input_variables.each do |dv| -%>
+        self.set_input_defaults('<%= dv.name %>', val=<%= dv.init_py_value %><%= @impl.use_units && !dv.units.blank? ? ", units='#{dv.units}'":"" %>)
+<%- end -%>
+<%- @mda.egmdo_random_variables.each do |v| -%>
+        self.set_input_defaults('_xi_<%= v.name %>', val=np.zeros(self.n_cases))
+<%- end -%>
+
+<%- @mda.plain_disciplines.each do |disc| -%>
+        name = '<%= disc.py_classname %>RandomVec'
+<%- if disc.openmdao_impl&.egmdo_surrogate -%>
+        disc = <%= disc.py_classname %>RandomVecDiscipline(self.gp_factory, self.n_cases)
+<%- else -%>
+        true_disc = self.disc_factory.create_<%= disc.snake_modulename %>()
+        disc = <%= disc.py_classname %>RandomVecDiscipline(true_disc, self.n_cases)
+<%- end -%>
+        self.add_subsystem(name, disc, promotes=['*'])
+<%- end -%>
+

@@ -28,6 +28,7 @@ module WhatsOpt
       _generate("doe_factory.py", "egmdo/doe_factory.py.erb", egmdo_dir)
       _generate("gp_factory.py", "egmdo/gp_factory.py.erb", egmdo_dir)
       _generate("random_analysis.py", "egmdo/random_analysis.py.erb", egmdo_dir)
+      _generate("random_vec_analysis.py", "egmdo/random_vec_analysis.py.erb", egmdo_dir)
       _generate("__init__.py", "__init__.py.erb", egmdo_dir)
       if @driver_name
         @driver = OpenmdaoDriverFactory.new(@driver_name, @driver_options).create_driver
