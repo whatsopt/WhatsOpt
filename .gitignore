@@ -73,3 +73,6 @@ services/whatsopt_server/optimizer_store/oneramdao
 
 # Ignore XDSMjs
 app/javascript/XDSMjs
+
+# Ignore Openmdao reports
+**/reports
