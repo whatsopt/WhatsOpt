@@ -1,15 +1,10 @@
 <h1>CHANGELOG</h1>
 
-<h3>1.21.4 (10/03/2022)</h3>
+<h3>1.22.0 (11/04/2022)</h3>
 <ul>
-  <li>User can specify a package name which is used for top level module and top level analysis class
-  </li>
-  <li>EGMDO scripts can be run using MPI to run random MDAs in parallel
-    (will be available when this <a href="https://github.com/OpenMDAO/OpenMDAO/issues/2434">OpenMDAO bug</a> is fixed)
-  </li>
-  <li>
-    Use units in OpenMDAO code generation by default
-  </li>
+  <li>User can specify a package name which is used for top level module and top level analysis class</li>
+  <li>Improvement of EGMDO algorithm using vectorized formulation of random MDA.</li>
+  <li>Use units in OpenMDAO code generation by default</li>
   <li>Fix concatenation of units string to description string</li>
   <li>Fix spread 'use units' checkbox setting accross analysis hierarchy</li>
   <li>Fix analysis base template when DirectSolver is selected</li>
