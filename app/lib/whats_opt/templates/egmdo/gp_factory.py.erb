@@ -43,8 +43,13 @@ class GpFactory:
 <%- end -%>
 
     def create_all_gps(self, n_cases=4):
+    <%- if @mda.egmdo_random_disciplines.size < 2 -%>
+        print("Error: You have to select two disciplines as surrogates then update the EGMDO code and retry.")
+        exit(-1)
+    <%- end -%>
     <%- @mda.egmdo_random_disciplines.each do |disc| -%>
     <%- disc.output_variables.each do |v| -%>
         self.create_gp_<%= disc.snake_modulename %>_<%= v.py_varname %>(n_cases)
     <%- end -%>
     <%- end -%>
+    

@@ -113,6 +113,16 @@ class <%= disc.py_classname %>RandomVecDiscipline(om.ExplicitComponent):
 <%- end -%>
 
     def compute(self, inputs, outputs):
+<%- simple_vars = (disc.variables - disc.design_variables).select{|v| v.ndim != 2 || v.first_dim != 1} -%>
+<%- if !simple_vars.empty? -%>
+        print("Error: You need to implement vectorized version of '<%= disc.name %>' compute() method.") 
+<%- end -%>
+<%- simple_vars.each do |v| -%>
+        print("Error: Variable '<%= v.name %>' shape should be '(1, n)', got '<%= v.shape %>'" )
+<%- end -%>        
+<%- if !simple_vars.empty? -%>
+        raise RuntimeError("Error: You need to implement vectorized version of '<%= disc.name %>' compute()")
+<%- end -%>
         self.disc.compute(inputs, outputs)
 
 <%- end -%>

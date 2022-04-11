@@ -92,4 +92,34 @@ class VariableTest < ActiveSupport::TestCase
     end
     assert_not Variable.of_analysis(analyses(:cicav)).find_by_name(var.name)
   end
+
+  test "should have vectorized shape" do
+    var = Variable.new(name: "test", io_mode: Variable::IN, shape: "1")
+    assert_equal "(1, 1)", var.vectorized_shape
+    var = Variable.new(name: "test", io_mode: Variable::IN, shape: "(1,)")
+    assert_equal "(1, 1)", var.vectorized_shape
+    var = Variable.new(name: "test", io_mode: Variable::IN, shape: "(4,)")
+    assert_equal "(1, 4)", var.vectorized_shape
+    var = Variable.new(name: "test", io_mode: Variable::IN, shape: "(1, 1)")
+    assert_equal "(1, 1)", var.vectorized_shape
+    var = Variable.new(name: "test", io_mode: Variable::IN, shape: "(2, 1)")
+    assert_equal "Cannot vectorize", var.vectorized_shape
+    var = Variable.new(name: "test", io_mode: Variable::IN, shape: "(1, 1, 1)")
+    assert_equal "Cannot vectorize", var.vectorized_shape
+  end
+
+  test "should have first dim" do
+    var = Variable.new(name: "test", io_mode: Variable::IN, shape: "1")
+    assert_equal 0, var.first_dim
+    var = Variable.new(name: "test", io_mode: Variable::IN, shape: "(1,)")
+    assert_equal 1, var.first_dim
+    var = Variable.new(name: "test", io_mode: Variable::IN, shape: "(4,)")
+    assert_equal 4, var.first_dim
+    var = Variable.new(name: "test", io_mode: Variable::IN, shape: "(1, 1)")
+    assert_equal 1, var.first_dim
+    var = Variable.new(name: "test", io_mode: Variable::IN, shape: "(2, 1)")
+    assert_equal 2, var.first_dim
+    var = Variable.new(name: "test", io_mode: Variable::IN, shape: "(1, 1, 1)")
+    assert_equal 1, var.first_dim
+  end
 end

@@ -196,6 +196,12 @@ class Variable < ApplicationRecord
     newvar
   end
 
+  def vectorized_shape
+    super
+  rescue WhatsOpt::Variable::VectorizedShapeError => e
+    "Cannot vectorize"
+  end
+
   private
     def set_defaults
       self.io_mode = DEFAULT_IOMODE if io_mode.blank?

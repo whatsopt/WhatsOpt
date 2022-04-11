@@ -5,6 +5,8 @@ module WhatsOpt
 
     class BadShapeAttributeError < StandardError
     end
+    class VectorizedShapeError < StandardError
+    end
 
     def self.included(klass)
       klass.extend(ClassMethods)
@@ -74,6 +76,40 @@ module WhatsOpt
                   4
                 else
                   raise BadShapeAttributeError.new("Shape should be either 1, (n,), (n, m), (n, m, p) or (n, m, p, q) but got '#{self.shape}' for variable #{self.name}")
+      end
+    end
+
+    def vectorized_shape
+      case self.ndim
+      when 0
+        "(1, 1)"
+      when 1
+        "(1, #{self.dim})"
+      when 2
+        if self.shape =~ /\A\s*\(\s*(\d+)\s*,\s*(\d+)\s*\)\s*\z/ && $1=="1"
+          self.shape
+        else
+          raise VectorizedShapeError.new("Cannot get a vectorized version of '#{self.name}'variable of shape #{self.shape}")
+        end
+      else
+        raise VectorizedShapeError.new("Cannot get a vectorized version of '#{self.name}' variable of shape #{self.shape}")
+      end
+    end
+
+    def first_dim
+      @first_dim ||=  case self.shape
+      when /\A\s*1\s*\z/
+        0
+      when /\A\s*\(\s*(\d+)\s*,\s*\)\s*\z/
+        $1.to_i
+      when /\A\s*\(\s*(\d+)\s*,\s*(\d+)\s*\)\s*\z/
+        $1.to_i
+      when /\A\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)\s*\z/
+        $1.to_i
+      when /\A\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)\s*\z/
+        $1.to_i
+      else
+        raise BadShapeAttributeError.new("Shape should be either 1, (n,), (n, m), (n, m, p) or (n, m, p, q) but got '#{self.shape}' for variable #{self.name}")
       end
     end
 
