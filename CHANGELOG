@@ -1,5 +1,10 @@
 <h1>CHANGELOG</h1>
 
+<h3>1.22.1 (13/04/2022)</h3>
+<ul>
+  <li>Fix EGMDO code generation when an output is used modeled as a random variable</li>
+</ul>
+
 <h3>1.22.0 (11/04/2022)</h3>
 <ul>
   <li>User can specify a package name which is used for top level module and top level analysis class</li>
