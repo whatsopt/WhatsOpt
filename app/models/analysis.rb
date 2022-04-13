@@ -196,7 +196,6 @@ class Analysis < ApplicationRecord
   def egmdo_random_variables
     @egmdo_vars ||= plain_disciplines.inject([]) do |acc, disc|
       acc = acc + disc.output_variables if disc.openmdao_impl&.egmdo_surrogate
-      acc.select{|v| coupling_variables.include?(v)}
     end
   end
 

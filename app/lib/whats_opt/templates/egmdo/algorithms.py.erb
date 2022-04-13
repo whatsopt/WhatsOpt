@@ -42,9 +42,9 @@ def compute_doe(discipline_factory, gp_factory, design_vars, n_cases, out_sqlite
     pb.driver.add_recorder(recorder)
     pb.driver.recording_options['includes'] = ['*']
 
-    # uncertain variable input are taken as design_variables to get recorded by driver recorder
+    # uncertain variable input are taken as design_variables
     <%- @mda.egmdo_random_variables.each do |dv| -%>
-    pb.model.add_design_var('_xi_<%= dv.py_varname %>', lower=<%= dv.lower_py_value %>, upper=<%= dv.upper_py_value %>)
+    pb.model.add_design_var('_xi_<%= dv.py_varname %>')
     <%- end -%>
     pb.setup()  
     for name, val in design_vars.items():
