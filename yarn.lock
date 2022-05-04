@@ -1217,17 +1217,17 @@
     uncontrollable "^7.2.1"
     warning "^4.0.3"
 
-"@rjsf/bootstrap-4@^3.2.1":
-  version "3.2.1"
-  resolved "https://registry.yarnpkg.com/@rjsf/bootstrap-4/-/bootstrap-4-3.2.1.tgz#9fb56b2c74c60792ea95e3cefa2b10c63f9523c5"
-  integrity sha512-y4GD31Nt096U5HUJI19O1yj5gsTEU0163lfAHjPFCWXWhw96KWQdKf714aO+JmrFAflgfGbdyCvG94TwyB/DIA==
+"@rjsf/bootstrap-4@^4.1.1":
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/@rjsf/bootstrap-4/-/bootstrap-4-4.1.1.tgz#5683e455b123ff566a02a27f874b163c8d92a4c1"
+  integrity sha512-B7q1c7hXGOxV2kpvfLEuhVp/cfQ01k3Y192zo84zK2OsQ6CR0Ouk1bZ7yb7NSKmMb4KEWpbTIbaMahSfMXKIGQ==
   dependencies:
     react-icons "^3.10.0"
 
-"@rjsf/core@^3.2.1":
-  version "3.2.1"
-  resolved "https://registry.yarnpkg.com/@rjsf/core/-/core-3.2.1.tgz#8a7b24c9a6f01f0ecb093fdfc777172c12b1b009"
-  integrity sha512-dk8ihvxFbcuIwU7G+HiJbFgwyIvaumPt5g5zfnuC26mwTUPlaDGFXKK2yITp8tJ3+hcwS5zEXtAN9wUkfuM4jA==
+"@rjsf/core@^4.1.1":
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/@rjsf/core/-/core-4.1.1.tgz#6ba23585b0fc891247e795bed1ab2c6ce44755fa"
+  integrity sha512-/R37fLwnhAavQVlYoILwYIha0ymgKtMWdtehgiODcf++rl4/jq38RjXhqF5wQT9uOYAHmtutokJsTFei1VY4bw==
   dependencies:
     "@types/json-schema" "^7.0.7"
     ajv "^6.7.0"

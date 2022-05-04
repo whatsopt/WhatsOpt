@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 
 // workaround to avoid warning in console
 // https://github.com/rjsf-team/react-jsonschema-form/issues/2648
-import Form from '@rjsf/core';
+// import Form from '@rjsf/core';
 // instead of
-// import Form from '@rjsf/bootstrap-4';
+import Form from '@rjsf/bootstrap-4';
 
 const SCHEMA_GENERAL = {
   type: 'object',
