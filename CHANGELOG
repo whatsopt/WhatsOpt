@@ -1,8 +1,9 @@
 <h1>CHANGELOG</h1>
 
-<h3>1.22.1 (13/04/2022)</h3>
+<h3>1.22.2 (04/05/2022)</h3>
 <ul>
   <li>Fix EGMDO code generation when an output is used modeled as a random variable</li>
+  <li>Tech.: Update ruby and javascript dependencies</li>
 </ul>
 
 <h3>1.22.0 (11/04/2022)</h3>

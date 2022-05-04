@@ -1,4 +1,4 @@
-lock '~>3.16.0'
+lock '~>3.17'
 
 set :application, 'WhatsOpt' # config valid only for current version of Capistrano
 
