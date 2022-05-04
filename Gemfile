@@ -120,7 +120,7 @@ gem "data-confirm-modal"
 gem 'tether-rails'
 
 # thrift
-gem "thrift", "~>0.15.0"
+gem "thrift", "~>0.16"
 
 # Actiontext image processing
 gem "image_processing", "~> 1.2"
