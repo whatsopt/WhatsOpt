@@ -104,6 +104,7 @@ class TestOptimizerService(unittest.TestCase):
 
         self.store.destroy_optimizer("1")
 
+    # @unittest.skip("skip")
     def test_optimizer_cstr(self):
         xlimits = [[-32.768, 32.768], [-32.768, 32.768]]
         self.store.create_optimizer(
@@ -144,6 +145,7 @@ class TestOptimizerService(unittest.TestCase):
         x1, x2 = x[:, 0], x[:, 1]
         return np.array(-82.81 - (x1 - 6) ** 2 - (x2 - 5) ** 2).reshape((-1, 1))
 
+    # @unittest.skip("skip")
     def test_segomoe_cstrs(self):
 
         xlimits = np.array([[13, 100], [0, 100]])

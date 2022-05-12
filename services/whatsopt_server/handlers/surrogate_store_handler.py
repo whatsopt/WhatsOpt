@@ -24,8 +24,7 @@ def throw_surrogate_exception(func):
             return func(*args, **kwargs)
         except Exception as err:
             print(err)
-            exc = SurrogateStoreTypes.SurrogateException()
-            exc.msg = str(err)
+            exc = SurrogateStoreTypes.SurrogateException(str(err))
             raise exc
 
     return func_wrapper
