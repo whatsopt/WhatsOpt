@@ -132,14 +132,14 @@ class SegomoeOptimizer(object):
                 comm=None,
             )
             res = sego.run_optim(n_iter=1)
-            res = (
-                res[0],
-                np.array(res[1]).flatten().tolist(),
-                np.array(res[2]).flatten().tolist(),
-                res[3],
-            )
-            print(res)
-        if not res:
-            res = (2, np.zeros((nx,)).tolist(), np.zeros((ny,)).tolist(), 0)
 
-        return res
+        if res:
+            status = res[0]
+            next_x = sego.get_x()[-1]
+        else:
+            status = 2
+            next_x = np.zeros((nx,)).tolist()
+
+        print(f"status={status}, next_x={next_x}, segomoe.res={res}")
+
+        return status, next_x

@@ -108,25 +108,25 @@ enum Type {
   ORD,
   ENUM
 }
-struct FBounds {
+struct Flimits {
   1: Float lower,
   2: Float upper 
 }
-struct IBounds {
+struct Ilimits {
   1: Integer lower,
   2: Integer upper 
 }
-typedef list<Float> OBounds
-typedef list<string> EBounds
-union Limit {
-  1: FBounds flimit,
-  2: IBounds ilimit,
-  3: OBounds olimit,
-  4: EBounds elimit
+typedef list<Float> Olimits
+typedef list<string> Elimits
+union Xlimits {
+  1: Flimits flimits,
+  2: Ilimits ilimits,
+  3: Olimits olimits,
+  4: Elimits elimits
 }
 struct Xtype {
-  1: Type xtype,
-  2: Limit xlimit
+  1: Type type,
+  2: Xlimits limits
 }
 typedef list<Xtype> Xtypes;
 
@@ -141,8 +141,9 @@ service OptimizerStore {
   void create_mixint_optimizer(1: string optimizer_id,
                                2: OptimizerKind kind,
                                3: Xtypes xtypes, 
-                               4: ConstraintSpecs cstr_specs, 
-                               5: Options options) throws (1: OptimizerException exc);
+                               4: Integer n_obj,
+                               5: ConstraintSpecs cstr_specs, 
+                               6: Options options) throws (1: OptimizerException exc);
 
   OptimizerResult ask(1: string optimizer_id) throws (1: OptimizerException exc);
 

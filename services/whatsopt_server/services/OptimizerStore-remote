@@ -25,7 +25,7 @@ if len(sys.argv) <= 1 or sys.argv[1] == '--help':
     print('')
     print('Functions:')
     print('  void create_optimizer(string optimizer_id, OptimizerKind kind, Matrix xlimits, ConstraintSpecs cstr_specs, Options options)')
-    print('  void create_mixint_optimizer(string optimizer_id, OptimizerKind kind, Xtypes xtypes, ConstraintSpecs cstr_specs, Options options)')
+    print('  void create_mixint_optimizer(string optimizer_id, OptimizerKind kind, Xtypes xtypes, Integer n_obj, ConstraintSpecs cstr_specs, Options options)')
     print('  OptimizerResult ask(string optimizer_id)')
     print('  void tell(string optimizer_id, Matrix x, Matrix y)')
     print('  void destroy_optimizer(string surrogate_id)')
@@ -115,10 +115,10 @@ if cmd == 'create_optimizer':
     pp.pprint(client.create_optimizer(args[0], eval(args[1]), eval(args[2]), eval(args[3]), eval(args[4]),))
 
 elif cmd == 'create_mixint_optimizer':
-    if len(args) != 5:
-        print('create_mixint_optimizer requires 5 args')
+    if len(args) != 6:
+        print('create_mixint_optimizer requires 6 args')
         sys.exit(1)
-    pp.pprint(client.create_mixint_optimizer(args[0], eval(args[1]), eval(args[2]), eval(args[3]), eval(args[4]),))
+    pp.pprint(client.create_mixint_optimizer(args[0], eval(args[1]), eval(args[2]), eval(args[3]), eval(args[4]), eval(args[5]),))
 
 elif cmd == 'ask':
     if len(args) != 1:

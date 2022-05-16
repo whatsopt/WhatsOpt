@@ -7,15 +7,21 @@ except ImportError:
     import pickle
 
 from whatsopt_server.optimizer_store.segomoe_optimizer import SegomoeOptimizer
+from whatsopt_server.optimizer_store.segmoomoe_optimizer import SegmoomoeOptimizer
 
 
 class OptimizerStore(object):
 
-    OPTIMIZER_NAMES = ["SEGOMOE"]
+    OPTIMIZER_NAMES = ["SEGOMOE", "SEGMOOMOE"]
 
     def __init__(self, outdir="."):
         self.outdir = outdir
-        self.optimizer_classes = {"SEGOMOE": SegomoeOptimizer}
+        self.optimizer_classes = {
+            "SEGOMOE": SegomoeOptimizer,
+        }
+        self.mixint_optimizer_classes = {
+            "SEGMOOMOE": SegmoomoeOptimizer,
+        }
         if not os.path.exists(outdir):
             os.makedirs(outdir)
 
@@ -31,6 +37,29 @@ class OptimizerStore(object):
         print("options = {}".format(optimizer_options))
         self.optimizer = self.optimizer_classes[optimizer_kind](
             xlimits, cstr_specs, **optimizer_options
+        )
+
+        self._dump(optimizer_id)
+        return self.optimizer
+
+    def create_mixint_optimizer(
+        self,
+        optimizer_id,
+        optimizer_kind,
+        xtypes,
+        n_obj=1,
+        cstr_specs=[],
+        optimizer_options={},
+    ):
+        if optimizer_kind not in OptimizerStore.OPTIMIZER_NAMES:
+            raise Exception(
+                "Unknown optimizer {} not in {}".format(
+                    optimizer_kind, OptimizerStore.OPTIMIZER_NAMES
+                )
+            )
+        print("options = {}".format(optimizer_options))
+        self.optimizer = self.mixint_optimizer_classes[optimizer_kind](
+            xtypes, n_obj, cstr_specs, **optimizer_options
         )
 
         self._dump(optimizer_id)

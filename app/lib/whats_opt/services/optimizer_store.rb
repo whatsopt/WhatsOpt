@@ -28,13 +28,13 @@ module WhatsOpt
           return
         end
 
-        def create_mixint_optimizer(optimizer_id, kind, xtypes, cstr_specs, options)
-          send_create_mixint_optimizer(optimizer_id, kind, xtypes, cstr_specs, options)
+        def create_mixint_optimizer(optimizer_id, kind, xtypes, n_obj, cstr_specs, options)
+          send_create_mixint_optimizer(optimizer_id, kind, xtypes, n_obj, cstr_specs, options)
           recv_create_mixint_optimizer()
         end
 
-        def send_create_mixint_optimizer(optimizer_id, kind, xtypes, cstr_specs, options)
-          send_message('create_mixint_optimizer', Create_mixint_optimizer_args, :optimizer_id => optimizer_id, :kind => kind, :xtypes => xtypes, :cstr_specs => cstr_specs, :options => options)
+        def send_create_mixint_optimizer(optimizer_id, kind, xtypes, n_obj, cstr_specs, options)
+          send_message('create_mixint_optimizer', Create_mixint_optimizer_args, :optimizer_id => optimizer_id, :kind => kind, :xtypes => xtypes, :n_obj => n_obj, :cstr_specs => cstr_specs, :options => options)
         end
 
         def recv_create_mixint_optimizer()
@@ -108,7 +108,7 @@ module WhatsOpt
           args = read_args(iprot, Create_mixint_optimizer_args)
           result = Create_mixint_optimizer_result.new()
           begin
-            @handler.create_mixint_optimizer(args.optimizer_id, args.kind, args.xtypes, args.cstr_specs, args.options)
+            @handler.create_mixint_optimizer(args.optimizer_id, args.kind, args.xtypes, args.n_obj, args.cstr_specs, args.options)
           rescue ::WhatsOpt::Services::OptimizerException => exc
             result.exc = exc
           end
@@ -196,13 +196,15 @@ module WhatsOpt
         OPTIMIZER_ID = 1
         KIND = 2
         XTYPES = 3
-        CSTR_SPECS = 4
-        OPTIONS = 5
+        N_OBJ = 4
+        CSTR_SPECS = 5
+        OPTIONS = 6
 
         FIELDS = {
           OPTIMIZER_ID => {:type => ::Thrift::Types::STRING, :name => 'optimizer_id'},
           KIND => {:type => ::Thrift::Types::I32, :name => 'kind', :enum_class => ::WhatsOpt::Services::OptimizerKind},
           XTYPES => {:type => ::Thrift::Types::LIST, :name => 'xtypes', :element => {:type => ::Thrift::Types::STRUCT, :class => ::WhatsOpt::Services::Xtype}},
+          N_OBJ => {:type => ::Thrift::Types::I64, :name => 'n_obj'},
           CSTR_SPECS => {:type => ::Thrift::Types::LIST, :name => 'cstr_specs', :element => {:type => ::Thrift::Types::STRUCT, :class => ::WhatsOpt::Services::ConstraintSpec}},
           OPTIONS => {:type => ::Thrift::Types::MAP, :name => 'options', :key => {:type => ::Thrift::Types::STRING}, :value => {:type => ::Thrift::Types::STRUCT, :class => ::WhatsOpt::Services::OptionValue}}
         }

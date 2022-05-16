@@ -724,7 +724,7 @@ class ConstraintSpec(object):
         return not (self == other)
 
 
-class FBounds(object):
+class Flimits(object):
     """
     Attributes:
      - lower
@@ -765,7 +765,7 @@ class FBounds(object):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
             oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
             return
-        oprot.writeStructBegin('FBounds')
+        oprot.writeStructBegin('Flimits')
         if self.lower is not None:
             oprot.writeFieldBegin('lower', TType.DOUBLE, 1)
             oprot.writeDouble(self.lower)
@@ -792,7 +792,7 @@ class FBounds(object):
         return not (self == other)
 
 
-class IBounds(object):
+class Ilimits(object):
     """
     Attributes:
      - lower
@@ -833,7 +833,7 @@ class IBounds(object):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
             oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
             return
-        oprot.writeStructBegin('IBounds')
+        oprot.writeStructBegin('Ilimits')
         if self.lower is not None:
             oprot.writeFieldBegin('lower', TType.I64, 1)
             oprot.writeI64(self.lower)
@@ -860,22 +860,22 @@ class IBounds(object):
         return not (self == other)
 
 
-class Limit(object):
+class Xlimits(object):
     """
     Attributes:
-     - flimit
-     - ilimit
-     - olimit
-     - elimit
+     - flimits
+     - ilimits
+     - olimits
+     - elimits
 
     """
 
 
-    def __init__(self, flimit=None, ilimit=None, olimit=None, elimit=None,):
-        self.flimit = flimit
-        self.ilimit = ilimit
-        self.olimit = olimit
-        self.elimit = elimit
+    def __init__(self, flimits=None, ilimits=None, olimits=None, elimits=None,):
+        self.flimits = flimits
+        self.ilimits = ilimits
+        self.olimits = olimits
+        self.elimits = elimits
 
     def read(self, iprot):
         if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
@@ -888,33 +888,33 @@ class Limit(object):
                 break
             if fid == 1:
                 if ftype == TType.STRUCT:
-                    self.flimit = FBounds()
-                    self.flimit.read(iprot)
+                    self.flimits = Flimits()
+                    self.flimits.read(iprot)
                 else:
                     iprot.skip(ftype)
             elif fid == 2:
                 if ftype == TType.STRUCT:
-                    self.ilimit = IBounds()
-                    self.ilimit.read(iprot)
+                    self.ilimits = Ilimits()
+                    self.ilimits.read(iprot)
                 else:
                     iprot.skip(ftype)
             elif fid == 3:
                 if ftype == TType.LIST:
-                    self.olimit = []
+                    self.olimits = []
                     (_etype61, _size58) = iprot.readListBegin()
                     for _i62 in range(_size58):
                         _elem63 = iprot.readDouble()
-                        self.olimit.append(_elem63)
+                        self.olimits.append(_elem63)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
             elif fid == 4:
                 if ftype == TType.LIST:
-                    self.elimit = []
+                    self.elimits = []
                     (_etype67, _size64) = iprot.readListBegin()
                     for _i68 in range(_size64):
                         _elem69 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
-                        self.elimit.append(_elem69)
+                        self.elimits.append(_elem69)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
@@ -927,26 +927,26 @@ class Limit(object):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
             oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
             return
-        oprot.writeStructBegin('Limit')
-        if self.flimit is not None:
-            oprot.writeFieldBegin('flimit', TType.STRUCT, 1)
-            self.flimit.write(oprot)
+        oprot.writeStructBegin('Xlimits')
+        if self.flimits is not None:
+            oprot.writeFieldBegin('flimits', TType.STRUCT, 1)
+            self.flimits.write(oprot)
             oprot.writeFieldEnd()
-        if self.ilimit is not None:
-            oprot.writeFieldBegin('ilimit', TType.STRUCT, 2)
-            self.ilimit.write(oprot)
+        if self.ilimits is not None:
+            oprot.writeFieldBegin('ilimits', TType.STRUCT, 2)
+            self.ilimits.write(oprot)
             oprot.writeFieldEnd()
-        if self.olimit is not None:
-            oprot.writeFieldBegin('olimit', TType.LIST, 3)
-            oprot.writeListBegin(TType.DOUBLE, len(self.olimit))
-            for iter70 in self.olimit:
+        if self.olimits is not None:
+            oprot.writeFieldBegin('olimits', TType.LIST, 3)
+            oprot.writeListBegin(TType.DOUBLE, len(self.olimits))
+            for iter70 in self.olimits:
                 oprot.writeDouble(iter70)
             oprot.writeListEnd()
             oprot.writeFieldEnd()
-        if self.elimit is not None:
-            oprot.writeFieldBegin('elimit', TType.LIST, 4)
-            oprot.writeListBegin(TType.STRING, len(self.elimit))
-            for iter71 in self.elimit:
+        if self.elimits is not None:
+            oprot.writeFieldBegin('elimits', TType.LIST, 4)
+            oprot.writeListBegin(TType.STRING, len(self.elimits))
+            for iter71 in self.elimits:
                 oprot.writeString(iter71.encode('utf-8') if sys.version_info[0] == 2 else iter71)
             oprot.writeListEnd()
             oprot.writeFieldEnd()
@@ -971,15 +971,15 @@ class Limit(object):
 class Xtype(object):
     """
     Attributes:
-     - xtype
-     - xlimit
+     - type
+     - limits
 
     """
 
 
-    def __init__(self, xtype=None, xlimit=None,):
-        self.xtype = xtype
-        self.xlimit = xlimit
+    def __init__(self, type=None, limits=None,):
+        self.type = type
+        self.limits = limits
 
     def read(self, iprot):
         if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
@@ -992,13 +992,13 @@ class Xtype(object):
                 break
             if fid == 1:
                 if ftype == TType.I32:
-                    self.xtype = iprot.readI32()
+                    self.type = iprot.readI32()
                 else:
                     iprot.skip(ftype)
             elif fid == 2:
                 if ftype == TType.STRUCT:
-                    self.xlimit = Limit()
-                    self.xlimit.read(iprot)
+                    self.limits = Xlimits()
+                    self.limits.read(iprot)
                 else:
                     iprot.skip(ftype)
             else:
@@ -1011,13 +1011,13 @@ class Xtype(object):
             oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
             return
         oprot.writeStructBegin('Xtype')
-        if self.xtype is not None:
-            oprot.writeFieldBegin('xtype', TType.I32, 1)
-            oprot.writeI32(self.xtype)
+        if self.type is not None:
+            oprot.writeFieldBegin('type', TType.I32, 1)
+            oprot.writeI32(self.type)
             oprot.writeFieldEnd()
-        if self.xlimit is not None:
-            oprot.writeFieldBegin('xlimit', TType.STRUCT, 2)
-            self.xlimit.write(oprot)
+        if self.limits is not None:
+            oprot.writeFieldBegin('limits', TType.STRUCT, 2)
+            self.limits.write(oprot)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
@@ -1084,31 +1084,31 @@ ConstraintSpec.thrift_spec = (
     (1, TType.I32, 'type', None, None, ),  # 1
     (2, TType.DOUBLE, 'bound', None, None, ),  # 2
 )
-all_structs.append(FBounds)
-FBounds.thrift_spec = (
+all_structs.append(Flimits)
+Flimits.thrift_spec = (
     None,  # 0
     (1, TType.DOUBLE, 'lower', None, None, ),  # 1
     (2, TType.DOUBLE, 'upper', None, None, ),  # 2
 )
-all_structs.append(IBounds)
-IBounds.thrift_spec = (
+all_structs.append(Ilimits)
+Ilimits.thrift_spec = (
     None,  # 0
     (1, TType.I64, 'lower', None, None, ),  # 1
     (2, TType.I64, 'upper', None, None, ),  # 2
 )
-all_structs.append(Limit)
-Limit.thrift_spec = (
+all_structs.append(Xlimits)
+Xlimits.thrift_spec = (
     None,  # 0
-    (1, TType.STRUCT, 'flimit', [FBounds, None], None, ),  # 1
-    (2, TType.STRUCT, 'ilimit', [IBounds, None], None, ),  # 2
-    (3, TType.LIST, 'olimit', (TType.DOUBLE, None, False), None, ),  # 3
-    (4, TType.LIST, 'elimit', (TType.STRING, 'UTF8', False), None, ),  # 4
+    (1, TType.STRUCT, 'flimits', [Flimits, None], None, ),  # 1
+    (2, TType.STRUCT, 'ilimits', [Ilimits, None], None, ),  # 2
+    (3, TType.LIST, 'olimits', (TType.DOUBLE, None, False), None, ),  # 3
+    (4, TType.LIST, 'elimits', (TType.STRING, 'UTF8', False), None, ),  # 4
 )
 all_structs.append(Xtype)
 Xtype.thrift_spec = (
     None,  # 0
-    (1, TType.I32, 'xtype', None, None, ),  # 1
-    (2, TType.STRUCT, 'xlimit', [Limit, None], None, ),  # 2
+    (1, TType.I32, 'type', None, None, ),  # 1
+    (2, TType.STRUCT, 'limits', [Xlimits, None], None, ),  # 2
 )
 fix_spec(all_structs)
 del all_structs

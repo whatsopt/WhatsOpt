@@ -59,11 +59,11 @@ module WhatsOpt
 
     class ConstraintSpec; end
 
-    class FBounds; end
+    class Flimits; end
 
-    class IBounds; end
+    class Ilimits; end
 
-    class Limit < ::Thrift::Union; end
+    class Xlimits < ::Thrift::Union; end
 
     class Xtype; end
 
@@ -230,7 +230,7 @@ module WhatsOpt
       ::Thrift::Struct.generate_accessors self
     end
 
-    class FBounds
+    class Flimits
       include ::Thrift::Struct, ::Thrift::Struct_Union
       LOWER = 1
       UPPER = 2
@@ -248,7 +248,7 @@ module WhatsOpt
       ::Thrift::Struct.generate_accessors self
     end
 
-    class IBounds
+    class Ilimits
       include ::Thrift::Struct, ::Thrift::Struct_Union
       LOWER = 1
       UPPER = 2
@@ -266,36 +266,36 @@ module WhatsOpt
       ::Thrift::Struct.generate_accessors self
     end
 
-    class Limit < ::Thrift::Union
+    class Xlimits < ::Thrift::Union
       include ::Thrift::Struct_Union
       class << self
-        def flimit(val)
-          Limit.new(:flimit, val)
+        def flimits(val)
+          Xlimits.new(:flimits, val)
         end
 
-        def ilimit(val)
-          Limit.new(:ilimit, val)
+        def ilimits(val)
+          Xlimits.new(:ilimits, val)
         end
 
-        def olimit(val)
-          Limit.new(:olimit, val)
+        def olimits(val)
+          Xlimits.new(:olimits, val)
         end
 
-        def elimit(val)
-          Limit.new(:elimit, val)
+        def elimits(val)
+          Xlimits.new(:elimits, val)
         end
       end
 
-      FLIMIT = 1
-      ILIMIT = 2
-      OLIMIT = 3
-      ELIMIT = 4
+      FLIMITS = 1
+      ILIMITS = 2
+      OLIMITS = 3
+      ELIMITS = 4
 
       FIELDS = {
-        FLIMIT => {:type => ::Thrift::Types::STRUCT, :name => 'flimit', :class => ::WhatsOpt::Services::FBounds, :optional => true},
-        ILIMIT => {:type => ::Thrift::Types::STRUCT, :name => 'ilimit', :class => ::WhatsOpt::Services::IBounds, :optional => true},
-        OLIMIT => {:type => ::Thrift::Types::LIST, :name => 'olimit', :element => {:type => ::Thrift::Types::DOUBLE}, :optional => true},
-        ELIMIT => {:type => ::Thrift::Types::LIST, :name => 'elimit', :element => {:type => ::Thrift::Types::STRING}, :optional => true}
+        FLIMITS => {:type => ::Thrift::Types::STRUCT, :name => 'flimits', :class => ::WhatsOpt::Services::Flimits, :optional => true},
+        ILIMITS => {:type => ::Thrift::Types::STRUCT, :name => 'ilimits', :class => ::WhatsOpt::Services::Ilimits, :optional => true},
+        OLIMITS => {:type => ::Thrift::Types::LIST, :name => 'olimits', :element => {:type => ::Thrift::Types::DOUBLE}, :optional => true},
+        ELIMITS => {:type => ::Thrift::Types::LIST, :name => 'elimits', :element => {:type => ::Thrift::Types::STRING}, :optional => true}
       }
 
       def struct_fields; FIELDS; end
@@ -309,19 +309,19 @@ module WhatsOpt
 
     class Xtype
       include ::Thrift::Struct, ::Thrift::Struct_Union
-      XTYPE = 1
-      XLIMIT = 2
+      TYPE = 1
+      LIMITS = 2
 
       FIELDS = {
-        XTYPE => {:type => ::Thrift::Types::I32, :name => 'xtype', :enum_class => ::WhatsOpt::Services::Type},
-        XLIMIT => {:type => ::Thrift::Types::STRUCT, :name => 'xlimit', :class => ::WhatsOpt::Services::Limit}
+        TYPE => {:type => ::Thrift::Types::I32, :name => 'type', :enum_class => ::WhatsOpt::Services::Type},
+        LIMITS => {:type => ::Thrift::Types::STRUCT, :name => 'limits', :class => ::WhatsOpt::Services::Xlimits}
       }
 
       def struct_fields; FIELDS; end
 
       def validate
-        unless @xtype.nil? || ::WhatsOpt::Services::Type::VALID_VALUES.include?(@xtype)
-          raise ::Thrift::ProtocolException.new(::Thrift::ProtocolException::UNKNOWN, 'Invalid value of field xtype!')
+        unless @type.nil? || ::WhatsOpt::Services::Type::VALID_VALUES.include?(@type)
+          raise ::Thrift::ProtocolException.new(::Thrift::ProtocolException::UNKNOWN, 'Invalid value of field type!')
         end
       end
 

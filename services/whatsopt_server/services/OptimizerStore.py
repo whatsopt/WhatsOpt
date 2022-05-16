@@ -31,12 +31,13 @@ class Iface(object):
         """
         pass
 
-    def create_mixint_optimizer(self, optimizer_id, kind, xtypes, cstr_specs, options):
+    def create_mixint_optimizer(self, optimizer_id, kind, xtypes, n_obj, cstr_specs, options):
         """
         Parameters:
          - optimizer_id
          - kind
          - xtypes
+         - n_obj
          - cstr_specs
          - options
 
@@ -117,25 +118,27 @@ class Client(Iface):
             raise result.exc
         return
 
-    def create_mixint_optimizer(self, optimizer_id, kind, xtypes, cstr_specs, options):
+    def create_mixint_optimizer(self, optimizer_id, kind, xtypes, n_obj, cstr_specs, options):
         """
         Parameters:
          - optimizer_id
          - kind
          - xtypes
+         - n_obj
          - cstr_specs
          - options
 
         """
-        self.send_create_mixint_optimizer(optimizer_id, kind, xtypes, cstr_specs, options)
+        self.send_create_mixint_optimizer(optimizer_id, kind, xtypes, n_obj, cstr_specs, options)
         self.recv_create_mixint_optimizer()
 
-    def send_create_mixint_optimizer(self, optimizer_id, kind, xtypes, cstr_specs, options):
+    def send_create_mixint_optimizer(self, optimizer_id, kind, xtypes, n_obj, cstr_specs, options):
         self._oprot.writeMessageBegin('create_mixint_optimizer', TMessageType.CALL, self._seqid)
         args = create_mixint_optimizer_args()
         args.optimizer_id = optimizer_id
         args.kind = kind
         args.xtypes = xtypes
+        args.n_obj = n_obj
         args.cstr_specs = cstr_specs
         args.options = options
         args.write(self._oprot)
@@ -321,7 +324,7 @@ class Processor(Iface, TProcessor):
         iprot.readMessageEnd()
         result = create_mixint_optimizer_result()
         try:
-            self._handler.create_mixint_optimizer(args.optimizer_id, args.kind, args.xtypes, args.cstr_specs, args.options)
+            self._handler.create_mixint_optimizer(args.optimizer_id, args.kind, args.xtypes, args.n_obj, args.cstr_specs, args.options)
             msg_type = TMessageType.REPLY
         except TTransport.TTransportException:
             raise
@@ -634,16 +637,18 @@ class create_mixint_optimizer_args(object):
      - optimizer_id
      - kind
      - xtypes
+     - n_obj
      - cstr_specs
      - options
 
     """
 
 
-    def __init__(self, optimizer_id=None, kind=None, xtypes=None, cstr_specs=None, options=None,):
+    def __init__(self, optimizer_id=None, kind=None, xtypes=None, n_obj=None, cstr_specs=None, options=None,):
         self.optimizer_id = optimizer_id
         self.kind = kind
         self.xtypes = xtypes
+        self.n_obj = n_obj
         self.cstr_specs = cstr_specs
         self.options = options
 
@@ -678,6 +683,11 @@ class create_mixint_optimizer_args(object):
                 else:
                     iprot.skip(ftype)
             elif fid == 4:
+                if ftype == TType.I64:
+                    self.n_obj = iprot.readI64()
+                else:
+                    iprot.skip(ftype)
+            elif fid == 5:
                 if ftype == TType.LIST:
                     self.cstr_specs = []
                     (_etype190, _size187) = iprot.readListBegin()
@@ -688,7 +698,7 @@ class create_mixint_optimizer_args(object):
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
-            elif fid == 5:
+            elif fid == 6:
                 if ftype == TType.MAP:
                     self.options = {}
                     (_ktype194, _vtype195, _size193) = iprot.readMapBegin()
@@ -725,15 +735,19 @@ class create_mixint_optimizer_args(object):
                 iter200.write(oprot)
             oprot.writeListEnd()
             oprot.writeFieldEnd()
+        if self.n_obj is not None:
+            oprot.writeFieldBegin('n_obj', TType.I64, 4)
+            oprot.writeI64(self.n_obj)
+            oprot.writeFieldEnd()
         if self.cstr_specs is not None:
-            oprot.writeFieldBegin('cstr_specs', TType.LIST, 4)
+            oprot.writeFieldBegin('cstr_specs', TType.LIST, 5)
             oprot.writeListBegin(TType.STRUCT, len(self.cstr_specs))
             for iter201 in self.cstr_specs:
                 iter201.write(oprot)
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         if self.options is not None:
-            oprot.writeFieldBegin('options', TType.MAP, 5)
+            oprot.writeFieldBegin('options', TType.MAP, 6)
             oprot.writeMapBegin(TType.STRING, TType.STRUCT, len(self.options))
             for kiter202, viter203 in self.options.items():
                 oprot.writeString(kiter202.encode('utf-8') if sys.version_info[0] == 2 else kiter202)
@@ -762,8 +776,9 @@ create_mixint_optimizer_args.thrift_spec = (
     (1, TType.STRING, 'optimizer_id', 'UTF8', None, ),  # 1
     (2, TType.I32, 'kind', None, None, ),  # 2
     (3, TType.LIST, 'xtypes', (TType.STRUCT, [Xtype, None], False), None, ),  # 3
-    (4, TType.LIST, 'cstr_specs', (TType.STRUCT, [ConstraintSpec, None], False), None, ),  # 4
-    (5, TType.MAP, 'options', (TType.STRING, 'UTF8', TType.STRUCT, [OptionValue, None], False), None, ),  # 5
+    (4, TType.I64, 'n_obj', None, None, ),  # 4
+    (5, TType.LIST, 'cstr_specs', (TType.STRUCT, [ConstraintSpec, None], False), None, ),  # 5
+    (6, TType.MAP, 'options', (TType.STRING, 'UTF8', TType.STRUCT, [OptionValue, None], False), None, ),  # 6
 )
 
 
