@@ -81,7 +81,8 @@ service SurrogateStore {
 
 
 enum OptimizerKind {
-  SEGOMOE
+  SEGOMOE,
+  SEGMOOMOE
 }
 
 struct OptimizerResult {
@@ -101,6 +102,34 @@ struct ConstraintSpec {
 }
 typedef list<ConstraintSpec> ConstraintSpecs;
 
+enum Type {
+  FLOAT,
+  INT,
+  ORD,
+  ENUM
+}
+struct FBounds {
+  1: Float lower,
+  2: Float upper 
+}
+struct IBounds {
+  1: Integer lower,
+  2: Integer upper 
+}
+typedef list<Float> OBounds
+typedef list<string> EBounds
+union Limit {
+  1: FBounds flimit,
+  2: IBounds ilimit,
+  3: OBounds olimit,
+  4: EBounds elimit
+}
+struct Xtype {
+  1: Type xtype,
+  2: Limit xlimit
+}
+typedef list<Xtype> Xtypes;
+
 service OptimizerStore {
 
   void create_optimizer(1: string optimizer_id,
@@ -108,6 +137,12 @@ service OptimizerStore {
                         3: Matrix xlimits, 
                         4: ConstraintSpecs cstr_specs, 
                         5: Options options) throws (1: OptimizerException exc);
+
+  void create_mixint_optimizer(1: string optimizer_id,
+                               2: OptimizerKind kind,
+                               3: Xtypes xtypes, 
+                               4: ConstraintSpecs cstr_specs, 
+                               5: Options options) throws (1: OptimizerException exc);
 
   OptimizerResult ask(1: string optimizer_id) throws (1: OptimizerException exc);
 
