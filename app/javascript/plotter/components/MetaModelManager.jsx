@@ -18,7 +18,7 @@ const UQ_SCHEMA = {
   properties: {
     kind: {
       type: 'string',
-      title: 'Distribution Kind',
+      title: 'Method',
       enum: [OPENTURNS_PCE],
       enumNames: ['Polynomial Chaos Expension'],
       default: SMT_KRIGING,
@@ -54,7 +54,7 @@ const OPTIM_SCHEMA = {
   properties: {
     kind: {
       type: 'string',
-      title: 'Distribution Kind',
+      title: 'Method',
       enum: [SMT_KRIGING, SMT_KPLS, SMT_KPLSK, SMT_LS, SMT_QP],
       enumNames: ['Kriging', 'KPLS (Kriging+PLS)', 'KPLSK (Kriging+PLS+KPLS initial guess)',
         'Least-Squares Approximation', 'Quadratic Polynomial Approximation'],
