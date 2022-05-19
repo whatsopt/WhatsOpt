@@ -82,9 +82,11 @@ class OptimizerStoreHandler:
         print("ASK", optimizer_id)
         optim = self.optim_store.get_optimizer(optimizer_id)
         if optim:
-            status, x = optim.ask()
-            print("status = {}, x_suggested = {}".format(status, x))
-            return OptimizerStoreTypes.OptimizerResult(status=status, x_suggested=x)
+            status, next_x, _ = optim.ask()
+            print(f"status = {status}, x_suggested = {next_x}")
+            return OptimizerStoreTypes.OptimizerResult(
+                status=status, x_suggested=next_x
+            )
         else:
             return OptimizerStoreTypes.OptimizerResult(status=status, x_suggested=[])
 

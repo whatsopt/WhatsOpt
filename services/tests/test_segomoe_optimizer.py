@@ -30,7 +30,7 @@ class TestSegomoeOptimizer(unittest.TestCase):
         res = segomoe.ask()
 
         # status, x_suggested, y_value, t_elapsed = res
-        status, x_suggested = res
+        status, x_suggested, _ = res
         self.assertEqual(0, status)
         print(status, x_suggested)
 
@@ -66,7 +66,7 @@ class TestSegomoeOptimizer(unittest.TestCase):
         res = segomoe.ask()
 
         # status, x_suggested, y_value, t_elapsed = res
-        status, x_suggested = res
+        status, x_suggested, _ = res
         print(status, x_suggested)
 
 

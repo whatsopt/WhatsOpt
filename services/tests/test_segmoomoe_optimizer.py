@@ -176,7 +176,7 @@ class TestSegmoomoeOptimizer(unittest.TestCase):
         res = segmoomoe.ask()
 
         # status, x_suggested, y_value, t_elapsed = res
-        status, x_suggested = res
+        status, x_suggested, _ = res
         print(status, x_suggested)
 
 

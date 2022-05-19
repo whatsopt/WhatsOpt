@@ -163,7 +163,7 @@ class SegmoomoeOptimizer(object):
 
         next_x = None
         with tempfile.TemporaryDirectory() as tmpdir:
-            tmpdir = "./out"
+            # tmpdir = "./out"
             np.save(os.path.join(tmpdir, "doe"), self.x)
             np.save(os.path.join(tmpdir, "doe_response"), self.y)
             segmoomoe = MOO(
@@ -172,7 +172,6 @@ class SegmoomoeOptimizer(object):
                 n_obj=self.n_obj,
                 const=cons,
                 path_hs=tmpdir,
-                dir_out=tmpdir + "/sego",
                 model_type=default_models,
                 **optim_settings,
             )
@@ -181,10 +180,15 @@ class SegmoomoeOptimizer(object):
         if res:
             status = res[0]
             next_x = segmoomoe.sego.get_x()[-1]
+            best_x = res[1]
         else:
             status = 2
             next_x = np.zeros((nx,)).tolist()
+            best_x = np.zeros((nx,)).tolist()
 
-        print(f"status={status}, next_x={next_x}, segmoomoe.res={res}")
+        print(f"status={status}")
+        print(f"next_x={next_x}")
+        print(f"best_x={best_x}")
+        print(f"segmoomoe.res={res}")
 
-        return status, next_x
+        return status, next_x, best_x
