@@ -111,6 +111,7 @@ class SegmoomoeOptimizer(object):
                 raise ValueError("Unknown xtype {xtype.type}")
         xlimits = np.array(xlimits)
 
+        # Fake objective function
         def fun(x):
             return (-1000 * np.ones(self.n_obj), False)
 
@@ -121,8 +122,7 @@ class SegmoomoeOptimizer(object):
                 cstr.get("bound", 0.0),
                 name="c_" + str(i),
                 tol=cstr.get("tol", 1e-4),
-                # f=lambda x: (-np.ones((1, 1)), False),
-                f=CSTR[i],
+                f=lambda x: (-np.ones((1, 1)), False),  # Fake constraint function
             )
             for i, cstr in enumerate(self.constraints)
         ]
