@@ -78,6 +78,80 @@ class OptimizerStoreHandler:
         )
 
     @throw_optimizer_exception
+    def create_mixint_optimizer(
+        self, optimizer_id, optimizer_kind, xtyps, n_obj, cstr_specs, optimizer_options={}
+    ):
+        print(
+            "CREATE ",
+            optimizer_id,
+            optimizer_kind,
+            OPTIMIZERS_MAP[optimizer_kind],
+            xtyps,
+            n_obj,
+            cstr_specs,
+            optimizer_options,
+        )
+
+        xtypes = []
+        xlimits = []
+        for xtype in xtyps:
+            if xtype.type == Type.FLOAT:
+                xtypes.append(mixint.FLOAT)
+                xlimits.append([xtype.limits.flimits.lower, xtype.limits.flimits.upper])
+            elif xtype.type == Type.INT:
+                xtypes.append(mixint.INT)
+                xlimits.append([xtype.limits.ilimits.lower, xtype.limits.ilimits.upper])
+            elif xtype.type == Type.ORD:
+                xtypes.append(mixint.ORD)
+                xlimits.append(xtype.limits.olimits)
+            elif xtype.type == Type.ENUM:
+                xtypes.append((mixint.ENUM, len(xtype.limits.elimits)))
+                xlimits.append(xtype.limits.elimits)
+            else:
+                raise ValueError("Unknown xtype {xtype.type}")
+
+        cspecs = []
+        for cspec in cstr_specs:
+            print(cspec)
+            if cspec.type == OptimizerStoreTypes.ConstraintType.GREATER:
+                cspecs.append({"type": ">", "bound": cspec.bound})
+            elif cspec.type == OptimizerStoreTypes.ConstraintType.EQUAL:
+                cspecs.append({"type": "=", "bound": cspec.bound})
+            elif cspec.type == OptimizerStoreTypes.ConstraintType.LESS:
+                cspecs.append({"type": "<", "bound": cspec.bound})
+            else:
+                raise ValueError(
+                    "Bad constraint specification: should be <, > or =, got {}".format(
+                        cspec.type
+                    )
+                )
+        optimizer_opts = {}
+        for k, v in optimizer_options.items():
+            if v.integer is not None:
+                optimizer_opts[k] = v.integer
+            if v.number is not None:
+                optimizer_opts[k] = v.number
+            if v.vector is not None:
+                optimizer_opts[k] = v.vector
+            if v.matrix is not None:
+                optimizer_opts[k] = v.matrix
+            if v.str is not None:
+                optimizer_opts[k] = v.str
+
+        self.optim_store.create_mixint_optimizer(
+            optimizer_id,
+            OPTIMIZERS_MAP[optimizer_kind],
+            xtypes,
+            xlimits,
+            n_obj,
+            cspecs,
+            optimizer_opts,
+        )
+
+
+
+
+    @throw_optimizer_exception
     def ask(self, optimizer_id):
         print("ASK", optimizer_id)
         optim = self.optim_store.get_optimizer(optimizer_id)

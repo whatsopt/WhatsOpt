@@ -21,7 +21,7 @@ class Optimization < ApplicationRecord
   RUNNING = 4
   OPTIMIZER_STATUS = [VALID_POINT, INVALID_POINT, RUNTIME_ERROR, SOLUTION_REACHED, RUNNING, PENDING]
 
-  store :config, accessors: [:xtypes, :xlimits, :n_obj, :cstr_specs], coder: JSON
+  store :config, accessors: [:xtypes, :xlimits, :n_obj, :cstr_specs, :options], coder: JSON
   store :inputs, accessors: [:x, :y], coder: JSON
   store :outputs, accessors: [:status, :x_suggested], coder: JSON
 
@@ -33,11 +33,13 @@ class Optimization < ApplicationRecord
   def create_optimizer
     unless new_record?
       if self.kind == "SEGOMOE"
-        proxy.create_optimizer(Optimization::OPTIMIZER_KINDS[kind], self.xlimits, self.cstr_specs)
+        proxy.create_optimizer(Optimization::OPTIMIZER_KINDS[self.kind], self.xlimits, self.cstr_specs)
       else
-        proxy.create_mixint_optimizer(Optimization::OPTIMIZER_KINDS[kind], self.xtypes, self.n_obj, self.cstr_specs)
+        proxy.create_mixint_optimizer(Optimization::OPTIMIZER_KINDS[self.kind], self.xtypes, self.n_obj, self.cstr_specs)
       end
     end
+  rescue WhatsOpt::OptimizationProxyError => err
+    raise ConfigurationInvalid.new("Error in optimization proxy: '#{err}'")
   end
 
   def perform
@@ -57,8 +59,8 @@ class Optimization < ApplicationRecord
   end
 
   def check_optimization_config
-    self.kind = "SEGOMOE" if kind.blank?
-    self.n_obj = 1 if n_obj.blank?
+    self.kind = "SEGOMOE" if self.kind.blank?
+    self.n_obj = 1 if self.n_obj.blank?
     unless self.kind == "SEGOMOE" || self.kind == "SEGMOOMOE"
       raise ConfigurationInvalid.new("optimizer kind should be SEGOMOE or SEGMOOMOE, got '#{self.kind}'")
     end
@@ -87,39 +89,36 @@ class Optimization < ApplicationRecord
         raise ConfigurationInvalid.new("xtypes field should be present, got '#{self.xtypes}'")
       end
 
-      begin
-        xtypes.each_with_index do |i, e|
-          case xtype.type
-          when "FLOAT"
-            if xtype.limits.size != 2 && xtype.limits.lower.to_f != xtype.limits.lower && xtype.limits.upper.to_f != xtype.limits.upper
-              raise ConfigurationInvalid.new("xtype.limits should be float [lower, upper], got '#{xtype.limits}'")
-            end
-          when "INT"
-            if xtype.limits.size != 2 && xtype.limits.lower.to_i != xtype.limits.lower && xtype.limits.upper.to_i != xtype.limits.upper
-              raise ConfigurationInvalid.new("xtype.limits should be int [lower, upper], got '#{xtype.limits}'")
-            end
-          when "ORD"
-            begin
-              raise unless xtype.limits.kind_of?(Array)  
-              xtype.limits.each do |l|
-                raise unless l.to_i == l
-              end
-            rescue Exception
-              raise ConfigurationInvalid.new("xtype.limits should be a list of int, got '#{xtype.limits}'")
-            end
-          when "ENUM"
-            begin
-              raise unless xtype.limits.kind_of?(Array)  
-            rescue Exception
-              raise ConfigurationInvalid.new("xtype.limits should be a list of string, got '#{xtype.limits}'")
-            end
-          else 
-            raise ConfigurationInvalid.new("xtype.type should be FLOAT, INT, ORD or ENUM, got '#{xtype.type}'")
+      xtypes.each_with_index do |xt, i|
+        case xt['type']
+        when "float_type"
+          if xt['limits'].size != 2 && xt['limits'][0].to_f != xt['limits'][0] && xt['limits'][1].to_f != xt['limits'][1]
+            raise ConfigurationInvalid.new("xtype.limits should be float [lower, upper], got '#{xt['limits']}'")
           end
+        when "int_type"
+          if xt['limits'].size != 2 && xt['limits'][0].to_i != xt['limits'][0] && xt['limits'][1].to_i != xt['limits'][1]
+            raise ConfigurationInvalid.new("xtype.limits should be int [lower, upper], got '#{xt['limits']}'")
+          end
+        when "ord_type"
+          begin
+            raise unless xt['limits'].kind_of?(Array)  
+            xt['limits'].each do |l|
+              raise unless l.to_i == l
+            end
+          rescue Exception
+            raise ConfigurationInvalid.new("xtype.limits should be a list of int, got '#{xt['limits']}'")
+          end
+        when "enum_type"
+          begin
+            raise unless xt['limits'].kind_of?(Array)  
+          rescue Exception
+            raise ConfigurationInvalid.new("xtype.limits should be a list of string, got '#{xt['limits']}'")
+          end
+        else 
+          raise ConfigurationInvalid.new("xtype.type should be FLOAT, INT, ORD or ENUM, got '#{xt['limits']}'")
         end
-      rescue Exception
-        raise ConfigurationInvalid.new("xlimits should be a matrix (nx, 2), got '#{self.xlimits}'")
       end
+
     else
       self.xtypes = []
     end

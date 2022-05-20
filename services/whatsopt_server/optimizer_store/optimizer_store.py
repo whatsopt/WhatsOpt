@@ -34,7 +34,7 @@ class OptimizerStore(object):
                     optimizer_kind, OptimizerStore.OPTIMIZER_NAMES
                 )
             )
-        print("options = {}".format(optimizer_options))
+        print(f"options = {optimizer_options}")
         self.optimizer = self.optimizer_classes[optimizer_kind](
             xlimits, cstr_specs, **optimizer_options
         )
@@ -47,19 +47,20 @@ class OptimizerStore(object):
         optimizer_id,
         optimizer_kind,
         xtypes,
+        xlimits,
         n_obj=1,
         cstr_specs=[],
         optimizer_options={},
     ):
         if optimizer_kind not in OptimizerStore.OPTIMIZER_NAMES:
-            raise Exception(
+            raise ValueError(
                 "Unknown optimizer {} not in {}".format(
                     optimizer_kind, OptimizerStore.OPTIMIZER_NAMES
                 )
             )
-        print("options = {}".format(optimizer_options))
+        print(f"options = {optimizer_options}")
         self.optimizer = self.mixint_optimizer_classes[optimizer_kind](
-            xtypes, n_obj, cstr_specs, **optimizer_options
+            xtypes, xlimits, n_obj, cstr_specs, **optimizer_options
         )
 
         self._dump(optimizer_id)

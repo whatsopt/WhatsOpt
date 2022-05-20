@@ -37,23 +37,8 @@ class SegmoomoeOptimizer(object):
         self.constraint_handling = "MC"  # or 'UTB'
         self.xtypes = xtypes
         self.n_obj = n_obj
-        self.constraints = self._parse_constraint_specs(cstr_specs)
+        self.constraints = cstr_specs
         self.workdir = tempfile.TemporaryDirectory()
-
-    @staticmethod
-    def _parse_constraint_specs(cstr_specs):
-        cstrs = []
-        for i, spec in enumerate(cstr_specs):
-            if spec["type"] == "<" or spec["type"] == "=" or spec["type"] == ">":
-                cstrs.append({"type": spec["type"], "bound": spec["bound"]})
-            else:
-                print("")
-                raise Exception(
-                    "Bad constraint spec type (n°{}): should match <, = or > , got {}".format(
-                        i + 1, spec
-                    )
-                )
-        return cstrs
 
     def tell(self, x, y):
         print("X *************************************************")
