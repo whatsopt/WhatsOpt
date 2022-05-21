@@ -33,9 +33,10 @@ def g2(x):  # constraint to force x > 0.2
 
 
 class SegmoomoeOptimizer(object):
-    def __init__(self, xtypes, n_obj, cstr_specs=[]):
+    def __init__(self, xtypes, xlimits, n_obj, cstr_specs=[]):
         self.constraint_handling = "MC"  # or 'UTB'
         self.xtypes = xtypes
+        self.xlimits = xlimits
         self.n_obj = n_obj
         self.constraints = cstr_specs
         self.workdir = tempfile.TemporaryDirectory()
@@ -77,25 +78,6 @@ class SegmoomoeOptimizer(object):
         # print("nobj={}, obj={}".format(nobj, obj))
         # print("ncstrs={}, cstrs={}".format(ncstrs, cstrs))
 
-        xtypes = []
-        xlimits = []
-        for xtype in self.xtypes:
-            if xtype.type == Type.FLOAT:
-                xtypes.append(mixint.FLOAT)
-                xlimits.append([xtype.limits.flimits.lower, xtype.limits.flimits.upper])
-            elif xtype.type == Type.INT:
-                xtypes.append(mixint.INT)
-                xlimits.append([xtype.limits.ilimits.lower, xtype.limits.ilimits.upper])
-            elif xtype.type == Type.ORD:
-                xtypes.append(mixint.ORD)
-                xlimits.append(xtype.limits.olimits)
-            elif xtype.type == Type.ENUM:
-                xtypes.append((mixint.ENUM, len(xtypes.limits.elimits)))
-                xlimits.append(xtype.limits.elimits)
-            else:
-                raise ValueError("Unknown xtype {xtype.type}")
-        xlimits = np.array(xlimits)
-
         # Fake objective function
         def fun(x):
             return (-1000 * np.ones(self.n_obj), False)
@@ -126,7 +108,7 @@ class SegmoomoeOptimizer(object):
             "eval_noise": False,
             "corr": "squar_exp",
             "xtypes": xtypes,
-            "xlimits": np.array(xlimits),
+            "xlimits": np.array(self.xlimits),
         }
         mod_con = mod_obj
         default_models = {"obj": mod_obj, "con": mod_con}

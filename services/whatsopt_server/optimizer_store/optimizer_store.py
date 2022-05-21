@@ -12,7 +12,9 @@ from whatsopt_server.optimizer_store.segmoomoe_optimizer import SegmoomoeOptimiz
 
 class OptimizerStore(object):
 
-    OPTIMIZER_NAMES = ["SEGOMOE", "SEGMOOMOE"]
+    SEGOMOE = "SEGOMOE"
+    SEGMOOMOE = "SEGMOOMOE"
+    OPTIMIZER_NAMES = [SEGOMOE, SEGMOOMOE]
 
     def __init__(self, outdir="."):
         self.outdir = outdir

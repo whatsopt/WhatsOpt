@@ -13,9 +13,10 @@ except ImportError:
 
 
 class SegomoeOptimizer(object):
-    def __init__(self, xlimits, cstr_specs=[]):
+    def __init__(self, xlimits, cstr_specs=[], options={}):
         self.constraint_handling = "MC"  # or 'UTB'
         self.xlimits = np.array(xlimits)
+        self.options = options
         self.constraints = self._parse_constraint_specs(cstr_specs)
         self.workdir = tempfile.TemporaryDirectory()
 

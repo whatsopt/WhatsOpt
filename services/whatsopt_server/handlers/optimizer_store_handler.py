@@ -1,8 +1,10 @@
 from whatsopt_server.services import ttypes as OptimizerStoreTypes
 from whatsopt_server.optimizer_store.optimizer_store import OptimizerStore
+import smt.applications.mixed_integer as mixint
 
 OPTIMIZERS_MAP = {
-    OptimizerStoreTypes.OptimizerKind.SEGOMOE: OptimizerStore.OPTIMIZER_NAMES[0]
+    OptimizerStoreTypes.OptimizerKind.SEGOMOE: OptimizerStore.SEGOMOE,
+    OptimizerStoreTypes.OptimizerKind.SEGMOOMOE: OptimizerStore.SEGMOOMOE
 }
 
 
@@ -82,7 +84,7 @@ class OptimizerStoreHandler:
         self, optimizer_id, optimizer_kind, xtyps, n_obj, cstr_specs, optimizer_options={}
     ):
         print(
-            "CREATE ",
+            "CREATE MIXINT OPTIM",
             optimizer_id,
             optimizer_kind,
             OPTIMIZERS_MAP[optimizer_kind],
@@ -95,16 +97,16 @@ class OptimizerStoreHandler:
         xtypes = []
         xlimits = []
         for xtype in xtyps:
-            if xtype.type == Type.FLOAT:
+            if xtype.type == OptimizerStoreTypes.Type.FLOAT:
                 xtypes.append(mixint.FLOAT)
                 xlimits.append([xtype.limits.flimits.lower, xtype.limits.flimits.upper])
-            elif xtype.type == Type.INT:
+            elif xtype.type == OptimizerStoreTypes.Type.INT:
                 xtypes.append(mixint.INT)
                 xlimits.append([xtype.limits.ilimits.lower, xtype.limits.ilimits.upper])
-            elif xtype.type == Type.ORD:
+            elif xtype.type == OptimizerStoreTypes.Type.ORD:
                 xtypes.append(mixint.ORD)
                 xlimits.append(xtype.limits.olimits)
-            elif xtype.type == Type.ENUM:
+            elif xtype.type == OptimizerStoreTypes.Type.ENUM:
                 xtypes.append((mixint.ENUM, len(xtype.limits.elimits)))
                 xlimits.append(xtype.limits.elimits)
             else:
@@ -147,8 +149,6 @@ class OptimizerStoreHandler:
             cspecs,
             optimizer_opts,
         )
-
-
 
 
     @throw_optimizer_exception
