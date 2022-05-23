@@ -88,6 +88,7 @@ enum OptimizerKind {
 struct OptimizerResult {
   1: Integer status,
   2: Vector x_suggested,
+  3: optional Matrix x_optima 
 }
 
 enum ConstraintType {
@@ -145,10 +146,10 @@ service OptimizerStore {
                                5: ConstraintSpecs cstr_specs, 
                                6: Options options) throws (1: OptimizerException exc);
 
-  OptimizerResult ask(1: string optimizer_id) throws (1: OptimizerException exc);
+  OptimizerResult ask(1: string optimizer_id, 2: bool with_optima) throws (1: OptimizerException exc);
 
   void tell(1: string optimizer_id, 2: Matrix x, 3: Matrix y) throws (1: OptimizerException exc);
 
-  void destroy_optimizer(1: string surrogate_id);
+  void destroy_optimizer(1: string optimizer_id);
 }
 

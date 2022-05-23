@@ -585,13 +585,15 @@ class OptimizerResult(object):
     Attributes:
      - status
      - x_suggested
+     - x_optima
 
     """
 
 
-    def __init__(self, status=None, x_suggested=None,):
+    def __init__(self, status=None, x_suggested=None, x_optima=None,):
         self.status = status
         self.x_suggested = x_suggested
+        self.x_optima = x_optima
 
     def read(self, iprot):
         if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
@@ -617,6 +619,21 @@ class OptimizerResult(object):
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
+            elif fid == 3:
+                if ftype == TType.LIST:
+                    self.x_optima = []
+                    (_etype60, _size57) = iprot.readListBegin()
+                    for _i61 in range(_size57):
+                        _elem62 = []
+                        (_etype66, _size63) = iprot.readListBegin()
+                        for _i67 in range(_size63):
+                            _elem68 = iprot.readDouble()
+                            _elem62.append(_elem68)
+                        iprot.readListEnd()
+                        self.x_optima.append(_elem62)
+                    iprot.readListEnd()
+                else:
+                    iprot.skip(ftype)
             else:
                 iprot.skip(ftype)
             iprot.readFieldEnd()
@@ -634,8 +651,18 @@ class OptimizerResult(object):
         if self.x_suggested is not None:
             oprot.writeFieldBegin('x_suggested', TType.LIST, 2)
             oprot.writeListBegin(TType.DOUBLE, len(self.x_suggested))
-            for iter57 in self.x_suggested:
-                oprot.writeDouble(iter57)
+            for iter69 in self.x_suggested:
+                oprot.writeDouble(iter69)
+            oprot.writeListEnd()
+            oprot.writeFieldEnd()
+        if self.x_optima is not None:
+            oprot.writeFieldBegin('x_optima', TType.LIST, 3)
+            oprot.writeListBegin(TType.LIST, len(self.x_optima))
+            for iter70 in self.x_optima:
+                oprot.writeListBegin(TType.DOUBLE, len(iter70))
+                for iter71 in iter70:
+                    oprot.writeDouble(iter71)
+                oprot.writeListEnd()
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
@@ -901,20 +928,20 @@ class Xlimits(object):
             elif fid == 3:
                 if ftype == TType.LIST:
                     self.olimits = []
-                    (_etype61, _size58) = iprot.readListBegin()
-                    for _i62 in range(_size58):
-                        _elem63 = iprot.readDouble()
-                        self.olimits.append(_elem63)
+                    (_etype75, _size72) = iprot.readListBegin()
+                    for _i76 in range(_size72):
+                        _elem77 = iprot.readDouble()
+                        self.olimits.append(_elem77)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
             elif fid == 4:
                 if ftype == TType.LIST:
                     self.elimits = []
-                    (_etype67, _size64) = iprot.readListBegin()
-                    for _i68 in range(_size64):
-                        _elem69 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
-                        self.elimits.append(_elem69)
+                    (_etype81, _size78) = iprot.readListBegin()
+                    for _i82 in range(_size78):
+                        _elem83 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                        self.elimits.append(_elem83)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
@@ -939,15 +966,15 @@ class Xlimits(object):
         if self.olimits is not None:
             oprot.writeFieldBegin('olimits', TType.LIST, 3)
             oprot.writeListBegin(TType.DOUBLE, len(self.olimits))
-            for iter70 in self.olimits:
-                oprot.writeDouble(iter70)
+            for iter84 in self.olimits:
+                oprot.writeDouble(iter84)
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         if self.elimits is not None:
             oprot.writeFieldBegin('elimits', TType.LIST, 4)
             oprot.writeListBegin(TType.STRING, len(self.elimits))
-            for iter71 in self.elimits:
-                oprot.writeString(iter71.encode('utf-8') if sys.version_info[0] == 2 else iter71)
+            for iter85 in self.elimits:
+                oprot.writeString(iter85.encode('utf-8') if sys.version_info[0] == 2 else iter85)
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
@@ -1077,6 +1104,7 @@ OptimizerResult.thrift_spec = (
     None,  # 0
     (1, TType.I64, 'status', None, None, ),  # 1
     (2, TType.LIST, 'x_suggested', (TType.DOUBLE, None, False), None, ),  # 2
+    (3, TType.LIST, 'x_optima', (TType.LIST, (TType.DOUBLE, None, False), False), None, ),  # 3
 )
 all_structs.append(ConstraintSpec)
 ConstraintSpec.thrift_spec = (

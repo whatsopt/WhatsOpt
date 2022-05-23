@@ -25,7 +25,7 @@ class Api::V1::OptimizationsController < Api::ApiController
   # PATCH /api/v1/optimizations/1
   def update
     @optim.check_optimization_inputs(optim_params)
-    inputs = { x: optim_params["x"], y: optim_params["y"] }
+    inputs = { x: optim_params["x"], y: optim_params["y"], with_optima: !!optim_params["with_optima"] }
     @optim.update!(inputs: inputs, outputs: { status: Optimization::RUNNING, x_suggested: nil })
     OptimizationJob.perform_later(@optim)
     head :no_content

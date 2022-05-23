@@ -22,8 +22,8 @@ class Optimization < ApplicationRecord
   OPTIMIZER_STATUS = [VALID_POINT, INVALID_POINT, RUNTIME_ERROR, SOLUTION_REACHED, RUNNING, PENDING]
 
   store :config, accessors: [:xtypes, :xlimits, :n_obj, :cstr_specs, :options], coder: JSON
-  store :inputs, accessors: [:x, :y], coder: JSON
-  store :outputs, accessors: [:status, :x_suggested], coder: JSON
+  store :inputs, accessors: [:x, :y, :with_optima], coder: JSON
+  store :outputs, accessors: [:status, :x_suggested, :x_optima], coder: JSON
 
   class InputInvalid < Exception; end
   class ConfigurationInvalid < Exception; end
@@ -43,10 +43,13 @@ class Optimization < ApplicationRecord
   end
 
   def perform
-    self.update!(outputs: { status: RUNNING, x_suggested: nil })
-    self.proxy.tell(inputs[:x], inputs[:y])
-    res = self.proxy.ask
-    self.update!(outputs: { status: res.status, x_suggested: res.x_suggested })
+    self.update!(outputs: { status: RUNNING, x_suggested: nil, x_optima: nil })
+    self.proxy.tell(self.inputs[:x], self.inputs[:y])
+    p "WITH OPTIMA ", self.inputs[:with_optima]
+    res = self.proxy.ask(self.inputs[:with_optima])
+    outputs = { status: res.status, x_suggested: res.x_suggested }
+    outputs["x_optima"] = res.x_optima if self.inputs[:with_optima]
+    self.update!(outputs: outputs)
   end
 
   def xdim

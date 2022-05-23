@@ -43,13 +43,13 @@ module WhatsOpt
           return
         end
 
-        def ask(optimizer_id)
-          send_ask(optimizer_id)
+        def ask(optimizer_id, with_optima)
+          send_ask(optimizer_id, with_optima)
           return recv_ask()
         end
 
-        def send_ask(optimizer_id)
-          send_message('ask', Ask_args, :optimizer_id => optimizer_id)
+        def send_ask(optimizer_id, with_optima)
+          send_message('ask', Ask_args, :optimizer_id => optimizer_id, :with_optima => with_optima)
         end
 
         def recv_ask()
@@ -74,13 +74,13 @@ module WhatsOpt
           return
         end
 
-        def destroy_optimizer(surrogate_id)
-          send_destroy_optimizer(surrogate_id)
+        def destroy_optimizer(optimizer_id)
+          send_destroy_optimizer(optimizer_id)
           recv_destroy_optimizer()
         end
 
-        def send_destroy_optimizer(surrogate_id)
-          send_message('destroy_optimizer', Destroy_optimizer_args, :surrogate_id => surrogate_id)
+        def send_destroy_optimizer(optimizer_id)
+          send_message('destroy_optimizer', Destroy_optimizer_args, :optimizer_id => optimizer_id)
         end
 
         def recv_destroy_optimizer()
@@ -119,7 +119,7 @@ module WhatsOpt
           args = read_args(iprot, Ask_args)
           result = Ask_result.new()
           begin
-            result.success = @handler.ask(args.optimizer_id)
+            result.success = @handler.ask(args.optimizer_id, args.with_optima)
           rescue ::WhatsOpt::Services::OptimizerException => exc
             result.exc = exc
           end
@@ -140,7 +140,7 @@ module WhatsOpt
         def process_destroy_optimizer(seqid, iprot, oprot)
           args = read_args(iprot, Destroy_optimizer_args)
           result = Destroy_optimizer_result.new()
-          @handler.destroy_optimizer(args.surrogate_id)
+          @handler.destroy_optimizer(args.optimizer_id)
           write_result(result, oprot, 'destroy_optimizer', seqid)
         end
 
@@ -239,9 +239,11 @@ module WhatsOpt
       class Ask_args
         include ::Thrift::Struct, ::Thrift::Struct_Union
         OPTIMIZER_ID = 1
+        WITH_OPTIMA = 2
 
         FIELDS = {
-          OPTIMIZER_ID => {:type => ::Thrift::Types::STRING, :name => 'optimizer_id'}
+          OPTIMIZER_ID => {:type => ::Thrift::Types::STRING, :name => 'optimizer_id'},
+          WITH_OPTIMA => {:type => ::Thrift::Types::BOOL, :name => 'with_optima'}
         }
 
         def struct_fields; FIELDS; end
@@ -308,10 +310,10 @@ module WhatsOpt
 
       class Destroy_optimizer_args
         include ::Thrift::Struct, ::Thrift::Struct_Union
-        SURROGATE_ID = 1
+        OPTIMIZER_ID = 1
 
         FIELDS = {
-          SURROGATE_ID => {:type => ::Thrift::Types::STRING, :name => 'surrogate_id'}
+          OPTIMIZER_ID => {:type => ::Thrift::Types::STRING, :name => 'optimizer_id'}
         }
 
         def struct_fields; FIELDS; end

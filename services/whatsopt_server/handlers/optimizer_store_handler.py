@@ -35,13 +35,8 @@ class OptimizerStoreHandler:
         self, optimizer_id, optimizer_kind, xlimits, cstr_specs, optimizer_options={}
     ):
         print(
-            "CREATE ",
-            optimizer_id,
-            optimizer_kind,
-            OPTIMIZERS_MAP[optimizer_kind],
-            xlimits,
-            cstr_specs,
-            optimizer_options,
+            f"CREATE #{optimizer_id} kind={optimizer_kind} opt={OPTIMIZERS_MAP[optimizer_kind]} " \
+            f"xlimits={xlimits} cstr_specs={cstr_specs} options={optimizer_options}"
         )
         cspecs = []
         for cspec in cstr_specs:
@@ -84,14 +79,8 @@ class OptimizerStoreHandler:
         self, optimizer_id, optimizer_kind, xtyps, n_obj, cstr_specs, optimizer_options={}
     ):
         print(
-            "CREATE MIXINT OPTIM",
-            optimizer_id,
-            optimizer_kind,
-            OPTIMIZERS_MAP[optimizer_kind],
-            xtyps,
-            n_obj,
-            cstr_specs,
-            optimizer_options,
+            f"CREATE #{optimizer_id} kind={optimizer_kind} opt={OPTIMIZERS_MAP[optimizer_kind]} " \
+            f"xlimits={xtyps} n_obj={n_obj} cstr_specs={cstr_specs} options={optimizer_options}"
         )
 
         xtypes = []
@@ -152,23 +141,31 @@ class OptimizerStoreHandler:
 
 
     @throw_optimizer_exception
-    def ask(self, optimizer_id):
-        print("ASK", optimizer_id)
+    def ask(self, optimizer_id, with_optima=False):
+        print(f"ASK #{optimizer_id} with_optima={with_optima}")
         optim = self.optim_store.get_optimizer(optimizer_id)
         if optim:
-            status, next_x, _ = optim.ask()
-            print(f"status = {status}, x_suggested = {next_x}")
-            return OptimizerStoreTypes.OptimizerResult(
-                status=status, x_suggested=next_x
-            )
+            status, next_x, x_optima = optim.ask(with_optima)
+            if with_optima:
+                print(f"status = {status}, x_suggested = {next_x}, x_optima = {x_optima}")
+                return OptimizerStoreTypes.OptimizerResult(
+                    status=status, x_suggested=next_x, x_optima=x_optima
+                )
+            else:
+                print(f"status = {status}, x_suggested = {next_x}")
+                return OptimizerStoreTypes.OptimizerResult(
+                    status=status, x_suggested=next_x
+                )
         else:
             return OptimizerStoreTypes.OptimizerResult(status=status, x_suggested=[])
 
+
     @throw_optimizer_exception
     def tell(self, optimizer_id, x, y):
-        print("TELL", optimizer_id, x, y)
+        print(f"TELL #{optimizer_id} x={x} y={y}")
         self.optim_store.tell_optimizer(optimizer_id, x, y)
 
+
     def destroy_optimizer(self, optimizer_id):
-        print("DESTROY")
+        print(f"DESTROY #{optimizer_id}")
         self.optim_store.destroy_optimizer(optimizer_id)

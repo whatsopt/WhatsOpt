@@ -36,7 +36,7 @@ class SegmoomoeOptimizer(object):
     def __init__(self, xtypes, xlimits, n_obj, cstr_specs=[]):
         self.constraint_handling = "MC"  # or 'UTB'
         self.xtypes = xtypes
-        self.xlimits = xlimits
+        self.xlimits = np.array(xlimits)
         self.n_obj = n_obj
         self.constraints = cstr_specs
         self.workdir = tempfile.TemporaryDirectory()
@@ -59,7 +59,7 @@ class SegmoomoeOptimizer(object):
         self.x = x
         self.y = y
 
-    def ask(self):
+    def ask(self, with_optima=False):
         nx = self.x.shape[1]
         ny = self.y.shape[1]
         if SEGMOOMOE_NOT_INSTALLED:
@@ -107,8 +107,8 @@ class SegmoomoeOptimizer(object):
             "name": "KRG",
             "eval_noise": False,
             "corr": "squar_exp",
-            "xtypes": xtypes,
-            "xlimits": np.array(self.xlimits),
+            "xtypes": self.xtypes,
+            "xlimits": self.xlimits,
         }
         mod_con = mod_obj
         default_models = {"obj": mod_obj, "con": mod_con}
@@ -125,7 +125,7 @@ class SegmoomoeOptimizer(object):
             "verbose": True,
             "grouped_eval": False,
             "n_clusters": 1,
-            "compute_front": False,
+            "compute_front": with_optima,
         }
 
         next_x = None
@@ -134,8 +134,8 @@ class SegmoomoeOptimizer(object):
             np.save(os.path.join(tmpdir, "doe"), self.x)
             np.save(os.path.join(tmpdir, "doe_response"), self.y)
             segmoomoe = MOO(
-                xlimits=xlimits,
-                xtypes=xtypes,
+                xlimits=self.xlimits,
+                xtypes=self.xtypes,
                 n_obj=self.n_obj,
                 const=cons,
                 path_hs=tmpdir,
@@ -145,9 +145,14 @@ class SegmoomoeOptimizer(object):
             res = segmoomoe.optimize(func)
 
         if res:
-            status = res[0]
-            next_x = segmoomoe.sego.get_x()[-1]
-            best_x = res[1]
+            if with_optima:
+                status = segmoomoe.res[0]
+                next_x = segmoomoe.sego.get_x()[-1]
+                best_x = res.X
+            else:
+                status = res[0]
+                next_x = segmoomoe.sego.get_x()[-1]
+                best_x = None
         else:
             status = 2
             next_x = np.zeros((nx,)).tolist()

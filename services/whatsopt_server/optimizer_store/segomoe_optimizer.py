@@ -52,7 +52,7 @@ class SegomoeOptimizer(object):
         self.x = x
         self.y = y
 
-    def ask(self):
+    def ask(self, with_optima):
         nx = self.x.shape[1]
         ny = self.y.shape[1]
         if SEGOMOE_NOT_INSTALLED:
@@ -74,7 +74,7 @@ class SegomoeOptimizer(object):
         print("lower={} upper={}".format(lb, ub))
 
         def f_grouped(x):
-            return -np.inf * np.ones(ny), False
+            return np.inf * np.ones(ny), False
 
         dvars = [{"name": "x_" + str(i), "lb": lb[i], "ub": ub[i]} for i in range(nx)]
         print(dvars)
@@ -137,11 +137,11 @@ class SegomoeOptimizer(object):
         if res:
             status = res[0]
             next_x = sego.get_x()[-1]
-            best_x = res[1]
+            best_x = [res[1][0].tolist()]
         else:
             status = 2
             next_x = np.zeros((nx,)).tolist()
-            best_x = np.zeros((nx,)).tolist()
+            best_x = np.zeros((1, nx)).tolist()
 
         print(f"status={status}")
         print(f"next_x={next_x}")
