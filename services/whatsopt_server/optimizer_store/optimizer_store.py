@@ -28,19 +28,15 @@ class OptimizerStore(object):
             os.makedirs(outdir)
 
     def create_optimizer(
-        self, optimizer_id, optimizer_kind, xlimits, cstr_specs=[], optimizer_options={}
+        self, optimizer_id, optimizer_kind, xlimits, cstr_specs=[], 
+        mod_obj_options={},
+        general_options={},
     ):
-        if optimizer_kind not in OptimizerStore.OPTIMIZER_NAMES:
-            raise Exception(
-                "Unknown optimizer {} not in {}".format(
-                    optimizer_kind, OptimizerStore.OPTIMIZER_NAMES
-                )
-            )
-        print(f"options = {optimizer_options}")
+        print(f"mod obj options = {mod_obj_options}")
+        print(f"general options = {general_options}")
         self.optimizer = self.optimizer_classes[optimizer_kind](
-            xlimits, cstr_specs, **optimizer_options
+            xlimits, cstr_specs, mod_obj_options, general_options
         )
-
         self._dump(optimizer_id)
         return self.optimizer
 
@@ -52,19 +48,14 @@ class OptimizerStore(object):
         xlimits,
         n_obj=1,
         cstr_specs=[],
-        optimizer_options={},
+        mod_obj_options={},
+        general_options={},
     ):
-        if optimizer_kind not in OptimizerStore.OPTIMIZER_NAMES:
-            raise ValueError(
-                "Unknown optimizer {} not in {}".format(
-                    optimizer_kind, OptimizerStore.OPTIMIZER_NAMES
-                )
-            )
-        print(f"options = {optimizer_options}")
+        print(f"mod obj options = {mod_obj_options}")
+        print(f"general options = {general_options}")
         self.optimizer = self.mixint_optimizer_classes[optimizer_kind](
-            xtypes, xlimits, n_obj, cstr_specs, **optimizer_options
+            xtypes, xlimits, n_obj, cstr_specs, mod_obj_options, general_options
         )
-
         self._dump(optimizer_id)
         return self.optimizer
 

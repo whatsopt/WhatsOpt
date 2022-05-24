@@ -7,12 +7,13 @@ typedef list<Float> Vector
 typedef list<Vector> Matrix
 
 typedef string OptionName;
-struct OptionValue {
-  1: optional Integer integer,
-  2: optional Float number,
-  3: optional Vector vector,
-  4: optional Matrix matrix,
-  5: optional string str
+union OptionValue {
+  1: Integer integer,
+  2: Float number,
+  3: Vector vector,
+  4: Matrix matrix,
+  5: string str,
+  6: bool boolean
 }
 typedef map<OptionName, OptionValue> Options;
 typedef map<OptionName, double> Kwargs;

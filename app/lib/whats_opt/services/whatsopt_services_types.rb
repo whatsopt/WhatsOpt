@@ -43,7 +43,7 @@ module WhatsOpt
       VALID_VALUES = Set.new([FLOAT, INT, ORD, ENUM]).freeze
     end
 
-    class OptionValue; end
+    class OptionValue < ::Thrift::Union; end
 
     class SurrogateException < ::Thrift::Exception; end
 
@@ -67,28 +67,57 @@ module WhatsOpt
 
     class Xtype; end
 
-    class OptionValue
-      include ::Thrift::Struct, ::Thrift::Struct_Union
+    class OptionValue < ::Thrift::Union
+      include ::Thrift::Struct_Union
+      class << self
+        def integer(val)
+          OptionValue.new(:integer, val)
+        end
+
+        def number(val)
+          OptionValue.new(:number, val)
+        end
+
+        def vector(val)
+          OptionValue.new(:vector, val)
+        end
+
+        def matrix(val)
+          OptionValue.new(:matrix, val)
+        end
+
+        def str(val)
+          OptionValue.new(:str, val)
+        end
+
+        def boolean(val)
+          OptionValue.new(:boolean, val)
+        end
+      end
+
       INTEGER = 1
       NUMBER = 2
       VECTOR = 3
       MATRIX = 4
       STR = 5
+      BOOLEAN = 6
 
       FIELDS = {
         INTEGER => {:type => ::Thrift::Types::I64, :name => 'integer', :optional => true},
         NUMBER => {:type => ::Thrift::Types::DOUBLE, :name => 'number', :optional => true},
         VECTOR => {:type => ::Thrift::Types::LIST, :name => 'vector', :element => {:type => ::Thrift::Types::DOUBLE}, :optional => true},
         MATRIX => {:type => ::Thrift::Types::LIST, :name => 'matrix', :element => {:type => ::Thrift::Types::LIST, :element => {:type => ::Thrift::Types::DOUBLE}}, :optional => true},
-        STR => {:type => ::Thrift::Types::STRING, :name => 'str', :optional => true}
+        STR => {:type => ::Thrift::Types::STRING, :name => 'str', :optional => true},
+        BOOLEAN => {:type => ::Thrift::Types::BOOL, :name => 'boolean', :optional => true}
       }
 
       def struct_fields; FIELDS; end
 
       def validate
+        raise(StandardError, 'Union fields are not set.') if get_set_field.nil? || get_value.nil?
       end
 
-      ::Thrift::Struct.generate_accessors self
+      ::Thrift::Union.generate_accessors self
     end
 
     class SurrogateException < ::Thrift::Exception

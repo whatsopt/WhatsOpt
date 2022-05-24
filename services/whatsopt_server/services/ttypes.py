@@ -105,16 +105,18 @@ class OptionValue(object):
      - vector
      - matrix
      - str
+     - boolean
 
     """
 
 
-    def __init__(self, integer=None, number=None, vector=None, matrix=None, str=None,):
+    def __init__(self, integer=None, number=None, vector=None, matrix=None, str=None, boolean=None,):
         self.integer = integer
         self.number = number
         self.vector = vector
         self.matrix = matrix
         self.str = str
+        self.boolean = boolean
 
     def read(self, iprot):
         if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
@@ -165,6 +167,11 @@ class OptionValue(object):
                     self.str = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
                 else:
                     iprot.skip(ftype)
+            elif fid == 6:
+                if ftype == TType.BOOL:
+                    self.boolean = iprot.readBool()
+                else:
+                    iprot.skip(ftype)
             else:
                 iprot.skip(ftype)
             iprot.readFieldEnd()
@@ -203,6 +210,10 @@ class OptionValue(object):
         if self.str is not None:
             oprot.writeFieldBegin('str', TType.STRING, 5)
             oprot.writeString(self.str.encode('utf-8') if sys.version_info[0] == 2 else self.str)
+            oprot.writeFieldEnd()
+        if self.boolean is not None:
+            oprot.writeFieldBegin('boolean', TType.BOOL, 6)
+            oprot.writeBool(self.boolean)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
@@ -1070,6 +1081,7 @@ OptionValue.thrift_spec = (
     (3, TType.LIST, 'vector', (TType.DOUBLE, None, False), None, ),  # 3
     (4, TType.LIST, 'matrix', (TType.LIST, (TType.DOUBLE, None, False), False), None, ),  # 4
     (5, TType.STRING, 'str', 'UTF8', None, ),  # 5
+    (6, TType.BOOL, 'boolean', None, None, ),  # 6
 )
 all_structs.append(SurrogateException)
 SurrogateException.thrift_spec = (

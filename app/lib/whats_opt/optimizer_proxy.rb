@@ -85,6 +85,7 @@ module WhatsOpt
         k = ks.to_s
         opts[k] = Services::OptionValue.new(matrix: v) if /^\[\[.*\]\]$/.match?(v.to_s)
         opts[k] = Services::OptionValue.new(vector: v) if !opts[k] && v.to_s =~ /^\[.*\]$/
+        opts[k] = Services::OptionValue.new(boolean: v) if v.class == TrueClass || v.class == FalseClass
         opts[k] = Services::OptionValue.new(integer: v.to_i) if !opts[k] && v.to_s == v.to_i.to_s
         opts[k] = Services::OptionValue.new(number: v.to_f) if !opts[k] && v.to_s =~ /^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$/
         opts[k] = Services::OptionValue.new(str: v.to_s) unless opts[k]

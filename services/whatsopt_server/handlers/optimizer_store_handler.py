@@ -38,40 +38,17 @@ class OptimizerStoreHandler:
             f"CREATE #{optimizer_id} kind={optimizer_kind} opt={OPTIMIZERS_MAP[optimizer_kind]} " \
             f"xlimits={xlimits} cstr_specs={cstr_specs} options={optimizer_options}"
         )
-        cspecs = []
-        for cspec in cstr_specs:
-            print(cspec)
-            if cspec.type == OptimizerStoreTypes.ConstraintType.GREATER:
-                cspecs.append({"type": ">", "bound": cspec.bound})
-            elif cspec.type == OptimizerStoreTypes.ConstraintType.EQUAL:
-                cspecs.append({"type": "=", "bound": cspec.bound})
-            elif cspec.type == OptimizerStoreTypes.ConstraintType.LESS:
-                cspecs.append({"type": "<", "bound": cspec.bound})
-            else:
-                Exception(
-                    "Bad constraint specification: should be <, > or =, got {}".format(
-                        cspec.type
-                    )
-                )
-        optimizer_opts = {}
-        for k, v in optimizer_options.items():
-            if v.integer is not None:
-                optimizer_opts[k] = v.integer
-            if v.number is not None:
-                optimizer_opts[k] = v.number
-            if v.vector is not None:
-                optimizer_opts[k] = v.vector
-            if v.matrix is not None:
-                optimizer_opts[k] = v.matrix
-            if v.str is not None:
-                optimizer_opts[k] = v.str
+
+        cspecs = self._parse_cstrs(cstr_specs)
+        mod_obj_options, general_options = self._parse_options(optimizer_options)
 
         self.optim_store.create_optimizer(
             optimizer_id,
             OPTIMIZERS_MAP[optimizer_kind],
             xlimits,
             cspecs,
-            optimizer_opts,
+            mod_obj_options,
+            general_options,
         )
 
     @throw_optimizer_exception
@@ -101,33 +78,8 @@ class OptimizerStoreHandler:
             else:
                 raise ValueError("Unknown xtype {xtype.type}")
 
-        cspecs = []
-        for cspec in cstr_specs:
-            print(cspec)
-            if cspec.type == OptimizerStoreTypes.ConstraintType.GREATER:
-                cspecs.append({"type": ">", "bound": cspec.bound})
-            elif cspec.type == OptimizerStoreTypes.ConstraintType.EQUAL:
-                cspecs.append({"type": "=", "bound": cspec.bound})
-            elif cspec.type == OptimizerStoreTypes.ConstraintType.LESS:
-                cspecs.append({"type": "<", "bound": cspec.bound})
-            else:
-                raise ValueError(
-                    "Bad constraint specification: should be <, > or =, got {}".format(
-                        cspec.type
-                    )
-                )
-        optimizer_opts = {}
-        for k, v in optimizer_options.items():
-            if v.integer is not None:
-                optimizer_opts[k] = v.integer
-            if v.number is not None:
-                optimizer_opts[k] = v.number
-            if v.vector is not None:
-                optimizer_opts[k] = v.vector
-            if v.matrix is not None:
-                optimizer_opts[k] = v.matrix
-            if v.str is not None:
-                optimizer_opts[k] = v.str
+        cspecs = self._parse_cstrs(cstr_specs)
+        mod_obj_options, general_options = self._parse_options(optimizer_options)
 
         self.optim_store.create_mixint_optimizer(
             optimizer_id,
@@ -136,7 +88,8 @@ class OptimizerStoreHandler:
             xlimits,
             n_obj,
             cspecs,
-            optimizer_opts,
+            mod_obj_options,
+            general_options,
         )
 
 
@@ -169,3 +122,50 @@ class OptimizerStoreHandler:
     def destroy_optimizer(self, optimizer_id):
         print(f"DESTROY #{optimizer_id}")
         self.optim_store.destroy_optimizer(optimizer_id)
+
+
+    @staticmethod
+    def _parse_cstrs(cstr_specs):
+        cspecs = []
+        for cspec in cstr_specs:
+            print(cspec)
+            if cspec.type == OptimizerStoreTypes.ConstraintType.GREATER:
+                cspecs.append({"type": ">", "bound": cspec.bound})
+            elif cspec.type == OptimizerStoreTypes.ConstraintType.EQUAL:
+                cspecs.append({"type": "=", "bound": cspec.bound})
+            elif cspec.type == OptimizerStoreTypes.ConstraintType.LESS:
+                cspecs.append({"type": "<", "bound": cspec.bound})
+            else:
+                raise ValueError(
+                    "Bad constraint specification: should be <, > or =, got {}".format(
+                        cspec.type
+                    )
+                )
+        return cspecs
+
+    @staticmethod
+    def _parse_options(optimizer_options):
+        optimizer_opts = {}
+        for k, v in optimizer_options.items():
+            if v.boolean is not None:
+                optimizer_opts[k] = v.boolean
+            if v.integer is not None:
+                optimizer_opts[k] = v.integer
+            if v.number is not None:
+                optimizer_opts[k] = v.number
+            if v.vector is not None:
+                optimizer_opts[k] = v.vector
+            if v.matrix is not None:
+                optimizer_opts[k] = v.matrix
+            if v.str is not None:
+                optimizer_opts[k] = v.str
+
+        # filter mod_obj options
+        mod_obj_options = {}
+        general_options = {}
+        for name, val in optimizer_opts.items():
+            if name.startswith("mod_obj__"):
+                mod_obj_options[name[len("mod_obj__"):]] = val
+            else:
+                general_options[name] = val
+        return mod_obj_options, general_options

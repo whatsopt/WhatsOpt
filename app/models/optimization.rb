@@ -33,9 +33,9 @@ class Optimization < ApplicationRecord
   def create_optimizer
     unless new_record?
       if self.kind == "SEGOMOE"
-        proxy.create_optimizer(Optimization::OPTIMIZER_KINDS[self.kind], self.xlimits, self.cstr_specs)
+        proxy.create_optimizer(Optimization::OPTIMIZER_KINDS[self.kind], self.xlimits, self.cstr_specs, self.options)
       else
-        proxy.create_mixint_optimizer(Optimization::OPTIMIZER_KINDS[self.kind], self.xtypes, self.n_obj, self.cstr_specs)
+        proxy.create_mixint_optimizer(Optimization::OPTIMIZER_KINDS[self.kind], self.xtypes, self.n_obj, self.cstr_specs, self.options)
       end
     end
   rescue WhatsOpt::OptimizationProxyError => err
@@ -44,11 +44,10 @@ class Optimization < ApplicationRecord
 
   def perform
     self.update!(outputs: { status: RUNNING, x_suggested: nil, x_optima: nil })
-    self.proxy.tell(self.inputs[:x], self.inputs[:y])
-    p "WITH OPTIMA ", self.inputs[:with_optima]
-    res = self.proxy.ask(self.inputs[:with_optima])
+    self.proxy.tell(self.x, self.y)
+    res = self.proxy.ask(self.with_optima)
     outputs = { status: res.status, x_suggested: res.x_suggested }
-    outputs["x_optima"] = res.x_optima if self.inputs[:with_optima]
+    outputs["x_optima"] = res.x_optima if self.with_optima
     self.update!(outputs: outputs)
   end
 
@@ -62,6 +61,7 @@ class Optimization < ApplicationRecord
   end
 
   def check_optimization_config
+    self.options = {} if self.options.blank?
     self.kind = "SEGOMOE" if self.kind.blank?
     self.n_obj = 1 if self.n_obj.blank?
     unless self.kind == "SEGOMOE" || self.kind == "SEGMOOMOE"
