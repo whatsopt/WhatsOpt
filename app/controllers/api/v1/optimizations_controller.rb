@@ -5,7 +5,11 @@ class Api::V1::OptimizationsController < Api::ApiController
 
   # GET /api/v1/optimizations/1
   def show
-    json_response @optim
+    if @optim.status == Optimization::OPTIMIZATION_ERROR
+      json_response({ message: @optim.err_msg }, :bad_request)
+    else
+      json_response @optim
+    end
   end
 
   # POST /api/v1/optimizations
@@ -16,9 +20,9 @@ class Api::V1::OptimizationsController < Api::ApiController
     @optim.create_optimizer
     @optim.set_owner(current_user)
     json_response @optim, :created
-  rescue Optimization::ConfigurationInvalid => e
+  rescue Optimization::OptimizationError => e
     skip_authorization
-    Rails.logger.error "Invalid optimizer configuration : " + e.message
+    Rails.logger.error e
     json_response({ message: e.message }, :bad_request)
   end
 
@@ -29,9 +33,6 @@ class Api::V1::OptimizationsController < Api::ApiController
     @optim.update!(inputs: inputs, outputs: { status: Optimization::RUNNING, x_suggested: nil })
     OptimizationJob.perform_later(@optim)
     head :no_content
-  rescue Optimization::InputInvalid => e
-    Rails.logger.error "Invalid optimizer inputs : " + e.message
-    json_response({ message: e.message }, :bad_request)
   end
 
   # DELETE /api/v1/optimizations/1

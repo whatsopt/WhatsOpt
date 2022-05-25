@@ -18,7 +18,7 @@ class SegomoeOptimizer(Optimizer):
     def __init__(self, xlimits, cstr_specs=[], mod_obj_options={}, options={}):
         super().__init__(xlimits, 1, cstr_specs, mod_obj_options, options)
         if SEGOMOE_NOT_INSTALLED:
-            raise RuntineError("Optimizer SEGOMOE not installed")
+            raise RuntimeError("Optimizer SEGOMOE not installed")
 
     def ask(self, with_optima):
         nx = self.x.shape[1]

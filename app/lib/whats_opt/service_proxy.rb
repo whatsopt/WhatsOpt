@@ -81,6 +81,10 @@ module WhatsOpt
       # puts "#{e}: #{e.msg}"
       Rails.logger.warn "#{e}: #{e.msg}"
       raise
+    rescue Services::OptimizerException => e
+      # puts "#{e}: #{e.msg}"
+      Rails.logger.warn "#{e}: #{e.msg}"
+      raise
     rescue Thrift::TransportException => e
       # puts "#{e}"
       Rails.logger.warn e

@@ -13,21 +13,21 @@ class Optimization < ApplicationRecord
     "SEGMOOMOE" => WhatsOpt::Services::OptimizerKind::SEGMOOMOE
   }
 
+  OPTIMIZATION_ERROR = -2
   PENDING = -1
   VALID_POINT = 0
   INVALID_POINT = 1
   RUNTIME_ERROR = 2
   SOLUTION_REACHED = 3
   RUNNING = 4
-  OPTIMIZER_STATUS = [VALID_POINT, INVALID_POINT, RUNTIME_ERROR, SOLUTION_REACHED, RUNNING, PENDING]
+  OPTIMIZER_STATUS = [VALID_POINT, INVALID_POINT, RUNTIME_ERROR, SOLUTION_REACHED, RUNNING, PENDING, OPTIMIZATION_ERROR]
 
   store :config, accessors: [:xtypes, :xlimits, :n_obj, :cstr_specs, :options], coder: JSON
   store :inputs, accessors: [:x, :y, :with_optima], coder: JSON
-  store :outputs, accessors: [:status, :x_suggested, :x_optima], coder: JSON
+  store :outputs, accessors: [:status, :x_suggested, :x_optima, :err_msg], coder: JSON
 
-  class InputInvalid < Exception; end
-  class ConfigurationInvalid < Exception; end
-
+  class OptimizationError < Exception; end
+  
   after_initialize :check_optimization_config
 
   def create_optimizer
@@ -39,7 +39,7 @@ class Optimization < ApplicationRecord
       end
     end
   rescue WhatsOpt::OptimizationProxyError => err
-    raise ConfigurationInvalid.new("Error in optimization proxy: '#{err}'")
+    log_error("#{err}: #{err.message}")  # do not fail in case of proxy error, let the client handle the error
   end
 
   def perform
@@ -49,6 +49,8 @@ class Optimization < ApplicationRecord
     outputs = { status: res.status, x_suggested: res.x_suggested }
     outputs["x_optima"] = res.x_optima if self.with_optima
     self.update!(outputs: outputs)
+  rescue WhatsOpt::OptimizationProxyError, WhatsOpt::Services::OptimizerException => err
+    log_error("#{err}: #{err.message}") # asynchronous: just set error state and log the error
   end
 
   def xdim
@@ -65,23 +67,23 @@ class Optimization < ApplicationRecord
     self.kind = "SEGOMOE" if self.kind.blank?
     self.n_obj = 1 if self.n_obj.blank?
     unless self.kind == "SEGOMOE" || self.kind == "SEGMOOMOE"
-      raise ConfigurationInvalid.new("optimizer kind should be SEGOMOE or SEGMOOMOE, got '#{self.kind}'")
+      raise_error("optimizer kind should be SEGOMOE or SEGMOOMOE, got '#{self.kind}'")
     end
 
     if self.kind == "SEGOMOE"
       if self.n_obj != 1
-        raise ConfigurationInvalid.new("SEGOMOE is mono-objective only, got '#{self.n_obj}'")
+        raise_error("SEGOMOE is mono-objective only, got '#{self.n_obj}'")
       end
 
       unless self.xlimits
-        raise ConfigurationInvalid.new("xlimits field should be present, got '#{self.xlimits}'")
+        raise_error("xlimits field should be present, got '#{self.xlimits}'")
       end
 
       begin
         m = Matrix[*self.xlimits]
         raise if (m.row_count < 1) || (m.column_count != 2)
       rescue Exception
-        raise ConfigurationInvalid.new("xlimits should be a matrix (nx, 2), got '#{self.xlimits}'")
+        raise_error("xlimits should be a matrix (nx, 2), got '#{self.xlimits}'")
       end
     else 
       self.xlimits = []
@@ -89,18 +91,18 @@ class Optimization < ApplicationRecord
 
     if self.kind == "SEGMOOMOE"
       unless self.xtypes
-        raise ConfigurationInvalid.new("xtypes field should be present, got '#{self.xtypes}'")
+        raise_error("xtypes field should be present, got '#{self.xtypes}'")
       end
 
       xtypes.each_with_index do |xt, i|
         case xt['type']
         when "float_type"
           if xt['limits'].size != 2 && xt['limits'][0].to_f != xt['limits'][0] && xt['limits'][1].to_f != xt['limits'][1]
-            raise ConfigurationInvalid.new("xtype.limits should be float [lower, upper], got '#{xt['limits']}'")
+            raise_error("xtype.limits should be float [lower, upper], got '#{xt['limits']}'")
           end
         when "int_type"
           if xt['limits'].size != 2 && xt['limits'][0].to_i != xt['limits'][0] && xt['limits'][1].to_i != xt['limits'][1]
-            raise ConfigurationInvalid.new("xtype.limits should be int [lower, upper], got '#{xt['limits']}'")
+            raise_error("xtype.limits should be int [lower, upper], got '#{xt['limits']}'")
           end
         when "ord_type"
           begin
@@ -109,16 +111,16 @@ class Optimization < ApplicationRecord
               raise unless l.to_i == l
             end
           rescue Exception
-            raise ConfigurationInvalid.new("xtype.limits should be a list of int, got '#{xt['limits']}'")
+            raise_error("xtype.limits should be a list of int, got '#{xt['limits']}'")
           end
         when "enum_type"
           begin
             raise unless xt['limits'].kind_of?(Array)  
           rescue Exception
-            raise ConfigurationInvalid.new("xtype.limits should be a list of string, got '#{xt['limits']}'")
+            raise_error("xtype.limits should be a list of string, got '#{xt['limits']}'")
           end
         else 
-          raise ConfigurationInvalid.new("xtype.type should be FLOAT, INT, ORD or ENUM, got '#{xt['limits']}'")
+          raise_error("xtype.type should be FLOAT, INT, ORD or ENUM, got '#{xt['limits']}'")
         end
       end
 
@@ -131,7 +133,7 @@ class Optimization < ApplicationRecord
     else
       self.cstr_specs.each do |cspec|
         unless /^[<>=]$/.match?(cspec["type"])
-          raise ConfigurationInvalid.new("Invalid constraint specification #{cspec} type should match '<>='")
+          raise_error("Invalid constraint specification #{cspec} type should match '<>='")
         end
       end
     end
@@ -139,7 +141,17 @@ class Optimization < ApplicationRecord
 
   def check_optimization_inputs(params)
     unless params["x"] && params["y"]
-      raise InputInvalid.new("x and y fields should be present, got #{params}")
+      raise_error("x and y fields should be present, got #{params}")
     end
+  end
+
+  def log_error(err_msg)
+    update!(status: OPTIMIZATION_ERROR, err_msg: err_msg)
+    Rails.logger.error "Optimization Error: #{err_msg}"
+  end
+
+  def raise_error(err_msg)
+    log_error(err_msg)
+    raise OptimizationError.new(err_msg)
   end
 end
