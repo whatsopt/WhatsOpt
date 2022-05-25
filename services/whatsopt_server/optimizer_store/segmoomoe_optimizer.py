@@ -31,7 +31,7 @@ class SegmoomoeOptimizer(Optimizer):
 
         # Fake objective function
         def fun(x):
-            return (np.inf * np.ones(self.n_obj), False)
+            return (np.max(self.y, axis=0)[:self.n_obj], False)
 
         cons = [
             Constraint(
