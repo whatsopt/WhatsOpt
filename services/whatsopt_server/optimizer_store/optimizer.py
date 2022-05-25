@@ -20,7 +20,7 @@ class Optimizer():
             if spec["type"] == "<" or spec["type"] == "=" or spec["type"] == ">":
                 cstrs.append({"type": spec["type"], "bound": spec["bound"]})
             else:
-                raise Value(
+                raise ValueError(
                     "Bad constraint spec type (n°{}): should match <, = or > , got {}".format(
                         i + 1, spec
                     )
@@ -46,4 +46,4 @@ class Optimizer():
         self.y = y
 
     def ask(self, with_best=False):
-        raise RuntineError("Not yet implemented")
+        raise RuntimeError("Not yet implemented")

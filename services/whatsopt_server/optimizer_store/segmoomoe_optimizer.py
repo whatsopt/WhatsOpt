@@ -93,7 +93,7 @@ class SegmoomoeOptimizer(Optimizer):
                 model_type=default_models,
                 **optim_settings,
             )
-            res = segmoomoe.optimize(func)
+            res = segmoomoe.optimize(fun)
 
         if res:
             if with_best:
