@@ -20,7 +20,7 @@ class SegomoeOptimizer(Optimizer):
         if SEGOMOE_NOT_INSTALLED:
             raise RuntimeError("Optimizer SEGOMOE not installed")
 
-    def ask(self, with_optima):
+    def ask(self, with_best):
         nx = self.x.shape[1]
         ny = self.y.shape[1]
 

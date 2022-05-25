@@ -45,5 +45,5 @@ class Optimizer():
         self.x = x
         self.y = y
 
-    def ask(self, with_optima=False):
+    def ask(self, with_best=False):
         raise RuntineError("Not yet implemented")

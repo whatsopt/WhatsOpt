@@ -26,7 +26,7 @@ if len(sys.argv) <= 1 or sys.argv[1] == '--help':
     print('Functions:')
     print('  void create_optimizer(string optimizer_id, OptimizerKind kind, Matrix xlimits, ConstraintSpecs cstr_specs, Options options)')
     print('  void create_mixint_optimizer(string optimizer_id, OptimizerKind kind, Xtypes xtypes, Integer n_obj, ConstraintSpecs cstr_specs, Options options)')
-    print('  OptimizerResult ask(string optimizer_id, bool with_optima)')
+    print('  OptimizerResult ask(string optimizer_id, bool with_best)')
     print('  void tell(string optimizer_id, Matrix x, Matrix y)')
     print('  void destroy_optimizer(string optimizer_id)')
     print('')

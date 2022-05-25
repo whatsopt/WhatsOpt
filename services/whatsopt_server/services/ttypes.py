@@ -596,15 +596,15 @@ class OptimizerResult(object):
     Attributes:
      - status
      - x_suggested
-     - x_optima
+     - x_best
 
     """
 
 
-    def __init__(self, status=None, x_suggested=None, x_optima=None,):
+    def __init__(self, status=None, x_suggested=None, x_best=None,):
         self.status = status
         self.x_suggested = x_suggested
-        self.x_optima = x_optima
+        self.x_best = x_best
 
     def read(self, iprot):
         if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
@@ -632,7 +632,7 @@ class OptimizerResult(object):
                     iprot.skip(ftype)
             elif fid == 3:
                 if ftype == TType.LIST:
-                    self.x_optima = []
+                    self.x_best = []
                     (_etype60, _size57) = iprot.readListBegin()
                     for _i61 in range(_size57):
                         _elem62 = []
@@ -641,7 +641,7 @@ class OptimizerResult(object):
                             _elem68 = iprot.readDouble()
                             _elem62.append(_elem68)
                         iprot.readListEnd()
-                        self.x_optima.append(_elem62)
+                        self.x_best.append(_elem62)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
@@ -666,10 +666,10 @@ class OptimizerResult(object):
                 oprot.writeDouble(iter69)
             oprot.writeListEnd()
             oprot.writeFieldEnd()
-        if self.x_optima is not None:
-            oprot.writeFieldBegin('x_optima', TType.LIST, 3)
-            oprot.writeListBegin(TType.LIST, len(self.x_optima))
-            for iter70 in self.x_optima:
+        if self.x_best is not None:
+            oprot.writeFieldBegin('x_best', TType.LIST, 3)
+            oprot.writeListBegin(TType.LIST, len(self.x_best))
+            for iter70 in self.x_best:
                 oprot.writeListBegin(TType.DOUBLE, len(iter70))
                 for iter71 in iter70:
                     oprot.writeDouble(iter71)
@@ -1116,7 +1116,7 @@ OptimizerResult.thrift_spec = (
     None,  # 0
     (1, TType.I64, 'status', None, None, ),  # 1
     (2, TType.LIST, 'x_suggested', (TType.DOUBLE, None, False), None, ),  # 2
-    (3, TType.LIST, 'x_optima', (TType.LIST, (TType.DOUBLE, None, False), False), None, ),  # 3
+    (3, TType.LIST, 'x_best', (TType.LIST, (TType.DOUBLE, None, False), False), None, ),  # 3
 )
 all_structs.append(ConstraintSpec)
 ConstraintSpec.thrift_spec = (

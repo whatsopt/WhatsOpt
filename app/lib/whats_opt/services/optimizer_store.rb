@@ -43,13 +43,13 @@ module WhatsOpt
           return
         end
 
-        def ask(optimizer_id, with_optima)
-          send_ask(optimizer_id, with_optima)
+        def ask(optimizer_id, with_best)
+          send_ask(optimizer_id, with_best)
           return recv_ask()
         end
 
-        def send_ask(optimizer_id, with_optima)
-          send_message('ask', Ask_args, :optimizer_id => optimizer_id, :with_optima => with_optima)
+        def send_ask(optimizer_id, with_best)
+          send_message('ask', Ask_args, :optimizer_id => optimizer_id, :with_best => with_best)
         end
 
         def recv_ask()
@@ -119,7 +119,7 @@ module WhatsOpt
           args = read_args(iprot, Ask_args)
           result = Ask_result.new()
           begin
-            result.success = @handler.ask(args.optimizer_id, args.with_optima)
+            result.success = @handler.ask(args.optimizer_id, args.with_best)
           rescue ::WhatsOpt::Services::OptimizerException => exc
             result.exc = exc
           end
@@ -239,11 +239,11 @@ module WhatsOpt
       class Ask_args
         include ::Thrift::Struct, ::Thrift::Struct_Union
         OPTIMIZER_ID = 1
-        WITH_OPTIMA = 2
+        WITH_BEST = 2
 
         FIELDS = {
           OPTIMIZER_ID => {:type => ::Thrift::Types::STRING, :name => 'optimizer_id'},
-          WITH_OPTIMA => {:type => ::Thrift::Types::BOOL, :name => 'with_optima'}
+          WITH_BEST => {:type => ::Thrift::Types::BOOL, :name => 'with_best'}
         }
 
         def struct_fields; FIELDS; end

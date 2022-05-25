@@ -44,11 +44,11 @@ class Iface(object):
         """
         pass
 
-    def ask(self, optimizer_id, with_optima):
+    def ask(self, optimizer_id, with_best):
         """
         Parameters:
          - optimizer_id
-         - with_optima
+         - with_best
 
         """
         pass
@@ -161,21 +161,21 @@ class Client(Iface):
             raise result.exc
         return
 
-    def ask(self, optimizer_id, with_optima):
+    def ask(self, optimizer_id, with_best):
         """
         Parameters:
          - optimizer_id
-         - with_optima
+         - with_best
 
         """
-        self.send_ask(optimizer_id, with_optima)
+        self.send_ask(optimizer_id, with_best)
         return self.recv_ask()
 
-    def send_ask(self, optimizer_id, with_optima):
+    def send_ask(self, optimizer_id, with_best):
         self._oprot.writeMessageBegin('ask', TMessageType.CALL, self._seqid)
         args = ask_args()
         args.optimizer_id = optimizer_id
-        args.with_optima = with_optima
+        args.with_best = with_best
         args.write(self._oprot)
         self._oprot.writeMessageEnd()
         self._oprot.trans.flush()
@@ -353,7 +353,7 @@ class Processor(Iface, TProcessor):
         iprot.readMessageEnd()
         result = ask_result()
         try:
-            result.success = self._handler.ask(args.optimizer_id, args.with_optima)
+            result.success = self._handler.ask(args.optimizer_id, args.with_best)
             msg_type = TMessageType.REPLY
         except TTransport.TTransportException:
             raise
@@ -852,14 +852,14 @@ class ask_args(object):
     """
     Attributes:
      - optimizer_id
-     - with_optima
+     - with_best
 
     """
 
 
-    def __init__(self, optimizer_id=None, with_optima=None,):
+    def __init__(self, optimizer_id=None, with_best=None,):
         self.optimizer_id = optimizer_id
-        self.with_optima = with_optima
+        self.with_best = with_best
 
     def read(self, iprot):
         if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
@@ -877,7 +877,7 @@ class ask_args(object):
                     iprot.skip(ftype)
             elif fid == 2:
                 if ftype == TType.BOOL:
-                    self.with_optima = iprot.readBool()
+                    self.with_best = iprot.readBool()
                 else:
                     iprot.skip(ftype)
             else:
@@ -894,9 +894,9 @@ class ask_args(object):
             oprot.writeFieldBegin('optimizer_id', TType.STRING, 1)
             oprot.writeString(self.optimizer_id.encode('utf-8') if sys.version_info[0] == 2 else self.optimizer_id)
             oprot.writeFieldEnd()
-        if self.with_optima is not None:
-            oprot.writeFieldBegin('with_optima', TType.BOOL, 2)
-            oprot.writeBool(self.with_optima)
+        if self.with_best is not None:
+            oprot.writeFieldBegin('with_best', TType.BOOL, 2)
+            oprot.writeBool(self.with_best)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
@@ -918,7 +918,7 @@ all_structs.append(ask_args)
 ask_args.thrift_spec = (
     None,  # 0
     (1, TType.STRING, 'optimizer_id', 'UTF8', None, ),  # 1
-    (2, TType.BOOL, 'with_optima', None, None, ),  # 2
+    (2, TType.BOOL, 'with_best', None, None, ),  # 2
 )
 
 

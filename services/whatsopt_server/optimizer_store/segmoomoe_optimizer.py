@@ -18,14 +18,14 @@ from whatsopt_server.optimizer_store.optimizer import Optimizer
 from whatsopt_server.services.ttypes import Type
 
 
-class SegmoomoeOptimizer(object):
+class SegmoomoeOptimizer(Optimizer):
     def __init__(self, xtypes, xlimits, n_obj, cstr_specs=[], mod_obj_options={}, options={}):
         super().__init__(xlimits, n_obj, cstr_specs, mod_obj_options, options)
         self.xtypes = xtypes
         if SEGMOOMOE_NOT_INSTALLED:
-            raise RuntineError("Optimizer SEGMOOMOE not installed")
+            raise RuntimeError("Optimizer SEGMOOMOE not installed")
 
-    def ask(self, with_optima=False):
+    def ask(self, with_best=False):
         nx = self.x.shape[1]
         ny = self.y.shape[1]
 
@@ -74,7 +74,7 @@ class SegmoomoeOptimizer(object):
             "verbose": True,
             "grouped_eval": False,
             "n_clusters": 1,
-            "compute_front": with_optima,
+            "compute_front": with_best,
         }
         optim_settings = {**optim_settings, **self.options}
 
@@ -96,7 +96,7 @@ class SegmoomoeOptimizer(object):
             res = segmoomoe.optimize(func)
 
         if res:
-            if with_optima:
+            if with_best:
                 status = segmoomoe.res[0]
                 next_x = segmoomoe.sego.get_x()[-1]
                 best_x = res.X

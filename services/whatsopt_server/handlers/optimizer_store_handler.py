@@ -94,15 +94,15 @@ class OptimizerStoreHandler:
 
 
     @throw_optimizer_exception
-    def ask(self, optimizer_id, with_optima=False):
-        print(f"ASK #{optimizer_id} with_optima={with_optima}")
+    def ask(self, optimizer_id, with_best=False):
+        print(f"ASK #{optimizer_id} with_best={with_best}")
         optim = self.optim_store.get_optimizer(optimizer_id)
         if optim:
-            status, next_x, x_optima = optim.ask(with_optima)
-            if with_optima:
-                print(f"status = {status}, x_suggested = {next_x}, x_optima = {x_optima}")
+            status, next_x, x_best = optim.ask(with_best)
+            if with_best:
+                print(f"status = {status}, x_suggested = {next_x}, x_best = {x_best}")
                 return OptimizerStoreTypes.OptimizerResult(
-                    status=status, x_suggested=next_x, x_optima=x_optima
+                    status=status, x_suggested=next_x, x_best=x_best
                 )
             else:
                 print(f"status = {status}, x_suggested = {next_x}")

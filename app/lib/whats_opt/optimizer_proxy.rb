@@ -61,9 +61,9 @@ module WhatsOpt
       _send { @client.create_mixint_optimizer(@id, optimizer_kind, xtyps, n_obj, cspecs.compact, opts) }
     end
 
-    def ask(with_optima)
+    def ask(with_best)
       res = nil
-      _send { res = @client.ask(@id, with_optima) }
+      _send { res = @client.ask(@id, with_best) }
       res
     end
 
