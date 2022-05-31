@@ -19,7 +19,9 @@ from whatsopt_server.services.ttypes import Type
 
 
 class SegmoomoeOptimizer(Optimizer):
-    def __init__(self, xtypes, xlimits, n_obj, cstr_specs=[], mod_obj_options={}, options={}):
+    def __init__(
+        self, xtypes, xlimits, n_obj, cstr_specs=[], mod_obj_options={}, options={}
+    ):
         super().__init__(xlimits, n_obj, cstr_specs, mod_obj_options, options)
         self.xtypes = xtypes
         if SEGMOOMOE_NOT_INSTALLED:
@@ -31,14 +33,14 @@ class SegmoomoeOptimizer(Optimizer):
 
         # Fake objective function
         def fun(x):
-            return (np.max(self.y, axis=0)[:self.n_obj], False)
+            return (np.max(self.y, axis=0)[: self.n_obj], False)
 
         cons = [
             Constraint(
                 cstr.get("type", "<"),
                 cstr.get("bound", 0.0),
                 name="c_" + str(i),
-                tol=cstr.get("tol", 1e-4),
+                tol=cstr.get("tol", 1e-6),
                 f=lambda x: (-np.ones((1, 1)), False),  # Fake constraint function
             )
             for i, cstr in enumerate(self.constraints)
@@ -46,11 +48,11 @@ class SegmoomoeOptimizer(Optimizer):
         # sego store constraint values as positive :
         #   c < bound   => store (bound - c)
         #   c >= bound  => store (c - bound)
-        for i, cstr in enumerate(self.constraints):
-            if cstr["type"] == "<":
-                self.y[:, i + 1] = cstr["bound"] - self.y[:, i + 1]
-            else:
-                self.y[:, i + 1] = self.y[:, i + 1] - cstr["bound"]
+        # for i, cstr in enumerate(self.constraints):
+        #     if cstr["type"] == "<":
+        #         self.y[:, i + 1] = cstr["bound"] - self.y[:, i + 1]
+        #     else:
+        #         self.y[:, i + 1] = self.y[:, i + 1] - cstr["bound"]
 
         mod_obj = {
             "type": "MIXEDsmt",
@@ -67,7 +69,6 @@ class SegmoomoeOptimizer(Optimizer):
         optim_settings = {
             "n_start": 10,
             "criterion": "PI",
-            "random_state": 1,
             "n_iter": 1,
             "pop_size": 30,
             "n_gen": 30,
