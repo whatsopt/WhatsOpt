@@ -45,6 +45,15 @@ class SegmoomoeOptimizer(Optimizer):
             )
             for i, cstr in enumerate(self.constraints)
         ]
+        # sego store constraint values as positive :
+        #  c < bound   => store (bound - c)
+        #  c >= bound  => store (c - bound)
+        for i, cstr in enumerate(self.constraints):
+            idx = self.n_obj + i
+            if cstr["type"] == "<":
+                self.y[:, idx] = cstr["bound"] - self.y[:, idx]
+            else:
+                self.y[:, idx] = self.y[:, idx] - cstr["bound"]
 
         mod_obj = {
             "type": "MIXEDsmt",
@@ -74,7 +83,7 @@ class SegmoomoeOptimizer(Optimizer):
         res = None
         next_x = None
         with tempfile.TemporaryDirectory() as tmpdir:
-            # tmpdir = "/d/rlafage/doe"
+            tmpdir = "/home/rlafage/sego"
             np.save(os.path.join(tmpdir, "doe"), self.x)
             np.save(os.path.join(tmpdir, "doe_response"), self.y)
             segmoomoe = MOO(
