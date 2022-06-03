@@ -466,38 +466,38 @@ class create_optimizer_args(object):
             elif fid == 3:
                 if ftype == TType.LIST:
                     self.xlimits = []
-                    (_etype168, _size165) = iprot.readListBegin()
-                    for _i169 in range(_size165):
-                        _elem170 = []
-                        (_etype174, _size171) = iprot.readListBegin()
-                        for _i175 in range(_size171):
-                            _elem176 = iprot.readDouble()
-                            _elem170.append(_elem176)
+                    (_etype182, _size179) = iprot.readListBegin()
+                    for _i183 in range(_size179):
+                        _elem184 = []
+                        (_etype188, _size185) = iprot.readListBegin()
+                        for _i189 in range(_size185):
+                            _elem190 = iprot.readDouble()
+                            _elem184.append(_elem190)
                         iprot.readListEnd()
-                        self.xlimits.append(_elem170)
+                        self.xlimits.append(_elem184)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
             elif fid == 4:
                 if ftype == TType.LIST:
                     self.cstr_specs = []
-                    (_etype180, _size177) = iprot.readListBegin()
-                    for _i181 in range(_size177):
-                        _elem182 = ConstraintSpec()
-                        _elem182.read(iprot)
-                        self.cstr_specs.append(_elem182)
+                    (_etype194, _size191) = iprot.readListBegin()
+                    for _i195 in range(_size191):
+                        _elem196 = ConstraintSpec()
+                        _elem196.read(iprot)
+                        self.cstr_specs.append(_elem196)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
             elif fid == 5:
                 if ftype == TType.MAP:
                     self.options = {}
-                    (_ktype184, _vtype185, _size183) = iprot.readMapBegin()
-                    for _i187 in range(_size183):
-                        _key188 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
-                        _val189 = OptionValue()
-                        _val189.read(iprot)
-                        self.options[_key188] = _val189
+                    (_ktype198, _vtype199, _size197) = iprot.readMapBegin()
+                    for _i201 in range(_size197):
+                        _key202 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                        _val203 = OptionValue()
+                        _val203.read(iprot)
+                        self.options[_key202] = _val203
                     iprot.readMapEnd()
                 else:
                     iprot.skip(ftype)
@@ -522,26 +522,26 @@ class create_optimizer_args(object):
         if self.xlimits is not None:
             oprot.writeFieldBegin('xlimits', TType.LIST, 3)
             oprot.writeListBegin(TType.LIST, len(self.xlimits))
-            for iter190 in self.xlimits:
-                oprot.writeListBegin(TType.DOUBLE, len(iter190))
-                for iter191 in iter190:
-                    oprot.writeDouble(iter191)
+            for iter204 in self.xlimits:
+                oprot.writeListBegin(TType.DOUBLE, len(iter204))
+                for iter205 in iter204:
+                    oprot.writeDouble(iter205)
                 oprot.writeListEnd()
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         if self.cstr_specs is not None:
             oprot.writeFieldBegin('cstr_specs', TType.LIST, 4)
             oprot.writeListBegin(TType.STRUCT, len(self.cstr_specs))
-            for iter192 in self.cstr_specs:
-                iter192.write(oprot)
+            for iter206 in self.cstr_specs:
+                iter206.write(oprot)
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         if self.options is not None:
             oprot.writeFieldBegin('options', TType.MAP, 5)
             oprot.writeMapBegin(TType.STRING, TType.STRUCT, len(self.options))
-            for kiter193, viter194 in self.options.items():
-                oprot.writeString(kiter193.encode('utf-8') if sys.version_info[0] == 2 else kiter193)
-                viter194.write(oprot)
+            for kiter207, viter208 in self.options.items():
+                oprot.writeString(kiter207.encode('utf-8') if sys.version_info[0] == 2 else kiter207)
+                viter208.write(oprot)
             oprot.writeMapEnd()
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
@@ -677,11 +677,11 @@ class create_mixint_optimizer_args(object):
             elif fid == 3:
                 if ftype == TType.LIST:
                     self.xtypes = []
-                    (_etype198, _size195) = iprot.readListBegin()
-                    for _i199 in range(_size195):
-                        _elem200 = Xtype()
-                        _elem200.read(iprot)
-                        self.xtypes.append(_elem200)
+                    (_etype212, _size209) = iprot.readListBegin()
+                    for _i213 in range(_size209):
+                        _elem214 = Xtype()
+                        _elem214.read(iprot)
+                        self.xtypes.append(_elem214)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
@@ -693,23 +693,23 @@ class create_mixint_optimizer_args(object):
             elif fid == 5:
                 if ftype == TType.LIST:
                     self.cstr_specs = []
-                    (_etype204, _size201) = iprot.readListBegin()
-                    for _i205 in range(_size201):
-                        _elem206 = ConstraintSpec()
-                        _elem206.read(iprot)
-                        self.cstr_specs.append(_elem206)
+                    (_etype218, _size215) = iprot.readListBegin()
+                    for _i219 in range(_size215):
+                        _elem220 = ConstraintSpec()
+                        _elem220.read(iprot)
+                        self.cstr_specs.append(_elem220)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
             elif fid == 6:
                 if ftype == TType.MAP:
                     self.options = {}
-                    (_ktype208, _vtype209, _size207) = iprot.readMapBegin()
-                    for _i211 in range(_size207):
-                        _key212 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
-                        _val213 = OptionValue()
-                        _val213.read(iprot)
-                        self.options[_key212] = _val213
+                    (_ktype222, _vtype223, _size221) = iprot.readMapBegin()
+                    for _i225 in range(_size221):
+                        _key226 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                        _val227 = OptionValue()
+                        _val227.read(iprot)
+                        self.options[_key226] = _val227
                     iprot.readMapEnd()
                 else:
                     iprot.skip(ftype)
@@ -734,8 +734,8 @@ class create_mixint_optimizer_args(object):
         if self.xtypes is not None:
             oprot.writeFieldBegin('xtypes', TType.LIST, 3)
             oprot.writeListBegin(TType.STRUCT, len(self.xtypes))
-            for iter214 in self.xtypes:
-                iter214.write(oprot)
+            for iter228 in self.xtypes:
+                iter228.write(oprot)
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         if self.n_obj is not None:
@@ -745,16 +745,16 @@ class create_mixint_optimizer_args(object):
         if self.cstr_specs is not None:
             oprot.writeFieldBegin('cstr_specs', TType.LIST, 5)
             oprot.writeListBegin(TType.STRUCT, len(self.cstr_specs))
-            for iter215 in self.cstr_specs:
-                iter215.write(oprot)
+            for iter229 in self.cstr_specs:
+                iter229.write(oprot)
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         if self.options is not None:
             oprot.writeFieldBegin('options', TType.MAP, 6)
             oprot.writeMapBegin(TType.STRING, TType.STRUCT, len(self.options))
-            for kiter216, viter217 in self.options.items():
-                oprot.writeString(kiter216.encode('utf-8') if sys.version_info[0] == 2 else kiter216)
-                viter217.write(oprot)
+            for kiter230, viter231 in self.options.items():
+                oprot.writeString(kiter230.encode('utf-8') if sys.version_info[0] == 2 else kiter230)
+                viter231.write(oprot)
             oprot.writeMapEnd()
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
@@ -1029,30 +1029,30 @@ class tell_args(object):
             elif fid == 2:
                 if ftype == TType.LIST:
                     self.x = []
-                    (_etype221, _size218) = iprot.readListBegin()
-                    for _i222 in range(_size218):
-                        _elem223 = []
-                        (_etype227, _size224) = iprot.readListBegin()
-                        for _i228 in range(_size224):
-                            _elem229 = iprot.readDouble()
-                            _elem223.append(_elem229)
+                    (_etype235, _size232) = iprot.readListBegin()
+                    for _i236 in range(_size232):
+                        _elem237 = []
+                        (_etype241, _size238) = iprot.readListBegin()
+                        for _i242 in range(_size238):
+                            _elem243 = iprot.readDouble()
+                            _elem237.append(_elem243)
                         iprot.readListEnd()
-                        self.x.append(_elem223)
+                        self.x.append(_elem237)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
             elif fid == 3:
                 if ftype == TType.LIST:
                     self.y = []
-                    (_etype233, _size230) = iprot.readListBegin()
-                    for _i234 in range(_size230):
-                        _elem235 = []
-                        (_etype239, _size236) = iprot.readListBegin()
-                        for _i240 in range(_size236):
-                            _elem241 = iprot.readDouble()
-                            _elem235.append(_elem241)
+                    (_etype247, _size244) = iprot.readListBegin()
+                    for _i248 in range(_size244):
+                        _elem249 = []
+                        (_etype253, _size250) = iprot.readListBegin()
+                        for _i254 in range(_size250):
+                            _elem255 = iprot.readDouble()
+                            _elem249.append(_elem255)
                         iprot.readListEnd()
-                        self.y.append(_elem235)
+                        self.y.append(_elem249)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
@@ -1073,20 +1073,20 @@ class tell_args(object):
         if self.x is not None:
             oprot.writeFieldBegin('x', TType.LIST, 2)
             oprot.writeListBegin(TType.LIST, len(self.x))
-            for iter242 in self.x:
-                oprot.writeListBegin(TType.DOUBLE, len(iter242))
-                for iter243 in iter242:
-                    oprot.writeDouble(iter243)
+            for iter256 in self.x:
+                oprot.writeListBegin(TType.DOUBLE, len(iter256))
+                for iter257 in iter256:
+                    oprot.writeDouble(iter257)
                 oprot.writeListEnd()
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         if self.y is not None:
             oprot.writeFieldBegin('y', TType.LIST, 3)
             oprot.writeListBegin(TType.LIST, len(self.y))
-            for iter244 in self.y:
-                oprot.writeListBegin(TType.DOUBLE, len(iter244))
-                for iter245 in iter244:
-                    oprot.writeDouble(iter245)
+            for iter258 in self.y:
+                oprot.writeListBegin(TType.DOUBLE, len(iter258))
+                for iter259 in iter258:
+                    oprot.writeDouble(iter259)
                 oprot.writeListEnd()
             oprot.writeListEnd()
             oprot.writeFieldEnd()

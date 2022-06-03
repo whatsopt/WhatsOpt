@@ -24,7 +24,7 @@ class Optimization < ApplicationRecord
 
   store :config, accessors: [:xtypes, :xlimits, :n_obj, :cstr_specs, :options], coder: JSON
   store :inputs, accessors: [:x, :y, :with_best], coder: JSON
-  store :outputs, accessors: [:status, :x_suggested, :x_best, :err_msg], coder: JSON
+  store :outputs, accessors: [:status, :x_suggested, :x_best, :y_best, :err_msg], coder: JSON
 
   class OptimizationError < Exception; end
   
@@ -43,11 +43,12 @@ class Optimization < ApplicationRecord
   end
 
   def perform
-    self.update!(outputs: { status: RUNNING, x_suggested: nil, x_best: nil })
+    self.update!(outputs: { status: RUNNING, x_suggested: nil, x_best: nil, y_best: nil })
     self.proxy.tell(self.x, self.y)
     res = self.proxy.ask(self.with_best)
     outputs = { status: res.status, x_suggested: res.x_suggested }
     outputs["x_best"] = res.x_best if self.with_best
+    outputs["y_best"] = res.y_best if self.with_best
     self.update!(outputs: outputs)
   rescue WhatsOpt::OptimizationProxyError, WhatsOpt::Services::OptimizerException => err
     log_error("#{err}: #{err.message}") # asynchronous: just set error state and log the error

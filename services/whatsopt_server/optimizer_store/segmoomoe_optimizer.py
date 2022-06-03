@@ -101,19 +101,22 @@ class SegmoomoeOptimizer(Optimizer):
             if with_best:
                 status = segmoomoe.res[0]
                 next_x = segmoomoe.sego.get_x()[-1]
-                best_x = res.X
+                x_best = res.X
+                y_best = res.F
             else:
                 status = res[0]
                 next_x = segmoomoe.sego.get_x()[-1]
-                best_x = None
+                x_best = None
+                y_best = None
         else:
             status = 2
             next_x = np.zeros((nx,)).tolist()
-            best_x = np.zeros((nx,)).tolist()
+            x_best = None
+            y_best = None
 
         print(f"status={status}")
         print(f"next_x={next_x}")
-        print(f"best_x={best_x}")
-        print(f"segmoomoe.res={res}")
+        print(f"x_best={x_best}")
+        print(f"y_best={y_best}")
 
-        return status, next_x, best_x
+        return status, next_x, x_best, y_best

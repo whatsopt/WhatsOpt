@@ -225,11 +225,13 @@ module WhatsOpt
       STATUS = 1
       X_SUGGESTED = 2
       X_BEST = 3
+      Y_BEST = 4
 
       FIELDS = {
         STATUS => {:type => ::Thrift::Types::I64, :name => 'status'},
         X_SUGGESTED => {:type => ::Thrift::Types::LIST, :name => 'x_suggested', :element => {:type => ::Thrift::Types::DOUBLE}},
-        X_BEST => {:type => ::Thrift::Types::LIST, :name => 'x_best', :element => {:type => ::Thrift::Types::LIST, :element => {:type => ::Thrift::Types::DOUBLE}}, :optional => true}
+        X_BEST => {:type => ::Thrift::Types::LIST, :name => 'x_best', :element => {:type => ::Thrift::Types::LIST, :element => {:type => ::Thrift::Types::DOUBLE}}, :optional => true},
+        Y_BEST => {:type => ::Thrift::Types::LIST, :name => 'y_best', :element => {:type => ::Thrift::Types::LIST, :element => {:type => ::Thrift::Types::DOUBLE}}, :optional => true}
       }
 
       def struct_fields; FIELDS; end

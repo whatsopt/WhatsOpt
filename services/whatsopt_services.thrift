@@ -89,7 +89,8 @@ enum OptimizerKind {
 struct OptimizerResult {
   1: Integer status,
   2: Vector x_suggested,
-  3: optional Matrix x_best 
+  3: optional Matrix x_best, 
+  4: optional Matrix y_best 
 }
 
 enum ConstraintType {
