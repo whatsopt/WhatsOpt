@@ -81,6 +81,7 @@ class SegomoeOptimizer(Optimizer):
             "cst_crit": "MC",
         }
         optim_settings = {**optim_settings, **self.options}
+        optim_settings["n_iter"] = 1  # force only one iteration anyway
 
         res = None
         with tempfile.TemporaryDirectory() as tmpdir:

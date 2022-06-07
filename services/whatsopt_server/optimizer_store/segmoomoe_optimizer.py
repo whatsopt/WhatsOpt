@@ -79,6 +79,7 @@ class SegmoomoeOptimizer(Optimizer):
             "compute_front": with_best,
         }
         optim_settings = {**optim_settings, **self.options}
+        optim_settings["n_iter"] = 1  # force only one iteration anyway
 
         res = None
         next_x = None
