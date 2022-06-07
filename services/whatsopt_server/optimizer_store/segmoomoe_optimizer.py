@@ -83,7 +83,7 @@ class SegmoomoeOptimizer(Optimizer):
         res = None
         next_x = None
         with tempfile.TemporaryDirectory() as tmpdir:
-            tmpdir = "/home/rlafage/sego"
+            # tmpdir = "/tmp"
             np.save(os.path.join(tmpdir, "doe"), self.x)
             np.save(os.path.join(tmpdir, "doe_response"), self.y)
             segmoomoe = MOO(
