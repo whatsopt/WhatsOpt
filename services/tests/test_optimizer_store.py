@@ -73,7 +73,7 @@ class TestOptimizerStore(unittest.TestCase):
         self.store.create_optimizer("1", "SEGOMOE", xlimits, cstrs)
         self.store.tell_optimizer("1", x, y)
         opt = self.store.get_optimizer("1")
-        status, next_x, best_x = opt.ask()
+        status, next_x, _ = opt.ask()
         print(status, next_x)
 
     def test_bad_constraints_specs(self):

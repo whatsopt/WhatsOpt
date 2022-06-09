@@ -12,6 +12,7 @@ class Api::V1::OptimizationControllerTest < ActionDispatch::IntegrationTest
 
   test "should create an optimization" do
     skip_if_parallel
+    skip_if_segomoe_not_installed
     assert_difference("Optimization.count", 1) do
       post api_v1_optimizations_url,
         params: { optimization: { kind: "SEGOMOE",
@@ -27,6 +28,7 @@ class Api::V1::OptimizationControllerTest < ActionDispatch::IntegrationTest
 
   test "should raise error on xlimits absence" do
     skip_if_parallel
+    skip_if_segomoe_not_installed
     assert_difference("Optimization.count", 0) do
       post api_v1_optimizations_url,
         params: { optimization: { kind: "SEGOMOE" } }, as: :json, headers: @auth_headers
@@ -36,6 +38,7 @@ class Api::V1::OptimizationControllerTest < ActionDispatch::IntegrationTest
 
   test "should raise error on ill formed xlimits" do
     skip_if_parallel
+    skip_if_segomoe_not_installed
     assert_difference("Optimization.count", 0) do
       post api_v1_optimizations_url,
         params: { optimization: { kind: "SEGOMOE", xlimits: [1, 2, 3] } }, as: :json, headers: @auth_headers

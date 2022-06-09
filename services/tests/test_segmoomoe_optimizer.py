@@ -1,10 +1,7 @@
-import os
 import unittest
 import numpy as np
 from whatsopt_server.optimizer_store.segmoomoe_optimizer import SegmoomoeOptimizer
 from whatsopt_server.services import ttypes as tt
-from smt.applications.mixed_integer import FLOAT, INT, MixedIntegerSamplingMethod
-from smt.sampling_methods import LHS
 
 
 def fun(x):  # function with 2 objectives
@@ -132,10 +129,6 @@ class TestSegmoomoeOptimizer(unittest.TestCase):
 
     # @unittest.skip("")
     def test_segmoomoe(self):
-        ndoe = 10
-        xtyps = [FLOAT, INT, INT]
-        xlimits = np.array([[0.0, 1.0], [0, 3], [0, 3]])
-
         # if os.path.exists("out/doe.npy"):
         #     xdoe = np.load("out/doe.npy")
         #     ydoe = np.load("out/doe_response.npy")
@@ -176,8 +169,8 @@ class TestSegmoomoeOptimizer(unittest.TestCase):
         res = segmoomoe.ask()
 
         # status, x_suggested, y_value, t_elapsed = res
-        status, x_suggested, _ = res
-        print(status, x_suggested)
+        status, _, _ = res
+        self.assertEqual(0, status)
 
 
 if __name__ == "__main__":

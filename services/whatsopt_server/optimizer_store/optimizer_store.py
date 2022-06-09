@@ -28,7 +28,11 @@ class OptimizerStore(object):
             os.makedirs(outdir)
 
     def create_optimizer(
-        self, optimizer_id, optimizer_kind, xlimits, cstr_specs=[], 
+        self,
+        optimizer_id,
+        optimizer_kind,
+        xlimits,
+        cstr_specs=[],
         mod_obj_options={},
         general_options={},
     ):

@@ -1,10 +1,8 @@
-import os
 import numpy as np
 import tempfile
-import warnings
 
-class Optimizer():
 
+class Optimizer:
     def __init__(self, xlimits, n_obj, cstr_specs, mod_obj_options, options):
         self.xlimits = np.array(xlimits)
         self.n_obj = n_obj

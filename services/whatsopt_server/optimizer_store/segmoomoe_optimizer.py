@@ -7,15 +7,12 @@ SEGMOOMOE_NOT_INSTALLED = False
 try:
     from moo.smoot import MOO
     from segomoe.constraint import Constraint
-    from smt.surrogate_models import KRG, KPLS
-    import smt.applications.mixed_integer as mixint
 
 except ImportError:
     warnings.warn("Optimizer SEGOMOE - MOO not installed")
     SEGMOOMOE_NOT_INSTALLED = True
 
 from whatsopt_server.optimizer_store.optimizer import Optimizer
-from whatsopt_server.services.ttypes import Type
 
 
 class SegmoomoeOptimizer(Optimizer):
@@ -29,7 +26,6 @@ class SegmoomoeOptimizer(Optimizer):
 
     def ask(self, with_best=False):
         nx = self.x.shape[1]
-        ny = self.y.shape[1]
 
         # Fake objective function
         def fun(x):
