@@ -7,12 +7,13 @@ typedef list<Float> Vector
 typedef list<Vector> Matrix
 
 typedef string OptionName;
-struct OptionValue {
-  1: optional Integer integer,
-  2: optional Float number,
-  3: optional Vector vector,
-  4: optional Matrix matrix,
-  5: optional string str
+union OptionValue {
+  1: Integer integer,
+  2: Float number,
+  3: Vector vector,
+  4: Matrix matrix,
+  5: string str,
+  6: bool boolean
 }
 typedef map<OptionName, OptionValue> Options;
 typedef map<OptionName, double> Kwargs;
@@ -81,12 +82,15 @@ service SurrogateStore {
 
 
 enum OptimizerKind {
-  SEGOMOE
+  SEGOMOE,
+  SEGMOOMOE
 }
 
 struct OptimizerResult {
   1: Integer status,
   2: Vector x_suggested,
+  3: optional Matrix x_best, 
+  4: optional Matrix y_best 
 }
 
 enum ConstraintType {
@@ -101,6 +105,34 @@ struct ConstraintSpec {
 }
 typedef list<ConstraintSpec> ConstraintSpecs;
 
+enum Type {
+  FLOAT,
+  INT,
+  ORD,
+  ENUM
+}
+struct Flimits {
+  1: Float lower,
+  2: Float upper 
+}
+struct Ilimits {
+  1: Integer lower,
+  2: Integer upper 
+}
+typedef list<Float> Olimits
+typedef list<string> Elimits
+union Xlimits {
+  1: Flimits flimits,
+  2: Ilimits ilimits,
+  3: Olimits olimits,
+  4: Elimits elimits
+}
+struct Xtype {
+  1: Type type,
+  2: Xlimits limits
+}
+typedef list<Xtype> Xtypes;
+
 service OptimizerStore {
 
   void create_optimizer(1: string optimizer_id,
@@ -109,10 +141,17 @@ service OptimizerStore {
                         4: ConstraintSpecs cstr_specs, 
                         5: Options options) throws (1: OptimizerException exc);
 
-  OptimizerResult ask(1: string optimizer_id) throws (1: OptimizerException exc);
+  void create_mixint_optimizer(1: string optimizer_id,
+                               2: OptimizerKind kind,
+                               3: Xtypes xtypes, 
+                               4: Integer n_obj,
+                               5: ConstraintSpecs cstr_specs, 
+                               6: Options options) throws (1: OptimizerException exc);
+
+  OptimizerResult ask(1: string optimizer_id, 2: bool with_best) throws (1: OptimizerException exc);
 
   void tell(1: string optimizer_id, 2: Matrix x, 3: Matrix y) throws (1: OptimizerException exc);
 
-  void destroy_optimizer(1: string surrogate_id);
+  void destroy_optimizer(1: string optimizer_id);
 }
 

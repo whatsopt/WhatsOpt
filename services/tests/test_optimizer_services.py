@@ -100,7 +100,6 @@ class TestOptimizerService(unittest.TestCase):
         res = self.store.ask("1")
 
         self.assertEqual(0, res.status)
-        np.testing.assert_allclose([0.8, 0.7], res.x_suggested, atol=0.1)
 
         self.store.destroy_optimizer("1")
 
@@ -125,7 +124,6 @@ class TestOptimizerService(unittest.TestCase):
         res = self.store.ask("1")
 
         self.assertEqual(0, res.status)
-        np.testing.assert_allclose([0.8, 0.7], res.x_suggested, atol=0.1)
 
         self.store.destroy_optimizer("1")
 

@@ -11,59 +11,18 @@ except ImportError:
     warnings.warn("Optimizer SEGOMOE not installed")
     SEGOMOE_NOT_INSTALLED = True
 
+from whatsopt_server.optimizer_store.optimizer import Optimizer
 
-class SegomoeOptimizer(object):
-    def __init__(self, xlimits, cstr_specs=[]):
-        self.constraint_handling = "MC"  # or 'UTB'
-        self.xlimits = np.array(xlimits)
-        self.constraints = self._parse_constraint_specs(cstr_specs)
-        self.workdir = tempfile.TemporaryDirectory()
 
-    @staticmethod
-    def _parse_constraint_specs(cstr_specs):
-        cstrs = []
-        for i, spec in enumerate(cstr_specs):
-            if spec["type"] == "<" or spec["type"] == "=" or spec["type"] == ">":
-                cstrs.append({"type": spec["type"], "bound": spec["bound"]})
-            else:
-                print("")
-                raise Exception(
-                    "Bad constraint spec type (n°{}): should match <, = or > , got {}".format(
-                        i + 1, spec
-                    )
-                )
-        return cstrs
+class SegomoeOptimizer(Optimizer):
+    def __init__(self, xlimits, cstr_specs=[], mod_obj_options={}, options={}):
+        super().__init__(xlimits, 1, cstr_specs, mod_obj_options, options)
+        if SEGOMOE_NOT_INSTALLED:
+            raise RuntimeError("Optimizer SEGOMOE not installed")
 
-    def tell(self, x, y):
-        print("X *************************************************")
-        print(x)
-        print("Y *************************************************")
-        print(y)
-        ncstrs = len(self.constraints)
-        print(y.shape)
-        if y.shape[1] != (ncstrs + 1):
-            raise Exception(
-                "Size mismatch: y should be of {} size (1 objective + {} constraints), got {}".format(
-                    ncstrs + 1, ncstrs, y.shape[1]
-                )
-            )
-
-        self.x = x
-        self.y = y
-
-    def ask(self):
+    def ask(self, with_best):
         nx = self.x.shape[1]
         ny = self.y.shape[1]
-        if SEGOMOE_NOT_INSTALLED:
-            return (3, np.zeros((1, nx)), np.zeros((1, ny)), 0)
-        # obj = self.y[:, :1]
-        # cstrs = self.y[:, 1:]
-        # nobj = obj.shape[1]
-        # ncstrs = cstrs.shape[1]
-        # print("nx={}, x={}".format(nx, self.x))
-        # print("ny={}, y={}".format(ny, self.y))
-        # print("nobj={}, obj={}".format(nobj, obj))
-        # print("ncstrs={}, cstrs={}".format(ncstrs, cstrs))
 
         print("Bounds of design variables:")
         print(self.xlimits)
@@ -72,8 +31,9 @@ class SegomoeOptimizer(object):
         ub = self.xlimits[:, 1].tolist()
         print("lower={} upper={}".format(lb, ub))
 
+        # Fake objective+constraints function
         def f_grouped(x):
-            return -np.inf * np.ones(ny), False
+            return np.inf * np.ones(ny), False
 
         dvars = [{"name": "x_" + str(i), "lb": lb[i], "ub": ub[i]} for i in range(nx)]
         print(dvars)
@@ -98,26 +58,29 @@ class SegomoeOptimizer(object):
 
         mod_obj = {
             "type": "Krig",
+            "regr": "constant",
             "corr": "squared_exponential",
             "theta0": [1.0] * nx,
             "thetaL": [0.1] * nx,
             "thetaU": [10.0] * nx,
             "normalize": True,
         }
+        mod_obj = {**mod_obj, **self.mod_obj_options}
         mod_con = mod_obj
         default_models = {"obj": mod_obj, "con": mod_con}
-        n_clusters = 1
+
         optim_settings = {
             "model_type": default_models,
-            "n_clusters": n_clusters,
+            "n_clusters": 1,
             "optimizer": "slsqp",
             "analytical_diff": False,
             "grouped_eval": True,
             "profiling": False,
             "debug": False,
             "verbose": True,
-            "cst_crit": self.constraint_handling,
+            "cst_crit": "MC",
         }
+        optim_settings = {**optim_settings, **self.options}
 
         res = None
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -132,14 +95,22 @@ class SegomoeOptimizer(object):
                 comm=None,
             )
             res = sego.run_optim(n_iter=1)
-            res = (
-                res[0],
-                np.array(res[1]).flatten().tolist(),
-                np.array(res[2]).flatten().tolist(),
-                res[3],
-            )
-            print(res)
-        if not res:
-            res = (2, np.zeros((nx,)).tolist(), np.zeros((ny,)).tolist(), 0)
 
-        return res
+        if res:
+            status = res[0]
+            next_x = sego.get_x()[-1]
+            x_best = [res[1][0].tolist()]
+            y_best = [res[2][0].tolist()]
+        else:
+            status = 2
+            next_x = np.zeros((nx,)).tolist()
+            x_best = None
+            y_best = None
+
+        print(f"status={status}")
+        print(f"next_x={next_x}")
+        print(f"x_best={x_best}")
+        print(f"y_best={y_best}")
+        print(f"sego.res={res}")
+
+        return status, next_x, x_best, y_best
