@@ -152,7 +152,6 @@ class Optimization < ApplicationRecord
   end
 
   def raise_error(err_msg)
-    log_error(err_msg)
     raise OptimizationError.new(err_msg)
   end
 end

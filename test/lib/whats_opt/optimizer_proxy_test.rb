@@ -24,7 +24,7 @@ class OptimizerProxyTest < ActiveSupport::TestCase
     y = [[9.09955542], [6.38231049], [12.4677347]]
 
     @proxy.tell(x, y)
-    @proxy.ask
+    @proxy.ask(with_best: true)
 
     @proxy.destroy_optimizer
   end
