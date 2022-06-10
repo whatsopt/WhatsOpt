@@ -34,6 +34,10 @@ class ActiveSupport::TestCase
     skip "SEGOMOE not installed" unless SEGOMOE_INSTALLED
   end
 
+  def skip_if_segomoe_installed
+    skip "SEGOMOE installed" if SEGOMOE_INSTALLED
+  end
+
   def csv2hash(filename)
     res = {}
     CSV.foreach("test/fixtures/#{filename}", headers: true, col_sep: ";", converters: :float).with_index(1) do |row, ln|

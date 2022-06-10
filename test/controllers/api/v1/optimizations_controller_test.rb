@@ -12,6 +12,7 @@ class Api::V1::OptimizationControllerTest < ActionDispatch::IntegrationTest
 
   test "should create an optimization" do
     skip_if_parallel
+    skip_if_segomoe_not_installed
     assert_difference("Optimization.count", 1) do
       post api_v1_optimizations_url,
         params: { optimization: { kind: "SEGOMOE",
