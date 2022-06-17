@@ -18,20 +18,20 @@ class OptimizerStore(object):
 
     def __init__(self, outdir=".", logdir="."):
         self.outdir = outdir
-        self.logdir = logdir
+        self.logdir = os.path.join(logdir, "optimizations")
         self.optimizer_classes = {
             "SEGOMOE": SegomoeOptimizer,
         }
         self.mixint_optimizer_classes = {
             "SEGMOOMOE": SegmoomoeOptimizer,
         }
-        if not os.path.exists(outdir):
-            os.makedirs(outdir)
-        if not os.path.exists(logdir):
-            os.makedirs(logdir)
+        if not os.path.exists(self.outdir):
+            os.makedirs(self.outdir)
+        if not os.path.exists(self.logdir):
+            os.makedirs(self.logdir)
 
     def make_logfile(self, optim_id):
-        return os.path.join(self.logdir, "optimizations", f"optim_{optim_id}.log")
+        return os.path.join(self.logdir, f"optim_{optim_id}.log")
 
     def create_optimizer(
         self,
@@ -45,7 +45,11 @@ class OptimizerStore(object):
         print(f"mod obj options = {mod_obj_options}")
         print(f"general options = {general_options}")
         self.optimizer = self.optimizer_classes[optimizer_kind](
-            xlimits, cstr_specs, mod_obj_options, general_options, self.make_logfile(optimizer_id)
+            xlimits,
+            cstr_specs,
+            mod_obj_options,
+            general_options,
+            self.make_logfile(optimizer_id),
         )
         self._dump(optimizer_id)
         return self.optimizer
