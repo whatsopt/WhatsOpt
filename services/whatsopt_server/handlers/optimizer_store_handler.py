@@ -21,8 +21,8 @@ def throw_optimizer_exception(func):
 
 
 class OptimizerStoreHandler:
-    def __init__(self, outdir="."):
-        self.optim_store = OptimizerStore(outdir)
+    def __init__(self, outdir=".", logdir="."):
+        self.optim_store = OptimizerStore(outdir, logdir)
 
     def ping(self):
         print("Optimizer server... Ping!")

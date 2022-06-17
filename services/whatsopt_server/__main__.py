@@ -32,9 +32,18 @@ def main(args=sys.argv[1:]):
         help="save trained surrogates or configured optimizers to DIRECTORY",
         metavar="DIRECTORY",
     )
+    parser.add_option(
+        "--logdir",
+        dest="logdir",
+        default=tempfile.gettempdir(),
+        help="save logs to DIRECTORY",
+        metavar="DIRECTORY",
+    )
     (options, args) = parser.parse_args(args)
     outdir = options.outdir
+    logdir = options.logdir
     print("Surrogates/Optimizers saved to {}".format(outdir))
+    print("Logs saved to {}".format(logdir))
 
     processor = TMultiplexedProcessor()
     processor.registerProcessor(
@@ -43,7 +52,7 @@ def main(args=sys.argv[1:]):
     )
     processor.registerProcessor(
         "OptimizerStoreService",
-        OptimizerStoreService.Processor(OptimizerStoreHandler(outdir=outdir)),
+        OptimizerStoreService.Processor(OptimizerStoreHandler(outdir=outdir, logdir=logdir)),
     )
     processor.registerProcessor(
         "AdministrationService",

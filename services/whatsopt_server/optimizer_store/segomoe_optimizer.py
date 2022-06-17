@@ -15,8 +15,8 @@ from whatsopt_server.optimizer_store.optimizer import Optimizer
 
 
 class SegomoeOptimizer(Optimizer):
-    def __init__(self, xlimits, cstr_specs=[], mod_obj_options={}, options={}):
-        super().__init__(xlimits, 1, cstr_specs, mod_obj_options, options)
+    def __init__(self, xlimits, cstr_specs=[], mod_obj_options={}, options={}, logfile=None):
+        super().__init__(xlimits, 1, cstr_specs, mod_obj_options, options, logfile)
         if SEGOMOE_NOT_INSTALLED:
             raise RuntimeError("Optimizer SEGOMOE not installed")
 
@@ -93,6 +93,7 @@ class SegomoeOptimizer(Optimizer):
                 optim_settings=optim_settings,
                 path_hs=tmpdir,
                 comm=None,
+                logfile=self.logfile,
             )
             res = sego.run_optim(n_iter=1)
 

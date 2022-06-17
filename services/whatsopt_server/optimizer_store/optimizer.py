@@ -3,12 +3,13 @@ import tempfile
 
 
 class Optimizer:
-    def __init__(self, xlimits, n_obj, cstr_specs, mod_obj_options, options):
+    def __init__(self, xlimits, n_obj, cstr_specs, mod_obj_options, options, logfile):
         self.xlimits = np.array(xlimits)
         self.n_obj = n_obj
         self.constraints = self._check_constraint_specs(cstr_specs)
         self.mod_obj_options = mod_obj_options
         self.options = options
+        self.logfile = logfile
         self.workdir = tempfile.TemporaryDirectory()
 
     @staticmethod
