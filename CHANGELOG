@@ -1,7 +1,8 @@
 <h1>CHANGELOG</h1>
 
-<h3>1.22.3 (12/05/2022)</h3>
+<h3>1.23.0 (17/06/2022)</h3>
 <ul>
+  <li>Implement access to in-house mixed-integer multi-objective SEGMOOMOE optimizer</li>
   <li>Fix EGMDO code generation when an output is used modeled as a random variable</li>
   <li>Tech.: Update ruby and javascript dependencies</li>
   <li>Tech.: Update SEGOMOE toolbox 
