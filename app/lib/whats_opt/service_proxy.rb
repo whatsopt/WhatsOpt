@@ -10,6 +10,7 @@ module WhatsOpt
 
     PYTHON = APP_CONFIG["python_cmd"] || "python"
     OUTDIR = File.join(Rails.root, "upload", "store")
+    LOGDIR = File.join(Rails.root, "log")
 
     DEFAULT_HOST = "localhost"
     DEFAULT_PORT = 41400
@@ -31,7 +32,7 @@ module WhatsOpt
       self._initialize
 
       if server_start && !server_available?
-        cmd = "#{PYTHON} #{File.join(Rails.root, 'services', 'run_server.py')} --outdir #{OUTDIR}"
+        cmd = "#{PYTHON} #{File.join(Rails.root, 'services', 'run_server.py')} --outdir #{OUTDIR} --logdir #{LOGDIR}"
         Rails.logger.info cmd
         @pid = spawn(cmd, [:out, :err] => File.join(Rails.root, "log", "whatsopt_server.log"))
         retries = 0

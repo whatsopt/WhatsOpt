@@ -17,9 +17,9 @@ from whatsopt_server.optimizer_store.optimizer import Optimizer
 
 class SegmoomoeOptimizer(Optimizer):
     def __init__(
-        self, xtypes, xlimits, n_obj, cstr_specs=[], mod_obj_options={}, options={}
+        self, xtypes, xlimits, n_obj, cstr_specs=[], mod_obj_options={}, options={}, logfile=None
     ):
-        super().__init__(xlimits, n_obj, cstr_specs, mod_obj_options, options)
+        super().__init__(xlimits, n_obj, cstr_specs, mod_obj_options, options, logfile)
         self.xtypes = xtypes
         if SEGMOOMOE_NOT_INSTALLED:
             raise RuntimeError("Optimizer SEGMOOMOE not installed")
@@ -90,6 +90,7 @@ class SegmoomoeOptimizer(Optimizer):
                 const=cons,
                 path_hs=tmpdir,
                 model_type=default_models,
+                logfile=self.logfile,
                 **optim_settings,
             )
             res = segmoomoe.optimize(fun)
