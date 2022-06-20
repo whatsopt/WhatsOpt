@@ -53,7 +53,7 @@ group :development, :test do
   gem 'simplecov-lcov', require: false
   # rswag
   gem "rspec-rails"
-  gem "rswag-specs", git: 'https://github.com/rswag/rswag.git', glob: 'rswag-specs/rswag-specs.gemspec'
+  gem "rswag-specs", "2.5.1"
 end
 
 group :development do
@@ -126,7 +126,7 @@ gem "thrift", "~>0.16"
 gem "image_processing", "~> 1.2"
 
 # Document API
-gem "rswag-api", git: 'https://github.com/rswag/rswag.git', glob: 'rswag-api/rswag-api.gemspec'
+gem "rswag-api", "2.5.1"
 
 # To cache XDSM json to get XDSM standalone html
 gem "deepsort"

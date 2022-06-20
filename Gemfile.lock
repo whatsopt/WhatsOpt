@@ -1,21 +1,3 @@
-GIT
-  remote: https://github.com/rswag/rswag.git
-  revision: e2bc45f19567cb52e8dc5898b255a6ad4b1c0590
-  glob: rswag-api/rswag-api.gemspec
-  specs:
-    rswag-api (0.0.0)
-      railties (>= 3.1, < 7.1)
-
-GIT
-  remote: https://github.com/rswag/rswag.git
-  revision: e2bc45f19567cb52e8dc5898b255a6ad4b1c0590
-  glob: rswag-specs/rswag-specs.gemspec
-  specs:
-    rswag-specs (0.0.0)
-      activesupport (>= 3.1, < 7.1)
-      json-schema (~> 2.2)
-      railties (>= 3.1, < 7.1)
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -365,6 +347,12 @@ GEM
       rspec-mocks (~> 3.10)
       rspec-support (~> 3.10)
     rspec-support (3.11.0)
+    rswag-api (2.5.1)
+      railties (>= 3.1, < 7.1)
+    rswag-specs (2.5.1)
+      activesupport (>= 3.1, < 7.1)
+      json-schema (~> 2.2)
+      railties (>= 3.1, < 7.1)
     rubocop (1.28.2)
       parallel (~> 1.10)
       parser (>= 3.1.0.0)
@@ -537,8 +525,8 @@ DEPENDENCIES
   rails (~> 7.0)
   rolify
   rspec-rails
-  rswag-api!
-  rswag-specs!
+  rswag-api (= 2.5.1)
+  rswag-specs (= 2.5.1)
   rubocop
   rubocop-rails_config
   rubyzip (~> 2.3.0)
