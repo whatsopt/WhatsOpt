@@ -193,10 +193,7 @@ paths:
               schema:
                 "$ref": "#/components/schemas/Error"
       requestBody:
-        content:
-          application/json:
-            schema:
-              description: 'x points where to predict using matrix format (nsampling,
+        description: 'x points where to predict using matrix format (nsampling,
                 nxdim) <br/>           where <strong>nsampling</strong> is the number
                 of points and <strong>nxdim</strong> the dimension of x<br/>           Each
                 column corresponds to the various values of an input variables of
@@ -206,6 +203,10 @@ paths:
                 be expanded as variable''s size scalar values<br/>           (example:
                 z of shape (m, p, q) will expands in ''z[0]'', ''z[1]'', ..., ''z[m*p*q-1]'',
                 ''z[m*p*q]'' scalar values).'
+        required: true
+        content:
+          application/json:
+            schema:
               type: object
               properties:
                 meta_model:
@@ -216,7 +217,9 @@ paths:
   "/api/v1/optimizations":
     post:
       summary: Create an optimization context
-      description: Initialize optimization context specifying design space and constraints
+      description: Initialize optimization context specifying design space and constraints.</br> 
+                   Mixed-integer multi-objectives optimization is available (SEGMOOMOE), it supersedes legacy mono-objective continuous 
+                   optimization which is still available (SEGOMOE).
       tags:
       - Optimization
       security:
@@ -227,24 +230,41 @@ paths:
           description: Optimization successfully created
           content: {}
       requestBody:
+        description: Optmization context&colon; xlimits and optional constraints <br/>
+                    - kind&colon; Optimizer name either 'SEGOMOE' (continous mono-objective) or 'SEGMOOMOE'(mixed-integer multi-objectives)<br/>
+                    - n_obj&colon; Number of objectives > 0 (used only with 'SEGMOOMOE')<br/>
+                    - xlimits&colon; design space in matrix format (nxdim, 2). The ith row is [lower bound, upper bound] of the ith design variable. </br>
+                    - cstr_specs&colon; constraint c specification either *c<bound*, *c>bound*, *c=bound* (default is *<0*)<br/>
+                    - options of the given optimizer (SEGOMOE or SEGMOOMOE)
+        require: true
         content:
           application/json:
             schema:
-              description: |-
-                Optmization context: xlimits and optional constraints <br/>
-                          * xlimits: design space in matrix format (nxdim, 2). The ith row is [lower bound, upper bound] of the ith design variable. </br>
-                          * cstr_specs: constraint c specification either *c<bound*, *c>bound*, *c=bound* (default is *<0*)
               type: object
               properties:
                 optimization:
                   type: object
                   properties:
+                    kind:
+                      type: string
+                      description: Optimizer name 
+                      enum: 
+                        - SEGOMOE
+                        - SEGMOOMOE
+                    n_obj:
+                      type: integer
+                      description: Number of objectives > 0 (used only by multi-obj optimization aka SEGMOOMOE)
+                    xtypes:
+                      "$ref": "#/components/schemas/XTypes"
                     xlimits:
                       "$ref": "#/components/schemas/XLimits"
                     cstr_specs:
                       type: array
                       items:
                         "$ref": "#/components/schemas/ConstraintSpec"
+                    options:
+                      type: object
+                      description: options of SEGOMOE or SEGOMOOE optimizers (cf. opimizers doc)
                   required:
                   - xlimits
               required:
@@ -258,6 +278,9 @@ paths:
         functions g1, g2, ..., gn specified at optimization creation. </br>       Previous
         evaluations should result from an initial DOE execution followed by previous
         call evaluation on previous suggestions.
+        When with_best is set, the best result (aka best locations and values of optimum) is also returned
+        as x_best and y_best. In case of mono-obj x and y are matrices with one row, in case of multi-obj
+        it is a Pareto front with several rows.
       tags:
       - Optimization
       security:
@@ -274,10 +297,7 @@ paths:
           description: x suggestion computation started
           content: {}
       requestBody:
-        content:
-          application/json:
-            schema:
-              description: 'x, y sampling points using matrix format (nsample, nxdim),
+        description: 'x, y sampling points using matrix format (nsample, nxdim),
                 (nsampling, nydim) <br/>           where <strong>nsampling</strong>
                 is the number of sample points, <strong>nxdim</strong> the dimension
                 of x and<br/>           <strong>nydim</strong> the dimension of y.
@@ -295,6 +315,10 @@ paths:
                 it should be expanded as variable''s size scalar values<br/>           (example:
                 z of shape (m, p, q) will expands in ''z[0]'', ''z[1]'', ..., ''z[m*p*q-1]'',
                 ''z[m*p*q]'' scalar values).'
+        required: true
+        content:
+          application/json:
+            schema:
               type: object
               properties:
                 optimization:
@@ -304,6 +328,9 @@ paths:
                       "$ref": "#/components/schemas/Matrix"
                     y:
                       "$ref": "#/components/schemas/Matrix"
+                    with_best:
+                      description: whether x_best, y_best are computed 
+                      type: boolean
     get:
       summary: Retrieve optimization result
       tags:
@@ -319,51 +346,37 @@ paths:
           type: string
       responses:
         '200':
-          description: Retrieve current optimization result
+          description: Retrieve current optimization result (x_best and y_best available only if with_best set on put request)
           content:
             application/json:
               schema:
                 type: object
                 description: Optimization result
                 properties:
-                  id:
-                    type: number
-                  kind:
-                    type: string
-                  inputs:
-                    type: object
-                    properties:
-                      x:
-                        "$ref": "#components/schemas/Matrix"
-                      y:
-                        "$ref": "#components/schemas/Matrix"
-                  outputs:
-                    type: object
-                    properties:
-                      x_suggested:
-                        "$ref": "#components/schemas/RowVector"
-                        nullable: true
-                      status:
-                        type: integer
-                        enum:
-                        - -1
-                        - 0
-                        - 1
-                        - 2
-                        - 3
-                        - 4
-                    required:
-                    - x_suggested
-                    - status
-                  created_at:
-                    type: string
-                    format: date-time
-                  updated_at:
-                    type: string
-                    format: date-time
+                  x_suggested:
+                    "$ref": "#components/schemas/RowVector"
+                    nullable: true
+                  status:
+                    type: integer
+                    enum:
+                    - -1
+                    - 0
+                    - 1
+                    - 2
+                    - 3
+                    - 4
+                  x_best:
+                    description: best optimum location (mono-obj) or best optima locations (multi-obj) so far
+                    "$ref": "#components/schemas/Matrix"
+                    nullable: true
+                  y_best:
+                    description: best optimum value (mono-obj) or best optima values (multi-obj) so far
+                    "$ref": "#components/schemas/Matrix"
+                    nullable: true
                 required:
-                - inputs
-                - outputs
+                - x_suggested
+                - status
+
     delete:
       summary: Destroy optimization context
       tags:
@@ -498,6 +511,28 @@ components:
                   type: string
                 name:
                   type: string
+    XTypes:
+      description: design space
+      type: array
+      items:
+        "$ref": "#components/schemas/XType"
+      minItems: 1
+    XType:
+      type: object
+      properties: 
+        type: 
+          type: string
+          enum:
+          - "FLOAT"
+          - "INT"
+          - "ORD"
+          - "ENUM"
+        limits: 
+          type: array
+          description: depending on type a couple of floats, a couple of integers, a list of integers, a list of strings
+          items:
+            type: number
+
   securitySchemes:
     Token:
       type: apiKey
@@ -512,7 +547,7 @@ tags:
 - name: Meta-Modeling
   description: Operations for using meta-models created in WhatsOpt
 - name: Optimization
-  description: Operations for using Onera SEGOMOE optimizer
+  description: Operations for using Onera mono-obj continuous optimizer (SEGOMOE) or Onera multi-obj mixed-integer optimizer (SEGMOOMOE)
 externalDocs:
   description: Find out more on WhatsOpt
   url: http://github.com/OneraHub/WhatsOpt
