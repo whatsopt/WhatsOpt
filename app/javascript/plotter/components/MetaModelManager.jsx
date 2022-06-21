@@ -145,12 +145,14 @@ class MetaModelManager extends React.Component {
 
   render() {
     const { selCases, uqMode } = this.props;
-    const outputs = [...new Set(selCases.o.map((c) => c.varname))].map((name) => (
+    const input_names = Array.from(new Set(selCases.i.map((c) => c.varname)));
+    const output_names = Array.from(new Set(selCases.o.map((c) => c.varname)));
+    const outputs = output_names.map((name) => (
       <span key={name} className="ml-5">
         {name}
       </span>
     ));
-    const inputs = [...new Set(selCases.i.map((c) => c.varname))].map((name) => (
+    const inputs = input_names.map((name) => (
       <span key={name} className="ml-5">
         {name}
       </span>
@@ -158,8 +160,8 @@ class MetaModelManager extends React.Component {
 
     const { formData } = this.state;
     formData.variables = {
-      inputs: [...new Set(selCases.i.map((c) => c.varname))],
-      outputs: [...new Set(selCases.o.map((c) => c.varname))],
+      inputs: input_names,
+      outputs: output_names,
     };
 
     const { errors } = this.state;
