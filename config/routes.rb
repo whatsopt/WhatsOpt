@@ -12,6 +12,7 @@ Rails.application.routes.draw do
   end
      
   resources :design_projects
+  resources :optimizations, only: [:index]
 
   namespace :api do
     namespace :v1, defaults: { format: :json } do

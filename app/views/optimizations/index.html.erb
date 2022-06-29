@@ -1,0 +1,30 @@
+<h1>Optimizations</h1>
+
+<p>
+<table class="table table-striped">
+
+  <thead>
+    <tr>
+      <th style="10%">Id</th>
+      <th style="20%">User</th>
+      <th style="20%">Optimizer</th>
+      <th style="20%">Status</th>
+      <th style="20%">Inputs</th>
+      <th style="10%">Last Modification</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @optimizations.each do |optimization_request| %>
+    <tr>
+      <td>#<%= optimization_request.id %></td>
+      <td><%= optimization_request.owner.login %></td>
+      <td><%= optimization_request.kind %></td>
+      <td><%= optimization_request.outputs["status"] ? optimization_request.outputs["status"] : "Empty" %></td>
+      <td><%= optimization_request.inputs.empty? ? "0" : optimization_request.inputs["x"].length %></td>
+      <td><%= optimization_request.updated_at %></td>
+    </tr>
+    <% end %>
+  </tbody>
+</table>
+</p>
