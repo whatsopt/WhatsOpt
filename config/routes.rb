@@ -12,7 +12,8 @@ Rails.application.routes.draw do
   end
      
   resources :design_projects
-  resources :optimizations, only: [:index]
+
+  resources :optimizations, only: [:index, :destroy]
 
   namespace :api do
     namespace :v1, defaults: { format: :json } do

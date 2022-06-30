@@ -1,30 +1,64 @@
 <h1>Optimizations</h1>
 
 <p>
-<table class="table table-striped">
+<table class="table">
 
   <thead>
     <tr>
+      <th style="width: 7%" data-sort-ignore="true">
+        <ul class='hidden_list'>
+          <li><input type="checkbox" id="selectAll"><label for="selectAll" style="padding-left:10px">Select All</label></li>
+          <li><label id="display_checkbox_count">_</label></li>
+        <ul>
+      </th>
       <th style="10%">Id</th>
       <th style="20%">User</th>
       <th style="20%">Optimizer</th>
       <th style="20%">Status</th>
-      <th style="20%">Inputs</th>
+      <th style="20%">Number of Points</th>
       <th style="10%">Last Modification</th>
     </tr>
   </thead>
 
   <tbody>
     <% @optimizations.each do |optimization_request| %>
-    <tr>
+    <tr class='table_row'>
+      <td><%= check_box_tag 'optimization_request_ids[]', optimization_request.id, false, class: "checkbox_child " + optimization_request.status_display %></td>
       <td>#<%= optimization_request.id %></td>
       <td><%= optimization_request.owner.login %></td>
       <td><%= optimization_request.kind %></td>
-      <td><%= optimization_request.outputs["status"] ? optimization_request.outputs["status"] : "Empty" %></td>
-      <td><%= optimization_request.inputs.empty? ? "0" : optimization_request.inputs["x"].length %></td>
+      <td><%= optimization_request.status_display %></td>
+      <td><%= optimization_request.nb_points %></td>
       <td><%= optimization_request.updated_at %></td>
     </tr>
     <% end %>
   </tbody>
 </table>
 </p>
+
+
+<% content_for :document_ready do %>
+<script type="text/javascript">
+
+$("#selectAll").change(function() {
+  checked = this.checked;
+  $('.checkbox_child').map(function () { 
+    $(this).prop('checked', checked);
+    console.log($(this).parent().parent())
+  })
+  update_checkbox_count()
+})
+
+
+$('.checkbox_child').change(function() {update_checkbox_count()})
+
+function update_checkbox_count() {
+  $('#display_checkbox_count').text(($('.checkbox_child:checked').length===0) ? "_" : "(" + $('.checkbox_child:checked').length + "/" + $('.checkbox_child').length + ")" );
+  
+  $('.checkbox_child').map(function () { 
+    $(this).parent().parent().removeClass( (this.checked) ? "" : "selected" ).addClass( (this.checked) ? "selected" : "");
+  })
+}
+
+</script>
+<% end %>

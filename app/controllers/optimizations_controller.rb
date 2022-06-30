@@ -1,18 +1,11 @@
 # frozen_string_literal: true
 
 class OptimizationsController < ApplicationController
-  before_action :set_optimization, only: [:show]
+  before_action :set_optimization, only: [:show, :destroy]
 
   # GET /optimizations
   def index
-    if params[:optimization_id]
-      policy_scope(Optimization)
-      @optimization = Optimization.find(params[:optimization_id])
-      #current_user.update(analyses_scope_optimization_id: @optimization.id)
-      redirect_to optimizations_url
-    else
-        @optimizations = policy_scope(Optimization)
-    end
+    @optimizations = policy_scope(Optimization)
   end
 
 private

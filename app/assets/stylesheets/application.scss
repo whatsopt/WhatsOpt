@@ -135,3 +135,22 @@ div.field_with_errors {
   stroke-width: 1px;
   visibility: visible;
 }
+
+.hidden_list {
+  list-style-type: none;
+}
+
+.holder {
+  height: 100%;
+  width: 100%;
+  display: flex;
+}
+
+.selected {
+  background-color: #6dacdf
+}
+
+.hidden_list {
+  padding: 0;
+  list-style-type: none;
+}

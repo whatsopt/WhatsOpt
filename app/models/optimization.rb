@@ -154,4 +154,18 @@ class Optimization < ApplicationRecord
   def raise_error(err_msg)
     raise OptimizationError.new(err_msg)
   end
+
+  def nb_points
+    return self.inputs.empty? ? "0" : self.inputs["x"].length
+  end
+
+  def status_display
+    status_text = {
+      -2 => "status_-2",
+      0 => "status_0",
+      2 => "status_2",
+      4 => "status_4"
+    }
+    return self.outputs["status"] ? status_text[self.outputs["status"]] : "empty"
+  end
 end
