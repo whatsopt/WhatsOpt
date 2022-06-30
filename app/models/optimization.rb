@@ -159,13 +159,29 @@ class Optimization < ApplicationRecord
     return self.inputs.empty? ? "0" : self.inputs["x"].length
   end
 
-  def status_display
+  def status_text
     status_text = {
-      -2 => "status_-2",
-      0 => "status_0",
-      2 => "status_2",
-      4 => "status_4"
+      -2 => "Unkown Error",
+      -1 => "Pending",
+      0 => "Valid Point",
+      1 => "Invalid Point",
+      2 => "Runtime Error",
+      3 => "Solution Reached",
+      4 => "Running"
     }
-    return self.outputs["status"] ? status_text[self.outputs["status"]] : "empty"
+    return self.outputs["status"] ? status_text[self.outputs["status"]] : "Empty"
+  end
+
+  def status_display
+    status_display = {
+      -2 => ["color:#CC0000;", "fas fa-times"],
+      -1 => ["color:#FFA500;", "fas fa-hourglass"],
+      0 => ["color:#00AA00;", "fas fa-check"],
+      1 => ["color:#CC0000;", "fas fa-times"],
+      2 => ["color:#CC0000;", "fas fa-times"],
+      3 => ["color:#00AA00;", "fas fa-check"],
+      4 => ["color:#FFA500;", "fas fa-hourglass"],
+    }
+    return self.outputs["status"] ? status_display[self.outputs["status"]] : ["color:#CC0000;", "fas fa-times"]
   end
 end
