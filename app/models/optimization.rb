@@ -156,7 +156,7 @@ class Optimization < ApplicationRecord
   end
 
   def nb_points
-    return self.inputs.empty? ? "0" : self.inputs["x"].length
+    self.inputs.empty? ? "0" : self.inputs["x"].length
   end
 
   def status_text
@@ -169,7 +169,7 @@ class Optimization < ApplicationRecord
       3 => "Solution_Reached",
       4 => "Running"
     }
-    return self.outputs["status"] ? status_text[self.outputs["status"]] : "Empty"
+    self.outputs["status"] ? status_text[self.outputs["status"]] : "Empty"
   end
 
   def status_display
@@ -182,6 +182,6 @@ class Optimization < ApplicationRecord
       3 => ["color:#00AA00;", "fas fa-check"],
       4 => ["color:#FFA500;", "fas fa-hourglass"],
     }
-    return self.outputs["status"] ? status_display[self.outputs["status"]] : ["color:#CC0000;", "fas fa-times"]
+    self.outputs["status"] ? status_display[self.outputs["status"]] : ["color:#CC0000;", "fas fa-times"]
   end
 end
