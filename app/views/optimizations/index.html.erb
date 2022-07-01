@@ -1,6 +1,15 @@
+<%= form_tag destroy_selected_optimizations_path, method: :delete do %>
+
 <h1>Optimizations</h1>
 
 <p>
+
+<div id="delete_button" class="btn-toolbar float-right">
+<%= submit_tag "Delete selected", :class => 'btn btn-primary btn-xs', data: { title: 'Are you sure?', 
+                                                              confirm: "Remove optimizations?",
+                                                              commit: 'Yes',
+                                                              cancel: 'No, cancel' }%>
+</div>
 
 
 <ul class='hidden_list'>
@@ -35,7 +44,10 @@
   <tbody>
     <% @optimizations.each do |optimization_request| %>
     <tr class='table_row'>
-      <td><%= check_box_tag 'optimization_request_ids[]', optimization_request.id, false, class: "checkbox_child " + (optimization_request.status || "empty").to_s %></td>
+      <td><%= check_box_tag 'optimization_request_ids[]', 
+                            optimization_request.id, 
+                            false, 
+                            class: "checkbox_child " + (optimization_request.status || "empty").to_s %></td>
       <td>#<%= optimization_request.id %></td>
       <td><%= optimization_request.kind %></td>
       <td><%= optimization_request.nb_points %></td>
@@ -53,11 +65,9 @@
 <% content_for :document_ready do %>
 <script type="text/javascript">
 
+$("#delete_button").hide();
 
-$(document).ready(function(){
-    $('[data-bs-toggle="tooltip"]').tooltip();
-});
-
+$('[data-bs-toggle="tooltip"]').tooltip();
 
 $("#selectAll").change(function() {
   checked = this.checked;
@@ -101,7 +111,14 @@ function update_checkbox_count() {
   } else {
     $("#selectAll").prop('checked', false)
   }
+
+  if ($('.checkbox_child:checked').length > 0) {
+    $("#delete_button").show();
+  } else {
+    $("#delete_button").hide();
+  }
 }
 
 </script>
+<% end %>
 <% end %>

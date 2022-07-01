@@ -22,4 +22,8 @@ class OptimizationPolicy < ApplicationPolicy
   def destroy?
     @user.has_role?(:owner, @record)
   end
+
+  def destroy_selected?
+    @user.has_role?(:owner, @record)
+  end
 end

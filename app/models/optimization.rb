@@ -161,12 +161,12 @@ class Optimization < ApplicationRecord
 
   def status_text
     status_text = {
-      -2 => "Unkown Error",
+      -2 => "Unkown_Error",
       -1 => "Pending",
-      0 => "Valid Point",
-      1 => "Invalid Point",
-      2 => "Runtime Error",
-      3 => "Solution Reached",
+      0 => "Valid_Point",
+      1 => "Invalid_Point",
+      2 => "Runtime_Error",
+      3 => "Solution_Reached",
       4 => "Running"
     }
     return self.outputs["status"] ? status_text[self.outputs["status"]] : "Empty"
