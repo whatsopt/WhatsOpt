@@ -27,6 +27,6 @@ module OptimizationsHelper
   end
 
   def nb_points(input)
-    input.empty? ? "0" : self.inputs["x"].length
+    input.empty? ? "0" : input["x"].length
   end
 end
