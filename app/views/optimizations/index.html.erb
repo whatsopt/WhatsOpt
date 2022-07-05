@@ -51,7 +51,7 @@
                             class: "checkbox_child #{optimization_request.status || "empty"}" %></td>
       <td>#<%= optimization_request.id %></td>
       <td><%= optimization_request.kind %></td>
-      <td><%= optimization_request.nb_points %></td>
+      <td><%= nb_points(optimization_request.inputs) %></td>
       <td></td>
       <td><a href="#"style="<%=status_display(optimization_request.outputs["status"])[0] %>" data-bs-toggle="tooltip" title=<%= status_text(optimization_request.outputs["status"]) %>>
         <i class="<%= status_display(optimization_request.outputs["status"])[1] %>"></i>
