@@ -21,3 +21,8 @@ user4:
   login: davina
   email: davina.davis@onera.fr
   api_key: FriendlyApiKeyUser4
+
+user5:
+  login: peter
+  email: peter.pan@onera.fr
+  api_key: FriendlyApiKeyUser5

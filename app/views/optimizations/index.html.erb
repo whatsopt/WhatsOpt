@@ -18,13 +18,13 @@
     <input type="checkbox" id="selectStatus"><label for="selectStatus" style="padding-left:10px">Select by Status</label>
     <select id="status-select">
       <option value="empty">Empty</option>
-      <option value="-2">Unkown Error</option>
-      <option value="2">Runtime Error</option>
-      <option value="1">Invalid Point</option>
-      <option value="-1">Pending</option>
-      <option value="4">Running</option>
-      <option value="0">Valid Point</option>
-      <option value="3">Solution Reached</option>
+      <option value="<%= Optimization::OPTIMIZATION_ERROR %>">Optimization Error</option>
+      <option value="<%= Optimization::RUNTIME_ERROR %>">Runtime Error</option>
+      <option value="<%= Optimization::INVALID_POINT %>">Invalid Point</option>
+      <option value="<%= Optimization::PENDING %>">Pending</option>
+      <option value="<%= Optimization::RUNNING %>">Running</option>
+      <option value="<%= Optimization::VALID_POINT %>">Valid Point</option>
+      <option value="<%= Optimization::SOLUTION_REACHED %>">Solution Reached</option>
     </select>
   </li>
 </ul>
@@ -36,6 +36,7 @@
       <th style="10%">Id</th>
       <th style="20%">Optimizer</th>
       <th style="20%">Number of Points</th>
+      <th style="20%">View Details</th>
       <th style="20%">Status</th>
       <th style="10%">Last Modification</th>
     </tr>
@@ -47,12 +48,13 @@
       <td><%= check_box_tag 'optimization_request_ids[]', 
                             optimization_request.id, 
                             false, 
-                            class: "checkbox_child " + (optimization_request.status || "empty").to_s %></td>
+                            class: "checkbox_child #{optimization_request.status || "empty"}" %></td>
       <td>#<%= optimization_request.id %></td>
       <td><%= optimization_request.kind %></td>
       <td><%= optimization_request.nb_points %></td>
-      <td><a href="#"style="<%=optimization_request.status_display[0] %>" data-bs-toggle="tooltip" title=<%= optimization_request.status_text %>>
-        <i class="<%= optimization_request.status_display[1] %>"></i>
+      <td></td>
+      <td><a href="#"style="<%=status_display(optimization_request.outputs["status"])[0] %>" data-bs-toggle="tooltip" title=<%= status_text(optimization_request.outputs["status"]) %>>
+        <i class="<%= status_display(optimization_request.outputs["status"])[1] %>"></i>
       </a></td>
       <td><%= optimization_request.updated_at.strftime("%d/%m/%Y, at %I:%M%p") %></td>
     </tr>
