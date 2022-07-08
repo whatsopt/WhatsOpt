@@ -12,7 +12,7 @@ class OptimizationsControllerTest < ActionDispatch::IntegrationTest
   test "should get index" do
     get optimizations_url
     assert_response :success
-    assert_select "tbody>tr", count: Optimization.owned_by(users(:user1)).size
+    assert_select "tbody>tr", count: Optimization.count
   end
 
   test "admin should destroy optimization" do
@@ -28,13 +28,5 @@ class OptimizationsControllerTest < ActionDispatch::IntegrationTest
     assert_difference("Optimization.count", 0) do
       delete destroy_selected_optimizations_path, params: { optimization_request_ids: [@unstat.id] }
     end
-  end
-
-  test "should not show non-owned optimizations" do
-    sign_out users(:user1)
-    sign_in users(:user2)
-    get optimizations_url
-    assert_response :success
-    assert_select "tbody>tr", count: 0
   end
 end
