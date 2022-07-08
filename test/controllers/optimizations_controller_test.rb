@@ -12,7 +12,7 @@ class OptimizationsControllerTest < ActionDispatch::IntegrationTest
   test "should get index" do
     get optimizations_url
     assert_response :success
-    assert_select "tbody>tr", count: Optimization.count
+    assert_select "tbody>tr", count: Optimization.owned_by(users(:user1)).size
   end
 
   test "admin should destroy optimization" do
