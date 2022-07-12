@@ -1,3 +1,9 @@
 optim_ackley2d:
   kind: SEGOMOE
   config: <%= { :xlimits => [[-32.768, 32.768], [-32.768, 32.768]] }.to_json.inspect  %>
+
+optim_unkown_status:
+  id: 46
+  kind: SEGOMOE
+  config: <%= { :xlimits => [[-32.768, 32.768], [-32.768, 32.768]] }.to_json.inspect  %>
+  outputs: {status: -2010281.829}

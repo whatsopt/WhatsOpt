@@ -26,6 +26,8 @@ class Optimization < ApplicationRecord
   store :inputs, accessors: [:x, :y, :with_best], coder: JSON
   store :outputs, accessors: [:status, :x_suggested, :x_best, :y_best, :err_msg], coder: JSON
 
+  scope :owned_by, ->(user) { with_role(:owner, user) }
+
   class OptimizationError < Exception; end
   
   after_initialize :check_optimization_config

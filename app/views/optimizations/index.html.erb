@@ -1,0 +1,126 @@
+<%= form_tag destroy_selected_optimizations_path, method: :delete do %>
+
+<h1>Optimizations</h1>
+
+<p>
+
+<div id="delete_button" class="btn-toolbar float-right">
+<%= submit_tag "Delete selected", :class => 'btn btn-primary btn-xs', data: { title: 'Are you sure?', 
+                                                              confirm: "Remove optimizations?",
+                                                              commit: 'Yes',
+                                                              cancel: 'No, cancel' }%>
+</div>
+
+
+<ul class='hidden_list'>
+  <li><input type="checkbox" id="selectAll"><label for="selectAll" style="padding-left:10px">Select All</label></li>
+  <li>
+    <input type="checkbox" id="selectStatus"><label for="selectStatus" style="padding-left:10px">Select by Status</label>
+    <select id="status-select">
+      <option value="empty">Empty</option>
+      <option value="<%= Optimization::OPTIMIZATION_ERROR %>">Optimization Error</option>
+      <option value="<%= Optimization::RUNTIME_ERROR %>">Runtime Error</option>
+      <option value="<%= Optimization::INVALID_POINT %>">Invalid Point</option>
+      <option value="<%= Optimization::PENDING %>">Pending</option>
+      <option value="<%= Optimization::RUNNING %>">Running</option>
+      <option value="<%= Optimization::VALID_POINT %>">Valid Point</option>
+      <option value="<%= Optimization::SOLUTION_REACHED %>">Solution Reached</option>
+    </select>
+  </li>
+</ul>
+<table class="table table-striped">
+
+  <thead>
+    <tr>
+      <th style="width: 7%" data-sort-ignore="true"><label id="display_checkbox_count">_</label></th>
+      <th style="10%">Id</th>
+      <th style="20%">Optimizer</th>
+      <th style="20%">Number of Points</th>
+      <th style="20%">View Details</th>
+      <th style="20%">Status</th>
+      <th style="10%">Last Modification</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @optimizations.each do |optimization_request| %>
+    <tr class='table_row'>
+      <td><%= check_box_tag 'optimization_request_ids[]', 
+                            optimization_request.id, 
+                            false, 
+                            class: "checkbox_child #{optimization_request.status || "empty"}" %></td>
+      <td>#<%= optimization_request.id %></td>
+      <td><%= optimization_request.kind %></td>
+      <td><%= nb_points(optimization_request.inputs) %></td>
+      <td></td>
+      <td><a href="#"style="<%=status_display(optimization_request.outputs["status"])[0] %>" data-bs-toggle="tooltip" title=<%= status_text(optimization_request.outputs["status"]) %>>
+        <i class="<%= status_display(optimization_request.outputs["status"])[1] %>"></i>
+      </a></td>
+      <td><%= optimization_request.updated_at.strftime("%d/%m/%Y, at %I:%M%p") %></td>
+    </tr>
+    <% end %>
+  </tbody>
+</table>
+</p>
+
+
+<% content_for :document_ready do %>
+<script type="text/javascript">
+
+$("#delete_button").hide();
+
+$('[data-bs-toggle="tooltip"]').tooltip();
+
+$("#selectAll").change(function() {
+  checked = this.checked;
+
+  $('.checkbox_child').map(function () { 
+    $(this).prop('checked', checked);
+  })
+
+  $("#selectStatus").prop('checked', checked)
+  update_checkbox_count()
+})
+
+
+$("#selectStatus").change(function() {
+  checked = this.checked;
+  status = $("#status-select").val()
+
+  $('.checkbox_child').map(function () { 
+    if (~$(this).attr('class').indexOf(status)) {
+      $(this).prop('checked', checked);
+    }
+  })
+  update_checkbox_count()
+})
+
+$("#status-select").change(function() {
+  $("#selectStatus").prop('checked', false)
+})
+
+$('.checkbox_child').change(function() {update_checkbox_count()})
+
+function update_checkbox_count() {
+  $('#display_checkbox_count').text(($('.checkbox_child:checked').length===0) ? "_" : "(" + $('.checkbox_child:checked').length + "/" + $('.checkbox_child').length + ")" );
+  
+  $('.checkbox_child').map(function () { 
+    $(this).parent().parent().removeClass( (this.checked) ? "" : "table-primary" ).addClass( (this.checked) ? "table-primary" : "");
+  })
+
+  if ($('.checkbox_child:checked').length == $('.checkbox_child').length) {
+    $("#selectAll").prop('checked', true)
+  } else {
+    $("#selectAll").prop('checked', false)
+  }
+
+  if ($('.checkbox_child:checked').length > 0) {
+    $("#delete_button").show();
+  } else {
+    $("#delete_button").hide();
+  }
+}
+
+</script>
+<% end %>
+<% end %>

@@ -12,14 +12,18 @@ class OptimizationPolicy < ApplicationPolicy
   end
 
   def show?
-    true
+    (@user.admin? || @user.has_role?(:owner, @record) || @user.has_role?(:co_owner, @record))
   end
 
   def update?
-    @user.has_role?(:owner, @record)
+    (@user.admin? || @user.has_role?(:owner, @record) || @user.has_role?(:co_owner, @record))
   end
 
   def destroy?
-    @user.has_role?(:owner, @record)
+    (@user.admin? || @user.has_role?(:owner, @record) || @user.has_role?(:co_owner, @record))
+  end
+
+  def destroy_selected?
+    (@user.admin? || @user.has_role?(:owner, @record) || @user.has_role?(:co_owner, @record))
   end
 end

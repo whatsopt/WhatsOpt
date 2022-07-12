@@ -13,6 +13,12 @@ Rails.application.routes.draw do
      
   resources :design_projects
 
+  resources :optimizations, only: [:index, :destroy] do
+    collection do
+      delete 'destroy_selected'
+    end
+  end
+
   namespace :api do
     namespace :v1, defaults: { format: :json } do
       resource :api_doc, only: [:show]
