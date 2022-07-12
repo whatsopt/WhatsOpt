@@ -58,10 +58,6 @@ users_roles_optim_ackley2d:
   user: user1
   role: owner_optim_ackley2d_role
 
-users_roles_optim_unexpected_id:
-  user: user5
-  role: owner_optim_unexpected_id_role
-
 users_roles_optim_unkown_status:
   user: user5
   role: owner_optim_unkown_status_role

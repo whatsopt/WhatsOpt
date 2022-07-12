@@ -57,10 +57,6 @@ owner_optim_ackley2d_role:
   name: owner
   resource: optim_ackley2d (Optimization) 
 
-owner_optim_unexpected_id_role:
-  name: owner
-  resource: optim_unexpected_id (Optimization)
-
 owner_unkown_status:
   name: owner
   resource: optim_unkown_status (Optimization)
