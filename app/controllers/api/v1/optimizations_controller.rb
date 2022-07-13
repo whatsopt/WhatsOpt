@@ -16,14 +16,15 @@ class Api::V1::OptimizationsController < Api::ApiController
   def create
     @optim = Optimization.new(optim_params)
     authorize @optim
-    @optim.save!
-    @optim.create_optimizer
-    @optim.set_owner(current_user)
-    json_response @optim, :created
-  rescue Optimization::OptimizationError => e
-    skip_authorization
-    Rails.logger.error e
-    json_response({ message: e.message }, :bad_request)
+    if @optim.save
+      @optim.create_optimizer
+      @optim.set_owner(current_user)
+      json_response @optim, :created
+    else
+      skip_authorization
+      Rails.logger.error @optim.errors
+      json_response({ message: "Validation failed", errors: @optim.errors }, :bad_request)
+    end
   end
 
   # PATCH /api/v1/optimizations/1

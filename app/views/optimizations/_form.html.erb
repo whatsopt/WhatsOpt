@@ -1,0 +1,35 @@
+<%= form_for(optimization, url: (optimization.new_record? ? optimizations_path : optimization_path(@optimization)), :html => { :multipart => true, :role => "form" }) do |f| %>
+  <% if @optimization.errors.any? %>
+    <% @optimization.errors.full_messages.each do |message| %>
+      <div class="alert <%= bootstrap_class_for :error %>" role="alert">
+        <a href="#" data-dismiss="alert" class="close">×</a> 
+        <%= message %>
+      </div>
+    <% end %>
+  <% end %>
+
+  <div class="row">
+	<div class=" col-4">
+
+	<div class="form-group">
+		<%= f.label :kind %>
+		<%= f.select :kind , Optimization::OPTIMIZER_KINDS.each_key, {}, {class: "form-control"} %>
+	</div>	
+
+    <div class="form-group">
+		<%= f.label :n_obj %>
+		<%= f.number_field :n_obj, class: "form-control" %>
+	</div>
+
+    <div class="form-group">
+		<%= f.label :xlimits %>
+		<%= f.text_field :xlimits, class: "form-control" %>
+	</div>
+	
+	<div class="form-group">
+	    <%= f.submit "Submit", class: "btn btn-primary submit" %>
+	    <%= f.submit "Cancel", class: "btn btn-secondary", name: "cancel_button" %>
+	</div>
+	</div>
+  </div>  
+<% end %>
