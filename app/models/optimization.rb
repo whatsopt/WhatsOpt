@@ -118,7 +118,7 @@ class Optimization < ApplicationRecord
 
 
   def str_to_array string
-    JSON.parse(string) rescue nil
+    JSON.parse(string) rescue "Invalid JSON"
   end
 
   class OptimizationError < Exception; end

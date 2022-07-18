@@ -22,7 +22,7 @@ class OptimizationsController < ApplicationController
   def download
     authorize Optimization.find(params[:optimization_id])
     path = "#{Rails.root}/log/optimizations/optim_#{params[:optimization_id]}.log"
-    if File.exists?(path) 
+    if File.exist?(path) 
       send_file(path) 
     else
       redirect_to optimizations_url, notice: "There isn't a log file"
@@ -40,8 +40,12 @@ class OptimizationsController < ApplicationController
       redirect_to optimizations_url, notice: "Optimization creation cancelled."
     else
       @optimization = Optimization.new(optimization_params)
-      @optimization.config["n_obj"] = optimization_params[:n_obj].to_i
-      @optimization.config["xlimits"] = @optimization.str_to_array(optimization_params[:xlimits])
+      if optimization_params[:kind] == "SEGOMOE"
+        @optimization.config["n_obj"] = 1
+        @optimization.config["xlimits"] = @optimization.str_to_array(optimization_params[:xlimits])
+      else 
+        @optimization.config["n_obj"] = optimization_params[:n_obj].to_i
+      end
       @optimization.outputs["status"] = -1
       authorize @optimization
       if @optimization.save

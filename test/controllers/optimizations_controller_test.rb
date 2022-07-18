@@ -29,4 +29,35 @@ class OptimizationsControllerTest < ActionDispatch::IntegrationTest
       delete destroy_selected_optimizations_path, params: { optimization_request_ids: [@unstat.id] }
     end
   end
+
+  test "should get redirected if there isn't a log file" do
+    get optimization_download_path(@ack.id)
+    assert_redirected_to optimizations_url
+  end
+
+  test "should get new" do
+    get new_optimization_url
+    assert_response :success
+  end
+
+  test "should create pending optimization" do
+    assert_difference("Optimization.count") do
+      post optimizations_url, params: { optimization: { kind: "SEGOMOE", xlimits: "[[1, 2], [3, 4]]" } }
+    end
+    assert_equal Optimization.last.outputs["status"], -1
+    assert_redirected_to optimizations_url
+  end
+
+  test "should assign owner on creation" do
+    post optimizations_url, params: { optimization: { kind: "SEGOMOE", xlimits: "[[1, 2], [3, 4]]" } }
+    assert Optimization.last.owner, users(:user1)
+  end
+
+  test "should authorized access by default" do
+    post optimizations_url, params: { optimization: { kind: "SEGOMOE", xlimits: "[[1, 2], [3, 4]]" } }
+    sign_out users(:user1)
+    sign_in users(:user2)
+    get optimization_url(Optimization.last)
+    assert_response :found
+  end
 end
