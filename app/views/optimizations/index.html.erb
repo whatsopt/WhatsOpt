@@ -2,13 +2,14 @@
 
 <h1>Optimizations</h1>
 
-<p>
-
-<div id="delete_button" class="btn-toolbar float-right">
-<%= submit_tag "Delete selected", :class => 'btn btn-primary btn-xs', data: { title: 'Are you sure?', 
+<div class="btn-toolbar float-right">
+  <div id="delete_button" style="margin-right:20px;">
+    <%= submit_tag "Delete selected", :class => 'btn btn-primary btn-xs', data: { title: 'Are you sure?', 
                                                               confirm: "Remove optimizations?",
                                                               commit: 'Yes',
                                                               cancel: 'No, cancel' }%>
+  </div>
+  <% #link_to 'New', new_optimization_path, class: "btn btn-primary" %>
 </div>
 
 
@@ -28,40 +29,30 @@
     </select>
   </li>
 </ul>
-<table class="table table-striped">
 
-  <thead>
-    <tr>
-      <th style="width: 7%" data-sort-ignore="true"><label id="display_checkbox_count">_</label></th>
-      <th style="10%">Id</th>
-      <th style="20%">Optimizer</th>
-      <th style="20%">Number of Points</th>
-      <th style="20%">View Details</th>
-      <th style="20%">Status</th>
-      <th style="10%">Last Modification</th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <% @optimizations.each do |optimization_request| %>
-    <tr class='table_row'>
-      <td><%= check_box_tag 'optimization_request_ids[]', 
-                            optimization_request.id, 
-                            false, 
-                            class: "checkbox_child #{optimization_request.status || "empty"}" %></td>
-      <td>#<%= optimization_request.id %></td>
-      <td><%= optimization_request.kind %></td>
-      <td><%= nb_points(optimization_request.inputs) %></td>
-      <td></td>
-      <td><a href="#"style="<%=status_display(optimization_request.outputs["status"])[0] %>" data-bs-toggle="tooltip" title=<%= status_text(optimization_request.outputs["status"]) %>>
-        <i class="<%= status_display(optimization_request.outputs["status"])[1] %>"></i>
-      </a></td>
-      <td><%= optimization_request.updated_at.strftime("%d/%m/%Y, at %I:%M%p") %></td>
-    </tr>
-    <% end %>
-  </tbody>
-</table>
-</p>
+<div id="optimizations">
+  <% if @optimizations.length > 0 %>
+    <%= render 'optimizations' %></div>
+  <% else %>
+    <table id="optimizations" class="table">
+      <thead>
+        <tr>
+          <th>No Optimization was found. If you want to run one :</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class='table_row'>
+          <td>If you haven't checked it already, here is the <%= link_to "part 2 of the tutorial", "https://github.com/OneraHub/WhatsOpt-Doc/blob/master/whatsopt_tutorial_part_2.md" %>.</td>
+        </tr>
+        <tr class='table_row'>
+          <td>You can follow the <%= link_to "optimization REST API Doc", api_doc_path %>, and get all you need.</td>
+        </tr>
+        <tr class='table_row'>
+          <td>Or you can read the <%= link_to "full WhatsOpt Doc", "http://github.com/OneraHub/WhatsOpt-Doc" %>, and get all the informations.</td>
+        </tr>
+      </tbody>
+    </table>
+  <% end %>
 
 
 <% content_for :document_ready do %>

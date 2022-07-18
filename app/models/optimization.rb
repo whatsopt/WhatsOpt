@@ -28,9 +28,102 @@ class Optimization < ApplicationRecord
 
   scope :owned_by, ->(user) { with_role(:owner, user) }
 
+  validate :check_optimization_config
+  validate :optimization_number_limit
+
+  def check_optimization_config
+    self.options = {} if self.options.blank?
+    self.kind = "SEGOMOE" if self.kind.blank?
+    self.n_obj = 1 if self.n_obj.blank?
+    unless self.kind == "SEGOMOE" || self.kind == "SEGMOOMOE"
+      errors.add(:base, "optimizer kind should be SEGOMOE or SEGMOOMOE, got '#{self.kind}'")
+    end
+
+    if self.kind == "SEGOMOE"
+      if self.n_obj != 1
+        errors.add(:base, "SEGOMOE is mono-objective only, got '#{self.n_obj}'")
+      end
+
+      unless self.xlimits
+        errors.add(:base, "xlimits field should be present, got '#{self.xlimits}'")
+        return
+      end
+
+      begin
+        m = Matrix[*self.xlimits]
+        raise if (m.row_count < 1) || (m.column_count != 2)
+      rescue Exception
+        errors.add(:base, "xlimits should be a matrix (nx, 2), got '#{self.xlimits}'")
+      end
+    else 
+      self.xlimits = []
+    end
+
+    if self.kind == "SEGMOOMOE"
+      unless self.xtypes
+        errors.add(:base, "xtypes field should be present, got '#{self.xtypes}'")
+        return
+      end
+
+      xtypes.each_with_index do |xt, i|
+        case xt['type']
+        when "float_type"
+          if xt['limits'].size != 2 && xt['limits'][0].to_f != xt['limits'][0] && xt['limits'][1].to_f != xt['limits'][1]
+            errors.add(:base, "xtype.limits should be float [lower, upper], got '#{xt['limits']}'")
+          end
+        when "int_type"
+          if xt['limits'].size != 2 && xt['limits'][0].to_i != xt['limits'][0] && xt['limits'][1].to_i != xt['limits'][1]
+            errors.add(:base, "xtype.limits should be int [lower, upper], got '#{xt['limits']}'")
+          end
+        when "ord_type"
+          begin
+            raise unless xt['limits'].kind_of?(Array)  
+            xt['limits'].each do |l|
+              raise unless l.to_i == l
+            end
+          rescue Exception
+            errors.add(:base, "xtype.limits should be a list of int, got '#{xt['limits']}'")
+          end
+        when "enum_type"
+          begin
+            raise unless xt['limits'].kind_of?(Array)  
+          rescue Exception
+            errors.add(:base, "xtype.limits should be a list of string, got '#{xt['limits']}'")
+          end
+        else 
+          errors.add(:base, "xtype.type should be FLOAT, INT, ORD or ENUM, got '#{xt['limits']}'")
+        end
+      end
+
+    else
+      self.xtypes = []
+    end
+
+    if self.cstr_specs.blank?
+      self.cstr_specs = []
+    else
+      self.cstr_specs.each do |cspec|
+        unless /^[<>=]$/.match?(cspec["type"])
+          errors.add(:base, "Invalid constraint specification #{cspec} type should match '<>='")
+        end
+      end
+    end
+  end
+
+  def optimization_number_limit
+    optim_num = Optimization.owned_by(self.owner).size
+    errors.add(:base, "You own too many optimizations (#{optim_num}), you must delete some before creating new ones") unless optim_num < 20
+  end
+
+
+
+  def str_to_array string
+    JSON.parse(string) rescue "Invalid JSON"
+  end
+
   class OptimizationError < Exception; end
   
-  after_initialize :check_optimization_config
+  #after_initialize :check_optimization_config
 
   def create_optimizer
     unless new_record?
@@ -63,83 +156,6 @@ class Optimization < ApplicationRecord
 
   def proxy
     WhatsOpt::OptimizerProxy.new(id: self.id.to_s)
-  end
-
-  def check_optimization_config
-    self.options = {} if self.options.blank?
-    self.kind = "SEGOMOE" if self.kind.blank?
-    self.n_obj = 1 if self.n_obj.blank?
-    unless self.kind == "SEGOMOE" || self.kind == "SEGMOOMOE"
-      raise_error("optimizer kind should be SEGOMOE or SEGMOOMOE, got '#{self.kind}'")
-    end
-
-    if self.kind == "SEGOMOE"
-      if self.n_obj != 1
-        raise_error("SEGOMOE is mono-objective only, got '#{self.n_obj}'")
-      end
-
-      unless self.xlimits
-        raise_error("xlimits field should be present, got '#{self.xlimits}'")
-      end
-
-      begin
-        m = Matrix[*self.xlimits]
-        raise if (m.row_count < 1) || (m.column_count != 2)
-      rescue Exception
-        raise_error("xlimits should be a matrix (nx, 2), got '#{self.xlimits}'")
-      end
-    else 
-      self.xlimits = []
-    end
-
-    if self.kind == "SEGMOOMOE"
-      unless self.xtypes
-        raise_error("xtypes field should be present, got '#{self.xtypes}'")
-      end
-
-      xtypes.each_with_index do |xt, i|
-        case xt['type']
-        when "float_type"
-          if xt['limits'].size != 2 && xt['limits'][0].to_f != xt['limits'][0] && xt['limits'][1].to_f != xt['limits'][1]
-            raise_error("xtype.limits should be float [lower, upper], got '#{xt['limits']}'")
-          end
-        when "int_type"
-          if xt['limits'].size != 2 && xt['limits'][0].to_i != xt['limits'][0] && xt['limits'][1].to_i != xt['limits'][1]
-            raise_error("xtype.limits should be int [lower, upper], got '#{xt['limits']}'")
-          end
-        when "ord_type"
-          begin
-            raise unless xt['limits'].kind_of?(Array)  
-            xt['limits'].each do |l|
-              raise unless l.to_i == l
-            end
-          rescue Exception
-            raise_error("xtype.limits should be a list of int, got '#{xt['limits']}'")
-          end
-        when "enum_type"
-          begin
-            raise unless xt['limits'].kind_of?(Array)  
-          rescue Exception
-            raise_error("xtype.limits should be a list of string, got '#{xt['limits']}'")
-          end
-        else 
-          raise_error("xtype.type should be FLOAT, INT, ORD or ENUM, got '#{xt['limits']}'")
-        end
-      end
-
-    else
-      self.xtypes = []
-    end
-
-    if self.cstr_specs.blank?
-      self.cstr_specs = []
-    else
-      self.cstr_specs.each do |cspec|
-        unless /^[<>=]$/.match?(cspec["type"])
-          raise_error("Invalid constraint specification #{cspec} type should match '<>='")
-        end
-      end
-    end
   end
 
   def check_optimization_inputs(params)

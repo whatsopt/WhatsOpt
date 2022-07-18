@@ -11,19 +11,27 @@ class OptimizationPolicy < ApplicationPolicy
     true
   end
 
+  def index?
+    (@user.admin? || @user.has_role?(:owner, @record))
+  end
+
   def show?
-    (@user.admin? || @user.has_role?(:owner, @record) || @user.has_role?(:co_owner, @record))
+    (@user.admin? || @user.has_role?(:owner, @record))
   end
 
   def update?
-    (@user.admin? || @user.has_role?(:owner, @record) || @user.has_role?(:co_owner, @record))
+    (@user.admin? || @user.has_role?(:owner, @record))
   end
 
   def destroy?
-    (@user.admin? || @user.has_role?(:owner, @record) || @user.has_role?(:co_owner, @record))
+    (@user.admin? || @user.has_role?(:owner, @record))
   end
 
   def destroy_selected?
-    (@user.admin? || @user.has_role?(:owner, @record) || @user.has_role?(:co_owner, @record))
+    (@user.admin? || @user.has_role?(:owner, @record))
+  end
+
+  def download?
+    (@user.admin? || @user.has_role?(:owner, @record))
   end
 end

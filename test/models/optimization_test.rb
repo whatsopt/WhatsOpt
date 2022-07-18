@@ -9,20 +9,17 @@ class OperationTest < ActiveSupport::TestCase
   end
 
   test "should reject bad optimizer kind" do
-    assert_raises Optimization::OptimizationError do
-      Optimization.new(kind: "TOTO", xlimits: [[0, 1], [0, 1]])
-    end
+    optim = Optimization.new(kind: "TOTO", xlimits: [[0, 1], [0, 1]])
+    assert !optim.valid?
   end
 
   test "should reject bad xlimits" do
-    assert_raises Optimization::OptimizationError do
-      Optimization.new(kind: "SEGOMOE", xlimits: [])
-    end
+    optim = Optimization.new(kind: "SEGOMOE", xlimits: [])
+    assert !optim.valid?
   end
 
   test "should reject without xlimits" do
-    assert_raises Optimization::OptimizationError do
-      Optimization.new(kind: "SEGOMOE")
-    end
+    optim = Optimization.new(kind: "SEGOMOE")
+    assert !optim.valid?
   end
 end

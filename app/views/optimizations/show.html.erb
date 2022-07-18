@@ -1,0 +1,11 @@
+<h2>Optimization Details, entry #<%= @optimization.id %>
+</h2>
+
+
+<%= link_to "Download Log", optimization_download_url(@optimization.id), class: "btn btn-primary ml-2" %>
+<%= content_tag :div,
+  id: "optimization_plot",
+  optimization_data: @optimization.to_json do %>
+<% end %>
+
+<%= javascript_pack_tag 'optview_application' %>

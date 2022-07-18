@@ -13,10 +13,11 @@ Rails.application.routes.draw do
      
   resources :design_projects
 
-  resources :optimizations, only: [:index, :destroy] do
+  resources :optimizations do
     collection do
       delete 'destroy_selected'
     end
+    get 'download' => 'optimizations#download'
   end
 
   namespace :api do
