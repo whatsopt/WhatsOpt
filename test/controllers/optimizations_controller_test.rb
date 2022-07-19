@@ -30,9 +30,11 @@ class OptimizationsControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test "should get redirected if there isn't a log file" do
+  test "should get log file" do
+    skip_if_segomoe_not_installed
+    @ack.create_optimizer
     get optimization_download_path(@ack.id)
-    assert_redirected_to optimizations_url
+    assert_response :success
   end
 
   test "should get new" do
