@@ -31,10 +31,18 @@ class Optimization < ApplicationRecord
   validate :check_optimization_config
   validate :optimization_number_limit
 
-  def check_optimization_config
+  after_initialize :init
+  
+  def init
     self.options = {} if self.options.blank?
     self.kind = "SEGOMOE" if self.kind.blank?
     self.n_obj = 1 if self.n_obj.blank?
+    self.cstr_specs = [] if self.cstr_specs.blank?
+    self.xlimits = [] unless self.kind == "SEGOMOE"
+    self.xtypes = [] unless self.kind == "SEGMOOMOE"
+  end
+
+  def check_optimization_config
     unless self.kind == "SEGOMOE" || self.kind == "SEGMOOMOE"
       errors.add(:base, "optimizer kind should be SEGOMOE or SEGMOOMOE, got '#{self.kind}'")
     end
@@ -55,8 +63,6 @@ class Optimization < ApplicationRecord
       rescue Exception
         errors.add(:base, "xlimits should be a matrix (nx, 2), got '#{self.xlimits}'")
       end
-    else 
-      self.xlimits = []
     end
 
     if self.kind == "SEGMOOMOE"
@@ -94,14 +100,9 @@ class Optimization < ApplicationRecord
           errors.add(:base, "xtype.type should be FLOAT, INT, ORD or ENUM, got '#{xt['limits']}'")
         end
       end
-
-    else
-      self.xtypes = []
     end
 
-    if self.cstr_specs.blank?
-      self.cstr_specs = []
-    else
+    unless self.cstr_specs.blank?
       self.cstr_specs.each do |cspec|
         unless /^[<>=]$/.match?(cspec["type"])
           errors.add(:base, "Invalid constraint specification #{cspec} type should match '<>='")

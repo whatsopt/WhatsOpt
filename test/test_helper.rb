@@ -12,7 +12,9 @@ require "rails/test_help"
 
 TEST_API_KEY = "FriendlyApiKey"
 
-SEGOMOE_INSTALLED = system("python << EOF\nimport segomoe\nEOF")
+PYTHON = APP_CONFIG["python_cmd"] || "python"
+
+SEGOMOE_INSTALLED = system("#{PYTHON} << EOF\nimport segomoe\nEOF")
 # puts("SEGOMOE_INSTALLED=#{SEGOMOE_INSTALLED}")
 
 class ActiveSupport::TestCase
