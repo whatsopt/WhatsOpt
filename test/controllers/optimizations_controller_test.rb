@@ -30,10 +30,10 @@ class OptimizationsControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test "should get redirected if there isn't a log file" do
+  test "should get log file" do
+    @ack.create_optimizer
     get optimization_download_path(@ack.id)
-    assert_redirected_to optimizations_url
-    #assert_equal controller.headers["Content-Transfer-Encoding"] "binary"
+    assert_response :success
   end
 
   test "should get new" do
