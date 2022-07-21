@@ -36,10 +36,14 @@ module WhatsOpt
       case category.to_s
       when Operation::CAT_RUNONCE 
         "mda"
-      when Operation::CAT_DOE, Operation::CAT_EGDOE
+      when Operation::CAT_DOE
         "doe"
-      when Operation::CAT_OPTIMIZATION, Operation::CAT_EGMDO
+      when Operation::CAT_EGDOE
+        "egdoe"
+      when Operation::CAT_OPTIMIZATION
         "mdo" 
+      when Operation::CAT_EGMDO
+        "egmdo" 
       else 
         Rails.logger.error "Operation category #{category} has no run method equivalent"
         "Unknown_operation_for_category_#{category}"
