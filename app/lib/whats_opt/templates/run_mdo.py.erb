@@ -3,6 +3,11 @@ from numpy import nan, inf
 import openmdao.api as om
 <%- if @driver.onerasego? -%>
 from openmdao_extensions.onera_sego_driver import OneraSegoDriver
+<%- elsif @driver.egobox? -%>
+from openmdao_extensions.egobox_egor_driver import EgoboxEgorDriver
+import egobox as egx
+import logging
+logging.basicConfig(level=logging.INFO)
 <%- end -%>
 <%- if @egmdo -%>
 from openmdao.utils.mpi import MPI
@@ -39,6 +44,8 @@ class NamedPyOptSparseDriver(om.pyOptSparseDriver):
 pb.driver = NamedPyOptSparseDriver()
 <%- elsif @driver.onerasego? -%>
 pb.driver = OneraSegoDriver()
+<%- elsif @driver.egobox? -%>
+pb.driver = EgoboxEgorDriver()
 <%- else -%>
 class NamedScipyOptimizeDriver(om.ScipyOptimizeDriver):
     def _get_name(self):

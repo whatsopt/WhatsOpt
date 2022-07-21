@@ -42,6 +42,7 @@ const SCHEMA_GENERAL = {
                 'pyoptsparse_optimizer_nsga2',
                 'pyoptsparse_optimizer_snopt',
                 'onerasego_optimizer_segomoe',
+                'egobox_optimizer_egor',
               ],
               enumNames: [
                 'Scipy - COBYLA',
@@ -54,6 +55,7 @@ const SCHEMA_GENERAL = {
                 'pyOptSparse - NSGA2',
                 'pyOptSparse - SNOPT',
                 'Onera - SEGOMOE',
+                'Egobox - EGOR'
               ],
               default: 'scipy_optimizer_slsqp',
             },

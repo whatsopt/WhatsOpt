@@ -55,11 +55,12 @@ module WhatsOpt
                     pyoptsparse_optimizer_psqp: {},
                     pyoptsparse_optimizer_nsga2: {},
                     pyoptsparse_optimizer_snopt: { tol: "Major feasibility tolerance",
-                                                  maxiter: "Major iterations limit" },
+                                                   maxiter: "Major iterations limit" },
                     onerasego_optimizer_segomoe: { maxiter: "maxiter", ncluster: "n_clusters",
                                                    optimizer: "optimizer", doedim: "size_doe" },
                     onerasego_optimizer_egmdo: { maxiter: "maxiter", ncluster: "n_clusters",
-                                                 optimizer: "optimizer", doedim: "size_doe" }
+                                                 optimizer: "optimizer", doedim: "size_doe" },
+                    egobox_optimizer_egor: { maxiter: "maxiter",  n_clusters: "n_clusters" }
                    }
 
     # optimizer specific settings
@@ -80,6 +81,8 @@ module WhatsOpt
     def algo_option
       if onerasego?
         "SEGOMOE"
+      elif egobox?
+        "EGOR"
       else
         super
       end
@@ -108,6 +111,11 @@ module WhatsOpt
     def onerasego?
       @lib =~ /onerasego/
     end
+
+    def egobox?
+      @lib =~ /egobox/
+    end
+
   end
 
   class OpenmdaoDriverFactory
@@ -125,7 +133,8 @@ module WhatsOpt
       pyoptsparse_optimizer_nsga2: {},
       pyoptsparse_optimizer_snopt: { tol: 1e-6, maxiter: 100 },
       onerasego_optimizer_segomoe: { maxiter: 100, ncluster: 1, optimizer: "slsqp" },
-      onerasego_optimizer_egmdo: { maxiter: 100, ncluster: 1, optimizer: "slsqp" }
+      onerasego_optimizer_egmdo: { maxiter: 100, ncluster: 1, optimizer: "slsqp" },
+      egobox_optimizer_egor: { maxiter: 10, n_clusters: 1 }
     }
     ALGO_NAMES = DEFAULT_OPTIONS.keys.sort
 
