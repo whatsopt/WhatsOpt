@@ -8,12 +8,21 @@ class OptimizationsController < ApplicationController
     @optimizations = policy_scope(Optimization)
   end
 
-  def destroy_selected
-    params[:optimization_request_ids].each do |optimization_selected|
-      authorize Optimization.find(optimization_selected.to_i)
-      Optimization.find(optimization_selected.to_i).destroy
+  def select
+    if params[:delete]
+      params[:optimization_request_ids].each do |optimization_selected|
+        authorize Optimization.find(optimization_selected.to_i)
+        Optimization.find(optimization_selected.to_i).destroy
+      end
+      redirect_to optimizations_url, notice: params[:optimization_request_ids].length > 1 ? "The #{params[:optimization_request_ids].length} optimizations were successfully deleted." : "The optimization was successfully deleted."
+    else
+      puts "maybe"
+      params[:optimization_request_ids].each do |optimization_selected|
+        authorize Optimization.find(optimization_selected)
+      end
+      puts "yay"
+      redirect_to controller: 'optimizations', action: 'compare', optim_list: params[:optimization_request_ids]
     end
-    redirect_to optimizations_url, notice: params[:optimization_request_ids].length > 1 ? "The #{params[:optimization_request_ids].length} optimizations were successfully deleted." : "The optimization was successfully deleted."
   end
 
   def show
@@ -54,6 +63,14 @@ class OptimizationsController < ApplicationController
       else
         render :new
       end
+    end
+  end
+
+  def compare
+    @compare_optimizations_list = []
+    params[:optim_list].each do |optimization_selected|
+      authorize Optimization.find(optimization_selected)
+      @compare_optimizations_list << Optimization.find(optimization_selected)
     end
   end
 

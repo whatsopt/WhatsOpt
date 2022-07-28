@@ -1,13 +1,12 @@
-import React, { useState} from 'react'
-import ReactDOM from 'react-dom'
+import React from 'react';
+import ReactDOM from 'react-dom';
 import OptView from 'optview';
 
-
 document.addEventListener('DOMContentLoaded', () => {
-  const node = document.getElementById('optimization_plot')
-  const optimization_data = JSON.parse(node.getAttribute('optimization_data'))
+  const optim_plot = document.getElementById('optimization_plot');
+
   ReactDOM.render(
-    <OptView optim={optimization_data}/>,
-    document.getElementById("optimization_plot"),
-  )
-})
+    <OptView data={JSON.parse(optim_plot.getAttribute('optimization_data'))} type={optim_plot.getAttribute('type')} />,
+    optim_plot,
+  );
+});

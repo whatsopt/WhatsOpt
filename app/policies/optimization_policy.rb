@@ -12,7 +12,7 @@ class OptimizationPolicy < ApplicationPolicy
   end
 
   def index?
-    (@user.admin? || @user.has_role?(:owner, @record))
+    show?
   end
 
   def show?
@@ -27,11 +27,15 @@ class OptimizationPolicy < ApplicationPolicy
     (@user.admin? || @user.has_role?(:owner, @record))
   end
 
-  def destroy_selected?
-    (@user.admin? || @user.has_role?(:owner, @record))
+  def select?
+    show?
+  end
+
+  def compare?
+    show?
   end
 
   def download?
-    (@user.admin? || @user.has_role?(:owner, @record))
+    show?
   end
 end

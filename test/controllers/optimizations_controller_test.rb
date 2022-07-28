@@ -19,14 +19,14 @@ class OptimizationsControllerTest < ActionDispatch::IntegrationTest
     sign_out users(:user1)
     sign_in users(:admin)
     assert_difference("Optimization.count", -1) do
-      delete destroy_selected_optimizations_path, params: { optimization_request_ids: [@ack.id] }
+      post select_optimizations_path, params: { delete: "-", optimization_request_ids: [@ack.id] }
       assert_redirected_to optimizations_url
     end
   end
 
   test "non-owner cannot destroy optimization" do
     assert_difference("Optimization.count", 0) do
-      delete destroy_selected_optimizations_path, params: { optimization_request_ids: [@unstat.id] }
+      post select_optimizations_path, params: { delete: "-", optimization_request_ids: [@unstat.id] }
     end
   end
 
@@ -61,5 +61,18 @@ class OptimizationsControllerTest < ActionDispatch::IntegrationTest
     sign_in users(:user2)
     get optimization_url(Optimization.last)
     assert_response :found
+  end
+
+  test "should not delete by default" do
+    assert_difference("Optimization.count", 0) do
+      post select_optimizations_path, params: {optimization_request_ids: [@ack.id, @unstat.id] }
+    end
+  end
+
+  test "should compare the optimizations" do 
+    sign_out users(:user1)
+    sign_in users(:admin)
+    post select_optimizations_path, params: {optimization_request_ids: [@ack.id, @unstat.id] }
+    assert_redirected_to controller: 'optimizations', action: 'compare', optim_list: [@ack.id, @unstat.id]
   end
 end
