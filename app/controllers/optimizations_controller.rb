@@ -16,11 +16,9 @@ class OptimizationsController < ApplicationController
       end
       redirect_to optimizations_url, notice: params[:optimization_request_ids].length > 1 ? "The #{params[:optimization_request_ids].length} optimizations were successfully deleted." : "The optimization was successfully deleted."
     else
-      puts "maybe"
       params[:optimization_request_ids].each do |optimization_selected|
         authorize Optimization.find(optimization_selected)
       end
-      puts "yay"
       redirect_to controller: 'optimizations', action: 'compare', optim_list: params[:optimization_request_ids]
     end
   end
