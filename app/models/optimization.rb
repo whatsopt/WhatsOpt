@@ -71,7 +71,7 @@ class Optimization < ApplicationRecord
         return
       end
 
-      xtypes.each_with_index do |xt, i|
+      self.xtypes.each_with_index do |xt, i|
         case xt['type']
         when "float_type"
           if xt['limits'].size != 2 && xt['limits'][0].to_f != xt['limits'][0] && xt['limits'][1].to_f != xt['limits'][1]
@@ -114,12 +114,6 @@ class Optimization < ApplicationRecord
   def optimization_number_limit
     optim_num = Optimization.owned_by(self.owner).size
     errors.add(:base, "You own too many optimizations (#{optim_num}), you must delete some before creating new ones") unless optim_num < 20
-  end
-
-
-
-  def str_to_array string
-    JSON.parse(string) rescue "Invalid JSON"
   end
 
   class OptimizationError < Exception; end

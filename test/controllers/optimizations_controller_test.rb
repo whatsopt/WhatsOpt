@@ -44,19 +44,19 @@ class OptimizationsControllerTest < ActionDispatch::IntegrationTest
 
   test "should create pending optimization" do
     assert_difference("Optimization.count") do
-      post optimizations_url, params: { optimization: { kind: "SEGOMOE", xlimits: "[[1, 2], [3, 4]]" } }
+      post optimizations_url, params: { optimization: { kind: "SEGOMOE", xlimits: ["1, 2", "3, 4"], options: ["", ""] } }
     end
     assert_equal Optimization.last.outputs["status"], -1
     assert_redirected_to optimizations_url
   end
 
   test "should assign owner on creation" do
-    post optimizations_url, params: { optimization: { kind: "SEGOMOE", xlimits: "[[1, 2], [3, 4]]" } }
+    post optimizations_url, params: { optimization: { kind: "SEGOMOE", xlimits: ["1, 2", "3, 4"], options: ["", ""] } }
     assert Optimization.last.owner, users(:user1)
   end
 
   test "should authorized access by default" do
-    post optimizations_url, params: { optimization: { kind: "SEGOMOE", xlimits: "[[1, 2], [3, 4]]" } }
+    post optimizations_url, params: { optimization: { kind: "SEGOMOE", xlimits: ["1, 2", "3, 4"], options: ["", ""] } }
     sign_out users(:user1)
     sign_in users(:user2)
     get optimization_url(Optimization.last)
