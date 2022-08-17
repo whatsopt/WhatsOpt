@@ -15,7 +15,8 @@ Rails.application.routes.draw do
 
   resources :optimizations do
     collection do
-      delete 'destroy_selected'
+      post 'select'
+      get 'compare'
     end
     get 'download' => 'optimizations#download'
   end

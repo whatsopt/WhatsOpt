@@ -1,15 +1,16 @@
-<%= form_tag destroy_selected_optimizations_path, method: :delete do %>
+<%= form_tag select_optimizations_path, method: "post" do %>
 
 <h1>Optimizations</h1>
 
 <div class="btn-toolbar float-right">
-  <div id="delete_button" style="margin-right:20px;">
-    <%= submit_tag "Delete selected", :class => 'btn btn-primary btn-xs', data: { title: 'Are you sure?', 
+  <div id="need_selected" style="margin-right:20px;">
+    <%= submit_tag "Delete selected", class: 'btn btn-danger btn-xs', name: 'delete', data: { title: 'Are you sure?', 
                                                               confirm: "Remove optimizations?",
                                                               commit: 'Yes',
                                                               cancel: 'No, cancel' }%>
+    <%= submit_tag "Plot selected", class: 'btn btn-primary btn-xs'%>
   </div>
-  <% #link_to 'New', new_optimization_path, class: "btn btn-primary" %>
+  <%= link_to 'New', new_optimization_path, class: "btn btn-primary" %>
 </div>
 
 
@@ -58,7 +59,7 @@
 <% content_for :document_ready do %>
 <script type="text/javascript">
 
-$("#delete_button").hide();
+$("#need_selected").hide();
 
 $('[data-bs-toggle="tooltip"]').tooltip();
 
@@ -106,9 +107,9 @@ function update_checkbox_count() {
   }
 
   if ($('.checkbox_child:checked').length > 0) {
-    $("#delete_button").show();
+    $("#need_selected").show();
   } else {
-    $("#delete_button").hide();
+    $("#need_selected").hide();
   }
 }
 

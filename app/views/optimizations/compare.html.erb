@@ -1,0 +1,40 @@
+<h2>Compare <%= @compare_optimizations_list.length %> entries : <%= params[:optim_list].join(', ') %></h2>
+
+<%= content_tag :div, id: "optimization_plot", optimization_data: @compare_optimizations_list.to_json, type: "compare" do %>
+<% end %>
+
+<p>
+<table id="compare_table" class="table table-striped">
+    <thead>
+        <tr>
+            <th style="10%">Id</th>
+            <th style="20%">Optimizer</th>
+            <th style="20%">Config</th>
+            <th style="20%">Options</th>
+            <th style="20%">Number of Points</th>
+            <th style="20%">Result</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <% @compare_optimizations_list.each do |optimization_to_compare| %>
+        <tr class='table_row'>
+            <td>#<%= optimization_to_compare.id %></td>
+            <td><%= optimization_to_compare.kind %></td>
+            <td><%= 
+                if optimization_to_compare.kind == "SEGOMOE" 
+                    "xlimits : " + optimization_to_compare.config["xlimits"].map { |i| "[" + i.join(", ")+ "]" }.join(", ")
+                else
+                    "xtypes : " + optimization_to_compare.config["xtypes"].map { |i| "{" + i["type"] + ", [" + i["limits"].join(", ") + "]}" }.join(", ")
+                end
+            %></td>
+            <td><%= optimization_to_compare.config["options"].to_s %></td>
+            <td><%= nb_points(optimization_to_compare.inputs) %></td>
+            <td><%= if optimization_to_compare.outputs["y_best"].nil? then "NaN" else optimization_to_compare.outputs["y_best"][-1] end %></td>
+        </tr>
+        <% end %>
+    </tbody>
+</table>
+</p>
+
+<%= javascript_pack_tag 'optview_application' %>
