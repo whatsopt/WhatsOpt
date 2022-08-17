@@ -1,4 +1,7 @@
-<h2>Optimization Details, entry #<%= @optimization.id %>
+<h2>Optimization Details, entry #<%= @optimization.id %> 
+    <a href="#"style="<%= status_display(@optimization.outputs["status"])[0] %>" data-bs-toggle="tooltip" title=<%= status_text(@optimization.outputs["status"]) %>>
+      <i class="<%= status_display(@optimization.outputs["status"])[1] %>"></i>
+    </a>
 </h2>
 
 <%= link_to "Download Log", optimization_download_url(@optimization.id), class: "btn btn-primary ml-2" %>
@@ -11,3 +14,4 @@
 </div>
 
 <%= javascript_pack_tag 'optview_application' %>
+

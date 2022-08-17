@@ -39,6 +39,10 @@ class OptimizationsController < ApplicationController
   def new
     @optimization = Optimization.new
     authorize @optimization
+    optim_num = Optimization.owned_by(current_user).size
+    if optim_num >= 20
+      redirect_to optimizations_url, notice: "You own too many optimizations (#{optim_num}), you must delete some before creating new ones" 
+    end
   end
 
   def create
@@ -87,9 +91,14 @@ class OptimizationsController < ApplicationController
 
   def compare
     @compare_optimizations_list = []
-    params[:optim_list].each do |optimization_selected|
-      authorize Optimization.find(optimization_selected)
-      @compare_optimizations_list << Optimization.find(optimization_selected)
+    if params[:optim_list].length > 1
+      params[:optim_list].each do |optimization_selected|
+        authorize Optimization.find(optimization_selected)
+        @compare_optimizations_list << Optimization.find(optimization_selected)
+      end
+    else
+      authorize Optimization.find(params[:optim_list].first)
+      redirect_to optimization_path(Optimization.find(params[:optim_list].first))
     end
   end
 

@@ -1,4 +1,4 @@
-<h2>Compare <%= @compare_optimizations_list.length %> entries : <%= params[:optim_list].join(', ') %></h2>
+<h2>Compare <%= @compare_optimizations_list.length %> entries : #<%= params[:optim_list].join(', #') %></h2>
 
 <%= content_tag :div, id: "optimization_plot", optimization_data: @compare_optimizations_list.to_json, type: "compare" do %>
 <% end %>
@@ -30,7 +30,7 @@
             %></td>
             <td><%= optimization_to_compare.config["options"].to_s %></td>
             <td><%= nb_points(optimization_to_compare.inputs) %></td>
-            <td><%= if optimization_to_compare.outputs["y_best"].nil? then "NaN" else optimization_to_compare.outputs["y_best"][-1] end %></td>
+            <td><%= if optimization_to_compare.outputs["y_best"].nil? then "None" else optimization_to_compare.outputs["y_best"][-1] end %></td>
         </tr>
         <% end %>
     </tbody>
