@@ -26,16 +26,6 @@ class OptimizationsController < ApplicationController
   def show
   end
 
-  def download
-    authorize Optimization.find(params[:optimization_id])
-    path = "#{Rails.root}/log/optimizations/optim_#{params[:optimization_id]}.log"
-    if File.exist?(path) 
-      send_file(path) 
-    else
-      redirect_to optimizations_url, notice: "There isn't a log file"
-    end
-  end
-
   def new
     @optimization = Optimization.new
     authorize @optimization
@@ -86,6 +76,14 @@ class OptimizationsController < ApplicationController
       else
         render :new
       end
+    end
+  end
+
+  def edit
+    set_optimization
+    if params[:cancel_button]
+      skip_authorization
+      redirect_to optimizations_url, notice: "Optimization update cancelled."
     end
   end
 
