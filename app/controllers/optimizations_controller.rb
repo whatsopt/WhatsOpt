@@ -81,9 +81,38 @@ class OptimizationsController < ApplicationController
 
   def edit
     set_optimization
+  end
+
+  def update
+    set_optimization
     if params[:cancel_button]
-      skip_authorization
-      redirect_to optimizations_url, notice: "Optimization update cancelled."
+      redirect_to optimization_path(@optimization), notice: "Optimization update cancelled."
+    else
+      errors = ""
+      params[:optimization][:inputs][:x].each_with_index do |x, i| 
+        new_x = x.delete(' ').split(',').map{|s| s.to_f}
+        if new_x.length == @optimization.config['xlimits'].length + @optimization.config['xtypes'].length
+          if params[:optimization][:inputs][:y][i] != ""
+            new_y = [params[:optimization][:inputs][:y][i].to_f]
+            if @optimization.inputs.empty? or @optimization.inputs['x'].nil?
+              @optimization.inputs = {"x" => [], "y" => []}
+            end
+            @optimization.inputs['x'].append(new_x)
+            @optimization.inputs['y'].append(new_y)
+          else
+            errors += "the input n°#{i + 1} is missing a y. "
+          end
+        else
+          errors += "the input n°#{i + 1} has a wrong x dimension, expected #{@optimization.config['xlimits'].length + @optimization.config['xtypes'].length}, was #{new_x.length}. "
+        end
+      end
+      if errors != ""
+        redirect_to edit_optimization_path(@optimization), notice: "Optimization update failed, #{errors}"
+      elsif @optimization.save
+        redirect_to optimization_path(@optimization), notice: "Optimization update was succesful, added #{params[:optimization][:inputs][:x].length} inputs"
+      else
+        redirect_to optimization_path(@optimization), notice: "Optimization update failed due to an unkown error"
+      end
     end
   end
 

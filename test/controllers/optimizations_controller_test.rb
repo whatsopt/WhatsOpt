@@ -68,4 +68,14 @@ class OptimizationsControllerTest < ActionDispatch::IntegrationTest
     post select_optimizations_path, params: {optimization_request_ids: [@ack.id, @unstat.id] }
     assert_redirected_to controller: 'optimizations', action: 'compare', optim_list: [@ack.id, @unstat.id]
   end
+
+  test "should add an input to the optimization" do
+    put optimization_path(@ack), params: {optimization: { inputs: { x: ["0, 0"], y: ["0"]} } }
+    assert_redirected_to optimization_path(@ack)
+  end
+
+  test "should not add invalid input" do
+    put optimization_path(@ack), params: {optimization: { inputs: { x: ["0"], y: ["0"]} } }
+    assert_redirected_to edit_optimization_path(@ack)
+  end
 end

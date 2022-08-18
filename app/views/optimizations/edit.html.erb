@@ -1,1 +1,42 @@
 <h2>Add inputs to optimization #<%= @optimization.id %></h2>
+<%= form_for(@optimization, url: (optimization_path(@optimization)), :html => { :multipart => true, :role => "form" }) do |f| %>
+  <% if @optimization.errors.any? %>
+    <% @optimization.errors.full_messages.each do |message| %>
+      <div class="alert <%= bootstrap_class_for :error %>" role="alert">
+        <a href="#" data-dismiss="alert" class="close">×</a> 
+        <%= message %>
+      </div>
+    <% end %>
+  <% end %>
+
+<table class="inputs">
+    <thead>
+        <tr>
+            <td><label for='optimization_inputs'>Inputs <a href='#' data-bs-toggle='tooltip' style='color:#000000;' title='Add a value x with the correct dimension associated with the result y'><i class='fas fa-question-circle'></i></a></label></td>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+    <tfoot>
+        <tr><td>
+            <%= f.submit "Submit", class: "btn btn-primary submit" %>
+	        <%= f.submit "Cancel", class: "btn btn-secondary", name: "cancel_button" %>
+        </td></tr> 
+    </tfoot>
+</table>
+<% end %>
+
+<% content_for :document_ready do %>
+<script type="text/javascript">
+
+$(document).ready(addField());
+
+function addField() {
+	$('.add_input_cell').remove()
+	$('.inputs').children('tbody').append("<tr><td><input class='form-control' type='text' name='optimization[inputs][x][]' id='optimization_inputs_x' placeholder='x'></td>" + 
+        "<td><input class='form-control' type='text' name='optimization[inputs][y][]' id='optimization_inputs_y' placeholder='y'></td></tr>" + 
+        "<tr class='add_input_cell'><td><a href='#' class='add_input'>Add input</a>");
+	$('.add_input').click(function(){addField();});
+}
+</script>
+<% end %>

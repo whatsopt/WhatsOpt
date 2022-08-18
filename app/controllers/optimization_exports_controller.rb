@@ -18,10 +18,12 @@ class OptimizationExportsController < ApplicationController
         redirect_to optimization_path(optim), notice: "There isn't a log file"
       end
     elsif format == "csv"
-      attributes = %w{kind config inputs outputs}
+      attributes = %w{x[] y}
       content = CSV.generate(headers: true) do |csv|
         csv << attributes
-        csv << attributes.map{ |attr| optim.send(attr) }
+        optim.inputs["x"].each_with_index do |x, i|
+          csv << x + optim.inputs["y"][i]
+        end
       end
       send_data content, filename: "optim_#{optim_id}.csv"
     end
