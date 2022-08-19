@@ -21,8 +21,10 @@ class OptimizationExportsController < ApplicationController
       attributes = %w{x[] y}
       content = CSV.generate(headers: true) do |csv|
         csv << attributes
-        optim.inputs["x"].each_with_index do |x, i|
-          csv << x + optim.inputs["y"][i]
+        unless optim.inputs.empty? or optim.inputs["x"].nil?
+          optim.inputs["x"].each_with_index do |x, i|
+            csv << x + optim.inputs["y"][i]
+          end
         end
       end
       send_data content, filename: "optim_#{optim_id}.csv"
