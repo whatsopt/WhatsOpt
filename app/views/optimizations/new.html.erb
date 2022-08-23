@@ -48,6 +48,8 @@ function updateOptions() {
 		addField('xlimits', 'Add a dimension to the input')
 	} else {
 		$("#options").html(
+			"<label for='optimization_n_obj'>Number of objectives <a href='#' data-bs-toggle='tooltip' style='color:#000000;' title='n_obj'><i class='fas fa-question-circle'></i></a></label>" +
+			"<input class='form-control' type='text' name='optimization[n_obj]' id='optimization_n_obj' placeholder='n_obj''>" +
 			"<label>Xtypes <a href='#' data-bs-toggle='tooltip' style='color:#000000;' title='For each field : type, min, max     ex: float_type, 1.0, 2.0'><i class='fas fa-question-circle'></i></a></label>" +
 			"<div id='xtypes'></div>" +
 			"<label>cstr_specs <a href='#' data-bs-toggle='tooltip' style='color:#000000;' title='For each field : type, bound, tol     ex: <, 0.0, 0.0001'><i class='fas fa-question-circle'></i></a></label>" +
