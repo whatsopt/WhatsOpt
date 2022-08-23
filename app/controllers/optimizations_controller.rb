@@ -33,7 +33,7 @@ class OptimizationsController < ApplicationController
       if error == ""
         redirect_to controller: 'optimizations', action: 'compare', optim_list: params[:optimization_request_ids]
       else
-        redirect_to optimizations_url, notice: "You can't compare these Optimizations : " + error
+        redirect_to optimizations_url, alert: "You can't compare these Optimizations : " + error
       end
     end
   end
@@ -45,8 +45,8 @@ class OptimizationsController < ApplicationController
     @optimization = Optimization.new
     authorize @optimization
     optim_num = Optimization.owned_by(current_user).size
-    if optim_num > 19
-      redirect_to optimizations_url, notice: "You own too many optimizations (#{optim_num}), you must delete some before creating new ones"
+    if optim_num > Optimization::MAX_OPTIM_NUMBER
+      redirect_to optimizations_url, alert: "You own too many optimizations (#{optim_num}), you must delete some before creating new ones"
     end
   end
 
@@ -125,11 +125,11 @@ class OptimizationsController < ApplicationController
         end
       end
       if errors != ""
-        redirect_to edit_optimization_path(@optimization), notice: "Optimization update failed, #{errors}"
+        redirect_to edit_optimization_path(@optimization), alert: "Optimization update failed, #{errors}"
       elsif @optimization.save
         redirect_to optimization_path(@optimization), notice: "Optimization update was succesful, added #{params[:optimization][:inputs][:x].length} inputs"
       else
-        redirect_to optimization_path(@optimization), notice: "Optimization update failed due to an unkown error"
+        redirect_to optimization_path(@optimization), alert: "Optimization update failed due to an unkown error"
       end
     end
   end
