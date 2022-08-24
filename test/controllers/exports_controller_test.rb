@@ -12,6 +12,7 @@ class ExportsControllerTest < ActionDispatch::IntegrationTest
   setup do
     sign_in users(:user1)
     @mda = analyses(:cicav)
+    @optim = optimizations(:optim_ackley2d)
   end
 
   test "should get openmdao zip archive given an mda_id" do
@@ -35,5 +36,17 @@ class ExportsControllerTest < ActionDispatch::IntegrationTest
   test "should redicrect in case of cmdows validation failed" do
     get mda_exports_new_url(mda_id: @mda.id, format: :cmdows)
     assert_response :redirect
+  end
+
+  test "should get csv file given an optimization id" do
+    get optimization_download_url(optimization_id: @optim.id, format: :csv)
+    assert_response :success
+  end
+
+  test "should get log file given an optimization id" do
+    skip_if_segomoe_not_installed
+    @optim.create_optimizer
+    get optimization_download_url(optimization_id: @optim.id, format: :log)
+    assert_response :success
   end
 end

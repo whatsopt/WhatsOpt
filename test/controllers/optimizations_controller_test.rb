@@ -30,13 +30,6 @@ class OptimizationsControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test "should get log file" do
-    skip_if_segomoe_not_installed
-    @ack.create_optimizer
-    get optimization_download_path(@ack.id)
-    assert_response :success
-  end
-
   test "should get new" do
     get new_optimization_url
     assert_response :success
@@ -74,5 +67,20 @@ class OptimizationsControllerTest < ActionDispatch::IntegrationTest
     sign_in users(:admin)
     post select_optimizations_path, params: {optimization_request_ids: [@ack.id, @unstat.id] }
     assert_redirected_to controller: 'optimizations', action: 'compare', optim_list: [@ack.id, @unstat.id]
+  end
+
+  test "should add an input to the optimization" do
+    put optimization_path(@ack), params: {optimization: { inputs: { x: ["0, 0"], y: ["0"]} } }
+    assert_redirected_to optimization_path(@ack)
+  end
+
+  test "should not add invalid input" do
+    put optimization_path(@ack), params: {optimization: { inputs: { x: ["0"], y: ["0"]} } }
+    assert_redirected_to edit_optimization_path(@ack)
+  end
+
+  test "should not be able to create too many optimization" do
+    (Optimization::MAX_OPTIM_NUMBER + 1).times { |i| post optimizations_url, params: { optimization: { kind: "SEGOMOE", xlimits: ["1, 2", "3, 4"], options: ["", ""] } } }
+    assert_equal Optimization.count, Optimization::MAX_OPTIM_NUMBER 
   end
 end

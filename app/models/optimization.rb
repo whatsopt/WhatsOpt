@@ -22,6 +22,8 @@ class Optimization < ApplicationRecord
   RUNNING = 4
   OPTIMIZER_STATUS = [VALID_POINT, INVALID_POINT, RUNTIME_ERROR, SOLUTION_REACHED, RUNNING, PENDING, OPTIMIZATION_ERROR]
 
+  MAX_OPTIM_NUMBER = 20
+
   store :config, accessors: [:xtypes, :xlimits, :n_obj, :cstr_specs, :options], coder: JSON
   store :inputs, accessors: [:x, :y, :with_best], coder: JSON
   store :outputs, accessors: [:status, :x_suggested, :x_best, :y_best, :err_msg], coder: JSON
@@ -113,7 +115,7 @@ class Optimization < ApplicationRecord
 
   def optimization_number_limit
     optim_num = Optimization.owned_by(self.owner).size
-    errors.add(:base, "You own too many optimizations (#{optim_num}), you must delete some before creating new ones") unless optim_num < 20
+    errors.add(:base, "You own too many optimizations (#{optim_num}), you must delete some before creating new ones") unless optim_num < MAX_OPTIM_NUMBER
   end
 
   class OptimizationError < Exception; end

@@ -18,7 +18,7 @@ Rails.application.routes.draw do
       post 'select'
       get 'compare'
     end
-    get 'download' => 'optimizations#download'
+    get 'download', to: 'optimization_exports#new'
   end
 
   namespace :api do
