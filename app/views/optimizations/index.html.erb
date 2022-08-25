@@ -16,22 +16,23 @@
       <%= link_to 'New', new_optimization_path, class: "btn btn-primary" %>
 -->
     </div>
-    <ul class='hidden_list'>
-      <li><input type="checkbox" id="selectAll"><label for="selectAll" style="padding-left:10px">All</label></li>
-      <li>
-        <input type="checkbox" id="selectStatus"><label for="selectStatus" style="padding-left:10px">By Status</label>
-        <select id="status-select">
-          <option value="empty">Empty</option>
-          <option value="<%= Optimization::OPTIMIZATION_ERROR %>">Optimization Error</option>
-          <option value="<%= Optimization::RUNTIME_ERROR %>">Runtime Error</option>
-          <option value="<%= Optimization::INVALID_POINT %>">Invalid Point</option>
-          <option value="<%= Optimization::PENDING %>">Pending</option>
-          <option value="<%= Optimization::RUNNING %>">Running</option>
-          <option value="<%= Optimization::VALID_POINT %>">Valid Point</option>
-          <option value="<%= Optimization::SOLUTION_REACHED %>">Solution Reached</option>
-        </select>
-      </li>
-    </ul>
+
+
+      <input type="checkbox" id="selectAll" class="ml-2">
+      <label for="selectAll">All</label>
+
+      <input type="checkbox" id="selectStatus" class="ml-4">
+      <label for="selectStatus">By Status</label>
+      <select id="status-select" class="custom-select form-control col-2">
+        <option value="empty">Empty</option>
+        <option value="<%= Optimization::OPTIMIZATION_ERROR %>">Optimization Error</option>
+        <option value="<%= Optimization::RUNTIME_ERROR %>">Runtime Error</option>
+        <option value="<%= Optimization::INVALID_POINT %>">Invalid Point</option>
+        <option value="<%= Optimization::PENDING %>">Pending</option>
+        <option value="<%= Optimization::RUNNING %>">Running</option>
+        <option value="<%= Optimization::VALID_POINT %>">Valid Point</option>
+        <option value="<%= Optimization::SOLUTION_REACHED %>">Solution Reached</option>
+      </select>
 
     <%= render 'optimizations' %></div>
 
