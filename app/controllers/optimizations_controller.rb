@@ -17,16 +17,16 @@ class OptimizationsController < ApplicationController
       redirect_to optimizations_url, notice: params[:optimization_request_ids].length > 1 ? "The #{params[:optimization_request_ids].length} optimizations were successfully deleted." : "The optimization was successfully deleted."
     else
       kind = Optimization.find(params[:optimization_request_ids].first).kind
-      obj_num = Optimization.find(params[:optimization_request_ids].first).config['n_obj']
+      obj_num = Optimization.find(params[:optimization_request_ids].first).n_obj
       error = ""
 
       params[:optimization_request_ids].each do |optimization_selected|
         authorize Optimization.find(optimization_selected)
-        if Optimization.find(optimization_selected).config['n_obj'] != obj_num 
+        if Optimization.find(optimization_selected).n_obj != obj_num 
           error = "Different number of objectives."
         end
         if Optimization.find(optimization_selected).kind != kind
-          error = "Different kind."
+          error = "Different optimizer."
         end
       end
 
@@ -57,14 +57,14 @@ class OptimizationsController < ApplicationController
     else
       @optimization = Optimization.new(optimization_params)
       if optimization_params[:kind] == "SEGOMOE"
-        @optimization.config["n_obj"] = 1
-        @optimization.config["xlimits"] = params[:optimization][:xlimits].map{|e| e.delete(' ').split(',').map{|s| s.to_i}}
+        @optimization.n_obj = 1
+        @optimization.xlimits = params[:optimization][:xlimits].map{|e| e.delete(' ').split(',').map{|s| s.to_i}}
         unless params[:optimization][:options][0].empty? || params[:optimization][:options][1].empty?
-          @optimization.config["options"]["mod_obj__regr"] = params[:optimization][:options][0]
-          @optimization.config["options"]["optimizer"] = params[:optimization][:options][1]
+          @optimization.options["mod_obj__regr"] = params[:optimization][:options][0]
+          @optimization.options["optimizer"] = params[:optimization][:options][1]
         end
       else 
-        @optimization.config["xtypes"] = params[:optimization][:xtypes].map do |e| 
+        @optimization.xtypes = params[:optimization][:xtypes].map do |e| 
           arr = e.delete(' ').split(',')
           if arr[0] == "int_type" 
             arr[1] = arr[1].to_i
@@ -75,15 +75,15 @@ class OptimizationsController < ApplicationController
           end
           {"type" => arr[0], "limits" => [arr[1], arr[2]]}
         end
-        @optimization.config["n_obj"] = params[:optimization][:n_obj].to_i
+        @optimization.n_obj = params[:optimization][:n_obj].to_i
         unless params[:optimization][:cstr_specs][0].empty?
-          @optimization.config["cstr_specs"] = params[:optimization][:cstr_specs].map do |e|
+          @optimization.cstr_specs = params[:optimization][:cstr_specs].map do |e|
             arr = e.delete(' ').split(',')
             {"type"=>arr[0], "bound"=>arr[1].to_f, "tol"=>arr[2].to_f}
           end
         end
       end
-      @optimization.outputs["status"] = -1
+      @optimization.status = -1
       authorize @optimization
       if @optimization.save
         @optimization.set_owner(current_user)
@@ -108,19 +108,19 @@ class OptimizationsController < ApplicationController
         new_x = x.delete(' ').split(',').map{|s| s.to_f}
         new_y = params[:optimization][:inputs][:y][i].delete(' ').split(',').map{|s| s.to_f}
 
-        if new_x.length == @optimization.config['xlimits'].length + @optimization.config['xtypes'].length
-          if new_y.length == @optimization.config['n_obj']
+        if new_x.length == @optimization.xlimits.length + @optimization.xtypes.length
+          if new_y.length == @optimization.n_obj
             if @optimization.inputs.empty? or @optimization.inputs['x'].nil?
               @optimization.inputs = {"x" => [], "y" => []}
             end
             @optimization.inputs['x'].append(new_x)
             @optimization.inputs['y'].append(new_y)
           else
-            errors += "the input n°#{i + 1} has a wrong y dimention, expected #{@optimization.config['n_obj']}, got #{new_y.length}. "
+            errors += "the input n°#{i + 1} has a wrong y dimention, expected #{@optimization.n_obj}, got #{new_y.length}. "
           end
         else
           if new_x.length != 0
-            errors += "the input n°#{i + 1} has a wrong x dimension, expected #{@optimization.config['xlimits'].length + @optimization.config['xtypes'].length}, got #{new_x.length}. "
+            errors += "the input n°#{i + 1} has a wrong x dimension, expected #{@optimization.xlimits.length + @optimization.xtypes.length}, got #{new_x.length}. "
           end
         end
       end

@@ -6,6 +6,8 @@ require "whatsopt_services_types"
 class Optimization < ApplicationRecord
   include Ownable
 
+  class OptimizationError < Exception; end
+
   resourcify
 
   OPTIMIZER_KINDS = {
@@ -31,7 +33,7 @@ class Optimization < ApplicationRecord
   scope :owned_by, ->(user) { with_role(:owner, user) }
 
   validate :check_optimization_config
-  validate :optimization_number_limit
+  validate :check_optimization_number
 
   after_initialize :init
   
@@ -113,15 +115,11 @@ class Optimization < ApplicationRecord
     end
   end
 
-  def optimization_number_limit
+  def check_optimization_number
     optim_num = Optimization.owned_by(self.owner).size
     errors.add(:base, "You own too many optimizations (#{optim_num}), you must delete some before creating new ones") unless optim_num < MAX_OPTIM_NUMBER
   end
-
-  class OptimizationError < Exception; end
   
-  #after_initialize :check_optimization_config
-
   def create_optimizer
     unless new_record?
       if self.kind == "SEGOMOE"
