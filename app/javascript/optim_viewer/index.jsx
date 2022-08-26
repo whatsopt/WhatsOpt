@@ -16,7 +16,7 @@ import PropTypes from 'prop-types';
 //   '#17becf'   // blue - teal
 // ];
 
-class OptView extends React.PureComponent {
+class OptimViewer extends React.PureComponent {
   constructor(props) {
     super(props);
     const {
@@ -131,8 +131,8 @@ class OptView extends React.PureComponent {
   }
 }
 
-OptView.propTypes = {
+OptimViewer.propTypes = {
   data: PropTypes.array.isRequired,
   type: PropTypes.string.isRequired,
 };
-export default OptView;
+export default OptimViewer;
