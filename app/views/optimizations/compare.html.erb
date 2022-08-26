@@ -1,4 +1,4 @@
-<h2>Compare <%= @compare_optimizations_list.length %> entries : #<%= params[:optim_list].join(', #') %></h2>
+<h2>Compare <%= @compare_optimizations_list.length %> optimizations : Optim #<%= params[:optim_list].join(', Optim #') %></h2>
 
 <%= content_tag :div, id: "optimization_plot", optimization_data: @compare_optimizations_list.to_json, type: "compare" do %>
 <% end %>
