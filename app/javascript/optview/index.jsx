@@ -27,7 +27,7 @@ class OptView extends React.PureComponent {
 
     console.log(data);
     if (data[0].inputs.y) {
-      if (data[0].config.n_obj == 1) {
+      if (data[0].config.n_obj === 1) {
         if (type === 'single') {
           if (data[0].inputs.x) {
             for (let i = 0; i < data[0].inputs.x[0].length; i += 1) {
@@ -58,25 +58,23 @@ class OptView extends React.PureComponent {
     }
   }
 
-  addInputPlot(x, n, name, color) {
+  addInputPlot(x, n, name) {
     this.input_list.push({
       x: Array.from({ length: x.length }, (_, i) => i + 1),
       y: x.map((z) => z[n]),
       type: 'scatter',
       mode: 'markers lines',
-      name: name,
-      // marker: { color: color },
+      name,
     });
   }
 
-  addParetoPlot(y, name, color) {
+  addParetoPlot(y, name) {
     this.input_list.push({
       x: y.map((z) => z[0]),
       y: y.map((z) => z[1]),
       type: 'scatter',
       mode: 'markers',
-      name: name,
-      // marker: { color: color },
+      name,
     });
   }
 
@@ -86,13 +84,13 @@ class OptView extends React.PureComponent {
     } = this.props;
     if (this.input_list.length === 0) {
       return (
-        <div class="alert alert-primary mt-5 mb-5" role="alert">
-          No data! Optimization not run yet? 
+        <div className="alert alert-primary mt-5 mb-5" role="alert">
+          No data! Optimization not run yet?
         </div>
       );
     }
 
-    if (data[0].config.n_obj == 1) {
+    if (data[0].config.n_obj === 1) {
       return (
         <div className="container">
           <div className="row">
@@ -103,8 +101,8 @@ class OptView extends React.PureComponent {
                   width: 800,
                   height: 500,
                   title: 'Data Points',
-                  xaxis: { title: "# Evaluations" },
-                  yaxis: { title: "Values" },
+                  xaxis: { title: '# Evaluations' },
+                  yaxis: { title: 'Values' },
                 }}
               />
             </div>
