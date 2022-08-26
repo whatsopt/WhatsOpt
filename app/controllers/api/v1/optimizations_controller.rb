@@ -23,7 +23,7 @@ class Api::V1::OptimizationsController < Api::ApiController
     else
       skip_authorization
       Rails.logger.error @optim.errors
-      json_response({ message: "Validation failed", errors: @optim.errors }, :bad_request)
+      json_response({ message: "Validation failed: #{@optim.errors.full_messages}", errors: @optim.errors }, :bad_request)
     end
   end
 
