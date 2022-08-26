@@ -2,7 +2,7 @@
 
 <%= link_to "Show Log", optimization_download_url(@optimization.id, format: "log"), class: "btn btn-secondary ml-2" %>
 <% if nb_points(@optimization.inputs).to_i > 0 %>
-  <%= link_to "Export Csv", optimization_download_url(@optimization.id, format: "csv"), class: "btn btn-secondary ml-2" %>
+  <%= link_to "Export History", optimization_download_url(@optimization.id, format: "csv"), class: "btn btn-secondary ml-2" %>
 <% end %>
 
 <!--
