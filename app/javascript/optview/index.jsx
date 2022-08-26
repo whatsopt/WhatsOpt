@@ -86,13 +86,8 @@ class OptView extends React.PureComponent {
     } = this.props;
     if (this.input_list.length === 0) {
       return (
-        <div className="container">
-          <div className="row">
-            {' '}
-            No data to see for entry :
-            {' '}
-            {data[0].id}
-          </div>
+        <div class="alert alert-primary mt-5 mb-5" role="alert">
+          No data! Optimization not run yet? 
         </div>
       );
     }
