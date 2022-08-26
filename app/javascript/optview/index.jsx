@@ -3,6 +3,19 @@ import React from 'react';
 import Plot from 'react-plotly.js';
 import PropTypes from 'prop-types';
 
+// const COLORS = [
+//   '#1f77b4',  // muted blue
+//   '#ff7f0e',  // safety orange
+//   '#2ca02c',  // cooked asparagus green
+//   '#d62728',  // brick red
+//   '#9467bd',  // muted purple
+//   '#8c564b',  // chestnut brown
+//   '#e377c2',  // raspberry yogurt pink
+//   '#7f7f7f',  // middle gray
+//   '#bcbd22',  // curry yellow - green
+//   '#17becf'   // blue - teal
+// ];
+
 class OptView extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -12,55 +25,58 @@ class OptView extends React.PureComponent {
     } = this.props;
     this.input_list = [];
 
+    console.log(data);
     if (data[0].inputs.y) {
-      if (data[0].inputs.y[0].length <= 1) {
+      if (data[0].config.n_obj == 1) {
         if (type === 'single') {
           if (data[0].inputs.x) {
             for (let i = 0; i < data[0].inputs.x[0].length; i += 1) {
-              this.inputPlot(data[0].inputs.x, i, 'gray', `input ${i + 1}`);
+              this.addInputPlot(data[0].inputs.x, i, `input ${i + 1}`);
             }
-            this.inputPlot(data[0].inputs.y, 0, 'red', 'output');
+            for (let i = 0; i < data[0].inputs.y[0].length; i += 1) {
+              this.addInputPlot(data[0].inputs.y, i, `output ${i + 1}`);
+            }
           }
         } else {
           for (let i = 0; i < data.length; i += 1) {
             if (data[i].inputs.x) {
-              this.inputPlot(data[i].inputs.y, 0, 'red', `output of #${data[i].id}`);
+              this.addInputPlot(data[i].inputs.y, 0, `output of #${data[i].id}`);
             }
           }
         }
       } else if (type === 'single') {
         if (data[0].inputs.y) {
-          this.paretoPlot(data[0].inputs.y, 'red', 'Pareto front');
+          this.addParetoPlot(data[0].inputs.y, 'Pareto front');
         }
       } else {
         for (let i = 0; i < data.length; i += 1) {
           if (data[i].inputs.y) {
-            this.paretoPlot(data[i].inputs.y, 'red', `#${data[i].id}`);
+            this.addParetoPlot(data[i].inputs.y, `#${data[i].id}`);
           }
         }
       }
     }
   }
 
-  inputPlot(_x, _n, _color, _name) {
+  addInputPlot(x, n, name, color) {
     this.input_list.push({
-      x: Array.from({ length: _x.length }, (_, n) => n + 1),
-      y: _x.map((z) => z[_n]),
+      x: Array.from({ length: x.length }, (_, i) => i + 1),
+      y: x.map((z) => z[n]),
       type: 'scatter',
       mode: 'markers lines',
-      name: _name,
-      marker: { color: _color },
+      name: name,
+      // marker: { color: color },
     });
   }
 
-  paretoPlot(_y, _color, _name) {
+  addParetoPlot(y, name, color) {
     this.input_list.push({
-      x: _y.map((z) => z[0]),
-      y: _y.map((z) => z[1]),
+      x: y.map((z) => z[0]),
+      y: y.map((z) => z[1]),
       type: 'scatter',
       mode: 'markers',
-      name: _name,
-      marker: { color: _color },
+      name: name,
+      // marker: { color: color },
     });
   }
 
@@ -81,7 +97,7 @@ class OptView extends React.PureComponent {
       );
     }
 
-    if (data[0].inputs.y[0].length <= 1) {
+    if (data[0].config.n_obj == 1) {
       return (
         <div className="container">
           <div className="row">
@@ -91,9 +107,9 @@ class OptView extends React.PureComponent {
                 layout={{
                   width: 800,
                   height: 500,
-                  title: 'Visual representation of the input points',
-                  xaxis: { title: "point's number" },
-                  yaxis: { title: "variable's values" },
+                  title: 'Data Points',
+                  xaxis: { title: "# Evaluations" },
+                  yaxis: { title: "Values" },
                 }}
               />
             </div>
@@ -110,7 +126,7 @@ class OptView extends React.PureComponent {
               layout={{
                 width: 800,
                 height: 500,
-                title: 'Visual representation of the best outputs, as a Pareto front',
+                title: 'Pareto front',
                 xaxis: { title: 'y1' },
                 yaxis: { title: 'y2' },
               }}
