@@ -3,16 +3,15 @@
 
   <thead>
     <tr>
-      <th style="5%" data-sort-ignore="true"><label id="display_checkbox_count">_</label></th>
-      <th style="10%">#</th>
+      <th style="5%" data-sort-ignore="true"></th>
+      <th style="10%">Optim #</th>
       <th style="20%">Optimizer</th>
       <th style="10%">Nb Inputs</th>
       <th style="10%">Nb Objectives</th>
       <th style="10%">Nb Constraints</th>
       <th style="15%">History</th>
       <th style="20%">Status</th>
-      <th style="20%">Last Modification</th>
-      <th style="10%">View</th>
+      <th style="20%">Created</th>
     </tr>
   </thead>
 
@@ -23,7 +22,9 @@
                             optim.id, 
                             false, 
                             class: "checkbox_child #{optim.status || "empty"}" %></td>
-      <td>#<%= optim.id %></td>
+      <td><%= link_to optimization_path(optim), title: "View" do %>
+            Optim #<%= optim.id %>
+        <% end %></td>
       <td><%= optim.kind %></td>
       <td><%= optim_input_dim(optim) %></td>
       <td><%= optim.n_obj %></td>
@@ -32,12 +33,7 @@
       <td><a href="#"style="<%=status_display(optim.outputs["status"])[0] %>" data-bs-toggle="tooltip" title=<%= status_text(optim.outputs["status"]) %>>
         <i class="<%= status_display(optim.outputs["status"])[1] %>"></i>
       </a></td>
-      <td><%= optim.updated_at.strftime("%d/%m/%Y, at %I:%M%p") %></td>
-      <td>
-        <%= link_to optimization_path(optim), class: "btn btn-sm", title: "View" do %>
-            <i class="fa fa-eye"></i>
-        <% end %>
-      </td>
+      <td><%= optim.created_at.strftime("%d/%m/%Y, at %I:%M%p") %></td>
     </tr>
     <% end %>
   </tbody>
