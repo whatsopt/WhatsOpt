@@ -430,7 +430,7 @@ GEM
     sshkit (1.21.2)
       net-scp (>= 1.1.2)
       net-ssh (>= 2.8.0)
-    strscan (3.0.4)
+    strscan (3.0.1)
     sucker_punch (3.0.1)
       concurrent-ruby (~> 1.0)
     tether-rails (1.4.0)
