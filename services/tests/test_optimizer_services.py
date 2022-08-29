@@ -39,8 +39,8 @@ class OptimizerStoreProxy(object):
             optimizer_id, optimizer_kind, xlimits, cstr_spec, options
         )
 
-    def ask(self, optimizer_id):
-        return self._thrift_client.ask(optimizer_id)
+    def ask(self, optimizer_id, with_best):
+        return self._thrift_client.ask(optimizer_id, with_best)
 
     def tell(self, optimizer_id, x, y):
         self._thrift_client.tell(optimizer_id, x, y)
@@ -97,7 +97,7 @@ class TestOptimizerService(unittest.TestCase):
         y = doe[:, 2:]
 
         self.store.tell("1", x, y)
-        res = self.store.ask("1")
+        res = self.store.ask("1", True)
 
         self.assertEqual(0, res.status)
 
@@ -121,7 +121,7 @@ class TestOptimizerService(unittest.TestCase):
         y = doe[:, 2:]
 
         self.store.tell("1", x, y)
-        res = self.store.ask("1")
+        res = self.store.ask("1", False)
 
         self.assertEqual(0, res.status)
 
@@ -167,7 +167,7 @@ class TestOptimizerService(unittest.TestCase):
             ],
         )
         self.store.tell("1", x, y)
-        res = self.store.ask("1")
+        res = self.store.ask("1", True)
         print(res.status, res.x_suggested)
 
 

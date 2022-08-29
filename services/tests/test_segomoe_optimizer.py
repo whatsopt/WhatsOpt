@@ -27,11 +27,13 @@ class TestSegomoeOptimizer(unittest.TestCase):
 
         segomoe = SegomoeOptimizer(xlimits)
         segomoe.tell(x, y)
-        res = segomoe.ask()
+        res = segomoe.ask(with_best=True)
 
         # status, x_suggested, y_value, t_elapsed = res
-        status, x_suggested, _ = res
+        status, x_suggested, x_best, y_best = res
         self.assertEqual(0, status)
+        self.assertNotEqual(None, x_best)
+        self.assertNotEqual(None, y_best)
         print(status, x_suggested)
 
     @staticmethod
@@ -63,10 +65,12 @@ class TestSegomoeOptimizer(unittest.TestCase):
 
         segomoe = SegomoeOptimizer(xlimits, cstrs)
         segomoe.tell(x, y)
-        res = segomoe.ask()
+        res = segomoe.ask(with_best=False)
 
         # status, x_suggested, y_value, t_elapsed = res
-        status, x_suggested, _ = res
+        status, x_suggested, x_best, y_best = res
+        self.assertEqual(None, x_best)
+        self.assertEqual(None, y_best)
         print(status, x_suggested)
 
 

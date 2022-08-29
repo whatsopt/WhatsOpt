@@ -97,16 +97,17 @@ class SegomoeOptimizer(Optimizer):
             )
             res = sego.run_optim(n_iter=1)
 
+        x_best = None
+        y_best = None
         if res:
             status = res[0]
             next_x = sego.get_x()[-1]
-            x_best = [res[1][0].tolist()]
-            y_best = [res[2][0].tolist()]
+            if with_best:
+                x_best = [res[1][0].tolist()]
+                y_best = [res[2][0].tolist()]
         else:
             status = 2
             next_x = np.zeros((nx,)).tolist()
-            x_best = None
-            y_best = None
 
         print(f"status={status}")
         print(f"next_x={next_x}")
