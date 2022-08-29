@@ -76,7 +76,6 @@ class SegomoeOptimizer(Optimizer):
             "analytical_diff": False,
             "grouped_eval": True,
             "profiling": False,
-            "debug": False,
             "verbose": True,
             "cst_crit": "MC",
         }
