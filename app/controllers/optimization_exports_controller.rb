@@ -18,12 +18,15 @@ class OptimizationExportsController < ApplicationController
         redirect_to optimization_path(optim), alert: "There isn't a log file"
       end
     elsif format == "csv"
-      attributes = %w{x[] y}
-      content = CSV.generate(headers: true) do |csv|
-        csv << attributes
-        unless optim.inputs.empty? or optim.inputs["x"].nil?
-          optim.inputs["x"].each_with_index do |x, i|
-            csv << x + optim.inputs["y"][i]
+      content = CSV.generate(col_sep: ";") do |csv|
+        unless optim.inputs.empty? or optim.x.nil?
+          headers = []
+          headers += optim.x[0].map.with_index {|_, i| "x_#{i+1}"}
+          headers += (1..optim.n_obj).map {|i| "obj_#{i}"}
+          headers += (1..optim.cstr_specs.size).map {|i| "cstr_#{i}"}
+          csv << headers
+          optim.x.each_with_index do |x, i|
+            csv << x + optim.y[i]
           end
         end
       end

@@ -26,6 +26,28 @@ module OptimizationsHelper
     end
   end
 
+  def optim_history(optim)
+    optim.x ? "#{optim.x.length} points" : "empty"
+  end
+
+  def optim_input_dim(optim)
+    if optim.xtypes
+      optim.xtypes.size
+    elsif optim.xlimits
+      optim.xlimits.size
+    else
+      "?"
+    end
+  end
+
+  def optim_cstrs_dim(optim)
+    if optim.cstr_specs
+      optim.cstr_specs.size
+    else
+      "0"
+    end
+  end
+
   def nb_points(input)
     (input.empty? or input["x"].nil?) ? "0" : input["x"].length
   end

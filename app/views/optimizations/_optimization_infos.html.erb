@@ -1,0 +1,25 @@
+<p>
+    <table id="compare_table" class="table table-striped">
+        <thead>
+            <tr>
+                <th style="10%">#</th>
+                <th style="20%">Optimizer</th>
+                <th style="20%">Input Types</th>
+                <th style="20%">Cstrs Specs</th>
+                <th style="20%">Options</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <% optimizations.each do |optimization| %>
+            <tr class='table_row'>
+                <td>#<%= optimization.id %></td>
+                <td><%= optimization.kind %></td>
+                <td><%= optimization.config["xtypes"].blank? ? optimization.config["xlimits"] : optimization.config["xtypes"]%></td>
+                <td><%= optimization.cstr_specs %></td>
+                <td><%= optimization.options %></td>
+            </tr>
+            <% end %>
+        </tbody>
+    </table>
+</p>

@@ -3,34 +3,37 @@
 
   <thead>
     <tr>
-      <th style="width: 7%" data-sort-ignore="true"><label id="display_checkbox_count">_</label></th>
-      <th style="10%">Id</th>
+      <th style="5%" data-sort-ignore="true"></th>
+      <th style="10%">Optim #</th>
       <th style="20%">Optimizer</th>
-      <th style="20%">Number of Points</th>
-      <th style="20%">View Details</th>
+      <th style="10%">Nb Inputs</th>
+      <th style="10%">Nb Objectives</th>
+      <th style="10%">Nb Constraints</th>
+      <th style="15%">History</th>
       <th style="20%">Status</th>
-      <th style="10%">Last Modification</th>
+      <th style="20%">Created</th>
     </tr>
   </thead>
 
   <tbody>
-    <% @optimizations.each do |optimization_request| %>
+    <% @optimizations.each do |optim| %>
     <tr class='table_row'>
       <td><%= check_box_tag 'optimization_request_ids[]', 
-                            optimization_request.id, 
+                            optim.id, 
                             false, 
-                            class: "checkbox_child #{optimization_request.status || "empty"}" %></td>
-      <td>#<%= optimization_request.id %></td>
-      <td><%= optimization_request.kind %></td>
-      <td><%= nb_points(optimization_request.inputs) %></td>
-      <td><%= link_to optimization_path(optimization_request), 
-            class: "btn btn-sm", title: "View" do %>
-        <i class="fa fa-file"></i>
+                            class: "checkbox_child #{optim.status || "empty"}" %></td>
+      <td><%= link_to optimization_path(optim), title: "View" do %>
+            Optim #<%= optim.id %>
         <% end %></td>
-      <td><a href="#"style="<%=status_display(optimization_request.outputs["status"])[0] %>" data-bs-toggle="tooltip" title=<%= status_text(optimization_request.outputs["status"]) %>>
-        <i class="<%= status_display(optimization_request.outputs["status"])[1] %>"></i>
+      <td><%= optim.kind %></td>
+      <td><%= optim_input_dim(optim) %></td>
+      <td><%= optim.n_obj %></td>
+      <td><%= optim_cstrs_dim(optim) %></td>
+      <td><%= optim_history(optim) %></td>
+      <td><a href="#"style="<%=status_display(optim.outputs["status"])[0] %>" data-bs-toggle="tooltip" title=<%= status_text(optim.outputs["status"]) %>>
+        <i class="<%= status_display(optim.outputs["status"])[1] %>"></i>
       </a></td>
-      <td><%= optimization_request.updated_at.strftime("%d/%m/%Y, at %I:%M%p") %></td>
+      <td><%= optim.created_at.strftime("%d/%m/%Y, at %I:%M%p") %></td>
     </tr>
     <% end %>
   </tbody>
