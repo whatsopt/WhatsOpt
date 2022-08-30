@@ -1,11 +1,41 @@
 <h1>CHANGELOG</h1>
 
+<h3>1.24.0 (30/08/2022)</h3>
+<ul>
+  <li>Add optimizations management GUI (thanks to @ColasPinson)</li>, it allows to:
+  <ul>
+    <li>Display the list of optimizations created through the <a
+        href="https://ether.onera.fr/whatsopt/api_doc">Optimization web service</a>, see:
+      <ul>
+        <li><a
+            href="https://github.com/OneraHub/WhatsOpt-Doc/blob/df10d34bbfacd2a48574c60ce1a33daf58d423b4/whatsopt_segomoe.ipynb"
+            target="_blank">
+            mono-objective continuous optimization tutorial
+          </a></li>
+        <li><a
+            href="https://github.com/OneraHub/WhatsOpt-Doc/blob/df10d34bbfacd2a48574c60ce1a33daf58d423b4/whatsopt_segmoomoe.ipynb"
+            target="_blank">
+            multi-objectives mixed-integer optimization tutorial
+          </a></li>
+      </ul>
+    </li>
+    <li>Remove useless optimizations</li>
+    <li>Plot results: optimization history in case of mono-objective optim., Pareto front
+      of the first two objectives in case of multi-objectives optim</li>
+    <li>Download SEGO optimizer logs for checking/debugging purpose</li>
+    <li>Download SEGO optimizer history data as a csv file for further exploitation</li>
+    <li>Note: For now the number of optimizations can not exceed 20 for a same user.</li>
+  </ul>
+  </li>
+  <li>Tech.: Update rails 7.0.3.1, gems and javascript dependencies</li>
+</ul>
+
 <h3>1.23.0 (17/06/2022)</h3>
 <ul>
   <li>Implement access to in-house mixed-integer multi-objective SEGMOOMOE optimizer</li>
   <li>Fix EGMDO code generation when an output is used modeled as a random variable</li>
   <li>Tech.: Update ruby and javascript dependencies</li>
-  <li>Tech.: Update SEGOMOE toolbox 
+  <li>Tech.: Update SEGOMOE toolbox
 </ul>
 
 <h3>1.22.0 (11/04/2022)</h3>
