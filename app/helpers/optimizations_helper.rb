@@ -31,9 +31,9 @@ module OptimizationsHelper
   end
 
   def optim_input_dim(optim)
-    if optim.xtypes
+    if !optim.xtypes.blank?
       optim.xtypes.size
-    elsif optim.xlimits
+    elsif !optim.xlimits.blank?
       optim.xlimits.size
     else
       "?"
