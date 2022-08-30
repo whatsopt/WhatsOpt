@@ -34,6 +34,7 @@ class Optimizer:
         nobj = self.n_obj
         ncstrs = len(self.constraints)
         print(y.shape)
+        print(nobj, ncstrs)
         if y.shape[1] != (nobj + ncstrs):
             raise ValueError(
                 "Size mismatch: y should be {}-size ({} objectives + {} constraints), got {}".format(

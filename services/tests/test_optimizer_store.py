@@ -38,11 +38,11 @@ class TestOptimizerStore(unittest.TestCase):
         self.store.create_optimizer("1", "SEGOMOE", self.xlimits, [])
         self.store.tell_optimizer("1", self.x, self.y)
         opt = self.store.get_optimizer("1")
-        status, _, _ = opt.ask()
+        status, _, _, _ = opt.ask(with_best=False)
 
         self.store.tell_optimizer("1", self.x, self.y)
         opt1 = self.store.get_optimizer("1")
-        status1, _, _ = opt1.ask()
+        status1, _, _, _ = opt1.ask(with_best=True)
         self.assertEqual(status, status1)
 
     @staticmethod
@@ -73,8 +73,8 @@ class TestOptimizerStore(unittest.TestCase):
         self.store.create_optimizer("1", "SEGOMOE", xlimits, cstrs)
         self.store.tell_optimizer("1", x, y)
         opt = self.store.get_optimizer("1")
-        status, next_x, _ = opt.ask()
-        print(status, next_x)
+        status, next_x, x_best, y_best = opt.ask(with_best=True)
+        print(status, next_x, x_best, y_best)
 
     def test_bad_constraints_specs(self):
         xlimits = np.array([[13, 100], [0, 100]])

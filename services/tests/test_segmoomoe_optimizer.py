@@ -1,8 +1,7 @@
 import unittest
 import numpy as np
 from whatsopt_server.optimizer_store.segmoomoe_optimizer import SegmoomoeOptimizer
-from whatsopt_server.services import ttypes as tt
-
+import smt.applications.mixed_integer as mixint
 
 def fun(x):  # function with 2 objectives
     f1 = x[:, 0] - x[:, 1] * x[:, 2]
@@ -144,32 +143,14 @@ class TestSegmoomoeOptimizer(unittest.TestCase):
             {"type": "<", "bound": 0.0, "tol": 1e-6},
         ]
 
-        xtypes = []
-        xtypes.append(
-            tt.Xtype(
-                type=tt.Type.FLOAT,
-                limits=tt.Xlimits(flimits=tt.Flimits(lower=0.0, upper=1.0)),
-            )
-        )
-        xtypes.append(
-            tt.Xtype(
-                type=tt.Type.INT,
-                limits=tt.Xlimits(ilimits=tt.Ilimits(lower=0, upper=3)),
-            )
-        )
-        xtypes.append(
-            tt.Xtype(
-                type=tt.Type.INT,
-                limits=tt.Xlimits(ilimits=tt.Ilimits(lower=0, upper=3)),
-            )
-        )
+        xtypes = [mixint.FLOAT, mixint.INT, mixint.INT]
+        xlimits = np.array([[0., 1.], [0., 3.], [0., 3.]])
 
-        segmoomoe = SegmoomoeOptimizer(xtypes, 3, cstrs)
+        segmoomoe = SegmoomoeOptimizer(xtypes, xlimits, 3, cstrs, logfile="LOGFILE.log")
         segmoomoe.tell(xdoe, ydoe)
         res = segmoomoe.ask()
 
-        # status, x_suggested, y_value, t_elapsed = res
-        status, _, _ = res
+        status, _, _, _ = res
         self.assertEqual(0, status)
 
 

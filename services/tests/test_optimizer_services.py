@@ -9,6 +9,7 @@ from thrift.transport import TTransport
 from thrift.protocol import TBinaryProtocol, TMultiplexedProtocol
 
 from whatsopt_server.services import OptimizerStore, Administration
+import whatsopt_server.services.ttypes as tt
 
 import DOE.doe_lhs as doe_lhs
 from DOE.tools_doe import trans
@@ -38,9 +39,15 @@ class OptimizerStoreProxy(object):
         self._thrift_client.create_optimizer(
             optimizer_id, optimizer_kind, xlimits, cstr_spec, options
         )
+    def create_mixint_optimizer(
+        self, optimizer_id, optimizer_kind, xtypes, n_obj, cstr_spec, options={}
+    ):
+        self._thrift_client.create_mixint_optimizer(
+            optimizer_id, optimizer_kind, xtypes, n_obj, cstr_spec, options
+        )
 
-    def ask(self, optimizer_id):
-        return self._thrift_client.ask(optimizer_id)
+    def ask(self, optimizer_id, with_best):
+        return self._thrift_client.ask(optimizer_id, with_best)
 
     def tell(self, optimizer_id, x, y):
         self._thrift_client.tell(optimizer_id, x, y)
@@ -52,12 +59,41 @@ class OptimizerStoreProxy(object):
         self.transport.close()
 
 
+# Test function for SEGOMOOMOE
+import numpy as np
+from smt.applications.mixed_integer import FLOAT, INT
+
+def fun(x):  # function with 2 objectives
+    x = np.atleast_2d(x)
+    f1 = x[:, 0] - x[:, 1] * x[:, 2]
+    f2 = 4 * x[:, 0] ** 2 - 4 * x[:, 0] ** x[:, 2] + 1 + x[:, 1]
+    f3 = x[:, 0] ** 2
+    return np.hstack((np.atleast_2d(f1).T, np.atleast_2d(f2).T, np.atleast_2d(f3).T))
+
+
+def g1(x):  # constraint to force x < 0.8
+    x = np.atleast_2d(x)
+    return np.atleast_2d(x[:, 0] - 0.8).T
+
+
+def g2(x):  # constraint to force x > 0.2
+    x = np.atleast_2d(x)
+    return np.atleast_2d(0.2 - x[:, 0]).T
+
+
+def f_grouped(x):
+    resfun = fun(x)
+    resg1 = g1(x)
+    resg2 = g2(x)
+    res = np.hstack((resfun, resg1, resg2))
+    return res
+
 class TestOptimizerService(unittest.TestCase):
     def setUp(self):
         cmd = os.path.join(
             os.path.dirname(__file__), os.path.pardir, "whatsopt_server", "__main__.py"
         )
-        self.server = subprocess.Popen(["python", cmd])
+        self.server = subprocess.Popen(["python", cmd, "--logdir", ".", "--outdir", "."])
         for _ in range(10):
             try:
                 self.store = OptimizerStoreProxy()  # server has to start
@@ -70,6 +106,7 @@ class TestOptimizerService(unittest.TestCase):
     def tearDown(self):
         self.store.close()
         self.server.kill()
+        time.sleep(0.5)
 
     # @unittest.skip("skip")
     def test_create_optimizer(self):
@@ -97,7 +134,7 @@ class TestOptimizerService(unittest.TestCase):
         y = doe[:, 2:]
 
         self.store.tell("1", x, y)
-        res = self.store.ask("1")
+        res = self.store.ask("1", True)
 
         self.assertEqual(0, res.status)
 
@@ -121,7 +158,7 @@ class TestOptimizerService(unittest.TestCase):
         y = doe[:, 2:]
 
         self.store.tell("1", x, y)
-        res = self.store.ask("1")
+        res = self.store.ask("1", False)
 
         self.assertEqual(0, res.status)
 
@@ -167,7 +204,62 @@ class TestOptimizerService(unittest.TestCase):
             ],
         )
         self.store.tell("1", x, y)
-        res = self.store.ask("1")
+        res = self.store.ask("1", True)
+        print(res.status, res.x_suggested)
+
+    # @unittest.skip("")
+    def test_segmoomoe_cstrs(self):
+        xtypes = []
+        xtypes.append(
+            tt.Xtype(
+                type=tt.Type.FLOAT,
+                limits=tt.Xlimits(flimits=tt.Flimits(lower=0.0, upper=1.0)),
+            )
+        )
+        xtypes.append(
+            tt.Xtype(
+                type=tt.Type.INT,
+                limits=tt.Xlimits(ilimits=tt.Ilimits(lower=0, upper=3)),
+            )
+        )
+        xtypes.append(
+            tt.Xtype(
+                type=tt.Type.INT,
+                limits=tt.Xlimits(ilimits=tt.Ilimits(lower=0, upper=3)),
+            )
+        )
+
+        xdoe = np.array([        
+            [0.36691555, 0.,        1.        ],
+            [0.58432706, 1.,       1.        ],
+            [0.09227899, 1.,         2.        ],
+            [0.95274182, 1.,         2.        ],
+            [0.72873502, 1.,         3.        ],
+            [0.87115983, 2.,         1.        ],
+            [0.24346361, 2.,         3.        ],
+            [0.4221473 , 2.,         0.        ],
+            [0.10886813, 2.,         1.        ],
+            [0.65557784, 3.,         2.        ],
+            [0.39532629, 2.,         0.        ]
+            ])
+        ydoe = f_grouped(xdoe)
+        print(ydoe)
+        self.store.create_mixint_optimizer(
+            "2",
+            OptimizerStore.OptimizerKind.SEGMOOMOE,
+            xtypes,
+            3,
+            [
+                OptimizerStore.ConstraintSpec(
+                    type=OptimizerStore.ConstraintType.LESS, bound=0.0
+                ),
+                OptimizerStore.ConstraintSpec(
+                    type=OptimizerStore.ConstraintType.LESS, bound=0.0
+                ),
+            ],
+        )
+        self.store.tell("2", xdoe, ydoe)
+        res = self.store.ask("2", True)
         print(res.status, res.x_suggested)
 
 
