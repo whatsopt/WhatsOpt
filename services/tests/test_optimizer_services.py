@@ -39,6 +39,7 @@ class OptimizerStoreProxy(object):
         self._thrift_client.create_optimizer(
             optimizer_id, optimizer_kind, xlimits, cstr_spec, options
         )
+
     def create_mixint_optimizer(
         self, optimizer_id, optimizer_kind, xtypes, n_obj, cstr_spec, options={}
     ):
@@ -60,9 +61,6 @@ class OptimizerStoreProxy(object):
 
 
 # Test function for SEGOMOOMOE
-import numpy as np
-from smt.applications.mixed_integer import FLOAT, INT
-
 def fun(x):  # function with 2 objectives
     x = np.atleast_2d(x)
     f1 = x[:, 0] - x[:, 1] * x[:, 2]
@@ -88,12 +86,15 @@ def f_grouped(x):
     res = np.hstack((resfun, resg1, resg2))
     return res
 
+
 class TestOptimizerService(unittest.TestCase):
     def setUp(self):
         cmd = os.path.join(
             os.path.dirname(__file__), os.path.pardir, "whatsopt_server", "__main__.py"
         )
-        self.server = subprocess.Popen(["python", cmd, "--logdir", ".", "--outdir", "."])
+        self.server = subprocess.Popen(
+            ["python", cmd, "--logdir", ".", "--outdir", "."]
+        )
         for _ in range(10):
             try:
                 self.store = OptimizerStoreProxy()  # server has to start
@@ -229,19 +230,21 @@ class TestOptimizerService(unittest.TestCase):
             )
         )
 
-        xdoe = np.array([        
-            [0.36691555, 0.,        1.        ],
-            [0.58432706, 1.,       1.        ],
-            [0.09227899, 1.,         2.        ],
-            [0.95274182, 1.,         2.        ],
-            [0.72873502, 1.,         3.        ],
-            [0.87115983, 2.,         1.        ],
-            [0.24346361, 2.,         3.        ],
-            [0.4221473 , 2.,         0.        ],
-            [0.10886813, 2.,         1.        ],
-            [0.65557784, 3.,         2.        ],
-            [0.39532629, 2.,         0.        ]
-            ])
+        xdoe = np.array(
+            [
+                [0.36691555, 0.0, 1.0],
+                [0.58432706, 1.0, 1.0],
+                [0.09227899, 1.0, 2.0],
+                [0.95274182, 1.0, 2.0],
+                [0.72873502, 1.0, 3.0],
+                [0.87115983, 2.0, 1.0],
+                [0.24346361, 2.0, 3.0],
+                [0.4221473, 2.0, 0.0],
+                [0.10886813, 2.0, 1.0],
+                [0.65557784, 3.0, 2.0],
+                [0.39532629, 2.0, 0.0],
+            ]
+        )
         ydoe = f_grouped(xdoe)
         print(ydoe)
         self.store.create_mixint_optimizer(
