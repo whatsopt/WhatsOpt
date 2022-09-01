@@ -75,6 +75,8 @@ class Api::V1::OptimizationControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should not be able to create too many optimizations" do
+    skip_if_parallel
+    skip_if_segomoe_not_installed
     Optimization::MAX_OPTIM_NUMBER.times do |_| 
       post api_v1_optimizations_url,
         params: { optimization: { kind: "SEGOMOE",
