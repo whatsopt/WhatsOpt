@@ -17,7 +17,7 @@ class Api::V1::OptimizationsController < Api::ApiController
     @optim = Optimization.new(optim_params)
     authorize @optim
     if !Optimization.check_optimization_number_for(current_user)
-      json_response({ message: "Optimization creationfailed: too many optimizations (>#{Optimization::MAX_OPTIM_NUMBER})" }, :bad_request)
+      json_response({ message: "Optimization creation failed: too many optimizations, max nb (#{Optimization::MAX_OPTIM_NUMBER}) reached)" }, :bad_request)
     else
       if @optim.save
         @optim.create_optimizer

@@ -14,7 +14,7 @@ class OptimizationsController < ApplicationController
         authorize Optimization.find(optimization_selected.to_i)
         Optimization.find(optimization_selected.to_i).destroy
       end
-      redirect_to optimizations_url, notice: params[:optimization_request_ids].length > 1 ? "The #{params[:optimization_request_ids].length} optimizations were successfully deleted." : "The optimization was successfully deleted."
+      redirect_to optimizations_url, notice: params[:optimization_request_ids].length > 1 ? "#{params[:optimization_request_ids].length} optimizations successfully deleted." : "Optimization is successfully deleted."
     else
       kind = Optimization.find(params[:optimization_request_ids].first).kind
       obj_num = Optimization.find(params[:optimization_request_ids].first).n_obj
