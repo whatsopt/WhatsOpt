@@ -15,7 +15,7 @@ class OptimizationExportsController < ApplicationController
       if File.exist?(path) 
         send_file(path) 
       else
-        redirect_to optimization_path(optim), alert: "There isn't a log file"
+        redirect_to optimization_path(optim), alert: "No log file available!"
       end
     elsif format == "csv"
       content = CSV.generate(col_sep: ";") do |csv|
