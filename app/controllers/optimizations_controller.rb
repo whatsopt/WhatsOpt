@@ -85,11 +85,15 @@ class OptimizationsController < ApplicationController
       end
       @optimization.status = -1
       authorize @optimization
-      if @optimization.save
-        @optimization.set_owner(current_user)
-        redirect_to optimizations_url, notice: "Optimization ##{@optimization.id} was successfully created."
+      if !Optimization.check_optimization_number_for(current_user)
+        redirect_to new_optimization_url, error: "Max optimization number reached (#{Optimization::MAX_OPTIM_NUMBER})." 
       else
-        render :new
+        if @optimization.save
+          @optimization.set_owner(current_user)
+          redirect_to optimizations_url, notice: "Optimization ##{@optimization.id} was successfully created."
+        else
+          redirect_to new_optimization_url, error: "Something went wrong, optimization creation failed." 
+        end
       end
     end
   end

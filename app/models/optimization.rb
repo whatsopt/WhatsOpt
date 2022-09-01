@@ -33,7 +33,6 @@ class Optimization < ApplicationRecord
   scope :owned_by, ->(user) { with_role(:owner, user) }
 
   validate :check_optimization_config
-  validate :check_optimization_number
 
   after_initialize :init
   
@@ -114,11 +113,6 @@ class Optimization < ApplicationRecord
       end
     end
   end
-
-  def check_optimization_number
-    optim_num = Optimization.owned_by(self.owner).size
-    errors.add(:base, "You own too many optimizations (#{optim_num}), you must delete some before creating new ones") unless optim_num < MAX_OPTIM_NUMBER
-  end
   
   def create_optimizer
     unless new_record?
@@ -157,6 +151,10 @@ class Optimization < ApplicationRecord
     unless params["x"] && params["y"]
       raise_error("x and y fields should be present, got #{params}")
     end
+  end
+
+  def self.check_optimization_number_for(user)
+    Optimization.owned_by(user).size < Optimization::MAX_OPTIM_NUMBER
   end
 
   def log_error(err_msg)
