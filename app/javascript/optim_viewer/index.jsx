@@ -25,7 +25,6 @@ class OptimViewer extends React.PureComponent {
     } = this.props;
     this.input_list = [];
 
-    console.log(data);
     if (data[0].inputs.y) {
       if (data[0].config.n_obj === 1) {
         if (type === 'single') {
@@ -46,7 +45,10 @@ class OptimViewer extends React.PureComponent {
         }
       } else if (type === 'single') {
         if (data[0].inputs.y) {
-          this.addParetoPlot(data[0].inputs.y, 'Pareto front');
+          this.addParetoPlot(data[0].inputs.y, 'History');
+        }
+        if (data[0].outputs.y_best) {
+          this.addParetoPlot(data[0].outputs.y_best, 'Approx Pareto front');
         }
       } else {
         for (let i = 0; i < data.length; i += 1) {

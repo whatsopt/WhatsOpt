@@ -15,7 +15,7 @@ class OptimizationExportsController < ApplicationController
       if File.exist?(path) 
         send_file(path) 
       else
-        redirect_to optimization_path(optim), alert: "There isn't a log file"
+        redirect_to optimization_path(optim), alert: "No log file available!"
       end
     elsif format == "csv"
       content = CSV.generate(col_sep: ";") do |csv|
@@ -27,6 +27,19 @@ class OptimizationExportsController < ApplicationController
           csv << headers
           optim.x.each_with_index do |x, i|
             csv << x + optim.y[i]
+          end
+        end
+      end
+      send_data content, filename: "optim_#{optim_id}.csv"
+    elsif format == "result_csv"
+      content = CSV.generate(col_sep: ";") do |csv|
+        unless optim.inputs.empty? or optim.x.nil?
+          headers = []
+          headers += optim.x_best[0].map.with_index {|_, i| "x_#{i+1}"}
+          headers += (1..optim.n_obj).map {|i| "obj_#{i}"}
+          csv << headers
+          optim.x_best.each_with_index do |x_best, i|
+            csv << x_best + optim.y_best[i]
           end
         end
       end

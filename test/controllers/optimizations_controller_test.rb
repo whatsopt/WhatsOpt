@@ -79,8 +79,10 @@ class OptimizationsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to edit_optimization_path(@ack)
   end
 
-  test "should not be able to create too many optimization" do
-    (Optimization::MAX_OPTIM_NUMBER + 1).times { |i| post optimizations_url, params: { optimization: { kind: "SEGOMOE", xlimits: ["1, 2", "3, 4"], options: ["", ""] } } }
-    assert_equal Optimization.count, Optimization::MAX_OPTIM_NUMBER 
+  test "should not be able to create too many optimizations" do
+    Optimization::MAX_OPTIM_NUMBER.times { |i| post optimizations_url, params: { optimization: { kind: "SEGOMOE", xlimits: ["1, 2", "3, 4"], options: ["", ""] } } }
+    post optimizations_url, params: { optimization: { kind: "SEGOMOE", xlimits: ["1, 2", "3, 4"], options: ["", ""] }}
+    assert_response :redirect
+    assert_equal Optimization::MAX_OPTIM_NUMBER, Optimization.owned_by(users(:user1)).size
   end
 end
