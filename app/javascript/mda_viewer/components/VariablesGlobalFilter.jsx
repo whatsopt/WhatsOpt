@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import 'core-js/stable';
-import 'regenerator-runtime/runtime';
+// import 'core-js/stable';
+// import 'regenerator-runtime/runtime';
 import { useAsyncDebounce } from 'react-table';
 
 function VariablesGlobalFilter({
