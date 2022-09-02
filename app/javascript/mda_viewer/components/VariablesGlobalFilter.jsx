@@ -1,9 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import 'core-js/stable';
-import 'regenerator-runtime/runtime';
+
+// Bug related to https://github.com/TanStack/table/issues/3962
+// This line is commented replaced by following code copied from react-table
 // import { useAsyncDebounce } from 'react-table';
 
+// cf.https://github.com/TanStack/table/issues/3297#issuecomment-935692094
 function useGetLatest(obj) {
   const ref = React.useRef();
   ref.current = obj;
