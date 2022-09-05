@@ -14,7 +14,7 @@ class OptimizationsController < ApplicationController
         authorize Optimization.find(optimization_selected.to_i)
         Optimization.find(optimization_selected.to_i).destroy
       end
-      redirect_to optimizations_url, notice: params[:optimization_request_ids].length > 1 ? "The #{params[:optimization_request_ids].length} optimizations were successfully deleted." : "The optimization was successfully deleted."
+      redirect_to optimizations_url, notice: params[:optimization_request_ids].length > 1 ? "#{params[:optimization_request_ids].length} optimizations successfully deleted." : "Optimization is successfully deleted."
     else
       kind = Optimization.find(params[:optimization_request_ids].first).kind
       obj_num = Optimization.find(params[:optimization_request_ids].first).n_obj
@@ -85,11 +85,15 @@ class OptimizationsController < ApplicationController
       end
       @optimization.status = -1
       authorize @optimization
-      if @optimization.save
-        @optimization.set_owner(current_user)
-        redirect_to optimizations_url, notice: "Optimization ##{@optimization.id} was successfully created."
+      if !Optimization.check_optimization_number_for(current_user)
+        redirect_to new_optimization_url, error: "Max optimization number reached (#{Optimization::MAX_OPTIM_NUMBER})." 
       else
-        render :new
+        if @optimization.save
+          @optimization.set_owner(current_user)
+          redirect_to optimizations_url, notice: "Optimization ##{@optimization.id} was successfully created."
+        else
+          redirect_to new_optimization_url, error: "Something went wrong, optimization creation failed." 
+        end
       end
     end
   end

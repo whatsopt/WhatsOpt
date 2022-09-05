@@ -24,21 +24,27 @@ class MonoObjOptimPlotter extends React.PureComponent {
     let plot_data = [];
     if (data.length === 1) {
       for (let i = 0; i < data[0].inputs.x[0].length; i += 1) {
-        const trace = this.makeTrace(data[0].inputs.x.map((z) => z[i]), `input ${i + 1}`);
+        const trace = this.makeTrace(data[0].inputs.x.map((z) => z[i]), `x${i + 1}`);
         plot_data.push(trace);
       }
       for (let i = 0; i < data[0].inputs.y[0].length; i += 1) {
-        const trace = this.makeTrace(data[0].inputs.y.map((z) => z[i]), `output ${i + 1}`);
+        let label = `cstr${i + 2 - data[0].config.cstr_specs.length}`;
+        if (i < data[0].config.n_obj) { 
+          label = `obj${i + 1}`;
+        }
+        const trace = this.makeTrace(data[0].inputs.y.map((z) => z[i]), label);
         plot_data.push(trace);
       }
     } else {
       for (let d = 0; d < data.length; d += 1) {
-        for (let i = 0; i < data[d].inputs.y[0].length; i += 1) {
-          const trace = this.makeTrace(data[d].inputs.y.map((z) => z[i]), `output ${i + 1}`);
+        for (let i = 0; i < data[d].config.n_obj; i += 1) {
+          const trace = this.makeTrace(data[d].inputs.y.map((z) => z[i]), `serie#${d+1} obj`);
           plot_data.push(trace);
         }
       }
     }
+
+    console.log(plot_data);
 
     let layout = {
       width: 800,

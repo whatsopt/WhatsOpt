@@ -20,8 +20,8 @@ class MultiObjOptimViewer extends React.PureComponent {
     for (let d = 0; d < data.length; d += 1) {
       for (let i = 0; i < n_obj; i += 1) {
         for (let j = 0; j < n_obj; j += 1) {
-          const xlabel = `obj${j}`;
-          const ylabel = `obj${i}`;
+          const xlabel = `obj${j+1}`;
+          const ylabel = `obj${i+1}`;
 
           let x = [];
           let y = []; 

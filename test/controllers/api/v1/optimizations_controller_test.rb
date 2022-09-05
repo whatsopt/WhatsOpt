@@ -73,4 +73,21 @@ class Api::V1::OptimizationControllerTest < ActionDispatch::IntegrationTest
     #assert_in_delta(0.85, resp["outputs"]["x_suggested"][0], 0.5)
     #assert_in_delta(0.66, resp["outputs"]["x_suggested"][1], 0.5)
   end
+
+  test "should not be able to create too many optimizations" do
+    skip_if_parallel
+    skip_if_segomoe_not_installed
+    Optimization::MAX_OPTIM_NUMBER.times do |_| 
+      post api_v1_optimizations_url,
+        params: { optimization: { kind: "SEGOMOE",
+                                  xlimits: [[-32.768, 32.768], [-32.768, 32.768]],
+                              }
+                  },
+        as: :json, headers: @auth_headers
+    end
+    post api_v1_optimizations_url, params: { optimization: { kind: "SEGOMOE", xlimits: ["1, 2", "3, 4"] }},
+        as: :json, headers: @auth_headers
+    assert_response :bad_request
+    assert_equal Optimization::MAX_OPTIM_NUMBER, Optimization.owned_by(users(:user1)).size
+  end
 end
