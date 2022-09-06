@@ -72,6 +72,17 @@ class Api::V1::OptimizationControllerTest < ActionDispatch::IntegrationTest
     resp = JSON.parse(response.body)
     #assert_in_delta(0.85, resp["outputs"]["x_suggested"][0], 0.5)
     #assert_in_delta(0.66, resp["outputs"]["x_suggested"][1], 0.5)
+
+    optimizer_pkl = File.join(Rails.root, "upload", "store", "optimizer_#{@optim.id}.pkl")
+    logfile = File.join(Rails.root, "log", "optimizations", "optim_#{@optim.id}.log")
+    assert File.exist?(optimizer_pkl)
+    assert File.exist?(logfile)
+    assert_difference('Optimization. count', -1) do
+      delete api_v1_optimization_url(@optim), as: :json, headers: @auth_headers
+    end
+    refute File.exist?(optimizer_pkl)
+    refute File.exist?(logfile)
+    WhatsOpt::OptimizerProxy.shutdown_server
   end
 
   test "should not be able to create too many optimizations" do
