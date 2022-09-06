@@ -52,7 +52,7 @@ class MultiObjOptimViewer extends React.PureComponent {
           } else {
             trace.name = `${ylabel} vs ${xlabel}`;
           }
-          if (data.length > 1) { 
+          if (data.length > 1) {
             trace.name = `serie#${d + 1} ${trace.name}`;
           }
           trace.marker = {
@@ -87,15 +87,15 @@ class MultiObjOptimViewer extends React.PureComponent {
             trace2.xaxis = xname;
             trace2.yaxis = yname;
             trace2.name = `Pareto ${ylabel} vs ${xlabel}`;
-            if (data.length > 1) { 
-              trace2.name = `serie#${d + 1} ${trace2.name}`
+            if (data.length > 1) {
+              trace2.name = `serie#${d + 1} ${trace2.name}`;
             }
             trace2.marker = {
               color: COLORMAP[d],
               symbol: SYMBOLS[1],
             };
             plot_data.push(trace2);
-          } 
+          }
         }
       }
     }

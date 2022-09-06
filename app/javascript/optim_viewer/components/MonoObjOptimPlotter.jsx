@@ -20,7 +20,7 @@ class MonoObjOptimPlotter extends React.PureComponent {
       data,
     } = this.props;
 
-    let plot_data = [];
+    const plot_data = [];
     if (data.length === 1) {
       for (let i = 0; i < data[0].inputs.x[0].length; i += 1) {
         const trace = MonoObjOptimPlotter.makeTrace(data[0].inputs.x.map((z) => z[i]), `x${i + 1}`);
