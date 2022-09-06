@@ -6,10 +6,7 @@ import MultiObjOptimPlotter from 'optim_viewer/components/MultiObjOptimPlotter';
 
 class OptimViewer extends React.PureComponent {
   render() {
-    const {
-      data,
-      type
-    } = this.props;
+    const { data } = this.props;
     if (data.length === 0) {
       return (
         <div className="alert alert-primary mt-5 mb-5" role="alert">
@@ -18,9 +15,9 @@ class OptimViewer extends React.PureComponent {
       );
     }
 
-    let viewer = <MultiObjOptimPlotter data={data} type={type} />;
+    let viewer = <MultiObjOptimPlotter data={data} />;
     if (data[0].config.n_obj === 1) {
-      viewer = <MonoObjOptimPlotter data={data} type={type} />;
+      viewer = <MonoObjOptimPlotter data={data} />;
     }
 
     return (
@@ -29,10 +26,9 @@ class OptimViewer extends React.PureComponent {
       </div>
     );
   }
-} 
+}
 
 OptimViewer.propTypes = {
   data: PropTypes.array.isRequired,
-  type: PropTypes.string.isRequired,
 };
 export default OptimViewer;

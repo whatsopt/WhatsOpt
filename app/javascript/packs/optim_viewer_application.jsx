@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const optim_plot = document.getElementById('optim_viewer');
 
   ReactDOM.render(
-    <OptimViewer data={JSON.parse(optim_plot.getAttribute('optimization_data'))} type={optim_plot.getAttribute('type')} />,
+    <OptimViewer data={JSON.parse(optim_plot.getAttribute('data-optimization'))} />,
     optim_plot,
   );
 });
