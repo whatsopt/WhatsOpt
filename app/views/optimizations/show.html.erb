@@ -12,7 +12,7 @@
 <%= link_to "Add Input", edit_optimization_path(@optimization), class: "btn btn-primary ml-2"%>
 -->
 
-<div id="optim_viewer" optimization_data="<%= [@optimization].to_json %>" type="single"></div>
+<div id="optim_viewer" data-optimization="<%= [@optimization].to_json %>"></div>
 
 <%= render partial: "optimization_infos", locals: { optimizations: [@optimization]} %>
 
