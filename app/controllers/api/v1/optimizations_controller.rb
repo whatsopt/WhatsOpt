@@ -42,7 +42,6 @@ class Api::V1::OptimizationsController < Api::ApiController
 
   # DELETE /api/v1/optimizations/1
   def destroy
-    @proxy.destroy_optimizer
     @optim.destroy!
     head :no_content
   end

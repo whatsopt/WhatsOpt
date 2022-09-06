@@ -68,12 +68,12 @@ class OptimizerStore(object):
         print(f"mod obj options = {mod_obj_options}")
         print(f"general options = {general_options}")
         self.optimizer = self.mixint_optimizer_classes[optimizer_kind](
-            xtypes, 
-            xlimits, 
-            n_obj, 
-            cstr_specs, 
-            mod_obj_options, 
-            general_options, 
+            xtypes,
+            xlimits,
+            n_obj,
+            cstr_specs,
+            mod_obj_options,
+            general_options,
             self.make_logfile(optimizer_id),
         )
         self._dump(optimizer_id)
@@ -95,6 +95,9 @@ class OptimizerStore(object):
         filename = self._optimizer_filename(optimizer_id)
         if os.path.exists(filename):
             os.remove(filename)
+        logfile = self.make_logfile(optimizer_id)
+        if os.path.exists(logfile):
+            os.remove(logfile)
 
     def _optimizer_filename(self, optimizer_id):
         return "%s/optimizer_%s.pkl" % (self.outdir, optimizer_id)

@@ -35,6 +35,8 @@ class Optimization < ApplicationRecord
   validate :check_optimization_config
 
   after_initialize :init
+
+  before_destroy :destroy_optimizer 
   
   def init
     self.options = {} if self.options.blank?
@@ -137,6 +139,10 @@ class Optimization < ApplicationRecord
   rescue WhatsOpt::OptimizationProxyError, WhatsOpt::Services::OptimizerException => err
     log_error("#{err}: #{err.message}") # asynchronous: just set error state and log the error
   end
+
+  def destroy_optimizer
+    self.proxy.destroy_optimizer
+  end 
 
   def xdim
     0 if self.xlimits.blank?

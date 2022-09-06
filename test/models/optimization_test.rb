@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "test_helper"
+require "fileutils"
 
 class OperationTest < ActiveSupport::TestCase
   test "should create valid optim" do

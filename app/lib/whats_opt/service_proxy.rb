@@ -65,7 +65,6 @@ module WhatsOpt
 
     def self.kill_server(pid)
       if pid
-        p "KILL #{pid}"
         Process.kill("TERM", pid)
         Process.waitpid pid
       end
