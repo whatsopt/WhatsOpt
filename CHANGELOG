@@ -1,5 +1,12 @@
 <h1>CHANGELOG</h1>
 
+<h3>1.24.1 (06/09/2022)</h3>
+<ul>
+  <li>Refactor optimization viewer: add multi-objectives scatter plot matrix</li>
+  <li>Fix optimization removal</li>
+  <li>Fix optimization limit handling</li>
+</ul>
+
 <h3>1.24.0 (30/08/2022)</h3>
 <ul>
   <li>Add optimizations management GUI (thanks to @ColasPinson)</li>, it allows to:
