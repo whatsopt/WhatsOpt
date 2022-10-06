@@ -24,6 +24,7 @@ class Api::V1::OptimizationControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     resp = JSON.parse(response.body)
     assert_equal "SEGOMOE", resp["kind"]
+    assert_equal(resp["config"], {"xlimits" => [[-32.768, 32.768], [-32.768, 32.768]], "options"=>{}, "n_obj"=>1, "cstr_specs"=>[], "xtypes"=>[]})
   end
 
   test "should raise error on xlimits absence" do
