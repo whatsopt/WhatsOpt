@@ -1,5 +1,12 @@
 <h1>CHANGELOG</h1>
 
+<h3>1.25.0 (unreleased)</h3>
+<ul>
+  <li>Fix optimization configuration retrieval from REST API</li>
+  <li>Add <a href="https://pypi.org/project/egobox/" target="_blank">Egor</a> optimizer as available optimizer for
+    run_mdo.py script</li>
+</ul>
+
 <h3>1.24.1 (06/09/2022)</h3>
 <ul>
   <li>Refactor optimization viewer: add multi-objectives scatter plot matrix</li>
