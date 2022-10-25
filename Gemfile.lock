@@ -187,8 +187,8 @@ GEM
     jquery-ui-rails (6.0.1)
       railties (>= 3.2.16)
     json (2.6.2)
-    json-schema (2.8.1)
-      addressable (>= 2.4)
+    json-schema (3.0.0)
+      addressable (>= 2.8)
     jsonapi-renderer (0.2.2)
     kramdown (2.4.0)
       rexml
@@ -323,12 +323,13 @@ GEM
       rspec-mocks (~> 3.11)
       rspec-support (~> 3.11)
     rspec-support (3.11.1)
-    rswag-api (2.5.1)
+    rswag-api (2.7.0)
       railties (>= 3.1, < 7.1)
-    rswag-specs (2.5.1)
+    rswag-specs (2.7.0)
       activesupport (>= 3.1, < 7.1)
-      json-schema (~> 2.2)
+      json-schema (>= 2.2, < 4.0)
       railties (>= 3.1, < 7.1)
+      rspec-core (>= 2.14)
     rubocop (1.37.1)
       json (~> 2.3)
       parallel (~> 1.10)
@@ -503,8 +504,8 @@ DEPENDENCIES
   rails (~> 7.0)
   rolify
   rspec-rails
-  rswag-api (= 2.5.1)
-  rswag-specs (= 2.5.1)
+  rswag-api (= 2.7.0)
+  rswag-specs (= 2.7.0)
   rubocop
   rubocop-rails_config
   rubyzip (~> 2.3.0)
