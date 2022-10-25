@@ -139,4 +139,4 @@ gem "sprockets-rails"
 # requires io-wait 0.2.1. Since io-wait is a default gem, you can either remove your dependency 
 # on it or try updating to a newer version of bundler that supports
 # io-wait as a default gem.)
-gem "io-wait", "0.2.0"
+# gem "io-wait", "0.2.0"
