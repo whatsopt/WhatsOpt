@@ -53,7 +53,11 @@
 
       $("#need_selected").hide();
 
-      //$('[data-bs-toggle="tooltip"]').tooltip();
+      // Initialize tooltips BS5
+      var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+      var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+      })
 
       $("#selectAll").change(function() {
         checked = this.checked;
@@ -68,7 +72,6 @@
 
 
       $("#selectStatus").change(function() {
-        console.log("coucou");
         checked = this.checked;
         status = $("#status-select").val()
 
