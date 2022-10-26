@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import AnalysisSelector from './AnalysisSelector';
 import ImportSection from './ImportSection';
+import DataConfirmModal from '../../utils/components/DataConfirmModal';
 
 // mapping with XDSMjs type values
 const DISCIPLINE = 'analysis';
@@ -41,6 +42,24 @@ class Discipline extends React.Component {
     this.handleDelete = this.handleDelete.bind(this);
     this.handleSelectChange = this.handleSelectChange.bind(this);
     this.handleSubAnalysisSelected = this.handleSubAnalysisSelected.bind(this);
+  }
+
+  componentDidMount() {
+    // const { conn: { name } } = this.props;
+    // // eslint-disable-next-line no-undef
+    // $(`#confirmModal-${name}`).on(
+    //   'show.bs.modal',
+    //   () => {
+    //     this.visible = true;
+    //   },
+    // );
+    // // eslint-disable-next-line no-undef
+    // $(`#confirmModal-${name}`).on(
+    //   'hidden.bs.modal',
+    //   () => {
+    //     this.visible = false;
+    //   },
+    // );
   }
 
   handleDiscNameChange(event) {
@@ -114,14 +133,14 @@ class Discipline extends React.Component {
   handleDelete() {
     const self = this;
     /* global dataConfirmModal */
-    dataConfirmModal.confirm({
-      title: 'Are you sure?',
-      text: 'Really do this?',
-      commit: 'Yes',
-      cancel: 'No, cancel',
-      onConfirm() { self.props.onDisciplineDelete(self.props.node); },
-      onCancel() { },
-    });
+    // dataConfirmModal.confirm({
+    //   title: 'Are you sure?',
+    //   text: 'Really do this?',
+    //   commit: 'Yes',
+    //   cancel: 'No, cancel',
+    //   onConfirm() { self.props.onDisciplineDelete(self.props.node); },
+    //   onCancel() { },
+    // });
   }
 
   handleSelectChange(event) {
@@ -276,6 +295,8 @@ class Discipline extends React.Component {
             <span className="align-bottom">{item}</span>
             <button
               type="button"
+              data-bs-toggle="modal"
+              data-bs-target={`#confirmModal-${node.id}`}
               className="d-inline btn btn-light btn-inverse btn-sm float-end text-danger"
               title="Delete"
               onClick={this.handleDelete}
@@ -363,6 +384,19 @@ class DisciplinesEditor extends React.Component {
         onSubAnalysisSearch={onSubAnalysisSearch}
       />
     ));
+    const disciplinesModals = nodes.map((node) => (
+      <DataConfirmModal
+        key={node.id}
+        id={node.id}
+        title="Are you sure?"
+        text={`Delete discipline ${node.name}`}
+        onCancel={() => { console.log('cancel'); }}
+        onConfirm={() => {
+          const self = this;
+          self.props.onDisciplineDelete(node);
+        }}
+      />
+    ));
     const nbNodes = disciplines.length;
     if (nbNodes === 0) {
       disciplines = 'None';
@@ -412,6 +446,7 @@ class DisciplinesEditor extends React.Component {
         </div>
         <hr />
         <ImportSection api={api} mdaId={mdaId} onDisciplineImport={onDisciplineImport} />
+        {disciplinesModals}
       </div>
     );
   }

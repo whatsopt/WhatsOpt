@@ -1,7 +1,7 @@
 import React from 'react';
 import { usePromiseTracker } from 'react-promise-tracker';
 
-const LoadingIndicator = () => {
+function LoadingIndicator() {
   const { promiseInProgress } = usePromiseTracker();
 
   return (
@@ -15,6 +15,6 @@ const LoadingIndicator = () => {
     </div>
     )
   );
-};
+}
 
 export default LoadingIndicator;
