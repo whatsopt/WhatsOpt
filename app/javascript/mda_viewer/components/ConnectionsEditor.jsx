@@ -166,7 +166,7 @@ class ConnectionsViewer extends React.PureComponent {
       <div>
         <div>
           {title}
-          <span className="badge badge-info ml-2">{count}</span>
+          <span className="badge badge-info ms-2">{count}</span>
         </div>
         <div>
           {connections}
@@ -219,7 +219,7 @@ class ConnectionsForm extends React.Component {
     // console.log('SELECTABLE', selectable);
     return (
       <form className="form" onSubmit={onConnectionCreate} noValidate>
-        <div className="form-group">
+        <div className="mb-3">
           <div htmlFor="typeahead-vars" className="sr-only">
             Name
           </div>
@@ -238,7 +238,7 @@ class ConnectionsForm extends React.Component {
             disabled={limited}
           />
         </div>
-        <div className="form-group">
+        <div className="mb-3">
           <button type="submit" className="btn btn-primary" disabled={isErroneous || limited}>Add</button>
         </div>
       </form>

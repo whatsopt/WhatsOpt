@@ -13,15 +13,15 @@
   <div class="row">
 	<div class=" col-4">
 
-	<div class="form-group">
+	<div class="mb-3">
 		<%= f.label :kind %>
 		<%= f.select :kind , Optimization::OPTIMIZER_KINDS.each_key, {}, {class: "form-control"} %>
 	</div>	
 
-    <div id="options" class="form-group">
+    <div id="options" class="mb-3">
 	</div>
 	
-	<div class="form-group">
+	<div class="mb-3">
 	    <%= f.submit "Submit", class: "btn btn-primary submit" %>
 	    <%= f.submit "Cancel", class: "btn btn-secondary", name: "cancel_button" %>
 	</div>

@@ -163,7 +163,7 @@ class Discipline extends React.Component {
       let deploymentOrSubAnalysis;
       if (discType === ANALYSIS) {
         deploymentOrSubAnalysis = (
-          <div className="form-group ml-2">
+          <div className="mb-3 ms-2">
             <AnalysisSelector
               message="Search for sub-analysis..."
               selected={selected}
@@ -174,11 +174,11 @@ class Discipline extends React.Component {
         );
       } else {
         deploymentOrSubAnalysis = (
-          <div className="form-group ml-2">
+          <div className="mb-3 ms-2">
             <label htmlFor="name">
               deployed on
               <input
-                className="form-control ml-1"
+                className="form-control ms-1"
                 id="name"
                 type="text"
                 defaultValue={discHost}
@@ -212,7 +212,7 @@ class Discipline extends React.Component {
               className="list-group-item editor-discipline"
             >
               <form className="form-inline" onSubmit={this.handleUpdate}>
-                <div className="form-group">
+                <div className="mb-3">
                   <input
                     className="form-control"
                     id="name"
@@ -222,7 +222,7 @@ class Discipline extends React.Component {
                     onChange={this.handleDiscNameChange}
                   />
                   <select
-                    className="form-control ml-2"
+                    className="form-control ms-2"
                     id="type"
                     value={discType}
                     onChange={this.handleSelectChange}
@@ -233,8 +233,8 @@ class Discipline extends React.Component {
                   </select>
                 </div>
                 {deploymentOrSubAnalysis}
-                <button type="submit" className="btn btn-primary ml-3">Update</button>
-                <button type="button" onClick={this.handleCancelEdit} className="btn btn-secondary ml-1">Cancel</button>
+                <button type="submit" className="btn btn-primary ms-3">Update</button>
+                <button type="button" onClick={this.handleCancelEdit} className="btn btn-secondary ms-1">Cancel</button>
               </form>
             </li>
           )}
@@ -261,7 +261,7 @@ class Discipline extends React.Component {
             <span className="align-bottom">{item}</span>
             <button
               type="button"
-              className="d-inline btn btn-light btn-inverse btn-sm float-right text-danger"
+              className="d-inline btn btn-light btn-inverse btn-sm float-end text-danger"
               title="Delete"
               onClick={this.handleDelete}
               disabled={limited}
@@ -270,7 +270,7 @@ class Discipline extends React.Component {
             </button>
             <button
               type="button"
-              className="d-inline btn btn-light btn-sm ml-2"
+              className="d-inline btn btn-light btn-sm ms-2"
               title="Edit"
               onClick={this.handleEdit}
               disabled={limited || not_editable}
@@ -357,7 +357,7 @@ class DisciplinesEditor extends React.Component {
         <div className="editor-section">
           <div className="editor-section-label">
             Disciplines
-            <span className="badge badge-info ml-2">{nbNodes}</span>
+            <span className="badge badge-info ms-2">{nbNodes}</span>
           </div>
           <DragDropContext
             onDragStart={this.onDragStart}
@@ -379,7 +379,7 @@ class DisciplinesEditor extends React.Component {
         </div>
         <div className="editor-section">
           <form className="form-inline" onSubmit={onDisciplineCreate}>
-            <div className="form-group">
+            <div className="mb-3">
               <div className="row">
                 <div className="col-3">
                   <input
@@ -394,7 +394,7 @@ class DisciplinesEditor extends React.Component {
                 </div>
               </div>
             </div>
-            <button type="submit" className="btn btn-primary ml-3" disabled={limited}>Add</button>
+            <button type="submit" className="btn btn-primary ms-3" disabled={limited}>Add</button>
           </form>
         </div>
         <hr />

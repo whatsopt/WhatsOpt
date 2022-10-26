@@ -4,7 +4,7 @@
 
   <%= form_tag select_optimizations_path, method: "post" do %>
 
-    <div class="btn-toolbar float-right">
+    <div class="btn-toolbar float-end">
       <div id="need_selected" style="margin-right:20px;">
         <%= submit_tag "Show", class: 'btn btn-primary btn-xs'%>
         <%= submit_tag "Delete", class: 'btn btn-danger btn-xs', name: 'delete', data: { title: 'Are you sure?', 
@@ -17,24 +17,33 @@
 -->
     </div>
 
+    <div class="form-check form-check-inline ms-2">
+        <input class="form-check-input me-1" type="checkbox" id="selectAll">
+        <label class="form-check-label" for="selectAll">All</label>
+    </div>
+    
+    <div class="form-check form-check-inline ms-5">
+        <input class="form-check-input" type="checkbox" id="selectStatus">
+        <label class="form-check-label" for="selectStatus">By Status</label>
+    </div>
 
-      <input type="checkbox" id="selectAll" class="ml-2">
-      <label for="selectAll">All</label>
-
-      <input type="checkbox" id="selectStatus" class="ml-4">
-      <label for="selectStatus">By Status</label>
-      <select id="status-select" class="custom-select form-control col-2">
-        <option value="empty">Empty</option>
-        <option value="<%= Optimization::OPTIMIZATION_ERROR %>">Optimization Error</option>
-        <option value="<%= Optimization::RUNTIME_ERROR %>">Runtime Error</option>
-        <option value="<%= Optimization::INVALID_POINT %>">Invalid Point</option>
-        <option value="<%= Optimization::PENDING %>">Pending</option>
-        <option value="<%= Optimization::RUNNING %>">Running</option>
-        <option value="<%= Optimization::VALID_POINT %>">Valid Point</option>
-        <option value="<%= Optimization::SOLUTION_REACHED %>">Solution Reached</option>
-      </select>
-      <label class="ml-4">Selected: </label>
-      <label id="display_checkbox_count"><%= "0/#{@optimizations.size}" %></label>
+    <div class="form-check form-check-inline">
+        <select id="status-select" class="form-select form-check-inline">
+          <option value="empty">Empty</option>
+          <option value="<%= Optimization::OPTIMIZATION_ERROR %>">Optimization Error</option>
+          <option value="<%= Optimization::RUNTIME_ERROR %>">Runtime Error</option>
+          <option value="<%= Optimization::INVALID_POINT %>">Invalid Point</option>
+          <option value="<%= Optimization::PENDING %>">Pending</option>
+          <option value="<%= Optimization::RUNNING %>">Running</option>
+          <option value="<%= Optimization::VALID_POINT %>">Valid Point</option>
+          <option value="<%= Optimization::SOLUTION_REACHED %>">Solution Reached</option>
+        </select>
+    </div>
+        
+    <div class="form-check form-check-inline">
+        <label class="ms-4">Selected: </label>
+        <label id="display_checkbox_count"><%= "0/#{@optimizations.size}" %></label>
+    </div>
 
     <%= render 'optimizations' %></div>
 
@@ -44,7 +53,7 @@
 
       $("#need_selected").hide();
 
-      $('[data-bs-toggle="tooltip"]').tooltip();
+      //$('[data-bs-toggle="tooltip"]').tooltip();
 
       $("#selectAll").change(function() {
         checked = this.checked;
@@ -59,6 +68,7 @@
 
 
       $("#selectStatus").change(function() {
+        console.log("coucou");
         checked = this.checked;
         status = $("#status-select").val()
 

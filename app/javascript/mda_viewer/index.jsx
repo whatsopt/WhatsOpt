@@ -566,7 +566,7 @@ class MdaViewer extends React.Component {
       return (
         <div>
           <form className="button_to" method="get" action={this.api.url(`/analyses/${mda.id}`)}>
-            <button className="btn float-right" type="submit">
+            <button className="btn float-end" type="submit">
               <i className="fa fa-times-circle" />
               {' '}
               Close
@@ -598,7 +598,7 @@ class MdaViewer extends React.Component {
               <a
                 className="nav-link"
                 id="analysis-tab"
-                data-toggle="tab"
+                data-bs-toggle="tab"
                 href="#analysis"
                 role="tab"
                 aria-controls="analysis"
@@ -611,7 +611,7 @@ class MdaViewer extends React.Component {
               <a
                 className="nav-link"
                 id="disciplines-tab"
-                data-toggle="tab"
+                data-bs-toggle="tab"
                 href="#disciplines"
                 role="tab"
                 aria-controls="disciplines"
@@ -624,7 +624,7 @@ class MdaViewer extends React.Component {
               <a
                 className="nav-link"
                 id="connections-tab"
-                data-toggle="tab"
+                data-bs-toggle="tab"
                 href="#connections"
                 role="tab"
                 aria-controls="connections"
@@ -637,7 +637,7 @@ class MdaViewer extends React.Component {
               <a
                 className="nav-link active"
                 id="variables-tab"
-                data-toggle="tab"
+                data-bs-toggle="tab"
                 href="#variables"
                 role="tab"
                 aria-controls="variables"
@@ -650,7 +650,7 @@ class MdaViewer extends React.Component {
               <a
                 className="nav-link"
                 id="openmdao-impl-tab"
-                data-toggle="tab"
+                data-bs-toggle="tab"
                 href="#openmdao-impl"
                 role="tab"
                 aria-controls="openmdao-impl"
@@ -740,7 +740,7 @@ class MdaViewer extends React.Component {
             href="#note"
             role="tab"
             aria-controls="note"
-            data-toggle="tab"
+            data-bs-toggle="tab"
             aria-selected="false"
           >
             Notes
@@ -761,7 +761,7 @@ class MdaViewer extends React.Component {
             href="#metamodel"
             role="tab"
             aria-controls="metamodel"
-            data-toggle="tab"
+            data-bs-toggle="tab"
             aria-selected="false"
           >
             MetaModel
@@ -787,7 +787,7 @@ class MdaViewer extends React.Component {
               <a
                 className="nav-link active"
                 id="variables-tab"
-                data-toggle="tab"
+                data-bs-toggle="tab"
                 href="#variables"
                 role="tab"
                 aria-controls="variables"
@@ -802,7 +802,7 @@ class MdaViewer extends React.Component {
               <a
                 className="nav-link"
                 id="exports-tab"
-                data-toggle="tab"
+                data-bs-toggle="tab"
                 href="#exports"
                 role="tab"
                 aria-controls="exports"
@@ -815,7 +815,7 @@ class MdaViewer extends React.Component {
               <a
                 className="nav-link"
                 id="diff-tab"
-                data-toggle="tab"
+                data-bs-toggle="tab"
                 href="#diffs"
                 role="tab"
                 aria-controls="diffs"
@@ -828,7 +828,7 @@ class MdaViewer extends React.Component {
               <a
                 className="nav-link"
                 id="history-tab"
-                data-toggle="tab"
+                data-bs-toggle="tab"
                 href="#history"
                 role="tab"
                 aria-controls="history"

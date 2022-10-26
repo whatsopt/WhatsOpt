@@ -54,16 +54,16 @@ module AnalysesHelper
   def badges(analysis)
     res = ""
     if analysis.is_metamodel_prototype?
-      res += '<span class="badge badge-pill badge-success mr-2" title="Analysis reference for a meta-model discipline">MM</span>'
+      res += '<span class="badge badge-pill badge-success me-2" title="Analysis reference for a meta-model discipline">MM</span>'
     end
     if analysis.uq_mode?
-      res += '<span class="badge badge-pill badge-info mr-2" title="Analysis with uncertain inputs">UQ</span>'
+      res += '<span class="badge badge-pill badge-info me-2" title="Analysis with uncertain inputs">UQ</span>'
     end
     if analysis.has_objective?
-      res += '<span class="badge badge-pill badge-primary mr-2" title="Analysis with optimization problem">OPTIM</span>'
+      res += '<span class="badge badge-pill badge-primary me-2" title="Analysis with optimization problem">OPTIM</span>'
     end
     if analysis.nesting_depth > 2
-      res += '<span class="badge badge-pill badge-danger mr-2" title="Analysis with more than 2 sub-analysis levels">DEEP</span>'
+      res += '<span class="badge badge-pill badge-danger me-2" title="Analysis with more than 2 sub-analysis levels">DEEP</span>'
     end
     raw(res)
   end

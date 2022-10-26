@@ -54,27 +54,28 @@ class ComparisonPanel extends React.Component {
   }
 
   handleAnalysisSearch(callback) {
-    this.api.getAnalysisCandidates(
-      (response) => {
-        const options = response.data
-          .filter((analysis) => analysis.id !== this.mdaId)
-          .map((analysis) => ({ id: analysis.id, label: `#${analysis.id} ${analysis.name}` }));
-        callback(options);
-      }, 'all',
-    );
+    this.api.getAnalysisCandidates((response) => {
+      const options = response.data
+        .filter((analysis) => analysis.id !== this.mdaId)
+        .map((analysis) => ({ id: analysis.id, label: `#${analysis.id} ${analysis.name}` }));
+      callback(options);
+    }, 'all');
   }
 
   handleAnalysisSelected(selected) {
     const [selection] = selected;
     const { mdaId } = this.props;
-    this.api.compareAnalyses(mdaId, selection.id,
+    this.api.compareAnalyses(
+      mdaId,
+      selection.id,
       (response) => {
         const diff = response.data;
         this.setState({ diff });
       },
       (error) => {
         console.log(error);
-      });
+      },
+    );
   }
 
   render() {

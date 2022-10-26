@@ -300,7 +300,7 @@ class Plotter extends React.Component {
             href="#metamodel"
             role="tab"
             aria-controls="metamodel"
-            data-toggle="tab"
+            data-bs-toggle="tab"
             aria-selected="false"
             onClick={(e) => this.activateTab(e, METAMODEL_TAB)}
           >
@@ -334,7 +334,7 @@ class Plotter extends React.Component {
           </small>
         </h1>
 
-        <div className="btn-group mr-2  float-right" role="group">
+        <div className="btn-group me-2  float-end" role="group">
           <a className="btn btn-primary" href={exportUrl}>Export Csv</a>
         </div>
 
@@ -346,7 +346,7 @@ class Plotter extends React.Component {
               href="#plots"
               role="tab"
               aria-controls="plots"
-              data-toggle="tab"
+              data-bs-toggle="tab"
               aria-selected="true"
               onClick={(e) => this.activateTab(e, PLOTS_TAB)}
             >
@@ -361,7 +361,7 @@ class Plotter extends React.Component {
               href="#variables"
               role="tab"
               aria-controls="variables"
-              data-toggle="tab"
+              data-bs-toggle="tab"
               aria-selected="false"
               onClick={(e) => this.activateTab(e, VARIABLES_TAB)}
             >

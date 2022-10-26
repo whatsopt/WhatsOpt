@@ -52,10 +52,10 @@ class VariablesPagination extends React.PureComponent {
               <i className="fas fa-angle-double-right" />
             </button>
           </li>
-          <span className="ml-2" />
+          <span className="ms-2" />
           <li className="page-item">
             <div className="form-row align-items-center">
-              <div className="form-group col-auto">
+              <div className="mb-3 col-auto">
                 <select
                   className="form-control"
                   value={pageSize}

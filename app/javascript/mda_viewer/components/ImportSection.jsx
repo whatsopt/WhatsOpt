@@ -52,7 +52,7 @@ class ImportSection extends React.Component {
     const disciplineImports = disciplines.map((disc) => {
       const label = `Import ${disc.name}`;
       return (
-        <div key={disc.id} className="btn-group mr-2" role="group">
+        <div key={disc.id} className="btn-group me-2" role="group">
           <button
             className="btn btn-primary"
             type="button"

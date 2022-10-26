@@ -1,6 +1,6 @@
-<div class="btn-toolbar float-right">
+<div class="btn-toolbar float-end">
   <%= button_to 'New', mda_operations_path(@mda), title: "Operate #{@mda.name}", method: 'post', class: "btn btn-primary" %>
-  <%= button_to mdas_url, method: :get, class:"btn ml-2" do |b|%>
+  <%= button_to mdas_url, method: :get, class:"btn ms-2" do |b|%>
     <span class="fa fa-times-circle"></span>
       Close
   <% end %>   
@@ -32,12 +32,12 @@
 	      <td title="<%= (ope.job && ope.job.started_at && ope.job.ended_at) ? 'Duration: '+distance_of_time_in_words(ope.job.started_at, ope.job.ended_at, include_seconds: true):""%>"><%= time_ago_in_words(ope.updated_at) %> ago</td>
 	      <td>
           <% if policy(ope).update? %>
-            <a href='#' name="edit-name" class="d-inline btn btn-light btn-inverse btn-sm" title="Edit name" data-api-key="<%=current_user.api_key%>" data-ope-id="<%= ope.id %>" data-ope-name="<%= ope.name %>" data-toggle="modal" data-target="#editModal">
+            <a href='#' name="edit-name" class="d-inline btn btn-light btn-inverse btn-sm" title="Edit name" data-api-key="<%=current_user.api_key%>" data-ope-id="<%= ope.id %>" data-ope-name="<%= ope.name %>" data-bs-toggle="modal" data-target="#editModal">
               <i class="fa fa-edit"></i> 
             </a> 
             <% if ope.rerunnable? %>
               <%= link_to edit_operation_path(ope), 
-                class: "d-inline btn btn-light btn-inverse btn-sm ml-2", title: "Re-run" do %>
+                class: "d-inline btn btn-light btn-inverse btn-sm ms-2", title: "Re-run" do %>
                 <i class="fa fa-undo"></i> 
               <% end %>  
             <% end %>  
@@ -45,7 +45,7 @@
 	                                                                    confirm: "Remove #{ope.name} operation?",
 	                                                                    commit: 'Yes',
 	                                                                    cancel: 'No, cancel' }, 
-	              class: "d-inline btn btn-light btn-inverse btn-sm text-danger ml-2", title:"Delete" do %>
+	              class: "d-inline btn btn-light btn-inverse btn-sm text-danger ms-2", title:"Delete" do %>
                 <i class="fa fa-times"></i> 
             <% end %>    
 	      	<% end %>
@@ -68,7 +68,7 @@
       </div>
       <div class="modal-body">
         <form>
-          <div class="form-group">
+          <div class="mb-3">
             <label for="operation[name]" class="col-form-label">Operation Name</label>
             <input type="text" class="form-control" id="operation_name" name="operation[name]">
           </div>

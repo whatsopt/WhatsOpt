@@ -148,12 +148,12 @@ class MetaModelManager extends React.Component {
     const input_names = Array.from(new Set(selCases.i.map((c) => c.varname)));
     const output_names = Array.from(new Set(selCases.o.map((c) => c.varname)));
     const outputs = output_names.map((name) => (
-      <span key={name} className="ml-5">
+      <span key={name} className="ms-5">
         {name}
       </span>
     ));
     const inputs = input_names.map((name) => (
-      <span key={name} className="ml-5">
+      <span key={name} className="ms-5">
         {name}
       </span>
     ));

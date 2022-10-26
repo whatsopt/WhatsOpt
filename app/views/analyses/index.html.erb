@@ -1,45 +1,46 @@
 
-<div class="btn-toolbar float-right">
+<div class="btn-toolbar float-end">
 
-  <div class="spinner d-flex justify-content-center text-success mt-1 mr-2">
-    <strong class="spinner mr-2">Loading...</strong>
+  <div class="spinner d-flex justify-content-center text-success mt-1 me-2">
+    <strong class="spinner me-2">Loading...</strong>
     <div class="spinner spinner-border text-success" role="status">
       <span class="sr-only">Loading...</span>
     </div>
   </div>
 
-  <div class="input-group mr-2">
-    <div class="input-group-prepend">
-      <label class="input-group-text" for="designProjectScope">Design Project</label>
-    </div>
+
+
+  <div class="input-group me-2">
+    <label class="input-group-text" for="designProjectScope">Design Project</label>
 
     <%= select_tag("design_project_scope", 
                     options_from_collection_for_select(DesignProject.all, "id", "name", current_user.analyses_scope_design_project_id.to_s),
                     prompt: "-- Any --",
                     "data-design-project-scope": current_user.analyses_scope_design_project_id,
-                    class: "custom-select", id: "designProjectScope") %>
+                    class: "form-select", id: "designProjectScope") %>
   </div>
 
-  <div class="btn-group btn-group-toggle mr-2" data-toggle="buttons">
-    <label class="btn btn-secondary <%= is_user_setting?('analyses_query', 'all') ? 'active':'' %>"  >
-      <input type="radio" name="query_all" id="all" data-analyses-query="all" autocomplete="off" <%= is_user_setting?('analyses_query', 'all') ? 'checked':'' %> /> All
+  <div class="btn-group me-2" role="group" data-bs-toggle="buttons">
+    <input type="radio" class="btn-check" name="btn-radio-query" id="all" data-analyses-query="all" autocomplete="off" <%= is_user_setting?('analyses_query', 'all') ? 'checked':'' %> />
+    <label class="btn btn-secondary <%= is_user_setting?('analyses_query', 'all') ? 'checked':'' %>" for="all">
+      All 
     </label>
-    <label class="btn btn-secondary <%= is_user_setting?('analyses_query', 'mine')? 'active':'' %>">
-      <input type="radio" name="query_mine" id="mine" data-analyses-query="mine" autocomplete="off" <%= is_user_setting?("analyses_query", "mine")? 'checked':'' %>/> Mine
-    </label>
-  </div>
-
-  <div class="btn-group btn-group-toggle mr-4" data-toggle="buttons">
-    <label class="btn btn-secondary <%= is_user_setting?('analyses_order', 'oldest') ? 'active':'' %>"  >
-      <input type="radio" name="order_oldest" id="oldest" data-analyses-order="oldest" 
-             autocomplete="off" <%= is_user_setting?('analyses_order', 'oldest') ? 'checked':'' %> /> Oldest
-    </label>
-    <label class="btn btn-secondary <%= is_user_setting?('analyses_order', 'newest')? 'active':'' %>">
-      <input type="radio" name="order_newest" id="newest" data-analyses-order="newest" 
-            autocomplete="off" <%= is_user_setting?("analyses_order", "newest")? 'checked':'' %>/> Newest
+    <input type="radio" class="btn-check" name="btn-radio-query" id="mine" data-analyses-query="mine" autocomplete="off" <%= is_user_setting?('analyses_query', 'mine') ? 'checked':'' %> />
+    <label class="btn btn-secondary <%= is_user_setting?('analyses_query', 'mine') ? 'checked':'' %>" for="mine">
+      Mine
     </label>
   </div>
 
+  <div class="btn-group me-4"  role="group" data-bs-toggle="buttons">
+    <input type="radio" class="btn-check" name="btn-radio-order" id="oldest" data-analyses-order="oldest" autocomplete="off" <%= is_user_setting?('analyses_order', 'oldest') ? 'checked':'' %> /> 
+    <label class="btn btn-secondary <%= is_user_setting?('analyses_order', 'oldest') ? 'checked':'' %>" for="oldest">
+      Oldest
+    </label>
+    <input type="radio" class="btn-check" name="btn-radio-order" id="newest" data-analyses-order="newest" autocomplete="off" <%= is_user_setting?('analyses_order', 'newest') ? 'checked':'' %> /> 
+    <label class="btn btn-secondary <%= is_user_setting?('analyses_order', 'newest') ? 'checked':'' %>" for="newest">
+      Newest
+    </label>
+  </div>
 
   <%= link_to 'New', new_mda_path, class: "btn btn-primary" %>
 </div>
@@ -53,7 +54,6 @@
   let relRoot = "<%= Rails.application.config.action_controller.relative_url_root %>";
   let SPINNER_TIMEOUT = 1500; //ms
   function setAnalysesListSettings() {
-    
     let query = $(this).data("analyses-query");
     let order = $(this).data("analyses-order");
     let timeout;
