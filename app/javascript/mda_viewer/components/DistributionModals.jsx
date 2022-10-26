@@ -293,7 +293,7 @@ class DistributionModal extends React.Component {
                   {' '}
                   {name}
                 </h4>
-                <button type="button" className="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-hidden="true">×</button>
               </div>
               <div className="container" />
               <div className="modal-body">
@@ -316,7 +316,7 @@ class DistributionModal extends React.Component {
                   {' '}
                   {name}
                 </h4>
-                <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close">
                   <span aria-hidden="true">&times;</span>
                 </button>
               </div>
