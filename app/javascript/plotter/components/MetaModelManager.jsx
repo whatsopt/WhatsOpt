@@ -173,7 +173,7 @@ class MetaModelManager extends React.Component {
     const schema = uqMode ? UQ_SCHEMA : OPTIM_SCHEMA;
 
     return (
-      <div className="editor-section col-4">
+      <div className="editor-section col-2">
         <legend>MetaModel</legend>
         {errs}
         <div className="editor-section">
