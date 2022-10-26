@@ -302,7 +302,7 @@ class DistributionModal extends React.Component {
                 </div>
               </div>
               <div className="modal-footer">
-                <button type="button" className="btn btn-primary" data-dismiss="modal">Close</button>
+                <button type="button" className="btn btn-primary" data-bs-dismiss="modal">Close</button>
               </div>
             </div>
           </div>
@@ -330,7 +330,7 @@ class DistributionModal extends React.Component {
                 </Form>
               </div>
               <div className="modal-footer">
-                <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 <button type="button" className="btn btn-primary" onClick={this.handleSave}>Save</button>
               </div>
             </div>
