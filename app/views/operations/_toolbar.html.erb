@@ -1,22 +1,22 @@
 <div class="btn-toolbar float-end">
-<%= button_to operation_path(ope.analysis.prev_operation_id(ope.id)), 
-    method: :get, class: "btn ms-2", title:"Previous Operation", disabled: ope.analysis.prev_operation_id(ope.id) < 0 do %>
-  <span class="fa fa-angle-left"></span>
-<% end %> 
-<%= button_to operation_path(ope.analysis.next_operation_id(ope.id)), 
-  method: :get, class: "btn ms-2", title:"Next Operation", disabled: ope.analysis.next_operation_id(ope.id) < 0 do %>
-  <span class="fa fa-angle-right"></span>
-<% end %> 
-<%= button_to mda_operations_path(ope.analysis_id), method: :get, class: "btn ms-2", title:"List" do %>
-  <span class="fa fa-ellipsis-v"></span>
-  List Operations
-<% end %> 
 <% if policy(ope).edit? && ope.rerunnable? %>
   <%= button_to edit_operation_path(ope), method: :get, class: "btn ms-2", title:"Re-run" do %>
     <span class="fa fa-rocket"></span>
     Re-run
   <% end %> 
 <% end %>
+<%= button_to operation_path(ope.analysis.prev_operation_id(ope.id)), 
+    method: :get, class: "btn ms-2", style: "border:0", title:"Previous Operation", disabled: ope.analysis.prev_operation_id(ope.id) < 0 do %>
+  <span class="fa fa-angle-left"></span>
+<% end %> 
+<%= button_to operation_path(ope.analysis.next_operation_id(ope.id)), 
+  method: :get, class: "btn ms-2", style: "border:0", title:"Next Operation", disabled: ope.analysis.next_operation_id(ope.id) < 0 do %>
+  <span class="fa fa-angle-right"></span>
+<% end %> 
+<%= button_to mda_operations_path(ope.analysis_id), method: :get, class: "btn ms-2", title:"List" do %>
+  <span class="fa fa-ellipsis-v"></span>
+  List Operations
+<% end %> 
 <% if policy(ope).destroy? %>
   <%= button_to operation_path(ope), method: :delete, data: { title: 'Are you sure?', 
 	                                                            confirm: "Remove #{ope.analysis.name} #{ope.name} operation?",
