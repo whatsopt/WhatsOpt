@@ -316,9 +316,7 @@ class DistributionModal extends React.Component {
                   {' '}
                   {name}
                 </h4>
-                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
+                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
               </div>
               <div className="modal-body">
                 <Form
