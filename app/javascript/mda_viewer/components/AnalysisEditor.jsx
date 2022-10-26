@@ -57,7 +57,7 @@ class TeamSelector extends React.PureComponent {
     return (
       <>
         <div className="editor-section">
-          <span className="form-inline">
+          <span className="d-flex flex-row align-items-center flex-wrap">
             <div>
               { title }
               <span className="ms-1 me-3 badge badge-info">
