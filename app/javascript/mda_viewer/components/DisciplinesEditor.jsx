@@ -174,9 +174,13 @@ class Discipline extends React.Component {
         );
       } else {
         deploymentOrSubAnalysis = (
-          <div className="mb-3 ms-2">
-            <label htmlFor="name">
-              deployed on
+          <>
+            <div className="col-auto">
+              <label htmlFor="name" className="mt-2">
+                deployed on
+              </label>
+            </div>
+            <div className="col-auto">
               <input
                 className="form-control ms-1"
                 id="name"
@@ -185,9 +189,11 @@ class Discipline extends React.Component {
                 placeholder="localhost"
                 onChange={this.handleDiscHostChange}
               />
-            </label>
-            :
-            <label htmlFor="port">
+            </div>
+            <div className="col-auto">
+              <label htmlFor="port" className="mt-2">:</label>
+            </div>
+            <div className="col-auto">
               <input
                 className="form-control"
                 id="port"
@@ -196,8 +202,9 @@ class Discipline extends React.Component {
                 placeholder="31400"
                 onChange={this.handleDiscPortChange}
               />
-            </label>
-          </div>
+            </div>
+
+          </>
         );
       }
       return (
@@ -211,30 +218,38 @@ class Discipline extends React.Component {
               {...provided.draggableProps}
               className="list-group-item editor-discipline"
             >
-              <form className="form-inline" onSubmit={this.handleUpdate}>
-                <div className="mb-3">
-                  <input
-                    className="form-control"
-                    id="name"
-                    type="text"
-                    defaultValue={discName}
-                    placeholder="Enter Name..."
-                    onChange={this.handleDiscNameChange}
-                  />
-                  <select
-                    className="form-control ms-2"
-                    id="type"
-                    value={discType}
-                    onChange={this.handleSelectChange}
-                    disabled={!type_changeable}
-                  >
-                    <option value={DISCIPLINE}>Discipline</option>
-                    <option value={ANALYSIS}>Sub-Analysis</option>
-                  </select>
+              <form className="d-flex flex-row align-items-bottom flex-wrap" onSubmit={this.handleUpdate}>
+                <div className="row">
+                  <div className="col-auto">
+                    <input
+                      className="form-control"
+                      id="name"
+                      type="text"
+                      defaultValue={discName}
+                      placeholder="Enter Name..."
+                      onChange={this.handleDiscNameChange}
+                    />
+                  </div>
+                  <div className="col-auto">
+                    <select
+                      className="form-control ms-2"
+                      id="type"
+                      value={discType}
+                      onChange={this.handleSelectChange}
+                      disabled={!type_changeable}
+                    >
+                      <option value={DISCIPLINE}>Discipline</option>
+                      <option value={ANALYSIS}>Sub-Analysis</option>
+                    </select>
+                  </div>
+                  {deploymentOrSubAnalysis}
+                  <div className="col-auto">
+                    <button type="submit" className="btn btn-primary ms-3">Update</button>
+                  </div>
+                  <div className="col-auto">
+                    <button type="button" onClick={this.handleCancelEdit} className="btn btn-secondary ms-1">Cancel</button>
+                  </div>
                 </div>
-                {deploymentOrSubAnalysis}
-                <button type="submit" className="btn btn-primary ms-3">Update</button>
-                <button type="button" onClick={this.handleCancelEdit} className="btn btn-secondary ms-1">Cancel</button>
               </form>
             </li>
           )}
@@ -378,23 +393,21 @@ class DisciplinesEditor extends React.Component {
           </DragDropContext>
         </div>
         <div className="editor-section">
-          <form className="form-inline" onSubmit={onDisciplineCreate}>
-            <div className="mb-3">
-              <div className="row">
-                <div className="col-3">
-                  <input
-                    type="text"
-                    value={name}
-                    placeholder="Enter Discipline Name..."
-                    className="form-control"
-                    id="name"
-                    onChange={onDisciplineNameChange}
-                    disabled={limited}
-                  />
-                </div>
-              </div>
+          <form className="row g-3" onSubmit={onDisciplineCreate}>
+            <div className="col-auto">
+              <input
+                type="text"
+                value={name}
+                placeholder="Enter Discipline Name..."
+                className="form-control"
+                id="name"
+                onChange={onDisciplineNameChange}
+                disabled={limited}
+              />
             </div>
-            <button type="submit" className="btn btn-primary ms-3" disabled={limited}>Add</button>
+            <div className="col-auto">
+              <button type="submit" className="btn btn-primary ms-3" disabled={limited}>Add</button>
+            </div>
           </form>
         </div>
         <hr />
