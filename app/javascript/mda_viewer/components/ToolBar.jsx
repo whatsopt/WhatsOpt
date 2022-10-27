@@ -125,7 +125,7 @@ class ToolBar extends React.Component {
               className={btnStatusClass}
               type="button"
               data-bs-toggle="collapse"
-              data-target="#collapseListing"
+              data-bs-target="#collapseListing"
               aria-expanded="false"
               onClick={this._getStatus}
             >

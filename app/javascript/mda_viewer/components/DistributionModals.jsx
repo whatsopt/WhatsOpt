@@ -273,7 +273,7 @@ class DistributionModal extends React.Component {
               data-varname={name}
               data-coord={i}
               data-bs-toggle="modal"
-              data-target={`#distributionModal-${name}`}
+              data-bs-target={`#distributionModal-${name}`}
               className="btn btn-sm"
             >
               <i className="fas fa-edit" />

@@ -528,7 +528,7 @@ class Runner extends React.Component {
               style={{ width: '120px' }}
               type="button"
               data-bs-toggle="collapse"
-              data-target="#collapseListing"
+              data-bs-target="#collapseListing"
               aria-expanded="false"
             >
               {btnIcon}

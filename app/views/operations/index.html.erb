@@ -32,7 +32,7 @@
 	      <td title="<%= (ope.job && ope.job.started_at && ope.job.ended_at) ? 'Duration: '+distance_of_time_in_words(ope.job.started_at, ope.job.ended_at, include_seconds: true):""%>"><%= time_ago_in_words(ope.updated_at) %> ago</td>
 	      <td>
           <% if policy(ope).update? %>
-            <a href='#' name="edit-name" class="d-inline btn btn-light btn-inverse btn-sm" title="Edit name" data-api-key="<%=current_user.api_key%>" data-ope-id="<%= ope.id %>" data-ope-name="<%= ope.name %>" data-bs-toggle="modal" data-target="#editModal">
+            <a href='#' name="edit-name" class="d-inline btn btn-light btn-inverse btn-sm" title="Edit name" data-api-key="<%=current_user.api_key%>" data-ope-id="<%= ope.id %>" data-ope-name="<%= ope.name %>" data-bs-toggle="modal" data-bs-target="#editModal">
               <i class="fa fa-edit"></i> 
             </a> 
             <% if ope.rerunnable? %>
