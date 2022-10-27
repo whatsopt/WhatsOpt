@@ -60,7 +60,7 @@ class TeamSelector extends React.PureComponent {
           <span className="d-flex flex-row align-items-center flex-wrap">
             <div>
               { title }
-              <span className="ms-1 me-3 badge badge-info">
+              <span className="ms-1 me-3 badge bg-info">
                 {users.length}
               </span>
             </div>

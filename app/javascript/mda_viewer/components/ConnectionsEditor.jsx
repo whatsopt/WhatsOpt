@@ -99,7 +99,7 @@ class VariableList extends React.PureComponent {
     let { vars } = this.props;
     const sorted = vars.sort(compare);
     vars = sorted.map((v) => {
-      const badgeKind = `badge ${(v.ioMode === 'in') ? 'badge-primary' : 'badge-secondary'}`;
+      const badgeKind = `badge ${(v.ioMode === 'in') ? 'bg-primary' : 'bg-secondary'}`;
       const klass = v.active ? 'btn m-1' : 'btn m-1 text-inactive';
       return (
         <button type="button" key={v.name} className={klass}>
@@ -166,7 +166,7 @@ class ConnectionsViewer extends React.PureComponent {
       <div>
         <div>
           {title}
-          <span className="badge badge-info ms-2">{count}</span>
+          <span className="badge bg-info ms-2">{count}</span>
         </div>
         <div>
           {connections}

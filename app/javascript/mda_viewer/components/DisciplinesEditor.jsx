@@ -406,7 +406,7 @@ class DisciplinesEditor extends React.Component {
         <div className="editor-section">
           <div className="editor-section-label">
             Disciplines
-            <span className="badge badge-info ms-2">{nbNodes}</span>
+            <span className="badge bg-info ms-2">{nbNodes}</span>
           </div>
           <DragDropContext
             onDragStart={this.onDragStart}
