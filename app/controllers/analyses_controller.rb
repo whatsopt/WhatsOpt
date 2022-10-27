@@ -2,7 +2,7 @@
 
 class AnalysesController < ApplicationController
   before_action :set_mda, only: [:show, :edit, :update, :destroy]
-  after_action :save_journal, only: [:create, :update, :destroy]
+  after_action :save_journal, only: [:create, :update]
 
   # GET /mdas
   def index
@@ -100,6 +100,6 @@ class AnalysesController < ApplicationController
     end
     
     def save_journal
-      @mda.save_journal
+      @mda.save_journal if @mda  # analysis may not exist when cancelling analysis creation 
     end
 end
