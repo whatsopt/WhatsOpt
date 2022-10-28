@@ -12,7 +12,9 @@ gem "puma", "~> 5.0"
 # Use SCSS for stylesheets
 gem "sass-rails", ">= 6"
 # Use Uglifier as compressor for JavaScript assets
-gem "uglifier", ">= 1.3.0"
+# gem "uglifier", ">= 1.3.0"
+gem 'terser'
+
 # Transpile app-like JavaScript. Read more: https://github.com/rails/webpacker
 # gem "webpacker", "~> 5.0"
 gem 'shakapacker', "~>6.0"
@@ -116,7 +118,7 @@ gem "rubyzip", "~>2.3.0"
 gem "popper" # bootstrap dependency
 gem "bootstrap", "~> 5.0"
 gem "font_awesome5_rails"
-gem "data-confirm-modal"
+# gem "data-confirm-modal"
 gem 'tether-rails'
 
 # thrift
