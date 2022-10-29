@@ -8,8 +8,6 @@
     </div>
   </div>
 
-
-
   <div class="input-group me-2">
     <label class="input-group-text" for="designProjectScope">Design Project</label>
 
@@ -50,6 +48,7 @@
 <div id="analyses"><%= render 'analyses' %></div>
 
 <% content_for :document_ready do %>
+
 <script>
   let relRoot = "<%= Rails.application.config.action_controller.relative_url_root %>";
   let SPINNER_TIMEOUT = 1500; //ms

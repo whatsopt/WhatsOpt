@@ -28,6 +28,7 @@
     "d3-transition": "^3.0.1",
     "debug": "^4.1.1",
     "diff2html": "^3.4.5",
+    "expose-loader": "^4.0.0",
     "ify-loader": "^1.1.0",
     "immutability-helper": "^3.0.2",
     "jquery": "^3.6.1",
