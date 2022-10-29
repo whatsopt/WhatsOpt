@@ -39,7 +39,6 @@ class Discipline extends React.Component {
     this.handleEdit = this.handleEdit.bind(this);
     this.handleCancelEdit = this.handleCancelEdit.bind(this);
     this.handleUpdate = this.handleUpdate.bind(this);
-    this.handleDelete = this.handleDelete.bind(this);
     this.handleSelectChange = this.handleSelectChange.bind(this);
     this.handleSubAnalysisSelected = this.handleSubAnalysisSelected.bind(this);
   }
@@ -128,19 +127,6 @@ class Discipline extends React.Component {
     // console.log(JSON.stringify(discattrs));
     const { onDisciplineUpdate } = this.props;
     onDisciplineUpdate(node, discAttrs);
-  }
-
-  handleDelete() {
-    const self = this;
-    /* global dataConfirmModal */
-    // dataConfirmModal.confirm({
-    //   title: 'Are you sure?',
-    //   text: 'Really do this?',
-    //   commit: 'Yes',
-    //   cancel: 'No, cancel',
-    //   onConfirm() { self.props.onDisciplineDelete(self.props.node); },
-    //   onCancel() { },
-    // });
   }
 
   handleSelectChange(event) {
@@ -299,7 +285,6 @@ class Discipline extends React.Component {
               data-bs-target={`#confirmModal-${node.id}`}
               className="d-inline btn btn-light btn-inverse btn-sm float-end text-danger"
               title="Delete"
-              onClick={this.handleDelete}
               disabled={limited}
             >
               <i className="fa fa-times" />
