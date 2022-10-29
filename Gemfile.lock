@@ -425,8 +425,6 @@ GEM
       concurrent-ruby (~> 1.0)
     terser (1.1.8)
       execjs (>= 0.3.0, < 3)
-    tether-rails (1.4.0)
-      rails (>= 3.1)
     thor (1.2.1)
     thrift (0.17.0)
     tilt (2.0.11)
@@ -513,7 +511,6 @@ DEPENDENCIES
   sqlite3
   sucker_punch
   terser
-  tether-rails
   thrift (~> 0.16)
   turbo-rails
   tzinfo-data

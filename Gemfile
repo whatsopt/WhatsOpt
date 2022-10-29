@@ -115,7 +115,6 @@ gem "rubyzip", "~>2.3.0"
 gem "popper" # bootstrap dependency
 gem "bootstrap", "~> 5.0"
 gem "font_awesome5_rails"
-gem 'tether-rails'
 
 # thrift
 gem "thrift", "~>0.16"
