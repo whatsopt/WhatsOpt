@@ -88,7 +88,6 @@ gem "highline"
 
 # Use jquery as the JavaScript library
 gem "jquery-rails"
-gem "jquery-ui-rails"
 
 # Authentication/Authorization
 gem "devise", ">=4.7.1"
@@ -118,7 +117,6 @@ gem "rubyzip", "~>2.3.0"
 gem "popper" # bootstrap dependency
 gem "bootstrap", "~> 5.0"
 gem "font_awesome5_rails"
-# gem "data-confirm-modal"
 gem 'tether-rails'
 
 # thrift
@@ -136,10 +134,3 @@ gem "deepsort"
 # Add sprockets with Rails 7
 gem "sprockets-rails"
 
-# Seems to be fixed now : keep the code around in case but should be removed
-# Fix io-wait 0.2.0 to deploy in production 
-# (2.0.1 does not work in /var/log/httpd/error_log: You have already activated io-wait 0.2.0, but your Gemfile 
-# requires io-wait 0.2.1. Since io-wait is a default gem, you can either remove your dependency 
-# on it or try updating to a newer version of bundler that supports
-# io-wait as a default gem.)
-# gem "io-wait", "0.2.0"
