@@ -31,7 +31,7 @@ class DisciplineSelector extends React.Component {
         </div>
         <select
           id={label}
-          className="custom-select"
+          className="form-select"
           value={selected}
           onChange={this.handleSelectChange}
         >
