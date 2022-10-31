@@ -39,10 +39,8 @@
         <% end %>
         <% end %>
         <% if policy(project).destroy? %>
-        <%= link_to design_project_path(project), method: :delete, data: { title: 'Are you sure?', 
-                                                              confirm: "Remove #{project.name} design project?",
-                                                              commit: 'Yes',
-                                                              cancel: 'No, cancel' }, 
+        <%= link_to design_project_path(project), method: :delete, 
+              data: { confirm: "Remove #{project.name} design project?" }, 
               class: "btn btn-sm text-danger", title:"Delete" do %>
         <i class="fas fa-times"></i>
         <% end %>

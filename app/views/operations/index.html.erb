@@ -41,12 +41,10 @@
                 <i class="fa fa-undo"></i> 
               <% end %>  
             <% end %>  
-	          <%= link_to operation_path(ope), method: :delete, data: { title: 'Are you sure?', 
-	                                                                    confirm: "Remove #{ope.name} operation?",
-	                                                                    commit: 'Yes',
-	                                                                    cancel: 'No, cancel' }, 
+	          <%= link_to operation_path(ope), method: :delete, 
+                data: { confirm: "Remove #{ope.name} operation?" }, 
 	              class: "d-inline btn btn-light btn-inverse btn-sm text-danger ms-2", title:"Delete" do %>
-                <i class="fa fa-times"></i> 
+                  <i class="fa fa-times"></i> 
             <% end %>    
 	      	<% end %>
 	      </td>
@@ -81,46 +79,7 @@
 </div>
 
 <% content_for :document_ready do %>
-<script>
-$(function() {
-  var relativeUrlRoot = document.getElementsByName('relative-url-root')[0].getAttribute('content');
-  var opeEdit = opeEdit || {}
-  var $modal = $('#editModal');
-  let $input=$("input[name='operation[name]']");
-
-  $modal.on('show.bs.modal', function(e) {
-    opeEdit.invoker = $(e.relatedTarget);
-    opeEdit.id = opeEdit.invoker.data('ope-id');
-    opeEdit.name = opeEdit.invoker.data('ope-name');
-    opeEdit.apiKey = opeEdit.invoker.data('api-key');
-    $input.val(opeEdit.name);
-    $input.focus();
-  });
-
-  $('button[data-save="true"]').on('click', 
-    function() {
-      var newName = $input.val();
-      $.ajax({
-        type: "PATCH",
-        xhrFields: { withCredentials: true },
-        headers: {'Authorization': 'Token '+opeEdit.apiKey},
-        url: relativeUrlRoot+'/api/v1/operations/'+opeEdit.id,
-        data: {operation: {name: newName}},
-        success: function() {
-          $("a[id="+opeEdit.id+"]").text(newName);
-          opeEdit.invoker.data('ope-name', newName);
-          $modal.modal('hide');
-        }, 
-        error: function(xhr, status, error) {
-          $('#errorPlaceHolder').html(
-            '<div class="alert alert-warning" role="alert"><a href="#" data-dismiss="alert" class="close">×</a>'
-            +  xhr.responseJSON.message
-            +'</div>'
-          );
-          $modal.modal('hide');
-        }, 
-      });
-    });
-});
-</script>
+  let relRoot = "<%= Rails.application.config.action_controller.relative_url_root %>";
+  let view = new App.OperationsIndex(relRoot);
+  view.start();
 <% end %>

@@ -7,33 +7,16 @@
     <td width="60%"></td>
   </tr>
   <tr>
-    <th>Api Key</th>
-    <td>
+    <th class="align-middle">Api Key</th>
+    <td class="align-middle">
       <div id="user-api-key"><%= @user.api_key %></div>
     </td>
-    <td><button id="reset-api-key" type="button" class="btn btn-primary">Reset</button></td>
+    <td class="align-middle"><button id="reset-api-key" type="button" class="btn btn-primary">Reset</button></td>
   </tr>
 </table>
 
 <% content_for :document_ready do %>
-<script>
   let relRoot = "<%= Rails.application.config.action_controller.relative_url_root %>";
-  $("#reset-api-key").on('click', function() {
-    let api_key = $("#user-api-key").text();
-    $.ajax({
-      type: "PATCH",
-      xhrFields: {
-        withCredentials: true
-      },
-      headers: {
-        'Authorization': 'Token ' + api_key
-      },
-      url: relRoot + '/api/v1/users/<%= current_user.id %>/api_key',
-      success: function() {
-        $.getScript(this.href);
-        return false;
-      }
-    })
-  });
-</script>
+  let view = new App.UserShow(relRoot, "<%= current_user.id %>");
+  view.start();
 <% end %>

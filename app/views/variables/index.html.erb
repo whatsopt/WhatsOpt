@@ -20,7 +20,8 @@
         <td><%= variable.io_mode %></td>
         <td><%= link_to 'Show', variable %></td>
         <td><%= link_to 'Edit', edit_variable_path(variable) %></td>
-        <td><%= link_to 'Destroy', variable, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= link_to 'Destroy', variable, method: :delete, 
+                        data: { confirm: 'Delete variable?' } %></td>
       </tr>
     <% end %>
   </tbody>

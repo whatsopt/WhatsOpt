@@ -30,7 +30,6 @@
 <% end %>
 
 <% content_for :document_ready do %>
-<script type="text/javascript">
 
 $(document).ready(updateOptions());
 $("#optimization_kind").change(function() {updateOptions();}); 
@@ -65,5 +64,4 @@ function addField(type, message) {
 	$('#' + type).append("<input class='form-control' type='text' name='optimization[" + type + "][]'><a href='#' class='add" + type + "'>" + message + "</a>");
 	$('.add' + type).click(function(){addField(type, message);});
 }
-</script>
 <% end %>
