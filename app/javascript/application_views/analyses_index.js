@@ -39,7 +39,7 @@ class AnalysesIndex {
 
     let current_design_project_id = '<%= current_user.analyses_scope_design_project_id %>';
 
-    $('#designProjectScope').on('click', function (e) {
+    $('#designProjectScope').on('click', function () {
       const design_project_id = this.value;
       let timeout;
       if (design_project_id !== current_design_project_id) {
