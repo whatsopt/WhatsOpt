@@ -272,8 +272,8 @@ class DistributionModal extends React.Component {
               id={`${name}-${i}`}
               data-varname={name}
               data-coord={i}
-              data-toggle="modal"
-              data-target={`#distributionModal-${name}`}
+              data-bs-toggle="modal"
+              data-bs-target={`#distributionModal-${name}`}
               className="btn btn-sm"
             >
               <i className="fas fa-edit" />
@@ -293,7 +293,7 @@ class DistributionModal extends React.Component {
                   {' '}
                   {name}
                 </h4>
-                <button type="button" className="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-hidden="true">×</button>
               </div>
               <div className="container" />
               <div className="modal-body">
@@ -302,7 +302,7 @@ class DistributionModal extends React.Component {
                 </div>
               </div>
               <div className="modal-footer">
-                <button type="button" className="btn btn-primary" data-dismiss="modal">Close</button>
+                <button type="button" className="btn btn-primary" data-bs-dismiss="modal">Close</button>
               </div>
             </div>
           </div>
@@ -316,9 +316,7 @@ class DistributionModal extends React.Component {
                   {' '}
                   {name}
                 </h4>
-                <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
+                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
               </div>
               <div className="modal-body">
                 <Form
@@ -330,7 +328,7 @@ class DistributionModal extends React.Component {
                 </Form>
               </div>
               <div className="modal-footer">
-                <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 <button type="button" className="btn btn-primary" onClick={this.handleSave}>Save</button>
               </div>
             </div>

@@ -120,12 +120,12 @@ class ToolBar extends React.Component {
     return (
       <div>
         <div className="btn-toolbar" role="toolbar">
-          <div className="btn-group mr-2" role="group">
+          <div className="btn-group me-2" role="group">
             <button
               className={btnStatusClass}
               type="button"
-              data-toggle="collapse"
-              data-target="#collapseListing"
+              data-bs-toggle="collapse"
+              data-bs-target="#collapseListing"
               aria-expanded="false"
               onClick={this._getStatus}
             >
@@ -133,13 +133,13 @@ class ToolBar extends React.Component {
             </button>
             <a className="btn btn-primary" href={hrefOm}>Export Openmdao</a>
           </div>
-          <div className="btn-group mr-2" role="group">
+          <div className="btn-group me-2" role="group">
             <a className="btn btn-primary" href={hrefGemseo}>Export Gemseo</a>
           </div>
-          <div className="btn-group mr-2" role="group">
+          <div className="btn-group me-2" role="group">
             <a className="btn btn-primary" href={hrefCmdows}>Export Cmdows</a>
           </div>
-          <div className="btn-group mr-2" role="group">
+          <div className="btn-group me-2" role="group">
             <button
               type="button"
               className="btn btn-primary"
@@ -149,7 +149,7 @@ class ToolBar extends React.Component {
               Export Csv
             </button>
           </div>
-          <div className="btn-group mr-2" role="group">
+          <div className="btn-group me-2" role="group">
             <button
               type="button"
               className="btn btn-primary"
@@ -158,7 +158,7 @@ class ToolBar extends React.Component {
               Export Image
             </button>
           </div>
-          <div className="btn-group mr-2" role="group">
+          <div className="btn-group me-2" role="group">
             <a className="btn btn-primary" href={hrefHtml}>Export Html</a>
           </div>
         </div>

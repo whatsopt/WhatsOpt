@@ -5,6 +5,8 @@
   <li>Fix optimization configuration retrieval from REST API</li>
   <li>Add <a href="https://pypi.org/project/egobox/" target="_blank">Egor</a> optimizer as available optimizer for
     run_mdo.py script</li>
+  <li>Tech: Upgrade ruby gems dependencies (among them rails 7.0.4)</li>
+  <li>Tech: Upgrade frontend to bootstrap v5</li>
 </ul>
 
 <h3>1.24.1 (06/09/2022)</h3>

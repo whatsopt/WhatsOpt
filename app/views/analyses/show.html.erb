@@ -1,6 +1,6 @@
-<div class="btn-toolbar float-right">
+<div class="btn-toolbar float-end">
   <% unless @mda.operations.empty? %>
-  <%= button_to mda_operations_path(@mda), method: :get, class: "btn ml-2", title:"List Operations" do %>
+  <%= button_to mda_operations_path(@mda), method: :get, class: "btn ms-2", title:"List Operations" do %>
   <span class="fa fa-ellipsis-v"></span>
   List Operations
   <% end %>
@@ -18,7 +18,7 @@
   <% end %>
   <% end %>
   <% if policy(@mda).operate? %>
-  <%= button_to mda_operations_path(@mda), method: :post, class:"btn ml-2" do |b|%>
+  <%= button_to mda_operations_path(@mda), method: :post, class:"btn ms-2" do |b|%>
   <span class="fa fa-rocket"></span>
   Operate
   <% end %>
@@ -28,12 +28,12 @@
                                                               confirm: "Remove #{@mda.name} analysis?",
                                                               commit: 'Yes',
                                                               cancel: 'No, cancel' }, 
-                  class: "btn ml-2", title:"Delete" do %>
+                  class: "btn ms-2", title:"Delete" do %>
   <span class="fa fa-times"></span>
   Delete
   <% end %>
   <% end %>
-  <%= button_to mdas_path, method: :get, class:"btn ml-2" do |b|%>
+  <%= button_to mdas_path, method: :get, class:"btn ms-2" do |b|%>
   <span class="fa fa-window-close"></span>
   Close
   <% end %>
@@ -58,4 +58,4 @@
   var API_KEY = "<%=current_user.api_key%>"
 </script>
 
-<%= javascript_pack_tag 'mda_viewer_application' %>
+<%= append_javascript_pack_tag 'mda_viewer_application' %>

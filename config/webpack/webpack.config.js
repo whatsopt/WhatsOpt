@@ -7,19 +7,33 @@ const options = {
   resolve: {
     extensions: ['.css'],
     fallback: { stream: false },
+    alias: {
+      jquery: 'jquery/src/jquery',
+    },
   },
 
   // Add dependency needed by swagger ui
   plugins: [new webpack.ProvidePlugin({
+    $: 'jquery',
+    jQuery: 'jquery',
     Buffer: ['buffer', 'Buffer'],
   })],
 
   // Add loader for plotly parallel coordinates
   module: {
-    rules: [{
-      test: /\.js$/,
-      loader: 'ify-loader',
-    }],
+    rules: [
+      {
+        test: /\.js$/,
+        loader: 'ify-loader',
+      },
+      {
+        test: require.resolve('jquery'),
+        loader: 'expose-loader',
+        options: {
+          exposes: ['$', 'jQuery'],
+        },
+      },
+    ],
   },
 
 };

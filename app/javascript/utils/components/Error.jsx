@@ -6,7 +6,7 @@ class Error extends React.PureComponent {
     const { msg, onClose } = this.props;
     return (
       <div className="alert alert-warning" role="alert">
-        <button type="button" className="close" href="#" onClick={onClose}>×</button>
+        <button type="button" className="btn-close" href="#" onClick={onClose} />
         {msg}
       </div>
     );

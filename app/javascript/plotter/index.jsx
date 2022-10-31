@@ -100,7 +100,7 @@ class PlotPanel extends React.Component {
     }
 
     return (
-      <div className="tab-pane fade" id={PLOTS_TAB} role="tabpanel" aria-labelledby="plots-tab">
+      <div className="tab-pane fade active show" id={PLOTS_TAB} role="tabpanel" aria-labelledby="plots-tab">
         {plotdist}
         {plotparall}
         {plotoptim}
@@ -216,11 +216,6 @@ class Plotter extends React.Component {
     this.activateTab = this.activateTab.bind(this);
   }
 
-  componentDidMount() {
-    // eslint-disable-next-line no-undef
-    $('#plots').tab('show');
-  }
-
   handleSelectionChange(event) {
     const { target } = event;
     const { selection } = this.state;
@@ -300,7 +295,7 @@ class Plotter extends React.Component {
             href="#metamodel"
             role="tab"
             aria-controls="metamodel"
-            data-toggle="tab"
+            data-bs-toggle="tab"
             aria-selected="false"
             onClick={(e) => this.activateTab(e, METAMODEL_TAB)}
           >
@@ -334,61 +329,63 @@ class Plotter extends React.Component {
           </small>
         </h1>
 
-        <div className="btn-group mr-2  float-right" role="group">
+        <div className="btn-group me-2  float-end" role="group">
           <a className="btn btn-primary" href={exportUrl}>Export Csv</a>
         </div>
 
-        <ul className="nav nav-tabs" id="myTab" role="tablist">
-          <li className="nav-item">
-            <a
-              className="nav-link active"
-              id="plots-tab"
-              href="#plots"
-              role="tab"
-              aria-controls="plots"
-              data-toggle="tab"
-              aria-selected="true"
-              onClick={(e) => this.activateTab(e, PLOTS_TAB)}
-            >
-              Plots
-            </a>
-          </li>
-          {metaModelItem}
-          <li className="nav-item">
-            <a
-              className="nav-link"
-              id="variables-tab"
-              href="#variables"
-              role="tab"
-              aria-controls="variables"
-              data-toggle="tab"
-              aria-selected="false"
-              onClick={(e) => this.activateTab(e, VARIABLES_TAB)}
-            >
-              Variables
-            </a>
-          </li>
-        </ul>
-        <div className="tab-content" id="myTabContent">
-          <PlotPanel
-            db={this.db}
-            optim={isOptim}
-            uqMode={uqMode}
-            cases={selCases}
-            title={title}
-            active={activeTab === PLOTS_TAB}
-            success={ope.success}
-          />
-          {metaModelPanel}
-          <VariablePanel
-            db={this.db}
-            optim={isOptim}
-            uqMode={uqMode}
-            cases={cases}
-            selCases={selCases}
-            active={activeTab === VARIABLES_TAB}
-            onSelectionChange={this.handleSelectionChange}
-          />
+        <div className="container-fluid">
+          <ul className="nav nav-tabs" id="myTab" role="tablist">
+            <li className="nav-item">
+              <a
+                className="nav-link active"
+                id="plots-tab"
+                href="#plots"
+                role="tab"
+                aria-controls="plots"
+                data-bs-toggle="tab"
+                aria-selected="true"
+                onClick={(e) => this.activateTab(e, PLOTS_TAB)}
+              >
+                Plots
+              </a>
+            </li>
+            {metaModelItem}
+            <li className="nav-item">
+              <a
+                className="nav-link"
+                id="variables-tab"
+                href="#variables"
+                role="tab"
+                aria-controls="variables"
+                data-bs-toggle="tab"
+                aria-selected="false"
+                onClick={(e) => this.activateTab(e, VARIABLES_TAB)}
+              >
+                Variables
+              </a>
+            </li>
+          </ul>
+          <div className="tab-content" id="myTabContent">
+            <PlotPanel
+              db={this.db}
+              optim={isOptim}
+              uqMode={uqMode}
+              cases={selCases}
+              title={title}
+              active={activeTab === PLOTS_TAB}
+              success={ope.success}
+            />
+            {metaModelPanel}
+            <VariablePanel
+              db={this.db}
+              optim={isOptim}
+              uqMode={uqMode}
+              cases={cases}
+              selCases={selCases}
+              active={activeTab === VARIABLES_TAB}
+              onSelectionChange={this.handleSelectionChange}
+            />
+          </div>
         </div>
       </div>
     );
