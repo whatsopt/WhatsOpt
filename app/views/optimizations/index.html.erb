@@ -7,10 +7,8 @@
     <div class="btn-toolbar float-end">
       <div id="need_selected" style="margin-right:20px;">
         <%= submit_tag "Show", class: 'btn btn-primary btn-xs'%>
-        <%= submit_tag "Delete", class: 'btn btn-danger btn-xs', name: 'delete', data: { title: 'Are you sure?', 
-                                                                  confirm: "Remove selected optimizations?",
-                                                                  commit: 'Yes',
-                                                                  cancel: 'No, cancel' }%>
+        <%= submit_tag "Delete", class: 'btn btn-danger btn-xs', name: 'delete', 
+                                 data: { confirm: "Remove selected optimizations?" }%>
       </div>
 <!--
       <%= link_to 'New', new_optimization_path, class: "btn btn-primary" %>

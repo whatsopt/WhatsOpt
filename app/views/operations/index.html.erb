@@ -41,12 +41,10 @@
                 <i class="fa fa-undo"></i> 
               <% end %>  
             <% end %>  
-	          <%= link_to operation_path(ope), method: :delete, data: { title: 'Are you sure?', 
-	                                                                    confirm: "Remove #{ope.name} operation?",
-	                                                                    commit: 'Yes',
-	                                                                    cancel: 'No, cancel' }, 
+	          <%= link_to operation_path(ope), method: :delete, 
+                data: { confirm: "Remove #{ope.name} operation?" }, 
 	              class: "d-inline btn btn-light btn-inverse btn-sm text-danger ms-2", title:"Delete" do %>
-                <i class="fa fa-times"></i> 
+                  <i class="fa fa-times"></i> 
             <% end %>    
 	      	<% end %>
 	      </td>

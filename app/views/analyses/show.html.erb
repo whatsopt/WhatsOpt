@@ -24,11 +24,9 @@
   <% end %>
   <% end %>
   <% if policy(@mda).destroy? %>
-  <%= button_to mda_path(@mda), method: :delete, data: { title: 'Are you sure?', 
-                                                              confirm: "Remove #{@mda.name} analysis?",
-                                                              commit: 'Yes',
-                                                              cancel: 'No, cancel' }, 
-                  class: "btn ms-2", title:"Delete" do %>
+  <%= button_to mda_path(@mda), method: :delete, 
+      data: { confirm: "Remove #{@mda.name} analysis?" }, 
+      class: "btn ms-2", title:"Delete" do %>
   <span class="fa fa-times"></span>
   Delete
   <% end %>
