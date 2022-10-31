@@ -62,9 +62,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="editModalLabel">Edit Name</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <form>
@@ -75,7 +73,7 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         <button type="button" class="btn btn-primary" data-save="true">Save</button>
       </div>
     </div>
@@ -84,6 +82,7 @@
 
 <% content_for :document_ready do %>
 <script>
+$(function() {
   var relativeUrlRoot = document.getElementsByName('relative-url-root')[0].getAttribute('content');
   var opeEdit = opeEdit || {}
   var $modal = $('#editModal');
@@ -115,7 +114,6 @@
           $modal.modal('hide');
         }, 
         error: function(xhr, status, error) {
-          console.log(xhr.responseJSON.message);
           $('#errorPlaceHolder').html(
             '<div class="alert alert-warning" role="alert"><a href="#" data-dismiss="alert" class="close">×</a>'
             +  xhr.responseJSON.message
@@ -125,5 +123,6 @@
         }, 
       });
     });
+});
 </script>
 <% end %>
