@@ -49,7 +49,7 @@
 
 <% content_for :document_ready do %>
   let relRoot = "<%= Rails.application.config.action_controller.relative_url_root %>";
-  let view = new App.AnalysesView(relRoot, "<%= current_user.api_key%>", "<%= current_user.id %>");
+  let view = new App.AnalysesIndex(relRoot, "<%= current_user.api_key%>", "<%= current_user.id %>");
   view.start();
 <% end %>
 

@@ -1,11 +1,10 @@
 import $ from 'jquery';
 
-class AnalysesView {
+class AnalysesIndex {
   constructor(relRoot, apiKey, userId) {
     this.relRoot = relRoot;
     this.apiKey = apiKey;
     this.userId = userId;
-    console.log(`constructor ${userId}`);
   }
 
   start() {
@@ -21,7 +20,7 @@ class AnalysesView {
         headers: { Authorization: `Token ${apiKey}` },
         url: `${relRoot}/api/v1/users/${userId}`,
         data: { user: { settings: { analyses_query: query, analyses_order: order } } },
-        beforeSend(xhr) {
+        beforeSend() {
           timeout = setTimeout(() => {
             $('.spinner').show();
           }, SPINNER_TIMEOUT);
@@ -50,7 +49,7 @@ class AnalysesView {
           headers: { Authorization: `Token ${apiKey}` },
           url: `${relRoot}/api/v1/users/${userId}`,
           data: { user: { settings: { analyses_scope_design_project_id: design_project_id } } },
-          beforeSend(xhr) {
+          beforeSend() {
             timeout = setTimeout(() => {
               $('.spinner').show();
             }, SPINNER_TIMEOUT);
@@ -72,4 +71,4 @@ class AnalysesView {
   }
 }
 
-export default AnalysesView;
+export default AnalysesIndex;

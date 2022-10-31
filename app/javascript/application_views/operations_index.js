@@ -1,31 +1,29 @@
 import $ from 'jquery';
 
-class OperationsView {
+class OperationsIndex {
   constructor(relRoot) {
     this.relRoot = relRoot;
   }
 
   start() {
     const relativeUrlRoot = this.relRoot;
-    const opeEdit = opeEdit || {};
+    const opeEdit = {};
     const $modal = $('#editModal');
+    const $input = $("input[name='operation[name]']");
 
     $modal.on('show.bs.modal', (e) => {
       opeEdit.invoker = $(e.relatedTarget);
       opeEdit.id = opeEdit.invoker.data('ope-id');
       opeEdit.name = opeEdit.invoker.data('ope-name');
       opeEdit.apiKey = opeEdit.invoker.data('api-key');
-      $("input[name='operation[name]']").val(opeEdit.name);
-    });
-
-    $modal.on('shown.bs.modal', () => {
-      $("input[name='operation[name]']").on('focus');
+      $input.val(opeEdit.name);
+      $input.on('focus');
     });
 
     $('button[data-save="true"]').on(
       'click',
       () => {
-        const newName = $("input[name='operation[name]']").val();
+        const newName = $input.val();
         $.ajax({
           type: 'PATCH',
           xhrFields: { withCredentials: true },
@@ -37,7 +35,7 @@ class OperationsView {
             opeEdit.invoker.data('ope-name', newName);
             $modal.modal('hide');
           },
-          error(xhr, status, error) {
+          error(xhr) {
             console.log(xhr.responseJSON.message);
             $('#errorPlaceHolder').html(
               `<div class="alert bg-warning" role="alert"><a href="#" data-dismiss="alert" class="close">×</a>${
@@ -52,4 +50,4 @@ class OperationsView {
   }
 }
 
-export default OperationsView;
+export default OperationsIndex;
