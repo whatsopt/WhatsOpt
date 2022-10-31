@@ -78,25 +78,25 @@ function VariablesGlobalFilter({
         }}
         placeholder="Filter..."
       />
-      <div className="input-group-append">
-        <button
-          disabled={!active}
-          type="button"
-          className="btn bg-transparent"
-          style={{ marginLeft: '-40px', zIndex: 100, color }}
-          onClick={() => {
-            setValue('');
-            onChange('');
-          }}
-        >
-          <i className="fa fa-times" />
-        </button>
-        <span className="input-group-text padding-left">
-          {matchCount}
-          {' '}
-          Variables
-        </span>
-      </div>
+      <button
+        disabled={!active}
+        type="button"
+        className="btn bg-transparent"
+        style={{
+          marginLeft: '-40px', zIndex: 100, color, border: 0,
+        }}
+        onClick={() => {
+          setValue('');
+          onChange('');
+        }}
+      >
+        <i className="fa fa-times" />
+      </button>
+      <span className="input-group-text padding-left">
+        {matchCount}
+        {' '}
+        Variables
+      </span>
     </div>
   );
 }

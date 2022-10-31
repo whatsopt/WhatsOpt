@@ -33,9 +33,9 @@ class MetaModelQualification extends React.Component {
     // Quality Buttons
     const qualityButtons = qualities.map((q, i) => {
       let badgeKind = 'badge ';
-      badgeKind += ((q.r2 < 0.5) ? 'badge-danger' : '');
-      badgeKind += ((q.r2 >= 0.5 && q.r2 < 0.95) ? 'badge-warning' : '');
-      badgeKind += ((q.r2 >= 0.95) ? 'badge-success' : '');
+      badgeKind += ((q.r2 < 0.5) ? 'bg-danger' : '');
+      badgeKind += ((q.r2 >= 0.5 && q.r2 < 0.95) ? 'bg-warning' : '');
+      badgeKind += ((q.r2 >= 0.95) ? 'bg-success' : '');
       let btnClass = 'btn btn-light m-1';
       btnClass += selected === i ? ' active' : '';
       return (

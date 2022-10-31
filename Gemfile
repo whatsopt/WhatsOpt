@@ -11,20 +11,20 @@ gem "rails", "~> 7.0"
 gem "puma", "~> 5.0"
 # Use SCSS for stylesheets
 gem "sass-rails", ">= 6"
-# Use Uglifier as compressor for JavaScript assets
-gem "uglifier", ">= 1.3.0"
-# Transpile app-like JavaScript. Read more: https://github.com/rails/webpacker
-# gem "webpacker", "~> 5.0"
-gem 'shakapacker', "~>6.0"
+# Use Terser as compressor for JavaScript assets
+gem "terser"
+
+# Transpile app-like JavaScript. Read more: https://github.com/shakacode/shakapacker
+gem "shakapacker", "~>6.0"
 # See https://github.com/rails/execjs#readme for more supported runtimes
 # gem 'therubyracer', platforms: :ruby
 
 # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
-gem "turbolinks", "~> 5"
+gem "turbo-rails"
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem "jbuilder", "~> 2.7"
 
-# rEDuces boot times through caching; required in config/boot.rb
+# reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", ">= 1.4.2", require: false
 
 # Protect from rogue client
@@ -86,7 +86,6 @@ gem "highline"
 
 # Use jquery as the JavaScript library
 gem "jquery-rails"
-gem "jquery-ui-rails"
 
 # Authentication/Authorization
 gem "devise", ">=4.7.1"
@@ -114,10 +113,8 @@ gem "rubyzip", "~>2.3.0"
 
 # UI
 gem "popper" # bootstrap dependency
-gem "bootstrap", "~> 4.0"
+gem "bootstrap", "~> 5.0"
 gem "font_awesome5_rails"
-gem "data-confirm-modal"
-gem 'tether-rails'
 
 # thrift
 gem "thrift", "~>0.16"
@@ -134,9 +131,3 @@ gem "deepsort"
 # Add sprockets with Rails 7
 gem "sprockets-rails"
 
-# Fix io-wait 0.2.0 to deploy in production 
-# (2.0.1 does not work in /var/log/httpd/error_log: You have already activated io-wait 0.2.0, but your Gemfile 
-# requires io-wait 0.2.1. Since io-wait is a default gem, you can either remove your dependency 
-# on it or try updating to a newer version of bundler that supports
-# io-wait as a default gem.)
-# gem "io-wait", "0.2.0"

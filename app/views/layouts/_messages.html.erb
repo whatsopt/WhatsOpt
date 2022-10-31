@@ -1,6 +1,6 @@
 <% flash_messages.each do |key, message| %>
-  <div class="alert <%= bootstrap_class_for key %>" role="alert">
-    <a href="#" data-dismiss="alert" class="close">×</a>
+  <div class="alert <%= bootstrap_class_for key %> alert-dismissible fade show" role="alert">
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     <%= message %>
   </div>
 <% end %>

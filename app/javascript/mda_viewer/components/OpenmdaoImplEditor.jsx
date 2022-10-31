@@ -266,7 +266,7 @@ class OpenmdaoImplEditor extends React.Component {
             >
               <div>
                 <button type="submit" className="btn btn-primary">Save</button>
-                <button type="button" className="ml-1 btn btn-secondary" onClick={this.handleReset}>Reset</button>
+                <button type="button" className="ms-1 btn btn-secondary" onClick={this.handleReset}>Reset</button>
               </div>
             </Form>
           </div>
@@ -293,7 +293,7 @@ class OpenmdaoImplEditor extends React.Component {
               onSubmit={(data) => this.handleSubmit(data)}
               liveValidate
             >
-              <div className="form-group">
+              <div className="mb-3">
                 <button type="submit" className="d-none btn btn-primary">Save</button>
               </div>
             </Form>
@@ -307,7 +307,7 @@ class OpenmdaoImplEditor extends React.Component {
               onSubmit={(data) => this.handleSubmit(data)}
               liveValidate
             >
-              <div className="form-group">
+              <div className="mb-3">
                 <button type="submit" className="d-none btn btn-primary">Save</button>
               </div>
             </Form>

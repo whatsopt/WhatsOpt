@@ -57,10 +57,10 @@ class TeamSelector extends React.PureComponent {
     return (
       <>
         <div className="editor-section">
-          <span className="form-inline">
+          <span className="d-flex flex-row align-items-center flex-wrap">
             <div>
               { title }
-              <span className="ml-1 mr-3 badge badge-info">
+              <span className="ms-1 me-3 badge bg-info">
                 {users.length}
               </span>
             </div>
@@ -127,7 +127,7 @@ class AnalysisEditor extends React.PureComponent {
         <div className="editor-section">
           <div className="editor-section-label">Information</div>
           <form className="col-6" onSubmit={onAnalysisUpdate}>
-            <div className="form-group">
+            <div className="mb-3">
               <div className="editor-section-label">
                 Name
               </div>
@@ -139,7 +139,7 @@ class AnalysisEditor extends React.PureComponent {
                 onChange={onAnalysisNameChange}
               />
             </div>
-            <div className="form-group">
+            <div className="mb-3">
               <div className="editor-section-label">
                 Design Project
               </div>
@@ -149,7 +149,7 @@ class AnalysisEditor extends React.PureComponent {
                 onProjectSelected={onProjectSelected}
               />
             </div>
-            <div className="form-group">
+            <div className="mb-3">
               <div className="editor-section-label">
                 Notes
               </div>
@@ -161,7 +161,7 @@ class AnalysisEditor extends React.PureComponent {
                 />
               </div>
             </div>
-            <button type="submit" className="btn btn-primary ml-3">Save</button>
+            <button type="submit" className="btn btn-primary ms-3">Save</button>
           </form>
         </div>
         <hr />
@@ -185,7 +185,7 @@ class AnalysisEditor extends React.PureComponent {
             <small>(when restricted, allow read only access to the users listed below)</small>
           </div>
           <form className="form" onSubmit={onAnalysisUpdate}>
-            <div className="form-group form-check">
+            <div className="mb-3 form-check">
               <label htmlFor="public" className="form-check-label">
                 <input
                   type="checkbox"

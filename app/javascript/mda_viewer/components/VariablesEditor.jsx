@@ -443,7 +443,7 @@ Table.propTypes = {
 function VariablesEditor(props) {
   React.useEffect(() => {
     // eslint-disable-next-line no-undef
-    $('.table-tooltip').attr('data-toggle', 'tooltip');
+    $('.table-tooltip').attr('data-bs-toggle', 'tooltip');
     // eslint-disable-next-line no-undef
     $(() => { $('.table-tooltip').tooltip({ placement: 'right' }); });
 

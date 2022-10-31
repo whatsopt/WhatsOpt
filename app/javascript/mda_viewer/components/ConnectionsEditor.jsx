@@ -31,7 +31,7 @@ class DisciplineSelector extends React.Component {
         </div>
         <select
           id={label}
-          className="custom-select"
+          className="form-select"
           value={selected}
           onChange={this.handleSelectChange}
         >
@@ -99,7 +99,7 @@ class VariableList extends React.PureComponent {
     let { vars } = this.props;
     const sorted = vars.sort(compare);
     vars = sorted.map((v) => {
-      const badgeKind = `badge ${(v.ioMode === 'in') ? 'badge-primary' : 'badge-secondary'}`;
+      const badgeKind = `badge ${(v.ioMode === 'in') ? 'bg-primary' : 'bg-secondary'}`;
       const klass = v.active ? 'btn m-1' : 'btn m-1 text-inactive';
       return (
         <button type="button" key={v.name} className={klass}>
@@ -166,7 +166,7 @@ class ConnectionsViewer extends React.PureComponent {
       <div>
         <div>
           {title}
-          <span className="badge badge-info ml-2">{count}</span>
+          <span className="badge bg-info ms-2">{count}</span>
         </div>
         <div>
           {connections}
@@ -219,7 +219,7 @@ class ConnectionsForm extends React.Component {
     // console.log('SELECTABLE', selectable);
     return (
       <form className="form" onSubmit={onConnectionCreate} noValidate>
-        <div className="form-group">
+        <div className="mb-3">
           <div htmlFor="typeahead-vars" className="sr-only">
             Name
           </div>
@@ -238,7 +238,7 @@ class ConnectionsForm extends React.Component {
             disabled={limited}
           />
         </div>
-        <div className="form-group">
+        <div className="mb-3">
           <button type="submit" className="btn btn-primary" disabled={isErroneous || limited}>Add</button>
         </div>
       </form>

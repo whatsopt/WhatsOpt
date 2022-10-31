@@ -480,7 +480,7 @@ class Runner extends React.Component {
     return (
       <div>
         <form className="button_to" method="get" action={this.api.url(urlOnClose)}>
-          <button className="btn float-right" type="submit">
+          <button className="btn float-end" type="submit">
             <i className="fa fa-times-circle" />
             {' '}
             Close
@@ -504,11 +504,11 @@ class Runner extends React.Component {
             onSubmit={this.handleRun}
             onChange={this.handleChange}
           >
-            <div className="form-group">
+            <div className="mb-3">
               <button type="submit" className="btn btn-primary" disabled={active}>Run</button>
               <button
                 type="button"
-                className="ml-1 btn btn-secondary"
+                className="ms-1 btn btn-secondary"
                 disabled={!active}
                 onClick={this.handleAbort}
               >
@@ -522,26 +522,26 @@ class Runner extends React.Component {
         <h2>Status</h2>
 
         <div className="editor-section">
-          <div className="btn-group ml-2" role="group">
+          <div className="btn-group ms-2" role="group">
             <button
               className={`${btnStatusClass} btn-primary`}
               style={{ width: '120px' }}
               type="button"
-              data-toggle="collapse"
-              data-target="#collapseListing"
+              data-bs-toggle="collapse"
+              data-bs-target="#collapseListing"
               aria-expanded="false"
             >
               {btnIcon}
-              <span className="ml-1">{status}</span>
+              <span className="ms-1">{status}</span>
             </button>
           </div>
-          <div className="btn-group ml-2" role="group">
+          <div className="btn-group ms-2" role="group">
             <strong>Started on</strong>
             :
             {' '}
             {startTime}
           </div>
-          <div className="btn-group ml-2" role="group">
+          <div className="btn-group ms-2" role="group">
             <strong>{(status === 'RUNNING') ? 'Elapsed' : 'Ended after'}</strong>
             :
             {' '}

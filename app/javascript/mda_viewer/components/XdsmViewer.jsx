@@ -9,7 +9,7 @@ class XdsmViewer extends React.Component {
   static _setTooltips() {
     // bootstrap tooltip for connections
     // eslint-disable-next-line no-undef
-    $('.ellipsized').attr('data-toggle', 'tooltip');
+    $('.ellipsized').attr('data-bs-toggle', 'tooltip');
     // eslint-disable-next-line no-undef
     $(() => { $('.ellipsized').tooltip({ placement: 'right' }); });
   }
