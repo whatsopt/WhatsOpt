@@ -86,22 +86,20 @@ $(function() {
   var relativeUrlRoot = document.getElementsByName('relative-url-root')[0].getAttribute('content');
   var opeEdit = opeEdit || {}
   var $modal = $('#editModal');
+  let $input=$("input[name='operation[name]']");
 
   $modal.on('show.bs.modal', function(e) {
     opeEdit.invoker = $(e.relatedTarget);
     opeEdit.id = opeEdit.invoker.data('ope-id');
     opeEdit.name = opeEdit.invoker.data('ope-name');
     opeEdit.apiKey = opeEdit.invoker.data('api-key');
-    $("input[name='operation[name]']").val(opeEdit.name);
-  });
-
-  $modal.on('shown.bs.modal', function() {
-    $("input[name='operation[name]']").focus();
+    $input.val(opeEdit.name);
+    $input.focus();
   });
 
   $('button[data-save="true"]').on('click', 
     function() {
-      var newName = $("input[name='operation[name]']").val();
+      var newName = $input.val();
       $.ajax({
         type: "PATCH",
         xhrFields: { withCredentials: true },
