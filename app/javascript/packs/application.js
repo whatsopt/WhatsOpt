@@ -1,3 +1,6 @@
+import $ from 'jquery';
+import '@popperjs/core';
+import 'bootstrap';
 import Rails from '@rails/ujs';
 import AnalysesIndex from '../application_views/analyses_index';
 import OperationsIndex from '../application_views/operations_index';
