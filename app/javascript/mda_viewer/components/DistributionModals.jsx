@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import validator from '@rjsf/validator-ajv8';
 import Form from '@rjsf/bootstrap-4';
 import update from 'immutability-helper';
 
@@ -15,7 +16,6 @@ const SCHEMA = {
       type: 'string',
       title: 'Distribution Kind',
       enum: [NORMAL, BETA, GAMMA, UNIFORM],
-      enumNames: [NORMAL, BETA, GAMMA, UNIFORM],
       default: NORMAL,
     },
   },
@@ -323,6 +323,7 @@ class DistributionModal extends React.Component {
                   schema={SCHEMA}
                   formData={formData}
                   onChange={this.handleChange}
+                  validator={validator}
                 >
                   <button type="button" className="d-none" />
                 </Form>

@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import update from 'immutability-helper';
+import validator from '@rjsf/validator-ajv8';
 import Form from '@rjsf/bootstrap-4';
 
 import Error from '../../utils/components/Error';
@@ -19,8 +20,7 @@ const UQ_SCHEMA = {
     kind: {
       type: 'string',
       title: 'Method',
-      enum: [OPENTURNS_PCE],
-      enumNames: ['Polynomial Chaos Expension'],
+      oneOf: [{ const: OPENTURNS_PCE, title: 'Polynomial Chaos Expension' }],
       default: SMT_KRIGING,
     },
   },
@@ -55,9 +55,12 @@ const OPTIM_SCHEMA = {
     kind: {
       type: 'string',
       title: 'Method',
-      enum: [SMT_KRIGING, SMT_KPLS, SMT_KPLSK, SMT_LS, SMT_QP],
-      enumNames: ['Kriging', 'KPLS (Kriging+PLS)', 'KPLSK (Kriging+PLS+KPLS initial guess)',
-        'Least-Squares Approximation', 'Quadratic Polynomial Approximation'],
+      oneOf: [
+        { const: SMT_KRIGING, title: 'Kriging' },
+        { const: SMT_KPLS, title: 'KPLS (Kriging+PLS)' },
+        { const: SMT_KPLSK, title: 'KPLSK (Kriging+PLS+KPLS initial guess)' },
+        { const: SMT_LS, title: 'Least-Squares Approximation' },
+        { const: SMT_QP, title: 'Quadratic Polynomial Approximation' }],
       default: SMT_KRIGING,
     },
   },
@@ -190,6 +193,7 @@ class MetaModelManager extends React.Component {
             formData={formData}
             onChange={this.handleChange}
             onSubmit={this.handleSubmit}
+            validator={validator}
           >
             <div>
               <button className="btn btn-primary" type="submit" ref={(btn) => { this.btnSubmit = btn; }}>Submit</button>
