@@ -6,6 +6,10 @@ import validator from '@rjsf/validator-ajv8';
 import Form from '@rjsf/bootstrap-4';
 import deepIsEqual from '../utils/compare';
 
+// Patch bootstrap 4 theme with bootstrap 5 select widget,
+// otherwise bootstrap 4 theme is compatible with Bootstrap 5
+import SelectWidget from '../utils/RjsfSelectWidgetBs5';
+
 class LogLine extends React.PureComponent {
   render() {
     const { line } = this.props;
@@ -60,13 +64,13 @@ const SCHEMA = {
         { const: 'runonce', title: 'RunOnce' },
         { const: 'smt_doe_lhs', title: 'SMT - LHS' },
         { const: 'smt_doe_egdoe', title: 'SMT - LHS on EGMDA' },
-        { const: 'scipy_optimizer_cobyla', title: 'Scipy - COBYLA'},
-        { const: 'scipy_optimizer_bfgs', title 'Scipy - BFGS'},
+        { const: 'scipy_optimizer_cobyla', title: 'Scipy - COBYLA' },
+        { const: 'scipy_optimizer_bfgs', title: 'Scipy - BFGS' },
         { const: 'scipy_optimizer_slsqp', title: 'Scipy - SLSQP' },
         { const: 'pyoptsparse_optimizer_conmin', title: 'pyOptSparse - CONMIN' },
-        //{ const: "pyoptsparse_optimizer_fsqp", title :"pyOptSparse - FSQP"},
+        // { const: "pyoptsparse_optimizer_fsqp", title :"pyOptSparse - FSQP"},
         { const: 'pyoptsparse_optimizer_slsqp', title: 'pyOptSparse - SLSQP' },
-        //{ const: "pyoptsparse_optimizer_psqp", title: "pyOptSparse - PSQP" },
+        // { const: "pyoptsparse_optimizer_psqp", title: "pyOptSparse - PSQP" },
         { const: 'pyoptsparse_optimizer_nsga2', title: 'pyOptSparse - NSGA2' },
         { const: 'pyoptsparse_optimizer_snopt', title: 'pyOptSparse - SNOPT' },
         { const: 'onerasego_optimizer_segomoe', title: 'Onera - SEGOMOE' },
@@ -229,7 +233,7 @@ const SCHEMA = {
                   default: OPTDEFAULTS.onerasego_optimizer_egmdo_optimizer,
                   oneOf: [
                     { const: 'cobyla', title: 'COBYLA' },
-                    { const: 'slsqp', title: 'SLSQP' }
+                    { const: 'slsqp', title: 'SLSQP' },
                   ],
                 },
               },
@@ -494,6 +498,7 @@ class Runner extends React.Component {
             uiSchema={UI_SCHEMA}
             onSubmit={this.handleRun}
             onChange={this.handleChange}
+            widgets={{ SelectWidget }}
             validator={validator}
           >
             <div className="mb-3">

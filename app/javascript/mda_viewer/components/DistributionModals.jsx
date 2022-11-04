@@ -4,6 +4,10 @@ import validator from '@rjsf/validator-ajv8';
 import Form from '@rjsf/bootstrap-4';
 import update from 'immutability-helper';
 
+// Patch bootstrap 4 theme with bootstrap 5 select widget,
+// otherwise bootstrap 4 theme is compatible with Bootstrap 5
+import SelectWidget from '../../utils/RjsfSelectWidgetBs5';
+
 const NORMAL = 'Normal';
 const BETA = 'Beta';
 const GAMMA = 'Gamma';
@@ -324,6 +328,7 @@ class DistributionModal extends React.Component {
                   formData={formData}
                   onChange={this.handleChange}
                   validator={validator}
+                  widgets={{ SelectWidget }}
                 >
                   <button type="button" className="d-none" />
                 </Form>
