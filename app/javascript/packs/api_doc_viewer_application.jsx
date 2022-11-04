@@ -1,5 +1,6 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
+
 import SwaggerApiDoc from 'api_doc_viewer';
 import WhatsOptApi from '../utils/WhatsOptApi';
 
@@ -14,5 +15,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const api = new WhatsOptApi(csrfToken, apiKey, relativeUrlRoot);
 
-  ReactDOM.render(<SwaggerApiDoc api={api} />, runnerElt[0]);
+  const root = createRoot(runnerElt[0]);
+  root.render(<SwaggerApiDoc api={api} />);
 });

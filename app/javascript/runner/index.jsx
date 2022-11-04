@@ -2,8 +2,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import update from 'immutability-helper';
+import validator from '@rjsf/validator-ajv8';
 import Form from '@rjsf/bootstrap-4';
 import deepIsEqual from '../utils/compare';
+
+// Patch bootstrap 4 theme with bootstrap 5 select widget,
+// otherwise bootstrap 4 theme is compatible with Bootstrap 5
+import SelectWidget from '../utils/RjsfSelectWidgetBs5';
 
 class LogLine extends React.PureComponent {
   render() {
@@ -55,35 +60,21 @@ const SCHEMA = {
     driver: {
       type: 'string',
       title: 'Driver',
-      enum: ['runonce',
-        'smt_doe_lhs',
-        'smt_doe_egdoe',
-        'scipy_optimizer_cobyla',
-        'scipy_optimizer_bfgs',
-        'scipy_optimizer_slsqp',
-        'pyoptsparse_optimizer_conmin',
-        // "pyoptsparse_optimizer_fsqp",
-        'pyoptsparse_optimizer_slsqp',
-        // "pyoptsparse_optimizer_psqp",
-        'pyoptsparse_optimizer_nsga2',
-        'pyoptsparse_optimizer_snopt',
-        'onerasego_optimizer_segomoe',
-        'onerasego_optimizer_egmdo',
-      ],
-      enumNames: ['RunOnce',
-        'SMT - LHS',
-        'SMT - LHS on EGMDA',
-        'Scipy - COBYLA',
-        'Scipy - BFGS',
-        'Scipy - SLSQP',
-        'pyOptSparse - CONMIN',
-        // "pyOptSparse - FSQP",
-        'pyOptSparse - SLSQP',
-        // "pyOptSparse - PSQP",
-        'pyOptSparse - NSGA2',
-        'pyOptSparse - SNOPT',
-        'Onera - SEGOMOE',
-        'Onera - SEGOMOE on EGMDA',
+      oneOf: [
+        { const: 'runonce', title: 'RunOnce' },
+        { const: 'smt_doe_lhs', title: 'SMT - LHS' },
+        { const: 'smt_doe_egdoe', title: 'SMT - LHS on EGMDA' },
+        { const: 'scipy_optimizer_cobyla', title: 'Scipy - COBYLA' },
+        { const: 'scipy_optimizer_bfgs', title: 'Scipy - BFGS' },
+        { const: 'scipy_optimizer_slsqp', title: 'Scipy - SLSQP' },
+        { const: 'pyoptsparse_optimizer_conmin', title: 'pyOptSparse - CONMIN' },
+        // { const: "pyoptsparse_optimizer_fsqp", title :"pyOptSparse - FSQP"},
+        { const: 'pyoptsparse_optimizer_slsqp', title: 'pyOptSparse - SLSQP' },
+        // { const: "pyoptsparse_optimizer_psqp", title: "pyOptSparse - PSQP" },
+        { const: 'pyoptsparse_optimizer_nsga2', title: 'pyOptSparse - NSGA2' },
+        { const: 'pyoptsparse_optimizer_snopt', title: 'pyOptSparse - SNOPT' },
+        { const: 'onerasego_optimizer_segomoe', title: 'Onera - SEGOMOE' },
+        { const: 'onerasego_optimizer_egmdo', title: 'Onera - SEGOMOE on EGMDA' },
       ],
       default: 'runonce',
     },
@@ -209,8 +200,10 @@ const SCHEMA = {
                   title: 'Internal optimizer used for enrichment step',
                   type: OPTTYPES.onerasego_optimizer_segomoe_optimizer,
                   default: OPTDEFAULTS.onerasego_optimizer_segomoe_optimizer,
-                  enum: ['cobyla', 'slsqp'],
-                  enumNames: ['COBYLA', 'SLSQP'],
+                  oneOf: [
+                    { const: 'cobyla', title: 'COBYLA' },
+                    { const: 'slsqp', slsqp: 'COBYLA' },
+                  ],
                 },
               },
             },
@@ -238,8 +231,10 @@ const SCHEMA = {
                   title: 'Internal optimizer used for enrichment step',
                   type: OPTTYPES.onerasego_optimizer_egmdo_optimizer,
                   default: OPTDEFAULTS.onerasego_optimizer_egmdo_optimizer,
-                  enum: ['cobyla', 'slsqp'],
-                  enumNames: ['COBYLA', 'SLSQP'],
+                  oneOf: [
+                    { const: 'cobyla', title: 'COBYLA' },
+                    { const: 'slsqp', title: 'SLSQP' },
+                  ],
                 },
               },
             },
@@ -503,6 +498,8 @@ class Runner extends React.Component {
             uiSchema={UI_SCHEMA}
             onSubmit={this.handleRun}
             onChange={this.handleChange}
+            widgets={{ SelectWidget }}
+            validator={validator}
           >
             <div className="mb-3">
               <button type="submit" className="btn btn-primary" disabled={active}>Run</button>

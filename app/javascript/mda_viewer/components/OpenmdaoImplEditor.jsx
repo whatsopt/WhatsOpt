@@ -1,11 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-// workaround to avoid warning in console
-// https://github.com/rjsf-team/react-jsonschema-form/issues/2648
-// import Form from '@rjsf/core';
-// instead of
+import validator from '@rjsf/validator-ajv8';
 import Form from '@rjsf/bootstrap-4';
+
+// Patch bootstrap 4 theme with bootstrap 5 select widget,
+// otherwise bootstrap 4 theme is compatible with Bootstrap 5
+import SelectWidget from '../../utils/RjsfSelectWidgetBs5';
 
 const SCHEMA_GENERAL = {
   type: 'object',
@@ -31,31 +32,18 @@ const SCHEMA_GENERAL = {
             optimization: {
               type: 'string',
               title: 'Optimization',
-              enum: [
-                'scipy_optimizer_cobyla',
-                'scipy_optimizer_bfgs',
-                'scipy_optimizer_slsqp',
-                'pyoptsparse_optimizer_conmin',
-                // "pyoptsparse_optimizer_fsqp",
-                'pyoptsparse_optimizer_slsqp',
-                // "pyoptsparse_optimizer_psqp",
-                'pyoptsparse_optimizer_nsga2',
-                'pyoptsparse_optimizer_snopt',
-                'onerasego_optimizer_segomoe',
-                'egobox_optimizer_egor',
-              ],
-              enumNames: [
-                'Scipy - COBYLA',
-                'Scipy - BFGS',
-                'Scipy - SLSQP',
-                'pyOptSparse - CONMIN',
-                // "pyOptSparse - FSQP",
-                'pyOptSparse - SLSQP',
-                // "pyOptSparse - PSQP",
-                'pyOptSparse - NSGA2',
-                'pyOptSparse - SNOPT',
-                'Onera - SEGOMOE',
-                'Egobox - EGOR'
+              oneOf: [
+                { const: 'scipy_optimizer_cobyla', title: 'Scipy - COBYLA' },
+                { const: 'scipy_optimizer_bfgs', title: 'Scipy - BFGS' },
+                { const: 'scipy_optimizer_slsqp', title: 'Scipy - SLSQP' },
+                { const: 'pyoptsparse_optimizer_conmin', title: 'pyOptSparse - CONMIN' },
+                // { const: "pyoptsparse_optimizer_fsqp", title: "pyOptSparse - FSQP"},
+                { const: 'pyoptsparse_optimizer_slsqp', title: 'pyOptSparse - SLSQP' },
+                // { const: "pyoptsparse_optimizer_psqp", title: "pyOptSparse - PSQP" },
+                { const: 'pyoptsparse_optimizer_nsga2', title: 'pyOptSparse - NSGA2' },
+                { const: 'pyoptsparse_optimizer_snopt', title: 'pyOptSparse - SNOPT' },
+                { const: 'onerasego_optimizer_segomoe', title: 'Onera - SEGOMOE' },
+                { const: 'egobox_optimizer_egor', title: 'Egobox - EGOR' },
               ],
               default: 'scipy_optimizer_slsqp',
             },
@@ -262,6 +250,8 @@ class OpenmdaoImplEditor extends React.Component {
               uiSchema={uiSchema}
               onChange={(data) => this.handleChange(data)}
               onSubmit={(data) => this.handleSubmit(data)}
+              validator={validator}
+              widgets={{ SelectWidget }}
               liveValidate
             >
               <div>
@@ -277,6 +267,8 @@ class OpenmdaoImplEditor extends React.Component {
               formData={formData}
               onChange={(data) => this.handleChange(data)}
               onSubmit={(data) => this.handleSubmit(data)}
+              validator={validator}
+              widgets={{ SelectWidget }}
               liveValidate
             >
               <div>
@@ -291,6 +283,8 @@ class OpenmdaoImplEditor extends React.Component {
               formData={formData}
               onChange={(data) => this.handleChange(data)}
               onSubmit={(data) => this.handleSubmit(data)}
+              validator={validator}
+              widgets={{ SelectWidget }}
               liveValidate
             >
               <div className="mb-3">
@@ -305,6 +299,8 @@ class OpenmdaoImplEditor extends React.Component {
               formData={formData}
               onChange={(data) => this.handleChange(data)}
               onSubmit={(data) => this.handleSubmit(data)}
+              validator={validator}
+              widgets={{ SelectWidget }}
               liveValidate
             >
               <div className="mb-3">
