@@ -1,5 +1,6 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
+
 import Runner from 'runner';
 import WhatsOptApi from '../utils/WhatsOptApi';
 
@@ -16,5 +17,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const api = new WhatsOptApi(csrfToken, apiKey, relativeUrlRoot);
 
-  ReactDOM.render(<Runner mda={mda} ope={ope} api={api} wsServer={wsServer} />, runnerElt[0]);
+  const root = createRoot(runnerElt[0]);
+  root.render(<Runner mda={mda} ope={ope} api={api} wsServer={wsServer} />);
 });

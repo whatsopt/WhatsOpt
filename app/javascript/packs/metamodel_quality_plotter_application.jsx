@@ -1,5 +1,6 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
+
 import MetaModelQualityPlotter from 'metamodel_quality_plotter';
 import WhatsOptApi from '../utils/WhatsOptApi';
 
@@ -16,9 +17,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const apiKey = plotterElt.data('api-key');
 
   const api = new WhatsOptApi(csrfToken, apiKey, relativeUrlRoot);
-  ReactDOM.render(<MetaModelQualityPlotter
+
+  const root = createRoot(plotterElt[0]);
+  root.render(<MetaModelQualityPlotter
     mdaName={mdaName}
     api={api}
     metaModelId={metaModelId}
-  />, plotterElt[0]);
+  />);
 });

@@ -1,5 +1,6 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
+
 import SensitivityPlotter from 'sensitivity_plotter';
 import WhatsOptApi from '../utils/WhatsOptApi';
 
@@ -14,5 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const apiKey = plotterElt.data('api-key');
 
   const api = new WhatsOptApi(csrfToken, apiKey, relativeUrlRoot);
-  ReactDOM.render(<SensitivityPlotter mda={mda} ope={ope} api={api} />, plotterElt[0]);
+
+  const root = createRoot(plotterElt[0]);
+  root.render(<SensitivityPlotter mda={mda} ope={ope} api={api} />);
 });

@@ -1,5 +1,6 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
+
 import MdaViewer from 'mda_viewer';
 import '@rails/actiontext';
 
@@ -20,12 +21,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const api = new WhatsOptApi(csrfToken, apiKey, relativeUrlRoot, mda.updated_at);
 
-  ReactDOM.render(<MdaViewer
+  const root = createRoot(mdaViewerElt[0]);
+  root.render(<MdaViewer
     mda={mda}
     isEditing={isEditing}
     api={api}
     members={members}
     coOwners={coOwners}
     currentUser={currentUser}
-  />, mdaViewerElt[0]);
+  />);
 });

@@ -1,5 +1,6 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
+
 import Plotter from 'plotter';
 import WhatsOptApi from '../utils/WhatsOptApi';
 
@@ -15,5 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const uqMode = plotterElt.data('uq-mode');
 
   const api = new WhatsOptApi(csrfToken, apiKey, relativeUrlRoot);
-  ReactDOM.render(<Plotter mda={mda} ope={ope} api={api} uqMode={uqMode} />, plotterElt[0]);
+
+  const root = createRoot(plotterElt[0]);
+  root.render(<Plotter mda={mda} ope={ope} api={api} uqMode={uqMode} />);
 });
