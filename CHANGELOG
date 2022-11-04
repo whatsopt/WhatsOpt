@@ -1,12 +1,12 @@
 <h1>CHANGELOG</h1>
 
-<h3>1.25.0 (unreleased)</h3>
+<h3>1.25.0 (04/11/2022)</h3>
 <ul>
   <li>Fix optimization configuration retrieval from REST API</li>
   <li>Add <a href="https://pypi.org/project/egobox/" target="_blank">Egor</a> optimizer as available optimizer for
-    run_mdo.py script</li>
-  <li>Tech: Upgrade ruby gems dependencies (among them rails 7.0.4)</li>
-  <li>Tech: Upgrade frontend to bootstrap v5</li>
+    run_mdo.py and run_egmdo.py scripts.</li>
+  <li>Tech: Upgrade backend ruby gems dependenciesi: Rails 7.0.4, manage js with webpack</li>
+  <li>Tech: Upgrade frontend: Bootstrap 5, React 18, Rjsf 5</li>
 </ul>
 
 <h3>1.24.1 (06/09/2022)</h3>
