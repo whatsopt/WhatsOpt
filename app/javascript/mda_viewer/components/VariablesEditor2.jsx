@@ -21,6 +21,7 @@ function Table({
 }) {
   const [data, setData] = React.useState(() => [...defaultData]);
   const [sorting, setSorting] = React.useState([]);
+  const [globalFilter, setGlobalFilter] = React.useState('');
 
   const columnVisibility = {};
   if (!isEditing) {
@@ -62,8 +63,10 @@ function Table({
     },
     state: {
       sorting,
+      globalFilter,
     },
     onSortingChange: setSorting,
+    onGlobalFilterChange: setGlobalFilter,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -82,67 +85,79 @@ function Table({
   const { pageSize } = table.getState().pagination;
 
   return (
-    <div className="row">
-      <div className="col-12">
-        <table className="connections table table-striped table-sm table-hover col" {...tableProps}>
-          <thead>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <th key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : (
-                        <div
-                          {...{
-                            className: header.column.getCanSort()
-                              ? 'cursor-pointer select-none'
-                              : '',
-                            onClick: header.column.getToggleSortingHandler(),
-                          }}
-                        >
-                          {flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
-                          {{
-                            asc: ' 🔼',
-                            desc: ' 🔽',
-                          }[header.column.getIsSorted()] || null}
-                        </div>
-                      )}
-                  </th>
-                ))}
-              </tr>
-            ))}
-          </thead>
-          <tbody>
-            {table.getRowModel().rows.map((row) => (
-              <tr key={row.id}>
-                {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+    <div className="container-fluid">
+
       <div className="row">
+        <div className="editor-section row">
+          <div className="col-4">
+            <VariablesGlobalFilter
+              globalFilteredRows={table.getFilteredRowModel().rows}
+              globalFilter={globalFilter}
+              setGlobalFilter={setGlobalFilter}
+            />
+          </div>
+        </div>
         <div className="col-12">
-          <VariablesPagination
-            canPreviousPage={canPreviousPage}
-            canNextPage={canNextPage}
-            pageOptions={pageOptions}
-            pageCount={pageCount}
-            gotoPage={gotoPage}
-            nextPage={nextPage}
-            previousPage={previousPage}
-            setPageSize={setPageSize}
-            pageIndex={pageIndex}
-            pageSize={pageSize}
-          />
+          <table className="connections table table-striped table-sm table-hover col" {...tableProps}>
+            <thead>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <tr key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <th key={header.id}>
+                      {header.isPlaceholder
+                        ? null
+                        : (
+                          <div
+                            {...{
+                              className: header.column.getCanSort()
+                                ? 'cursor-pointer select-none'
+                                : '',
+                              onClick: header.column.getToggleSortingHandler(),
+                            }}
+                          >
+                            {flexRender(
+                              header.column.columnDef.header,
+                              header.getContext(),
+                            )}
+                            {{
+                              asc: ' 🔼',
+                              desc: ' 🔽',
+                            }[header.column.getIsSorted()] || null}
+                          </div>
+                        )}
+                    </th>
+                  ))}
+                </tr>
+              ))}
+            </thead>
+            <tbody>
+              {table.getRowModel().rows.map((row) => (
+                <tr key={row.id}>
+                  {row.getVisibleCells().map((cell) => (
+                    <td key={cell.id}>
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div className="row">
+          <div className="col-12">
+            <VariablesPagination
+              canPreviousPage={canPreviousPage}
+              canNextPage={canNextPage}
+              pageOptions={pageOptions}
+              pageCount={pageCount}
+              gotoPage={gotoPage}
+              nextPage={nextPage}
+              previousPage={previousPage}
+              setPageSize={setPageSize}
+              pageIndex={pageIndex}
+              pageSize={pageSize}
+            />
+          </div>
         </div>
       </div>
     </div>
