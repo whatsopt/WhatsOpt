@@ -1,14 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
 import {
   createColumnHelper,
   flexRender,
   getCoreRowModel,
   getSortedRowModel,
-  SortingState,
+  getFilteredRowModel,
+  getPaginationRowModel,
   useReactTable,
 } from '@tanstack/react-table';
+
+import { RIEInput, RIESelect } from './riek/src';
+import VariablesPagination from './VariablesPagination';
+import VariablesGlobalFilter from './VariablesGlobalFilter';
 
 /* eslint-disable react/jsx-props-no-spreading */
 function Table({
@@ -62,7 +66,20 @@ function Table({
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
   });
+
+  const canPreviousPage = table.getCanPreviousPage();
+  const canNextPage = table.getCanNextPage();
+  const pageCount = table.getPageCount();
+  const pageOptions = table.getPageOptions();
+  const gotoPage = table.setPageIndex;
+  const { nextPage } = table;
+  const { previousPage } = table;
+  const { setPageSize } = table;
+  const { pageIndex } = table.getState().pagination;
+  const { pageSize } = table.getState().pagination;
 
   return (
     <div className="row">
@@ -111,6 +128,22 @@ function Table({
             ))}
           </tbody>
         </table>
+      </div>
+      <div className="row">
+        <div className="col-12">
+          <VariablesPagination
+            canPreviousPage={canPreviousPage}
+            canNextPage={canNextPage}
+            pageOptions={pageOptions}
+            pageCount={pageCount}
+            gotoPage={gotoPage}
+            nextPage={nextPage}
+            previousPage={previousPage}
+            setPageSize={setPageSize}
+            pageIndex={pageIndex}
+            pageSize={pageSize}
+          />
+        </div>
       </div>
     </div>
   );
