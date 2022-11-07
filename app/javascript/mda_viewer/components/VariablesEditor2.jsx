@@ -55,7 +55,7 @@ function _computeTypeSelection(conn) {
 function CheckButtonCell({
   cell,
   row: { index },
-  table: { options: { data: connections, meta: { limited } } },
+  table: { options: { data: connections, meta: { limited, onConnectionChange } } },
 }) {
   const isChecked = connections[index].active;
   return (
@@ -293,13 +293,11 @@ const defaultColumn = {
 
 /* eslint-disable react/jsx-props-no-spreading */
 function Table({
-  columns, data: defaultData,
+  columns, data,
   onConnectionChange, isEditing, limited, useScaling,
 }) {
-  const [data, setData] = React.useState(() => [...defaultData]);
   const [sorting, setSorting] = React.useState([]);
   const [globalFilter, setGlobalFilter] = React.useState('');
-  const [editing, setEditing] = React.useState(isEditing);
 
   const cellToFocus = React.useRef({ index: null, id: null });
 
