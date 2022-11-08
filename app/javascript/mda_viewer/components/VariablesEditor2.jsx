@@ -74,16 +74,20 @@ function CheckButtonCell({
 
 CheckButtonCell.propTypes = {
   cell: PropTypes.shape({
-    value: PropTypes.bool.isRequired,
+    getValue: PropTypes.func.isRequired,
   }).isRequired,
   row: PropTypes.shape({
     index: PropTypes.number.isRequired,
   }).isRequired,
-  data: PropTypes.array.isRequired,
-  onConnectionChange: PropTypes.func.isRequired,
-  limited: PropTypes.bool.isRequired,
+  table: PropTypes.object.isRequired,
 };
 
+// A name for distributions: N(0, 1), U(-10, 10)
+function _uqLabelOf(uq) {
+  const { kind, options_attributes } = uq;
+  const options = options_attributes.map((opt) => opt.value);
+  return `${kind[0]}(${options.join(', ')})`;
+}
 function ReadonlyCell({
   cell,
   row: { index },
@@ -93,6 +97,12 @@ function ReadonlyCell({
   let textStyle = CELL_CLASSNAME;
   textStyle += connections[index].active ? '' : ' text-inactive';
   let info = cell.getValue();
+
+  // Case of the UQ column: display a distribution name
+  const { uq } = connections[index];
+  info = uq.length > 0 ? _uqLabelOf(uq[0]) : info;
+  info = uq.length > 1 ? `[${info}, ...]` : info;
+
   if (id === 'role') {
     const selectOptions = _computeRoleSelection(connections[index]);
     for (let i = 0; i < selectOptions.length; i += 1) {
@@ -125,14 +135,8 @@ ReadonlyCell.propTypes = {
   cell: PropTypes.object.isRequired,
   row: PropTypes.object.isRequired,
   column: PropTypes.object.isRequired,
-  data: PropTypes.array.isRequired,
+  table: PropTypes.object.isRequired,
 };
-
-function _uqLabelOf(uq) {
-  const { kind, options_attributes } = uq;
-  const options = options_attributes.map((opt) => opt.value);
-  return `${kind[0]}(${options.join(', ')})`;
-}
 
 function ButtonCell({
   cell,
@@ -171,11 +175,17 @@ function ButtonCell({
     }
   }
 
-  cell.getValue = () => label;
   return ReadonlyCell({
     cell, row, column, table,
   });
 }
+
+ButtonCell.propTypes = {
+  cell: PropTypes.object.isRequired,
+  row: PropTypes.object.isRequired,
+  column: PropTypes.object.isRequired,
+  table: PropTypes.object.isRequired,
+};
 
 function EditableCell({
   cell,
@@ -285,6 +295,13 @@ function EditableCell({
     cell, row, column, table,
   });
 }
+
+EditableCell.propTypes = {
+  cell: PropTypes.object.isRequired,
+  row: PropTypes.object.isRequired,
+  column: PropTypes.object.isRequired,
+  table: PropTypes.object.isRequired,
+};
 
 // Set our editable cell renderer as the default Cell renderer
 const defaultColumn = {
@@ -397,6 +414,7 @@ function Table({
                         {header.isPlaceholder
                           ? null
                           : (
+                            // eslint-disable-next-line jsx-a11y/click-events-have-key-events
                             <div
                               {...{
                                 className: header.column.getCanSort()
