@@ -98,11 +98,12 @@ function ReadonlyCell({
   textStyle += connections[index].active ? '' : ' text-inactive';
   let info = cell.getValue();
 
-  // Case of the UQ column: display a distribution name
-  const { uq } = connections[index];
-  info = uq.length > 0 ? _uqLabelOf(uq[0]) : info;
-  info = uq.length > 1 ? `[${info}, ...]` : info;
-
+  if (id === 'uq') {
+    // Case of the UQ column: display a distribution name
+    const { uq } = connections[index];
+    info = uq.length > 0 ? _uqLabelOf(uq[0]) : info;
+    info = uq.length > 1 ? `[${info}, ...]` : info;
+  }
   if (id === 'role') {
     const selectOptions = _computeRoleSelection(connections[index]);
     for (let i = 0; i < selectOptions.length; i += 1) {
