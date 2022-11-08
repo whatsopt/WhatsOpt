@@ -477,6 +477,7 @@ function VariablesEditor(props) {
     columnHelper.accessor('active', {
       header: () => '#',
       cell: (info) => CheckButtonCell(info),
+      enableGlobalFilter: false,
     }),
     columnHelper.accessor('from', {
       header: () => 'From',
@@ -502,25 +503,32 @@ function VariablesEditor(props) {
     }),
     columnHelper.accessor('init', {
       header: () => 'Init',
+      enableGlobalFilter: false,
     }),
     columnHelper.accessor('lower', {
       header: () => 'Lower',
+      enableGlobalFilter: false,
     }),
     columnHelper.accessor('upper', {
       header: () => 'Upper',
+      enableGlobalFilter: false,
     }),
     columnHelper.accessor('uq', {
       header: () => 'UQ',
       cell: (info) => ButtonCell(info),
+      enableGlobalFilter: false,
     }),
     columnHelper.accessor('ref', {
       header: () => 'Ref',
+      enableGlobalFilter: false,
     }),
     columnHelper.accessor('ref0', {
       header: () => 'Ref0',
+      enableGlobalFilter: false,
     }),
     columnHelper.accessor('res_ref', {
       header: () => 'Res.Ref',
+      enableGlobalFilter: false,
     }),
   ];
 
