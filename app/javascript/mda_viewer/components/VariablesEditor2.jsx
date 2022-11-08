@@ -9,7 +9,7 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-
+import { Tooltip } from 'bootstrap';
 import { RIEInput, RIESelect } from './riek/src';
 import VariablesPagination from './VariablesPagination';
 import VariablesGlobalFilter from './VariablesGlobalFilter';
@@ -125,7 +125,7 @@ function ReadonlyCell({
     const title = connections[index].desc;
     if (title) {
       textStyle += ' table-tooltip';
-      return (<span className={textStyle} title={title} data-original-title={title}>{info}</span>);
+      return (<span className={textStyle} title={title} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title={title}>{info}</span>);
     }
   }
   return (<span className={textStyle}>{info}</span>);
@@ -549,6 +549,12 @@ function VariablesEditor(props) {
       enableGlobalFilter: false,
     }),
   ];
+
+  React.useEffect(() => {
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    console.log(`tooltipTriggerList size= ${tooltipTriggerList}`);
+    [...tooltipTriggerList].map((tooltipTriggerEl) => new Tooltip(tooltipTriggerEl));
+  }, []);
 
   return (
     <Table
