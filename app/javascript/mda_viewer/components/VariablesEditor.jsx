@@ -1,8 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
-  useTable, useSortBy, usePagination, useGlobalFilter,
-} from 'react-table';
+  createColumnHelper,
+  flexRender,
+  getCoreRowModel,
+  getSortedRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  useReactTable,
+} from '@tanstack/react-table';
+import { Tooltip } from 'bootstrap';
 import { RIEInput, RIESelect } from './riek/src';
 import VariablesPagination from './VariablesPagination';
 import VariablesGlobalFilter from './VariablesGlobalFilter';
@@ -46,20 +53,20 @@ function _computeTypeSelection(conn) {
 }
 
 function CheckButtonCell({
-  cell: { value },
+  cell,
   row: { index },
-  data: connections,
-  onConnectionChange,
-  limited,
+  table: { options: { data: connections, meta: { limited, onConnectionChange } } },
 }) {
   const isChecked = connections[index].active;
   return (
     <input
       type="checkbox"
-      value={value}
+      value={cell.getValue()}
       checked={isChecked}
-      onChange={() => onConnectionChange(connections[index].id,
-        { active: !isChecked })}
+      onChange={() => onConnectionChange(
+        connections[index].id,
+        { active: !isChecked },
+      )}
       disabled={limited}
     />
   );
@@ -67,25 +74,35 @@ function CheckButtonCell({
 
 CheckButtonCell.propTypes = {
   cell: PropTypes.shape({
-    value: PropTypes.bool.isRequired,
+    getValue: PropTypes.func.isRequired,
   }).isRequired,
   row: PropTypes.shape({
     index: PropTypes.number.isRequired,
   }).isRequired,
-  data: PropTypes.array.isRequired,
-  onConnectionChange: PropTypes.func.isRequired,
-  limited: PropTypes.bool.isRequired,
+  table: PropTypes.object.isRequired,
 };
 
+// A name for distributions: N(0, 1), U(-10, 10)
+function _uqLabelOf(uq) {
+  const { kind, options_attributes } = uq;
+  const options = options_attributes.map((opt) => opt.value);
+  return `${kind[0]}(${options.join(', ')})`;
+}
 function ReadonlyCell({
-  cell: { value },
+  cell,
   row: { index },
   column: { id },
-  data: connections,
+  table: { options: { data: connections } },
 }) {
   let textStyle = CELL_CLASSNAME;
   textStyle += connections[index].active ? '' : ' text-inactive';
-  let info = value;
+  let info = cell.getValue();
+
+  // Case of the UQ column: display a distribution name
+  const { uq } = connections[index];
+  info = uq.length > 0 ? _uqLabelOf(uq[0]) : info;
+  info = uq.length > 1 ? `[${info}, ...]` : info;
+
   if (id === 'role') {
     const selectOptions = _computeRoleSelection(connections[index]);
     for (let i = 0; i < selectOptions.length; i += 1) {
@@ -108,7 +125,7 @@ function ReadonlyCell({
     const title = connections[index].desc;
     if (title) {
       textStyle += ' table-tooltip';
-      return (<span className={textStyle} title={title} data-original-title={title}>{info}</span>);
+      return (<span className={textStyle} title={title} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title={title}>{info}</span>);
     }
   }
   return (<span className={textStyle}>{info}</span>);
@@ -118,23 +135,16 @@ ReadonlyCell.propTypes = {
   cell: PropTypes.object.isRequired,
   row: PropTypes.object.isRequired,
   column: PropTypes.object.isRequired,
-  data: PropTypes.array.isRequired,
+  table: PropTypes.object.isRequired,
 };
 
-function _uqLabelOf(uq) {
-  const { kind, options_attributes } = uq;
-  const options = options_attributes.map((opt) => opt.value);
-  return `${kind[0]}(${options.join(', ')})`;
-}
-
 function ButtonCell({
-  /* cell, */
+  cell,
   row,
   column,
-  data: connections,
-  onConnectionChange,
-  isEditing,
+  table,
 }) {
+  const { options: { data: connections, meta: { isEditing } } } = table;
   const { index } = row;
   const {
     name, role, shape, uq,
@@ -164,22 +174,33 @@ function ButtonCell({
       );
     }
   }
+
   return ReadonlyCell({
-    cell: { value: label }, row, column, data: connections, onConnectionChange, isEditing,
+    cell, row, column, table,
   });
 }
+
+ButtonCell.propTypes = {
+  cell: PropTypes.object.isRequired,
+  row: PropTypes.object.isRequired,
+  column: PropTypes.object.isRequired,
+  table: PropTypes.object.isRequired,
+};
 
 function EditableCell({
   cell,
   row,
   column,
-  data: connections,
-  onConnectionChange,
-  isEditing,
-  limited,
-  cellToFocus,
+  table,
 }) {
-  const { value } = cell;
+  const {
+    options: {
+      data: connections, meta: {
+        onConnectionChange, isEditing, limited, cellToFocus,
+      },
+    },
+  } = table;
+  const value = cell.getValue();
   const { index } = row;
   const { id } = column;
   if (isEditing && !(limited && id === 'type') && connections[index].active) {
@@ -271,72 +292,43 @@ function EditableCell({
     }
   }
   return ReadonlyCell({
-    cell, row, column, data: connections, onConnectionChange, isEditing,
+    cell, row, column, table,
   });
 }
 
+EditableCell.propTypes = {
+  cell: PropTypes.object.isRequired,
+  row: PropTypes.object.isRequired,
+  column: PropTypes.object.isRequired,
+  table: PropTypes.object.isRequired,
+};
+
 // Set our editable cell renderer as the default Cell renderer
 const defaultColumn = {
-  Cell: EditableCell,
+  cell: (info) => EditableCell(info),
 };
 
 /* eslint-disable react/jsx-props-no-spreading */
-// Be sure to pass our updateMyData and the skipPageReset option
 function Table({
   columns, data,
   onConnectionChange, isEditing, limited, useScaling,
 }) {
-  // For this example, we're using pagination to illustrate how to stop
-  // the current page from resetting when our data changes
-  // Otherwise, nothing is different here.
+  const [sorting, setSorting] = React.useState([]);
+  const [globalFilter, setGlobalFilter] = React.useState('');
+
   const cellToFocus = React.useRef({ index: null, id: null });
 
-  const hiddenColumns = [];
+  const columnVisibility = {};
   if (!isEditing) {
-    hiddenColumns.push('active', 'desc', 'type');
+    columnVisibility.active = false;
+    columnVisibility.desc = false;
+    columnVisibility.type = false;
   }
   if (!useScaling) {
-    hiddenColumns.push('ref', 'ref0', 'res_ref');
+    columnVisibility.ref = false;
+    columnVisibility.ref0 = false;
+    columnVisibility.res_ref = false;
   }
-
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    prepareRow,
-    page, // instead of rows,
-    preGlobalFilteredRows,
-    globalFilteredRows,
-    setGlobalFilter,
-
-    // The rest of these things are super handy, too ;)
-    canPreviousPage,
-    canNextPage,
-    pageOptions,
-    pageCount,
-    gotoPage,
-    nextPage,
-    previousPage,
-    setPageSize,
-    state: { pageIndex, pageSize, globalFilter },
-  } = useTable(
-    {
-      columns,
-      data,
-      defaultColumn,
-      onConnectionChange,
-      isEditing,
-      limited,
-      useScaling,
-      cellToFocus,
-      initialState: { hiddenColumns },
-      autoResetPage: false,
-      autoResetSortBy: false,
-    },
-    useGlobalFilter,
-    useSortBy,
-    usePagination,
-  );
 
   //            From, Name, Role, Shape, Units, Init, Lower, Upper, UQ
   let colWidths = ['10', '30', '10', '5', '5', '10', '10', '10', '10'];
@@ -356,75 +348,125 @@ function Table({
 
   const tableProps = {
     style: { tableLayout: table_layout },
-    ...getTableProps(),
   };
+
+  const table = useReactTable({
+    data,
+    columns,
+    defaultColumn,
+    initialState: {
+      columnVisibility,
+    },
+    state: {
+      sorting,
+      globalFilter,
+    },
+    meta: {
+      isEditing,
+      limited,
+      useScaling,
+      onConnectionChange,
+      cellToFocus,
+    },
+    onSortingChange: setSorting,
+    onGlobalFilterChange: setGlobalFilter,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+  });
+
+  const canPreviousPage = table.getCanPreviousPage();
+  const canNextPage = table.getCanNextPage();
+  const pageCount = table.getPageCount();
+  const pageOptions = table.getPageOptions();
+  const gotoPage = table.setPageIndex;
+  const { nextPage } = table;
+  const { previousPage } = table;
+  const { setPageSize } = table;
+  const { pageIndex } = table.getState().pagination;
+  const { pageSize } = table.getState().pagination;
 
   return (
     <div className="container-fluid">
-      <div className="editor-section row">
-        <div className="col-4">
-          <VariablesGlobalFilter
-            globalFilteredRows={globalFilteredRows}
-            globalFilter={globalFilter}
-            setGlobalFilter={setGlobalFilter}
-          />
-        </div>
-      </div>
+
       <div className="row">
+        <div className="editor-section row">
+          <div className="col-4">
+            <VariablesGlobalFilter
+              globalFilteredRows={table.getFilteredRowModel().rows}
+              globalFilter={globalFilter}
+              setGlobalFilter={setGlobalFilter}
+            />
+          </div>
+        </div>
         <div className="col-12">
           <table className="connections table table-striped table-sm table-hover col" {...tableProps}>
             <thead>
-              {headerGroups.map((headerGroup) => (
-                <tr {...headerGroup.getHeaderGroupProps()}>
-                  {headerGroup.headers.map((column, i) => {
-                    const cprops = {
+              {table.getHeaderGroups().map((headerGroup) => (
+                <tr key={headerGroup.id}>
+                  {headerGroup.headers.map((header, i) => {
+                    const hprops = {
                       width: `${colWidths[i]}% `,
-                      ...column.getHeaderProps(column.getSortByToggleProps()),
                     };
-                    const sortSymbol = (column.isSortedDesc ? ' 🔽' : ' 🔼');
                     return (
-                      <th {...cprops}>
-                        {column.render('Header')}
-                        <span>
-                          {column.isSorted
-                            ? sortSymbol
-                            : ''}
-                        </span>
+                      <th key={header.id} {...hprops}>
+                        {header.isPlaceholder
+                          ? null
+                          : (
+                            // eslint-disable-next-line jsx-a11y/click-events-have-key-events
+                            <div
+                              {...{
+                                className: header.column.getCanSort()
+                                  ? 'cursor-pointer select-none'
+                                  : '',
+                                onClick: header.column.getToggleSortingHandler(),
+                              }}
+                            >
+                              {flexRender(
+                                header.column.columnDef.header,
+                                header.getContext(),
+                              )}
+                              {{
+                                asc: ' 🔼',
+                                desc: ' 🔽',
+                              }[header.column.getIsSorted()] || null}
+                            </div>
+                          )}
                       </th>
                     );
                   })}
                 </tr>
               ))}
             </thead>
-            <tbody {...getTableBodyProps()}>
-              {page.map( // {rows.map(
-                (row /* i */) => {
-                  prepareRow(row);
-                  return (
-                    <tr {...row.getRowProps()}>
-                      {row.cells.map((cell) => <td {...cell.getCellProps()}>{cell.render('Cell')}</td>)}
-                    </tr>
-                  );
-                },
-              )}
+            <tbody>
+              {table.getRowModel().rows.map((row) => (
+                <tr key={row.id}>
+                  {row.getVisibleCells().map((cell) => (
+                    <td key={cell.id}>
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </td>
+                  ))}
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
-      </div>
-      <div className="row">
-        <div className="col-12">
-          <VariablesPagination
-            canPreviousPage={canPreviousPage}
-            canNextPage={canNextPage}
-            pageOptions={pageOptions}
-            pageCount={pageCount}
-            gotoPage={gotoPage}
-            nextPage={nextPage}
-            previousPage={previousPage}
-            setPageSize={setPageSize}
-            pageIndex={pageIndex}
-            pageSize={pageSize}
-          />
+        <div className="row">
+          <div className="col-12">
+            <VariablesPagination
+              canPreviousPage={canPreviousPage}
+              canNextPage={canNextPage}
+              pageOptions={pageOptions}
+              pageCount={pageCount}
+              gotoPage={gotoPage}
+              nextPage={nextPage}
+              previousPage={previousPage}
+              setPageSize={setPageSize}
+              pageIndex={pageIndex}
+              pageSize={pageSize}
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -441,92 +483,78 @@ Table.propTypes = {
 };
 
 function VariablesEditor(props) {
-  React.useEffect(() => {
-    // eslint-disable-next-line no-undef
-    $('.table-tooltip').attr('data-bs-toggle', 'tooltip');
-    // eslint-disable-next-line no-undef
-    $(() => { $('.table-tooltip').tooltip({ placement: 'right' }); });
-
-    return () => {
-      // eslint-disable-next-line no-undef
-      $('.table-tooltip').tooltip('dispose');
-    };
-  }, []);
-
   const {
     db, filter, isEditing, limited, useScaling, onConnectionChange,
   } = props;
 
   const connections = db.computeConnections(filter);
 
-  const columns = React.useMemo(
-    () => [
-      {
-        Header: '#',
-        accessor: 'active',
-        Cell: CheckButtonCell,
-      },
-      {
-        Header: 'From',
-        accessor: 'from',
-        Cell: ReadonlyCell,
-      },
-      {
-        Header: 'Name',
-        accessor: 'name',
-      },
-      {
-        Header: 'Role',
-        accessor: 'role',
-      },
-      {
-        Header: 'Description',
-        accessor: 'desc',
-      },
-      {
-        Header: 'Type',
-        accessor: 'type',
-      },
-      {
-        Header: 'Shape',
-        accessor: 'shape',
-      },
-      {
-        Header: 'Units',
-        accessor: 'units',
-      },
-      {
-        Header: 'Init',
-        accessor: 'init',
-      },
-      {
-        Header: 'Lower',
-        accessor: 'lower',
-      },
-      {
-        Header: 'Upper',
-        accessor: 'upper',
-      },
-      {
-        Header: 'UQ',
-        accessor: (/* row */) => '',
-        Cell: ButtonCell,
-      },
-      {
-        Header: 'Ref',
-        accessor: 'ref',
-      },
-      {
-        Header: 'Ref0',
-        accessor: 'ref0',
-      },
-      {
-        Header: 'Res.Ref',
-        accessor: 'res_ref',
-      },
-    ],
-    [isEditing, limited, useScaling],
-  );
+  const columnHelper = createColumnHelper();
+
+  const columns = [
+    columnHelper.accessor('active', {
+      header: () => '#',
+      cell: (info) => CheckButtonCell(info),
+      enableGlobalFilter: false,
+    }),
+    columnHelper.accessor('from', {
+      header: () => 'From',
+      cell: (info) => ReadonlyCell(info),
+    }),
+    columnHelper.accessor('name', {
+      header: () => 'Name',
+    }),
+    columnHelper.accessor('role', {
+      header: () => 'Role',
+    }),
+    columnHelper.accessor('desc', {
+      header: () => 'Description',
+    }),
+    columnHelper.accessor('type', {
+      header: () => 'Type',
+    }),
+    columnHelper.accessor('shape', {
+      header: () => 'Shape',
+    }),
+    columnHelper.accessor('units', {
+      header: () => 'Units',
+    }),
+    columnHelper.accessor('init', {
+      header: () => 'Init',
+      enableGlobalFilter: false,
+    }),
+    columnHelper.accessor('lower', {
+      header: () => 'Lower',
+      enableGlobalFilter: false,
+    }),
+    columnHelper.accessor('upper', {
+      header: () => 'Upper',
+      enableGlobalFilter: false,
+    }),
+    columnHelper.accessor('uq', {
+      header: () => 'UQ',
+      cell: (info) => ButtonCell(info),
+      enableGlobalFilter: false,
+    }),
+    columnHelper.accessor('ref', {
+      header: () => 'Ref',
+      enableGlobalFilter: false,
+    }),
+    columnHelper.accessor('ref0', {
+      header: () => 'Ref0',
+      enableGlobalFilter: false,
+    }),
+    columnHelper.accessor('res_ref', {
+      header: () => 'Res.Ref',
+      enableGlobalFilter: false,
+    }),
+  ];
+
+  React.useEffect(() => {
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    console.log(`tooltipTriggerList size= ${tooltipTriggerList}`);
+    [...tooltipTriggerList].map((tooltipTriggerEl) => new Tooltip(tooltipTriggerEl));
+  }, []);
 
   return (
     <Table

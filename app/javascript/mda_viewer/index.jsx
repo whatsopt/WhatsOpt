@@ -8,7 +8,7 @@ import AnalysisNotePanel from 'mda_viewer/components/AnalysisNotePanel';
 import AnalysisBreadCrumbs from 'mda_viewer/components/AnalysisBreadCrumbs';
 import DisciplinesEditor from 'mda_viewer/components/DisciplinesEditor';
 import ConnectionsEditor from 'mda_viewer/components/ConnectionsEditor';
-import VariablesEditor from 'mda_viewer/components/VariablesEditor2';
+import VariablesEditor from 'mda_viewer/components/VariablesEditor';
 import OpenmdaoImplEditor from 'mda_viewer/components/OpenmdaoImplEditor';
 import ExportPanel from 'mda_viewer/components/ExportPanel';
 import HistoryPanel from 'mda_viewer/components/HistoryPanel';
