@@ -11,7 +11,7 @@ class XdsmViewer extends React.Component {
     // eslint-disable-next-line no-undef
     $('.ellipsized').attr('data-bs-toggle', 'tooltip');
     // eslint-disable-next-line no-undef
-    $(() => { $('.ellipsized').tooltip({ placement: 'right' }); });
+    $('.ellipsized').attr('data-bs-placement', 'right');
   }
 
   constructor(props) {
@@ -63,7 +63,7 @@ class XdsmViewer extends React.Component {
   update(mda) {
     // remove bootstrap tooltip
     // eslint-disable-next-line no-undef
-    $('.ellipsized').tooltip('dispose');
+    // $('.ellipsized').tooltip('dispose');
 
     const xdsmMda = update(mda, { nodes: { 0: { name: { $set: 'Driver' }, type: { $set: 'driver' } } } });
     this.selectableXdsm.updateMdo(xdsmMda);
