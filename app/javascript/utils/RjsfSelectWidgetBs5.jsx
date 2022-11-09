@@ -23,8 +23,6 @@ function SelectWidget({
   placeholder,
   rawErrors = [],
 }) {
-  console.log(value);
-  console.log(options);
   const { enumOptions, enumDisabled } = options;
 
   const emptyValue = multiple ? [] : '';
