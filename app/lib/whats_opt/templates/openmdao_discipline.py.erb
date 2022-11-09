@@ -5,7 +5,7 @@ from <%= @pkg_prefix %><%= @discipline.py_full_modulename %>_base import <%= @di
 class <%= @discipline.py_classname %>(<%= @discipline.py_classname %>Base):
     """ A class to encapsulate <%= @discipline.py_classname %> discipline """
 
-    def compute(self, inputs, outputs):
+    def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
         """ <%= @discipline.py_classname %> computation """
         # Here one can implement discipline resolution code
         # (python function or module, external software calls...)
@@ -14,16 +14,24 @@ class <%= @discipline.py_classname %>(<%= @discipline.py_classname %>Base):
         pass
 <%- else -%>
 <%- @discipline.input_variables.numeric.each do |var_in| -%>
+<% if var_in.integer? %>
+        <%= var_in.py_shortname %> = discrete_inputs['<%= var_in.py_varname %>']  # shape: <%= var_in.shape %>, type: <%= var_in.type %>
+<% else %>
         <%= var_in.py_shortname %> = inputs['<%= var_in.py_varname %>']  # shape: <%= var_in.shape %>, type: <%= var_in.type %>
+<% end %>
+<% end %>
 <%- end -%>
 
 <%- @discipline.output_variables.numeric.each do |var_out| -%>
+<% if var_out.integer? %>
+        discrete_outputs['<%= var_out.py_varname %>'] = <%= var_out.default_py_value %> 
+<% else %>
         outputs['<%= var_out.py_varname %>'] = <%= var_out.default_py_value %>
 <%- end -%>
 <%- end -%>
 
 <% if @dimpl.support_derivatives -%>
-    def compute_partials(self, inputs, partials):
+    def compute_partials(self, inputs, partials, discrete_inputs=None):
         """ Jacobian for <%= @discipline.py_classname %> """
 <% @discipline.output_variables.numeric.each do |var_out| %><% @discipline.input_variables.numeric.each do |var_in| %>
         partials['<%= var_out.py_varname %>', '<%= var_in.py_varname %>'] = np.zeros((<%= var_out.dim %>, <%= var_in.dim %>))<% end %><% end %>

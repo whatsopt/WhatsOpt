@@ -129,6 +129,10 @@ module WhatsOpt
       self.io_mode.to_sym != OUT
     end
 
+    def integer?
+      self.type == INTEGER_T
+    end
+
     def reflect!(other)
       self.update(type: other.type, shape: other.shape, desc: other.desc, units: other.units, active: other.active)
       self

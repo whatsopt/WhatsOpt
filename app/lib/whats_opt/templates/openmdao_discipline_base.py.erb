@@ -12,15 +12,23 @@ class <%= @discipline.py_classname %>Base(<%= @dimpl.implicit_component ? "om.Im
 <% unless @discipline.variables.empty? -%>
     def setup(self):
 <% @discipline.input_variables.numeric.each do |var| -%>
+<% if var.integer? -%>
+        self.add_discrete_input('<%= var.py_varname %>', val=<%= var.init_py_value %>, desc='<%= var.escaped_desc %>')
+<% else -%>
         self.add_input('<%= var.py_varname %>', val=<%= var.init_py_value %>, desc='<%= var.escaped_desc %>'<%= @impl.use_units && !var.units.blank? ? ", units='#{var.units}'":"" %>)
+<% end -%>
 <% end %>
 <% @discipline.output_variables.numeric.each do |var| -%>
+<% if var.integer? %>
+        self.add_discrete_output('<%= var.py_varname %>', val=<%= var.init_py_value %>, desc='<%= var.escaped_desc %>')
+<% else %>
 <% if var.scaling.blank? -%>
         self.add_output('<%= var.py_varname %>', val=<%= var.init_py_value %>, desc='<%= var.escaped_desc %>'<%= @impl.use_units && !var.units.blank? ? ", units='#{var.units}'":"" %>)
-<% else -%>
+<%- else -%>
         self.add_output('<%= var.py_varname %>', val=<%= var.init_py_value %>, desc='<%= var.escaped_desc %>',
-                        ref=<%= var.scaling_ref_py_value %>, ref0=<%= var.scaling_ref0_py_value %>, res_ref=<%= var.scaling_res_ref_py_value %><%= @impl.use_units && !var.units.blank? ? ", units='#{var.units}'":"" %>)
+                            ref=<%= var.scaling_ref_py_value %>, ref0=<%= var.scaling_ref0_py_value %>, res_ref=<%= var.scaling_res_ref_py_value %><%= @impl.use_units && !var.units.blank? ? ", units='#{var.units}'":"" %>)
 <% end -%>
+<% end%>
 <% end -%>
 
 <%- unless @discipline.input_variables.numeric.empty? || @discipline.output_variables.numeric.empty? -%>
