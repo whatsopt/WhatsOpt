@@ -23,6 +23,8 @@ function SelectWidget({
   placeholder,
   rawErrors = [],
 }) {
+  console.log(value);
+  console.log(options);
   const { enumOptions, enumDisabled } = options;
 
   const emptyValue = multiple ? [] : '';
@@ -74,9 +76,9 @@ function SelectWidget({
       {!multiple && schema.default === undefined && (
         <option value="">{placeholder}</option>
       )}
-      {(enumOptions).map(({ val, label }, i) => {
+      {(enumOptions).map(({ value: val, label }, i) => {
         const disabl = Array.isArray(enumDisabled)
-                    && (enumDisabled).indexOf(val) !== -1;
+          && (enumDisabled).indexOf(val) !== -1;
         return (
           // eslint-disable-next-line react/no-array-index-key
           <option key={i} id={label} value={val} disabled={disabl}>
