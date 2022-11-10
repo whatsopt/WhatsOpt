@@ -85,11 +85,11 @@ exit(-1)
 pb.model.add_design_var('<%= dv.name %>', lower=<%= dv.lower_py_value %>, upper=<%= dv.upper_py_value %><%= @impl.use_units && !dv.units.blank? ? ", units='#{dv.units}'":"" %>)
 <%- end -%>
 
-# Objective definition
 <%- if @mda.objective_variables.empty? -%>
 print("Error: You have to specify an optimization objective then update the run_<%= @egmdo ? "eg" : "" %>mdo.py script and retry.")
 exit(-1)
 <% end %>
+# Objective and constraints definition
 <% @mda.min_objective_variables.each do |voi| -%>
 pb.model.add_objective('<%= voi.name %>'<%= @impl.use_units && !voi.units.blank? ? ", units='#{voi.units}'":"" %>)
 <%- end -%>
