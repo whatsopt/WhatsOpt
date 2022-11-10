@@ -17,6 +17,7 @@ from <%= @pkg_prefix %><%= @mda.py_modulename %> import <%= @mda.py_classname %>
 <%- end -%>
 from mda_init import initialize
 
+# Command options
 parser = OptionParser()
 parser.add_option("--plot",
                   action="store_true", dest="plot", default=False,
@@ -31,6 +32,7 @@ parser.add_option("--parallel", default=False,
 <%- end -%>
 (options, args) = parser.parse_args()
 
+# Problem definition
 <%- if @egmdo -%>
 <%- if @remote -%>
 pb = om.Problem(<%= @mda.py_classname %>(discipline_factory=<%= @mda.py_classname %>Proxy(), plot=options.plot))
@@ -51,11 +53,9 @@ pb.driver = SmtDOEDriver(sampling_method_name='LHS', n_cases=options.n_cases,
 pb.driver.options['run_parallel'] = options.parallel
 <%- end -%>
 
-case_recorder_filename = '<%= @sqlite_filename %>'
-recorder = om.SqliteRecorder(case_recorder_filename)
-pb.driver.add_recorder(recorder)
-pb.driver.recording_options['includes'] = ['*']
+<%= @generator.render_partial('recorder_partial.py.erb') %>
 
+# Design variables 
 <%- if @mda.design_variables.empty? -%>
 print("Error: You have to specify some design variables then update the run_doe.py script and retry.")
 exit(-1)
@@ -68,12 +68,14 @@ exit(-1)
 pb.model.add_design_var('<%= dv.name %>', lower=<%= dv.lower_py_value %>, upper=<%= dv.upper_py_value %><%= @impl.use_units && !dv.units.blank? ? ", units='#{dv.units}'":"" %>)
 <%- end -%>
 
+# Run DOE 
 pb.setup()
 initialize(pb)
 
 pb.run_driver()
 
 <%- if (@mda.response_dim * @mda.design_var_dim) < 10 -%>
+# Scatter plots
 if options.plot:
     reader = om.CaseReader(case_recorder_filename)
     cases = reader.list_cases('driver')
