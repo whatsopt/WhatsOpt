@@ -16,6 +16,8 @@ module WhatsOpt
     INTEGER_T = "Integer"
     STRING_T = "String"
 
+    INTEGER_TAG = "wop:int"
+
     IN = :in
     OUT = :out
 
@@ -129,7 +131,7 @@ module WhatsOpt
       self.io_mode.to_sym != OUT
     end
 
-    def integer?
+    def is_int?
       self.type == INTEGER_T
     end
 

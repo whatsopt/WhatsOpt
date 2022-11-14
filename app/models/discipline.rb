@@ -115,6 +115,10 @@ class Discipline < ApplicationRecord
     !!endpoint
   end
 
+  def is_derivable?
+    variables.where(type: Variable::INTEGER_T).all.blank?
+  end
+
   def local?(remote_ip)
     return true unless has_endpoint?
     endpoint_ip = Resolv.getaddress(endpoint.host)
