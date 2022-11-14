@@ -1,8 +1,11 @@
 <h1>CHANGELOG</h1>
 
-<h3>1.25.0 (unreleased)</h3>
+<h3>1.26.0 (unreleased)</h3>
 <ul>
-  li>[Tech] Upgrade frontend: React Table v8</li>
+  <li>Manage integer variables by using <a href="https://joss.theoj.org/papers/10.21105/joss.04737">egobox</a> for mixed
+    integer
+    LHS DOE and Egor optimizer</li>
+  <li>[Tech] Upgrade frontend: React Table v8</li>
 </ul>
 
 <h3>1.25.0 (04/11/2022)</h3>
