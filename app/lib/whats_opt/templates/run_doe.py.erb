@@ -3,7 +3,11 @@ from numpy import nan, inf
 import matplotlib.pyplot as plt
 from optparse import OptionParser
 import openmdao.api as om
+<% if @mda.mixint? %>
+from openmdao_extensions.egobox_doe_driver import EgoboxDOEDriver
+<% else %>
 from openmdao_extensions.smt_doe_driver import SmtDOEDriver
+<% end %>
 <%- if @egmdo -%>
 from openmdao.utils.mpi import MPI
 from <%= @pkg_prefix %><%= @egmdo_module %>.<%= @mda.py_modulename %>_egmda import <%= @mda.py_classname %>Egmda as <%= @mda.py_classname %>
@@ -47,8 +51,12 @@ pb = om.Problem(<%= @mda.py_classname %>(parallel=parallel, plot=options.plot))
 pb = om.Problem(<%= @mda.py_classname %>())
 <%- end -%>
 
+<%- if @mda.mixint? -%>
+pb.driver = EgoboxDOEDriver(n_cases=options.n_cases)
+<%- else -%>
 pb.driver = SmtDOEDriver(sampling_method_name='LHS', n_cases=options.n_cases,
                          sampling_method_options={'criterion': 'ese'})
+<%- end -%>
 <%- if not @egmdo -%>
 pb.driver.options['run_parallel'] = options.parallel
 <%- end -%>

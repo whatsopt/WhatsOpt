@@ -76,6 +76,10 @@ class Analysis < ApplicationRecord
     operations.successful.size > 0
   end
 
+  def mixint?
+    !Variable.of_analysis(self).where(type: Variable::INTEGER_T).all.blank?
+  end
+
   def variables
     @variables = Variable.of_analysis(id).active.order("variables.name ASC")
   end
