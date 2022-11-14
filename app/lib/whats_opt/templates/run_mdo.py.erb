@@ -22,6 +22,7 @@ from <%= @pkg_prefix %><%= @mda.py_modulename %> import <%= @mda.py_classname %>
 <%- end -%>
 from mda_init import initialize
 
+# Problem definition
 <%- if @egmdo %>
 <%- if @remote -%>
 pb = om.Problem(<%= @mda.py_classname %>(discipline_factory=<%= @mda.py_classname %>Proxy()))
@@ -37,6 +38,8 @@ pb = om.Problem(<%= @mda.py_classname %>())
 <%- end -%>
 
 <%- if @driver.pyoptsparse? -%>
+# Subclass to give a well-formed name (i.e. '<lib>_optimizer_<algo>') 
+# used to manage results afterwards in WhatsOpt
 class NamedPyOptSparseDriver(om.pyOptSparseDriver):
     def _get_name(self):
         return '<%= "pyoptsparse_optimizer_#{@driver.algo_option.downcase}" %>'
@@ -47,12 +50,15 @@ pb.driver = OneraSegoDriver()
 <%- elsif @driver.egobox? -%>
 pb.driver = EgoboxEgorDriver()
 <%- else -%>
+# Subclass to give a well-formed name (i.e. '<lib>_optimizer_<algo>') 
+# used to manage results afterwards in WhatsOpt
 class NamedScipyOptimizeDriver(om.ScipyOptimizeDriver):
     def _get_name(self):
         return '<%= "scipy_optimizer_#{@driver.algo_option.downcase}" %>'
 pb.driver = NamedScipyOptimizeDriver()
 <%- end -%>
 
+# Optimizer options
 pb.driver.options['optimizer'] = '<%= @driver.algo_option %>'
 <%- @driver.options.each do |k, v| -%>
 pb.driver.options['<%= k %>'] = <%= v %>
@@ -64,11 +70,9 @@ pb.driver.opt_settings['<%= k %>'] = <%= v %>
 # pb.driver.options['debug_print'] = ['desvars','ln_cons','nl_cons','objs', 'totals']
 pb.driver.options['debug_print'] = []
 
-case_recorder_filename = '<%= @sqlite_filename %>'
-recorder = om.SqliteRecorder(case_recorder_filename)
-pb.driver.add_recorder(recorder)
-pb.driver.recording_options['includes'] = ['*']
+<%= @generator.render_partial('recorder_partial.py.erb') %>
 
+# Design variables
 <%- if @mda.design_variables.empty? -%>
 print("Error: You have to specify some design variables then update the run_<%= @egmdo ? "eg" : "" %>mdo.py script and retry.")
 exit(-1)
@@ -85,6 +89,7 @@ pb.model.add_design_var('<%= dv.name %>', lower=<%= dv.lower_py_value %>, upper=
 print("Error: You have to specify an optimization objective then update the run_<%= @egmdo ? "eg" : "" %>mdo.py script and retry.")
 exit(-1)
 <% end %>
+# Objective and constraints definition
 <% @mda.min_objective_variables.each do |voi| -%>
 pb.model.add_objective('<%= voi.name %>'<%= @impl.use_units && !voi.units.blank? ? ", units='#{voi.units}'":"" %>)
 <%- end -%>
@@ -104,11 +109,13 @@ pb.model.add_constraint('<%= voi.name %>', equals=<%= voi.cstr_init_py_value %><
 pb.model.add_constraint('<%= voi.name %>', lower=<%= voi.cstr_lower_py_value %>, upper=<%= voi.cstr_upper_py_value %><%= @impl.use_units && !voi.units.blank? ? ", units='#{voi.units}'":"" %>)
 <%- end -%>
 
+# Run optimizer
 pb.setup()
 initialize(pb)
 
 pb.run_driver()
 
+# Print results
 <%- if @egmdo -%>
 if not MPI or (MPI and MPI.COMM_WORLD.rank == 0):
 <%- @mda.design_variables.each do |dv| -%>
@@ -118,13 +125,10 @@ if not MPI or (MPI and MPI.COMM_WORLD.rank == 0):
 <%- @mda.design_variables.each do |dv| %>
 print("<%= dv.name %>= {}".format(pb['<%= dv.name %>']))<% end %>
 <%- end %>
+# Code snippet to read result data back from recorded file
 # cr = om.CaseReader(case_recorder_filename)
-# sources = cr.list_sources()
-# print(sources)
-
-# cases = cr.list_cases("driver")
-# print(cases)
-
-# for i in range(len(cases)):
-#     obj = cases[i]
-#     print(obj)
+# cases = cr.get_cases()
+# for case in cases:
+#     print(case.name, sorted(case.outputs))
+#     for name in case.outputs:
+#         print(f"{name}={case.outputs[name]}")
