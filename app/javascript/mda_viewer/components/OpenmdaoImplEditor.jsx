@@ -42,7 +42,7 @@ const SCHEMA_GENERAL = {
                 // { const: "pyoptsparse_optimizer_psqp", title: "pyOptSparse - PSQP" },
                 { const: 'pyoptsparse_optimizer_nsga2', title: 'pyOptSparse - NSGA2' },
                 { const: 'pyoptsparse_optimizer_snopt', title: 'pyOptSparse - SNOPT' },
-                { const: 'onerasego_optimizer_segomoe', title: 'Onera - SEGOMOE' },
+                { const: 'onerasego_optimizer_segomoe', title: 'SegoToolbox - SEGOMOE' },
                 { const: 'egobox_optimizer_egor', title: 'Egobox - EGOR' },
               ],
               default: 'scipy_optimizer_slsqp',
