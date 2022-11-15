@@ -15,8 +15,8 @@ def create_user(params)
     u = User.create! do |u|
       u.login                 = params[:login]
       u.email                 = params[:email]
-      u.password              = params[:login]
-      u.password_confirmation = params[:login]
+      u.password              = "#{params[:login].capitalize}2022!"
+      u.password_confirmation = "#{params[:login].capitalize}2022!"
     end
   end
   u
