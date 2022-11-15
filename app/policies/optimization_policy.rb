@@ -3,7 +3,11 @@
 class OptimizationPolicy < ApplicationPolicy
   class Scope < Scope
     def resolve
-      scope.with_role(:owner, user)
+      if user.admin?
+        scope.all
+      else
+        scope.with_role(:owner, user)
+      end
     end
   end
 
@@ -20,11 +24,11 @@ class OptimizationPolicy < ApplicationPolicy
   end
 
   def update?
-    (@user.admin? || @user.has_role?(:owner, @record))
+    @user.has_role?(:owner, @record)
   end
 
   def destroy?
-    (@user.admin? || @user.has_role?(:owner, @record))
+    @user.has_role?(:owner, @record)
   end
 
   def select?
