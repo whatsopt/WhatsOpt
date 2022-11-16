@@ -38,7 +38,7 @@
       </a></td>
       <td><%= optim.created_at.strftime("%d/%m/%Y, at %I:%M%p") %></td>
 <% if current_user.admin? %>
-      <td><%= optim.owner.login %></th>
+      <td><%= optim.owner&.login %></td>
 <% end %>
     </tr>
     <% end %>
