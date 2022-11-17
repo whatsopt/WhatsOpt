@@ -23,7 +23,7 @@ class ApplicationController < ActionController::Base
 
     def user_not_authorized
       flash[:error] = "You are not authorized to perform this action."
-      redirect_to root_path
+      redirect_back(fallback_location: root_path)
     end
 
     def api_docs_controller?

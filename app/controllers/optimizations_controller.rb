@@ -11,7 +11,7 @@ class OptimizationsController < ApplicationController
   def select
     if params[:delete]
       params[:optimization_request_ids].each do |optimization_selected|
-        authorize Optimization.find(optimization_selected.to_i)
+        authorize Optimization.find(optimization_selected.to_i), :destroy?
         Optimization.find(optimization_selected.to_i).destroy
       end
       redirect_to optimizations_url, notice: params[:optimization_request_ids].length > 1 ? "#{params[:optimization_request_ids].length} optimizations successfully deleted." : "Optimization is successfully deleted."

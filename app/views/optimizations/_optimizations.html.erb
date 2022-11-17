@@ -12,6 +12,9 @@
       <th style="15%">History</th>
       <th style="20%">Status</th>
       <th style="20%">Created</th>
+<% if current_user.admin? %>
+      <th>Owner</th>
+<% end %>
     </tr>
   </thead>
 
@@ -34,6 +37,9 @@
         <i class="<%= status_display(optim.outputs["status"])[1] %>"></i>
       </a></td>
       <td><%= optim.created_at.strftime("%d/%m/%Y, at %I:%M%p") %></td>
+<% if current_user.admin? %>
+      <td><%= optim.owner&.login %></td>
+<% end %>
     </tr>
     <% end %>
   </tbody>
