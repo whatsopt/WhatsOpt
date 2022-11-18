@@ -133,7 +133,7 @@ class OptimizationsController < ApplicationController
       elsif @optimization.save
         redirect_to optimization_path(@optimization), notice: "Optimization update was succesful, added #{params[:optimization][:inputs][:x].length} inputs"
       else
-        redirect_to optimization_path(@optimization), alert: "Optimization update failed due to an unkown error"
+        redirect_to optimization_path(@optimization), alert: "Optimization update failed due to an unknown error"
       end
     end
   end
