@@ -33,6 +33,9 @@ class Journal < ApplicationRecord
       before = old_attrs[attr_name]
       after = journalized.send(attr_name)
       unless before == after || (before.blank? && after.blank?)
+        # Ensure value size less than 255 characters which correspond to field string max size in db 
+        before = before.truncate(255)
+        after = after.truncate(255)
         add_change_detail(journalized.class.name, journalized.name, attr_name, before, after)
       end
     end
