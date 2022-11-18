@@ -3,7 +3,7 @@
 class OptimizationPolicy < ApplicationPolicy
   class Scope < Scope
     def resolve
-      if user.admin? || user.has_role?(:sego_expert, @record)
+      if user.admin? || user.sego_expert?
         scope.all
       else
         scope.with_role(:owner, user)
