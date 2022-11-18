@@ -126,8 +126,8 @@ class AnalysisEditor extends React.PureComponent {
       <div className="container-fluid">
         <div className="editor-section">
           <div className="editor-section-label">Information</div>
-          <form className="col-6" onSubmit={onAnalysisUpdate}>
-            <div className="mb-3">
+          <form onSubmit={onAnalysisUpdate}>
+            <div className="mb-3 col-4">
               <div className="editor-section-label">
                 Name
               </div>
@@ -139,7 +139,7 @@ class AnalysisEditor extends React.PureComponent {
                 onChange={onAnalysisNameChange}
               />
             </div>
-            <div className="mb-3">
+            <div className="mb-3 col-4">
               <div className="editor-section-label">
                 Design Project
               </div>
@@ -153,7 +153,7 @@ class AnalysisEditor extends React.PureComponent {
               <div className="editor-section-label">
                 Notes
               </div>
-              <div className="editor-section-label">
+              <div className="editor-section-label col-9">
                 <AnalysisNoteEditor
                   mdaId={mdaId}
                   note={note}
