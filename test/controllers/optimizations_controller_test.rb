@@ -35,9 +35,9 @@ class OptimizationsControllerTest < ActionDispatch::IntegrationTest
   test "SEGO expert cannot destroy optimization" do
     sign_out users(:user1)
     sign_in users(:user2)
-    assert_difference("Optimization.count", -1) do
+    assert_difference("Optimization.count", 0) do
       post select_optimizations_path, params: { delete: "-", optimization_request_ids: [@optim_ack.id] }
-      assert_redirected_to optimizations_url
+      assert_redirected_to root_url
     end
   end
 
