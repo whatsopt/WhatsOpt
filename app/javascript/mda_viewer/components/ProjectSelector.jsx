@@ -43,7 +43,7 @@ class ProjectSelector extends React.Component {
         labelKey="name"
         minLength={1}
         onSearch={this.handleSearch}
-        placeholder="Search for design project, otherwise none is fine."
+        placeholder="Search for a design project to attach to, otherwise none is fine."
         onChange={this.handleChange}
       />
     );

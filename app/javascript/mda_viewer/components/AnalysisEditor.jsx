@@ -125,7 +125,11 @@ class AnalysisEditor extends React.PureComponent {
     return (
       <div className="container-fluid">
         <div className="editor-section">
-          <div className="editor-section-label">Information</div>
+          <div className="editor-section-label">
+            <i className="fas fa-info-circle" title="Analysis general informations" />
+            {' '}
+            General Information
+          </div>
           <form onSubmit={onAnalysisUpdate}>
             <div className="mb-3 col-4">
               <div className="editor-section-label">
