@@ -4,6 +4,8 @@
 <ul>
   <li>Manage integer variables by using <a href="https://joss.theoj.org/papers/10.21105/joss.04737">egobox</a> for mixed
     integer LHS DOE and Egor optimizer</li>
+  <li>Authorize optimizations list read access to SEGO experts</li>
+  <li>Authorize any optimization read access given its id to any user</li>
   <li>Fix bug in event journalization occuring when analysis notes length is more than 255 chars</li>
   <li>Fix error display styling in anaylsis edition</li>
   <li>[Tech] Upgrade frontend: React Table v8</li>
