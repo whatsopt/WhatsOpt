@@ -30,9 +30,13 @@ class Journal < ApplicationRecord
 
   def journalize_changes(journalized, old_attrs)
     journalized.journalized_attribute_names.each do |attr_name|
-      before = old_attrs[attr_name]
+      # ensure an empty string as all attributes have not a null:false default
+      before = old_attrs[attr_name] || ""
       after = journalized.send(attr_name)
       unless before == after || (before.blank? && after.blank?)
+        # Ensure value size less than 255 characters which correspond to field string max size in db 
+        before = before.truncate(30)
+        after = after.truncate(30)
         add_change_detail(journalized.class.name, journalized.name, attr_name, before, after)
       end
     end

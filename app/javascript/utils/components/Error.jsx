@@ -5,9 +5,9 @@ class Error extends React.PureComponent {
   render() {
     const { msg, onClose } = this.props;
     return (
-      <div className="alert alert-warning" role="alert">
-        <button type="button" className="btn-close" href="#" onClick={onClose} />
+      <div className="alert alert-warning alert-dismissible fade show" role="alert">
         {msg}
+        <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close" onClick={onClose} />
       </div>
     );
   }
