@@ -58,9 +58,13 @@ users_roles_optim_ackley2d:
   user: user1
   role: owner_optim_ackley2d_role
 
-users_roles_optim_unkown_status:
+users_roles_optim_unknown_status:
   user: user5
-  role: owner_optim_unkown_status_role
+  role: owner_optim_unknown_status_role
+
+users_roles_optim_unknown_status:
+  user: user2
+  role: sego_expert_role
 
 users_roles_cicav_project:
   user: user1

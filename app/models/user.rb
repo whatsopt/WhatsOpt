@@ -46,6 +46,10 @@ class User < ActiveRecord::Base
     @admin ||= has_role?(:admin)
   end
 
+  def sego_expert?
+    @sego_expert ||= has_role?(:sego_expert)
+  end
+
   def reset_api_key!
     generate_api_key
     save

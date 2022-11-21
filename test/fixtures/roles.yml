@@ -1,6 +1,9 @@
 admin_role: 
   name: admin
-  
+
+sego_expert_role:
+  name: sego_expert
+
 owner_cicav_mda_role:
   name: owner
   resource: cicav (Analysis)
@@ -57,9 +60,9 @@ owner_optim_ackley2d_role:
   name: owner
   resource: optim_ackley2d (Optimization) 
 
-owner_unkown_status:
+owner_optim_unknown_status_role:
   name: owner
-  resource: optim_unkown_status (Optimization)
+  resource: optim_unknown_status (Optimization)
 
 owner_cicav_project_role:
   name: owner

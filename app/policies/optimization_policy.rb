@@ -3,7 +3,7 @@
 class OptimizationPolicy < ApplicationPolicy
   class Scope < Scope
     def resolve
-      if user.admin?
+      if user.admin? || user.sego_expert?
         scope.all
       else
         scope.with_role(:owner, user)
@@ -15,20 +15,16 @@ class OptimizationPolicy < ApplicationPolicy
     true
   end
 
-  def index?
-    show?
-  end
-
   def show?
-    (@user.admin? || @user.has_role?(:owner, @record))
+    true
   end
 
   def update?
-    @user.has_role?(:owner, @record)
+    (@user.admin? || @user.has_role?(:owner, @record))
   end
 
   def destroy?
-    show?
+    (@user.admin? || @user.has_role?(:owner, @record))
   end
 
   def select?

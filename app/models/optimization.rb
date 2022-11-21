@@ -15,6 +15,7 @@ class Optimization < ApplicationRecord
     "SEGMOOMOE" => WhatsOpt::Services::OptimizerKind::SEGMOOMOE
   }
 
+  UNKNOWN_STATUS = -3
   OPTIMIZATION_ERROR = -2
   PENDING = -1
   VALID_POINT = 0
@@ -22,7 +23,7 @@ class Optimization < ApplicationRecord
   RUNTIME_ERROR = 2
   SOLUTION_REACHED = 3
   RUNNING = 4
-  OPTIMIZER_STATUS = [VALID_POINT, INVALID_POINT, RUNTIME_ERROR, SOLUTION_REACHED, RUNNING, PENDING, OPTIMIZATION_ERROR]
+  OPTIMIZER_STATUS = [VALID_POINT, INVALID_POINT, RUNTIME_ERROR, SOLUTION_REACHED, RUNNING, PENDING, OPTIMIZATION_ERROR, UNKNOWN_STATUS]
 
   MAX_OPTIM_NUMBER = 20
 
@@ -138,6 +139,10 @@ class Optimization < ApplicationRecord
     self.update!(outputs: outputs)
   rescue WhatsOpt::OptimizationProxyError, WhatsOpt::Services::OptimizerException => err
     log_error("#{err}: #{err.message}") # asynchronous: just set error state and log the error
+  end
+
+  def safe_status
+    OPTIMIZER_STATUS[self.status]
   end
 
   def destroy_optimizer
