@@ -8,6 +8,7 @@
   <li>Authorize any optimization read access given its id to any user</li>
   <li>Fix bug in event journalization occuring when analysis notes length is more than 255 chars</li>
   <li>Fix error display styling in anaylsis edition</li>
+  <li>Max number of optimizations done through web services is increased from 20 to 50.</li>
   <li>[Tech] Upgrade frontend: React Table v8, fontawesome v6</li>
 </ul>
 
