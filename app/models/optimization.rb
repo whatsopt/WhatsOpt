@@ -25,7 +25,7 @@ class Optimization < ApplicationRecord
   RUNNING = 4
   OPTIMIZER_STATUS = [VALID_POINT, INVALID_POINT, RUNTIME_ERROR, SOLUTION_REACHED, RUNNING, PENDING, OPTIMIZATION_ERROR, UNKNOWN_STATUS]
 
-  MAX_OPTIM_NUMBER = 20
+  MAX_OPTIM_NUMBER = 50
 
   store :config, accessors: [:xtypes, :xlimits, :n_obj, :cstr_specs, :options], coder: JSON
   store :inputs, accessors: [:x, :y, :with_best], coder: JSON
