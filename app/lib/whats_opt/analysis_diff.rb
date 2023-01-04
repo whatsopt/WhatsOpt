@@ -17,7 +17,9 @@ class WhatsOpt::AnalysisDiff
         res
     ensure 
         mda1_file.close
+        mda1_file.unlink
         mda2_file.close
+        mda2_file.unlink
     end
 
 end

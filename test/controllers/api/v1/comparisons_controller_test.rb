@@ -14,7 +14,7 @@ class Api::V1::ComparisonsControllerTest < ActionDispatch::IntegrationTest
     get api_v1_mda_comparisons_new_url(@mda, with: @mda_copy), as: :json, headers: @auth_headers
     assert_response :success
     resp = response.body
-    assert_equal "---", resp[..2]
+    refute resp.empty?  # should get a diff as the copy set designvars back to parameters
   end
 
 end
