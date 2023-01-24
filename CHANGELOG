@@ -1,6 +1,6 @@
 <h1>CHANGELOG</h1>
 
-<h3>1.26.0 (unreleased)</h3>
+<h3>1.26.0 (24/01/2022)</h3>
 <ul>
   <li>Manage integer variables by using <a href="https://joss.theoj.org/papers/10.21105/joss.04737">egobox</a> for mixed
     integer LHS DOE and Egor optimizer</li>
@@ -9,6 +9,7 @@
   <li>Fix bug in event journalization occuring when analysis notes length is more than 255 chars</li>
   <li>Fix error display styling in anaylsis edition</li>
   <li>Max number of optimizations done through web services is increased from 20 to 50.</li>
+  <li>OpenMDAO generator: use the shape information when adding variables to components</li>
   <li>[Tech] Upgrade frontend: React Table v8, fontawesome v6</li>
 </ul>
 
