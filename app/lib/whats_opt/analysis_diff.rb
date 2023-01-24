@@ -13,11 +13,13 @@ class WhatsOpt::AnalysisDiff
         str2 = JSON.pretty_generate(AnalysisDiffSerializer.new(mda2).as_json)
         mda2_file.write(str2)
         mda2_file.flush
-        res = `diff --unified=-1 #{mda1_file.path} #{mda2_file.path}`
+        res = `diff --unified=100 #{mda1_file.path} #{mda2_file.path}`
         res
     ensure 
         mda1_file.close
+        mda1_file.unlink
         mda2_file.close
+        mda2_file.unlink
     end
 
 end
