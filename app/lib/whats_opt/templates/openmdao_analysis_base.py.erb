@@ -10,7 +10,9 @@ from openmdao_extensions.reckless_nonlinear_block_gs import RecklessNonlinearBlo
 from openmdao.api import <%= @impl.nonlinear_solver.name %>
 <% end -%>
 from openmdao.api import <%= @impl.linear_solver.name %>
+
 from openmdao import __version__ as OPENMDAO_VERSION
+from openmdao.utils.general_utils import ensure_compatible
 
 <% @mda.sub_analyses.each do |a| -%>
 from <%= @pkg_prefix %><%= a.py_full_modulename %> import <%= a.py_classname %>
@@ -69,9 +71,8 @@ class <%= @mda.py_classname %>Base(<%= @impl.parallel_group ? "om.ParallelGroup"
         self.linear_solver.options['iprint'] = <%= @impl.linear_solver.iprint %>
 
     def setup(self):<% @mda.input_variables.each do |dv| %>
-        # FIXME: Not sure setting input defaults is required as WhatsOpt ensures variables consistency over the analysis.
-        # Commented out for now as it may be a problem when a variable has a shape with ndim > 0 (ie not a scalar) and is initialized with a scalar
-        # self.set_input_defaults('<%= dv.name %>', val=<%= dv.init_py_value %>, <%= dv.ndim > 0 ? "src_shape=#{dv.shape} ," : "" %> <%= @impl.use_units && !dv.units.blank? ? ", units='#{dv.units}'":"" %>)<% end -%>
+        value, shape = ensure_compatible('<%= dv.name %>', <%= dv.init_py_value %> <%= dv.ndim > 0 ? ", shape=#{dv.shape}" : "" %>)
+        self.set_input_defaults('<%= dv.name %>', val=value <%= @impl.use_units && !dv.units.blank? ? ", units='#{dv.units}'":"" %>)<% end -%>
 <% @mda.disciplines.nodes.each do |d| %>
         self.add_subsystem('<%= d.py_modulename %>', self.create_<%= d.basename %>(),
                            promotes=[<%= d.variables.map(&:py_varname).map{|v| "'#{v}'"}.join(', ') %>])<% end -%>
