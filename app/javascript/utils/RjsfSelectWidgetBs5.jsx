@@ -1,17 +1,14 @@
-// copy from https://github.com/rjsf-team/react-jsonschema-form/blob/914f0a1fb1f09794866ec996877e323f789dd499/packages/bootstrap-4/src/SelectWidget/SelectWidget.tsx
-// Patch bsPrefix value below from 'custom-select' to 'form-select'
+// 1 - Copy from https://github.com/rjsf-team/react-jsonschema-form/blob/c9f3d0ad794bb2ace458455f22ff1e6c4a84e9e2/packages/bootstrap-4/src/SelectWidget/SelectWidget.tsx
+// 2 - Translate in jsx
+// 3 - Patch bsPrefix value below from 'custom-select' to 'form-select'
 
-import React from "react";
-import Form from "react-bootstrap/Form";
+import React from 'react';
+import Form from 'react-bootstrap/Form';
 import {
   ariaDescribedByIds,
-  FormContextType,
   enumOptionsIndexForValue,
   enumOptionsValueForIndex,
-  RJSFSchema,
-  StrictRJSFSchema,
-  WidgetProps,
-} from "@rjsf/utils";
+} from '@rjsf/utils';
 
 export default function SelectWidget({
   schema,
