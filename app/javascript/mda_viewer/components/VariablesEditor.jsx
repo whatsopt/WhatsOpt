@@ -316,20 +316,19 @@ function Table({
 }) {
   const [sorting, setSorting] = React.useState([]);
   const [globalFilter, setGlobalFilter] = React.useState('');
+  const [columnVisibility, setColumnVisibility] = React.useState({});
 
   const cellToFocus = React.useRef({ index: null, id: null });
 
-  const columnVisibility = {};
-  if (!isEditing) {
-    columnVisibility.active = false;
-    columnVisibility.desc = false;
-    columnVisibility.type = false;
-  }
-  if (!useScaling) {
-    columnVisibility.ref = false;
-    columnVisibility.ref0 = false;
-    columnVisibility.res_ref = false;
-  }
+  console.log(`isEdititng=${isEditing} Usescaling = ${useScaling}`);
+
+  columnVisibility.active = isEditing;
+  columnVisibility.desc = isEditing;
+  columnVisibility.type = isEditing;
+
+  columnVisibility.ref = useScaling;
+  columnVisibility.ref0 = useScaling;
+  columnVisibility.res_ref = useScaling;
 
   //            From, Name, Role, Shape, Units, Init, Lower, Upper, UQ
   let colWidths = ['10', '30', '10', '5', '5', '10', '10', '10', '10'];
@@ -371,6 +370,7 @@ function Table({
     },
     onSortingChange: setSorting,
     onGlobalFilterChange: setGlobalFilter,
+    onColumnVisibilityChange: setColumnVisibility,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),

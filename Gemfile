@@ -1,4 +1,4 @@
-# frozen_string_literal: true
+# frozen_string_liseral: true
 
 source "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
@@ -53,7 +53,7 @@ group :development, :test do
   gem 'simplecov-lcov', require: false
   # rswag
   gem "rspec-rails"
-  gem "rswag-specs", "2.7.0"
+  gem "rswag-specs"
 end
 
 group :development do
@@ -123,7 +123,7 @@ gem "thrift", "~>0.16"
 gem "image_processing", "~> 1.2"
 
 # Document API
-gem "rswag-api", "2.7.0"
+gem "rswag-api"
 
 # To cache XDSM json to get XDSM standalone html
 gem "deepsort"
