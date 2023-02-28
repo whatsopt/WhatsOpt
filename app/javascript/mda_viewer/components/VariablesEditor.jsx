@@ -320,8 +320,6 @@ function Table({
 
   const cellToFocus = React.useRef({ index: null, id: null });
 
-  console.log(`isEdititng=${isEditing} Usescaling = ${useScaling}`);
-
   columnVisibility.active = isEditing;
   columnVisibility.desc = isEditing;
   columnVisibility.type = isEditing;
@@ -553,7 +551,6 @@ function VariablesEditor(props) {
 
   React.useEffect(() => {
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-    console.log(`tooltipTriggerList size= ${tooltipTriggerList}`);
     [...tooltipTriggerList].map((tooltipTriggerEl) => new Tooltip(tooltipTriggerEl));
   }, []);
 
