@@ -6,10 +6,10 @@ module OptimizationsHelper
     status_text = {
       Optimization::OPTIMIZATION_ERROR => "Optimization_Error",
       Optimization::PENDING => "Pending",
-      Optimization::VALID_POINT => "Valid_Point",
-      Optimization::INVALID_POINT => "Invalid_Point",
-      Optimization::RUNTIME_ERROR => "Runtime_Error",
-      Optimization::SOLUTION_REACHED => "Solution_Reached",
+      Optimization::VALID_POINT => "Valid Point",
+      Optimization::INVALID_POINT => "Invalid Point",
+      Optimization::RUNTIME_ERROR => "Runtime Error",
+      Optimization::SOLUTION_REACHED => "Solution Reached",
       Optimization::RUNNING => "Running"
     }
     status_text[status] ? status_text[status] : "Empty"
