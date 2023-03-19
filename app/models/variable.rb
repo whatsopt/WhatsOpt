@@ -94,7 +94,12 @@ class Variable < ApplicationRecord
         default_py_value
       end
     else
-      self.parameter.init
+      is_num = true if Float(self.parameter.init) rescue false
+      if is_num && self.ndim > 0
+        ones_py_value + " * #{self.parameter.init}"
+      else
+        self.parameter.init
+      end
     end
   end
 
