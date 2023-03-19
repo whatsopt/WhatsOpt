@@ -93,11 +93,9 @@ class Analysis < ApplicationRecord
   end
 
   def coupling_variables 
-    # TODO: see if it can be optimize using SQL
     unless @couplings 
       conns = Connection.of_analysis(self).select{|c| !c.driverish?}
-      # FIXME: only scalar couplings are handled at the moment for EGMDO
-      @couplings = conns.map(&:from).uniq # .select(&:is_scalar?)
+      @couplings = conns.map(&:from).uniq
     end
     @couplings
   end
