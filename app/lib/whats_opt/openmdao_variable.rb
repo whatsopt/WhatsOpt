@@ -58,6 +58,10 @@ module WhatsOpt
       end
     end
 
+    def ones_py_value
+      default_py_value
+    end
+
     def lower_py_value
       "-inf"
     end
