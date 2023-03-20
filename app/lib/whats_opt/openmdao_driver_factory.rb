@@ -11,10 +11,12 @@ module WhatsOpt
       @options = {}
 
       options.each do |k, v|
-        @options[k] = v.to_s
-        if ["true", "false"].include?(@options[k])
+        @options[k] = v
+        if ["true", "false"].include?(@options[k].to_s)
           @options[k] = @options[k].capitalize  # Python boolean
-        elsif /\b[a-zA-Z]/.match?(@options[k]) # wrap string
+        elsif @options[k].kind_of?(Array)
+          @options[k] = @options[k].join('.')
+        elsif /\b[a-zA-Z]/.match?(@options[k].to_s) # wrap string
           @options[k] = "'#{@options[k]}'"
         end
       end
@@ -60,7 +62,9 @@ module WhatsOpt
                                                    optimizer: "optimizer", doedim: "size_doe" },
                     onerasego_optimizer_egmdo: { maxiter: "maxiter", ncluster: "n_clusters",
                                                  optimizer: "optimizer", doedim: "size_doe" },
-                    egobox_optimizer_egor: { maxiter: "maxiter",  n_clusters: "n_clusters",  
+                    egobox_optimizer_egor: { maxiter: "maxiter",  n_clusters: "n_clusters",
+                                             infill_strategy: "infill_strategy",
+                                             infill_optimizer: "infill_optimizer",  
                                              cstr_tol: "cstr_tol", regr_spec: "regr_spec", corr_spec: "corr_spec"}
                    }
 
@@ -135,7 +139,12 @@ module WhatsOpt
       pyoptsparse_optimizer_snopt: { tol: 1e-6, maxiter: 100 },
       onerasego_optimizer_segomoe: { maxiter: 100, ncluster: 1, optimizer: "slsqp" },
       onerasego_optimizer_egmdo: { maxiter: 100, ncluster: 1, optimizer: "slsqp" },
-      egobox_optimizer_egor: { maxiter: 100, n_clusters: 1, cstr_tol: 1e-6, regr_spec:1, corr_spec:1 }
+      egobox_optimizer_egor: { maxiter: 100, n_clusters: 1, cstr_tol: 1e-4, 
+                               infill_strategy: ["egx", "InfillStrategy", "WB2"], 
+                               infill_optimizer: ["egx", "InfillOptimizer", "SLSQP"], 
+                               regr_spec: ["egx", "RegressionSpec", "CONSTANT"], 
+                               corr_spec: ["egx", "CorrelationSpec", "SQUARED_EXPONENTIAL"] 
+                              }
     }
     ALGO_NAMES = DEFAULT_OPTIONS.keys.sort
 
