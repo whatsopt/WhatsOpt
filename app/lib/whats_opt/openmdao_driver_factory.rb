@@ -11,10 +11,12 @@ module WhatsOpt
       @options = {}
 
       options.each do |k, v|
-        @options[k] = v.to_s
-        if ["true", "false"].include?(@options[k])
-          @options[k] = @options[k].capitalize  # Python boolean
-        elsif /\b[a-zA-Z]/.match?(@options[k]) # wrap string
+        @options[k] = v
+        if ["true", "false"].include?(@options[k].to_s)
+          @options[k] = @options[k].to_s.capitalize  # Python boolean
+        elsif @options[k].kind_of?(Array)
+          @options[k] = @options[k].join('.')
+        elsif /\b[a-zA-Z]/.match?(@options[k].to_s) # wrap string
           @options[k] = "'#{@options[k]}'"
         end
       end
@@ -45,6 +47,7 @@ module WhatsOpt
   class OpenmdaoOptimizerDriver < OpenmdaoDriver
     attr_reader :opt_settings
 
+    # Option pattern: <library>_optimizer_<algoname>_<option_name>
     OPT_SETTINGS = {
                     scipy_optimizer_cobyla: {},
                     scipy_optimizer_bfgs: {},
@@ -60,7 +63,9 @@ module WhatsOpt
                                                    optimizer: "optimizer", doedim: "size_doe" },
                     onerasego_optimizer_egmdo: { maxiter: "maxiter", ncluster: "n_clusters",
                                                  optimizer: "optimizer", doedim: "size_doe" },
-                    egobox_optimizer_egor: { maxiter: "maxiter",  n_clusters: "n_clusters",  
+                    egobox_optimizer_egor: { maxiter: "maxiter",  n_clusters: "n_clusters",
+                                             infill_strategy: "infill_strategy",
+                                             infill_optimizer: "infill_optimizer",  
                                              cstr_tol: "cstr_tol", regr_spec: "regr_spec", corr_spec: "corr_spec"}
                    }
 
@@ -73,6 +78,8 @@ module WhatsOpt
       end
       options.each do |k, _|
         if OPT_SETTINGS[@algoname][k]
+          # option of the optimizer, to be set in opt_settings dict
+          # and removed from options of the driver
           @opt_settings[OPT_SETTINGS[@algoname][k]] = @options[k]
           @options.delete(k)
         end
@@ -120,6 +127,8 @@ module WhatsOpt
   end
 
   class OpenmdaoDriverFactory
+
+    # Option pattern: <library>_<optimizer|doe>_<algoname>_<option_name>
     DEFAULT_OPTIONS = {
       runonce: {},
       smt_doe_lhs: { nbpts: 50 },
@@ -135,7 +144,12 @@ module WhatsOpt
       pyoptsparse_optimizer_snopt: { tol: 1e-6, maxiter: 100 },
       onerasego_optimizer_segomoe: { maxiter: 100, ncluster: 1, optimizer: "slsqp" },
       onerasego_optimizer_egmdo: { maxiter: 100, ncluster: 1, optimizer: "slsqp" },
-      egobox_optimizer_egor: { maxiter: 100, n_clusters: 1, cstr_tol: 1e-6, regr_spec:1, corr_spec:1 }
+      egobox_optimizer_egor: { maxiter: 100, n_clusters: 1, cstr_tol: 1e-4, 
+                               infill_strategy: ["egx", "InfillStrategy", "WB2"], 
+                               infill_optimizer: ["egx", "InfillOptimizer", "SLSQP"], 
+                               regr_spec: ["egx", "RegressionSpec", "CONSTANT"], 
+                               corr_spec: ["egx", "CorrelationSpec", "SQUARED_EXPONENTIAL"] 
+                              }
     }
     ALGO_NAMES = DEFAULT_OPTIONS.keys.sort
 
@@ -165,15 +179,14 @@ module WhatsOpt
         end
         @dict[@algoname] = {}
         options_hash.each do |k, v|
-          if k =~ /^(\w+)_(\w+)$/
+          if k =~ /^([a-z]+_[a-z]+_[a-z]+)_(\w+)$/
             algo, optname = $1.to_sym, $2.to_sym
             if algo != @algoname
-              # p "Option #{k} is not a valid for algorithm #{@algoname}"
               raise BadOptionError.new("Option #{k} is not a valid for algorithm #{@algoname}")
             end
             @dict[@algoname][optname] = v
           else
-            raise BadOptionError.new("Option #{k} is not valid: Option name should match /^(\w+)_(\w+)$/")
+            raise BadOptionError.new("Option #{k} is not valid: Option name should match /^([a-z]+_[a-z]+_[a-z]+)_(\w+)$/")
           end
         end
 
