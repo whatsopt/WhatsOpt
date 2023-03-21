@@ -13,7 +13,7 @@ module WhatsOpt
       options.each do |k, v|
         @options[k] = v
         if ["true", "false"].include?(@options[k].to_s)
-          @options[k] = @options[k].capitalize  # Python boolean
+          @options[k] = @options[k].to_s.capitalize  # Python boolean
         elsif @options[k].kind_of?(Array)
           @options[k] = @options[k].join('.')
         elsif /\b[a-zA-Z]/.match?(@options[k].to_s) # wrap string
@@ -47,6 +47,7 @@ module WhatsOpt
   class OpenmdaoOptimizerDriver < OpenmdaoDriver
     attr_reader :opt_settings
 
+    # Option pattern: <library>_optimizer_<algoname>_<option_name>
     OPT_SETTINGS = {
                     scipy_optimizer_cobyla: {},
                     scipy_optimizer_bfgs: {},
@@ -77,6 +78,8 @@ module WhatsOpt
       end
       options.each do |k, _|
         if OPT_SETTINGS[@algoname][k]
+          # option of the optimizer, to be set in opt_settings dict
+          # and removed from options of the driver
           @opt_settings[OPT_SETTINGS[@algoname][k]] = @options[k]
           @options.delete(k)
         end
@@ -124,6 +127,8 @@ module WhatsOpt
   end
 
   class OpenmdaoDriverFactory
+
+    # Option pattern: <library>_<optimizer|doe>_<algoname>_<option_name>
     DEFAULT_OPTIONS = {
       runonce: {},
       smt_doe_lhs: { nbpts: 50 },
@@ -174,15 +179,14 @@ module WhatsOpt
         end
         @dict[@algoname] = {}
         options_hash.each do |k, v|
-          if k =~ /^(\w+)_(\w+)$/
+          if k =~ /^([a-z]+_[a-z]+_[a-z]+)_(\w+)$/
             algo, optname = $1.to_sym, $2.to_sym
             if algo != @algoname
-              # p "Option #{k} is not a valid for algorithm #{@algoname}"
               raise BadOptionError.new("Option #{k} is not a valid for algorithm #{@algoname}")
             end
             @dict[@algoname][optname] = v
           else
-            raise BadOptionError.new("Option #{k} is not valid: Option name should match /^(\w+)_(\w+)$/")
+            raise BadOptionError.new("Option #{k} is not valid: Option name should match /^([a-z]+_[a-z]+_[a-z]+)_(\w+)$/")
           end
         end
 
