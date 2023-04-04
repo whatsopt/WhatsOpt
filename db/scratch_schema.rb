@@ -237,16 +237,12 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_04_122123) do
   end
 
   create_table "packages", force: :cascade do |t|
-    t.integer "analysis_id"
     t.text "description"
-    t.integer "owner_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["analysis_id"], name: "index_packages_on_analysis_id"
-    t.index ["owner_id"], name: "index_packages_on_owner_id"
   end
 
-  create_table "packaging", id: false, force: :cascade do |t|
+  create_table "packagings", id: false, force: :cascade do |t|
     t.integer "analysis_id", null: false
     t.integer "package_id", null: false
   end
@@ -344,6 +340,4 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_04_122123) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "analysis_disciplines", "analyses"
   add_foreign_key "analysis_disciplines", "disciplines"
-  add_foreign_key "packages", "analyses"
-  add_foreign_key "packages", "owners"
 end

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Packaginging < ApplicationRecord
+class Packaging < ApplicationRecord
   belongs_to :package, touch: true
   belongs_to :analysis
 end

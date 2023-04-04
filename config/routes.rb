@@ -1,5 +1,4 @@
 Rails.application.routes.draw do
-
   devise_for :users
   resources :users, only: [:show]
   resource :api_doc, only: [:show]
@@ -12,6 +11,7 @@ Rails.application.routes.draw do
   end
      
   resources :design_projects
+  resources :packages, only: [:index]
 
   resources :optimizations do
     collection do
@@ -37,6 +37,7 @@ Rails.application.routes.draw do
         resource :openmdao_impl, only: [:show, :update]
         resource :parameterization, only: [:update]
         resource :journal, only: [:show]        
+        resource :package, only: [:create]
         post 'openmdao_checking', to: 'openmdao_checking#create' 
         get 'exports/new'
         get 'comparisons/new'
