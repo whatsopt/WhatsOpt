@@ -1,4 +1,8 @@
-<h1>Design Projects</h1>
+<div class="btn-toolbar float-end">
+  <%= link_to 'New', new_package_path, class: "btn btn-primary ms-2" %>
+</div>
+
+<h1>Packages</h1>
 
 <p>
 <table class="table table-striped">
@@ -16,32 +20,11 @@
   <tbody>
     <% @packages.each do |pkg| %>
     <tr>
-      <%# <td><%= pkg %></td>
-      <td><%= pkg.owner.login %></td>
       <td><%= pkg.description %></td>
-      <td><%= link_to_analyses_if_authorized(project) %>
-        <% unless project.analyses.roots.empty? %>
-        <%= link_to design_project_path(project), 
-                class: "btn btn-sm", title: "List Analyses" do %>
-        <i class="fas fa-ellipsis-v"></i>
-        <% end %>
-        <% end %>
-      </td>
-      <td>
-        <% if policy(project).update? %>
-        <%= link_to edit_design_project_path(project), 
-            class: "btn btn-sm", title: "Edit" do %>
-        <i class="fas fa-edit"></i>
-        <% end %>
-        <% end %>
-        <% if policy(project).destroy? %>
-        <%= link_to design_project_path(project), method: :delete, 
-              data: { confirm: "Remove #{project.name} design project?" }, 
-              class: "btn btn-sm text-danger", title:"Delete" do %>
-        <i class="fas fa-times"></i>
-        <% end %>
-        <% end %>
-      </td> %>
+      <td></td>
+      <td><%= pkg.description %></td>
+      <td></td>
+      <td></td>
     </tr>
     <% end %>
   </tbody>

@@ -11,7 +11,7 @@ Rails.application.routes.draw do
   end
      
   resources :design_projects
-  resources :packages, only: [:index]
+  resources :packages
 
   resources :optimizations do
     collection do

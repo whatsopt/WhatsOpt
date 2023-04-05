@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class DesignProjectPolicy < ApplicationPolicy
+class PackagePolicy < ApplicationPolicy
   class Scope < Scope
     def resolve
       scope.all
@@ -24,6 +24,6 @@ class DesignProjectPolicy < ApplicationPolicy
   end
 
   def destroy?
-    @user.admin? || @user.has_role?(:owner, @record)
+    @user.admin? || @user.has_role?(:owner, @record.analysis)
   end
 end

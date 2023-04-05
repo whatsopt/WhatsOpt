@@ -6,8 +6,12 @@ class Api::V1::PackagesController < Api::ApiController
   def create
     @mda = Analysis.find(params[:mda_id])
     authorize @mda
-    p params
-    @package = Package.new(package_params)
+    @package = @mda&.package 
+    if @package
+      @package.update(package_params)
+    else
+      @package = Package.new(package_params)
+    end
     @package.analysis = @mda
     @package.save!
     render json: @package, status: :created
