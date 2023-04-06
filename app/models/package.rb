@@ -3,7 +3,14 @@
 class Package < ApplicationRecord
   has_one_attached :archive
 
-  has_one :packaging, dependent: :destroy
-  has_one :analysis, through: :packaging
+  belongs_to :analysis
+
+  def name 
+    if archive.attached?
+      archive.attachment.filename
+    else
+      '<no archive>'
+    end
+  end
 
 end

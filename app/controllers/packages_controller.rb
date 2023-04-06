@@ -7,29 +7,13 @@ class PackagesController < ApplicationController
     @packages = policy_scope(Package)
   end
 
-  # GET /packages/new
-  def new
-    @package = Package.new
+  # DELETE /packages/1
+  def destroy
+    @package = Package.find(params[:id])
+    name = @package.name
     authorize @package
-  end
-
-  # GET /packages/1/edit
-  def edit
-  end
-
-  # POST /packages
-  def create
-    @package = Package.new(package_params)
-    authorize @package
-    if params[:cancel_button]
-      redirect_to packages_url, notice: "Package creation cancelled."
-    else
-      if @package.save
-        redirect_to packages_url, notice: "Package #{@package.id} was successfully created."
-      else
-        redirect_to new_package_url, error: "Something went wrong."
-      end
-    end
+    @package.destroy
+    redirect_to packages_url, notice: "Package #{name} was successfully deleted."
   end
 
   private 

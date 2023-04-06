@@ -29,8 +29,7 @@ class Analysis < ApplicationRecord
   has_one :openmdao_impl, class_name: "OpenmdaoAnalysisImpl", dependent: :destroy
 
   has_one :design_project_filing, dependent: :destroy
-  has_one :packaging, dependent: :destroy
-  has_one :package, through: :packaging
+  has_one :package, dependent: :destroy
 
   has_many :journals, -> { includes([:details, :user]).order(created_on: :asc) }, dependent: :destroy
 

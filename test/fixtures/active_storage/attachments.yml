@@ -1,0 +1,4 @@
+cicav_pkg_attachment:
+  name: archive
+  record: cicav_pkg (Package)
+  blob: cicav_pkg_blob

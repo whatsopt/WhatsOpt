@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_04_04_122123) do
+ActiveRecord::Schema[7.0].define(version: 2023_04_03_155358) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -238,13 +238,10 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_04_122123) do
 
   create_table "packages", force: :cascade do |t|
     t.text "description"
+    t.integer "analysis_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-  end
-
-  create_table "packagings", id: false, force: :cascade do |t|
-    t.integer "analysis_id", null: false
-    t.integer "package_id", null: false
+    t.index ["analysis_id"], name: "index_packages_on_analysis_id"
   end
 
   create_table "parameters", force: :cascade do |t|
@@ -340,4 +337,5 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_04_122123) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "analysis_disciplines", "analyses"
   add_foreign_key "analysis_disciplines", "disciplines"
+  add_foreign_key "packages", "analyses"
 end

@@ -1,8 +1,4 @@
-<div class="btn-toolbar float-end">
-  <%= link_to 'New', new_package_path, class: "btn btn-primary ms-2" %>
-</div>
-
-<h1>Packages</h1>
+<h1>WhatsOpt Package Store</h1>
 
 <p>
 <table class="table table-striped">
@@ -10,9 +6,10 @@
   <thead>
     <tr>
       <th style="10%">Name</th>
-      <th style="10%">Owner</th>
+      <th style="10%">Analysis</th>
+      <th style="30%">Owner</th>
       <th style="30%">Description</th>
-      <th style="30%">Analysis</th>
+      <th style="30%">Time</th>
       <th style="20%">Actions</th>
     </tr>
   </thead>
@@ -20,11 +17,20 @@
   <tbody>
     <% @packages.each do |pkg| %>
     <tr>
+      <td><%= pkg.archive.blob.filename %></td>
+      <td><%= pkg&.analysis&.name %></td>
+      <td><%= pkg&.analysis&.owner&.login %></td>
       <td><%= pkg.description %></td>
-      <td></td>
-      <td><%= pkg.description %></td>
-      <td></td>
-      <td></td>
+      <td><%= pkg.updated_at %></td>
+      <td>
+        <% if policy(pkg).destroy? %>
+        <%= link_to package_path(pkg), method: :delete, 
+              data: { confirm: "Remove #{pkg.archive.blob.filename} package?" }, 
+              class: "btn btn-sm text-danger", title:"Delete" do %>
+        <i class="fas fa-times"></i>
+        <% end %>
+        <% end %>
+      </td>
     </tr>
     <% end %>
   </tbody>
