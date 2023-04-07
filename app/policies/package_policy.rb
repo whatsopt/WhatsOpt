@@ -3,7 +3,7 @@
 class PackagePolicy < ApplicationPolicy
   class Scope < Scope
     def resolve
-      scope.all
+      scope.joins(:analysis).where(analyses: { id: Pundit.policy_scope!(@user, Analysis) })
     end
   end
 

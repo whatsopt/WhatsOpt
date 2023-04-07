@@ -5,12 +5,14 @@ class Package < ApplicationRecord
 
   belongs_to :analysis
 
-  def name 
+  def filename 
     if archive.attached?
-      archive.attachment.filename
+      archive.attachment.blob.filename
     else
       '<no archive>'
     end
   end
+
+
 
 end

@@ -7,9 +7,9 @@
     <tr>
       <th style="10%">Name</th>
       <th style="10%">Analysis</th>
-      <th style="30%">Owner</th>
+      <th style="10%">Owner</th>
       <th style="30%">Description</th>
-      <th style="30%">Time</th>
+      <th style="20%">Time</th>
       <th style="20%">Actions</th>
     </tr>
   </thead>
@@ -17,9 +17,9 @@
   <tbody>
     <% @packages.each do |pkg| %>
     <tr>
-      <td><%= pkg.archive.blob.filename %></td>
-      <td><%= pkg&.analysis&.name %></td>
-      <td><%= pkg&.analysis&.owner&.login %></td>
+      <td><%= link_to_package_if_authorized(pkg, current_user) %></td>
+      <td><%= link_to_analysis_if_authorized(pkg.analysis, current_user) %></td>
+      <td><%= pkg.analysis.owner.login %></td>
       <td><%= pkg.description %></td>
       <td><%= pkg.updated_at %></td>
       <td>
