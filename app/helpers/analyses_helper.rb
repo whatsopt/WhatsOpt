@@ -65,6 +65,9 @@ module AnalysesHelper
     if analysis.nesting_depth > 2
       res += '<span class="badge rounded-pill bg-danger me-2" title="Analysis with more than 2 sub-analysis levels">DEEP</span>'
     end
+    if analysis.packaged?
+      res += '<span class="badge rounded-pill bg-warning me-2" title="Analysis is packaged">PKG</span>'
+    end
     raw(res)
   end
 end
