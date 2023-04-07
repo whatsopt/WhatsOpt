@@ -89,6 +89,10 @@ class AnalysisDatabase {
     return this.constraints.map((cstr) => cstr.name).includes(c.varname);
   }
 
+  isAnalysisUsed() {
+    return this.mda.operated || this.mda.packaged;
+  }
+
   getObjective() {
     if (this.objective) {
       return this.objective;

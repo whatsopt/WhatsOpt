@@ -77,6 +77,10 @@ class Analysis < ApplicationRecord
     operations.successful.size > 0
   end
 
+  def packaged?
+    !!package
+  end
+
   def mixint?
     !Variable.of_analysis(self).where(type: Variable::INTEGER_T).all.blank?
   end
@@ -310,6 +314,7 @@ class Analysis < ApplicationRecord
 
       public: public,
       operated: operated?,
+      packaged: packaged?,
       path: path.map { |a| { id: a.id, name: a.name } },
       nodes: build_nodes,
       edges: build_edges,
