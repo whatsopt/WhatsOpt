@@ -14,8 +14,8 @@ module ApplicationHelper
     h
   end
 
-  def enable_geometry_models?
-    APP_CONFIG["enable_geometry_models"]
+  def enable_wopstore?
+    APP_CONFIG["enable_wopstore"]
   end
 
   def enable_remote_operations?

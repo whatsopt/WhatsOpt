@@ -31,7 +31,9 @@
         <li class="nav-item"><%= link_to "Analyses", mdas_path, class: "nav-link" %></li>
         <li class="nav-item"><%= link_to "Design Projects", design_projects_path, class: "nav-link" %></li>
         <li class="nav-item"><%= link_to "Optimizations", optimizations_path, class: "nav-link" %></li>
-        <li class="nav-item"><%= link_to "WopStore", packages_path, class: "nav-link" %></li>
+        <% if APP_CONFIG['enable_wopstore'] %>
+          <li class="nav-item"><%= link_to "WopStore", packages_path, class: "nav-link" %></li>
+        <% end %>
         <% end %>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Help</a>
