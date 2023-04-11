@@ -138,6 +138,12 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
   test "should maintain a list of generated filepaths in package mode with package attached" do
     skip "Apache Thrift not installed" unless thrift?
     assert @mda.packaged?
+
+    # XXX: Fixture does not seem to always load the file properly
+    #      this ensure the presence of the file
+    @mda.package.archive.attach(io: File.open(file_fixture('cicav-0.1.0.tar.gz')), filename: 'cicav-0.1.0.tar.gz')
+    assert File.exist?(ActiveStorage::Blob.service.path_for(@mda.package.archive.key))
+
     pkg_expected = ["__init__.py", "aerodynamics.py", "aerodynamics_base.py", "cicav.py",
                 "cicav_base.py", "geometry.py", "geometry_base.py", "propulsion.py", "propulsion_base.py"] + 
                 ["egmdo/__init__.py", "egmdo/algorithms.py", "egmdo/cicav_egmda.py", "egmdo/doe_factory.py", 

@@ -8,6 +8,12 @@ class PackageExtractorTest < ActiveSupport::TestCase
   def setup
     @mda = analyses(:cicav)
     @pkgext = WhatsOpt::PackageExtractor.new(@mda)
+    
+    # XXX: Fixture does not seem to always load the file properly
+    #      this ensure the presence of the file
+    @mda.package.archive.attach(io: File.open(file_fixture('cicav-0.1.0.tar.gz')), filename: 'cicav-0.1.0.tar.gz')
+    assert File.exist?(ActiveStorage::Blob.service.path_for(@mda.package.archive.key))
+
     assert @mda.package.archive.attached?
   end
 
