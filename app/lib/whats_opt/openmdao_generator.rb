@@ -227,9 +227,9 @@ module WhatsOpt
     end
 
     def _generate_package_files(gendir)
-      if @mda.package
+      if @mda.packaged?
         # Package is attached, use it!
-        WhatsOpt::PackageExtractor.new(@mda).extract(gendir)
+        @genfiles |= WhatsOpt::PackageExtractor.new(@mda).extract(gendir)
       else 
         # no package => generate package skeleton
         _generate(".gitignore", "package/gitignore.erb", gendir, no_comment: true)

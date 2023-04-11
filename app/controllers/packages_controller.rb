@@ -10,7 +10,7 @@ class PackagesController < ApplicationController
   # DELETE /packages/1
   def destroy
     @package = Package.find(params[:id])
-    name = @package.name
+    name = @package.archive.attachment.filename
     authorize @package
     @package.destroy
     redirect_to packages_url, notice: "Package #{name} was successfully deleted."
