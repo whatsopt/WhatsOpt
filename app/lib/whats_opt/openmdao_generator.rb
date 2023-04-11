@@ -227,9 +227,15 @@ module WhatsOpt
     end
 
     def _generate_package_files(gendir)
-      _generate(".gitignore", "package/gitignore.erb", gendir, no_comment: true)
-      _generate("README", "package/README.erb", gendir, no_comment: true)
-      _generate("setup.py", "package/setup.py.erb", gendir)
+      if @mda.package
+        # Package is attached, use it!
+        WhatsOpt::PackageExtractor.new(@mda).extract(gendir)
+      else 
+        # no package => generate package skeleton
+        _generate(".gitignore", "package/gitignore.erb", gendir, no_comment: true)
+        _generate("README", "package/README.erb", gendir, no_comment: true)
+        _generate("setup.py", "package/setup.py.erb", gendir)
+      end
     end
 
   end
