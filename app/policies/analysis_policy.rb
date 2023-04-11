@@ -26,6 +26,10 @@ class AnalysisPolicy < ApplicationPolicy
     APP_CONFIG["enable_remote_operations"] && destroy?
   end
 
+  def pack?
+    APP_CONFIG["enable_wopstore"] && destroy?
+  end
+
   def edit?
     update?
   end

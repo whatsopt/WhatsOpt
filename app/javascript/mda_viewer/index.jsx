@@ -539,7 +539,7 @@ class MdaViewer extends React.Component {
         onFilterChange={this.handleFilterChange}
         onConnectionChange={this.handleConnectionChange}
         isEditing={isEditing}
-        limited={db.mda.operated}
+        limited={db.isAnalysisUsed()}
       />
     );
 
@@ -565,18 +565,18 @@ class MdaViewer extends React.Component {
           </div>
         );
       }
-      let warningIfOperated;
-      if (db.mda.operated) {
-        warningIfOperated = (
+      let warningIfUsed;
+      if (db.isAnalysisUsed()) {
+        warningIfUsed = (
           <div className="alert alert-info alert-dismissible fade show" role="alert">
-            As this analysis is already operated,
+            As this analysis is already operated or packaged,
             {' '}
             <strong>your edition access is limited</strong>
             .
             <br />
             {' '}
             If you need full edition access either restart with a copy of the analysis
-            or discard existing operation results.
+            or discard existing operations and attached package.
             <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close" />
           </div>
         );
@@ -632,7 +632,7 @@ class MdaViewer extends React.Component {
               {co_owned}
             </small>
           </h1>
-          {warningIfOperated}
+          {warningIfUsed}
           {breadcrumbs}
           <div className="mda-section">
             {xdsmViewer}
@@ -746,7 +746,7 @@ class MdaViewer extends React.Component {
               <ConnectionsEditor
                 db={db}
                 filter={filter}
-                limited={db.mda.operated}
+                limited={db.isAnalysisUsed()}
                 onFilterChange={this.handleFilterChange}
                 selectedConnectionNames={selectedConnectionNames}
                 connectionErrors={errors}

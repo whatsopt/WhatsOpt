@@ -1,5 +1,6 @@
 defaults: &defaults
   enable_remote_operations: true
+  enable_wopstore: true
   enable_ldap: false
   python_cmd:  python
   thrift_cmd:  thrift
@@ -11,8 +12,9 @@ test:
   <<: *defaults
 
 production:
-  enable_remote_operations: true
-  enable_ldap: true
+  enable_remote_operations: false
+  enable_wopstore: false
+  enable_ldap: false
   python_cmd:  python
   thrift_cmd:  thrift
 

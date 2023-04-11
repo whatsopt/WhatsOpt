@@ -1,0 +1,3 @@
+PKG-INFO
+*.egg-info
+setup.cfg
