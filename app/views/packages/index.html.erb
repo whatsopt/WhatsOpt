@@ -18,7 +18,7 @@
     <% @packages.each do |pkg| %>
     <tr>
       <td><%= link_to_package_if_authorized(pkg, current_user) %></td>
-      <td><%= link_to_analysis_if_authorized(pkg.analysis, current_user) %></td>
+      <td><%= link_to_analysis_if_authorized(pkg.analysis, current_user) %><%=" (##{pkg.analysis.id})"%></td>
       <td><%= pkg.analysis.owner.login %></td>
       <td><%= pkg.description %></td>
       <td><%= pkg.updated_at %></td>
