@@ -21,7 +21,7 @@ class Api::V1::PackagesControllerTest < ActionDispatch::IntegrationTest
   test "should create package" do
     assert_difference("Package.count", 1) do
       post api_v1_mda_package_url(@mda2), params: { package: { 
-              archive: fixture_file_upload(sample_file("my_sellar-0.1.0.tar.gz"), 'application/tar+gzip'),
+              archive: fixture_file_upload(sample_file("my_sellar-0.1.0.tar.gz"), 'application/gzip'),
               description: "This a package" 
             }}, headers: @auth_headers
       assert_response :success
@@ -36,7 +36,7 @@ class Api::V1::PackagesControllerTest < ActionDispatch::IntegrationTest
     refute_equal new_desc, @mda.package.description
     assert_difference("Package.count", 0) do
       post api_v1_mda_package_url(@mda), params: { package: { 
-              archive: fixture_file_upload(sample_file("my_sellar-0.1.0.tar.gz"), 'application/tar+gzip'),
+              archive: fixture_file_upload(sample_file("my_sellar-0.1.0.tar.gz"), 'application/gzip'),
               description: new_desc 
             }}, headers: @auth_headers
       assert_response :success
