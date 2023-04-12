@@ -1,12 +1,19 @@
 # frozen_string_literal: true
 
 class Api::V1::PackagesController < Api::ApiController
+  before_action :set_package
+
+  # GET /api/v1/{mda_id}/package
+  def show
+    if @package
+      render json: @package, status: :created
+    else
+      render json: { message: "No package" }, status: :not_found
+    end
+  end
 
   # POST /api/v1/{mda_id}/package
   def create
-    @mda = Analysis.find(params[:mda_id])
-    authorize @mda
-    @package = @mda&.package 
     if @package
       @package.update(package_params)
     else
@@ -18,6 +25,12 @@ class Api::V1::PackagesController < Api::ApiController
   end
 
   private 
+
+  def set_package
+    @mda = Analysis.find(params[:mda_id])
+    authorize @mda
+    @package = @mda&.package 
+  end
 
   def package_params
     params.require(:package).permit(:description, :archive) 
