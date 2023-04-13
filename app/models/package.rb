@@ -2,7 +2,7 @@
 
 class Package < ApplicationRecord
 
-  PKG_REGEXP = /\A(\w+)-(\d+\.)?(\d+\.)?(\*|\d+)\.tar\.gz\z/
+  PKG_REGEXP = /\A(\w+)-(\d+\.)?(\d+\.)?(\w+)\.tar\.gz\z/
 
   has_one_attached :archive
 
