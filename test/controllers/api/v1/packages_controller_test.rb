@@ -46,4 +46,27 @@ class Api::V1::PackagesControllerTest < ActionDispatch::IntegrationTest
     assert pack.archive.attached?
   end
 
+  test "should not create package if filename is wrong" do
+    assert_difference("Package.count", 0) do
+      post api_v1_mda_package_url(@mda2), params: { package: { 
+              archive: fixture_file_upload(sample_file("sellar_optim.json"), 'application/gzip'),
+              description: "This a package for testing filename validity" 
+            }}, headers: @auth_headers
+      assert_response :unprocessable_entity
+      resp = JSON::parse(response.body)
+    end
+  end
+
+  test "should not create package if filename is not unique" do
+    assert_difference("Package.count", 0) do
+      post api_v1_mda_package_url(@mda2), params: { package: { 
+              archive: fixture_file_upload("cicav-0.1.0.tar.gz", 'application/gzip'),
+              description: "This a package for testing filename validity" 
+            }}, headers: @auth_headers
+      resp = JSON::parse(response.body)
+      assert_response :unprocessable_entity
+    end
+  end
+
+
 end

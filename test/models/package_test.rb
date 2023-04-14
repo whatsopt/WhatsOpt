@@ -2,7 +2,7 @@
 
 require "test_helper"
 
-class PackahgeTest < ActiveSupport::TestCase
+class PackageTest < ActiveSupport::TestCase
 
   def setup
     @pkg = packages(:cicav_pkg)

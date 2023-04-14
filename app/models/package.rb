@@ -12,6 +12,7 @@ class Package < ApplicationRecord
   validates :name, presence: true
   validates :version, presence: true
   validate :archive_mime_type
+  validate :filename_uniqueness
 
   def filename 
     if archive.attached?
@@ -40,6 +41,14 @@ class Package < ApplicationRecord
   def archive_mime_type
     if archive.attached? && !archive.content_type.in?(%w(application/gzip))
       errors.add(:archive, 'Must be a source dist .tar.gz file')
+    end
+  end
+
+  def filename_uniqueness
+    present = ActiveStorage::Attachment.where(name: 'archive').joins(:blob).where(blob: {filename: self.filename})
+    # check if we are updating which is ok
+    if present.size > 0 and present.first.record_id != self.id
+      errors.add(:archive, 'filename already present')
     end
   end
 
