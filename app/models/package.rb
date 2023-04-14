@@ -48,7 +48,7 @@ class Package < ApplicationRecord
     present = ActiveStorage::Attachment.where(name: 'archive').joins(:blob).where(blob: {filename: self.filename})
     # check if we are updating which is ok
     if present.size > 0 and present.first.record_id != self.id
-      errors.add(:archive, 'filename already present')
+      errors.add(:archive, "'#{self.filename}' already attached to analysis ##{present.first.record.analysis.id}")
     end
   end
 
