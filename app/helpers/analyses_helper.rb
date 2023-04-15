@@ -70,4 +70,17 @@ module AnalysesHelper
     end
     raw(res)
   end
+
+  def owners(analysis)
+    res = "<span class='me-2'>#{analysis.owner.login}"
+    analysis.co_owners.each_with_index do |u, i|
+      if i+1 == analysis.co_owners.size
+        res += "<span class='me-2'> and #{u.login}"
+      else
+        res += "<span class='me-2'>, #{u.login}"
+      end
+    end
+    res += "</span>"
+    raw(res)
+  end
 end
