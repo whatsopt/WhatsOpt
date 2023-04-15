@@ -22,12 +22,9 @@ class AnalysisPolicy < ApplicationPolicy
     @record.public || @user.admin? || @user.has_role?(:owner, @record) || @user.has_role?(:member, @record)
   end
 
+  # Used in erb views templates
   def operate?
     APP_CONFIG["enable_remote_operations"] && destroy?
-  end
-
-  def pack?
-    APP_CONFIG["enable_wopstore"] && destroy?
   end
 
   def edit?
