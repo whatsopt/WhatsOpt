@@ -6,7 +6,7 @@ class OperationPolicy < ApplicationPolicy
   end
 
   def show?
-    enable_remote_operations? && AnalysisPolicy.new(@user, @record.analysis).show?
+    AnalysisPolicy.new(@user, @record.analysis).show?
   end
 
   def create?
@@ -14,10 +14,10 @@ class OperationPolicy < ApplicationPolicy
   end
 
   def update?
-    enable_remote_operations? && destroy?
+    destroy?
   end
 
   def destroy?
-    enable_remote_operations? && (@user.admin? || @user.has_role?(:owner, @record.analysis))
+    (@user.admin? || @user.has_role?(:owner, @record.analysis))
   end
 end
