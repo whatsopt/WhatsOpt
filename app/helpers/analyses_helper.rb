@@ -83,4 +83,15 @@ module AnalysesHelper
     res += "</span>"
     raw(res)
   end
+
+  def ownership(analysis)
+    res=""
+    unless analysis.public
+      res += ' <i class="fas fa-user-secret" title="Analysis with restricted access"></i>'
+    end
+    if analysis.co_owners.count > 0
+      res += ' <i class="fas fa-users-cog" title="Analysis has co-owners"></i>'
+    end
+    raw(res) 
+  end
 end
