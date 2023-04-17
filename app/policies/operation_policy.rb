@@ -6,7 +6,7 @@ class OperationPolicy < ApplicationPolicy
   end
 
   def show?
-    @record.analysis.public || @user.admin? || @user.has_role?(:owner, @record.analysis) || @user.has_role?(:member, @record.analysis)
+    AnalysisPolicy.new(@user, @record.analysis).show?
   end
 
   def create?
@@ -14,7 +14,7 @@ class OperationPolicy < ApplicationPolicy
   end
 
   def update?
-    (@user.admin? || @user.has_role?(:owner, @record.analysis))
+    destroy?
   end
 
   def destroy?

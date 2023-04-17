@@ -70,4 +70,28 @@ module AnalysesHelper
     end
     raw(res)
   end
+
+  def owners(analysis)
+    res = "<span class='me-2'>#{analysis.owner.login}"
+    analysis.co_owners.each_with_index do |u, i|
+      if i+1 == analysis.co_owners.size
+        res += "<span class='me-2'> and #{u.login}"
+      else
+        res += "<span class='me-2'>, #{u.login}"
+      end
+    end
+    res += "</span>"
+    raw(res)
+  end
+
+  def ownership(analysis)
+    res=""
+    unless analysis.public
+      res += ' <i class="fas fa-user-secret" title="Analysis with restricted access"></i>'
+    end
+    if analysis.co_owners.count > 0
+      res += ' <i class="fas fa-users-cog" title="Analysis has co-owners"></i>'
+    end
+    raw(res) 
+  end
 end

@@ -15,6 +15,7 @@ class Api::V1::PackagesController < Api::ApiController
   # POST /api/v1/{mda_id}/package
   def create
     if @package
+      authorize @package, :update?
       @package.update(package_params)
     else
       @package = Package.new(package_params)
@@ -29,7 +30,8 @@ class Api::V1::PackagesController < Api::ApiController
   def set_package
     @mda = Analysis.find(params[:mda_id])
     authorize @mda
-    @package = @mda&.package 
+    @package = @mda&.package
+    authorize @package if @package
   end
 
   def package_params

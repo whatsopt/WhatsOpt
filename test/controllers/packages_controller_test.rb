@@ -23,6 +23,15 @@ class PackagesControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test "co-owner should not destroy package" do
+    sign_in users(:user4)
+    @pkg = packages(:cicav_pkg)
+    assert_difference("Package.count", 0) do
+      delete package_url(@pkg)
+      assert_redirected_to root_url
+    end
+  end
+
   test "non-owner cannot destroy package" do
     @pkg = packages(:cicav_pkg)
     sign_out users(:user1)
