@@ -16,61 +16,61 @@
 
 <body>
   <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top" role="navigation">
+    <div class="container-fluid">
+
     <%= link_to mdas_path, class: "navbar-brand" do %>
-    <%= image_tag "logo_whatsopt_v1.0.svg", alt: "Logo", width: 32, height: 32, class: "d-inline-block align-top" %>
-    <span>WhatsOpt</span>
+      <%= image_tag "logo_whatsopt_v1.0.svg", alt: "Logo", width: 32, height: 32, class: "d-inline-block align-top" %>
+      <span>WhatsOpt</span>
     <% end %>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
 
     <div class="collapse navbar-collapse" id="navbarNavDropdown">
-    <div class="container-fluid">
-      <ul class="navbar-nav me-auto">
-        <% if user_signed_in? %>
-        <li class="nav-item"><%= link_to "Analyses", mdas_path, class: "nav-link" %></li>
-        <li class="nav-item"><%= link_to "Design Projects", design_projects_path, class: "nav-link" %></li>
-        <li class="nav-item"><%= link_to "Optimizations", optimizations_path, class: "nav-link" %></li>
-        <% if APP_CONFIG['enable_wopstore'] %>
-          <li class="nav-item"><%= link_to "WopStore", packages_path, class: "nav-link" %></li>
-        <% end %>
-        <% end %>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Help</a>
-          <div class="dropdown-menu" aria-labelledby="dropdown01">
-            <%= link_to "Doc", "http://github.com/OneraHub/WhatsOpt-Doc", class: "dropdown-item" %>
-            <%= link_to "API Doc", api_doc_path, class: "dropdown-item" %>
-            <div class="dropdown-divider"></div>
-            <%= link_to "Issues", "https://github.com/OneraHub/WhatsOpt/issues", class: "dropdown-item" %>
-          </div>
-        </li>
-      </ul>
-    </div>
-
-    <div class="container-fluid">
-      <ul class="navbar-nav d-flex justify-content-end">
-        <% if user_signed_in? %>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="dropdown02" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><%= current_user.login %></a>
-          <div class="dropdown-menu" aria-labelledby="dropdown02">
-            <%= link_to "My Profile", user_path(current_user), class: "dropdown-item" %>
-            <div class="dropdown-divider"></div>
-            <%= link_to "Sign out", destroy_user_session_path, method: :delete, class: "dropdown-item" %>
-          </div>
-        </li>
-        <% else %>
-        <li class="nav-item">
-          <% if current_page?(user_session_path) %>
-          <%= link_to "Sign in", user_session_path, class: "nav-link disabled" %>
-          <% else %>
-          <%= link_to "Sign in", user_session_path, class: "nav-link" %>
+      <div class="container-fluid">
+        <ul class="navbar-nav me-auto">
+          <% if user_signed_in? %>
+            <li class="nav-item"><%= link_to "Analyses", mdas_path, class: "nav-link" %></li>
+            <li class="nav-item"><%= link_to "DesignProjects", design_projects_path, class: "nav-link" %></li>
+            <li class="nav-item"><%= link_to "Optimizations", optimizations_path, class: "nav-link" %></li>
+            <% if APP_CONFIG['enable_wopstore'] %>
+              <li class="nav-item"><%= link_to "WopStore", packages_path, class: "nav-link" %></li>
+            <% end %>
           <% end %>
-        </li>
-        <% end %>
-      </ul>
-      <% if !user_signed_in? %>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Help</a>
+            <div class="dropdown-menu" aria-labelledby="dropdown01">
+              <%= link_to "Doc", "http://github.com/OneraHub/WhatsOpt-Doc", class: "dropdown-item" %>
+              <%= link_to "API Doc", api_doc_path, class: "dropdown-item" %>
+              <div class="dropdown-divider"></div>
+              <%= link_to "Issues", "https://github.com/OneraHub/WhatsOpt/issues", class: "dropdown-item" %>
+            </div>
+          </li>
+        </ul>
+      </div>
 
-      <% end %>
+      <div class="container-fluid">
+        <ul class="navbar-nav d-flex justify-content-end">
+          <% if user_signed_in? %>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="dropdown02" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><%= current_user.login %></a>
+              <div class="dropdown-menu" aria-labelledby="dropdown02">
+                <%= link_to "My Profile", user_path(current_user), class: "dropdown-item" %>
+                <div class="dropdown-divider"></div>
+                <%= link_to "Sign out", destroy_user_session_path, method: :delete, class: "dropdown-item" %>
+              </div>
+            </li>
+          <% else %>
+            <li class="nav-item">
+              <% if current_page?(user_session_path) %>
+                <%= link_to "Sign in", user_session_path, class: "nav-link disabled" %>
+              <% else %>
+                <%= link_to "Sign in", user_session_path, class: "nav-link" %>
+              <% end %>
+            </li>
+          <% end %>
+        </ul>
+      </div>
     </div>
     </div>
   </nav>
