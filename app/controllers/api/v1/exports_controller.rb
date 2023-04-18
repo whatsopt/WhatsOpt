@@ -16,7 +16,7 @@ class Api::V1::ExportsController < Api::ApiController
 
     user_agent = request.headers["User-Agent"]
     mda = Analysis.find(mda_id)
-    authorize mda
+    authorize mda, :show?
     case format 
     when "openmdao", "openmdao_pkg" 
       ogen = WhatsOpt::OpenmdaoGenerator.new(mda, whatsopt_url: whatsopt_url, pkg_format: (format == "openmdao_pkg"),
