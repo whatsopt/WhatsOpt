@@ -68,6 +68,9 @@ module AnalysesHelper
     if analysis.packaged?
       res += '<span class="badge rounded-pill bg-warning me-2" title="Analysis is packaged">PKG</span>'
     end
+    if analysis.mono_disciplinary?
+      res += '<span class="badge rounded-pill bg-secondary me-2" title="Analysis has one discipline">DISC</span>'
+    end
     raw(res)
   end
 
