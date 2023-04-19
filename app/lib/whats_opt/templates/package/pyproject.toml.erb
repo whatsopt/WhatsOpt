@@ -14,5 +14,10 @@ requires-python = ">=3.7"
 classifiers = [
     "Programming Language :: Python :: 3",
 ]
-dependencies = ['<%= @framework %>']
+dependencies = ["<%= @framework %>"]
 
+# Flat layout just include analysis module
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["<%= @mda.py_modulename %>"] 
+namespaces = false
