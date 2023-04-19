@@ -119,8 +119,14 @@ module WhatsOpt
 
     def _generate_code(gendir, options = {})
       # gendir='/tmp' # for debug
-      opts = { with_server: true, with_egmdo: false, with_run: true, with_unittests: false }.merge(options)
-      pkg_dir = package_dir? ? File.join(gendir, @mda.py_modulename) : gendir
+      opts = { with_server: true, with_egmdo: false, with_run: true, with_unittests: false, with_src_dir: false }.merge(options)
+      if opts[:with_src_dir]
+        src_dir = File.join(gendir, "src")
+        Dir.mkdir(src_dir) unless Dir.exist?(src_dir)
+      else 
+        src_dir = gendir
+      end
+      pkg_dir = package_dir? ? File.join(src_dir, @mda.py_modulename) : src_dir
       Dir.mkdir(pkg_dir) unless Dir.exist?(pkg_dir)
 
       @mda.disciplines.nodes.each do |disc|
@@ -168,7 +174,7 @@ module WhatsOpt
       Dir.mkdir(gendir) unless Dir.exist?(gendir)
 
       # generate only analysis code: no script , no server
-      opts = options.merge(with_run: false, with_server: false, with_runops: false)
+      opts = options.merge(with_run: false, with_server: false, with_runops: false, with_src_dir: false)
       sub_ogen._generate_code(gendir, opts)
       @genfiles += sub_ogen.genfiles
     end
