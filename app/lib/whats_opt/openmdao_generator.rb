@@ -233,8 +233,8 @@ module WhatsOpt
       else 
         # no package => generate package skeleton
         _generate(".gitignore", "package/gitignore.erb", gendir, no_comment: true)
-        _generate("README", "package/README.erb", gendir, no_comment: true)
-        _generate("setup.py", "package/setup.py.erb", gendir)
+        _generate("README.md", "package/README.md.erb", gendir, no_comment: true)
+        _generate("pyproject.toml", "package/pyproject.toml.erb", gendir, no_comment: true)
       end
     end
 
