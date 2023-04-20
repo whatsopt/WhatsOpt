@@ -1,0 +1,39 @@
+<%= form_for(fastoad_config, url: (fastoad_config.new_record? ? fastoad_configs_path : fastoad_config_path(@fastoad_config))) do |f| %>
+<% if @fastoad_config.errors.any? %>
+<% @fastoad_config.errors.full_messages.each do |message| %>
+<div class="alert <%= bootstrap_class_for :error %>" role="alert">
+  <a href="#" data-dismiss="alert" class="close">×</a>
+  <%= message %>
+</div>
+<% end %>
+<% end %>
+
+<div class="row">
+  <div class=" col-4">
+    <div class="mb-3">
+      <%= f.label :name %>
+      <%= f.text_field :name, class: "form-control" %>
+    </div>
+
+    <div class="mb-3">
+      <%= f.label :module_folders %>
+      <%= f.text_field :module_folders, class: "form-control" %>
+    </div>
+
+    <div class="mb-3">
+      <%= f.label :input_file %>
+      <%= f.text_field :input_file, class: "form-control" %>
+    </div>
+
+    <div class="mb-3">
+      <%= f.label :output_file %>
+      <%= f.text_field :output_file, class: "form-control" %>
+    </div>
+
+    <div class="mb-3">
+      <%= f.submit "Submit", class: "btn btn-primary" %>
+      <%= f.submit "Cancel", class: "btn btn-secondary", name: "cancel_button" %>
+    </div>
+  </div>
+</div>
+<% end %>

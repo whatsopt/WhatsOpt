@@ -36,6 +36,9 @@
             <% if APP_CONFIG['enable_wopstore'] %>
               <li class="nav-item"><%= link_to "WopStore", packages_path, class: "nav-link" %></li>
             <% end %>
+            <% if APP_CONFIG['enable_fastoad'] %>
+              <li class="nav-item"><%= link_to "FAST-OAD", fastoad_configs_path, class: "nav-link" %></li>
+            <% end %>
           <% end %>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Help</a>

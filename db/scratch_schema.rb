@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_04_03_155358) do
+ActiveRecord::Schema[7.0].define(version: 2023_04_20_094011) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -130,6 +130,28 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_03_155358) do
     t.string "service_type"
     t.integer "service_id"
     t.index ["service_type", "service_id"], name: "index_endpoints_on_service_type_and_service_id"
+  end
+
+  create_table "fastoad_configs", force: :cascade do |t|
+    t.string "name"
+    t.string "version"
+    t.string "module_folders"
+    t.string "input_file"
+    t.string "output_file"
+    t.integer "analysis_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["analysis_id"], name: "index_fastoad_configs_on_analysis_id"
+  end
+
+  create_table "fastoad_modules", force: :cascade do |t|
+    t.string "name"
+    t.string "fastoad_id"
+    t.string "version"
+    t.integer "fastoad_config_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["fastoad_config_id"], name: "index_fastoad_modules_on_fastoad_config_id"
   end
 
   create_table "geometry_models", force: :cascade do |t|
@@ -337,5 +359,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_03_155358) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "analysis_disciplines", "analyses"
   add_foreign_key "analysis_disciplines", "disciplines"
+  add_foreign_key "fastoad_configs", "analyses"
+  add_foreign_key "fastoad_modules", "fastoad_configs"
   add_foreign_key "packages", "analyses"
 end

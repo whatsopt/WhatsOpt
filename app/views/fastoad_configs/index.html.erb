@@ -1,0 +1,50 @@
+<div class="btn-toolbar float-end">
+  <%= link_to 'New', new_fastoad_config_path, class: "btn btn-primary ms-2" %>
+</div>
+
+<h1>FAST-OAD Configurations</h1>
+
+<p>
+<table class="table table-striped">
+
+  <thead>
+    <tr>
+      <th style="width: 10%">Name</th>
+      <th style="width: 10%">Owner</th>
+      <th style="width: 20%">ModuleFolders</th>
+      <th style="width: 20%">InputFile</th>
+      <th style="width: 20%">OutputFile</th>
+      <th style="width: 5%">NbOfModules</th>
+      <th style="width: 15%">Actions</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @fastoad_configs.each do |config| %>
+    <tr>
+      <td><%= link_to config.name, fastoad_config_path(config) %></td>
+      <td><%= config.owner.login %></td>
+      <td><%= config.module_folders %></td>
+      <td><%= config.input_file %></td>
+      <td><%= config.output_file %></td>
+      <td><%= config.modules.count %></td>
+      <td>
+        <% if policy(config).update? %>
+        <%= link_to edit_fastoad_config_path(config), 
+            class: "btn btn-sm", title: "Edit" do %>
+        <i class="fas fa-edit"></i>
+        <% end %>
+        <% end %>
+        <% if policy(config).destroy? %>
+        <%= link_to fastoad_config_path(config), method: :delete, 
+              data: { confirm: "Remove #{config.name} FAST-OAD config?" }, 
+              class: "btn btn-sm text-danger", title:"Delete" do %>
+        <i class="fas fa-times"></i>
+        <% end %>
+        <% end %>
+      </td>
+    </tr>
+    <% end %>
+  </tbody>
+</table>
+</p>

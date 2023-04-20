@@ -11,6 +11,7 @@ Rails.application.routes.draw do
   end
      
   resources :design_projects
+  resources :fastoad_configs
   resources :packages, only: [:index, :destroy] if APP_CONFIG['enable_wopstore']
 
   resources :optimizations do
