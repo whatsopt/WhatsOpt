@@ -61,6 +61,10 @@ class Analysis < ApplicationRecord
     !has_parent?
   end
 
+  def mono_disciplinary?
+    self.disciplines.nodes.size == 1
+  end
+
   def is_metamodel?
     disciplines.nodes.size > 0 && !disciplines.nodes.detect { |d| !d.is_metamodel? }
   end
