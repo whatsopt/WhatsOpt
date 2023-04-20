@@ -124,7 +124,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     expected = pkg_expected + ["mda_init.py", "run_mda.py", "run_mdo.py", 
       "run_doe.py", "run_screening.py", "run_server.py", 
       "run_egdoe.py", "run_egmda.py", "run_egmdo.py"] +
-      [".gitignore", "README", "setup.py"]
+      [".gitignore", "README.md", "pyproject.toml"]
     @ogen_pkg = WhatsOpt::OpenmdaoGenerator.new(@mda, pkg_format: true)
     Dir.mktmpdir do |dir|
       @ogen_pkg._generate_code(dir, with_server: true, with_egmdo: true, with_runops: true, with_run: true, with_unittests: true)
@@ -159,7 +159,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     expected = pkg_expected + ["mda_init.py", "run_mda.py", "run_mdo.py", 
       "run_doe.py", "run_screening.py", "run_server.py", 
       "run_egdoe.py", "run_egmda.py", "run_egmdo.py"] +
-      ["README", "setup.py"]
+      ["README.md", "pyproject.toml"]
 
     @ogen_pkg = WhatsOpt::OpenmdaoGenerator.new(@mda, pkg_format: true)
     Dir.mktmpdir do |dir|
@@ -335,7 +335,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
         "outerpkg/server/outerpkg/Outerpkg.py", "outerpkg/server/outerpkg/__init__.py", "outerpkg/server/outerpkg/constants.py", "outerpkg/server/outerpkg/ttypes.py",
         "outerpkg/server/outerpkg_conversions.py", "outerpkg/server/outerpkg_proxy.py", "outerpkg/vacant_discipline.py", "outerpkg/vacant_discipline_base.py",
         "outerpkg/server/remote_discipline.py"]+
-        [".gitignore", "README", "setup.py"]).sort
+        [".gitignore", "README.md", "pyproject.toml"]).sort
       assert_equal expected, basenames
     end
   end

@@ -2,3 +2,5 @@ Package <%= @mda.name %> based on analysis #<%= @mda.id%>@<%= @whatsopt_url %>:
 <% @mda.disciplines.nodes.each do |disc| -%>
   * <%= disc.name %>
 <% end -%>
+
+<%= @mda.note_text %>
