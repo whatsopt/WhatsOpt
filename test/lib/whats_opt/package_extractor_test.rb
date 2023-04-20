@@ -20,12 +20,12 @@ class PackageExtractorTest < ActiveSupport::TestCase
   test "should extract package" do
     Dir.mktmpdir do |dir|
         @genfiles = @pkgext.extract(dir)
-        assert File.exist?(File.join(dir, "setup.py"))
-        assert File.exist?(File.join(dir, "README"))
+        assert File.exist?(File.join(dir, "pyproject.toml"))
+        assert File.exist?(File.join(dir, "README.md"))
         assert File.exist?(File.join(dir, "cicav"))
-        expected = ["README", "cicav/__init__.py", "cicav/aerodynamics.py", "cicav/aerodynamics_base.py", 
+        expected = ["README.md", "cicav/__init__.py", "cicav/aerodynamics.py", "cicav/aerodynamics_base.py", 
                     "cicav/cicav.py", "cicav/cicav_base.py", "cicav/geometry.py", "cicav/geometry_base.py", 
-                    "cicav/propulsion.py", "cicav/propulsion_base.py", "setup.py"]
+                    "cicav/propulsion.py", "cicav/propulsion_base.py", "pyproject.toml"]
         assert_equal expected, @genfiles.map{|f| f[dir.size+1..]}
     end
   end
