@@ -16,6 +16,11 @@
     </div>
 
     <div class="mb-3">
+      <%= f.label :version %>
+      <%= f.select :version, [['1.4.1', '1.4.1']], class: "form-control" %>
+    </div>
+
+    <div class="mb-3">
       <%= f.label :module_folders %>
       <%= f.text_field :module_folders, class: "form-control" %>
     </div>
@@ -28,6 +33,11 @@
     <div class="mb-3">
       <%= f.label :output_file %>
       <%= f.text_field :output_file, class: "form-control" %>
+    </div>
+
+    <div class="mb-3">
+      <%= f.label :analysis_id %>
+      <%= f.select :analysis_id, [['FASTOADModel', '1.4.1']], class: "form-control" %>
     </div>
 
     <div class="mb-3">

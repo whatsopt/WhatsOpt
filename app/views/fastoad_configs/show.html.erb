@@ -1,19 +1,62 @@
 <h1><%= "FAST-OAD Conf. #{@fastoad_config.name}" %></h1>
 
+
+<h2>General</h2>
+<table class="table">
+<tr>
+    <th>Version</th>
+    <td><%= @fastoad_config.version %></td>
+</tr>
+<tr>
+    <th>AnalysisRef</th>
+    <td><%= link_to @fastoad_config.analysis.name, mda_path(@fastoad_config.analysis)  %> <%= "(##{@fastoad_config.analysis_id})" %></td>
+</tr>
+<tr>
+    <th style="width: 10%">Module Folders</th>
+    <td><%= @fastoad_config.module_folders %></td>
+</tr>
+<tr>
+    <th>InputFile</th>
+    <td><%= @fastoad_config.input_file %></td>
+</tr>
+<tr>
+    <th>OutputFile</th>
+    <td><%= @fastoad_config.output_file %></td>
+</tr>
+</table>
+
+<h2>New Modules</h2>
 <table class="table table-striped">
 <thead>
 <tr>
-    <th style="10%">Name</th>
-    <th style="10%">Version</th>
-    <th style="20%">FAST-OAD Id</th>
+    <th>Name</th>
+    <th>FAST-OAD Id</th>
 </tr>
 </thead>
 
 <tbody>
-  <% @fastoad_config.modules.each do |mod| %>
+  <% [].each do |mod| %>
   <tr>
     <td><%= mod.name %></td>
-    <td><%= mod.version %></td>
+    <td><%= mod.fastoad_id %></td>
+  </tr>
+  <% end %>
+</tbody>
+</table>
+
+<h2>Base Modules</h2>
+<table class="table table-striped">
+<thead>
+<tr>
+    <th>Name</th>
+    <th>FAST-OAD Id</th>
+</tr>
+</thead>
+
+<tbody>
+  <% @fastoad_config.fastoad_modules.each do |mod| %>
+  <tr>
+    <td><%= mod.name %></td>
     <td><%= mod.fastoad_id %></td>
   </tr>
   <% end %>

@@ -9,13 +9,11 @@
 
   <thead>
     <tr>
-      <th style="width: 10%">Name</th>
-      <th style="width: 10%">Owner</th>
-      <th style="width: 20%">ModuleFolders</th>
-      <th style="width: 20%">InputFile</th>
-      <th style="width: 20%">OutputFile</th>
-      <th style="width: 5%">NbOfModules</th>
-      <th style="width: 15%">Actions</th>
+      <th style="width: 20%">Name</th>
+      <th style="width: 20%">FAST-OAD Version</th>
+      <th style="width: 20%">Analysis</th>
+      <th style="width: 20%">Owner</th>
+      <th style="width: 20%">Actions</th>
     </tr>
   </thead>
 
@@ -23,11 +21,9 @@
     <% @fastoad_configs.each do |config| %>
     <tr>
       <td><%= link_to config.name, fastoad_config_path(config) %></td>
+      <td><%= config.version %></td>
+      <td><%= link_to config.analysis.name, mda_path(config.analysis) %></td>
       <td><%= config.owner.login %></td>
-      <td><%= config.module_folders %></td>
-      <td><%= config.input_file %></td>
-      <td><%= config.output_file %></td>
-      <td><%= config.modules.count %></td>
       <td>
         <% if policy(config).update? %>
         <%= link_to edit_fastoad_config_path(config), 
