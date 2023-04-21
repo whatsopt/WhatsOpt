@@ -10,6 +10,7 @@ class FastoadConfig < ApplicationRecord
 
   belongs_to :analysis
   has_many :fastoad_modules
+  has_many :custom_modules, foreign_key: "custom_config_id", class_name: 'FastoadModule'
 
   validates :name, presence: true, uniqueness: true
   validates :version, presence: true

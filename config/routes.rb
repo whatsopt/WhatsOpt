@@ -11,7 +11,11 @@ Rails.application.routes.draw do
   end
      
   resources :design_projects
-  resources :fastoad_configs
+  if APP_CONFIG['enable_fastoad']
+    resources :fastoad_configs, shallow: true do
+      resources :fastoad_modules
+    end
+  end 
   resources :packages, only: [:index, :destroy] if APP_CONFIG['enable_wopstore']
 
   resources :optimizations do
