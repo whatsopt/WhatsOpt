@@ -28,25 +28,27 @@ class FastoadModulesController < ApplicationController
   # POST /fastoad_configs/:fastoad_config_id/fastoad_modules
   def create
     @fastoad_config = FastoadConfig.find(params[:fastoad_config_id])
-    unless @fastoad_module
-      @fastoad_module = @fastoad_config.custom_modules.create(fastoad_module_params)
+    authorize @fastoad_config
+    @fastoad_module = @fastoad_config.custom_modules.build(fastoad_module_params)
+    if @fastoad_module.save
+      redirect_to fastoad_config_url(@fastoad_config), notice: "FAST-OAD module #{@fastoad_module.name} was successfully created."
+    else
+      redirect_to fastoad_config_url(@fastoad_config), error: "Something went wrong while creating #{@fastoad_module.name}.\n#{@fastoad_module.errors.full_messages}"
     end
-    authorize @fastoad_module
-    redirect_to edit_fastoad_module_url(@fastoad_module)
   end
 
   # PATCH/PUT /fastoad_modules/1
   def update
-    redirect_to edit_fastoad_module_url(@fastoad_module)
+    redirect_to fastoad_config_url(@fastoad_config)
   end
 
   # DELETE /fastoad_modules/1
   def destroy
     authorize @fastoad_module
     @fastoad_module.destroy
-    redirect_to fastoad_configs_url, notice: "Fastoad Module was successfully destroyed."
+    redirect_to fastoad_config_url(@fastoad_config), notice: "Fastoad Module was successfully destroyed."
   rescue FastoadModule::ForbiddenRemovalError => exc
-    redirect_to fastoad_configs_url, alert: exc.message
+    redirect_to fastoad_config_url(@fastoad_config), alert: exc.message
   end
 
   private

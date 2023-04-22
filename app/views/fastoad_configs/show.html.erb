@@ -35,7 +35,7 @@
 </thead>
 
 <tbody>
-  <% [].each do |mod| %>
+  <% @fastoad_config.custom_modules.each do |mod| %>
   <tr>
     <td><%= mod.name %></td>
     <td><%= mod.fastoad_id %></td>

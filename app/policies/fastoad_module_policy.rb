@@ -7,7 +7,7 @@ class FastoadModulePolicy < ApplicationPolicy
   end
 
   def create?
-    @user.has_role?(:owner, @record.fastoad_config)
+    true
   end
 
   def update?
@@ -15,6 +15,6 @@ class FastoadModulePolicy < ApplicationPolicy
   end
 
   def destroy?
-    (@user.admin? || @user.has_role?(:owner, @record.fastoad_config))
+    (@user.admin?)
   end
 end
