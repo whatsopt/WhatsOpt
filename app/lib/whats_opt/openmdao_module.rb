@@ -21,7 +21,7 @@ module WhatsOpt
     end
 
     def snake_modulename
-      _full_modulename.tr(".", "_")
+      full_modulename.tr(".", "_")
     end
 
     def camel_modulename
@@ -41,7 +41,7 @@ module WhatsOpt
     end
 
     def py_full_modulename
-      _full_modulename(final_name: py_modulename)
+      full_modulename(final_name: py_modulename)
     end
 
     def py_filename
@@ -50,6 +50,14 @@ module WhatsOpt
 
     def py_basefilename
       "#{basename}_base.py"
+    end
+
+    # return fully qualified dotted module name without root name 
+    def full_modulename(final_name: _modulename)
+      fmn = _sub_packagename
+      fmn += "." unless fmn.blank?
+      fmn += "#{final_name}"
+      fmn
     end
 
   private
@@ -72,13 +80,6 @@ module WhatsOpt
       self._namespace.sub(/^#{Regexp.escape(@@root_modulename)}\.?/, "")
     end
 
-    # return fully qualified dotted module name without root name 
-    def _full_modulename(final_name: _modulename)
-      fmn = _sub_packagename
-      fmn += "." unless fmn.blank?
-      fmn += "#{final_name}"
-      fmn
-    end
 
   end
 end

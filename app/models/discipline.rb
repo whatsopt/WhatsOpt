@@ -55,6 +55,10 @@ class Discipline < ApplicationRecord
     invalid
   end
 
+  def fullname
+    snake_modulename
+  end
+
   def input_variables
     @input_variables ||= variables.ins
   end

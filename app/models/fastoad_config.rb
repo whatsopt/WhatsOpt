@@ -10,10 +10,10 @@ class FastoadConfig < ApplicationRecord
   DEFAULT_OUTPUT_FILE = "./output_file.xml"
 
   belongs_to :analysis
-  has_one :custom_analysis, class_name: 'Analysis'
+  has_one :custom_analysis, foreign_key: "custom_config_id", class_name: "Analysis", dependent: :destroy
 
-  has_many :fastoad_modules
-  has_many :custom_modules, foreign_key: "custom_config_id", class_name: 'FastoadModule'
+  has_many :fastoad_modules, dependent: :destroy
+  has_many :custom_modules, foreign_key: "custom_config_id", class_name: "FastoadModule", dependent: :destroy
 
   validates :name, presence: true, uniqueness: true
   validates :version, presence: true
@@ -40,6 +40,22 @@ class FastoadConfig < ApplicationRecord
       end
     end
     modules
+  end
+
+  def update_custom_modules(disciplines)
+    cmp = disciplines.zip(self.custom_modules)
+    cmp.each do |disc, cm|
+      if cm
+        if disc
+          cm.update(name: disc.name, fastoad_id: disc.fullname)
+        end 
+      else
+        self.custom_modules.create(name: disc.name, fastoad_id: disc.fullname)
+      end
+    end
+    while self.custom_modules.count > disciplines.size do
+      self.custom_modules.last.destroy
+    end
   end
 
 private

@@ -44,8 +44,9 @@
 </tbody>
 </table>
 
-<%= link_to 'New', new_fastoad_config_fastoad_module_url(@fastoad_config), class: "btn btn-primary" %>
-
+<div class="btn">
+  <%= link_to 'Custom Analysis', fastoad_config_path(@fastoad_config), method: :patch, class: "btn btn-primary ms-2" %>
+</div>
 
 <h2>Base Modules</h2>
 <table class="table table-striped">
