@@ -30,7 +30,9 @@ class Analysis < ApplicationRecord
 
   has_one :design_project_filing, dependent: :destroy
   has_one :package, dependent: :destroy
-  has_one :fastoad_config, dependent: :destroy
+
+  has_one :fastoad_config
+  belongs_to :custom_config, class_name: "FastoadConfig"
 
   has_many :journals, -> { includes([:details, :user]).order(created_on: :asc) }, dependent: :destroy
 

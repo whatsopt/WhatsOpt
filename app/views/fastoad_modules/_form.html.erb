@@ -1,6 +1,6 @@
 <%= form_for([fastoad_config, fastoad_module], url: (fastoad_module.new_record? ? fastoad_config_fastoad_modules_path(fastoad_config) : fastoad_module_path(fastoad_module))) do |f| %>
-<% if @fastoad_config.errors.any? %>
-<% @fastoad_config.errors.full_messages.each do |message| %>
+<% if fastoad_module.errors.any? %>
+<% fastoad_module.errors.full_messages.each do |message| %>
 <div class="alert <%= bootstrap_class_for :error %>" role="alert">
   <a href="#" data-dismiss="alert" class="close">×</a>
   <%= message %>

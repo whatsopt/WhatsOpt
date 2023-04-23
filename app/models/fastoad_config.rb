@@ -4,11 +4,14 @@ class FastoadConfig < ApplicationRecord
   include Ownable
   resourcify
 
+  DEFAULT_VERSION = "1.4.1"
   DEFAULT_MODULE_FOLDERS =  "./modules"
   DEFAULT_INPUT_FILE = "./input_file.xml"
   DEFAULT_OUTPUT_FILE = "./output_file.xml"
 
   belongs_to :analysis
+  has_one :custom_analysis, class_name: 'Analysis'
+
   has_many :fastoad_modules
   has_many :custom_modules, foreign_key: "custom_config_id", class_name: 'FastoadModule'
 
@@ -42,13 +45,10 @@ class FastoadConfig < ApplicationRecord
 private
 
   def set_defaults
-    self.module_folders = DEFAULT_MODULE_FOLDERS if module_folders.blank?
-    self.input_file = DEFAULT_INPUT_FILE if input_file.blank?
-    self.output_file  = DEFAULT_OUTPUT_FILE if output_file.blank?
+    self.version = DEFAULT_VERSION if version.blank?
 
     if fastoad_modules.blank?
       conf = self.load_conf(self.version)
-
       self.module_folders = conf['module_folders']
       self.input_file = conf['input_file']
       self.output_file = conf['output_file']
@@ -56,6 +56,10 @@ private
       modules = list_modules(conf['model'])
       self.fastoad_modules = modules
     end
+    self.module_folders = DEFAULT_MODULE_FOLDERS if module_folders.blank?
+    self.input_file = DEFAULT_INPUT_FILE if input_file.blank?
+    self.output_file  = DEFAULT_OUTPUT_FILE if output_file.blank?
+    self.analysis = Analysis.find_by_name("FAST_OAD_v141") if analysis.blank?
   end
 
 end

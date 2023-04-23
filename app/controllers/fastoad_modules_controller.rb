@@ -33,13 +33,13 @@ class FastoadModulesController < ApplicationController
     if @fastoad_module.save
       redirect_to fastoad_config_url(@fastoad_config), notice: "FAST-OAD module #{@fastoad_module.name} was successfully created."
     else
-      redirect_to fastoad_config_url(@fastoad_config), error: "Something went wrong while creating #{@fastoad_module.name}.\n#{@fastoad_module.errors.full_messages}"
+      redirect_to new_fastoad_config_url, error: "Something went wrong while creating #{@fastoad_module.name}.\n#{@fastoad_module.errors.full_messages}"
     end
   end
 
   # PATCH/PUT /fastoad_modules/1
   def update
-    redirect_to fastoad_config_url(@fastoad_config)
+    redirect_to fastoad_module_url(@fastoad_module)
   end
 
   # DELETE /fastoad_modules/1

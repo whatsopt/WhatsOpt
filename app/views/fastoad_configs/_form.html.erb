@@ -1,11 +1,11 @@
-<%= form_for(fastoad_config, url: (fastoad_config.new_record? ? fastoad_configs_path : fastoad_config_path(@fastoad_config))) do |f| %>
-<% if @fastoad_config.errors.any? %>
-<% @fastoad_config.errors.full_messages.each do |message| %>
-<div class="alert <%= bootstrap_class_for :error %>" role="alert">
-  <a href="#" data-dismiss="alert" class="close">×</a>
-  <%= message %>
-</div>
-<% end %>
+<%= form_for(fastoad_config, url: (fastoad_config.new_record? ? fastoad_configs_path : fastoad_config_path(fastoad_config))) do |f| %>
+<% if fastoad_config.errors.any? %>
+  <% fastoad_config.errors.full_messages.each do |message| %>
+  <div class="alert <%= bootstrap_class_for :error %>" role="alert">
+    <a href="#" data-dismiss="alert" class="close">×</a>
+    <%= message %>
+  </div>
+  <% end %>
 <% end %>
 
 <div class="row">
@@ -33,11 +33,6 @@
     <div class="mb-3">
       <%= f.label :output_file %>
       <%= f.text_field :output_file, class: "form-control" %>
-    </div>
-
-    <div class="mb-3">
-      <%= f.label :analysis_id %>
-      <%= f.select :analysis_id, [['FASTOADModel', '1.4.1']], class: "form-control" %>
     </div>
 
     <div class="mb-3">

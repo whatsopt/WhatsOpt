@@ -33,7 +33,7 @@ class FastoadConfigsController < ApplicationController
         @fastoad_config.set_owner(current_user)
         redirect_to fastoad_configs_url, notice: "FAST-OAD Configuration #{@fastoad_config.name} was successfully created."
       else
-        redirect_to new_fastoad_config_url, error: "Something went wrong while creating #{@fastoad_config.name}."
+        render :new
       end
     end
   end

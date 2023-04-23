@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_04_21_151702) do
+ActiveRecord::Schema[7.0].define(version: 2023_04_23_084727) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -55,6 +55,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_21_151702) do
     t.datetime "updated_at", precision: nil, null: false
     t.boolean "public", default: true
     t.string "ancestry"
+    t.integer "custom_config_id"
     t.index ["ancestry"], name: "index_analyses_on_ancestry"
   end
 
@@ -165,9 +166,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_21_151702) do
     t.string "fastoad_id"
     t.string "version"
     t.integer "fastoad_config_id"
+    t.integer "custom_config_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "custom_config_id"
     t.index ["custom_config_id"], name: "index_fastoad_modules_on_custom_config_id"
     t.index ["fastoad_config_id"], name: "index_fastoad_modules_on_fastoad_config_id"
   end
