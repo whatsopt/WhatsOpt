@@ -13,6 +13,10 @@ module AnalysesHelper
     end
   end
 
+  def analysis_name_and_id(analysis, user)
+    link_to_analysis_if_authorized(analysis, user)+ " (##{analysis.id})"
+  end
+
   def link_to_operation_if_authorized(ope, user)
     if policy(ope.analysis).show?
       link_to ope.name, operation_path(ope), id: ope.id
