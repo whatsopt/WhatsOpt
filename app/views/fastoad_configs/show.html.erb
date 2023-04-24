@@ -8,8 +8,20 @@
     <td><%= @fastoad_config.version %></td>
 </tr>
 <tr>
-    <th>AnalysisRef</th>
-    <td><%= link_to @fastoad_config.analysis.name, mda_path(@fastoad_config.analysis)  %> <%= "(##{@fastoad_config.analysis_id})" %></td>
+    <th>Reference</th>
+    <td><%= analysis_name_and_id(@fastoad_config.analysis, current_user) %></td>
+</tr>
+<tr>
+    <th>Custom</th>
+    <td>
+    <% if @fastoad_config.custom_analysis %> 
+      <%= analysis_name_and_id(@fastoad_config.custom_analysis, current_user) %>
+    <% else %>
+      <div class="btn">
+        <%= link_to 'Custom Analysis', fastoad_config_path(@fastoad_config), method: :patch, class: "btn btn-primary ms-2" %>
+      </div>
+    <% end %>
+    </td>
 </tr>
 <tr>
     <th style="width: 10%">Module Folders</th>
@@ -44,11 +56,8 @@
 </tbody>
 </table>
 
-<div class="btn">
-  <%= link_to 'Custom Analysis', fastoad_config_path(@fastoad_config), method: :patch, class: "btn btn-primary ms-2" %>
-</div>
 
-<h2>Base Modules</h2>
+<h2>FAST-OAD <%= @fastoad_config.version %> Modules</h2>
 <table class="table table-striped">
 <thead>
 <tr>
