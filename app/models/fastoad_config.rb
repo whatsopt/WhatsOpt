@@ -29,9 +29,9 @@ class FastoadConfig < ApplicationRecord
     conf
   end
 
-  def list_modules(model)
+  def list_modules(fastoad_conf_model)
     modules = []
-    model.each do |k, mod|
+    fastoad_conf_model.each do |k, mod|
       next if ["linear_solver", "nonlinear_solver"].include?(k)
       if mod['id']
         modules << FastoadModule.new(name: k, version: "1.4.1", fastoad_id: mod['id'])
@@ -42,7 +42,30 @@ class FastoadConfig < ApplicationRecord
     modules
   end
 
-  def update_custom_modules(disciplines)
+  def update_custom_modules
+    disciplines = self._compute_disciplines_diff
+    self._update_custom_modules_from_diff(disciplines)
+  end
+
+  def _compute_disciplines_diff
+    ref_discs = self.analysis.all_plain_disciplines
+    custom_discs = self.custom_analysis.all_plain_disciplines 
+    discs_diff = []
+    custom_discs.each do |custom_disc|
+      found = false
+      ref_discs.each do |ref_disc|
+        if custom_disc.fullname == ref_disc.fullname and custom_disc.position == ref_disc.position
+          found = true
+          break
+        end
+      end
+      next if found
+      discs_diff << custom_disc
+    end
+    discs_diff
+  end
+
+  def _update_custom_modules_from_diff(disciplines)
     cmp = disciplines.zip(self.custom_modules)
     cmp.each do |disc, cm|
       if cm
@@ -58,8 +81,7 @@ class FastoadConfig < ApplicationRecord
     end
   end
 
-private
-
+  private
   def set_defaults
     self.version = DEFAULT_VERSION if version.blank?
 

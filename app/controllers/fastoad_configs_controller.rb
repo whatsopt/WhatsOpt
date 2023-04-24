@@ -10,6 +10,9 @@ class FastoadConfigsController < ApplicationController
 
   # GET /fastoad_configs/1
   def show
+    if @fastoad_config.custom_analysis
+      @fastoad_config.update_custom_modules
+    end
   end
 
   # GET /fastoad_configs/new
@@ -44,28 +47,7 @@ class FastoadConfigsController < ApplicationController
       redirect_to fastoad_config_url(@fastoad_config), notice: "FAST-OAD update cancelled."
     else
       if @fastoad_config.custom_analysis
-        ref_discs = @fastoad_config.analysis.all_plain_disciplines
-        custom_discs = @fastoad_config.custom_analysis.all_plain_disciplines 
-        discs_diff = []
-        custom_discs.each do |custom_disc|
-          found = false
-          ref_discs.each do |ref_disc|
-            # p "##########################################################################################"
-            # p "##########################################################################################"
-            # p "#{custom_disc.fullname} == #{ref_disc.fullname} and #{custom_disc.position} == #{ref_disc.position}"
-            if custom_disc.fullname == ref_disc.fullname and custom_disc.position == ref_disc.position
-              found = true
-              break
-            end
-          end
-          next if found
-          discs_diff << custom_disc
-        end
-        # p "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
-        # p "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
-        # p "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
-        # p discs_diff
-        @fastoad_config.update_custom_modules(discs_diff)
+      @fastoad_config.update_custom_modules
       else
         mda = @fastoad_config.analysis.create_copy!
         mda.name = mda.name + "_Custom"
