@@ -354,7 +354,7 @@ class DisciplinesEditor extends React.Component {
     } = this.props;
 
     const mdaId = db.mda.id;
-    const limited = db.isAnalysisUsed;
+    const limited = db.isAnalysisUsed();
 
     let disciplines = nodes.map((node, i) => (
       <Discipline
