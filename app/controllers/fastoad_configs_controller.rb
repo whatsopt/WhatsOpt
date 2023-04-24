@@ -96,7 +96,7 @@ private
   end
 
   def fastoad_config_params
-    params.require(:fastoad_config).permit(:name, :description)
+    params.require(:fastoad_config).permit(:name, :version, :module_folders, :input_file, :output_file)
   end
 end
 
