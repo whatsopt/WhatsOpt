@@ -23,6 +23,8 @@ class Discipline < ApplicationRecord
   has_one :sub_analysis, through: :analysis_discipline, source: :analysis
   has_one :meta_model, dependent: :destroy
 
+  has_one :fastoad_module, dependent: :destroy
+
   belongs_to :analysis
   acts_as_list scope: :analysis, top_of_list: 0
 
@@ -56,7 +58,7 @@ class Discipline < ApplicationRecord
   end
 
   def fullname
-    snake_modulename
+    full_modulename
   end
 
   def input_variables

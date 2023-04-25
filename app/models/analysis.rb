@@ -237,7 +237,23 @@ class Analysis < ApplicationRecord
   end
 
   def all_plain_disciplines
+    all_plain_disciplines_width_first
+  end
+
+  def all_plain_disciplines_width_first
     @allplain ||= sub_analyses.inject(plain_disciplines) { |ary, elt| ary + elt.all_plain_disciplines }
+  end
+
+  def all_plain_disciplines_depth_first
+    res = []
+    disciplines.nodes.each do |node|
+      if node.is_plain?
+        res << node
+      else
+        res += node.sub_analysis.all_plain_disciplines_depth_first
+      end
+    end
+    res
   end
 
   def all_sub_analyses

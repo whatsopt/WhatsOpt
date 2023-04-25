@@ -46,21 +46,17 @@ class FastoadConfigsController < ApplicationController
     if params[:cancel_button]
       redirect_to fastoad_config_url(@fastoad_config), notice: "FAST-OAD update cancelled."
     else
+      # FIXME: only update custom modules or create custom analysis
+      # @fastoad_config.update(fastoad_config_params)
       if @fastoad_config.custom_analysis
-      @fastoad_config.update_custom_modules
+        @fastoad_config.update_custom_modules
       else
-        mda = @fastoad_config.analysis.create_copy!
-        mda.name = mda.name + "_Custom"
-        journal = mda.init_journal(current_user)
-        journal.journalize(mda, Journal::COPY_ACTION)
-        mda.set_owner(current_user)
-        mda.save_journal
-        @fastoad_config.custom_analysis = mda
+        @fastoad_config.create_custom_analysis(current_user)
       end
       if @fastoad_config.save
         redirect_to mda_url(@fastoad_config.custom_analysis)
       else
-        render :show
+        render :show, error: "Something went wrong!"
       end
     end
   end

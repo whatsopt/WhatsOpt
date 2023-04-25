@@ -1,6 +1,6 @@
 <h1><%= "FAST-OAD Conf. #{@fastoad_config.name}" %></h1>
 
-<%= render 'shared/alerts', object: fastoad_config %>
+<%= render 'shared/alerts', object: @fastoad_config %>
 
 <h2>General</h2>
 <table class="table">
@@ -50,7 +50,7 @@
 <tbody>
   <% @fastoad_config.custom_modules.each do |mod| %>
   <tr>
-    <td><%= mod.name %></td>
+    <td><%= mod.fullname %></td>
     <td><%= mod.fastoad_id %></td>
   </tr>
   <% end %>
@@ -70,7 +70,7 @@
 <tbody>
   <% @fastoad_config.fastoad_modules.each do |mod| %>
   <tr>
-    <td><%= mod.name %></td>
+    <td><%= mod.fullname %></td>
     <td><%= mod.fastoad_id %></td>
   </tr>
   <% end %>

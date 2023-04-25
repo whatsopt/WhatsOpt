@@ -29,17 +29,14 @@ class FastoadConfig < ApplicationRecord
     conf
   end
 
-  def list_modules(fastoad_conf_model)
-    modules = []
-    fastoad_conf_model.each do |k, mod|
-      next if ["linear_solver", "nonlinear_solver"].include?(k)
-      if mod['id']
-        modules << FastoadModule.new(name: k, version: "1.4.1", fastoad_id: mod['id'])
-      else
-        modules += list_modules(mod)
-      end
-    end
-    modules
+  def create_custom_analysis(user)
+    mda = self.analysis.create_copy!
+    mda.name = mda.name + "_Custom"
+    journal = mda.init_journal(user)
+    journal.journalize(mda, Journal::COPY_ACTION)
+    mda.set_owner(user)
+    mda.save_journal
+    self.custom_analysis = mda
   end
 
   def update_custom_modules
@@ -48,8 +45,8 @@ class FastoadConfig < ApplicationRecord
   end
 
   def _compute_disciplines_diff
-    ref_discs = self.analysis.all_plain_disciplines
-    custom_discs = self.custom_analysis.all_plain_disciplines 
+    ref_discs = self.analysis.all_plain_disciplines_depth_first
+    custom_discs = self.custom_analysis.all_plain_disciplines_depth_first 
     discs_diff = []
     custom_discs.each do |custom_disc|
       found = false
@@ -65,39 +62,75 @@ class FastoadConfig < ApplicationRecord
     discs_diff
   end
 
-  def _update_custom_modules_from_diff(disciplines)
-    cmp = disciplines.zip(self.custom_modules)
+  def _update_custom_modules_from_diff(custom_disciplines)
+    cmp = custom_disciplines.zip(self.custom_modules)
     cmp.each do |disc, cm|
       if cm
         if disc
-          cm.update(name: disc.name, fastoad_id: disc.fullname)
+          cm.update(name: disc.name, fastoad_id: disc.fullname, discipline: disc)
         end 
       else
-        self.custom_modules.create(name: disc.name, fastoad_id: disc.fullname)
+        self.custom_modules.create(name: disc.name, fastoad_id: disc.fullname, discipline: disc)
       end
     end
-    while self.custom_modules.count > disciplines.size do
-      self.custom_modules.last.destroy
-    end
+
+    # FIXME: As discipline deletion remove also related module (dependent: destroy)
+    # The following is not needed anymore
+    # (custom_disciplines.size..self.custom_modules.count).each do |_|
+    #   self.custom_modules.last.destroy
+    # end
   end
 
   private
+
+
+  def list_modules_from_conf(fastoad_conf_model, root="")
+    modules = []
+    fastoad_conf_model.each do |k, mod|
+      next if ["linear_solver", "nonlinear_solver"].include?(k)
+      if mod['id']
+        modules << {name: k, fullname: (root == "" ? k : root + ".#{k}"), fastoad_id: mod['id']}
+      else
+        modules += list_modules(mod, (root == "" ? k : root + ".#{k}"))
+      end
+    end
+    modules
+  end
+
   def set_defaults
     self.version = DEFAULT_VERSION if version.blank?
 
-    if fastoad_modules.blank?
-      conf = self.load_conf(self.version)
-      self.module_folders = conf['module_folders']
-      self.input_file = conf['input_file']
-      self.output_file = conf['output_file']
+    conf = self.load_conf(self.version)
+    self.module_folders = conf['module_folders']
+    self.input_file = conf['input_file']
+    self.output_file = conf['output_file']
 
-      modules = list_modules(conf['model'])
-      self.fastoad_modules = modules
-    end
+    modules = list_modules_from_conf(conf['model'])
+      
     self.module_folders = DEFAULT_MODULE_FOLDERS if module_folders.blank?
     self.input_file = DEFAULT_INPUT_FILE if input_file.blank?
     self.output_file  = DEFAULT_OUTPUT_FILE if output_file.blank?
     self.analysis = Analysis.find_by_name("FAST_OAD_v141") if analysis.blank?
+
+    if fastoad_modules.blank?
+      fastoad_disciplines = self.analysis.all_plain_disciplines_depth_first
+      module_infos = list_modules_from_conf(conf['model'])
+
+      if fastoad_disciplines.size != module_infos.size
+        Rails.logger.error "FastOAD conf read from conf file #{self.version} inconsistent with Analysis ##{self.analysis.id}"
+        Rails.logger.error "  size(#{fastoad_disciplines.size}) != size(#{module_infos.size})"
+        self.errors.add(:base, message: "FastOAD conf read from conf file #{self.version} inconsistent with Analysis ##{self.analysis.id}")
+      end
+      disc_infos = fastoad_disciplines.zip(module_infos)
+
+      disc_infos.each do |disc, info|
+        if disc.fullname != info['fullname']
+          Rails.logger.error "FastOAD conf read from conf file #{self.version} inconsistent with Analysis ##{self.analysis.id}: "
+        self.fastoad_modules.build(name: disc.name, fastoad_id: disc.fullname, discipline: disc)
+      end
+    end
   end
+
+
 
 end
