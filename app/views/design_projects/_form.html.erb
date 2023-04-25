@@ -1,12 +1,6 @@
 <%= form_for(design_project, url: (design_project.new_record? ? design_projects_path : design_project_path(@design_project))) do |f| %>
-<% if @design_project.errors.any? %>
-<% @design_project.errors.full_messages.each do |message| %>
-<div class="alert <%= bootstrap_class_for :error %>" role="alert">
-  <a href="#" data-dismiss="alert" class="close">×</a>
-  <%= message %>
-</div>
-<% end %>
-<% end %>
+
+<%= render 'shared/alerts', object: design_project %>
 
 <div class="row">
   <div class=" col-4">
