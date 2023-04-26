@@ -317,6 +317,7 @@ class Analysis < ApplicationRecord
       note: note.blank? ? "":note.to_s,
 
       public: public,
+      locked: locked,
       operated: operated?,
       packaged: packaged?,
       path: path.map { |a| { id: a.id, name: a.name } },
@@ -498,6 +499,11 @@ class Analysis < ApplicationRecord
         inner.update_column(:public, mda_params[:public])
       end
     end
+    if mda_params.key? :locked
+      descendants.each do |inner|
+        inner.update_column(:locked, mda_params[:locked])
+      end
+    end
     if super_discipline && mda_params[:name]
       super_discipline.update!(name: self.name)
     end
@@ -547,7 +553,7 @@ class Analysis < ApplicationRecord
   def create_copy!(parent = nil, super_disc = nil)
     mda_copy = 
     Analysis.transaction do  # metamodel and subanalysis are saved, rollback if problem
-      mda_copy = Analysis.create!(name: name, public: public) do |copy|
+      mda_copy = Analysis.create!(name: name, public: public, locked: locked) do |copy|
         copy.parent_id = parent.id if parent
         copy.openmdao_impl = self.openmdao_impl.build_copy if self.openmdao_impl
         copy.build_design_project_filing(design_project: self.design_project) if self.design_project
@@ -765,6 +771,7 @@ class Analysis < ApplicationRecord
     analysis_attrs= {
       name: name,
       public: ope.analysis.public,
+      locked: ope.analysis.locked,
       disciplines_attributes: [
         { name: "__DRIVER__", variables_attributes: driver_vars },
         { name: "#{ope.analysis.name.camelize}", type: WhatsOpt::Discipline::METAMODEL,

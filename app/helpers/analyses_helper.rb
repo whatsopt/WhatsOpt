@@ -2,7 +2,7 @@
 
 module AnalysesHelper
   def lock_status(analysis)
-    analysis.public ? "" : raw('<span><i class="fa fa-lock"></i></span>')
+    analysis.locked ? "" : raw('<span><i class="fa fa-lock"></i></span>')
   end
 
   def link_to_analysis_if_authorized(analysis, user)

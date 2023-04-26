@@ -118,6 +118,7 @@ class Api::V1::AnalysesController < Api::V1::ApiMdaUpdaterController
         :note,
         :design_project_id,
         :public,
+        :locked,
         import: [:analysis, disciplines: [] ],
         disciplines_attributes: [
             :name,

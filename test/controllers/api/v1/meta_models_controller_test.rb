@@ -72,6 +72,7 @@ class Api::V1::MetaModelsControllerTest < ActionDispatch::IntegrationTest
     mda = Analysis.last
     assert_equal @user3, mda.owner
     assert_equal @mda.public, mda.public
+    assert_equal @mda.locked, mda.locked
     assert_equal @mda.design_project, mda.design_project
     assert_equal [], mda.members  # cicav is public
 

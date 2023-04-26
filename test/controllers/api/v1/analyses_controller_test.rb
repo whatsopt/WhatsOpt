@@ -210,7 +210,7 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     assert_equal @user1, inner.owner
   end
 
-  test "should update descendants attributes" do
+  test "should make descendants public" do
     @outer = analyses(:outermda)
     public = true
     patch api_v1_mda_url(@outer), params: { analysis: { public: public }, requested_at: Time.now }, as: :json, headers: @auth_headers
@@ -219,6 +219,17 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     public = false
     patch api_v1_mda_url(@outer), params: { analysis: { public: public }, requested_at: Time.now }, as: :json, headers: @auth_headers
     assert_equal public, @inner.reload.public
+  end
+
+  test "should lock descendants" do
+    @outer = analyses(:outermda)
+    locked = true
+    patch api_v1_mda_url(@outer), params: { analysis: { locked: locked }, requested_at: Time.now }, as: :json, headers: @auth_headers
+    @inner = analyses(:innermda)
+    assert_equal locked, @inner.locked
+    locked = false
+    patch api_v1_mda_url(@outer), params: { analysis: { locked: locked }, requested_at: Time.now }, as: :json, headers: @auth_headers
+    assert_equal locked, @inner.reload.locked
   end
 
   test "should have an openmdao implementation in whatsopt_ui json" do
