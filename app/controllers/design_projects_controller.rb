@@ -34,7 +34,7 @@ class DesignProjectsController < ApplicationController
         @design_project.set_owner(current_user)
         redirect_to design_projects_url, notice: "Design project #{@design_project.name} was successfully created."
       else
-        redirect_to new_design_project_url, error: "Something went wrong while creating #{@design_project.name}."
+        render :new
       end
     end
   end
