@@ -114,7 +114,7 @@ class Discipline < ApplicationRecord
   end
 
   def is_plain?
-    !has_sub_analysis?
+    type != Discipline::ANALYSIS
   end
 
   def has_endpoint?

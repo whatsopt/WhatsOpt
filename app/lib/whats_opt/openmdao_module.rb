@@ -29,7 +29,7 @@ module WhatsOpt
     end
 
     def py_sub_packagename
-      _sub_packagename
+      sub_packagename
     end
 
     def py_classname
@@ -54,10 +54,14 @@ module WhatsOpt
 
     # return fully qualified dotted module name without root name 
     def full_modulename(final_name: _modulename)
-      fmn = _sub_packagename
+      fmn = sub_packagename
       fmn += "." unless fmn.blank?
       fmn += "#{final_name}"
       fmn
+    end
+
+    def sub_packagename
+      self._namespace.sub(/^#{Regexp.escape(@@root_modulename)}\.?/, "")
     end
 
   private
@@ -76,9 +80,7 @@ module WhatsOpt
       namespace.join(".")
     end
 
-    def _sub_packagename
-      self._namespace.sub(/^#{Regexp.escape(@@root_modulename)}\.?/, "")
-    end
+
 
 
   end

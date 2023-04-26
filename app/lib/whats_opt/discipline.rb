@@ -6,7 +6,7 @@ module WhatsOpt
 
     # WhatsOpt / XDSMjs type mapping
     NULL_DRIVER = "null_driver"
-    DISCIPLINE = "analysis"
+    DISCIPLINE = "analysis"  # !!! in WhatsOpt DISCIPLINE is 'analysis' in XDSM !!!
     FUNCTION = "function"
     ANALYSIS = "mda"
     METAMODEL = "metamodel"

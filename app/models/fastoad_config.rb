@@ -91,7 +91,7 @@ class FastoadConfig < ApplicationRecord
       if mod['id']
         modules << {name: k, fullname: (root == "" ? k : root + ".#{k}"), fastoad_id: mod['id']}
       else
-        modules += list_modules(mod, (root == "" ? k : root + ".#{k}"))
+        modules += list_modules_from_conf(mod, (root == "" ? k : root + ".#{k}"))
       end
     end
     modules
@@ -105,32 +105,42 @@ class FastoadConfig < ApplicationRecord
     self.input_file = conf['input_file']
     self.output_file = conf['output_file']
 
-    modules = list_modules_from_conf(conf['model'])
-      
     self.module_folders = DEFAULT_MODULE_FOLDERS if module_folders.blank?
     self.input_file = DEFAULT_INPUT_FILE if input_file.blank?
     self.output_file  = DEFAULT_OUTPUT_FILE if output_file.blank?
     self.analysis = Analysis.find_by_name("FAST_OAD_v141") if analysis.blank?
 
     if fastoad_modules.blank?
-      fastoad_disciplines = self.analysis.all_plain_disciplines_depth_first
+      modules = list_modules_from_conf(conf['model'])
+      
+      fastoad_disciplines = self.analysis.all_disciplines
       module_infos = list_modules_from_conf(conf['model'])
+      p module_infos
+      p fastoad_disciplines.map {|d| d.is_sub_analysis? ? d.sub_packagename : d.fullname}
 
-      if fastoad_disciplines.size != module_infos.size
-        Rails.logger.error "FastOAD conf read from conf file #{self.version} inconsistent with Analysis ##{self.analysis.id}"
-        Rails.logger.error "  size(#{fastoad_disciplines.size}) != size(#{module_infos.size})"
-        self.errors.add(:base, message: "FastOAD conf read from conf file #{self.version} inconsistent with Analysis ##{self.analysis.id}")
-      end
-      disc_infos = fastoad_disciplines.zip(module_infos)
-
-      disc_infos.each do |disc, info|
-        if disc.fullname != info['fullname']
-          Rails.logger.error "FastOAD conf read from conf file #{self.version} inconsistent with Analysis ##{self.analysis.id}: "
-        self.fastoad_modules.build(name: disc.name, fastoad_id: disc.fullname, discipline: disc)
+      module_infos.each_with_index do |info|
+        found = false
+        fastoad_disciplines.each do |disc|
+          fullname = if disc.is_sub_analysis? 
+            disc.sub_packagename
+          else
+            disc.fullname
+          end
+          
+          if fullname == info[:fullname]
+            found = true
+            p "BUILD name: #{disc.name}, fastoad_id: #{info[:fastoad_id]}, discipline: #{disc.id}"
+            self.fastoad_modules.build(name: disc.name, fastoad_id: info[:fastoad_id], discipline: disc)
+            break
+          end
+        end
+        unless found
+          Rails.logger.error "FastOAD conf read from conf file #{self.version} inconsistent with Analysis ##{self.analysis.id}"
+          Rails.logger.error "  #{info[:fullname]} module not found in ##{self.analysis.id})"
+          self.errors.add(:base, message: "FastOAD conf #{self.version} vs Analysis #{self.analysis.name} ##{self.analysis.id} : #{info[:fullname]} module not found in ##{self.analysis.id})")
+        end
       end
     end
   end
-
-
 
 end
