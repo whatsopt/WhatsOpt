@@ -30,7 +30,7 @@ class DesignProjectsControllerTest < ActionDispatch::IntegrationTest
 
   test "name cannot be blank on creation" do
     post design_projects_url, params: { design_project: { name: "" } }
-    assert_redirected_to new_design_project_url
+    assert_select 'div.alert-danger'
   end
 
   test "name cannot be duplicated" do
@@ -40,7 +40,7 @@ class DesignProjectsControllerTest < ActionDispatch::IntegrationTest
     end
     assert_difference("DesignProject.count", 0) do
       post design_projects_url, params: { design_project: { name: "test" } }
-      assert_redirected_to new_design_project_url
+      assert_select 'div.alert-danger'
     end
   end
 

@@ -1,12 +1,6 @@
-<%= form_for(analysis, url: (analysis.new_record? ? mdas_path : mda_path(@mda)), :html => { :multipart => true, :role => "form" }) do |f| %>
-  <% if @mda.errors.any? %>
-    <% @mda.errors.full_messages.each do |message| %>
-      <div class="alert <%= bootstrap_class_for :error %>" role="alert">
-        <a href="#" data-dismiss="alert" class="close">×</a> 
-        <%= message %>
-      </div>
-    <% end %>
-  <% end %>
+<%= form_for(analysis, url: (analysis.new_record? ? mdas_path : mda_path(analysis)), :html => { :multipart => true, :role => "form" }) do |f| %>
+
+  <%= render 'shared/alerts', object: analysis %>
 
   <div class="row">
 	<div class=" col-4">
