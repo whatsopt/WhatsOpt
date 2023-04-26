@@ -78,6 +78,7 @@ class MdaViewer extends React.Component {
     this.handleAnalysisNameChange = this.handleAnalysisNameChange.bind(this);
     this.handleAnalysisNoteChange = this.handleAnalysisNoteChange.bind(this);
     this.handleAnalysisPublicChange = this.handleAnalysisPublicChange.bind(this);
+    this.handleAnalysisLockedChange = this.handleAnalysisLockedChange.bind(this);
     this.handleAnalysisUserSearch = this.handleAnalysisUserSearch.bind(this);
     this.handleAnalysisUserCreate = this.handleAnalysisUserCreate.bind(this);
     this.handleAnalysisUserDelete = this.handleAnalysisUserDelete.bind(this);
@@ -319,6 +320,20 @@ class MdaViewer extends React.Component {
       { public: !mda.public },
       () => {
         const newState = update(this.state, { mda: { public: { $set: !mda.public } } });
+        this.setState(newState);
+      },
+      this.displayError,
+    );
+    return false;
+  }
+
+  handleAnalysisLockedChange() {
+    const { mda } = this.state;
+    this.api.updateAnalysis(
+      mda.id,
+      { locked: !mda.locked },
+      () => {
+        const newState = update(this.state, { mda: { locked: { $set: !mda.locked } } });
         this.setState(newState);
       },
       this.displayError,
@@ -602,6 +617,10 @@ class MdaViewer extends React.Component {
       if (!db.mda.public) {
         restricted = (<i className="fas fa-user-secret" title="Analysis with restricted access" />);
       }
+      let locked;
+      if (db.mda.locked) {
+        restricted = (<i className="fas fa-lock" title="Analysis locked in readonly mode" />);
+      }
       let co_owned;
       if (analysisCoOwners.length > 0) {
         co_owned = (<i className="fas fa-users-cog" title="Analysis has co-owners" />);
@@ -626,6 +645,8 @@ class MdaViewer extends React.Component {
               (#
               {mda.id}
               )
+              {' '}
+              {locked}
               {' '}
               {restricted}
               {' '}
@@ -715,6 +736,7 @@ class MdaViewer extends React.Component {
                 note={db.mda.note}
                 newAnalysisName={newAnalysisName}
                 analysisPublic={mda.public}
+                analysisLocked={mda.locked}
                 analysisPermissionsEditable={analysisPermissionsEditable}
                 analysisMembers={analysisMembers}
                 analysisCoOwners={analysisCoOwners}
@@ -722,6 +744,7 @@ class MdaViewer extends React.Component {
                 onAnalysisNameChange={this.handleAnalysisNameChange}
                 onAnalysisNoteChange={this.handleAnalysisNoteChange}
                 onAnalysisPublicChange={this.handleAnalysisPublicChange}
+                onAnalysisLockedChange={this.handleAnalysisLockedChange}
                 onAnalysisUserSearch={this.handleAnalysisUserSearch}
                 onAnalysisUserSelected={this.handleAnalysisUserCreate}
                 onAnalysisUserDelete={this.handleAnalysisUserDelete}
@@ -917,6 +940,7 @@ MdaViewer.propTypes = {
     owner: PropTypes.object.isRequired,
     name: PropTypes.string.isRequired,
     public: PropTypes.bool.isRequired,
+    locked: PropTypes.bool.isRequired,
     note: PropTypes.string.isRequired,
     id: PropTypes.number.isRequired,
     path: PropTypes.array.isRequired,
