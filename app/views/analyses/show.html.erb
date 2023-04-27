@@ -11,7 +11,7 @@
   Copy
   <% end %>
   <% end %>
-  <% if policy(@mda).edit? %>
+  <% if policy(@mda).edit? || policy(@mda).unlock?%>
   <%= button_to edit_mda_path(@mda), method: :get, class:"btn" do |b|%>
   <span class="fa fa-edit"></span>
   Edit
@@ -41,6 +41,9 @@
 <h1><%= link_to_design_project_if_any(@mda) %><%= @mda.name%> 
   <small>
     <%= "(##{@mda.id})"%>
+    <% if @mda.locked %>
+      <i class="fas fa-lock" title="Analysis is readonly"></i>
+    <% end %>
     <% unless @mda.public %>
       <i class="fas fa-user-secret" title="Analysis with restricted access"></i>
     <% end %>

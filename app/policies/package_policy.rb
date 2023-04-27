@@ -5,6 +5,10 @@ class PackagePolicy < ApplicationPolicy
     APP_CONFIG["enable_wopstore"]
   end
 
+  def analysis_unlocked?
+    !@record.analysis.locked
+  end
+
   class Scope < Scope
     def resolve
       scope.joins(:analysis).where(analyses: { id: Pundit.policy_scope!(@user, Analysis) })
@@ -22,15 +26,15 @@ class PackagePolicy < ApplicationPolicy
   end
 
   def edit?
-    enable_wopstore? && destroy?
+    destroy?
   end
 
   def update?
-    enable_wopstore? && destroy?
+    destroy?
   end
 
   # Admin can destroy edit/update/destroy packages
   def destroy?
-    enable_wopstore? && (@user.admin? || create?)
+    enable_wopstore? && analysis_unlocked? && (@user.admin? || create?)
   end
 end

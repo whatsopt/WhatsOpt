@@ -96,7 +96,7 @@ class AnalysesController < ApplicationController
     end
 
     def mda_params
-      params.require(:analysis).permit(:name, :public, design_project: [:id])
+      params.require(:analysis).permit(:name, :public, :locked, design_project: [:id])
     end
     
     def save_journal

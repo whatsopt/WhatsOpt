@@ -45,6 +45,7 @@ private
       analyses_attributes: [:name,
                             :note,
                             :public,
+                            :locked,
                             disciplines_attributes: [
                               :name,
                               variables_attributes: [

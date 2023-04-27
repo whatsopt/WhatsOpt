@@ -168,6 +168,7 @@ class AnalysesControllerTest < ActionDispatch::IntegrationTest
 
     assert_equal user2, copy.owner
     assert_equal @cicav.public, copy.public
+    assert_equal @cicav.locked, copy.locked
     assert_equal @cicav.design_project, copy.design_project
     assert_equal [], copy.members  # cicav public
   end

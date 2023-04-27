@@ -4,9 +4,9 @@
   <thead>
     <tr>
       <th style="width: 5%">#</th>
-      <th style="width: 20%">Name</th>
-      <th style="width: 5%">Owner</th>
-      <th style="width: 5%">Ownership</th>
+      <th style="width: 15%">Name</th>
+      <th style="width: 7%">Owner</th>
+      <th style="width: 8%">Access</th>
       <th style="width: 10%">Tag</th>
       <th style="width: 12%">Updated</th>
       <th style="width: 30%">Operations</th>
@@ -20,9 +20,7 @@
         <td>#<%= mda.id %></td>
         <td><%= link_to_analysis_if_authorized(mda, current_user) %></td>
         <td><%= mda&.owner&.login %></td>
-        <td>
-          <%= ownership(mda) %>
-        </td>
+        <td><%= analysis_access(mda) %></td>
         <td><%= badges(mda) %></td>
         <td><%= time_ago_in_words(mda.updated_at)%> ago</td>
         <td>

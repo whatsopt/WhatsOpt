@@ -93,9 +93,10 @@ class AnalysisEditor extends React.PureComponent {
   render() {
     let teamMembers = null;
     const {
-      analysisPublic, analysisMembers, analysisCoOwners, analysisPermissionsEditable,
-      onAnalysisUserSearch, onAnalysisUserSelected, onAnalysisUserDelete, onAnalysisUpdate,
-      newAnalysisName, onAnalysisNameChange, onAnalysisNoteChange, onAnalysisPublicChange,
+      analysisPublic, analysisMembers, analysisCoOwners,
+      analysisPermissionsEditable, onAnalysisUserSearch, onAnalysisUserSelected,
+      onAnalysisUserDelete, onAnalysisUpdate, newAnalysisName,
+      onAnalysisNameChange, onAnalysisNoteChange, onAnalysisPublicChange,
       mdaId, note, onProjectSearch, onProjectSelected, mdaProject,
     } = this.props;
     if (!analysisPublic) {
