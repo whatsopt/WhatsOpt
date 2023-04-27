@@ -618,8 +618,10 @@ class MdaViewer extends React.Component {
         restricted = (<i className="fas fa-user-secret" title="Analysis with restricted access" />);
       }
       let lock;
+      let locked = ('');
       if (db.mda.locked) {
-        lock = (<i className="fas fa-lock" title="Analysis locked in readonly mode" />);
+        lock = (<i className="fas fa-lock" title="Analysis is locked readonly" />);
+        locked = lock;
       } else {
         lock = (<i className="fas fa-unlock" title="Analysis is editable/deletable" />);
       }
@@ -653,7 +655,7 @@ class MdaViewer extends React.Component {
               {mda.id}
               )
               {' '}
-              {lock}
+              {locked}
               {' '}
               {restricted}
               {' '}

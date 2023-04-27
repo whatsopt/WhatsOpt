@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
 module AnalysesHelper
-  def lock_status(analysis)
-    analysis.locked ? "" : raw('<span><i class="fa fa-lock"></i></span>')
-  end
 
   def link_to_analysis_if_authorized(analysis, user)
     if policy(analysis).show?
@@ -86,8 +83,11 @@ module AnalysesHelper
     raw(res)
   end
 
-  def ownership(analysis)
-    res=""
+  def analysis_access(analysis)
+    res = ""
+    if analysis.locked
+      res += ' <i class="fa fa-lock"></i></span>'
+    end
     unless analysis.public
       res += ' <i class="fas fa-user-secret" title="Analysis with restricted access"></i>'
     end
