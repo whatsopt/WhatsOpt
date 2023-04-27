@@ -86,7 +86,7 @@ module AnalysesHelper
   def analysis_access(analysis)
     res = ""
     if analysis.locked
-      res += ' <i class="fa fa-lock"></i></span>'
+      res += ' <i class="fa fa-lock"  title="Analysis is readonly"></i></span>'
     end
     unless analysis.public
       res += ' <i class="fas fa-user-secret" title="Analysis with restricted access"></i>'
