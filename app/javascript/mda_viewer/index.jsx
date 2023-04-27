@@ -581,7 +581,7 @@ class MdaViewer extends React.Component {
         );
       }
       let warningIfUsed;
-      if (db.isAnalysisUsed()) {
+      if (!db.mda.locked && db.isAnalysisUsed()) {
         warningIfUsed = (
           <div className="alert alert-info alert-dismissible fade show" role="alert">
             As this analysis is already operated or packaged,
