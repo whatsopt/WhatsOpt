@@ -93,11 +93,10 @@ class AnalysisEditor extends React.PureComponent {
   render() {
     let teamMembers = null;
     const {
-      analysisPublic, analysisLocked, analysisMembers, analysisCoOwners,
+      analysisPublic, analysisMembers, analysisCoOwners,
       analysisPermissionsEditable, onAnalysisUserSearch, onAnalysisUserSelected,
       onAnalysisUserDelete, onAnalysisUpdate, newAnalysisName,
-      onAnalysisNameChange, onAnalysisNoteChange,
-      onAnalysisPublicChange, onAnalysisLockedChange,
+      onAnalysisNameChange, onAnalysisNoteChange, onAnalysisPublicChange,
       mdaId, note, onProjectSearch, onProjectSelected, mdaProject,
     } = this.props;
     if (!analysisPublic) {
@@ -173,30 +172,6 @@ class AnalysisEditor extends React.PureComponent {
         <hr />
         <div className="editor-section">
           <div className="editor-section-label">
-            <i className="fas fa-lock" title="Analysis locked in readonly mode" />
-            {' '}
-            Readonly
-            {' '}
-            <small>(when locked in readonly mode, edition or deletion are disabled)</small>
-          </div>
-          <form className="form" onSubmit={onAnalysisUpdate}>
-            <div className="mb-3 form-check">
-              <label htmlFor="locked" className="form-check-label">
-                <input
-                  type="checkbox"
-                  className="form-check-input"
-                  defaultChecked={analysisLocked}
-                  id="locked"
-                  onChange={onAnalysisLockedChange}
-                />
-                Locked
-              </label>
-            </div>
-          </form>
-        </div>
-        <hr />
-        <div className="editor-section">
-          <div className="editor-section-label">
             <i className="fas fa-users-cog" title="Analysis has co-owners" />
             {' '}
             Collaboration
@@ -242,7 +217,6 @@ AnalysisEditor.propTypes = {
   mdaProject: PropTypes.object.isRequired,
   newAnalysisName: PropTypes.string.isRequired,
   analysisPublic: PropTypes.bool.isRequired,
-  analysisLocked: PropTypes.bool.isRequired,
   analysisPermissionsEditable: PropTypes.bool.isRequired,
   analysisMembers: PropTypes.array.isRequired,
   analysisCoOwners: PropTypes.array.isRequired,
@@ -250,7 +224,6 @@ AnalysisEditor.propTypes = {
   onAnalysisNameChange: PropTypes.func.isRequired,
   onAnalysisNoteChange: PropTypes.func.isRequired,
   onAnalysisPublicChange: PropTypes.func.isRequired,
-  onAnalysisLockedChange: PropTypes.func.isRequired,
   onAnalysisUserSearch: PropTypes.func.isRequired,
   onAnalysisUserSelected: PropTypes.func.isRequired,
   onAnalysisUserDelete: PropTypes.func.isRequired,

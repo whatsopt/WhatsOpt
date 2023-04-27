@@ -617,10 +617,17 @@ class MdaViewer extends React.Component {
       if (!db.mda.public) {
         restricted = (<i className="fas fa-user-secret" title="Analysis with restricted access" />);
       }
-      let locked;
+      let lock;
       if (db.mda.locked) {
-        restricted = (<i className="fas fa-lock" title="Analysis locked in readonly mode" />);
+        lock = (<i className="fas fa-lock" title="Analysis locked in readonly mode" />);
+      } else {
+        lock = (<i className="fas fa-unlock" title="Analysis is editable/deletable" />);
       }
+      const tab_disabled = db.mda.locked ? 'disabled' : '';
+      const tab_lock_active = db.mda.locked ? 'active' : '';
+      const tab_vars_active = !db.mda.locked ? 'active' : '';
+      const tab_lock_show = db.mda.locked ? 'show' : '';
+      const tab_vars_show = !db.mda.locked ? 'show' : '';
       let co_owned;
       if (analysisCoOwners.length > 0) {
         co_owned = (<i className="fas fa-users-cog" title="Analysis has co-owners" />);
@@ -646,7 +653,7 @@ class MdaViewer extends React.Component {
               {mda.id}
               )
               {' '}
-              {locked}
+              {lock}
               {' '}
               {restricted}
               {' '}
@@ -661,7 +668,20 @@ class MdaViewer extends React.Component {
           <ul className="nav nav-tabs" id="myTab" role="tablist">
             <li className="nav-item">
               <a
-                className="nav-link"
+                className={`nav-link ${tab_lock_active}`}
+                id="lock-tab"
+                data-bs-toggle="tab"
+                href="#lock"
+                role="tab"
+                aria-controls="lock"
+                aria-selected="false"
+              >
+                { lock }
+              </a>
+            </li>
+            <li className="nav-item">
+              <a
+                className={`nav-link ${tab_disabled}`}
                 id="analysis-tab"
                 data-bs-toggle="tab"
                 href="#analysis"
@@ -674,7 +694,7 @@ class MdaViewer extends React.Component {
             </li>
             <li className="nav-item">
               <a
-                className="nav-link"
+                className={`nav-link ${tab_disabled}`}
                 id="disciplines-tab"
                 data-bs-toggle="tab"
                 href="#disciplines"
@@ -687,7 +707,7 @@ class MdaViewer extends React.Component {
             </li>
             <li className="nav-item">
               <a
-                className="nav-link"
+                className={`nav-link ${tab_disabled}`}
                 id="connections-tab"
                 data-bs-toggle="tab"
                 href="#connections"
@@ -700,7 +720,7 @@ class MdaViewer extends React.Component {
             </li>
             <li className="nav-item">
               <a
-                className="nav-link active"
+                className={`nav-link ${tab_vars_active} ${tab_disabled}`}
                 id="variables-tab"
                 data-bs-toggle="tab"
                 href="#variables"
@@ -713,7 +733,7 @@ class MdaViewer extends React.Component {
             </li>
             <li className="nav-item">
               <a
-                className="nav-link"
+                className={`nav-link ${tab_disabled}`}
                 id="openmdao-impl-tab"
                 data-bs-toggle="tab"
                 href="#openmdao-impl"
@@ -727,6 +747,35 @@ class MdaViewer extends React.Component {
           </ul>
           <div className="tab-content" id="myTabContent">
             {errs}
+            <div className={`tab-pane fade ${tab_lock_show} ${tab_lock_active}`} id="lock" role="tabpanel" aria-labelledby="lock-tab">
+              <div className="container-fluid">
+                <div className="editor-section">
+                  <div className="editor-section-label">
+                    <i className="fas fa-lock" title="Analysis locked in readonly mode" />
+                    {' '}
+                    Readonly
+                    {' '}
+                    <small>
+                      (when locked, edition or deletion are disabled)
+                    </small>
+                  </div>
+                  <form className="form" onSubmit={this.handleAnalysisUpdate}>
+                    <div className="mb-3 form-check">
+                      <label htmlFor="locked" className="form-check-label">
+                        <input
+                          type="checkbox"
+                          className="form-check-input"
+                          defaultChecked={db.mda.locked}
+                          id="locked"
+                          onChange={this.handleAnalysisLockedChange}
+                        />
+                        Locked
+                      </label>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
             <div className="tab-pane fade" id="analysis" role="tabpanel" aria-labelledby="analysis-tab">
               {mdaMsg}
               <AnalysisEditor
@@ -736,7 +785,6 @@ class MdaViewer extends React.Component {
                 note={db.mda.note}
                 newAnalysisName={newAnalysisName}
                 analysisPublic={mda.public}
-                analysisLocked={mda.locked}
                 analysisPermissionsEditable={analysisPermissionsEditable}
                 analysisMembers={analysisMembers}
                 analysisCoOwners={analysisCoOwners}
@@ -744,7 +792,6 @@ class MdaViewer extends React.Component {
                 onAnalysisNameChange={this.handleAnalysisNameChange}
                 onAnalysisNoteChange={this.handleAnalysisNoteChange}
                 onAnalysisPublicChange={this.handleAnalysisPublicChange}
-                onAnalysisLockedChange={this.handleAnalysisLockedChange}
                 onAnalysisUserSearch={this.handleAnalysisUserSearch}
                 onAnalysisUserSelected={this.handleAnalysisUserCreate}
                 onAnalysisUserDelete={this.handleAnalysisUserDelete}
@@ -778,7 +825,7 @@ class MdaViewer extends React.Component {
                 onConnectionDelete={this.handleConnectionDelete}
               />
             </div>
-            <div className="tab-pane fade show active" id="variables" role="tabpanel" aria-labelledby="variables-tab">
+            <div className={`tab-pane fade ${tab_vars_show} ${tab_vars_active}`} id="variables" role="tabpanel" aria-labelledby="variables-tab">
               {varEditor}
               <DistributionModals db={db} onConnectionChange={this.handleConnectionChange} />
             </div>
