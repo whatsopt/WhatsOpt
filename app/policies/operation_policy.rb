@@ -5,12 +5,16 @@ class OperationPolicy < ApplicationPolicy
     APP_CONFIG["enable_remote_operations"]
   end
 
+  def analysis_unlocked?
+    !@record.analysis.locked
+  end
+
   def show?
     AnalysisPolicy.new(@user, @record.analysis).show?
   end
 
   def create?
-    enable_remote_operations? && @user.has_role?(:owner, @record.analysis)
+    enable_remote_operations? && analysis_unlocked? && @user.has_role?(:owner, @record.analysis)
   end
 
   def update?
@@ -18,6 +22,6 @@ class OperationPolicy < ApplicationPolicy
   end
 
   def destroy?
-    (@user.admin? || @user.has_role?(:owner, @record.analysis))
+    analysis_unlocked? && (@user.admin? || @user.has_role?(:owner, @record.analysis))
   end
 end
