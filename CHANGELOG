@@ -1,9 +1,14 @@
 <h1>CHANGELOG</h1>
 
-<h3>1.27.0 (14/04/2023)</h3>
+<h3>1.27.0 (27/04/2023)</h3>
 <ul>
   <li>Add WhatsOpt Package Store (WopStore) which allows to store and distribute implementations of analyses</li>
+  <li>Add analysis lock: the owner of an analysis can lock it into readonly mode to prevent unwanted deletion or updates in the long run</li>
+  <li>Add <a href="https://joss.theoj.org/papers/10.21105/joss.04737">Egor</a> optimizer among available optimizers</li>
+  <li>Add a special tag (DISC) for mono-disciplinary analyses</li>
   <li>Allow to initialize array variables with a scalar (array filled with the scalar value)</li>
+  <li>Fix flash notices format when cancelling actions</li>
+  <li>Tech: Upgrade to xdsmjs 2.0</li>
 </ul>
 
 <h3>1.26.0 (24/01/2023)</h3>
@@ -692,3 +697,4 @@
   <li>Display Notebooks as static HTML</li>
   <li>Link to JupyterHub server</li>
 </ul>
+
