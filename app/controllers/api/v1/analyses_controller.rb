@@ -68,7 +68,11 @@ class Api::V1::AnalysesController < Api::V1::ApiMdaUpdaterController
   # PUT/PATCH /api/v1/mdas/1
   def update
     import = mda_params[:import]   # import/export disicplines
-    if import
+    if @mda.locked && mda_params.has_key?(:locked)
+      old_attrs = @mda.get_jounalized_attrs
+      @mda.update!(mda_params)
+      @journal.journalize_changes(@mda, old_attrs)
+    elsif import
       fromAnalysis = Analysis.find(import[:analysis])
       authorize(fromAnalysis, :show?)
       new_discs = @mda.import!(fromAnalysis, import[:disciplines])
@@ -80,10 +84,7 @@ class Api::V1::AnalysesController < Api::V1::ApiMdaUpdaterController
       what_info = "[#{info}]"
       @journal.journalize(fromAnalysis, Journal::COPY_ACTION, copy_what: what_info)
     else  # update analysis proper attributes
-      old_attrs = @mda.attributes.merge!({
-        "note_text" => @mda.note.to_plain_text,
-        "design_project_name" => @mda.design_project&.name
-      })
+      old_attrs = @mda.get_jounalized_attrs
       if mda_params[:design_project_id]
         @mda.update_design_project!(mda_params[:design_project_id])
       end
@@ -96,6 +97,7 @@ class Api::V1::AnalysesController < Api::V1::ApiMdaUpdaterController
   end
 
   protected
+
     def create_nested_analysis
       mda = Analysis.create_nested_analyses(mda_params)
       mda.save!
@@ -104,7 +106,11 @@ class Api::V1::AnalysesController < Api::V1::ApiMdaUpdaterController
 
     def set_mda
       @mda = Analysis.find(params[:id])
-      authorize @mda
+      if @mda.locked && mda_params.has_key?(:locked)
+        authorize @mda, :unlock?
+      else
+        authorize @mda
+      end
       @journal = @mda.init_journal(current_user)
     end
 

@@ -27,15 +27,19 @@ class AnalysisPolicy < ApplicationPolicy
     APP_CONFIG["enable_remote_operations"] && destroy?
   end
 
+  def unlock?
+    @user.has_role?(:owner, @record)
+  end
+
   def edit?
-    update?
+    @record.locked || update?
   end
 
   def update?
-    (@user.admin? || @user.has_role?(:owner, @record) || @user.has_role?(:co_owner, @record))
+    !@record.locked && (@user.admin? || @user.has_role?(:owner, @record) || @user.has_role?(:co_owner, @record))
   end
 
   def destroy?
-    @user.admin? || @user.has_role?(:owner, @record)
+    !@record.locked && (@user.admin? || @user.has_role?(:owner, @record))
   end
 end
