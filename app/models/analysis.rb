@@ -46,8 +46,15 @@ class Analysis < ApplicationRecord
   validates :name, format: { with: /\A[a-zA-Z][_\.a-zA-Z0-9\s]*\z/, message: "%{value} is not a valid analysis name." }
 
   def journalized_attribute_names
-    ["name", "note_text", "design_project_name"]
+    ["name", "public", "locked", "note_text", "design_project_name"]
   end
+
+  def get_jounalized_attrs
+    self.attributes.merge!({
+      "note_text" => self.note.to_plain_text,
+      "design_project_name" => self.design_project&.name
+    })
+  end  
 
   def driver
     @driver ||= disciplines.driver.take
