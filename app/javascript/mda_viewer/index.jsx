@@ -770,6 +770,7 @@ class MdaViewer extends React.Component {
                           defaultChecked={db.mda.locked}
                           id="locked"
                           onChange={this.handleAnalysisLockedChange}
+                          disabled={!analysisPermissionsEditable}
                         />
                         Locked
                       </label>
