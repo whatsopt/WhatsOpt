@@ -37,7 +37,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: install
-          key: ${{ runner.os }}-thrift-0.16.0-cache-v1
+          key: ${{ runner.os }}-thrift-0.16.0-cache
 
       - name: Make Thrift Compiler
         if: steps.cache-thrift.outputs.cache-hit != 'true'
@@ -71,7 +71,7 @@ jobs:
         id: yarn-cache
         run: echo "::set-output name=dir::$(yarn cache dir)"
       - name: JS package cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ${{ steps.yarn-cache.outputs.dir }}
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
