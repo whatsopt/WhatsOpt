@@ -32,7 +32,7 @@ class AnalysisPolicy < ApplicationPolicy
   end
 
   def edit?
-    @record.locked || update?
+    (unlock? && @record.locked) || update?
   end
 
   def update?
