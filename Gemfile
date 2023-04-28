@@ -131,3 +131,5 @@ gem "deepsort"
 # Add sprockets with Rails 7
 gem "sprockets-rails"
 
+# Pagination
+gem "pagy", "~> 6.0"
