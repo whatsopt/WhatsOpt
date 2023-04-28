@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module AnalysesHelper
+  include Pagy::Frontend
 
   def link_to_analysis_if_authorized(analysis, user)
     if policy(analysis).show?
