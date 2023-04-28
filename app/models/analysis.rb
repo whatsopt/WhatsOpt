@@ -69,7 +69,7 @@ class Analysis < ApplicationRecord
   end
 
   def mono_disciplinary?
-    self.disciplines.nodes.size == 1
+    self.disciplines.nodes.size == 1 && self.is_plain?
   end
 
   def is_metamodel?
@@ -233,6 +233,10 @@ class Analysis < ApplicationRecord
 
   def is_composite?
     sub_analyses.count != 0
+  end
+
+  def is_plain?
+    sub_analyses.count == 0
   end
 
   def nesting_depth

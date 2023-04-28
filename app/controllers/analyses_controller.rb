@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class AnalysesController < ApplicationController
+  include Pagy::Backend
+
   before_action :set_mda, only: [:show, :edit, :update, :destroy]
   after_action :save_journal, only: [:create, :update]
 
@@ -23,6 +25,7 @@ class AnalysesController < ApplicationController
         @mdas = @mdas.joins(:design_project_filing)
           .where(design_project_filings: { design_project_id: current_user.analyses_scope_design_project_id })
       end
+      @pagy, @mdas = pagy(@mdas)
     end
   end
 
