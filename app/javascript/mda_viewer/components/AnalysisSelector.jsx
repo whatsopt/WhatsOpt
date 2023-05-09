@@ -39,7 +39,7 @@ class AnalysisSelector extends React.Component {
 
   render() {
     const { defaultSelected, isLoading, options } = this.state;
-    const { message } = this.props;
+    const { message, disabled } = this.props;
     return (
       <AsyncTypeahead
         id="analysis"
@@ -53,7 +53,9 @@ class AnalysisSelector extends React.Component {
         onSearch={this.handleSearch}
         placeholder={message}
         onChange={this.handleChange}
+        // eslint-disable-next-line react/no-unused-class-component-methods
         ref={(ref) => { this.typeahead = ref; }}
+        disabled={disabled}
       />
     );
   }
@@ -62,6 +64,7 @@ class AnalysisSelector extends React.Component {
 AnalysisSelector.propTypes = {
   message: PropTypes.string.isRequired,
   selected: PropTypes.array.isRequired,
+  disabled: PropTypes.bool.isRequired,
   onAnalysisSearch: PropTypes.func.isRequired,
   onAnalysisSelected: PropTypes.func.isRequired,
 };
