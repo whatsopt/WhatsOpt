@@ -533,10 +533,13 @@ class Analysis < ApplicationRecord
     end
   end
 
-  def import!(fromAnalysis, discipline_ids)
+  def import!(fromAnalysis, discipline_ids=[])
     # do not import from self
     new_discs = []
     if fromAnalysis.id != id
+      if discipline_ids.blank? # import all disciplines by default
+        discipline_ids = fromAnalysis.disciplines.nodes.map(&:id)
+      end
       Analysis.transaction do
         discipline_ids.each do |discId|
           disc = Discipline.find(discId)
