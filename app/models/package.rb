@@ -18,7 +18,14 @@ class Package < ApplicationRecord
     if archive.attached?
       archive.attachment.blob.filename.to_s
     else
-      '<no archive>'
+      "no_archive-0.0.0.tar.gz"
+    end
+  end
+
+  def name_version 
+    @basename ||= begin 
+      filename =~ PKG_REGEXP
+      "#{$1}-#{$2}#{$3}#{$4}"
     end
   end
 
