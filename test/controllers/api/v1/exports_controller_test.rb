@@ -5,7 +5,6 @@ require "test_helper"
 class Api::V1::ExportsControllerTest < ActionDispatch::IntegrationTest
   setup do
     @auth_headers = { "Authorization" => "Token " + TEST_API_KEY }
-    @mda = analyses(:cicav)
   end
 
   test "should pull nested analysis as openmdao code" do
@@ -37,6 +36,13 @@ class Api::V1::ExportsControllerTest < ActionDispatch::IntegrationTest
     mda = analyses(:fast)
     get api_v1_mda_exports_new_url(mda, format: :openmdao_pkg), as: :json, headers: @auth_headers
     assert_response :unauthorized
+  end
+
+  test "should fetch packaged content from src_mda in current mda" do
+    mda = analyses(:cicav)
+    src_mda = analyses(:singleton)
+    get api_v1_mda_exports_new_url(mda, format: :mda_pkg_content, src_id: src_mda), as: :json, headers: @auth_headers
+    assert_response :success
   end
 
 end

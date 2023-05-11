@@ -2,3 +2,8 @@ cicav_pkg_attachment:
   name: archive
   record: cicav_pkg (Package)
   blob: cicav_pkg_blob
+
+singleton_pkg_attachment:
+  name: archive
+  record: singleton_pkg (Package)
+  blob: singleton_pkg_blob

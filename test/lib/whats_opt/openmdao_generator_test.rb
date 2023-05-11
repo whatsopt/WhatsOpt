@@ -34,6 +34,15 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     end
   end
 
+  test "should generate openmdao process for an singleton mda" do
+    @mda = analyses(:singleton)
+    @ogen = WhatsOpt::OpenmdaoGenerator.new(@mda, pkg_format: true)
+    Dir.mktmpdir do |dir|
+      @ogen._generate_code(dir,with_server: false) 
+      assert File.exist?(@ogen.genfiles.first)
+    end
+  end
+
   def _assert_file_generation(expected, with_server: false, with_egmdo: false, with_runops: true, with_run: true, with_unittests: false)
     Dir.mktmpdir do |dir|
       @ogen._generate_code(dir, with_server: with_server, with_egmdo: with_egmdo, with_runops: with_runops, with_run: with_run, with_unittests: with_unittests)

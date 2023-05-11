@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
-require "whats_opt/cmdows_generator"
-require "whats_opt/openmdao_generator"
+require "whats_opt/package_fetcher"
 
 # Used by wop
 class Api::V1::ExportsController < Api::ApiController
@@ -32,6 +31,17 @@ class Api::V1::ExportsController < Api::ApiController
         send_data content, filename: filename                          
       rescue WhatsOpt::GemseoGenerator::NotYetImplementedError => e
         json_response({ message: "GEMSEO export failure: #{e}" }, :bad_request)
+      end
+    when "mda_pkg_content"
+      src_id = params[:src_id]
+      src_mda = Analysis.find(src_id)
+      src_pkg = src_mda
+      fetcher = WhatsOpt::PackageFetcher.new(mda, src_mda)
+      begin
+        content, filename = fetcher.generate()
+        send_data content, filename: filename                          
+      rescue => e
+        json_response({ message: "Package content export failure: #{e}" }, :bad_request)
       end
     else
       json_response({ message: "Export format #{format} not known" }, :bad_request)

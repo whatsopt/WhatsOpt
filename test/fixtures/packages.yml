@@ -2,3 +2,8 @@
 cicav_pkg:
   analysis: cicav
   description: "this is a cicav package"
+
+singleton_pkg:
+  analysis: singleton
+  description: "this is a singleton package"
+
