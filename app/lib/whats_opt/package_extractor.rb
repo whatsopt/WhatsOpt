@@ -24,7 +24,6 @@ module WhatsOpt
       
       tar_cmd = "tar tf #{pkgfile} --strip-components=1 --exclude-from=#{excludes} #{src_dir}"
       Rails.logger.info tar_cmd
-      # p tar_cmd
       output = `#{tar_cmd}`
       @genfiles = output.split(/\n/)
       @genfiles = @genfiles.filter{|f| f[-1] != '/'}  # filter out directories

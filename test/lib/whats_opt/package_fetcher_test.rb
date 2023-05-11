@@ -20,9 +20,7 @@ class PackageFetcherTest < ActiveSupport::TestCase
   test "should generate source" do
     Dir.mktmpdir do |dir|
         @genfiles = @pkgfetcher._generate_code(dir)
-        expected = ["cicav/__init__.py", "cicav/aerodynamics.py", "cicav/aerodynamics_base.py", 
-                    "cicav/cicav.py", "cicav/cicav_base.py", "cicav/geometry.py", "cicav/geometry_base.py", 
-                    "cicav/propulsion.py", "cicav/propulsion_base.py"]
+        expected = ["cicav/__init__.py", "cicav/singleton_discipline.py", "cicav/singleton_discipline_base.py"]
         assert_equal expected, @genfiles.map{|f| f[dir.size+1..]}
     end
   end
