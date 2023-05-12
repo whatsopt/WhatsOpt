@@ -75,6 +75,8 @@ class Api::V1::AnalysesController < Api::V1::ApiMdaUpdaterController
       json_response @mda
     elsif import 
       if @mda.packaged? || @mda.operated?
+        p @mda.packaged?
+        p @mda.operated?
         json_response @mda, :forbidden
       else
         fromAnalysis = Analysis.find(import[:analysis])
