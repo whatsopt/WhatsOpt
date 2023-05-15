@@ -14,6 +14,12 @@ class PackageFetcherTest < ActiveSupport::TestCase
                                 content_type: 'application/gzip')
     assert @mda.package.archive.attached?
     assert File.exist?(ActiveStorage::Blob.service.path_for(@mda.package.archive.key))
+
+    @src_mda.package.archive.attach(io: File.open(file_fixture('singleton-0.1.0.tar.gz')), filename: 'singleton-0.1.0.tar.gz',
+                                content_type: 'application/gzip')
+    assert @src_mda.package.archive.attached?
+    assert File.exist?(ActiveStorage::Blob.service.path_for(@src_mda.package.archive.key))
+
     @pkgfetcher = WhatsOpt::PackageFetcher.new(@mda, @src_mda)
   end
 
