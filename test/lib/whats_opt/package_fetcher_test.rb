@@ -30,4 +30,13 @@ class PackageFetcherTest < ActiveSupport::TestCase
         assert_equal expected, @genfiles.map{|f| f[dir.size+1..]}
     end
   end
+
+  test "should generate empty extraction if no package found" do
+    @pkgfetcher = WhatsOpt::PackageFetcher.new(@mda, analyses(:fast))
+    Dir.mktmpdir do |dir|
+        @genfiles = @pkgfetcher._generate_code(dir)
+        expected = []
+        assert_equal expected, @genfiles.map{|f| f[dir.size+1..]}
+    end
+  end
 end
