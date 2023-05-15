@@ -31,12 +31,14 @@ class ImportSection extends React.Component {
 
   handleAnalysisSelected(selected) {
     const [selection] = selected;
-    this.api.getDisciplines(selection.id,
+    this.api.getDisciplines(
+      selection.id,
       (response) => {
         console.log(response.data);
         const disciplines = response.data;
         this.setState({ selected, disciplines });
-      });
+      },
+    );
   }
 
   handleImport(discId) {
@@ -48,6 +50,7 @@ class ImportSection extends React.Component {
 
   render() {
     const { selected, disciplines } = this.state;
+    const { disabled } = this.props;
 
     const disciplineImports = disciplines.map((disc) => {
       const label = `Import ${disc.name}`;
@@ -74,6 +77,7 @@ class ImportSection extends React.Component {
               selected={selected}
               onAnalysisSearch={this.handleAnalysisSearch}
               onAnalysisSelected={this.handleAnalysisSelected}
+              disabled={disabled}
             />
           </div>
         </div>
@@ -88,6 +92,7 @@ class ImportSection extends React.Component {
 ImportSection.propTypes = {
   api: PropTypes.object.isRequired,
   mdaId: PropTypes.number.isRequired,
+  disabled: PropTypes.bool.isRequired,
   onDisciplineImport: PropTypes.func.isRequired,
 };
 

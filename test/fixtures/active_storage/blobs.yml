@@ -1,1 +1,3 @@
 cicav_pkg_blob: <%= ActiveStorage::FixtureSet.blob filename: "cicav-0.1.0.tar.gz" %>
+
+singleton_pkg_blob: <%= ActiveStorage::FixtureSet.blob filename: "singleton-0.1.0.tar.gz" %>

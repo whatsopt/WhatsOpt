@@ -430,7 +430,12 @@ class DisciplinesEditor extends React.Component {
           </form>
         </div>
         <hr />
-        <ImportSection api={api} mdaId={mdaId} onDisciplineImport={onDisciplineImport} />
+        <ImportSection
+          api={api}
+          mdaId={mdaId}
+          onDisciplineImport={onDisciplineImport}
+          disabled={limited}
+        />
         {disciplinesModals}
       </div>
     );

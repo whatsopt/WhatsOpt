@@ -72,17 +72,25 @@ class Api::V1::AnalysesController < Api::V1::ApiMdaUpdaterController
       old_attrs = @mda.get_jounalized_attrs
       @mda.update!(mda_params)
       @journal.journalize_changes(@mda, old_attrs)
-    elsif import
-      fromAnalysis = Analysis.find(import[:analysis])
-      authorize(fromAnalysis, :show?)
-      new_discs = @mda.import!(fromAnalysis, import[:disciplines])
-      new_discs.filter{|d| d.has_sub_analysis?}.each do |disc|
-        disc.sub_analysis.set_owner(current_user)
-        disc.sub_analysis.copy_ownership(@mda)
+      json_response @mda
+    elsif import 
+      if @mda.packaged? || @mda.operated?
+        p @mda.packaged?
+        p @mda.operated?
+        json_response @mda, :forbidden
+      else
+        fromAnalysis = Analysis.find(import[:analysis])
+        authorize(fromAnalysis, :show?)
+        new_discs = @mda.import!(fromAnalysis, import[:disciplines])
+        new_discs.filter{|d| d.has_sub_analysis?}.each do |disc|
+          disc.sub_analysis.set_owner(current_user)
+          disc.sub_analysis.copy_ownership(@mda)
+        end
+        info = new_discs.map{|d| d.name}.join(", ")
+        what_info = "[#{info}]"
+        @journal.journalize(fromAnalysis, Journal::COPY_ACTION, copy_what: what_info)
+        json_response @mda
       end
-      info = new_discs.map{|d| d.name}.join(", ")
-      what_info = "[#{info}]"
-      @journal.journalize(fromAnalysis, Journal::COPY_ACTION, copy_what: what_info)
     else  # update analysis proper attributes
       old_attrs = @mda.get_jounalized_attrs
       if mda_params[:design_project_id]
@@ -90,8 +98,8 @@ class Api::V1::AnalysesController < Api::V1::ApiMdaUpdaterController
       end
       @mda.update!(mda_params.except(:design_project_id))
       @journal.journalize_changes(@mda, old_attrs)
+      json_response @mda
     end
-    json_response @mda
   rescue Connection::VariableAlreadyProducedError => e
     json_response({ message: e }, :unprocessable_entity)
   end

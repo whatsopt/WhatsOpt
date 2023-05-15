@@ -1,5 +1,11 @@
 <h1>CHANGELOG</h1>
 
+<h3>1.27.2 (15/05/2023)</h3>
+<ul>
+  <li>Add REST API to enable analysis merging and implementation package fetching</li>
+  <li>Fix an operated or packaged analysis can not be updated</li>
+</ul>
+
 <h3>1.27.1 (28/04/2023)</h3>
 <ul>
   <li>Now analysis index is paginated</li>

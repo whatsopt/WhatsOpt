@@ -247,6 +247,7 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
   test "should import a discipline from another analysis" do
     # beforeConnsNb = Connection.of_analysis(@mda).size
     mda = analyses(:singleton)
+    mda.package.destroy!  # remove package to avoid forbidden error (cannot import if analysis is packaged)
     mda2 = analyses(:innermda)
     disc = disciplines(:innermda_discipline)
     put api_v1_mda_url(mda), params: { analysis: { import: { analysis: mda2.id, disciplines: [disc.id] } }, requested_at: Time.now },
@@ -270,6 +271,9 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
 
   test "should import a metamodel" do
     orig_count = @mda.disciplines.count
+    @mda.package.destroy!  # remove package to avoid forbidden error (cannot import if analysis is packaged)
+    @mda.operations.final.map(&:destroy!)  # remove operations to avoid forbidden error (cannot import if analysis is operated)
+    @mda.operations.map(&:destroy!)  # remove operations to avoid forbidden error (cannot import if analysis is operated)
     mda2 = analyses(:singleton_mm)
     disc = disciplines(:disc_singleton_mm)
     put api_v1_mda_url(@mda), params: { analysis: { import: { analysis: mda2.id, disciplines: [disc.id] } }, requested_at: Time.now },
@@ -286,6 +290,7 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
 
   test "should import a sub-analysis" do
     mda = analyses(:singleton)
+    mda.package.destroy!  # remove package to avoid forbidden error (cannot import if analysis is packaged)
     orig_count = mda.disciplines.count
     mda2 = analyses(:outermda)
     disc = disciplines(:outermda_innermda_discipline)
@@ -297,12 +302,15 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should not import a sub-analysis if var already produced" do
+    @mda.package.destroy!  # remove package to avoid forbidden error (cannot import if analysis is packaged)
+    @mda.operations.final.map(&:destroy!)  # remove operations to avoid forbidden error (cannot import if analysis is operated)
+    @mda.operations.map(&:destroy!)  # remove operations to avoid forbidden error (cannot import if analysis is operated)
     orig_count = @mda.disciplines.count
     mda2 = analyses(:outermda)
     disc = disciplines(:outermda_innermda_discipline)
     put api_v1_mda_url(@mda), params: { analysis: { import: { analysis: mda2.id, disciplines: [disc.id] } }, requested_at: Time.now },
       as: :json, headers: @auth_headers
-    assert_response :unprocessable_entity  # y2 aleready produced
+    assert_response :unprocessable_entity  # y2 already produced
   end
 
   test "should recreate analysis with imports" do
