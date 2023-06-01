@@ -16,8 +16,3 @@ classifiers = [
 ]
 dependencies = ["<%= @framework %>"]
 
-# Flat layout just include analysis module
-[tool.setuptools.packages.find]
-where = ["."]
-include = ["<%= @mda.py_modulename %>"] 
-namespaces = false
