@@ -114,10 +114,10 @@ gem "rubyzip", "~>2.3.0"
 # UI
 gem "popper" # bootstrap dependency
 gem "bootstrap", "~> 5.0"
-gem "font-awesome-sass", "~> 6.2.1"
+gem "font-awesome-sass", "~> 6.4.0"
 
 # thrift
-gem "thrift", "~>0.16"
+gem "thrift", "<0.18"
 
 # Actiontext image processing
 gem "image_processing", "~> 1.2"
