@@ -1,5 +1,10 @@
 <h1>CHANGELOG</h1>
 
+<h3>1.27.3 (13/06/2023)</h3>
+<ul>
+  <li>[Tech] Upgrade backend and frontend dependencies</li>
+</ul>
+
 <h3>1.27.2 (15/05/2023)</h3>
 <ul>
   <li>Add REST API to enable analysis merging and implementation package fetching</li>
