@@ -11,6 +11,7 @@ class Package < ApplicationRecord
   validates :filename, format: { with: PKG_REGEXP }
   validates :name, presence: true
   validates :version, presence: true
+  validates :archive, presence: true
   validate :archive_mime_type
   validate :filename_uniqueness
 
