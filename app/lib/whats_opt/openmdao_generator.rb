@@ -132,6 +132,7 @@ module WhatsOpt
       @mda.disciplines.nodes.each do |disc|
         if disc.has_sub_analysis?
           _generate_sub_analysis(disc, pkg_dir, opts)
+          _generate_discipline(disc, pkg_dir, opts) if disc.is_sub_optimization?
         else
           _generate_discipline(disc, pkg_dir, opts)
           _generate_test_scripts(disc, pkg_dir) if opts[:with_unittests]
@@ -157,8 +158,10 @@ module WhatsOpt
       @discipline = discipline  # @discipline used in template
       @dimpl = @discipline.openmdao_impl || OpenmdaoDisciplineImpl.new
       @with_server = options[:with_server]
-      if @discipline.type == "metamodel"
+      if @discipline.type == WhatsOpt::Discipline::METAMODEL
         _generate(discipline.py_filename, "openmdao_metamodel.py.erb", gendir)
+      elsif @discipline.type == WhatsOpt::Discipline::OPTIMIZATION
+        _generate(discipline.py_filename, "openmdao_optimization.py.erb", gendir)
       else
         _generate(discipline.py_filename, "openmdao_discipline.py.erb", gendir)
       end
@@ -173,7 +176,7 @@ module WhatsOpt
       gendir = File.join(gendir, mda.basename)
       Dir.mkdir(gendir) unless Dir.exist?(gendir)
 
-      # generate only analysis code: no script , no server
+      # generate only analysis code: no script, no server
       opts = options.merge(with_run: false, with_server: false, with_runops: false, with_src_dir: false)
       sub_ogen._generate_code(gendir, opts)
       @genfiles += sub_ogen.genfiles

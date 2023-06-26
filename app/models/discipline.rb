@@ -103,6 +103,10 @@ class Discipline < ApplicationRecord
     type == Discipline::ANALYSIS
   end
 
+  def is_sub_optimization?
+    type == Discipline::OPTIMIZATION
+  end
+
   def has_sub_analysis?
     !!sub_analysis
   end

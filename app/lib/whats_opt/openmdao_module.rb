@@ -48,6 +48,10 @@ module WhatsOpt
       "#{basename}.py"
     end
 
+    def py_optim_filename
+      "#{basename}_optim.py"
+    end
+
     def py_basefilename
       "#{basename}_base.py"
     end

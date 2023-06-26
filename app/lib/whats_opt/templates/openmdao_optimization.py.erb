@@ -1,0 +1,9 @@
+from <%= @pkg_prefix %><%= @discipline.py_full_modulename %>_base import <%= @discipline.py_classname %>Base
+
+class <%= @discipline.py_classname %>(<%= @discipline.py_classname %>Base):
+    """ An OpenMDAO sub optimization for <%= @discipline.py_classname %> discipline """
+		
+    def __init__(self, inputs=None, outputs=None, reports=False, **kwargs):
+        super().__init__(Problem(), inputs=None, outputs=None, reports=False, **kwargs)
+
+

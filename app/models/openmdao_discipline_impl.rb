@@ -13,6 +13,16 @@ class OpenmdaoDisciplineImpl < ActiveRecord::Base
     )
   end
 
+  def openmdao_component_baseclass
+    if self.implicit_component 
+      "om.ImplicitComponent"
+    elsif self.discipline.is_sub_optimization?
+      "om.SubmodelComponent"
+    else
+      "om.ExplicitComponent"
+    end
+  end
+
   private
     def _ensure_default_impl
       self.implicit_component = false if implicit_component.nil?
