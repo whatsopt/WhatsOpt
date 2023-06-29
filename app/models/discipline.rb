@@ -151,13 +151,13 @@ class Discipline < ApplicationRecord
     end
     update!(params)
     if sub_analysis 
-      if type != WhatsOpt::Discipline::ANALYSIS
-        # _detach_sub_analysis
-        analysis_discipline.destroy
-      elsif type == WhatsOpt::Discipline::ANALYSIS
+      if type == WhatsOpt::Discipline::ANALYSIS || type == WhatsOpt::Discipline::OPTIMIZATION
         self.sub_analysis.parent = self.analysis
         self.sub_analysis.name = self.name
         self.sub_analysis.save!
+      else
+        # _detach_sub_analysis
+        analysis_discipline.destroy
       end
     end
   end
