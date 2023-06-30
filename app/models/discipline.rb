@@ -6,6 +6,9 @@ require "whats_opt/discipline"
 
 class Discipline < ApplicationRecord
   include WhatsOpt::Discipline
+
+  # FIXME: Should be moved in implementations: openmdao_discipline_impl, gemseo_discipline_impl
+  # and templates should use impl object
   include WhatsOpt::OpenmdaoModule
 
   class ForbiddenRemovalError < StandardError; end
@@ -103,6 +106,10 @@ class Discipline < ApplicationRecord
     type == Discipline::ANALYSIS
   end
 
+  def is_sub_optimization?
+    type == Discipline::OPTIMIZATION
+  end
+
   def has_sub_analysis?
     !!sub_analysis
   end
@@ -147,13 +154,13 @@ class Discipline < ApplicationRecord
     end
     update!(params)
     if sub_analysis 
-      if type != WhatsOpt::Discipline::ANALYSIS
-        # _detach_sub_analysis
-        analysis_discipline.destroy
-      elsif type == WhatsOpt::Discipline::ANALYSIS
+      if type == WhatsOpt::Discipline::ANALYSIS || type == WhatsOpt::Discipline::OPTIMIZATION
         self.sub_analysis.parent = self.analysis
         self.sub_analysis.name = self.name
         self.sub_analysis.save!
+      else
+        # _detach_sub_analysis
+        analysis_discipline.destroy
       end
     end
   end

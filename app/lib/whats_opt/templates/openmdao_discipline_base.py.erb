@@ -4,7 +4,7 @@ import numpy as np
 from numpy import nan, inf
 import openmdao.api as om
 
-class <%= @discipline.py_classname %>Base(<%= @dimpl.implicit_component ? "om.ImplicitComponent" : "om.ExplicitComponent" %>):
+class <%= @discipline.py_classname %>Base(<%= @dimpl.openmdao_component_baseclass %>):
     """ An OpenMDAO base component to encapsulate <%= @discipline.py_classname %> discipline. 
     This class defines inputs and outputs of the discipline and declare partials.
     """

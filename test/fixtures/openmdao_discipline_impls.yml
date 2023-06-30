@@ -45,3 +45,9 @@ disc_cicav_metamodel_impl:
   implicit_component: false
   support_derivatives: false
   egmdo_surrogate: false
+
+disc_singleton_impl:
+  discipline: disc_singleton_impl
+  implicit_component: false
+  support_derivatives: false
+  egmdo_surrogate: false

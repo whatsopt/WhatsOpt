@@ -4,7 +4,10 @@ require "whats_opt/discipline"
 require "whats_opt/openmdao_module"
 
 class Analysis < ApplicationRecord
+  # FIXME: Should be moved in implementations: openmdao_anaysis_impl, gemseo_anaysis_impl
+  # and templates should use impl object
   include WhatsOpt::OpenmdaoModule
+
   include Ownable
   resourcify
 

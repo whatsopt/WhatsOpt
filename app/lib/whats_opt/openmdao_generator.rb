@@ -132,6 +132,7 @@ module WhatsOpt
       @mda.disciplines.nodes.each do |disc|
         if disc.has_sub_analysis?
           _generate_sub_analysis(disc, pkg_dir, opts)
+          _generate_discipline(disc, pkg_dir, opts) if disc.is_sub_optimization?
         else
           _generate_discipline(disc, pkg_dir, opts)
           _generate_test_scripts(disc, pkg_dir) if opts[:with_unittests]
@@ -155,14 +156,17 @@ module WhatsOpt
 
     def _generate_discipline(discipline, gendir, options = {})
       @discipline = discipline  # @discipline used in template
-      @dimpl = @discipline.openmdao_impl || OpenmdaoDisciplineImpl.new
+      @dimpl = @discipline.openmdao_impl || OpenmdaoDisciplineImpl.new(discipline: @discipline)
       @with_server = options[:with_server]
-      if @discipline.type == "metamodel"
+      if @discipline.type == WhatsOpt::Discipline::METAMODEL
         _generate(discipline.py_filename, "openmdao_metamodel.py.erb", gendir)
+        _generate(discipline.py_basefilename, "openmdao_discipline_base.py.erb", gendir)
+      elsif @discipline.type == WhatsOpt::Discipline::OPTIMIZATION
+        _generate_sub_optimization(gendir, discipline)
       else
         _generate(discipline.py_filename, "openmdao_discipline.py.erb", gendir)
+        _generate(discipline.py_basefilename, "openmdao_discipline_base.py.erb", gendir)
       end
-      _generate(discipline.py_basefilename, "openmdao_discipline_base.py.erb", gendir)
     end
 
     # options: sqlite_filename=nil
@@ -173,10 +177,34 @@ module WhatsOpt
       gendir = File.join(gendir, mda.basename)
       Dir.mkdir(gendir) unless Dir.exist?(gendir)
 
-      # generate only analysis code: no script , no server
+      # generate only analysis code: no script, no server
       opts = options.merge(with_run: false, with_server: false, with_runops: false, with_src_dir: false)
       sub_ogen._generate_code(gendir, opts)
       @genfiles += sub_ogen.genfiles
+    end
+
+    def _generate_sub_optimization(gendir, discipline)
+      save_driver = @driver
+      save_mda = @mda
+      save_impl = @impl
+
+      @mda = discipline.sub_analysis
+      @impl = @mda.openmdao_impl || OpenmdaoAnalysisImpl.new(analysis: @mda)
+      @driver = OpenmdaoDriverFactory.new(@impl.optimization_driver).create_driver
+
+      if @driver.optimization?
+        _generate(@dimpl.py_filename, "openmdao_discipline_mdo.py.erb", gendir)
+        _generate(@dimpl.py_basefilename, "openmdao_discipline_mdo_base.py.erb", gendir)
+      else
+        # should be simple run_once driver
+        if @driver.class != WhatsOpt::OpenmdaoRunOnceDriver
+          raise RuntimeError.new("Ouch! Should be run_once driver got #{@driver.inspect}")  
+        end
+      end
+
+      @driver = save_driver
+      @mda = save_mda
+      @impl = save_impl
     end
 
     def _generate_main(gendir, options = {})

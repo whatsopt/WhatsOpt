@@ -8,12 +8,19 @@ import DataConfirmModal from '../../utils/components/DataConfirmModal';
 // mapping with XDSMjs type values
 const DISCIPLINE = 'analysis';
 const ANALYSIS = 'mda';
-const METAMODEL = 'metamodel';
 const XDSMJS_DISCIPLINE = 'function';
 const XDSMJS_ANALYSIS = 'group';
 
+// no mapping needed same value in XDSMjs
+const OPTIMIZATION = 'mdo';
+const METAMODEL = 'metamodel';
+
 function isLocalHost(host) {
   return (host === '' || host === 'localhost' || host === '127.0.0.1');
+}
+
+function isComposite(discType) {
+  return (discType === ANALYSIS || discType === OPTIMIZATION);
 }
 class Discipline extends React.Component {
   constructor(props) {
@@ -44,6 +51,8 @@ class Discipline extends React.Component {
   }
 
   componentDidMount() {
+    // TODO: Tooltips call backs have to re-enabled between edits?
+    // TODO: Not straightforward but not critical, so ...
     // const { conn: { name } } = this.props;
     // // eslint-disable-next-line no-undef
     // $(`#confirmModal-${name}`).on(
@@ -111,7 +120,7 @@ class Discipline extends React.Component {
     if (discType === DISCIPLINE) {
       discAttrs.endpoint_attributes = { host: discHost, port: discPort };
     }
-    if (discType === ANALYSIS) {
+    if (isComposite(discType)) {
       discAttrs.analysis_discipline_attributes = {
         discipline_id: node.id, analysis_id: subAnalysisId,
       };
@@ -124,7 +133,6 @@ class Discipline extends React.Component {
         endattrs._destroy = 1;
       }
     }
-    // console.log(JSON.stringify(discattrs));
     const { onDisciplineUpdate } = this.props;
     onDisciplineUpdate(node, discAttrs);
   }
@@ -132,7 +140,8 @@ class Discipline extends React.Component {
   handleSelectChange(event) {
     const discType = event.target.value;
     const { selected } = this.state;
-    if (discType !== ANALYSIS && selected) { // unset analysis if needed
+
+    if (!isComposite(discType) && selected) { // unset analysis if needed
       this.setState({ discType, selected: [] });
     } else {
       this.setState({ discType });
@@ -162,18 +171,19 @@ class Discipline extends React.Component {
     }
     const not_editable = (type === METAMODEL);
     const sub_analysable = (type === DISCIPLINE && !connected);
-    const type_changeable = sub_analysable || type === ANALYSIS;
+    const type_changeable = sub_analysable || isComposite(type);
 
     if (isEditing) {
       let deploymentOrSubAnalysis;
-      if (discType === ANALYSIS) {
+      if (isComposite(discType)) {
         deploymentOrSubAnalysis = (
-          <div className="mb-3 ms-2">
+          <div className="col-auto">
             <AnalysisSelector
               message="Search for sub-analysis..."
               selected={selected}
               onAnalysisSearch={onSubAnalysisSearch}
               onAnalysisSelected={this.handleSubAnalysisSelected}
+              disabled={false}
             />
           </div>
         );
@@ -245,6 +255,7 @@ class Discipline extends React.Component {
                     >
                       <option value={DISCIPLINE}>Discipline</option>
                       <option value={ANALYSIS}>Sub-Analysis</option>
+                      <option value={OPTIMIZATION}>Sub-Optimization</option>
                     </select>
                   </div>
                   {deploymentOrSubAnalysis}
