@@ -23,6 +23,22 @@ class OpenmdaoDisciplineImpl < ActiveRecord::Base
     end
   end
 
+  def py_filename
+    if self.discipline.is_sub_optimization?
+      "#{self.discipline.basename}_mdo.py"
+    else
+      self.discipline.py_filename
+    end
+  end
+
+  def py_basefilename
+    if self.discipline.is_sub_optimization?
+      "#{self.discipline.basename}_mdo_base.py"
+    else
+      self.discipline.py_basefilename
+    end
+  end
+
   private
     def _ensure_default_impl
       self.implicit_component = false if implicit_component.nil?

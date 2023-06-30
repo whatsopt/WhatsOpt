@@ -6,6 +6,9 @@ require "whats_opt/discipline"
 
 class Discipline < ApplicationRecord
   include WhatsOpt::Discipline
+
+  # FIXME: Should be moved in implementations: openmdao_discipline_impl, gemseo_discipline_impl
+  # and templates should use impl object
   include WhatsOpt::OpenmdaoModule
 
   class ForbiddenRemovalError < StandardError; end

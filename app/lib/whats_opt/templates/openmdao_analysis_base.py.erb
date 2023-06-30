@@ -15,7 +15,13 @@ from openmdao import __version__ as OPENMDAO_VERSION
 from openmdao.utils.general_utils import ensure_compatible
 
 <% @mda.sub_analyses.each do |a| -%>
+<% if a.super_discipline.is_sub_optimization? %>
+# sub optimization
+from <%= @pkg_prefix %><%= a.super_discipline.py_modulename %>_mdo import <%= a.super_discipline.py_classname %>Mdo
+<% else %> 
+# <%= a.super_discipline.type %>
 from <%= @pkg_prefix %><%= a.py_full_modulename %> import <%= a.py_classname %>
+<% end %>
 <% end -%>
 
 <% @mda.all_plain_disciplines.each do |disc| -%>
@@ -83,7 +89,11 @@ class <%= @mda.py_classname %>Base(<%= @impl.parallel_group ? "om.ParallelGroup"
         User can override this method in a subclass 
         to take control over <%= a.py_classname %> sub analysis creation.
         """
+<% if a.super_discipline.is_sub_optimization? %>
+        return <%= a.super_discipline.py_classname %>Mdo()
+<% else %>
         return <%= a.py_classname %>(factory=self.options["factory"])
+<% end %>
 <% end -%>
 <% @mda.plain_disciplines.each do |disc| %>
     def create_<%= disc.py_modulename %>(self):
