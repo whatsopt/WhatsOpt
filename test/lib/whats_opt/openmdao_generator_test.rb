@@ -19,7 +19,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
   test "should generate openmdao component for a given discipline in mda" do
     skip "Apache Thrift not installed" unless thrift?
     Dir.mktmpdir do |dir|
-      disc = @mda.disciplines[0]
+      disc = @mda.disciplines.nodes.first
       filepath = @ogen._generate_discipline disc, dir
       assert File.exist?(filepath)
       assert_match(/(\w+)_base\.py/, filepath)
@@ -38,7 +38,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     @mda = analyses(:singleton)
     @ogen = WhatsOpt::OpenmdaoGenerator.new(@mda, pkg_format: true)
     Dir.mktmpdir do |dir|
-      @ogen._generate_code(dir,with_server: false) 
+      @ogen._generate_code(dir, with_server: false) 
       assert File.exist?(@ogen.genfiles.first)
     end
   end
