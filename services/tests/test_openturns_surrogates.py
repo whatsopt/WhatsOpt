@@ -3,9 +3,6 @@ import numpy as np
 from whatsopt_server.surrogate_store.openturns_surrogates import PCE
 
 
-import numpy as np
-
-
 def xsinx(x):
     x = np.reshape(x, (-1,))
     y = np.zeros(x.shape)
