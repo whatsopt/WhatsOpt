@@ -17,4 +17,9 @@ classifiers = [
 dependencies = ["<%= @framework %>"]
 
 [tool.setuptools]
-packages = ["<%= @mda.py_modulename %>"]
+packages = [
+    "<%= @mda.py_modulename -%>",
+<%- @mda.sub_analyses.each do |sub_mda| -%>
+    "<%= @pkg_prefix %><%= sub_mda.py_modulename -%>",
+<%- end -%>
+]
