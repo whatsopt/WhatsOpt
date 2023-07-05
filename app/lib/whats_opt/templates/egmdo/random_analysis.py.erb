@@ -14,22 +14,22 @@ from openmdao.api import <%= @impl.linear_solver.name %>
 <%- @mda.plain_disciplines.each do |disc| -%>
 <%- if disc.openmdao_impl&.egmdo_surrogate -%>
 
-class <%= disc.py_classname %>RandomDiscipline(om.ExplicitComponent):
-    """ An OpenMDAO base component to encapsulate <%= disc.py_classname %> discipline """
+class <%= disc.impl.py_classname %>RandomDiscipline(om.ExplicitComponent):
+    """ An OpenMDAO base component to encapsulate <%= disc.impl.py_classname %> discipline """
     def __init__(self, gp_factory, **kwargs):
         super().__init__(**kwargs)
-<%- disc.output_variables.each do |v| -%>        
-        with open(gp_factory.gp_filename("<%= disc.snake_modulename %>", "<%= v.py_varname %>"), 'rb') as f:
+<%- disc.impl.numeric_output_vars.each do |v| -%>        
+        with open(gp_factory.gp_filename("<%= disc.impl.snake_modulename %>", "<%= v.py_varname %>"), 'rb') as f:
             self.gp_<%= v.py_varname %> = pickle.load(f) 
 <%- end %>
 
 <%- unless disc.variables.empty? -%>
     def setup(self):
-<%- disc.input_variables.numeric.each do |var| %>
+<%- disc.impl.numeric_input_vars.each do |var| %>
         self.add_input('<%= var.py_varname %>', val=<%= var.init_py_value %>, desc='<%= var.escaped_desc %>'<%= @impl.use_units && !var.units.blank? ? ", units='#{var.units}'":"" %>)<%- end %>
-<%- disc.output_variables.each do |var| %>
+<%- disc.impl.numeric_output_vars.each do |var| %>
         self.add_input('_xi_<%= var.py_varname %>', val=0.0)<%- end %>
-<%- disc.output_variables.numeric.each do |var| -%>
+<%- disc.impl.numeric_output_vars.each do |var| -%>
 <%- if var.scaling.blank? -%>
         self.add_output('<%= var.py_varname %>', val=<%= var.init_py_value %>, desc='<%= var.escaped_desc %>'<%= @impl.use_units && !var.units.blank? ? ", units='#{var.units}'":"" %>)
 <%- else -%>
@@ -42,14 +42,14 @@ class <%= disc.py_classname %>RandomDiscipline(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         inputs_gp = np.array([])
         random_inputs = []
-<% disc.output_variables.each do |v| %>
+<% disc.impl.numeric_output_vars.each do |v| %>
         random_inputs.append('_xi_<%= v.py_varname %>')
 <% end %>
         for name in sorted(inputs.keys()):
             if name not in random_inputs: 
                 inputs_gp = np.concatenate((inputs_gp, inputs[name].flatten()))
         inputs_gp = np.atleast_2d(inputs_gp)    
-<% disc.output_variables.each do |v|%>
+<% disc.impl.numeric_output_vars.each do |v|%>
         sigma = np.sqrt(self.gp_<%= v.py_varname %>.predict_variances(inputs_gp))
         mean = self.gp_<%= v.py_varname %>.predict_values(inputs_gp)
         outputs['<%= v.py_varname %>'] = mean + inputs['_xi_<%= v.py_varname %>'] * sigma 
@@ -57,11 +57,11 @@ class <%= disc.py_classname %>RandomDiscipline(om.ExplicitComponent):
 
     def compute_partials(self, inputs, partials):
         """ Jacobian for Discipline1 """
-<%- disc.output_variables.numeric.each do |var_out| -%>
-<%- disc.input_variables.numeric.each do |var_in| -%>
+<%- disc.impl.numeric_output_vars.each do |var_out| -%>
+<%- disc.impl.numeric_input_vars.each do |var_in| -%>
         partials['<%= var_out.py_varname %>', '<%= var_in.py_varname %>'] = np.zeros((<%= var_out.dim %>, <%= var_in.dim %>))
 <%- end -%>
-<%- disc.output_variables.numeric.each do |var_in| -%>
+<%- disc.impl.numeric_input_vars.each do |var_in| -%>
         partials['<%= var_out.py_varname %>', '_xi_<%= var_in.py_varname %>'] = np.zeros((<%= var_out.dim %>, <%= var_in.dim %>))
 <%- end -%>
 <%- end -%>
@@ -69,7 +69,7 @@ class <%= disc.py_classname %>RandomDiscipline(om.ExplicitComponent):
         inputs_gp = np.array([])
         random_inputs = []
 
-<%- disc.output_variables.each do |v| -%>
+<%- disc.impl.numeric_output_vars.each do |v| -%>
         random_inputs.append('_xi_<%= v.py_varname %>')
 <%- end -%>
 
@@ -78,7 +78,7 @@ class <%= disc.py_classname %>RandomDiscipline(om.ExplicitComponent):
                 inputs_gp = np.concatenate((inputs_gp, inputs[name].flatten()))
         inputs_gp = np.atleast_2d(inputs_gp)
 
-<%- disc.output_variables.each do |v| -%>
+<%- disc.impl.numeric_output_vars.each do |v| -%>
         i = 0
         sigma = np.sqrt(self.gp_<%= v.py_varname %>.predict_variances(inputs_gp))
         d_sigma = self.gp_<%= v.py_varname %>.predict_variance_derivatives(inputs_gp)/(2.0*sigma)
@@ -131,12 +131,12 @@ class <%= @mda.py_classname %>RandomAnalysis(<%= @impl.parallel_group ? "om.Para
 <%- end -%>
 
 <%- @mda.plain_disciplines.each do |disc| -%>
-<%- if disc.openmdao_impl&.egmdo_surrogate -%>
-        name = '<%= disc.py_classname %>Random'
-        disc = <%= disc.py_classname %>RandomDiscipline(self.gp_factory)
+<%- if disc.impl.egmdo_surrogate -%>
+        name = '<%= disc.impl.py_classname %>Random'
+        disc = <%= disc.impl.py_classname %>RandomDiscipline(self.gp_factory)
 <%- else -%>
-        name = '<%= disc.py_classname %>'
-        disc = self.disc_factory.create_<%= disc.snake_modulename %>()
+        name = '<%= disc.impl.py_classname %>'
+        disc = self.disc_factory.create_<%= disc.impl.snake_modulename %>()
 <%- end -%>
         self.add_subsystem(name, disc, promotes=['*'])
 <%- end -%>

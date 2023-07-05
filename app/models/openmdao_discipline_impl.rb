@@ -1,9 +1,19 @@
 # frozen_string_literal: true
 
 class OpenmdaoDisciplineImpl < ActiveRecord::Base
+  include WhatsOpt::OpenmdaoModule
+
   belongs_to :discipline
 
   after_initialize :_ensure_default_impl
+
+  def name 
+    self.discipline.name
+  end
+
+  def path 
+    self.discipline.path
+  end
 
   def build_copy
     OpenmdaoDisciplineImpl.new(
@@ -23,19 +33,27 @@ class OpenmdaoDisciplineImpl < ActiveRecord::Base
     end
   end
 
+  def numeric_input_vars
+    @ivars ||= self.discipline.input_variables.active.numeric
+  end
+
+  def numeric_output_vars
+    @ovars ||= self.discipline.output_variables.active.numeric
+  end
+
   def py_filename
     if self.discipline.is_sub_optimization?
-      "#{self.discipline.basename}_mdo.py"
+      "#{self.basename}_mdo.py"
     else
-      self.discipline.py_filename
+      super
     end
   end
 
   def py_basefilename
     if self.discipline.is_sub_optimization?
-      "#{self.discipline.basename}_mdo_base.py"
+      "#{self.basename}_mdo_base.py"
     else
-      self.discipline.py_basefilename
+      super
     end
   end
 

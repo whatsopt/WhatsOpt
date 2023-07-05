@@ -14,8 +14,8 @@ class <%= @mda.py_classname %>Handler:
     def __init__(self):
         factory = Factory()
         <% @mda.all_plain_disciplines.each do |disc| %>
-        self.<%= disc.snake_modulename %> = factory.create_<%= disc.snake_modulename %>()
-        self.<%= disc.snake_modulename %>.setup()
+        self.<%= disc.impl.snake_modulename %> = factory.create_<%= disc.impl.snake_modulename %>()
+        self.<%= disc.impl.snake_modulename %>.setup()
         <% end %>
 
     ### Admin interface
@@ -29,21 +29,21 @@ class <%= @mda.py_classname %>Handler:
 
     ### <%= @mda.py_classname %> interface
 <% @mda.all_plain_disciplines.each do |disc| %>
-    def compute_<%= disc.snake_modulename %>(self, ins):
+    def compute_<%= disc.impl.snake_modulename %>(self, ins):
 <% if !disc.local?(@remote_ip) -%>
         socket = TSocket.TSocket('<%= disc.endpoint&.host %>', <%= disc.endpoint&.port %>)
         transport = TTransport.TBufferedTransport(socket)
         protocol = TBinaryProtocol.TBinaryProtocol(transport)
         thrift_client = <%= @mda.py_classname %>.Client(protocol)
         transport.open()
-        outs = thrift_client.compute_<%= disc.snake_modulename %>(ins)
+        outs = thrift_client.compute_<%= disc.impl.snake_modulename %>(ins)
         transport.close()
         return outs
 <% else -%>
         outputs = {}
-        inputs = to_openmdao_<%= disc.snake_modulename %>_inputs(ins)
-        self.<%= disc.snake_modulename %>.compute(inputs, outputs)
-        return to_thrift_<%= disc.snake_modulename %>_output(outputs)
+        inputs = to_openmdao_<%= disc.impl.snake_modulename %>_inputs(ins)
+        self.<%= disc.impl.snake_modulename %>.compute(inputs, outputs)
+        return to_thrift_<%= disc.impl.snake_modulename %>_output(outputs)
 <% end -%>
 <% end -%>
 

@@ -8,8 +8,8 @@ from yaml import load, FullLoader
 from gemseo.core.discipline import MDODiscipline
 from gemseo.core.json_grammar import JSONGrammar
 
-class <%= @discipline.py_classname %>Base(MDODiscipline):
-    """ An GEMSEO discipline to encapsulate <%= @discipline.py_classname %> discipline """
+class <%= @discipline.impl.py_classname %>Base(MDODiscipline):
+    """ An GEMSEO discipline to encapsulate <%= @discipline.impl.py_classname %> discipline """
 
     def __init__(self, **kwargs):
         self.comp_dir = "./"
@@ -17,25 +17,25 @@ class <%= @discipline.py_classname %>Base(MDODiscipline):
 
     def _instantiate_grammars(self, input_grammar_file, output_grammar_file, grammar_type=MDODiscipline.JSON_GRAMMAR_TYPE):
         self.default_inputs = {
-        <% @discipline.input_variables.each do |var| %>
+        <% @discipline.impl.numeric_input_vars.each do |var| %>
             '<%= var.py_varname %>': np.atleast_1d(<%= var.init_py_value %>),<% end -%>
         }
         self.default_outputs = {
-        <% @discipline.output_variables.each do |var| %>
+        <% @discipline.impl.numeric_output_vars.each do |var| %>
             '<%= var.py_varname %>': np.atleast_1d(<%= var.init_py_value %>),<% end -%>
         }
-        self.input_grammar = JSONGrammar("<%= @discipline.py_classname %>")
+        self.input_grammar = JSONGrammar("<%= @discipline.impl.py_classname %>")
         self.input_grammar.initialize_from_base_dict(self.default_inputs)
-        self.output_grammar = JSONGrammar("<%= @discipline.py_classname %>")
+        self.output_grammar = JSONGrammar("<%= @discipline.impl.py_classname %>")
         self.output_grammar.initialize_from_base_dict(self.default_outputs)
 
     def _run(self):
-    <% @discipline.input_variables.each do |var| %>
+    <% @discipline.impl.numeric_input_vars.each do |var| %>
         <%= var.py_varname %> = self.get_inputs_by_name(["<%= var.py_varname %>"])
     <% end -%>
 
         inputs = self.local_data
         outputs = {}
         self.compute(inputs, outputs)
-    <% @discipline.output_variables.each do |var| %>
+    <% @discipline.impl.numeric_output_vars.each do |var| %>
         self.store_local_data(<%= var.py_varname %>=np.atleast_1d(outputs["<%= var.py_varname %>"]))<% end -%>

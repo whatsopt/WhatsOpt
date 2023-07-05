@@ -1,16 +1,16 @@
 import numpy as np
-from <%= @discipline.py_full_modulename %>_base import <%= @discipline.py_classname %>Base
+from <%= @discipline.impl.py_full_modulename %>_base import <%= @discipline.impl.py_classname %>Base
 
-class <%= @discipline.py_classname %>(<%= @discipline.py_classname %>Base):
-    """ A class to encapsulate <%= @discipline.py_classname %> discipline """
+class <%= @discipline.impl.py_classname %>(<%= @discipline.impl.py_classname %>Base):
+    """ A class to encapsulate <%= @discipline.impl.py_classname %> discipline """
 		
     def compute(self, inputs, outputs):
-        """ <%= @discipline.py_classname %> computation """
-        <%= "pass" if @discipline.output_variables.numeric.empty? -%>
-    <% @discipline.output_variables.numeric.each do |var_out| %>
+        """ <%= @discipline.impl.py_classname %> computation """
+        <%= "pass" if @discipline.impl.numeric_output_vars.empty? -%>
+    <% @discipline.impl.numeric_output_vars.each do |var_out| %>
         outputs['<%= var_out.py_varname %>'] = <%= var_out.default_py_value %> <% end %>  
 
 # Reminder of inputs 
-#   <% @discipline.input_variables.numeric.each do |var_in| %>
+#   <% @discipline.impl.numeric_input_vars.each do |var_in| %>
 #       inputs['<%= var_in.py_varname %>'] -> shape: <%= var_in.shape -%>, type: <%= var_in.type -%>
     <% end %>  

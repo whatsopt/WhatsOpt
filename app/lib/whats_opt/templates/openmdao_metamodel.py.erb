@@ -11,10 +11,10 @@ WHATSOPT_DIRNAME = os.path.join(os.path.expanduser('~'), '.whatsopt')
 API_KEY_FILENAME = os.path.join(WHATSOPT_DIRNAME, 'api_key')
 <% end %>
 
-from <%= @pkg_prefix %><%= @discipline.py_full_modulename %>_base import <%= @discipline.py_classname %>Base
+from <%= @pkg_prefix %><%= @discipline.impl.py_full_modulename %>_base import <%= @discipline.impl.py_classname %>Base
 
-class <%= @discipline.py_classname %>(<%= @discipline.py_classname %>Base):
-    """ An OpenMDAO metamodel for <%= @discipline.py_classname %> discipline """
+class <%= @discipline.impl.py_classname %>(<%= @discipline.impl.py_classname %>Base):
+    """ An OpenMDAO metamodel for <%= @discipline.impl.py_classname %> discipline """
 		
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -31,8 +31,8 @@ class <%= @discipline.py_classname %>(<%= @discipline.py_classname %>Base):
         self.headers = {'Authorization': 'Token token=' + self.api_key, 'User-Agent': 'metamodel'}
 
     def compute(self, inputs, outputs):
-        """ <%= @discipline.py_classname %> metamodel computation """
-        sample = <%= @discipline.py_classname %>._to_json_param(inputs)
+        """ <%= @discipline.impl.py_classname %> metamodel computation """
+        sample = <%= @discipline.impl.py_classname %>._to_json_param(inputs)
         resp = self.session.put(self.url, headers=self.headers, 
             json={"meta_model": { "x": sample }})
         if resp.ok:
@@ -46,7 +46,7 @@ class <%= @discipline.py_classname %>(<%= @discipline.py_classname %>Base):
                 meta = self._var_rel2meta
             for name in outnames:
                 meta_outputs[name] = meta[name]
-            <%= @discipline.py_classname %>._from_json_responses(meta_outputs, resp.json()["y"], outputs)
+            <%= @discipline.impl.py_classname %>._from_json_responses(meta_outputs, resp.json()["y"], outputs)
         else:
             resp.raise_for_status()
 

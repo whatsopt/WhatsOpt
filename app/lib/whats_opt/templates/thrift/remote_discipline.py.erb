@@ -7,31 +7,31 @@ from thrift.protocol import TBinaryProtocol
 
 from <%= @pkg_prefix %><%= @server_module %>.<%= @mda.py_modulename %> import <%= @mda.py_classname %>
 <% @mda.all_plain_disciplines.each do |disc| -%>
-from <%= @pkg_prefix %><%= disc.py_full_modulename %> import <%= disc.py_classname %>
+from <%= @pkg_prefix %><%= disc.impl.py_full_modulename %> import <%= disc.impl.py_classname %>
 <% end -%>
 <% @mda.all_plain_disciplines.each do |disc| -%>
-from .discipline_proxy import <%= disc.py_classname %>Proxy
+from .discipline_proxy import <%= disc.impl.py_classname %>Proxy
 <% end -%>
 
 <% @mda.all_plain_disciplines.each do |disc| %>
-class Remote<%= disc.py_classname %>(<%= disc.py_classname %>):
-    """ An OpenMDAO base component to encapsulate <%= disc.py_classname %> discipline """
+class Remote<%= disc.impl.py_classname %>(<%= disc.impl.py_classname %>):
+    """ An OpenMDAO base component to encapsulate <%= disc.impl.py_classname %> discipline """
 
     def __init__(self, thrift_client=None, *args, **kwargs):
-        super(Remote<%= disc.py_classname %>, self).__init__(*args, **kwargs)
+        super(Remote<%= disc.impl.py_classname %>, self).__init__(*args, **kwargs)
         self._manage_connection = False
         if thrift_client is None:
             self._transport = TSocket.TSocket('<%= disc.endpoint&.host %>', <%= disc.endpoint&.port %>)
             self._transport = TTransport.TBufferedTransport(self._transport)
             protocol = TBinaryProtocol.TBinaryProtocol(self._transport)
             thrift_client = <%= @mda.py_classname %>.Client(protocol)
-            self._discipline_proxy = <%= disc.py_classname %>Proxy(thrift_client)
+            self._discipline_proxy = <%= disc.impl.py_classname %>Proxy(thrift_client)
             self._manage_connection = True
         else:
-            self._discipline_proxy = <%= disc.py_classname %>Proxy(thrift_client)
+            self._discipline_proxy = <%= disc.impl.py_classname %>Proxy(thrift_client)
 
     def compute(self, inputs, outputs):
-        """ <%= disc.py_classname %> computation """
+        """ <%= disc.impl.py_classname %> computation """
         if self._manage_connection:
             self._transport.open()
         self._discipline_proxy.compute(inputs, outputs)

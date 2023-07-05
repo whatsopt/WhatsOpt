@@ -5,8 +5,8 @@ import inspect
 import numpy as np
 from numpy import nan
 
-<% @mda.all_plain_disciplines.each do |d| -%>
-from <%= d.py_full_modulename %> import <%= d.py_classname %>
+<% @mda.all_plain_disciplines.each do |disc| -%>
+from <%= disc.impl.py_full_modulename %> import <%= disc.impl.py_classname %>
 <% end -%>
 
 from gemseo.mda.jacobi import MDAJacobi
@@ -19,7 +19,7 @@ from gemseo.algos.design_space import DesignSpace
 class <%= @mda.py_classname %>MDABase(MDAJacobi):
     def __init__(self, dtype="float64", **mda_options):
         disciplines = [
-            <%= @mda.disciplines.nodes.map{|d| "self.create_#{d.basename}()"}.join(', ') %>
+            <%= @mda.disciplines.nodes.map{|disc| "self.create_#{disc.impl.basename}()"}.join(', ') %>
         ]
         super().__init__(disciplines, **mda_options)
 
@@ -32,14 +32,14 @@ class <%= @mda.py_classname %>MDABase(MDAJacobi):
             '<%= var.py_varname %>': np.atleast_1d(<%= var.init_py_value %>),<% end -%>
 
         }
-        self.input_grammar = JSONGrammar("<%= @discipline.py_classname %>")
+        self.input_grammar = JSONGrammar("<%= @discipline.impl.py_classname %>")
         self.input_grammar.initialize_from_base_dict(self.default_inputs)
-        self.output_grammar = JSONGrammar("<%= @discipline.py_classname %>")
+        self.output_grammar = JSONGrammar("<%= @discipline.impl.py_classname %>")
         self.output_grammar.initialize_from_base_dict(self.default_outputs)
 
 <% @mda.plain_disciplines.each do |disc| -%>
-    def create_<%= disc.basename %>(self):
-    	return <%= disc.py_classname %>()
+    def create_<%= disc.impl.basename %>(self):
+    	return <%= disc.impl.py_classname %>()
 <% end %>
 
 class <%= @mda.py_classname %>DesignSpace(DesignSpace):
@@ -63,7 +63,7 @@ class <%= @mda.py_classname %>DOEScenarioBase(DOEScenario):
     def __init__(self, **kwargs):
 
         self._disciplines = [
-            <%= @mda.disciplines.nodes.map{|d| "self.create_#{d.basename}()"}.join(', ') %>
+            <%= @mda.disciplines.nodes.map{|d| "self.create_#{d.impl.basename}()"}.join(', ') %>
         ]
         for disc in self._disciplines:
             disc.set_jacobian_approximation()
@@ -89,8 +89,8 @@ class <%= @mda.py_classname %>DOEScenarioBase(DOEScenario):
         self._instantiate_grammars(input_grammar_file, output_grammar_file)
 
 <% @mda.plain_disciplines.each do |disc| -%>
-    def create_<%= disc.basename %>(self):
-    	return <%= disc.py_classname %>()
+    def create_<%= disc.impl.basename %>(self):
+    	return <%= disc.impl.py_classname %>()
 <% end %>
 
 
@@ -100,7 +100,7 @@ class <%= @mda.py_classname %>MDOScenarioBase(MDOScenario):
     def __init__(self, **kwargs):
 
         self._disciplines = [
-            <%= @mda.disciplines.nodes.map{|d| "self.create_#{d.basename}()"}.join(', ') %>
+            <%= @mda.disciplines.nodes.map{|d| "self.create_#{d.impl.basename}()"}.join(', ') %>
         ]
         for disc in self._disciplines:
             disc.set_jacobian_approximation()
@@ -137,6 +137,6 @@ class <%= @mda.py_classname %>MDOScenarioBase(MDOScenario):
         self._instantiate_grammars(input_grammar_file, output_grammar_file)
 
 <% @mda.plain_disciplines.each do |disc| -%>
-    def create_<%= disc.basename %>(self):
-    	return <%= disc.py_classname %>()
+    def create_<%= disc.impl.basename %>(self):
+    	return <%= disc.impl.py_classname %>()
 <% end %>

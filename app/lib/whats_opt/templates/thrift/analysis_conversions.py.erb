@@ -3,15 +3,15 @@ from .<%= @mda.py_modulename %>.ttypes import *
 
 <% @mda.all_plain_disciplines.each do |disc| -%>
 
-# <%= disc.py_classname %> 
-def to_openmdao_<%= disc.snake_modulename%>_inputs(ins, inputs={}):
-    <% disc.input_variables.active.numeric.each do |var| %>
+# <%= disc.impl.py_classname %> 
+def to_openmdao_<%= disc.impl.snake_modulename%>_inputs(ins, inputs={}):
+    <% disc.impl.numeric_input_vars.each do |var| %>
     inputs['<%= var.name %>'] = np.array(ins.<%= var.thrift_name %>)<% end %>
     return inputs
 
-def to_thrift_<%= disc.snake_modulename%>_input(inputs):
-    ins = <%= disc.camel_modulename%>Input()
-    <% disc.input_variables.active.numeric.each do |var| %>
+def to_thrift_<%= disc.impl.snake_modulename%>_input(inputs):
+    ins = <%= disc.impl.camel_modulename%>Input()
+    <% disc.impl.numeric_input_vars.each do |var| %>
     <% if var.ndim > 0 %>
     ins.<%= var.name %> = inputs['<%= var.thrift_name %>'].tolist()
     <% else %>
@@ -19,14 +19,14 @@ def to_thrift_<%= disc.snake_modulename%>_input(inputs):
     <% end %><% end %>
     return ins
 
-def to_openmdao_<%= disc.snake_modulename%>_outputs(output, outputs={}):
-    <% disc.output_variables.active.numeric.each do |var| %>
+def to_openmdao_<%= disc.impl.snake_modulename%>_outputs(output, outputs={}):
+    <% disc.impl.numeric_output_vars.each do |var| %>
     outputs['<%= var.name %>'] = np.array(output.<%= var.name %>)<% end %>
     return outputs
 
-def to_thrift_<%= disc.snake_modulename%>_output(outputs):
-    output = <%= disc.camel_modulename%>Output()
-    <% disc.output_variables.active.numeric.each do |var| %>
+def to_thrift_<%= disc.impl.snake_modulename%>_output(outputs):
+    output = <%= disc.impl.camel_modulename%>Output()
+    <% disc.impl.numeric_output_vars.each do |var| %>
     <% if var.ndim > 0 %>
     output.<%= var.name %> = outputs['<%= var.name %>'].tolist()
     <% else %>

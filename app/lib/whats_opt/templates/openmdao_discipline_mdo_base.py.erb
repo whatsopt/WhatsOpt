@@ -4,7 +4,7 @@ import numpy as np
 from numpy import nan, inf
 import openmdao.api as om
 
-from <%= @pkg_prefix %><%= @discipline.sub_analysis.py_full_modulename %> import <%= @discipline.sub_analysis.py_classname %>
+from <%= @pkg_prefix %><%= @dimpl.discipline.sub_analysis.py_full_modulename %> import <%= @dimpl.discipline.sub_analysis.py_classname %>
 <%- if @driver.onerasego? -%>
 from openmdao_extensions.onera_sego_driver import OneraSegoDriver
 <%- elsif @driver.egobox? -%>
@@ -14,15 +14,15 @@ import logging
 logging.basicConfig(level=logging.INFO)
 <%- end -%>
 
-class <%= @discipline.py_classname %>MdoBase(om.SubmodelComp):
-    """ An OpenMDAO base component to encapsulate an MDO as <%= @discipline.py_classname %> discipline. 
+class <%= @dimpl.py_classname %>MdoBase(om.SubmodelComp):
+    """ An OpenMDAO base component to encapsulate an MDO as <%= @dimpl.py_classname %> discipline. 
     This class defines inputs and outputs of the MDO discipline and declare partials.
     """
 
     def __init__(self, inputs=None, outputs=None, reports=False, **kwargs):
 
         # Problem definition
-        pb = om.Problem(<%= @discipline.py_classname %>())
+        pb = om.Problem(<%= @dimpl.py_classname %>())
         super().__init__(pb, inputs=None, outputs=None, reports=False, **kwargs)
 
         <%- if @driver.pyoptsparse? -%>
@@ -49,7 +49,7 @@ class <%= @discipline.py_classname %>MdoBase(om.SubmodelComp):
 
         # Design variables
         <%- if @mda.design_variables.empty? -%>
-        print("Error: You have to specify some design variables in <%= @discipline.name %> then update and retry.")
+        print("Error: You have to specify some design variables in <%= @dimpl.name %> then update and retry.")
         exit(-1)
         <%- end -%>
         <%- @mda.design_variables.each do |dv| -%>
@@ -58,7 +58,7 @@ class <%= @discipline.py_classname %>MdoBase(om.SubmodelComp):
 
         # Objective and constraints definition
         <%- if @mda.objective_variables.empty? -%>
-        print("Error: You have to specify an optimization objective in <%= @discipline.name %> then update and retry.")
+        print("Error: You have to specify an optimization objective in <%= @dimpl.name %> then update and retry.")
         exit(-1)
         <% end %>
         <% @mda.min_objective_variables.each do |voi| %>
@@ -80,13 +80,13 @@ class <%= @discipline.py_classname %>MdoBase(om.SubmodelComp):
         pb.model.add_constraint('<%= voi.name %>', lower=<%= voi.cstr_lower_py_value %>, upper=<%= voi.cstr_upper_py_value %><%= @impl.use_units && !voi.units.blank? ? ", units='#{voi.units}'":"" %>)
         <%- end -%>
 
-<% unless @discipline.variables.empty? -%>
+<% unless @dimpl.discipline.variables.empty? -%>
     def setup(self):
         super().setup()
-<% @discipline.input_variables.numeric.each do |var| -%>
+<% @dimpl.numeric_input_vars.each do |var| -%>
         self.add_input('<%= var.py_varname %>', val=<%= var.init_py_value %>, <%= var.ndim > 0 ? "shape=#{var.shape} ," : "" %> <%= var.is_int? ? "tags=['#{Variable::INTEGER_TAG}'] ," : "" %> desc='<%= var.escaped_desc %>'<%= @impl.use_units && !var.units.blank? ? ", units='#{var.units}'":"" %>)
 <% end %>
-<% @discipline.output_variables.numeric.each do |var| -%>
+<% @dimpl.numeric_input_vars.each do |var| -%>
 <% if var.scaling.blank? -%>
         self.add_output('<%= var.py_varname %>', val=<%= var.init_py_value %>, <%= var.ndim > 0 ? "shape=#{var.shape} ," : "" %> <%= var.is_int? ? "tags=['#{Variable::INTEGER_TAG}'] ," : "" %> desc='<%= var.escaped_desc %>'<%= @impl.use_units && !var.units.blank? ? ", units='#{var.units}'":"" %>)
 <%- else -%>
@@ -95,7 +95,7 @@ class <%= @discipline.py_classname %>MdoBase(om.SubmodelComp):
 <% end -%>
 <% end -%>
 
-<%- unless @discipline.input_variables.numeric.empty? || @discipline.output_variables.numeric.empty? || !@discipline.is_derivable?-%>
+<%- unless @dimpl.numeric_input_vars.empty? || @dimpl.numeric_output_vars.empty? || !@discipline.is_derivable?-%>
     def setup_partials(self):
         self.declare_partials('*', '*', method='<%= @dimpl.support_derivatives ? "exact" : "fd" %>')
 <% end -%>

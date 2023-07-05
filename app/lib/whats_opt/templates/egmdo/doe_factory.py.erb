@@ -24,10 +24,10 @@ class DoeFactory:
         return os.path.join(self.outdir, f"doe_<%= @mda.snake_modulename %>_{disc_name}.npy")
 
 <%- @mda.plain_disciplines.each do |disc| -%>
-<%- if disc.openmdao_impl&.egmdo_surrogate? -%>
-    def create_doe_<%= disc.snake_modulename %>(self, n_cases):
+<%- if disc.impl.egmdo_surrogate? -%>
+    def create_doe_<%= disc.impl.snake_modulename %>(self, n_cases):
         pb = om.Problem(comm=self.comm)
-        pb.model.add_subsystem("<%= disc.py_classname %>", self.discipline_factory.create_<%= disc.snake_modulename %>(), promotes=['*'])
+        pb.model.add_subsystem("<%= disc.impl.py_classname %>", self.discipline_factory.create_<%= disc.impl.snake_modulename %>(), promotes=['*'])
         pb.driver = SmtDOEDriver(
             sampling_method_name="LHS",
             n_cases=n_cases,
@@ -35,10 +35,10 @@ class DoeFactory:
         )
         pb.driver.options["run_parallel"] = False
 
-        recorder = om.SqliteRecorder(self.doe_recorder_filename("<%= disc.snake_modulename %>"), record_viewer_data=False)
+        recorder = om.SqliteRecorder(self.doe_recorder_filename("<%= disc.impl.snake_modulename %>"), record_viewer_data=False)
         pb.driver.add_recorder(recorder)
         pb.driver.recording_options["includes"] = ["*"]
-        <%- disc.input_variables.each do |v| -%>
+        <%- disc.impl.numeric_input_vars.each do |v| -%>
         <%- refvar = @mda.variable(v.name) -%>
 <%- if @mda.is_parameter?(v.name) -%>
         <%- lower = refvar.init_py_value -%>
@@ -59,7 +59,7 @@ class DoeFactory:
         pb.cleanup()
 
         # read the doe
-        cr = om.CaseReader(self.doe_recorder_filename("<%= disc.snake_modulename %>"))
+        cr = om.CaseReader(self.doe_recorder_filename("<%= disc.impl.snake_modulename %>"))
         driver_cases = cr.list_cases("driver", out_stream=None)
         case = cr.get_case(driver_cases[0])
         n_doe = len(driver_cases)
@@ -69,15 +69,15 @@ class DoeFactory:
         for i in range(n_doe):
             case = cr.get_case(driver_cases[i])
 <%- index = 0 -%>
-<%- (disc.input_variables + disc.output_variables).each_with_index do |var, i| -%>
+<%- (disc.impl.numeric_input_vars + disc.impl.numeric_output_vars).each_with_index do |var, i| -%>
             doe[i, <%= index %>:<%= index + var.dim %>] = case.outputs['<%= var.name %>']
 <%- index = index + var.dim -%>
 <%- end -%>
         # save the DoE for futur enrichement
-        np.save(self.doe_numpy_filename("<%= disc.snake_modulename %>"), doe)
+        np.save(self.doe_numpy_filename("<%= disc.impl.snake_modulename %>"), doe)
 
         print(doe) 
-<% input_size = (disc.input_variables).inject(0){|acc, v| acc + v.dim } %>
+<% input_size = (disc.impl.numeric_input_vars).inject(0){|acc, v| acc + v.dim } %>
 <% size_limit = 10 %>
         input_size = <%= input_size %>
         plot_disabled = (input_size > <%= size_limit %>)
@@ -85,14 +85,14 @@ class DoeFactory:
             print(f"Plot disabled as {input_size} is too large (> <%= size_limit %>)")
 <% if input_size < size_limit %>
         if self.plot:
-<%- (disc.output_variables).each_with_index do |var, i| -%>
+<%- (disc.impl.numeric_output_vars).each_with_index do |var, i| -%>
             for i in range(dim-1):
                 plt.subplot(1, dim-1, i + 1)
                 plt.plot(doe[:, i], doe[:, -1], 'o')
                 if i == 0:
                     plt.ylabel('<%= var.name %>')
 <%- v_index = 0 -%>
-<%- (disc.input_variables).each_with_index do |v, j| -%>
+<%- (disc.impl.numeric_input_vars).each_with_index do |v, j| -%>
 <%- (0...v.dim).each do |j| -%> 
                 if i == <%= v_index + j %>:
                     plt.xlabel('<%= v.dim > 1 ? "#{v.name}[#{j}]" : v.name %>')
@@ -102,14 +102,14 @@ class DoeFactory:
 <%- end -%>
             plt.show()
 <%- end %>
-    def update_doe_<%= disc.snake_modulename %>(self, design_vars, coupling_vars):
+    def update_doe_<%= disc.impl.snake_modulename %>(self, design_vars, coupling_vars):
         # open the disciplinary DoE
-        doe = np.load(self.doe_numpy_filename("<%= disc.snake_modulename %>"))
+        doe = np.load(self.doe_numpy_filename("<%= disc.impl.snake_modulename %>"))
         new_doe = np.zeros((doe.shape[0] + 1, doe.shape[1]))
         new_doe[:doe.shape[0], :] = doe
 
         # open the sqlite dictionnary to find the index of the variables
-        filename = self.doe_recorder_filename("<%= disc.snake_modulename %>")
+        filename = self.doe_recorder_filename("<%= disc.impl.snake_modulename %>")
         cr = om.CaseReader(filename)
         driver_cases = cr.list_cases('driver', out_stream=None)
         case = cr.get_case(driver_cases[0])
@@ -122,7 +122,7 @@ class DoeFactory:
             dim_design_vars.append(len(case.get_design_vars()[design_vars_names[i]]))
 
         problem = om.Problem(comm=self.comm)
-        problem.model.add_subsystem("<%= disc.py_classname %>", self.discipline_factory.create_<%= disc.snake_modulename %>(), promotes=["*"])
+        problem.model.add_subsystem("<%= disc.impl.py_classname %>", self.discipline_factory.create_<%= disc.impl.snake_modulename %>(), promotes=["*"])
         problem.setup()
         <%- disc.design_variables.each do |var| -%>
         problem['<%= var.py_varname %>'] = design_vars['<%= var.py_varname %>']
@@ -148,13 +148,13 @@ class DoeFactory:
             else:
                 new_doe[-1, start:start + dim_design_vars[ind + 1]] = design_vars[name]
 
-        <%- count = disc.output_variables.size -%>
-        <%- disc.output_variables.each_with_index do |var, i| -%>
+        <%- count = disc.impl.numeric_output_vars.size -%>
+        <%- disc.impl.numeric_output_vars.each_with_index do |var, i| -%>
         new_doe[-1, -<%= count - i %>] = problem.model.list_outputs(out_stream=None)[<%= i %>][1]['val']
         <%- end -%>
 
         # save the DoE 
-        np.save(self.doe_numpy_filename("<%= disc.snake_modulename %>"), new_doe)
+        np.save(self.doe_numpy_filename("<%= disc.impl.snake_modulename %>"), new_doe)
 
         return new_doe
 <% end -%>
@@ -162,10 +162,10 @@ class DoeFactory:
 
 def create_all_does(discipline_factory, n_cases=4):
 <%- @mda.plain_disciplines.each do |disc| -%>
-<%- if disc.openmdao_impl&.egmdo_surrogate -%>
-    DoeFactory(discipline_factory).create_doe_<%= disc.snake_modulename %>(n_cases)
+<%- if disc.impl.egmdo_surrogate -%>
+    DoeFactory(discipline_factory).create_doe_<%= disc.impl.snake_modulename %>(n_cases)
 <%- end -%>
 <%- end -%>
-<%- if @mda.disciplines.select{|d| d.openmdao_impl&.egmdo_surrogate}.empty? -%>
+<%- if @mda.disciplines.nodes.select{|d| d.impl.egmdo_surrogate}.empty? -%>
     pass
 <%- end -%>
