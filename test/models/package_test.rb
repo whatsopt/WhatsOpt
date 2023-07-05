@@ -16,4 +16,14 @@ class PackageTest < ActiveSupport::TestCase
     assert_equal "0.1.0", @pkg.version
   end
 
+  test "should update when package archive change" do
+    assert @pkg.archive.attached?
+    date = @pkg.updated_at
+    @pkg.archive.attach(io: File.open(file_fixture('cicav-0.1.0.tar.gz')), filename: 'cicav-0.1.0.tar.gz',
+                        content_type: 'application/gzip')
+    assert @pkg.archive.attached?
+    @pkg.save!
+    refute_equal date, @pkg.updated_at
+  end
+  
 end
