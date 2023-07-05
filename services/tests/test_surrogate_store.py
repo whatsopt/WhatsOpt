@@ -4,6 +4,13 @@ import numpy as np
 from whatsopt_server.surrogate_store.surrogate_store import SurrogateStore
 
 
+def xsinx(x):
+    x = np.reshape(x, (-1,))
+    y = np.zeros(x.shape)
+    y = (x - 3.5) * np.sin((x - 3.5) / (np.pi))
+    return y.reshape((-1, 1))
+
+
 class TestSurrogateStore(unittest.TestCase):
     def setUp(self):
         self.store = SurrogateStore()
@@ -64,17 +71,17 @@ class TestSurrogateStore(unittest.TestCase):
         self.assertTrue((13, 1), y.shape)
 
     def test_get_openturns_pce_sensibility_analysis(self):
-        xt = np.array([[0.0, 1.0, 2.0, 3.0, 4.0]]).T
-        yt = np.array([0.0, 1.0, 1.5, 0.5, 1.0]).T
+        xt = np.atleast_2d(np.random.uniform(0, 25, 200)).T
+        yt = xsinx(xt)
 
         self.store.create_surrogate("3", "OPENTURNS_PCE", xt, yt)
         sa = self.store.get_sobol_pce_sensitivity_analysis("3")
         self.assertEqual([1.0], sa["S1"])
-        self.assertEqual([0.0], sa["ST"])
+        self.assertEqual([1.0], sa["ST"])
 
-    def test_get_openturns_pce_sensibility_analysi_with_uncertainties(self):
-        xt = np.array([[0.0, 1.0, 2.0, 3.0, 4.0]]).T
-        yt = np.array([0.0, 1.0, 1.5, 0.5, 1.0]).T
+    def test_get_openturns_pce_sensibility_analysis_with_uncertainties(self):
+        xt = np.atleast_2d(np.random.uniform(0, 25, 200)).T
+        yt = xsinx(xt)
 
         self.store.create_surrogate(
             "3",
@@ -86,7 +93,7 @@ class TestSurrogateStore(unittest.TestCase):
         )
         sa = self.store.get_sobol_pce_sensitivity_analysis("3")
         self.assertEqual([1.0], sa["S1"])
-        self.assertEqual([0.0], sa["ST"])
+        self.assertEqual([1.0], sa["ST"])
 
 
 if __name__ == "__main__":
