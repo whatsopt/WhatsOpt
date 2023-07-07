@@ -4,7 +4,7 @@ import numpy as np
 from numpy import nan, inf
 import openmdao.api as om
 
-from <%= @pkg_prefix %><%= @dimpl.discipline.sub_analysis.py_full_modulename %> import <%= @dimpl.discipline.sub_analysis.py_classname %>
+from <%= @pkg_prefix %><%= @mda.py_full_modulename %> import <%= @mda.py_classname %>
 <%- if @driver.onerasego? -%>
 from openmdao_extensions.onera_sego_driver import OneraSegoDriver
 <%- elsif @driver.egobox? -%>

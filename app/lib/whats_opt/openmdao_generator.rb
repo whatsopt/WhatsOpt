@@ -156,7 +156,7 @@ module WhatsOpt
 
     def _generate_discipline(discipline, gendir, options = {})
       @discipline = discipline  # @discipline used in template
-      @dimpl = @discipline.openmdao_impl || OpenmdaoDisciplineImpl.new(discipline: @discipline)
+      @dimpl = @discipline.impl # for shortcut
       @with_server = options[:with_server]
       if @discipline.type == WhatsOpt::Discipline::METAMODEL
         _generate(@dimpl.py_filename, "openmdao_metamodel.py.erb", gendir)
@@ -189,6 +189,7 @@ module WhatsOpt
       save_impl = @impl
 
       @mda = discipline.sub_analysis
+      @dimpl = discipline.impl
       @impl = @mda.openmdao_impl || OpenmdaoAnalysisImpl.new(analysis: @mda)
       @driver = OpenmdaoDriverFactory.new(@impl.optimization_driver).create_driver
 
