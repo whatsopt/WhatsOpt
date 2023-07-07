@@ -14,6 +14,7 @@ class OpenmdaoAnalysisImpl < ActiveRecord::Base
 
   after_initialize :_ensure_default_impl
 
+  validates :analysis, presence: true
   validates :package_name, presence: true
   validates :package_name, format: { with: /\A[a-z]+[_a-z0-9]*\z/, message: "should follow PEP8 recommendation for Python package names"}
   NULL_PACKAGE_NAME = "pkg_place_holder"
