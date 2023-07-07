@@ -4,10 +4,10 @@ import numpy as np
 from numpy import nan, inf
 import openmdao.api as om
 
-from <%= @pkg_prefix %><%= @mda.py_full_modulename %> import <%= @mda.py_classname %>
-<%- if @driver.onerasego? -%>
+from <%= @pkg_prefix %><%= @sub_mda.py_full_modulename %> import <%= @sub_mda.py_classname %>
+<%- if @sub_driver.onerasego? -%>
 from openmdao_extensions.onera_sego_driver import OneraSegoDriver
-<%- elsif @driver.egobox? -%>
+<%- elsif @sub_driver.egobox? -%>
 from openmdao_extensions.egobox_egor_driver import EgoboxEgorDriver
 import egobox as egx
 import logging
@@ -25,22 +25,22 @@ class <%= @dimpl.py_classname %>MdoBase(om.SubmodelComp):
         pb = om.Problem(<%= @dimpl.py_classname %>())
         super().__init__(pb, inputs=None, outputs=None, reports=False, **kwargs)
 
-        <%- if @driver.pyoptsparse? -%>
+        <%- if @sub_driver.pyoptsparse? -%>
         pb.driver = om.pyOptSparseDriver()
-        <%- elsif @driver.onerasego? -%>
+        <%- elsif @sub_driver.onerasego? -%>
         pb.driver = OneraSegoDriver()
-        <%- elsif @driver.egobox? -%>
+        <%- elsif @sub_driver.egobox? -%>
         pb.driver = EgoboxEgorDriver()
         <%- else -%>
         pb.driver = om.ScipyOptimizeDriver()
         <%- end -%>
 
         # Optimizer options
-        pb.driver.options['optimizer'] = '<%= @driver.algo_option %>'
-        <%- @driver.options.each do |k, v| -%>
+        pb.driver.options['optimizer'] = '<%= @sub_driver.algo_option %>'
+        <%- @sub_driver.options.each do |k, v| -%>
         pb.driver.options['<%= k %>'] = <%= v %>
         <%- end -%>
-        <%- @driver.opt_settings.each do |k, v| -%>
+        <%- @sub_driver.opt_settings.each do |k, v| -%>
         pb.driver.opt_settings['<%= k %>'] = <%= v %>
         <%- end -%>
 
@@ -48,35 +48,35 @@ class <%= @dimpl.py_classname %>MdoBase(om.SubmodelComp):
         pb.driver.options['debug_print'] = []
 
         # Design variables
-        <%- if @mda.design_variables.empty? -%>
+        <%- if @sub_mda.design_variables.empty? -%>
         print("Error: You have to specify some design variables in <%= @dimpl.name %> then update and retry.")
         exit(-1)
         <%- end -%>
-        <%- @mda.design_variables.each do |dv| -%>
+        <%- @sub_mda.design_variables.each do |dv| -%>
         pb.model.add_design_var('<%= dv.name %>', lower=<%= dv.lower_py_value %>, upper=<%= dv.upper_py_value %><%= @impl.use_units && !dv.units.blank? ? ", units='#{dv.units}'":"" %>)
         <%- end -%>
 
         # Objective and constraints definition
-        <%- if @mda.objective_variables.empty? -%>
+        <%- if @sub_mda.objective_variables.empty? -%>
         print("Error: You have to specify an optimization objective in <%= @dimpl.name %> then update and retry.")
         exit(-1)
         <% end %>
-        <% @mda.min_objective_variables.each do |voi| %>
+        <% @sub_mda.min_objective_variables.each do |voi| %>
         pb.model.add_objective('<%= voi.name %>'<%= @impl.use_units && !voi.units.blank? ? ", units='#{voi.units}'":"" %>)
         <%- end -%>
-        <%- @mda.max_objective_variables.each do |voi| %>
+        <%- @sub_mda.max_objective_variables.each do |voi| %>
         pb.model.add_objective('<%= voi.name %>', scaler=-1<%= @impl.use_units && !voi.units.blank? ? ", units='#{voi.units}'":"" %>)
         <%- end -%>
-        <%- @mda.neg_constraint_variables.each do |voi| %>
+        <%- @sub_mda.neg_constraint_variables.each do |voi| %>
         pb.model.add_constraint('<%= voi.name %>', upper=<%= voi.cstr_upper_py_value %><%= @impl.use_units && !voi.units.blank? ? ", units='#{voi.units}'":"" %>)
         <%- end -%>
-        <%- @mda.pos_constraint_variables.each do |voi| %>
+        <%- @sub_mda.pos_constraint_variables.each do |voi| %>
         pb.model.add_constraint('<%= voi.name %>', lower=<%= voi.cstr_lower_py_value %><%= @impl.use_units && !voi.units.blank? ? ", units='#{voi.units}'":"" %>)
         <%- end -%>
-        <%- @mda.eq_constraint_variables.each do |voi| %>
+        <%- @sub_mda.eq_constraint_variables.each do |voi| %>
         pb.model.add_constraint('<%= voi.name %>', equals=<%= voi.cstr_init_py_value %><%= @impl.use_units && !voi.units.blank? ? ", units='#{voi.units}'":"" %>)
         <%- end -%>
-        <%- @mda.bounded_constraint_variables.each do |voi| %>
+        <%- @sub_mda.bounded_constraint_variables.each do |voi| %>
         pb.model.add_constraint('<%= voi.name %>', lower=<%= voi.cstr_lower_py_value %>, upper=<%= voi.cstr_upper_py_value %><%= @impl.use_units && !voi.units.blank? ? ", units='#{voi.units}'":"" %>)
         <%- end -%>
 

@@ -18,7 +18,7 @@ class <%= @dimpl.py_classname %>(<%= @dimpl.py_classname %>Base):
         # and then run 'wop update'.
 
 
-<%- if @dimpl.numeric_input_vars.empty? && @dimpl.numeric_input_vars.empty? -%>
+<%- if @dimpl.numeric_input_vars.empty? && @dimpl.numeric_output_vars.empty? -%>
         pass
 <%- else -%>
 <%- @dimpl.numeric_input_vars.each do |var_in| -%>

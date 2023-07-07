@@ -184,14 +184,10 @@ module WhatsOpt
     end
 
     def _generate_sub_optimization(gendir, discipline)
-      save_driver = @driver
-      save_mda = @mda
-      save_impl = @impl
-
-      @mda = discipline.sub_analysis
+      @sub_mda = discipline.sub_analysis
       @dimpl = discipline.impl
-      @impl = @mda.openmdao_impl || OpenmdaoAnalysisImpl.new(analysis: @mda)
-      @driver = OpenmdaoDriverFactory.new(@impl.optimization_driver).create_driver
+      @sub_impl = @sub_mda.openmdao_impl || OpenmdaoAnalysisImpl.new(analysis: @sub_mda)
+      @sub_driver = OpenmdaoDriverFactory.new(@sub_impl.optimization_driver).create_driver
 
       if @driver.optimization?
         _generate(@dimpl.py_filename, "openmdao_discipline_mdo.py.erb", gendir)
@@ -202,10 +198,6 @@ module WhatsOpt
           raise RuntimeError.new("Ouch! Should be run_once driver got #{@driver.inspect}")  
         end
       end
-
-      @driver = save_driver
-      @mda = save_mda
-      @impl = save_impl
     end
 
     def _generate_main(gendir, options = {})

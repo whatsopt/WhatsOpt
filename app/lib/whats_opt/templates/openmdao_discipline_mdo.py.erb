@@ -1,5 +1,5 @@
 import openmdao.api as om
-from <%= @pkg_prefix %><%= @dimpl.py_modulename %>_mdo_base import <%= @discipline.py_classname %>MdoBase
+from <%= @pkg_prefix %><%= @dimpl.py_modulename %>_mdo_base import <%= @dimpl.py_classname %>MdoBase
 
 class <%= @dimpl.py_classname %>Mdo(<%= @dimpl.py_classname %>MdoBase):
     """ An OpenMDAO sub optimization for <%= @dimpl.py_classname %> discipline """

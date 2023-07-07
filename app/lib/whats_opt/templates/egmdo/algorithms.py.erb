@@ -158,7 +158,7 @@ def enrich_gp(gp_factory, design_vars, coupling_vars,  max_effect_varnames):
     <% disc.output_variables.each do |v| %>
         if max_effect_varnames[k] == '<%= v.name %>':
             print("Enrich GP of discipline '<%= disc.name %>'")
-            gp_factory.update_gp_<%= disc.impl.py_modulename %>_<%= v.py_varname %>(design_vars, coupling_vars)
+            gp_factory.update_gp_<%= disc.impl.snake_modulename %>_<%= v.py_varname %>(design_vars, coupling_vars)
     <%- end -%>
     <%- end -%>    
     <%- if @mda.egmdo_random_variables.blank? -%>
@@ -227,7 +227,7 @@ def solve_egmda(discipline_factory, gp_factory, design_vars, outdir=".",
 <%- end %>
 <%- random_vars.each_with_index do |cv, i| -%>
 <%- disc = cv.discipline -%>
-                with open(gp_factory.gp_filename("<%= disc.impl.py__modulename %>", "<%= cv.py_varname %>"),'rb') as f:
+                with open(gp_factory.gp_filename("<%= disc.impl.snake_modulename %>", "<%= cv.py_varname %>"),'rb') as f:
                     gp_<%= i %> = pickle.load(f)
 
                 inputs_gp<%= i %> = np.zeros((100, <%= disc.input_variables.map(&:dim).inject(0, :+) %>)) 
