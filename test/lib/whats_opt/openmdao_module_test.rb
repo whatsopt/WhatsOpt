@@ -24,28 +24,28 @@ class OpenmdaoMappingTest < ActiveSupport::TestCase
     @outer = analyses(:outermda)
     assert_equal "outerpkg", @outer.py_full_modulename
     @outer_disc = disciplines(:outermda_discipline)
-    assert_equal "disc", @outer_disc.py_full_modulename
+    assert_equal "disc", @outer_disc.impl.py_full_modulename
     @inner = analyses(:innermda)
     assert_equal "inner.inner", @inner.py_full_modulename
     @inner_disc = disciplines(:innermda_discipline)
-    assert_equal "inner.plain_discipline", @inner_disc.py_full_modulename
+    assert_equal "inner.plain_discipline", @inner_disc.impl.py_full_modulename
     @outer.set_as_root_module
     assert_equal "outerpkg", @outer.py_full_modulename
     assert_equal "inner.inner", @inner.py_full_modulename
-    assert_equal "inner.plain_discipline", @inner_disc.py_full_modulename
+    assert_equal "inner.plain_discipline", @inner_disc.impl.py_full_modulename
     @inner.set_as_root_module
     assert_equal "outerpkg", @outer.py_full_modulename
     assert_equal "inner", @inner.py_full_modulename
-    assert_equal "plain_discipline", @inner_disc.py_full_modulename
+    assert_equal "plain_discipline", @inner_disc.impl.py_full_modulename
   end
 
   test "should have a snake module name" do
     @inner_disc = disciplines(:innermda_discipline)
-    assert_equal "inner_plain_discipline", @inner_disc.snake_modulename
+    assert_equal "inner_plain_discipline", @inner_disc.impl.snake_modulename
   end
 
   test "should have a camel module name" do
     @inner_disc = disciplines(:innermda_discipline)
-    assert_equal "InnerPlainDiscipline", @inner_disc.camel_modulename
+    assert_equal "InnerPlainDiscipline", @inner_disc.impl.camel_modulename
   end
 end

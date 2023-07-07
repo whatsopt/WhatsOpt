@@ -4,17 +4,17 @@ import numpy as np
 from numpy import nan, inf
 import openmdao.api as om
 
-class <%= @discipline.py_classname %>Base(<%= @dimpl.openmdao_component_baseclass %>):
-    """ An OpenMDAO base component to encapsulate <%= @discipline.py_classname %> discipline. 
+class <%= @dimpl.py_classname %>Base(<%= @dimpl.openmdao_component_baseclass %>):
+    """ An OpenMDAO base component to encapsulate <%= @dimpl.py_classname %> discipline. 
     This class defines inputs and outputs of the discipline and declare partials.
     """
 
-<% unless @discipline.variables.empty? -%>
+<% unless @dimpl.discipline.variables.empty? -%>
     def setup(self):
-<% @discipline.input_variables.numeric.each do |var| -%>
+<% @dimpl.numeric_input_vars.each do |var| -%>
         self.add_input('<%= var.py_varname %>', val=<%= var.init_py_value %>, <%= var.ndim > 0 ? "shape=#{var.shape} ," : "" %> <%= var.is_int? ? "tags=['#{Variable::INTEGER_TAG}'] ," : "" %> desc='<%= var.escaped_desc %>'<%= @impl.use_units && !var.units.blank? ? ", units='#{var.units}'":"" %>)
 <% end %>
-<% @discipline.output_variables.numeric.each do |var| -%>
+<% @dimpl.numeric_output_vars.each do |var| -%>
 <% if var.scaling.blank? -%>
         self.add_output('<%= var.py_varname %>', val=<%= var.init_py_value %>, <%= var.ndim > 0 ? "shape=#{var.shape} ," : "" %> <%= var.is_int? ? "tags=['#{Variable::INTEGER_TAG}'] ," : "" %> desc='<%= var.escaped_desc %>'<%= @impl.use_units && !var.units.blank? ? ", units='#{var.units}'":"" %>)
 <%- else -%>
@@ -23,7 +23,7 @@ class <%= @discipline.py_classname %>Base(<%= @dimpl.openmdao_component_baseclas
 <% end -%>
 <% end -%>
 
-<%- unless @discipline.input_variables.numeric.empty? || @discipline.output_variables.numeric.empty? || !@discipline.is_derivable?-%>
+<%- unless @dimpl.numeric_input_vars.empty? || @dimpl.numeric_output_vars.empty? || !@discipline.is_derivable?-%>
     def setup_partials(self):
         self.declare_partials('*', '*', method='<%= @dimpl.support_derivatives ? "exact" : "fd" %>')
 <% end -%>

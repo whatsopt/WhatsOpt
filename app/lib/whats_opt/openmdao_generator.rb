@@ -156,16 +156,16 @@ module WhatsOpt
 
     def _generate_discipline(discipline, gendir, options = {})
       @discipline = discipline  # @discipline used in template
-      @dimpl = @discipline.openmdao_impl || OpenmdaoDisciplineImpl.new(discipline: @discipline)
+      @dimpl = @discipline.impl # for shortcut
       @with_server = options[:with_server]
       if @discipline.type == WhatsOpt::Discipline::METAMODEL
-        _generate(discipline.py_filename, "openmdao_metamodel.py.erb", gendir)
-        _generate(discipline.py_basefilename, "openmdao_discipline_base.py.erb", gendir)
+        _generate(@dimpl.py_filename, "openmdao_metamodel.py.erb", gendir)
+        _generate(@dimpl.py_basefilename, "openmdao_discipline_base.py.erb", gendir)
       elsif @discipline.type == WhatsOpt::Discipline::OPTIMIZATION
         _generate_sub_optimization(gendir, discipline)
       else
-        _generate(discipline.py_filename, "openmdao_discipline.py.erb", gendir)
-        _generate(discipline.py_basefilename, "openmdao_discipline_base.py.erb", gendir)
+        _generate(@dimpl.py_filename, "openmdao_discipline.py.erb", gendir)
+        _generate(@dimpl.py_basefilename, "openmdao_discipline_base.py.erb", gendir)
       end
     end
 
@@ -184,13 +184,10 @@ module WhatsOpt
     end
 
     def _generate_sub_optimization(gendir, discipline)
-      save_driver = @driver
-      save_mda = @mda
-      save_impl = @impl
-
-      @mda = discipline.sub_analysis
-      @impl = @mda.openmdao_impl || OpenmdaoAnalysisImpl.new(analysis: @mda)
-      @driver = OpenmdaoDriverFactory.new(@impl.optimization_driver).create_driver
+      @sub_mda = discipline.sub_analysis
+      @dimpl = discipline.impl
+      @sub_impl = @sub_mda.openmdao_impl || OpenmdaoAnalysisImpl.new(analysis: @sub_mda)
+      @sub_driver = OpenmdaoDriverFactory.new(@sub_impl.optimization_driver).create_driver
 
       if @driver.optimization?
         _generate(@dimpl.py_filename, "openmdao_discipline_mdo.py.erb", gendir)
@@ -201,10 +198,6 @@ module WhatsOpt
           raise RuntimeError.new("Ouch! Should be run_once driver got #{@driver.inspect}")  
         end
       end
-
-      @driver = save_driver
-      @mda = save_mda
-      @impl = save_impl
     end
 
     def _generate_main(gendir, options = {})
@@ -257,7 +250,7 @@ module WhatsOpt
       tests_dir = File.join(gendir, "tests")
       Dir.mkdir(tests_dir) unless File.exist?(tests_dir)
       @discipline = discipline  # @discipline used in template
-      _generate("test_#{discipline.py_filename}", "test_discipline.py.erb", tests_dir)
+      _generate("test_#{discipline.impl.py_filename}", "test_discipline.py.erb", tests_dir)
     end
 
     def _generate_package_files(gendir)

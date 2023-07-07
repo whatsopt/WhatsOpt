@@ -1,14 +1,14 @@
 from .<%= @mda.py_modulename %>_conversions import *
 
 <% @mda.all_plain_disciplines.each do |disc| %>
-class <%= disc.py_classname %>Proxy():
+class <%= disc.impl.py_classname %>Proxy():
     def __init__(self, thrift_client=None):
-        super(<%= disc.py_classname %>Proxy, self).__init__()
+        super(<%= disc.impl.py_classname %>Proxy, self).__init__()
         self._thrift_client = thrift_client
         
     def compute(self, inputs, outputs):
-        output = self._thrift_client.compute_<%= disc.snake_modulename %>(to_thrift_<%= disc.snake_modulename %>_input(inputs))
-        to_openmdao_<%= disc.snake_modulename %>_outputs(output, outputs)
+        output = self._thrift_client.compute_<%= disc.impl.snake_modulename %>(to_thrift_<%= disc.impl.snake_modulename %>_input(inputs))
+        to_openmdao_<%= disc.impl.snake_modulename %>_outputs(output, outputs)
 <% end %>
 
     

@@ -17,7 +17,7 @@ from openmdao.utils.general_utils import ensure_compatible
 <% @mda.sub_analyses.each do |a| -%>
 <% if a.super_discipline.is_sub_optimization? %>
 # sub optimization
-from <%= @pkg_prefix %><%= a.super_discipline.py_modulename %>_mdo import <%= a.super_discipline.py_classname %>Mdo
+from <%= @pkg_prefix %><%= a.super_discipline.impl.py_modulename %>_mdo import <%= a.super_discipline.impl.py_classname %>Mdo
 <% else %> 
 # <%= a.super_discipline.type %>
 from <%= @pkg_prefix %><%= a.py_full_modulename %> import <%= a.py_classname %>
@@ -26,9 +26,9 @@ from <%= @pkg_prefix %><%= a.py_full_modulename %> import <%= a.py_classname %>
 
 <% @mda.all_plain_disciplines.each do |disc| -%>
 <% if @check_only || disc.local?(@remote_ip) -%>
-from <%= @pkg_prefix %><%= disc.py_full_modulename %> import <%= disc.py_classname %> 
+from <%= @pkg_prefix %><%= disc.impl.py_full_modulename %> import <%= disc.impl.py_classname %> 
 <% else %>
-from <%= @pkg_prefix %><%= @server_module %>.remote_discipline import Remote<%= disc.py_classname %>
+from <%= @pkg_prefix %><%= @server_module %>.remote_discipline import Remote<%= disc.impl.py_classname %>
 <% end -%>
 <% end -%>
 
@@ -40,14 +40,14 @@ class <%= @mda.py_classname %>FactoryBase():
     and pass that subclass to the analysis constructor as a factory argument.
     """
 <% @mda.all_plain_disciplines.each do |disc| %>
-    def create_<%= disc.snake_modulename %>(self):
+    def create_<%= disc.impl.snake_modulename %>(self):
 <% if (@check_only || disc.local?(@remote_ip)) -%>
-        return <%= disc.py_classname %>()
+        return <%= disc.impl.py_classname %>()
 <% else -%>
         """ 
-        <%= disc.py_classname %> is expected to be run on remote host <%= disc.host %>.
+        <%= disc.impl.py_classname %> is expected to be run on remote host <%= disc.host %>.
         """
-        return Remote<%= disc.py_classname %>()
+        return Remote<%= disc.impl.py_classname %>()
 <% end -%>
 <% end %>
 
@@ -79,9 +79,9 @@ class <%= @mda.py_classname %>Base(<%= @impl.parallel_group ? "om.ParallelGroup"
     def setup(self):<% @mda.input_variables.each do |dv| %>
         value, shape = ensure_compatible('<%= dv.name %>', <%= dv.init_py_value %> <%= dv.ndim > 0 ? ", shape=#{dv.shape}" : "" %>)
         self.set_input_defaults('<%= dv.name %>', val=value <%= @impl.use_units && !dv.units.blank? ? ", units='#{dv.units}'":"" %>)<% end -%>
-<% @mda.disciplines.nodes.each do |d| %>
-        self.add_subsystem('<%= d.py_modulename %>', self.create_<%= d.basename %>(),
-                           promotes=[<%= d.variables.map(&:py_varname).map{|v| "'#{v}'"}.join(', ') %>])<% end -%>
+<% @mda.disciplines.nodes.each do |disc| %>
+        self.add_subsystem('<%= disc.impl.py_modulename %>', self.create_<%= disc.impl.basename %>(),
+                           promotes=[<%= disc.variables.map(&:py_varname).map{|v| "'#{v}'"}.join(', ') %>])<% end -%>
 
 <% @mda.sub_analyses.each do |a| %>
     def create_<%= a.py_modulename %>(self):
@@ -90,13 +90,13 @@ class <%= @mda.py_classname %>Base(<%= @impl.parallel_group ? "om.ParallelGroup"
         to take control over <%= a.py_classname %> sub analysis creation.
         """
 <% if a.super_discipline.is_sub_optimization? %>
-        return <%= a.super_discipline.py_classname %>Mdo()
+        return <%= a.super_discipline.impl.py_classname %>Mdo()
 <% else %>
         return <%= a.py_classname %>(factory=self.options["factory"])
 <% end %>
 <% end -%>
 <% @mda.plain_disciplines.each do |disc| %>
-    def create_<%= disc.py_modulename %>(self):
-        return self.options["factory"].create_<%= disc.snake_modulename %>()
+    def create_<%= disc.impl.py_modulename %>(self):
+        return self.options["factory"].create_<%= disc.impl.snake_modulename %>()
 <% end %>
 
