@@ -8,7 +8,7 @@ class OpenmdaoAnalysisImplTest < ActiveSupport::TestCase
   end
 
   test "should provide default solver configuration" do
-    oai = OpenmdaoAnalysisImpl.new
+    oai = OpenmdaoAnalysisImpl.new(analysis: analyses(:cicav))
     assert_equal "NonlinearBlockGS", oai.nonlinear_solver.name
     assert_equal "ScipyKrylov",  oai.linear_solver.name
     assert_equal false, oai.parallel_group

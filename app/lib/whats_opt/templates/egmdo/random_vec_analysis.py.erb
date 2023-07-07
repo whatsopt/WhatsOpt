@@ -130,8 +130,8 @@ class <%= disc.impl.py_classname %>RandomVecDiscipline(om.ExplicitComponent):
 <%- end -%>
 
 
-class <%= @mda.py_classname %>RandomVecAnalysis(<%= @impl.parallel_group ? "om.ParallelGroup" : "om.Group" %>):
-    """ An OpenMDAO base component to encapsulate <%= @mda.py_classname %> random MDA """
+class <%= @impl.py_classname %>RandomVecAnalysis(<%= @impl.parallel_group ? "om.ParallelGroup" : "om.Group" %>):
+    """ An OpenMDAO base component to encapsulate <%= @impl.py_classname %> random MDA """
     def __init__(self, discipline_factory, gp_factory, n_cases=1, **kwargs):
         super(). __init__(**kwargs)
         self.disc_factory = discipline_factory

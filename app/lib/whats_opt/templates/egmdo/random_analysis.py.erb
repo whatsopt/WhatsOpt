@@ -99,8 +99,8 @@ class <%= disc.impl.py_classname %>RandomDiscipline(om.ExplicitComponent):
 <%- end -%>
 
 
-class <%= @mda.py_classname %>RandomAnalysis(<%= @impl.parallel_group ? "om.ParallelGroup" : "om.Group" %>):
-    """ An OpenMDAO base component to encapsulate <%= @mda.py_classname %> random MDA """
+class <%= @impl.py_classname %>RandomAnalysis(<%= @impl.parallel_group ? "om.ParallelGroup" : "om.Group" %>):
+    """ An OpenMDAO base component to encapsulate <%= @impl.py_classname %> random MDA """
     def __init__(self, discipline_factory, gp_factory, **kwargs):
         super(). __init__(**kwargs)
         self.disc_factory = discipline_factory

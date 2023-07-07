@@ -5,7 +5,7 @@ from thrift.transport import TSocket
 from thrift.transport import TTransport
 from thrift.protocol import TBinaryProtocol
 
-from <%= @pkg_prefix %><%= @server_module %>.<%= @mda.py_modulename %> import <%= @mda.py_classname %>
+from <%= @pkg_prefix %><%= @server_module %>.<%= @impl.py_modulename %> import <%= @impl.py_classname %>
 <% @mda.all_plain_disciplines.each do |disc| -%>
 from <%= @pkg_prefix %><%= disc.impl.py_full_modulename %> import <%= disc.impl.py_classname %>
 <% end -%>
@@ -24,7 +24,7 @@ class Remote<%= disc.impl.py_classname %>(<%= disc.impl.py_classname %>):
             self._transport = TSocket.TSocket('<%= disc.endpoint&.host %>', <%= disc.endpoint&.port %>)
             self._transport = TTransport.TBufferedTransport(self._transport)
             protocol = TBinaryProtocol.TBinaryProtocol(self._transport)
-            thrift_client = <%= @mda.py_classname %>.Client(protocol)
+            thrift_client = <%= @impl.py_classname %>.Client(protocol)
             self._discipline_proxy = <%= disc.impl.py_classname %>Proxy(thrift_client)
             self._manage_connection = True
         else:

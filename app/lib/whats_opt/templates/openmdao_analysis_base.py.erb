@@ -20,7 +20,7 @@ from openmdao.utils.general_utils import ensure_compatible
 from <%= @pkg_prefix %><%= a.super_discipline.impl.py_modulename %>_mdo import <%= a.super_discipline.impl.py_classname %>Mdo
 <% else %> 
 # <%= a.super_discipline.type %>
-from <%= @pkg_prefix %><%= a.py_full_modulename %> import <%= a.py_classname %>
+from <%= @pkg_prefix %><%= a.impl.py_full_modulename %> import <%= a.impl.py_classname %>
 <% end %>
 <% end -%>
 
@@ -32,7 +32,7 @@ from <%= @pkg_prefix %><%= @server_module %>.remote_discipline import Remote<%= 
 <% end -%>
 <% end -%>
 
-class <%= @mda.py_classname %>FactoryBase():
+class <%= @impl.py_classname %>FactoryBase():
     """ 
     A factory for all plain disciplines of <%= @mda.name %> analysis.
 
@@ -51,11 +51,11 @@ class <%= @mda.py_classname %>FactoryBase():
 <% end -%>
 <% end %>
 
-class <%= @mda.py_classname %>Base(<%= @impl.parallel_group ? "om.ParallelGroup" : "om.Group" %>):
-    """ An OpenMDAO base component to encapsulate <%= @mda.py_classname %> MDA """
+class <%= @impl.py_classname %>Base(<%= @impl.parallel_group ? "om.ParallelGroup" : "om.Group" %>):
+    """ An OpenMDAO base component to encapsulate <%= @impl.py_classname %> MDA """
 
     def initialize(self):
-        self.options.declare('factory', default=<%= @mda.py_classname %>FactoryBase(), 
+        self.options.declare('factory', default=<%= @impl.py_classname %>FactoryBase(), 
                              types=object, recordable=False)
 
         self.nonlinear_solver = <%= @impl.nonlinear_solver.name %>()
@@ -84,15 +84,15 @@ class <%= @mda.py_classname %>Base(<%= @impl.parallel_group ? "om.ParallelGroup"
                            promotes=[<%= disc.variables.map(&:py_varname).map{|v| "'#{v}'"}.join(', ') %>])<% end -%>
 
 <% @mda.sub_analyses.each do |a| %>
-    def create_<%= a.py_modulename %>(self):
+    def create_<%= a.impl.py_modulename %>(self):
         """ 
         User can override this method in a subclass 
-        to take control over <%= a.py_classname %> sub analysis creation.
+        to take control over <%= a.impl.py_classname %> sub analysis creation.
         """
 <% if a.super_discipline.is_sub_optimization? %>
         return <%= a.super_discipline.impl.py_classname %>Mdo()
 <% else %>
-        return <%= a.py_classname %>(factory=self.options["factory"])
+        return <%= a.impl.py_classname %>(factory=self.options["factory"])
 <% end %>
 <% end -%>
 <% @mda.plain_disciplines.each do |disc| %>

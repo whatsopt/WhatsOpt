@@ -52,8 +52,8 @@ module WhatsOpt
 
     def check_mda_setup
       ok, lines = false, []
-      @mda.set_as_root_module
-      Dir.mktmpdir("check_#{@mda.basename}_") do |dir|
+      @impl.set_as_root_module
+      Dir.mktmpdir("check_#{@impl.basename}_") do |dir|
         # dir="/tmp/check" # for debug
         begin
           @check_only = true
@@ -66,13 +66,13 @@ module WhatsOpt
           lines = log.lines.map(&:chomp)
         end
       end
-      @mda.unset_root_module
+      @impl.unset_root_module
       return ok, lines
     end
 
     def run(category = Operation::CAT_RUNONCE, sqlite_filename = nil)
       ok, lines = false, []
-      Dir.mktmpdir("run_#{@mda.basename}_#{category}") do |dir|
+      Dir.mktmpdir("run_#{@impl.basename}_#{category}") do |dir|
         # dir='/tmp' # for debug
         begin
           _generate_code(dir, sqlite_filename: sqlite_filename)
@@ -89,7 +89,7 @@ module WhatsOpt
     end
 
     def monitor(category = Operation::CAT_RUNONCE, sqlite_filename = nil, outdir = ".", &block)
-      Dir.mktmpdir("run_#{@mda.basename}_#{category}") do |dir|
+      Dir.mktmpdir("run_#{@impl.basename}_#{category}") do |dir|
         # dir="/tmp" # for debug
         _generate_code dir, sqlite_filename: sqlite_filename, outdir: outdir
         method = self.to_run_method(category)
@@ -98,7 +98,7 @@ module WhatsOpt
     end
 
     def _check_mda(dir)
-      script = File.join(dir, @mda.py_filename)
+      script = File.join(dir, @impl.py_filename)
       Rails.logger.info "#{PYTHON} #{script} --no-n2"
       stdouterr, status = Open3.capture2e(PYTHON, script, "--no-n2")
       return status.success?, stdouterr
@@ -126,7 +126,7 @@ module WhatsOpt
       else 
         src_dir = gendir
       end
-      pkg_dir = package_dir? ? File.join(src_dir, @mda.py_modulename) : src_dir
+      pkg_dir = package_dir? ? File.join(src_dir, @impl.py_modulename) : src_dir
       Dir.mkdir(pkg_dir) unless Dir.exist?(pkg_dir)
 
       @mda.disciplines.nodes.each do |disc|
@@ -174,7 +174,7 @@ module WhatsOpt
       mda = super_discipline.sub_analysis
       sub_ogen = OpenmdaoGenerator.new(mda, server_host: @server_host, remote_ip: @remote_ip, 
         pkg_format: !@pkg_prefix.blank?, driver_name: @driver_name, driver_options: @driver_options)
-      gendir = File.join(gendir, mda.basename)
+      gendir = File.join(gendir, mda.impl.basename)
       Dir.mkdir(gendir) unless Dir.exist?(gendir)
 
       # generate only analysis code: no script, no server
@@ -201,8 +201,8 @@ module WhatsOpt
     end
 
     def _generate_main(gendir, options = {})
-      _generate(@mda.py_filename, "openmdao_analysis.py.erb", gendir)
-      _generate(@mda.py_basefilename, "openmdao_analysis_base.py.erb", gendir)
+      _generate(@impl.py_filename, "openmdao_analysis.py.erb", gendir)
+      _generate(@impl.py_basefilename, "openmdao_analysis_base.py.erb", gendir)
       _generate("__init__.py", "__init__.py.erb", gendir)
     end
 
@@ -215,10 +215,10 @@ module WhatsOpt
       if @driver_name # coming from GUI running remote driver
         @driver = OpenmdaoDriverFactory.new(@driver_name, @driver_options).create_driver
         if @driver.optimization?
-          @sqlite_filename = options[:sqlite_filename] || "#{@mda.basename}_mdo.sqlite"
+          @sqlite_filename = options[:sqlite_filename] || "#{@impl.basename}_mdo.sqlite"
           _generate("run_mdo.py", "run_mdo.py.erb", gendir)
         elsif @driver.doe?
-          @sqlite_filename = options[:sqlite_filename] || "#{@mda.basename}_doe.sqlite"
+          @sqlite_filename = options[:sqlite_filename] || "#{@impl.basename}_doe.sqlite"
           _generate("run_doe.py", "run_doe.py.erb", gendir)
         else
           # should be simple run_once driver
@@ -228,20 +228,20 @@ module WhatsOpt
         end
       elsif (options[:with_runops] || @mda.is_root_analysis?)
         @driver = OpenmdaoDriverFactory.new(DEFAULT_DOE_DRIVER).create_driver
-        @sqlite_filename = options[:sqlite_filename] || "#{@mda.basename}_doe.sqlite"
+        @sqlite_filename = options[:sqlite_filename] || "#{@impl.basename}_doe.sqlite"
         if @mda.uq_mode?
           _generate("run_doe.py", "run_uq_doe.py.erb", gendir)
         else
           _generate("run_doe.py", "run_doe.py.erb", gendir)
           if @mda.is_root_analysis?
             @driver = OpenmdaoDriverFactory.new(@impl.optimization_driver).create_driver
-            @sqlite_filename = options[:sqlite_filename] || "#{@mda.basename}_mdo.sqlite"
+            @sqlite_filename = options[:sqlite_filename] || "#{@impl.basename}_mdo.sqlite"
             _generate("run_mdo.py", "run_mdo.py.erb", gendir)
           end
         end
       end
       if (options[:with_runops] || @mda.is_root_analysis?) && @mda.has_design_variables?
-        @sqlite_filename = options[:sqlite_filename] || "#{@mda.basename}_screening.sqlite"
+        @sqlite_filename = options[:sqlite_filename] || "#{@impl.basename}_screening.sqlite"
         _generate("run_screening.py", "run_screening.py.erb", gendir)
       end
     end

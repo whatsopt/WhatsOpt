@@ -1,6 +1,6 @@
 from optparse import OptionParser
 from gemseo.api import configure_logger
-from <%= @mda.py_modulename %> import <%= @mda.py_classname %>DOEScenario 
+from <%= @impl.py_modulename %> import <%= @impl.py_classname %>DOEScenario 
 
 parser = OptionParser()
 parser.add_option("-n", "--ncases", type="int",
@@ -10,7 +10,7 @@ parser.add_option("-n", "--ncases", type="int",
 
 configure_logger()
 
-scenario = <%= @mda.py_classname %>DOEScenario()
+scenario = <%= @impl.py_classname %>DOEScenario()
 <% @mda.response_variables.each do |voi| %>
 scenario.add_observable('<%= voi.name %>')<% end -%>
 
@@ -18,7 +18,7 @@ scenario.add_observable('<%= voi.name %>')<% end -%>
 scenario.execute(input_data={"max_iter": 10, "algo": "OT_LHS", "n_samples": options.n_cases })
 
 problem = scenario.formulation.opt_problem
-problem.export_hdf("<%= @mda.py_modulename %>_doe.hdf5")
+problem.export_hdf("<%= @impl.py_modulename %>_doe.hdf5")
 
 ### Post-processing Example
 # from gemseo.api import execute_post

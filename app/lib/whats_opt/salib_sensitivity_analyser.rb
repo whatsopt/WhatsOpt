@@ -16,7 +16,7 @@ module WhatsOpt
 
     def run
       ok, out, err = false, "{}", ""
-      Dir.mktmpdir("run_#{@mda.basename}_salib_sensitivity_analysis") do |dir|
+      Dir.mktmpdir("run_#{@mda.impl.basename}_salib_sensitivity_analysis") do |dir|
         # dir = "/tmp" # for debug
         _generate_code(dir)
         ok, out, err = _run_sensitivity_analysis(dir)

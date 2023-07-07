@@ -22,20 +22,20 @@ class OpenmdaoMappingTest < ActiveSupport::TestCase
 
   test "should modify modulename regarding root_modulename" do
     @outer = analyses(:outermda)
-    assert_equal "outerpkg", @outer.py_full_modulename
+    assert_equal "outerpkg", @outer.impl.py_full_modulename
     @outer_disc = disciplines(:outermda_discipline)
     assert_equal "disc", @outer_disc.impl.py_full_modulename
     @inner = analyses(:innermda)
-    assert_equal "inner.inner", @inner.py_full_modulename
+    assert_equal "inner.inner", @inner.impl.py_full_modulename
     @inner_disc = disciplines(:innermda_discipline)
     assert_equal "inner.plain_discipline", @inner_disc.impl.py_full_modulename
-    @outer.set_as_root_module
-    assert_equal "outerpkg", @outer.py_full_modulename
-    assert_equal "inner.inner", @inner.py_full_modulename
+    @outer.impl.set_as_root_module
+    assert_equal "outerpkg", @outer.impl.py_full_modulename
+    assert_equal "inner.inner", @inner.impl.py_full_modulename
     assert_equal "inner.plain_discipline", @inner_disc.impl.py_full_modulename
-    @inner.set_as_root_module
-    assert_equal "outerpkg", @outer.py_full_modulename
-    assert_equal "inner", @inner.py_full_modulename
+    @inner.impl.set_as_root_module
+    assert_equal "outerpkg", @outer.impl.py_full_modulename
+    assert_equal "inner", @inner.impl.py_full_modulename
     assert_equal "plain_discipline", @inner_disc.impl.py_full_modulename
   end
 

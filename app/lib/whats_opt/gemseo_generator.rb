@@ -52,8 +52,8 @@ module WhatsOpt
     end
 
     def _generate_main(gendir, options = {})
-      _generate(@mda.py_filename, "gemseo/gemseo_analysis.py.erb", gendir)
-      _generate(@mda.py_basefilename, "gemseo/gemseo_analysis_base.py.erb", gendir)
+      _generate(@impl.py_filename, "gemseo/gemseo_analysis.py.erb", gendir)
+      _generate(@impl.py_basefilename, "gemseo/gemseo_analysis_base.py.erb", gendir)
       _generate("__init__.py", "__init__.py.erb", gendir)
     end
 

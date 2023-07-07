@@ -16,7 +16,7 @@ from gemseo.core.discipline import MDODiscipline
 from gemseo.core.json_grammar import JSONGrammar
 from gemseo.algos.design_space import DesignSpace
 
-class <%= @mda.py_classname %>MDABase(MDAJacobi):
+class <%= @impl.py_classname %>MDABase(MDAJacobi):
     def __init__(self, dtype="float64", **mda_options):
         disciplines = [
             <%= @mda.disciplines.nodes.map{|disc| "self.create_#{disc.impl.basename}()"}.join(', ') %>
@@ -42,9 +42,9 @@ class <%= @mda.py_classname %>MDABase(MDAJacobi):
     	return <%= disc.impl.py_classname %>()
 <% end %>
 
-class <%= @mda.py_classname %>DesignSpace(DesignSpace):
-    """**<%= @mda.py_classname %>DesignSpace** creates the :class:`.DesignSpace` of the
-    <%= @mda.py_classname %> problem"""
+class <%= @impl.py_classname %>DesignSpace(DesignSpace):
+    """**<%= @impl.py_classname %>DesignSpace** creates the :class:`.DesignSpace` of the
+    <%= @impl.py_classname %> problem"""
 
     def __init__(self):
         super().__init__()
@@ -57,8 +57,8 @@ class <%= @mda.py_classname %>DesignSpace(DesignSpace):
         self.add_variable("<%= dv.name %>", <%= dv.dim %>, l_b=<%= dv.lower_py_value %>, u_b=<%= dv.upper_py_value %>, value=<%= dv.name %>)<% end -%>
 
 
-class <%= @mda.py_classname %>DOEScenarioBase(DOEScenario):
-    """ A base class for <%= @mda.py_classname %> DOE Scenario """
+class <%= @impl.py_classname %>DOEScenarioBase(DOEScenario):
+    """ A base class for <%= @impl.py_classname %> DOE Scenario """
 
     def __init__(self, **kwargs):
 
@@ -69,8 +69,8 @@ class <%= @mda.py_classname %>DOEScenarioBase(DOEScenario):
             disc.set_jacobian_approximation()
         self._formulation = "MDF"
         self._objective_name =  "<%= @mda.has_objective? ? @mda.min_objective_variables.first.name : 'NO_OBJECTIVE_ERROR' %>"
-        self._design_space = <%= @mda.py_classname %>DesignSpace()
-        self._name = "<%= @mda.py_classname %>DOEScenario"
+        self._design_space = <%= @impl.py_classname %>DesignSpace()
+        self._name = "<%= @impl.py_classname %>DOEScenario"
 
         super().__init__(
             self._disciplines,
@@ -94,8 +94,8 @@ class <%= @mda.py_classname %>DOEScenarioBase(DOEScenario):
 <% end %>
 
 
-class <%= @mda.py_classname %>MDOScenarioBase(MDOScenario):
-    """ A base class for <%= @mda.py_classname %> MDO Scenario """
+class <%= @impl.py_classname %>MDOScenarioBase(MDOScenario):
+    """ A base class for <%= @impl.py_classname %> MDO Scenario """
 
     def __init__(self, **kwargs):
 
@@ -106,8 +106,8 @@ class <%= @mda.py_classname %>MDOScenarioBase(MDOScenario):
             disc.set_jacobian_approximation()
         self._formulation = "MDF" 
         self._objective_name =  "<%= @mda.has_objective? ? @mda.min_objective_variables.first.name : 'NO_OBJECTIVE_ERROR' %>" 
-        self._design_space = <%= @mda.py_classname %>DesignSpace()
-        self._name = "<%= @mda.py_classname %>MDOScenario"
+        self._design_space = <%= @impl.py_classname %>DesignSpace()
+        self._name = "<%= @impl.py_classname %>MDOScenario"
 
         super().__init__(
             self._disciplines,

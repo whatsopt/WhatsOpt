@@ -4,9 +4,6 @@ require "whats_opt/discipline"
 require "whats_opt/openmdao_module"
 
 class Analysis < ApplicationRecord
-  # FIXME: Should be moved in implementations: openmdao_anaysis_impl, gemseo_anaysis_impl
-  # and templates should use impl object
-  include WhatsOpt::OpenmdaoModule
 
   include Ownable
   resourcify
@@ -209,14 +206,14 @@ class Analysis < ApplicationRecord
 
   def egmdo_random_disciplines
     @egmdo_disciplines ||= plain_disciplines.inject([]) do |acc, disc|
-      acc << disc if disc.openmdao_impl&.egmdo_surrogate
+      acc << disc if disc.impl.egmdo_surrogate
       acc
     end
   end
 
   def egmdo_random_variables
     @egmdo_vars ||= plain_disciplines.inject([]) do |acc, disc|
-      acc = acc + disc.output_variables if disc.openmdao_impl&.egmdo_surrogate
+      acc = acc + disc.output_variables if disc.impl.egmdo_surrogate
       acc
     end
   end
@@ -261,22 +258,6 @@ class Analysis < ApplicationRecord
 
   def root_analysis
     root
-  end
-
-  def py_modulename
-    self.is_root? && self.openmdao_impl ? "#{self.openmdao_impl.top_packagename}" : super
-  end
-
-  def py_classname
-    self.is_root? && self.openmdao_impl ? "#{self.openmdao_impl.top_packagename.camelize}" : super
-  end
-
-  def py_filename
-    self.is_root? && self.openmdao_impl ? "#{self.openmdao_impl.top_packagename}.py" : super
-  end
-
-  def py_basefilename
-    self.is_root? && self.openmdao_impl ? "#{self.openmdao_impl.top_packagename}_base.py" : super
   end
 
   def has_remote_discipline?(localhost)
@@ -425,8 +406,7 @@ class Analysis < ApplicationRecord
   end
 
   def build_openmdao_impl
-    self.openmdao_impl ||= OpenmdaoAnalysisImpl.new
-    ActiveModelSerializers::SerializableResource.new(self.openmdao_impl).as_json
+    ActiveModelSerializers::SerializableResource.new(self.impl).as_json
   end
 
   def build_metamodel_quality
@@ -879,6 +859,10 @@ class Analysis < ApplicationRecord
     @current_journal = nil
   end
 
+  def impl
+    self.openmdao_impl || OpenmdaoAnalysisImpl.new(analysis: self)
+  end
+
   private
     def _ensure_driver_presence
       if self.disciplines.empty?
@@ -887,6 +871,6 @@ class Analysis < ApplicationRecord
     end
 
     def _ensure_openmdao_impl_presence
-      self.openmdao_impl ||= OpenmdaoAnalysisImpl.new
+      self.openmdao_impl ||= OpenmdaoAnalysisImpl.new(analysis: self)
     end
 end

@@ -10,14 +10,14 @@ from openmdao_extensions.smt_doe_driver import SmtDOEDriver
 <% end %>
 <%- if @egmdo -%>
 from openmdao.utils.mpi import MPI
-from <%= @pkg_prefix %><%= @egmdo_module %>.<%= @mda.py_modulename %>_egmda import <%= @mda.py_classname %>Egmda as <%= @mda.py_classname %>
+from <%= @pkg_prefix %><%= @egmdo_module %>.<%= @impl.py_modulename %>_egmda import <%= @impl.py_classname %>Egmda as <%= @impl.py_classname %>
 <%- if @remote -%>
-from <%= @pkg_prefix %><%= @server_module %>.<%= @mda.py_modulename %>_proxy import <%= @mda.py_classname %>Proxy
+from <%= @pkg_prefix %><%= @server_module %>.<%= @impl.py_modulename %>_proxy import <%= @impl.py_classname %>Proxy
 <%- end -%>
 <%- elsif @remote -%>
-from <%= @pkg_prefix %><%= @server_module %>.<%= @mda.py_modulename %>_proxy import <%= @mda.py_classname %>Proxy as <%= @mda.py_classname %>
+from <%= @pkg_prefix %><%= @server_module %>.<%= @impl.py_modulename %>_proxy import <%= @impl.py_classname %>Proxy as <%= @impl.py_classname %>
 <%- else -%>
-from <%= @pkg_prefix %><%= @mda.py_modulename %> import <%= @mda.py_classname %>
+from <%= @pkg_prefix %><%= @impl.py_modulename %> import <%= @impl.py_classname %>
 <%- end -%>
 from mda_init import initialize
 
@@ -39,16 +39,16 @@ parser.add_option("--parallel", default=False,
 # Problem definition
 <%- if @egmdo -%>
 <%- if @remote -%>
-pb = om.Problem(<%= @mda.py_classname %>(discipline_factory=<%= @mda.py_classname %>Proxy(), plot=options.plot))
+pb = om.Problem(<%= @impl.py_classname %>(discipline_factory=<%= @impl.py_classname %>Proxy(), plot=options.plot))
 <%- else -%>
 # Options: discipline_factory=None, gp_factory=None, 
 # n_doe_pce=500, epsilon_coeff_var=1e-3, threshold_coeff_var=1e-3, n_iter_max=10, 
 # parallel=False, outdir=".", plot=False, plot_range=[0, 50]
 parallel = (MPI is not None and MPI.COMM_WORLD.size > 1)
-pb = om.Problem(<%= @mda.py_classname %>(parallel=parallel, plot=options.plot))
+pb = om.Problem(<%= @impl.py_classname %>(parallel=parallel, plot=options.plot))
 <% end %>
 <%- else -%>
-pb = om.Problem(<%= @mda.py_classname %>())
+pb = om.Problem(<%= @impl.py_classname %>())
 <%- end -%>
 
 <%- if @mda.mixint? -%>

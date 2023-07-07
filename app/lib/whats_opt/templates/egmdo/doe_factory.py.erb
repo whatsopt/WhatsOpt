@@ -18,10 +18,10 @@ class DoeFactory:
             self.comm = MPI.COMM_WORLD.Split(rank) # force to run only on one proc in MPI context  
 
     def doe_recorder_filename(self, disc_name):
-        return os.path.join(self.outdir, f"doe_<%= @mda.snake_modulename %>_{disc_name}.sqlite")
+        return os.path.join(self.outdir, f"doe_<%= @impl.snake_modulename %>_{disc_name}.sqlite")
 
     def doe_numpy_filename(self, disc_name):
-        return os.path.join(self.outdir, f"doe_<%= @mda.snake_modulename %>_{disc_name}.npy")
+        return os.path.join(self.outdir, f"doe_<%= @impl.snake_modulename %>_{disc_name}.npy")
 
 <%- @mda.plain_disciplines.each do |disc| -%>
 <%- if disc.impl.egmdo_surrogate? -%>

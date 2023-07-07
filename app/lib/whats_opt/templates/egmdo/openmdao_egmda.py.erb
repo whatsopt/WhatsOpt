@@ -3,15 +3,15 @@ from numpy import nan, inf
 
 import openmdao.api as om
 from mda_init import initialize
-from <%= @pkg_prefix %><%= @mda.py_modulename %> import <%= @mda.py_classname %>Factory as DisciplineFactory
-from <%= @pkg_prefix %>egmdo.random_vec_analysis import <%= @mda.py_classname %>RandomVecAnalysis
-from <%= @pkg_prefix %>egmdo.random_analysis import <%= @mda.py_classname %>RandomAnalysis
+from <%= @pkg_prefix %><%= @impl.py_modulename %> import <%= @impl.py_classname %>Factory as DisciplineFactory
+from <%= @pkg_prefix %>egmdo.random_vec_analysis import <%= @impl.py_classname %>RandomVecAnalysis
+from <%= @pkg_prefix %>egmdo.random_analysis import <%= @impl.py_classname %>RandomAnalysis
 from <%= @pkg_prefix %>egmdo.doe_factory import DoeFactory
 from <%= @pkg_prefix %>egmdo.gp_factory import GpFactory
 from <%= @pkg_prefix %>egmdo.algorithms import solve_egmda
 
-class <%= @mda.py_classname %>EgDiscipline(om.ExplicitComponent):
-    """ An OpenMDAO base component to encapsulate <%= @mda.py_classname %> discipline """
+class <%= @impl.py_classname %>EgDiscipline(om.ExplicitComponent):
+    """ An OpenMDAO base component to encapsulate <%= @impl.py_classname %> discipline """
 
     def __init__(self, discipline_factory, gp_factory, 
                  n_doe_pce=500, epsilon_coeff_var=1e-3, threshold_coeff_var=1e-3, n_iter_max=10, 
@@ -60,7 +60,7 @@ class <%= @mda.py_classname %>EgDiscipline(om.ExplicitComponent):
 
         # After the convergence we run the problem at the mean value of the disciplinary 
         # surrogate models to fill the outputs
-        pb = om.Problem(<%= @mda.py_classname %>RandomVecAnalysis(self.discipline_factory, self.gp_factory))
+        pb = om.Problem(<%= @impl.py_classname %>RandomVecAnalysis(self.discipline_factory, self.gp_factory))
         # pb.model.nonlinear_solver.options['err_on_non_converge'] = False
         # pb.model.linear_solver.options['err_on_non_converge'] = False
         pb.model.nonlinear_solver.options['iprint'] = 0
@@ -75,7 +75,7 @@ class <%= @mda.py_classname %>EgDiscipline(om.ExplicitComponent):
 <% end %>
 
     def compute_partials(self, inputs, partials):
-        pb = om.Problem(<%= @mda.py_classname %>RandomAnalysis(self.discipline_factory, self.gp_factory))
+        pb = om.Problem(<%= @impl.py_classname %>RandomAnalysis(self.discipline_factory, self.gp_factory))
         # pb.model.nonlinear_solver.options['err_on_non_converge'] = False
         # pb.model.linear_solver.options['err_on_non_converge'] = False
         pb.model.nonlinear_solver.options['iprint'] = 0
@@ -93,8 +93,8 @@ class <%= @mda.py_classname %>EgDiscipline(om.ExplicitComponent):
 <%- end -%>
 
 
-class <%= @mda.py_classname %>Egmda(om.Group):
-    """ An OpenMDAO base component to encapsulate <%= @mda.py_classname %> EGMDA """
+class <%= @impl.py_classname %>Egmda(om.Group):
+    """ An OpenMDAO base component to encapsulate <%= @impl.py_classname %> EGMDA """
     def __init__(self, discipline_factory=None, gp_factory=None, 
                  n_doe_pce=500, epsilon_coeff_var=1e-3, threshold_coeff_var=1e-3, n_iter_max=10, 
                  parallel=False, outdir='<%= @outdir %>', plot=False, plot_range=[0, 50]):
@@ -118,8 +118,8 @@ class <%= @mda.py_classname %>Egmda(om.Group):
 <%- @mda.input_variables.each do |dv| -%>
         self.set_input_defaults('<%= dv.name %>', val=<%= dv.init_py_value %><%= @impl.use_units && !dv.units.blank? ? ", units='#{dv.units}'":"" %>)
 <%- end %>
-        self.add_subsystem('<%= @mda.py_classname %>', 
-                           <%= @mda.py_classname %>EgDiscipline(
+        self.add_subsystem('<%= @impl.py_classname %>', 
+                           <%= @impl.py_classname %>EgDiscipline(
                                 discipline_factory=self.discipline_factory, gp_factory=self.gp_factory, 
                                 n_doe_pce=self.n_doe_pce, epsilon_coeff_var=self.epsilon_coeff_var,
                                 threshold_coeff_var=self.threshold_coeff_var, parallel=self.parallel, 

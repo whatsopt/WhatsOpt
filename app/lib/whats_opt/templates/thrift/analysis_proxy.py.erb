@@ -3,22 +3,22 @@ from thrift.transport import TSocket
 from thrift.transport import TTransport
 from thrift.protocol import TBinaryProtocol
 
-from <%= @pkg_prefix %><%= @server_module %>.<%= @mda.py_full_modulename %> import <%= @mda.py_classname %>
-from <%= @pkg_prefix %><%= @mda.py_full_modulename %> import <%= @mda.py_classname %> as <%= @mda.py_classname %>Original
+from <%= @pkg_prefix %><%= @server_module %>.<%= @impl.py_full_modulename %> import <%= @impl.py_classname %>
+from <%= @pkg_prefix %><%= @impl.py_full_modulename %> import <%= @impl.py_classname %> as <%= @impl.py_classname %>Original
 <% @mda.all_plain_disciplines.each do |disc| %>
 <% if !disc.local?(@remote_ip) or @remote %>
 from .remote_discipline import Remote<%= disc.impl.py_classname %>
 <% end %>
 <% end %>
 
-class <%= @mda.py_classname %>Proxy(<%= @mda.py_classname %>Original):
+class <%= @impl.py_classname %>Proxy(<%= @impl.py_classname %>Original):
     
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         socket = TSocket.TSocket('<%= @server_host %>', <%= @server_port %>)
         transport = TTransport.TBufferedTransport(socket)
         protocol = TBinaryProtocol.TBinaryProtocol(transport)
-        self._thrift_client = <%= @mda.py_classname %>.Client(protocol)
+        self._thrift_client = <%= @impl.py_classname %>.Client(protocol)
         transport.open()
 
 <% @mda.all_plain_disciplines.each do |disc| %>
