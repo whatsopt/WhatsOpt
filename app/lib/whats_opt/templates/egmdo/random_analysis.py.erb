@@ -61,7 +61,7 @@ class <%= disc.impl.py_classname %>RandomDiscipline(om.ExplicitComponent):
 <%- disc.impl.numeric_input_vars.each do |var_in| -%>
         partials['<%= var_out.py_varname %>', '<%= var_in.py_varname %>'] = np.zeros((<%= var_out.dim %>, <%= var_in.dim %>))
 <%- end -%>
-<%- disc.impl.numeric_input_vars.each do |var_in| -%>
+<%- disc.impl.numeric_output_vars.each do |var_in| -%>
         partials['<%= var_out.py_varname %>', '_xi_<%= var_in.py_varname %>'] = np.zeros((<%= var_out.dim %>, <%= var_in.dim %>))
 <%- end -%>
 <%- end -%>
