@@ -128,7 +128,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
                 "server/cicav/constants.py", "server/cicav_conversions.py",
                 "server/cicav_proxy.py", "server/cicav/ttypes.py",
                 "server/discipline_proxy.py", "server/remote_discipline.py"] 
-    pkg_name = @mda.py_modulename
+    pkg_name = @mda.impl.py_modulename
     pkg_expected = pkg_expected.map{|f| "#{pkg_name}/#{f}"}
     expected = pkg_expected + ["mda_init.py", "run_mda.py", "run_mdo.py", 
       "run_doe.py", "run_screening.py", "run_server.py", 
@@ -163,7 +163,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
                 "server/cicav/constants.py", "server/cicav_conversions.py",
                 "server/cicav_proxy.py", "server/cicav/ttypes.py",
                 "server/discipline_proxy.py", "server/remote_discipline.py"] 
-    pkg_name = @mda.py_modulename
+    pkg_name = @mda.impl.py_modulename
     pkg_expected = pkg_expected.map{|f| "#{pkg_name}/#{f}"}
     expected = pkg_expected + ["mda_init.py", "run_mda.py", "run_mdo.py", 
       "run_doe.py", "run_screening.py", "run_server.py", 

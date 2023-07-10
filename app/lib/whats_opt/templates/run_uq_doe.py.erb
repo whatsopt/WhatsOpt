@@ -8,9 +8,9 @@ from openmdao_extensions.openturns_doe_driver import OpenturnsDOEDriver
 
 import openturns as ot
 <% if @remote -%>
-from <%= @pkg_prefix %><%= @server_module %>.<%= @mda.py_modulename %>_proxy import <%= @mda.py_classname %>Proxy as <%= @mda.py_classname %> 
+from <%= @pkg_prefix %><%= @server_module %>.<%= @impl.py_modulename %>_proxy import <%= @impl.py_classname %>Proxy as <%= @impl.py_classname %> 
 <% else -%>
-from <%= @pkg_prefix %><%= @mda.py_modulename %> import <%= @mda.py_classname %> 
+from <%= @pkg_prefix %><%= @impl.py_modulename %> import <%= @impl.py_classname %> 
 <% end %>
 from optparse import OptionParser
 parser = OptionParser()
@@ -22,7 +22,7 @@ parser.add_option("-p", "--parallel",
                   help="run doe in parallel")
 (options, args) = parser.parse_args()
 
-pb = om.Problem(<%= @mda.py_classname %>())
+pb = om.Problem(<%= @impl.py_classname %>())
 dists = []
 <% @mda.uncertain_input_variables.each do |uv| -%>
 <% uv.distributions.each.with_index do |_, i| %>

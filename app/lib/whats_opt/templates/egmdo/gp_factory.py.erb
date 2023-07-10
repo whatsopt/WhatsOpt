@@ -11,7 +11,7 @@ class GpFactory:
         self.outdir = outdir
 
     def gp_filename(self, disc_name, var_name):
-        return os.path.join(self.outdir, f"gp_<%= @mda.snake_modulename %>_{disc_name}_{var_name}.pkl")
+        return os.path.join(self.outdir, f"gp_<%= @impl.snake_modulename %>_{disc_name}_{var_name}.pkl")
 
 <%- @mda.egmdo_random_disciplines.each do |disc| -%>
 <%- outdim = Analysis.vars_dim(disc.output_variables) -%>

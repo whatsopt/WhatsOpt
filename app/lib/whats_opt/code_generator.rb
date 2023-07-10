@@ -16,6 +16,7 @@ module WhatsOpt
       @prefix = "code"
       @comment_delimiters = { begin: '"""', end: '"""' }
       @mda = mda
+      @impl = mda.impl
       @template_dir = File.join(File.dirname(__FILE__), "templates")
       @genfiles = []
       @server_module = "server"
@@ -39,7 +40,7 @@ module WhatsOpt
       zip_filename = nil
       stringio = nil
       @genfiles = []
-      Dir.mktmpdir("#{prefix}_#{@mda.basename}_") do |dir|
+      Dir.mktmpdir("#{prefix}_#{@mda.impl.basename}_") do |dir|
         # dir='/tmp'
         zip_rootpath = Pathname.new(dir)
         zip_filename = File.basename(dir) + ".zip"

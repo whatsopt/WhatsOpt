@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 import openmdao.api as om
-from <%= @pkg_prefix %><%= @discipline.analysis.py_full_modulename %> import <%= @discipline.analysis.py_classname %>Factory
+from <%= @pkg_prefix %><%= @discipline.analysis.impl.py_full_modulename %> import <%= @discipline.analysis.impl.py_classname %>Factory
 from <%= @pkg_prefix %><%= @discipline.impl.py_full_modulename %> import <%= @discipline.impl.py_classname %>
 
 class Test<%= @discipline.impl.py_classname %>(om.Group):
@@ -16,7 +16,7 @@ class Test<%= @discipline.impl.py_classname %>(om.Group):
 class <%= @discipline.impl.py_classname %>Test(unittest.TestCase):
 
     def test_<%= @discipline.impl.py_classname %>(self):
-        factory = <%= @discipline.analysis.py_classname %>Factory()
+        factory = <%= @impl.py_classname %>Factory()
         pb = om.Problem(Test<%= @discipline.impl.py_classname %>(factory=factory))
         pb.setup()  
         pb.run_model()   

@@ -3,7 +3,7 @@ requires = ["setuptools", "setuptools-scm"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "<%= @mda.py_modulename %>"
+name = "<%= @impl.py_modulename %>"
 version = "0.1.0"
 authors = [
     {name = "<%= @mda.owner.name_from_email %>", email = "<%= @mda.owner.email %>"},
@@ -18,8 +18,8 @@ dependencies = ["<%= @framework %>"]
 
 [tool.setuptools]
 packages = [
-    "<%= @mda.py_modulename -%>",
+    "<%= @impl.py_modulename -%>",
 <%- @mda.sub_analyses.each do |sub_mda| -%>
-    "<%= @pkg_prefix %><%= sub_mda.py_modulename -%>",
+    "<%= @pkg_prefix %><%= sub_mda.impl.py_modulename -%>",
 <%- end -%>
 ]

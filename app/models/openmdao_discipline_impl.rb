@@ -7,6 +7,8 @@ class OpenmdaoDisciplineImpl < ActiveRecord::Base
 
   after_initialize :_ensure_default_impl
 
+  validates :discipline, presence: true
+
   def name 
     self.discipline.name
   end

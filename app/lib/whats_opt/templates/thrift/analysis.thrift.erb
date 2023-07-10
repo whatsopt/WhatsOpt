@@ -1,4 +1,4 @@
-namespace py <%= @mda.py_modulename %>
+namespace py <%= @impl.py_modulename %>
 
 typedef double Float
 typedef i32 Integer
@@ -25,7 +25,7 @@ struct <%= disc.impl.camel_modulename %>Output {
 }
 <% end -%>
 
-service <%= @mda.py_classname %> {
+service <%= @impl.py_classname %> {
 <% @mda.all_plain_disciplines.each do |disc| -%>
     <%= disc.impl.camel_modulename %>Output compute_<%= disc.impl.snake_modulename %>(1:<%= disc.impl.camel_modulename %>Input input)
 <% end -%>

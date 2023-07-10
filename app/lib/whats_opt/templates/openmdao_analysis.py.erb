@@ -1,19 +1,19 @@
 from optparse import OptionParser
 import openmdao.api as om
 # from openmdao_extensions.reckless_nonlinear_block_gs import RecklessNonlinearBlockGS
-from <%= @pkg_prefix %><%= @mda.py_full_modulename %>_base import <%= @mda.py_classname %>Base, <%= @mda.py_classname %>FactoryBase
+from <%= @pkg_prefix %><%= @impl.py_full_modulename %>_base import <%= @impl.py_classname %>Base, <%= @impl.py_classname %>FactoryBase
 
 
-class <%= @mda.py_classname %>Factory(<%= @mda.py_classname %>FactoryBase):
-    """ A factory to create disciplines of <%= @mda.py_classname %> analysis. """
+class <%= @impl.py_classname %>Factory(<%= @impl.py_classname %>FactoryBase):
+    """ A factory to create disciplines of <%= @impl.py_classname %> analysis. """
 
     # One can override here create methods from the base class to take control over disciplines creation
     # then pass an instance of this class as the 'factory' argument of the constructor (see run_*.py scripts),
-    # example: my_analysis = <%= @mda.py_classname %>(factory=<%= @mda.py_classname %>Factory())
+    # example: my_analysis = <%= @impl.py_classname %>(factory=<%= @impl.py_classname %>Factory())
 
 
-class <%= @mda.py_classname %>(<%= @mda.py_classname %>Base):
-    """ An OpenMDAO Group to encapsulate <%= @mda.py_classname %> analysis 
+class <%= @impl.py_classname %>(<%= @impl.py_classname %>Base):
+    """ An OpenMDAO Group to encapsulate <%= @impl.py_classname %> analysis 
     see https://openmdao.org/newdocs/versions/latest/features/core_features/working_with_groups/main.html
     """
     # One can override here default behaviour provided by WhatsOpt in the base class.
@@ -48,7 +48,7 @@ if __name__ == "__main__":
     (options, args) = parser.parse_args()
 
     problem = om.Problem()
-    problem.model = <%= @mda.py_classname %>()
+    problem.model = <%= @impl.py_classname %>()
 
     problem.setup()
     problem.final_setup()

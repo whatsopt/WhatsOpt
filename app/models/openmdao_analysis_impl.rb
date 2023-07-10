@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class OpenmdaoAnalysisImpl < ActiveRecord::Base
+  include WhatsOpt::OpenmdaoModule
+
   NONLINEAR_SOLVERS = %w[NonlinearBlockGS RecklessNonlinearBlockGS NonlinearBlockJac NonlinearRunOnce NewtonSolver BroydenSolver].freeze
   LINEAR_SOLVERS    = %w[LinearBlockGS LinearBlockJac LinearRunOnce DirectSolver PETScKrylov ScipyKrylov LinearUserDefined].freeze
 
@@ -12,9 +14,38 @@ class OpenmdaoAnalysisImpl < ActiveRecord::Base
 
   after_initialize :_ensure_default_impl
 
+  validates :analysis, presence: true
   validates :package_name, presence: true
   validates :package_name, format: { with: /\A[a-z]+[_a-z0-9]*\z/, message: "should follow PEP8 recommendation for Python package names"}
   NULL_PACKAGE_NAME = "pkg_place_holder"
+
+  def name 
+    self.analysis.name
+  end
+
+  def path 
+    self.analysis.path
+  end
+
+  def py_modulename
+    self.analysis.is_root? ? self.top_packagename : super
+  end
+
+  def py_classname
+    self.analysis.is_root? ? self.top_packagename.camelize : super
+  end
+
+  def py_filename
+    self.analysis.is_root? ? "#{self.top_packagename}.py" : super
+  end
+
+  def py_basefilename
+    self.analysis.is_root? ? "#{self.top_packagename}_base.py" : super
+  end
+
+  def top_packagename
+    self.analysis.root_analysis.impl.package_name
+  end
 
   def delete_related_solvers!
     OpenmdaoAnalysisImpl.transaction do
@@ -73,19 +104,6 @@ class OpenmdaoAnalysisImpl < ActiveRecord::Base
       .empty?
   end
 
-  def is_package_specified?
-    pname = self.analysis.root_analysis&.openmdao_impl&.package_name
-    !pname.blank? && pname != NULL_PACKAGE_NAME
-  end
-
-  def top_packagename
-    if is_package_specified?
-      self.analysis.root_analysis.openmdao_impl.package_name
-    else
-      self.analysis.root_analysis.basename
-    end
-  end
-
   private
     def _ensure_default_impl
       self.parallel_group = false if parallel_group.blank?
@@ -93,6 +111,6 @@ class OpenmdaoAnalysisImpl < ActiveRecord::Base
       self.linear_solver ||= Solver.new(name: "ScipyKrylov")
       self.use_units = true if use_units.nil?
       self.optimization_driver = :scipy_optimizer_slsqp if optimization_driver.blank?
-      self.package_name = NULL_PACKAGE_NAME if package_name.blank?
+      self.package_name = self.basename if package_name.blank?
     end
 end

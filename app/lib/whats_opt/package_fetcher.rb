@@ -15,16 +15,16 @@ module WhatsOpt
 
     def _generate_code(gendir, options = {})
       @genfiles = []
-      Dir.mktmpdir("fetch_#{@src_mda.py_modulename}_") do |dir|
+      Dir.mktmpdir("fetch_#{@src_mda.impl.py_modulename}_") do |dir|
         files = WhatsOpt::PackageExtractor.new(@src_mda).extract(dir, src_only: true)
 
         files.each do |src_file|
           # skip root analysis implementation
-          next if src_file =~ /#{@src_mda.py_filename}$/
-          next if src_file =~ /#{@src_mda.py_basefilename}$/
+          next if src_file =~ /#{@src_mda.impl.py_filename}$/
+          next if src_file =~ /#{@src_mda.impl.py_basefilename}$/
 
           outfile = src_file
-          outfile = outfile.gsub("/#{@src_mda.py_modulename}/", "/#{@mda.py_modulename}/")
+          outfile = outfile.gsub("/#{@src_mda.impl.py_modulename}/", "/#{@impl.py_modulename}/")
 
           src_dir = Pathname.new(dir)
           abs_outfile = Pathname.new(outfile)
@@ -33,7 +33,7 @@ module WhatsOpt
           outfile = File.join(gendir, rel_outfile)
           FileUtils.mkdir_p File.dirname(outfile)
           File.open(outfile, 'w') do |out|
-            out << File.open(src_file).read.gsub("from #{@src_mda.py_modulename}", "from #{@mda.py_modulename}")
+            out << File.open(src_file).read.gsub("from #{@src_mda.impl.py_modulename}", "from #{@impl.py_modulename}")
           end
           @genfiles << outfile
         end

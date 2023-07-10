@@ -4,12 +4,12 @@ from thrift.transport import TTransport
 from thrift.protocol import TBinaryProtocol
 from thrift.server import TServer
 
-from <%= @pkg_prefix %><%= @mda.py_full_modulename %> import <%= @mda.py_classname %>Factory as Factory
-from <%= @pkg_prefix %><%= @server_module %>.<%= @mda.py_modulename %> import <%= @mda.py_classname %> as <%= @mda.py_classname %>Service
-from <%= @pkg_prefix %><%= @server_module %>.<%= @mda.py_modulename %>_conversions import *
+from <%= @pkg_prefix %><%= @impl.py_full_modulename %> import <%= @impl.py_classname %>Factory as Factory
+from <%= @pkg_prefix %><%= @server_module %>.<%= @impl.py_modulename %> import <%= @impl.py_classname %> as <%= @impl.py_classname %>Service
+from <%= @pkg_prefix %><%= @server_module %>.<%= @impl.py_modulename %>_conversions import *
 from <%= @pkg_prefix %><%= @server_module %>.remote_discipline import *
 
-class <%= @mda.py_classname %>Handler:
+class <%= @impl.py_classname %>Handler:
 
     def __init__(self):
         factory = Factory()
@@ -24,17 +24,17 @@ class <%= @mda.py_classname %>Handler:
         print("Ping!")
 
     def shutdown(self):
-        print("Shutting down <%= @mda.py_classname %> server...")
+        print("Shutting down <%= @impl.py_classname %> server...")
         exit(0)
 
-    ### <%= @mda.py_classname %> interface
+    ### <%= @impl.py_classname %> interface
 <% @mda.all_plain_disciplines.each do |disc| %>
     def compute_<%= disc.impl.snake_modulename %>(self, ins):
 <% if !disc.local?(@remote_ip) -%>
         socket = TSocket.TSocket('<%= disc.endpoint&.host %>', <%= disc.endpoint&.port %>)
         transport = TTransport.TBufferedTransport(socket)
         protocol = TBinaryProtocol.TBinaryProtocol(transport)
-        thrift_client = <%= @mda.py_classname %>.Client(protocol)
+        thrift_client = <%= @impl.py_classname %>.Client(protocol)
         transport.open()
         outs = thrift_client.compute_<%= disc.impl.snake_modulename %>(ins)
         transport.close()
@@ -48,13 +48,13 @@ class <%= @mda.py_classname %>Handler:
 <% end -%>
 
 def run_server(port):
-    handler = <%= @mda.py_classname %>Handler()
-    processor = <%= @mda.py_classname %>Service.Processor(handler)
+    handler = <%= @impl.py_classname %>Handler()
+    processor = <%= @impl.py_classname %>Service.Processor(handler)
     transport = TSocket.TServerSocket('0.0.0.0', port=port)
     tfactory = TTransport.TBufferedTransportFactory()
     pfactory = TBinaryProtocol.TBinaryProtocolFactory()
 
-    print("Start <%= @mda.py_classname %> analysis server listening on port {}".format(port))
+    print("Start <%= @impl.py_classname %> analysis server listening on port {}".format(port))
     server = TServer.TSimpleServer(processor, transport, tfactory, pfactory)
     server.serve()
 

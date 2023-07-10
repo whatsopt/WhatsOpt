@@ -63,7 +63,7 @@ module WhatsOpt
     end
 
     def _namespace
-      namespace = self.path.map { |a| a.basename }
+      namespace = self.path.map { |a| a.impl.basename }
       namespace.shift
       namespace.join(".")
     end
