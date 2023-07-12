@@ -34,8 +34,13 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     end
   end
 
-  test "should generate openmdao process for an singleton mda" do
+  test "should generate openmdao process for a singleton mda" do
     @mda = analyses(:singleton)
+    # XXX: Fixture does not seem to always load the file properly
+    #      this ensure the presence of the file and avoid tar extraction error
+    @mda.package.archive.attach(io: File.open(file_fixture('singleton-0.1.0.tar.gz')), filename: 'singleton-0.1.0.tar.gz')
+    assert File.exist?(ActiveStorage::Blob.service.path_for(@mda.package.archive.key))
+
     @ogen = WhatsOpt::OpenmdaoGenerator.new(@mda, pkg_format: true)
     Dir.mktmpdir do |dir|
       @ogen._generate_code(dir, with_server: false) 
