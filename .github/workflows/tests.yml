@@ -37,7 +37,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: install
-          key: ${{ runner.os }}-thrift-0.16.0-cache
+          key: ${{ runner.os }}-thrift-0.18.1-cache
 
       - name: Make Thrift Compiler
         if: steps.cache-thrift.outputs.cache-hit != 'true'
