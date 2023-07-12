@@ -117,7 +117,7 @@ gem "bootstrap", "~> 5.0"
 gem "font-awesome-sass", "~> 6.4.0"
 
 # thrift
-gem "thrift", "<0.18"
+gem "thrift", "~>0.18"
 
 # Actiontext image processing
 gem "image_processing", "~> 1.2"
