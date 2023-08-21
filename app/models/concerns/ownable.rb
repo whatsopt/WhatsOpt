@@ -56,7 +56,7 @@ module Ownable
 
   def copy_membership(ownable_src)
     ownable_src.readers.each do |r|
-      self.add_member(r) 
+      self.add_member(r)
     end
   end
 

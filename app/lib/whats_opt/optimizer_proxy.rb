@@ -4,7 +4,6 @@ require "thrift"
 require "optimizer_store"
 
 module WhatsOpt
-
   class OptimizationProxyError < Exception; end
 
   class OptimizerProxy < ServiceProxy
@@ -43,18 +42,18 @@ module WhatsOpt
       end
       xtyps = xtypes.map do |xt|
         limits = case xt['type']
-          when 'float_type'
-            flimits = WhatsOpt::Services::Flimits.new(lower: xt['limits'][0], upper: xt['limits'][1])
-            WhatsOpt::Services::Xlimits.flimits(flimits)
-          when 'int_type'
-            ilimits = WhatsOpt::Services::Ilimits.new(lower: xt['limits'][0], upper: xt['limits'][1])
-            WhatsOpt::Services::Xlimits.ilimits(ilimits)
-          when 'ord_type'
-            WhatsOpt::Services::Xlimits.olimits(xt['limits'])
-          when 'enum_type'
-            WhatsOpt::Services::Xlimits.elimits(xt['limits'])
-          else 
-            raise OptimizationProxyError.new("Type should be float_type, int_type, ord_type or enum_type, got #{xt['type']}")
+                 when 'float_type'
+                   flimits = WhatsOpt::Services::Flimits.new(lower: xt['limits'][0], upper: xt['limits'][1])
+                   WhatsOpt::Services::Xlimits.flimits(flimits)
+                 when 'int_type'
+                   ilimits = WhatsOpt::Services::Ilimits.new(lower: xt['limits'][0], upper: xt['limits'][1])
+                   WhatsOpt::Services::Xlimits.ilimits(ilimits)
+                 when 'ord_type'
+                   WhatsOpt::Services::Xlimits.olimits(xt['limits'])
+                 when 'enum_type'
+                   WhatsOpt::Services::Xlimits.elimits(xt['limits'])
+                 else
+                   raise OptimizationProxyError.new("Type should be float_type, int_type, ord_type or enum_type, got #{xt['type']}")
         end
         Services::Xtype.new(type: XTYPE_TYPES[xt['type']], limits: limits)
       end
@@ -78,7 +77,6 @@ module WhatsOpt
     end
 
   private
-
     def _parse_options(options)
       opts = {}
       options.each do |ks, v|
@@ -92,6 +90,5 @@ module WhatsOpt
       end
       opts
     end
-
   end
 end

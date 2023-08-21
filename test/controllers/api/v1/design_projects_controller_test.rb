@@ -3,7 +3,6 @@
 require "test_helper"
 
 class Api::V1::DesignProjectsControllerTest < ActionDispatch::IntegrationTest
-
   setup do
     @user1 = users(:user1)
     @auth_headers = { "Authorization" => "Token " + TEST_API_KEY }
@@ -40,7 +39,7 @@ class Api::V1::DesignProjectsControllerTest < ActionDispatch::IntegrationTest
     @proj = design_projects(:cicav_project)
     get api_v1_design_project_url(@proj, format: :wopjson), as: :json, headers: @auth_headers2
     assert_response :unauthorized
-  end 
+  end
 
   test "should create a project with its analyses" do
     @proj = design_projects(:cicav_project)
@@ -50,7 +49,7 @@ class Api::V1::DesignProjectsControllerTest < ActionDispatch::IntegrationTest
     resp["name"] = "#{resp["name"]}_duplicate"
     assert_difference("DesignProject.count") do
       assert_difference("Analysis.count", 3) do
-        post api_v1_design_projects_url, as: :json, headers: @auth_headers, params: {project: resp}
+        post api_v1_design_projects_url, as: :json, headers: @auth_headers, params: { project: resp }
         assert_response :success
       end
     end
@@ -66,14 +65,11 @@ class Api::V1::DesignProjectsControllerTest < ActionDispatch::IntegrationTest
     resp["name"] = "#{resp["name"]}_duplicate"
     assert_difference("DesignProject.count") do
       assert_difference("Analysis.count", 3) do
-        post api_v1_design_projects_url, as: :json, headers: @auth_headers2, params: {project: resp}
+        post api_v1_design_projects_url, as: :json, headers: @auth_headers2, params: { project: resp }
         assert_response :success
       end
     end
     proj = DesignProject.last
     assert_equal 2, proj.analyses.count   # the sub analyse innermda not attached to a project
   end
-
-
-
 end

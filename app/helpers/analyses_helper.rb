@@ -28,8 +28,8 @@ module AnalysesHelper
     end
     raw(res)
   end
-  
-  def link_to_final_operations_if_authorized(analysis, user, nb=2)
+
+  def link_to_final_operations_if_authorized(analysis, user, nb = 2)
     res = ""
     Operation.final.done(analysis).newest.first(nb).each do |ope|
       res += '<span style="margin: 0px 5px">'
@@ -42,8 +42,8 @@ module AnalysesHelper
     end
     count = Operation.done(analysis).count
     if count > nb
-      name = ' (+' + (count-nb).to_s + ')'
-      # res += link_to name, mda_operations_path(analysis), title: "List Operations" 
+      name = ' (+' + (count - nb).to_s + ')'
+      # res += link_to name, mda_operations_path(analysis), title: "List Operations"
       res += name
     end
     raw(res)
@@ -74,7 +74,7 @@ module AnalysesHelper
   def owners(analysis)
     res = "<span class='me-2'>#{analysis.owner.login}"
     analysis.co_owners.each_with_index do |u, i|
-      if i+1 == analysis.co_owners.size
+      if i + 1 == analysis.co_owners.size
         res += "<span class='me-2'> and #{u.login}"
       else
         res += "<span class='me-2'>, #{u.login}"
@@ -95,6 +95,6 @@ module AnalysesHelper
     if analysis.co_owners.count > 0
       res += ' <i class="fas fa-users-cog" title="Analysis has co-owners"></i>'
     end
-    raw(res) 
+    raw(res)
   end
 end

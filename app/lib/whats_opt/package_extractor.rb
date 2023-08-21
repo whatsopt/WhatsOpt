@@ -2,7 +2,6 @@
 
 module WhatsOpt
   class PackageExtractor
-
     attr_accessor :genfiles, :prefix
 
     def initialize(mda)
@@ -16,20 +15,20 @@ module WhatsOpt
         excludes = File.join(File.dirname(__FILE__), 'excluded-files.txt')
 
         src_dir = if src_only
-          pkg_root_dir = @mda.package.name_version 
+          pkg_root_dir = @mda.package.name_version
           pkgname = @mda.package.name
           File.join(pkg_root_dir, pkgname)
         else
           ""
         end
-        
+
         tar_cmd = "tar tf #{pkgfile} --strip-components=1 --exclude-from=#{excludes} #{src_dir}"
         Rails.logger.info tar_cmd
         output = `#{tar_cmd}`
         @genfiles = output.split(/\n/)
-        @genfiles = @genfiles.filter{|f| f[-1] != '/'}  # filter out directories
-        @genfiles = @genfiles.map{|f| f[f.index('/')+1..]}  # strip root directory name
-        @genfiles = @genfiles.map{|f| File.join(gendir, f)}  # prepend gendir
+        @genfiles = @genfiles.filter { |f| f[-1] != '/' }  # filter out directories
+        @genfiles = @genfiles.map { |f| f[f.index('/') + 1..] }  # strip root directory name
+        @genfiles = @genfiles.map { |f| File.join(gendir, f) }  # prepend gendir
 
         tar_cmd = "tar xvf #{pkgfile} --strip-components=1 --exclude-from=#{excludes} -C #{gendir} #{src_dir}"
         Rails.logger.info tar_cmd
@@ -38,6 +37,5 @@ module WhatsOpt
 
       @genfiles
     end
-
   end
 end

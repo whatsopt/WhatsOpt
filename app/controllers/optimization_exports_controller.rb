@@ -12,8 +12,8 @@ class OptimizationExportsController < ApplicationController
 
     if format == "log"
       path = "#{Rails.root}/log/optimizations/optim_#{optim_id}.log"
-      if File.exist?(path) 
-        send_file(path) 
+      if File.exist?(path)
+        send_file(path)
       else
         redirect_to optimization_path(optim), alert: "No log file available!"
       end
@@ -21,9 +21,9 @@ class OptimizationExportsController < ApplicationController
       content = CSV.generate(col_sep: ";") do |csv|
         unless optim.inputs.empty? or optim.x.nil?
           headers = []
-          headers += optim.x[0].map.with_index {|_, i| "x_#{i+1}"}
-          headers += (1..optim.n_obj).map {|i| "obj_#{i}"}
-          headers += (1..optim.cstr_specs.size).map {|i| "cstr_#{i}"}
+          headers += optim.x[0].map.with_index { |_, i| "x_#{i + 1}" }
+          headers += (1..optim.n_obj).map { |i| "obj_#{i}" }
+          headers += (1..optim.cstr_specs.size).map { |i| "cstr_#{i}" }
           csv << headers
           optim.x.each_with_index do |x, i|
             csv << x + optim.y[i]
@@ -35,8 +35,8 @@ class OptimizationExportsController < ApplicationController
       content = CSV.generate(col_sep: ";") do |csv|
         unless optim.inputs.empty? or optim.x.nil?
           headers = []
-          headers += optim.x_best[0].map.with_index {|_, i| "x_#{i+1}"}
-          headers += (1..optim.n_obj).map {|i| "obj_#{i}"}
+          headers += optim.x_best[0].map.with_index { |_, i| "x_#{i + 1}" }
+          headers += (1..optim.n_obj).map { |i| "obj_#{i}" }
           csv << headers
           optim.x_best.each_with_index do |x_best, i|
             csv << x_best + optim.y_best[i]

@@ -43,7 +43,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
 
     @ogen = WhatsOpt::OpenmdaoGenerator.new(@mda, pkg_format: true)
     Dir.mktmpdir do |dir|
-      @ogen._generate_code(dir, with_server: false) 
+      @ogen._generate_code(dir, with_server: false)
       assert File.exist?(@ogen.genfiles.first)
     end
   end
@@ -60,7 +60,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
 
   test "should maintain a list of generated filepaths without server" do
     expected = ["__init__.py", "aerodynamics.py", "aerodynamics_base.py", "cicav.py",
-                "cicav_base.py", "geometry.py", "geometry_base.py", "mda_init.py", 
+                "cicav_base.py", "geometry.py", "geometry_base.py", "mda_init.py",
                 "propulsion.py", "propulsion_base.py",
                 "run_mda.py", "run_mdo.py", "run_doe.py", "run_screening.py"]
     _assert_file_generation expected
@@ -68,9 +68,9 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
 
   test "should maintain a list of generated filepaths with egmdo" do
     expected = ["__init__.py", "aerodynamics.py", "aerodynamics_base.py", "cicav.py",
-                "cicav_base.py", "geometry.py", "geometry_base.py", "mda_init.py", 
+                "cicav_base.py", "geometry.py", "geometry_base.py", "mda_init.py",
                 "propulsion.py", "propulsion_base.py", "run_mda.py", "run_mdo.py", "run_doe.py", "run_egdoe.py"] + [
-                "egmdo/__init__.py", "egmdo/algorithms.py", "egmdo/cicav_egmda.py", "egmdo/doe_factory.py", 
+                "egmdo/__init__.py", "egmdo/algorithms.py", "egmdo/cicav_egmda.py", "egmdo/doe_factory.py",
                 "egmdo/gp_factory.py", "egmdo/random_analysis.py", "egmdo/random_vec_analysis.py",
                 "run_egmda.py", "run_egmdo.py", "run_screening.py"
                 ]
@@ -81,7 +81,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     obj = disciplines(:geometry).output_variables.where(name: "obj")
     Connection.where(from: obj).update(role: WhatsOpt::Variable::RESPONSE_ROLE)
     expected = ["__init__.py", "aerodynamics.py", "aerodynamics_base.py", "cicav.py",
-                "cicav_base.py", "geometry.py", "geometry_base.py", "mda_init.py", 
+                "cicav_base.py", "geometry.py", "geometry_base.py", "mda_init.py",
                 "propulsion.py", "propulsion_base.py",
                 "run_mda.py", "run_mdo.py", "run_doe.py", "run_screening.py"]
     _assert_file_generation expected
@@ -89,7 +89,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
 
   test "should maintain a list of generated filepaths with unittests" do
     expected = ["__init__.py", "aerodynamics.py", "aerodynamics_base.py", "cicav.py",
-                "cicav_base.py", "geometry.py", "geometry_base.py", "mda_init.py", 
+                "cicav_base.py", "geometry.py", "geometry_base.py", "mda_init.py",
                 "propulsion.py", "propulsion_base.py",
                 "run_mda.py", "run_mdo.py", "run_doe.py", "run_screening.py"] +
                 ["tests/test_aerodynamics.py", "tests/test_geometry.py", "tests/test_propulsion.py"]
@@ -98,7 +98,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
 
   test "should maintain a list of generated filepaths with optimization" do
     expected = ["__init__.py", "aerodynamics.py", "aerodynamics_base.py", "cicav.py",
-                "cicav_base.py", "geometry.py", "geometry_base.py", "mda_init.py", 
+                "cicav_base.py", "geometry.py", "geometry_base.py", "mda_init.py",
                 "propulsion.py", "propulsion_base.py",
                 "run_mda.py", "run_mdo.py", "run_doe.py", "run_screening.py"]
     _assert_file_generation expected
@@ -108,7 +108,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     skip "Apache Thrift not installed" unless thrift?
     expected = ["__init__.py", "aerodynamics.py", "aerodynamics_base.py", "cicav.py",
                 "cicav_base.py", "geometry.py", "geometry_base.py", "mda_init.py", "propulsion.py", "propulsion_base.py",
-                "run_mda.py", "run_mdo.py", "run_doe.py", "run_screening.py"] + 
+                "run_mda.py", "run_mdo.py", "run_doe.py", "run_screening.py"] +
                 ["run_server.py", "server/__init__.py", "server/analysis.thrift", "server/cicav/__init__.py",
                 "server/cicav/Cicav-remote", "server/cicav/Cicav.py",
                 "server/cicav/constants.py", "server/cicav_conversions.py",
@@ -124,19 +124,19 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     refute @mda.packaged?
 
     pkg_expected = ["__init__.py", "aerodynamics.py", "aerodynamics_base.py", "cicav.py",
-                "cicav_base.py", "geometry.py", "geometry_base.py", "propulsion.py", "propulsion_base.py"] + 
-                ["egmdo/__init__.py", "egmdo/algorithms.py", "egmdo/cicav_egmda.py", "egmdo/doe_factory.py", 
+                "cicav_base.py", "geometry.py", "geometry_base.py", "propulsion.py", "propulsion_base.py"] +
+                ["egmdo/__init__.py", "egmdo/algorithms.py", "egmdo/cicav_egmda.py", "egmdo/doe_factory.py",
                 "egmdo/gp_factory.py", "egmdo/random_analysis.py", "egmdo/random_vec_analysis.py"] +
                 ["tests/test_aerodynamics.py", "tests/test_geometry.py", "tests/test_propulsion.py"] +
                 ["server/__init__.py", "server/analysis.thrift", "server/cicav/__init__.py",
                 "server/cicav/Cicav-remote", "server/cicav/Cicav.py",
                 "server/cicav/constants.py", "server/cicav_conversions.py",
                 "server/cicav_proxy.py", "server/cicav/ttypes.py",
-                "server/discipline_proxy.py", "server/remote_discipline.py"] 
+                "server/discipline_proxy.py", "server/remote_discipline.py"]
     pkg_name = @mda.impl.py_modulename
-    pkg_expected = pkg_expected.map{|f| "#{pkg_name}/#{f}"}
-    expected = pkg_expected + ["mda_init.py", "run_mda.py", "run_mdo.py", 
-      "run_doe.py", "run_screening.py", "run_server.py", 
+    pkg_expected = pkg_expected.map { |f| "#{pkg_name}/#{f}" }
+    expected = pkg_expected + ["mda_init.py", "run_mda.py", "run_mdo.py",
+      "run_doe.py", "run_screening.py", "run_server.py",
       "run_egdoe.py", "run_egmda.py", "run_egmdo.py"] +
       [".gitignore", "README.md", "pyproject.toml"]
     @ogen_pkg = WhatsOpt::OpenmdaoGenerator.new(@mda, pkg_format: true)
@@ -159,19 +159,19 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     assert File.exist?(ActiveStorage::Blob.service.path_for(@mda.package.archive.key))
 
     pkg_expected = ["__init__.py", "aerodynamics.py", "aerodynamics_base.py", "cicav.py",
-                "cicav_base.py", "geometry.py", "geometry_base.py", "propulsion.py", "propulsion_base.py"] + 
-                ["egmdo/__init__.py", "egmdo/algorithms.py", "egmdo/cicav_egmda.py", "egmdo/doe_factory.py", 
+                "cicav_base.py", "geometry.py", "geometry_base.py", "propulsion.py", "propulsion_base.py"] +
+                ["egmdo/__init__.py", "egmdo/algorithms.py", "egmdo/cicav_egmda.py", "egmdo/doe_factory.py",
                 "egmdo/gp_factory.py", "egmdo/random_analysis.py", "egmdo/random_vec_analysis.py"] +
                 ["tests/test_aerodynamics.py", "tests/test_geometry.py", "tests/test_propulsion.py"] +
                 ["server/__init__.py", "server/analysis.thrift", "server/cicav/__init__.py",
                 "server/cicav/Cicav-remote", "server/cicav/Cicav.py",
                 "server/cicav/constants.py", "server/cicav_conversions.py",
                 "server/cicav_proxy.py", "server/cicav/ttypes.py",
-                "server/discipline_proxy.py", "server/remote_discipline.py"] 
+                "server/discipline_proxy.py", "server/remote_discipline.py"]
     pkg_name = @mda.impl.py_modulename
-    pkg_expected = pkg_expected.map{|f| "#{pkg_name}/#{f}"}
-    expected = pkg_expected + ["mda_init.py", "run_mda.py", "run_mdo.py", 
-      "run_doe.py", "run_screening.py", "run_server.py", 
+    pkg_expected = pkg_expected.map { |f| "#{pkg_name}/#{f}" }
+    expected = pkg_expected + ["mda_init.py", "run_mda.py", "run_mdo.py",
+      "run_doe.py", "run_screening.py", "run_server.py",
       "run_egdoe.py", "run_egmda.py", "run_egmdo.py"] +
       ["README.md", "pyproject.toml"]
 
@@ -325,10 +325,10 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
       ogen._generate_code dir
       dirpath = Pathname.new(dir)
       basenames = ogen.genfiles.map { |f| Pathname.new(f).relative_path_from(dirpath).to_s }.sort
-      expected = (["__init__.py", "disc.py", "disc_base.py", "inner/__init__.py", "inner/inner.py", 
+      expected = (["__init__.py", "disc.py", "disc_base.py", "inner/__init__.py", "inner/inner.py",
         "inner/inner_base.py", "inner/plain_discipline.py",
-        "inner/plain_discipline_base.py", "mda_init.py", "outerpkg.py", "outerpkg_base.py", "run_mda.py", 
-        "run_mdo.py", "run_doe.py", "run_screening.py", "run_server.py", "server/__init__.py", 
+        "inner/plain_discipline_base.py", "mda_init.py", "outerpkg.py", "outerpkg_base.py", "run_mda.py",
+        "run_mdo.py", "run_doe.py", "run_screening.py", "run_server.py", "server/__init__.py",
         "server/analysis.thrift", "server/discipline_proxy.py", "server/outerpkg/Outerpkg-remote",
         "server/outerpkg/Outerpkg.py", "server/outerpkg/__init__.py", "server/outerpkg/constants.py", "server/outerpkg/ttypes.py",
         "server/outerpkg_conversions.py", "server/outerpkg_proxy.py", "vacant_discipline.py", "vacant_discipline_base.py",
@@ -345,14 +345,14 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
       ogen._generate_code dir
       dirpath = Pathname.new(dir)
       basenames = ogen.genfiles.map { |f| Pathname.new(f).relative_path_from(dirpath).to_s }.sort
-      expected = (["outerpkg/__init__.py", "outerpkg/disc.py", "outerpkg/disc_base.py", "outerpkg/inner/__init__.py", "outerpkg/inner/inner.py", 
+      expected = (["outerpkg/__init__.py", "outerpkg/disc.py", "outerpkg/disc_base.py", "outerpkg/inner/__init__.py", "outerpkg/inner/inner.py",
         "outerpkg/inner/inner_base.py", "outerpkg/inner/plain_discipline.py",
-        "outerpkg/inner/plain_discipline_base.py", "mda_init.py", "outerpkg/outerpkg.py", "outerpkg/outerpkg_base.py", "run_mda.py", 
-        "run_mdo.py", "run_doe.py", "run_screening.py", "run_server.py", "outerpkg/server/__init__.py", 
+        "outerpkg/inner/plain_discipline_base.py", "mda_init.py", "outerpkg/outerpkg.py", "outerpkg/outerpkg_base.py", "run_mda.py",
+        "run_mdo.py", "run_doe.py", "run_screening.py", "run_server.py", "outerpkg/server/__init__.py",
         "outerpkg/server/analysis.thrift", "outerpkg/server/discipline_proxy.py", "outerpkg/server/outerpkg/Outerpkg-remote",
         "outerpkg/server/outerpkg/Outerpkg.py", "outerpkg/server/outerpkg/__init__.py", "outerpkg/server/outerpkg/constants.py", "outerpkg/server/outerpkg/ttypes.py",
         "outerpkg/server/outerpkg_conversions.py", "outerpkg/server/outerpkg_proxy.py", "outerpkg/vacant_discipline.py", "outerpkg/vacant_discipline_base.py",
-        "outerpkg/server/remote_discipline.py"]+
+        "outerpkg/server/remote_discipline.py"] +
         [".gitignore", "README.md", "pyproject.toml"]).sort
       assert_equal expected, basenames
     end

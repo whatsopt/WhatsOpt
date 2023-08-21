@@ -11,19 +11,19 @@ class SegomoeOptimizationCstrTest < OptimizationTestBase
     f = Proc.new do |x|
       x1 = x[0]
       x2 = x[1]
-      -x1 -x2
+      -x1 - x2
     end
 
     g1 = Proc.new do |x|
       x1 = x[0]
       x2 = x[1]
-      - 2.0 * x1 ** 4.0 + 8.0 * x1 ** 3.0 - 8.0 * x1 ** 2.0 + x2 - 2.0
+      - 2.0 * x1**4.0 + 8.0 * x1**3.0 - 8.0 * x1**2.0 + x2 - 2.0
     end
 
     g2 = Proc.new do |x|
       x1 = x[0]
       x2 = x[1]
-      -4.0 * x1 ** 4.0 + 32.0 * x1 ** 3.0 - 88.0 * x1 ** 2.0 + 96.0 * x1 + x2 - 36.0
+      -4.0 * x1**4.0 + 32.0 * x1**3.0 - 88.0 * x1**2.0 + 96.0 * x1 + x2 - 36.0
     end
 
     xlimits = [[0, 3], [0, 4]]

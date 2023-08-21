@@ -1,7 +1,7 @@
 # Use this hook to configure devise mailer, warden hooks and so forth.
 # Many of these configuration options can be set straight in your model.
 Devise.setup do |config|
-  # ==> LDAP Configuration 
+  # ==> LDAP Configuration
   config.ldap_logger = true
   config.ldap_create_user = true
   # config.ldap_update_password = true
@@ -21,7 +21,7 @@ Devise.setup do |config|
   # confirmation, reset password and unlock tokens in the database.
   # Devise will use the `secret_key_base` as its `secret_key`
   # by default. You can change it below and use your own secret key.
-  #config.secret_key = '45e33e6c1a44224007b3401711c7b2a05b6489e5b2e1c5762626e6e4f5ee190f7d4c3cd1bd844514970870b9741b3b4ed8fe4474b4dd9c85de25d388f2149337'
+  # config.secret_key = '45e33e6c1a44224007b3401711c7b2a05b6489e5b2e1c5762626e6e4f5ee190f7d4c3cd1bd844514970870b9741b3b4ed8fe4474b4dd9c85de25d388f2149337'
 
   # ==> Mailer Configuration
   # Configure the e-mail address which will be shown in Devise::Mailer,
@@ -287,6 +287,3 @@ Devise.setup do |config|
   # so you need to do it manually. For the users scope, it would be:
   # config.omniauth_path_prefix = '/my_engine/users/auth'
 end
-
-
-

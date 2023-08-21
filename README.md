@@ -5,7 +5,7 @@
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 
 # WhatsOpt [![WhatsOpt](https://github.com/OneraHub/WhatsOpt/blob/master/app/assets/images/favicon-32.png)](https://github.com/OneraHub/WhatsOpt)
-WhatsOpt is a Ruby on Rails web application allowing to define and share multi-disciplinary analyses in terms of disciplines and data exchange. It was developed to support overall vehicle design activities at ONERA. 
+WhatsOpt is a Ruby on Rails web application allowing to define and share multi-disciplinary analyses in terms of disciplines and data exchange. It was developed to support overall vehicle design activities at ONERA.
 
 From this high-level modeling, users can generate source code skeleton required to plug the actual implementation of their disciplines and get an actual executable model of the vehicle concept under study. Users can also generate code to run numerical methods such as sensitivity analysis, design of experiments, metamodel construction and optimizations.
 
@@ -26,7 +26,7 @@ or if you use Bibtex, you can use the following entry:
 <pre>
 @inproceedings{lafage2019whatsopt,
   title={WhatsOpt: a web application for multidisciplinary design analysis and optimization},
-  doi={10.2514/6.2019-2990}, 
+  doi={10.2514/6.2019-2990},
   url={https://doi.org/10.2514/6.2019-2990}
   author={Lafage, R{\'e}mi and Defoort, Sebastien and Lefebvre, Thierry},
   booktitle={AIAA Aviation 2019 Forum},
@@ -37,6 +37,6 @@ or if you use Bibtex, you can use the following entry:
 
 ## Contact
 
-WhatsOpt was created by Rémi Lafage for and thanks to the _MDO and Integrated Concepts_ team at [ONERA, the French Aerospace Lab](https://www.onera.fr/en). 
+WhatsOpt was created by Rémi Lafage for and thanks to the _MDO and Integrated Concepts_ team at [ONERA, the French Aerospace Lab](https://www.onera.fr/en).
 
 Contact: remi [dot] lafage [at] onera [dot] fr

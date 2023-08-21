@@ -51,7 +51,7 @@ class Api::V1::UserRolesController < Api::ApiController
     authorize mda, :destroy?
     if params[:user_role][:role]
       if params[:user_role][:role] == "member"
-        mda.remove_member user        
+        mda.remove_member user
       elsif params[:user_role][:role] == "co_owner"
         mda.remove_co_owner user
       end

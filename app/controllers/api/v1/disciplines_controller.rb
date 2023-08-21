@@ -11,7 +11,7 @@ class Api::V1::DisciplinesController < Api::V1::ApiMdaUpdaterController
   def index
     @mda = Analysis.find(params[:mda_id])
     authorize @mda, :show?
-    disciplines =  policy_scope(Discipline).where(analysis: @mda) 
+    disciplines = policy_scope(Discipline).where(analysis: @mda)
     json_response disciplines
   end
 
@@ -62,7 +62,7 @@ class Api::V1::DisciplinesController < Api::V1::ApiMdaUpdaterController
     end
 
     def discipline_params
-      params.require(:discipline).permit(:name, :analysis_id, :type, :position, 
+      params.require(:discipline).permit(:name, :analysis_id, :type, :position,
                                          endpoint_attributes: [:id, :host, :port, :_destroy],
                                          analysis_discipline_attributes: [:discipline_id, :analysis_id])
     end

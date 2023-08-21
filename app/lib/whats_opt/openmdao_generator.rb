@@ -5,7 +5,6 @@ require "whats_opt/server_generator"
 
 module WhatsOpt
   class OpenmdaoGenerator < CodeGenerator
-
     class DisciplineNotFoundException < StandardError
     end
 
@@ -34,17 +33,17 @@ module WhatsOpt
 
     def to_run_method(category)
       case category.to_s
-      when Operation::CAT_RUNONCE 
+      when Operation::CAT_RUNONCE
         "mda"
       when Operation::CAT_DOE
         "doe"
       when Operation::CAT_EGDOE
         "egdoe"
       when Operation::CAT_OPTIMIZATION
-        "mdo" 
+        "mdo"
       when Operation::CAT_EGMDO
-        "egmdo" 
-      else 
+        "egmdo"
+      else
         Rails.logger.error "Operation category #{category} has no run method equivalent"
         "Unknown_operation_for_category_#{category}"
       end
@@ -123,7 +122,7 @@ module WhatsOpt
       if opts[:with_src_dir]
         src_dir = File.join(gendir, "src")
         Dir.mkdir(src_dir) unless Dir.exist?(src_dir)
-      else 
+      else
         src_dir = gendir
       end
       pkg_dir = package_dir? ? File.join(src_dir, @impl.py_modulename) : src_dir
@@ -172,7 +171,7 @@ module WhatsOpt
     # options: sqlite_filename=nil
     def _generate_sub_analysis(super_discipline, gendir, options = {})
       mda = super_discipline.sub_analysis
-      sub_ogen = OpenmdaoGenerator.new(mda, server_host: @server_host, remote_ip: @remote_ip, 
+      sub_ogen = OpenmdaoGenerator.new(mda, server_host: @server_host, remote_ip: @remote_ip,
         pkg_format: !@pkg_prefix.blank?, driver_name: @driver_name, driver_options: @driver_options)
       gendir = File.join(gendir, mda.impl.basename)
       Dir.mkdir(gendir) unless Dir.exist?(gendir)
@@ -195,7 +194,7 @@ module WhatsOpt
       else
         # should be simple run_once driver
         if @driver.class != WhatsOpt::OpenmdaoRunOnceDriver
-          raise RuntimeError.new("Ouch! Should be run_once driver got #{@driver.inspect}")  
+          raise RuntimeError.new("Ouch! Should be run_once driver got #{@driver.inspect}")
         end
       end
     end
@@ -223,7 +222,7 @@ module WhatsOpt
         else
           # should be simple run_once driver
           if @driver.class != WhatsOpt::OpenmdaoRunOnceDriver
-            raise RuntimeError.new("Ouch! Should be run_once driver got #{@driver.inspect}")  
+            raise RuntimeError.new("Ouch! Should be run_once driver got #{@driver.inspect}")
           end
         end
       elsif (options[:with_runops] || @mda.is_root_analysis?)
@@ -257,13 +256,12 @@ module WhatsOpt
       if @mda.packaged?
         # Package is attached, use it!
         @genfiles |= WhatsOpt::PackageExtractor.new(@mda).extract(gendir)
-      else 
+      else
         # no package => generate package skeleton
         _generate(".gitignore", "package/gitignore.erb", gendir, no_comment: true)
         _generate("README.md", "package/README.md.erb", gendir, no_comment: true)
         _generate("pyproject.toml", "package/pyproject.toml.erb", gendir, no_comment: true)
       end
     end
-
   end
 end

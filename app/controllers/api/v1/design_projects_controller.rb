@@ -27,7 +27,7 @@ class Api::V1::DesignProjectsController < Api::ApiController
   # GET /api/v1/design_projects/1
   def show
     @project = DesignProject.find(params[:id])
-    if params[:format]  == "wopjson"  # wop pull --json
+    if params[:format] == "wopjson"  # wop pull --json
       authorize @project, :destroy?   # only owner can export a project
       json_response @project, :ok, serializer: DesignProjectAttrsSerializer
     else # Design project public REST API
@@ -37,7 +37,6 @@ class Api::V1::DesignProjectsController < Api::ApiController
   end
 
 private
-
   def project_params
     params.require(:project).permit(
       :name,
@@ -54,7 +53,6 @@ private
                                 scaling_attributes: [:ref, :ref0, :res_ref]
                               ],
                               sub_analysis_attributes: {}
-                            ]]) 
+                            ]])
   end
-
 end

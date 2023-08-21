@@ -31,7 +31,7 @@ class OpenmdaoDriverFactoryTest < ActiveSupport::TestCase
     assert_equal("onerasego_optimizer", @driver.lib)
     assert_equal("segomoe", @driver.algo)
     assert_equal({}, @driver.options)
-    assert_equal({"maxiter"=>100, "n_clusters"=>2, "optimizer"=>"'cobyla'", "size_doe"=>10}, @driver.opt_settings)
+    assert_equal({ "maxiter" => 100, "n_clusters" => 2, "optimizer" => "'cobyla'", "size_doe" => 10 }, @driver.opt_settings)
   end
 
   test "should create an egor driver" do
@@ -42,7 +42,7 @@ class OpenmdaoDriverFactoryTest < ActiveSupport::TestCase
     assert_equal("egobox_optimizer", @driver.lib)
     assert_equal("egor", @driver.algo)
     assert_equal({}, @driver.options)
-    assert_equal({"n_clusters"=>2, "maxiter"=>100, "cstr_tol"=>0.0001, "infill_strategy"=>"egx.InfillStrategy.WB2", "infill_optimizer"=>"egx.InfillOptimizer.SLSQP", "regr_spec"=>"egx.RegressionSpec.CONSTANT", "corr_spec"=>"egx.CorrelationSpec.SQUARED_EXPONENTIAL"}, @driver.opt_settings)
+    assert_equal({ "n_clusters" => 2, "maxiter" => 100, "cstr_tol" => 0.0001, "infill_strategy" => "egx.InfillStrategy.WB2", "infill_optimizer" => "egx.InfillOptimizer.SLSQP", "regr_spec" => "egx.RegressionSpec.CONSTANT", "corr_spec" => "egx.CorrelationSpec.SQUARED_EXPONENTIAL" }, @driver.opt_settings)
   end
 
   test "should reject bad-formed option hash" do

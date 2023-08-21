@@ -1,16 +1,15 @@
 # frozen_string_literal: true
 
 class Journal < ApplicationRecord
-
   belongs_to :analysis
   belongs_to :user
   has_many :details, class_name: "JournalDetail", dependent: :delete_all
 
   ADD_ACTION = :add
-  CHANGE_ACTION = :change 
+  CHANGE_ACTION = :change
   REMOVE_ACTION = :remove
   COPY_ACTION = :copy
-  ACTIONS = [ADD_ACTION, CHANGE_ACTION, REMOVE_ACTION, COPY_ACTION] 
+  ACTIONS = [ADD_ACTION, CHANGE_ACTION, REMOVE_ACTION, COPY_ACTION]
 
   def save(*args)
     details.empty? ? false : super()
@@ -34,7 +33,7 @@ class Journal < ApplicationRecord
       before = old_attrs[attr_name].to_s || ""
       after = journalized.send(attr_name).to_s
       unless before == after || (before.blank? && after.blank?)
-        # Ensure value size less than 255 characters which correspond to field string max size in db 
+        # Ensure value size less than 255 characters which correspond to field string max size in db
         before = before.truncate(30)
         after = after.truncate(30)
         add_change_detail(journalized.class.name, journalized.name, attr_name, before, after)

@@ -30,7 +30,7 @@ class Discipline < ApplicationRecord
 
   accepts_nested_attributes_for :variables, reject_if: proc { |attrs| attrs["name"].blank? }, allow_destroy: true
   accepts_nested_attributes_for :sub_analysis, reject_if: proc { |attrs| attrs["name"].blank? }, allow_destroy: true
-  accepts_nested_attributes_for :endpoint, reject_if: proc { |attrs| attrs["host"].blank? || attrs["host"]=="localhost" }, allow_destroy: true
+  accepts_nested_attributes_for :endpoint, reject_if: proc { |attrs| attrs["host"].blank? || attrs["host"] == "localhost" }, allow_destroy: true
   accepts_nested_attributes_for :analysis_discipline, reject_if: :analysis_discipline_invalid?, allow_destroy: true
 
   validates :name, presence: true, allow_blank: false
@@ -64,22 +64,22 @@ class Discipline < ApplicationRecord
 
   def input_coupling_variables
     @couplings ||= analysis.coupling_variables.map(&:name)
-    input_variables.select{|v| @couplings.include?(v.name)}
+    input_variables.select { |v| @couplings.include?(v.name) }
   end
 
   def design_variables
     desvars = analysis.design_variables.map(&:name)
-    input_variables.select{|v| desvars.include?(v.name)}
+    input_variables.select { |v| desvars.include?(v.name) }
   end
 
   def output_coupling_variables
     @couplings ||= analysis.coupling_variables.map(&:name)
-    output_variables.select{|v| @couplings.include?(v.name)}
+    output_variables.select { |v| @couplings.include?(v.name) }
   end
 
   def has_out_coupling?
     @couplings ||= analysis.coupling_variables.map(&:name)
-    @has_out_coupling ||= output_variables.select{|v| @couplings.include?(v.name)}.empty?
+    @has_out_coupling ||= output_variables.select { |v| @couplings.include?(v.name) }.empty?
   end
 
   def is_driver?
@@ -149,7 +149,7 @@ class Discipline < ApplicationRecord
       insert_at(params[:position])
     end
     update!(params)
-    if sub_analysis 
+    if sub_analysis
       if type == WhatsOpt::Discipline::ANALYSIS || type == WhatsOpt::Discipline::OPTIMIZATION
         self.sub_analysis.parent = self.analysis
         self.sub_analysis.name = self.name
@@ -240,7 +240,7 @@ class Discipline < ApplicationRecord
     end
 
     varattrs = ActiveModelSerializers::SerializableResource.new(vars,
-          each_serializer: VariableSerializer).as_json 
+          each_serializer: VariableSerializer).as_json
     {
       name: self.name,
       type: self.type,
@@ -248,11 +248,11 @@ class Discipline < ApplicationRecord
     }
   end
 
-  def is_sub_analysis_connected_by?(var) 
+  def is_sub_analysis_connected_by?(var)
     if has_sub_analysis?
       sub_driver = sub_analysis.driver
       !(sub_driver.variables.where(name: var.name, io_mode: var.reflected_io_mode).empty?)
-    else 
+    else
       false
     end
   end

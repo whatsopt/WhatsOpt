@@ -16,14 +16,14 @@ class OpenmdaoAnalysisImpl < ActiveRecord::Base
 
   validates :analysis, presence: true
   validates :package_name, presence: true
-  validates :package_name, format: { with: /\A[a-z]+[_a-z0-9]*\z/, message: "should follow PEP8 recommendation for Python package names"}
+  validates :package_name, format: { with: /\A[a-z]+[_a-z0-9]*\z/, message: "should follow PEP8 recommendation for Python package names" }
   NULL_PACKAGE_NAME = "pkg_place_holder"
 
-  def name 
+  def name
     self.analysis.name
   end
 
-  def path 
+  def path
     self.analysis.path
   end
 
@@ -92,15 +92,15 @@ class OpenmdaoAnalysisImpl < ActiveRecord::Base
 
   def egmdo_support_derivatives?
     analysis.all_plain_disciplines
-      .select{|d| !d.openmdao_impl.egmdo_surrogate && !d.openmdao_impl.support_derivatives} 
+      .select { |d| !d.openmdao_impl.egmdo_surrogate && !d.openmdao_impl.support_derivatives }
       .empty?
   end
 
   def support_derivatives?
     analysis.all_plain_disciplines
-      .select{|d| 
+      .select { |d|
         !d.openmdao_impl.support_derivatives
-      } 
+      }
       .empty?
   end
 

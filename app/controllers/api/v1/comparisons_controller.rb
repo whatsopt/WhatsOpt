@@ -14,7 +14,7 @@ class Api::V1::ComparisonsController < Api::ApiController
     authorize mda
     authorize other
 
-    diff = WhatsOpt::AnalysisDiff.compare(other, mda) 
+    diff = WhatsOpt::AnalysisDiff.compare(other, mda)
 
     render plain: diff
   end

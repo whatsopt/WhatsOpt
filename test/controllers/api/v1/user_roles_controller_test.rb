@@ -14,7 +14,7 @@ class Api::V1::UserRolesControllerTest < ActionDispatch::IntegrationTest
     resp = JSON.parse(response.body)
     user3 = users(:user3)
     user4 = users(:user4)
-    assert_equal [user3, user4].map{|u| {"id" => u.id, "login" => u.login }}, resp
+    assert_equal [user3, user4].map { |u| { "id" => u.id, "login" => u.login } }, resp
   end
 
   test "should search for co_owners" do
@@ -32,7 +32,7 @@ class Api::V1::UserRolesControllerTest < ActionDispatch::IntegrationTest
     user2 = users(:user2)
     user5 = users(:user5)
     admin = users(:admin)
-    assert_equal [admin.id, user5.id, user2.id], resp.map{|u| u["id"]}
+    assert_equal [admin.id, user5.id, user2.id], resp.map { |u| u["id"] }
   end
 
   test "should add a member" do

@@ -24,7 +24,7 @@ class Api::V1::OptimizationControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     resp = JSON.parse(response.body)
     assert_equal "SEGOMOE", resp["kind"]
-    assert_equal(resp["config"], {"xlimits" => [[-32.768, 32.768], [-32.768, 32.768]], "options"=>{}, "n_obj"=>1, "cstr_specs"=>[], "xtypes"=>[]})
+    assert_equal(resp["config"], { "xlimits" => [[-32.768, 32.768], [-32.768, 32.768]], "options" => {}, "n_obj" => 1, "cstr_specs" => [], "xtypes" => [] })
   end
 
   test "should raise error on xlimits absence" do
@@ -65,14 +65,14 @@ class Api::V1::OptimizationControllerTest < ActionDispatch::IntegrationTest
     assert_equal 0, status
     x = resp["outputs"]["x_suggested"]
     # value not checked as optim is stochastic
-    #assert_in_delta(0.85, x[0], 0.5)
-    #assert_in_delta(0.66, x[1], 0.5)
+    # assert_in_delta(0.85, x[0], 0.5)
+    # assert_in_delta(0.66, x[1], 0.5)
 
     get api_v1_optimization_url(@optim), as: :json, headers: @auth_headers
     assert_response :success
     resp = JSON.parse(response.body)
-    #assert_in_delta(0.85, resp["outputs"]["x_suggested"][0], 0.5)
-    #assert_in_delta(0.66, resp["outputs"]["x_suggested"][1], 0.5)
+    # assert_in_delta(0.85, resp["outputs"]["x_suggested"][0], 0.5)
+    # assert_in_delta(0.66, resp["outputs"]["x_suggested"][1], 0.5)
 
     optimizer_pkl = File.join(Rails.root, "upload", "store", "optimizer_#{@optim.id}.pkl")
     logfile = File.join(Rails.root, "log", "optimizations", "optim_#{@optim.id}.log")
@@ -89,7 +89,7 @@ class Api::V1::OptimizationControllerTest < ActionDispatch::IntegrationTest
   test "should not be able to create too many optimizations" do
     skip_if_parallel
     skip_if_segomoe_not_installed
-    Optimization::MAX_OPTIM_NUMBER.times do |_| 
+    Optimization::MAX_OPTIM_NUMBER.times do |_|
       post api_v1_optimizations_url,
         params: { optimization: { kind: "SEGOMOE",
                                   xlimits: [[-32.768, 32.768], [-32.768, 32.768]],
@@ -97,7 +97,7 @@ class Api::V1::OptimizationControllerTest < ActionDispatch::IntegrationTest
                   },
         as: :json, headers: @auth_headers
     end
-    post api_v1_optimizations_url, params: { optimization: { kind: "SEGOMOE", xlimits: ["1, 2", "3, 4"] }},
+    post api_v1_optimizations_url, params: { optimization: { kind: "SEGOMOE", xlimits: ["1, 2", "3, 4"] } },
         as: :json, headers: @auth_headers
     assert_response :bad_request
     assert_equal Optimization::MAX_OPTIM_NUMBER, Optimization.owned_by(users(:user1)).size

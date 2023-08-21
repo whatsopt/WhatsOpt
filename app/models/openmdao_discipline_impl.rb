@@ -9,11 +9,11 @@ class OpenmdaoDisciplineImpl < ActiveRecord::Base
 
   validates :discipline, presence: true
 
-  def name 
+  def name
     self.discipline.name
   end
 
-  def path 
+  def path
     self.discipline.path
   end
 
@@ -26,7 +26,7 @@ class OpenmdaoDisciplineImpl < ActiveRecord::Base
   end
 
   def openmdao_component_baseclass
-    if self.implicit_component 
+    if self.implicit_component
       "om.ImplicitComponent"
     elsif self.discipline.is_sub_optimization?
       "om.SubmodelComponent"

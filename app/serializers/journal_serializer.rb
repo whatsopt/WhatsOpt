@@ -7,5 +7,4 @@ class JournalSerializer < ActiveModel::Serializer
   def author
     object.user.login
   end
-
 end

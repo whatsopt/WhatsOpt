@@ -85,5 +85,4 @@ class Api::V1::ConnectionsController < Api::V1::ApiMdaUpdaterController
                                          scaling_attributes: [:id, :_destroy, :ref, :ref0, :res_ref],
                                          distributions_attributes: [:id, :_destroy, :kind, options_attributes: [:id, :_destroy, :name, :value]])
     end
-
 end

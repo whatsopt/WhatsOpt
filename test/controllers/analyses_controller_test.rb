@@ -66,7 +66,7 @@ class AnalysesControllerTest < ActionDispatch::IntegrationTest
     get mda_url(Analysis.last)
     assert_response :success
   end
-  
+
   test "should authorized access to members" do
     sign_in users(:user3)
     get mda_url(@cicav)
@@ -163,7 +163,7 @@ class AnalysesControllerTest < ActionDispatch::IntegrationTest
       post mdas_url, params: { mda_id: @cicav.id }
       assert_redirected_to mda_url(Analysis.last)
     end
-    copy =  Analysis.last
+    copy = Analysis.last
     assert_equal @cicav.disciplines.count, copy.disciplines.count
 
     assert_equal user2, copy.owner

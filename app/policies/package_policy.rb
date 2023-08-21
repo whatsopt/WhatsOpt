@@ -15,7 +15,7 @@ class PackagePolicy < ApplicationPolicy
     end
   end
 
-  # Only the owner of the corresponding analysis can create package 
+  # Only the owner of the corresponding analysis can create package
   def create?
     enable_wopstore? && @user.has_role?(:owner, @record.analysis)
   end

@@ -18,13 +18,13 @@ module Devise
             end
           else
             fail
-          end 
+          end
         else
           halt!
-        end 
-      end 
-    end 
-  end 
+        end
+      end
+    end
+  end
 end
 
 Warden::Strategies.add(:local_override, Devise::Strategies::LocalOverride)

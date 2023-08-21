@@ -13,12 +13,12 @@ class PythonUtilsTest < ActiveSupport::TestCase
   end
 
   test "should parse 'np.ones((2,3))' as array of float" do
-    assert_equal [1.0]*6, str_to_ary("np.ones((2,3))")
+    assert_equal [1.0] * 6, str_to_ary("np.ones((2,3))")
   end
 
   test "should raise exception when str is invalid" do
     assert_raises ArrayParseError do
-      assert_equal [1.0]*6, str_to_ary("[2,3")
+      assert_equal [1.0] * 6, str_to_ary("[2,3")
     end
   end
 

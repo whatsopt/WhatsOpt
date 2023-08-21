@@ -70,6 +70,5 @@ module WhatsOpt
         end
       end
     end
-
   end
 end

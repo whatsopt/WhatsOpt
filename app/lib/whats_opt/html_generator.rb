@@ -51,9 +51,8 @@ TEMPLATE = <<HTML
 HTML
 
 module WhatsOpt
-  class HtmlGenerator 
-
-    def initialize(mda, url:nil)
+  class HtmlGenerator
+    def initialize(mda, url: nil)
       @mda = mda
       @basename = "xdsm"
       @content = ""
@@ -61,7 +60,7 @@ module WhatsOpt
     end
 
     def generate
-      root = "#{File.dirname(__FILE__)}/../../.." 
+      root = "#{File.dirname(__FILE__)}/../../.."
       @xdsm_css = File.open("#{root}/node_modules/xdsmjs/xdsmjs.css").read
       @xdsm_js = File.open("#{root}/node_modules/xdsmjs/dist/xdsmjs.js").read
       @xdsm_json = @mda.to_xdsm_json

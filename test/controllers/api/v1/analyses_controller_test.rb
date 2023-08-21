@@ -26,7 +26,7 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     get api_v1_mdas_url(all: true), as: :json, headers: @auth_headers
     assert_response :success
     analyses = JSON.parse(response.body)
-    assert_equal Analysis.count-2, analyses.size # ALL - {user2 private, one sub-analysis}
+    assert_equal Analysis.count - 2, analyses.size # ALL - {user2 private, one sub-analysis}
     mda = analyses[0]
     assert_equal ["created_at", "id", "name", "updated_at"], mda.keys.sort
   end
@@ -71,14 +71,14 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
   test "should create a transient sellar mda without requiring authorization when asking for the xdsm format" do
     assert_difference("Analysis.count", 0) do
       params = { 'analysis': { 'name': "Sellar", 'disciplines_attributes': [{ 'name': "__DRIVER__", 'variables_attributes': [{ 'name': "x", 'io_mode': "out", 'type': "Float", 'shape': "1", 'units': nil, 'desc': "", 'parameter_attributes': { 'init': "2.0" }, 'scaling_attributes': { 'ref': "3.0" } }, { 'name': "z", 'io_mode': "out", 'type': "Float", 'shape': "(2,)", 'units': nil, 'desc': "", 'parameter_attributes': { 'init': "[5.0, 2.0]" } }, { 'name': "obj", 'io_mode': "in", 'type': "Float", 'shape': "1", 'units': nil, 'desc': "" }, { 'name': "g1", 'io_mode': "in", 'type': "Float", 'shape': "1", 'units': nil, 'desc': "constraint" }, { 'name': "g2", 'io_mode': "in", 'type': "Float", 'shape': "1", 'units': nil, 'desc': "" }] }, { 'name': "Disc1", 'variables_attributes': [{ 'name': "x", 'io_mode': "in", 'type': "Float", 'shape': "1", 'units': nil, 'desc': "" }, { 'name': "y2", 'io_mode': "in", 'type': "Float", 'shape': "1", 'units': nil, 'desc': "" }, { 'name': "z", 'io_mode': "in", 'type': "Float", 'shape': "(2,)", 'units': nil, 'desc': "" }, { 'name': "y1", 'io_mode': "out", 'type': "Float", 'shape': "1", 'units': nil, 'desc': "" }] }, { 'name': "Disc2", 'variables_attributes': [{ 'name': "y2", 'io_mode': "out", 'type': "Float", 'shape': "1", 'units': nil, 'desc': "" }, { 'name': "y1", 'io_mode': "in", 'type': "Float", 'shape': "1", 'units': nil, 'desc': "" }, { 'name': "z", 'io_mode': "in", 'type': "Float", 'shape': "(2,)", 'units': nil, 'desc': "" }] }, { 'name': "Functions", 'variables_attributes': [{ 'name': "x", 'io_mode': "in", 'type': "Float", 'shape': "1", 'units': nil, 'desc': "" }, { 'name': "y1", 'io_mode': "in", 'type': "Float", 'shape': "1", 'units': nil, 'desc': "" }, { 'name': "y2", 'io_mode': "in", 'type': "Float", 'shape': "1", 'units': nil, 'desc': "" }, { 'name': "z", 'io_mode': "in", 'type': "Float", 'shape': "(2,)", 'units': nil, 'desc': "" }, { 'name': "obj", 'io_mode': "out", 'type': "Float", 'shape': "1", 'units': nil, 'desc': "" }, { 'name': "g1", 'io_mode': "out", 'type': "Float", 'shape': "1", 'units': nil, 'desc': "constraint" }, { 'name': "g2", 'io_mode': "out", 'type': "Float", 'shape': "1", 'units': nil, 'desc': "" }] }] } }
-      post api_v1_mdas_url(format: "xdsm"), params: params, as: :json 
+      post api_v1_mdas_url(format: "xdsm"), params: params, as: :json
       assert_response :success
       # resp = JSON.parse(response.body)
     end
   end
 
   test "should update a mda" do
-    put api_v1_mda_url(@mda), params: { analysis: { name: "TestNewName"}, requested_at: Time.now }, as: :json, headers: @auth_headers
+    put api_v1_mda_url(@mda), params: { analysis: { name: "TestNewName" }, requested_at: Time.now }, as: :json, headers: @auth_headers
     assert_response :success
     get api_v1_mda_url(@mda), as: :json, headers: @auth_headers
     assert_response :success
@@ -115,28 +115,28 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     assert_difference("Discipline.count", 4) do
       assert_difference("Analysis.count", 2) do
         assert_difference("AnalysisDiscipline.count", 1) do
-        mda_attrs =
-          { "name": "Outer", "disciplines_attributes": [
-            { "name": "__DRIVER__", "variables_attributes": [
-              { "name": "x", "io_mode": "out", "type": "Float", "shape": "1", "units": "", "desc": "",
-                    "parameter_attributes": { "init": "2.0" } },
-              { "name": "y", "io_mode": "in", "type": "Float", "shape": "1", "units": "" }] },
-            { "name": "InnerDiscipline", "sub_analysis_attributes":
-              { "name": "InnerDiscipline", "disciplines_attributes": [
-                { "name": "__DRIVER__", "variables_attributes": [
-                    { "name": "x", "io_mode": "out", "type": "Float", "shape": "1", "units": "",  "desc": "",
-                        "parameter_attributes": { "init": "2.0" } },
-                    { "name": "y", "io_mode": "in", "type": "Float", "shape": "1", "units": "",  "desc": "" }] },
-                { "name": "Disc", "variables_attributes": [
-                  { "name": "x", "io_mode": "in", "type": "Float", "shape": "1", "units": "",  "desc": "",
-                    "parameter_attributes": { "init": "2.0" } },
-                  { "name": "y", "io_mode": "out", "type": "Float", "shape": "1", "units": "",  "desc": "" }
+          mda_attrs =
+            { "name": "Outer", "disciplines_attributes": [
+              { "name": "__DRIVER__", "variables_attributes": [
+                { "name": "x", "io_mode": "out", "type": "Float", "shape": "1", "units": "", "desc": "",
+                      "parameter_attributes": { "init": "2.0" } },
+                { "name": "y", "io_mode": "in", "type": "Float", "shape": "1", "units": "" }] },
+              { "name": "InnerDiscipline", "sub_analysis_attributes":
+                { "name": "InnerDiscipline", "disciplines_attributes": [
+                  { "name": "__DRIVER__", "variables_attributes": [
+                      { "name": "x", "io_mode": "out", "type": "Float", "shape": "1", "units": "",  "desc": "",
+                          "parameter_attributes": { "init": "2.0" } },
+                      { "name": "y", "io_mode": "in", "type": "Float", "shape": "1", "units": "",  "desc": "" }] },
+                  { "name": "Disc", "variables_attributes": [
+                    { "name": "x", "io_mode": "in", "type": "Float", "shape": "1", "units": "",  "desc": "",
+                      "parameter_attributes": { "init": "2.0" } },
+                    { "name": "y", "io_mode": "out", "type": "Float", "shape": "1", "units": "",  "desc": "" }
+                  ] }
                 ] }
-              ] }
-            }
-          ] }
-        post api_v1_mdas_url, params: { analysis: mda_attrs }, as: :json, headers: @auth_headers
-        assert_response :success
+              }
+            ] }
+          post api_v1_mdas_url, params: { analysis: mda_attrs }, as: :json, headers: @auth_headers
+          assert_response :success
         end
       end
     end
@@ -159,36 +159,36 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     assert_difference("Discipline.count", 0) do
       assert_difference("Analysis.count", 0) do
         assert_difference("AnalysisDiscipline.count", 0) do
-        mda_attrs =
-          { "name": "Outer", "disciplines_attributes": [
-            { "name": "__DRIVER__", "variables_attributes": [
-              { "name": "x", "io_mode": "out", "type": "Float", "shape": "1", "units": "", "desc": "",
-                    "parameter_attributes": { "init": "2.0" } },
-              { "name": "y", "io_mode": "in", "type": "Float", "shape": "1", "units": "" }] },
-            { "name": "InnerDiscipline", "sub_analysis_attributes":
-              { "name": "InnerDiscipline", "disciplines_attributes": [
-                { "name": "__DRIVER__", "variables_attributes": [
-                    { "name": "x", "io_mode": "out", "type": "Float", "shape": "1", "units": "",  "desc": "",
-                        "parameter_attributes": { "init": "2.0" } },
-                    { "name": "y", "io_mode": "in", "type": "Float", "shape": "1", "units": "",  "desc": "" }] },
-                { "name": "Disc", "variables_attributes": [
-                  { "name": "x", "io_mode": "in", "type": "Float", "shape": "1", "units": "",  "desc": "",
-                    "parameter_attributes": { "init": "2.0" } },
-                  { "name": "y", "io_mode": "out", "type": "Float", "shape": "1", "units": "",  "desc": "" }
+          mda_attrs =
+            { "name": "Outer", "disciplines_attributes": [
+              { "name": "__DRIVER__", "variables_attributes": [
+                { "name": "x", "io_mode": "out", "type": "Float", "shape": "1", "units": "", "desc": "",
+                      "parameter_attributes": { "init": "2.0" } },
+                { "name": "y", "io_mode": "in", "type": "Float", "shape": "1", "units": "" }] },
+              { "name": "InnerDiscipline", "sub_analysis_attributes":
+                { "name": "InnerDiscipline", "disciplines_attributes": [
+                  { "name": "__DRIVER__", "variables_attributes": [
+                      { "name": "x", "io_mode": "out", "type": "Float", "shape": "1", "units": "",  "desc": "",
+                          "parameter_attributes": { "init": "2.0" } },
+                      { "name": "y", "io_mode": "in", "type": "Float", "shape": "1", "units": "",  "desc": "" }] },
+                  { "name": "Disc", "variables_attributes": [
+                    { "name": "x", "io_mode": "in", "type": "Float", "shape": "1", "units": "",  "desc": "",
+                      "parameter_attributes": { "init": "2.0" } },
+                    { "name": "y", "io_mode": "out", "type": "Float", "shape": "1", "units": "",  "desc": "" }
+                  ] }
                 ] }
-              ] }
-            }
-          ] }
-        post api_v1_mdas_url(format: :xdsm, analysis: mda_attrs), as: :json, headers: @auth_headers
-        assert_response :success
-        resp = JSON.parse(response.body)
-        assert_equal ["root", "InnerDiscipline"], resp.keys
+              }
+            ] }
+          post api_v1_mdas_url(format: :xdsm, analysis: mda_attrs), as: :json, headers: @auth_headers
+          assert_response :success
+          resp = JSON.parse(response.body)
+          assert_equal ["root", "InnerDiscipline"], resp.keys
         end
       end
     end
     ActiveRecord::Base.connected_to(role: :writing, shard: :scratch) do
       assert_equal 0, Analysis.count
-    end 
+    end
   end
 
   test "should create nested sellar analysis" do
@@ -245,28 +245,28 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should import a discipline from another analysis" do
-    # beforeConnsNb = Connection.of_analysis(@mda).size
-    mda = analyses(:singleton)
-    mda.package.destroy!  # remove package to avoid forbidden error (cannot import if analysis is packaged)
-    mda2 = analyses(:innermda)
-    disc = disciplines(:innermda_discipline)
-    put api_v1_mda_url(mda), params: { analysis: { import: { analysis: mda2.id, disciplines: [disc.id] } }, requested_at: Time.now },
-        as: :json, headers: @auth_headers3
-    assert_response :success
-    mda.reload
-    newDisc = mda.disciplines.last
-    assert_equal disc.name, newDisc.name
-    assert_equal 7, Connection.of_analysis(mda).count
-    # Connection.of_analysis(mda).each do |conn|
-    #   puts "Connection #{conn.from.name} from #{conn.from.discipline.name} to #{conn.to.discipline.name}"
-    # end
-    # Connection u from __DRIVER__ to SingletonDiscipline
-    # Connection x2 from __DRIVER__ to PlainDiscipline
-    # Connection y1 from __DRIVER__ to PlainDiscipline
-    # Connection z from __DRIVER__ to PlainDiscipline
-    # Connection v from SingletonDiscipline to __DRIVER__
-    # Connection y from PlainDiscipline to __DRIVER__
-    # Connection y2 from PlainDiscipline to __DRIVER__ 
+   # beforeConnsNb = Connection.of_analysis(@mda).size
+   mda = analyses(:singleton)
+   mda.package.destroy!  # remove package to avoid forbidden error (cannot import if analysis is packaged)
+   mda2 = analyses(:innermda)
+   disc = disciplines(:innermda_discipline)
+   put api_v1_mda_url(mda), params: { analysis: { import: { analysis: mda2.id, disciplines: [disc.id] } }, requested_at: Time.now },
+       as: :json, headers: @auth_headers3
+   assert_response :success
+   mda.reload
+   newDisc = mda.disciplines.last
+   assert_equal disc.name, newDisc.name
+   assert_equal 7, Connection.of_analysis(mda).count
+   # Connection.of_analysis(mda).each do |conn|
+   #   puts "Connection #{conn.from.name} from #{conn.from.discipline.name} to #{conn.to.discipline.name}"
+   # end
+   # Connection u from __DRIVER__ to SingletonDiscipline
+   # Connection x2 from __DRIVER__ to PlainDiscipline
+   # Connection y1 from __DRIVER__ to PlainDiscipline
+   # Connection z from __DRIVER__ to PlainDiscipline
+   # Connection v from SingletonDiscipline to __DRIVER__
+   # Connection y from PlainDiscipline to __DRIVER__
+   # Connection y2 from PlainDiscipline to __DRIVER__
  end
 
   test "should import a metamodel" do
@@ -378,7 +378,7 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     sub_mda = analyses(:innermda)
     super_disc = disciplines(:outermda_innermda_discipline)
     assert_equal sub_mda.name, super_disc.name
-    put api_v1_mda_url(sub_mda), params: { analysis: { name: "NewName"}, requested_at: Time.now }, 
+    put api_v1_mda_url(sub_mda), params: { analysis: { name: "NewName" }, requested_at: Time.now },
                               as: :json, headers: @auth_headers
     assert_response :success
     super_disc.reload

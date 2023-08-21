@@ -16,5 +16,4 @@ class Api::V1::ComparisonsControllerTest < ActionDispatch::IntegrationTest
     resp = response.body
     refute resp.empty?  # should get a diff as the copy set designvars back to parameters
   end
-
 end

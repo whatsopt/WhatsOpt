@@ -25,7 +25,7 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
     updated_at = @mda.updated_at
     assert_difference("Variable.count", 2) do
       assert_difference("Connection.count", 1) do
-        post api_v1_mda_connections_url(mda_id: @mda.id, requested_at: Time.now, 
+        post api_v1_mda_connections_url(mda_id: @mda.id, requested_at: Time.now,
                                         connection: { from: @geometry.id, to: @aerodynamics.id, names: ["newvar"] }),
              as: :json, headers: @auth_headers
         assert_response :success
@@ -40,7 +40,7 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
   test "should create no new connection if connection already exists" do
     assert_difference("Variable.count", 0) do
       assert_difference("Connection.count", 0) do
-        post api_v1_mda_connections_url(mda_id: @mda.id, requested_at: Time.now, 
+        post api_v1_mda_connections_url(mda_id: @mda.id, requested_at: Time.now,
                                         connection: { from: @geometry.id, to: @aerodynamics.id, names: [@varyg.name] }),
              as: :json, headers: @auth_headers
         assert_response :success
@@ -51,7 +51,7 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
   test "should create no new variable out if variable already exists" do
     assert_difference("Variable.count", 1) do
       assert_difference("Connection.count", 1) do
-        post api_v1_mda_connections_url(mda_id: @mda.id, requested_at: Time.now, 
+        post api_v1_mda_connections_url(mda_id: @mda.id, requested_at: Time.now,
                                         connection: { from: @geometry.id, to: @propulsion.id, names: [@varyg.name] }),
              as: :json, headers: @auth_headers
         assert_response :success
@@ -60,14 +60,14 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should create connection from same discipline to other ones" do
-    post api_v1_mda_connections_url(mda_id: @mda.id, requested_at: Time.now, 
+    post api_v1_mda_connections_url(mda_id: @mda.id, requested_at: Time.now,
                                     connection: { from: @geometry.id, to: @mda.driver.id, names: [@varyg.name] }),
          as: :json, headers: @auth_headers
     assert_response :success
   end
 
   test "should raise error on bad request" do
-    post api_v1_mda_connections_url(mda_id: @mda.id, requested_at: Time.now, 
+    post api_v1_mda_connections_url(mda_id: @mda.id, requested_at: Time.now,
                                     connection: { from: @geometry.id, to: @aerodynamics.id, names: [""] }),
          as: :json, headers: @auth_headers
     assert_match(/can't be blank/, JSON.parse(response.body)["message"])
@@ -134,7 +134,7 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
       assert_difference("Connection.count", -1) do
         conn = connections(:innermda_disc_y2_outermda_disc)
         mda = conn.from.discipline.analysis
-        delete api_v1_mda_connection_url(mda.id, conn), params: {requested_at: Time.now}, as: :json, headers: @auth_headers
+        delete api_v1_mda_connection_url(mda.id, conn), params: { requested_at: Time.now }, as: :json, headers: @auth_headers
         assert_response :success
       end
     end
@@ -145,7 +145,7 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
       assert_difference("Connection.count", 0) do
         conn = connections(:outermda_disc_y1_innermda_disc)
         mda = conn.from.discipline.analysis
-        delete api_v1_mda_connection_url(mda.id, conn), params: {requested_at: Time.now}, as: :json, headers: @auth_headers
+        delete api_v1_mda_connection_url(mda.id, conn), params: { requested_at: Time.now }, as: :json, headers: @auth_headers
         assert_response :success
       end
     end
@@ -156,13 +156,13 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
       assert_difference("Connection.count", 0) do
         conn = connections(:innermda_disc_y_outermda_driver)
         mda = conn.from.discipline.analysis
-        delete api_v1_mda_connection_url(mda.id, conn), params: {requested_at: Time.now}, as: :json, headers: @auth_headers
+        delete api_v1_mda_connection_url(mda.id, conn), params: { requested_at: Time.now }, as: :json, headers: @auth_headers
         assert_response :unprocessable_entity
         assert_equal "Connection y has to be suppressed in INNER sub-analysis first",
                      JSON.parse(response.body)["message"]
         conn = connections(:outermda_driver_x2_innermda_disc)
         mda = conn.from.discipline.analysis
-        delete api_v1_mda_connection_url(mda.id, conn), params: {requested_at: Time.now}, as: :json, headers: @auth_headers
+        delete api_v1_mda_connection_url(mda.id, conn), params: { requested_at: Time.now }, as: :json, headers: @auth_headers
         assert_response :unprocessable_entity
         assert_equal "Connection x2 has to be suppressed in INNER sub-analysis first",
                      JSON.parse(response.body)["message"]
@@ -213,7 +213,7 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
       assert_difference("Connection.count", -2) do
         conn = connections(:innermda_driver_y1_innermda_disc)
         mda = conn.from.discipline.analysis
-        delete api_v1_mda_connection_url(mda.id, conn), params: {requested_at: Time.now}, as: :json, headers: @auth_headers
+        delete api_v1_mda_connection_url(mda.id, conn), params: { requested_at: Time.now }, as: :json, headers: @auth_headers
         assert_response :success
       end
     end
@@ -224,7 +224,7 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
       assert_difference("Connection.count", -2) do
         conn = connections(:innermda_disc_y_innermda_driver)
         mda = conn.from.discipline.analysis
-        delete api_v1_mda_connection_url(mda.id, conn), params: {requested_at: Time.now}, as: :json, headers: @auth_headers
+        delete api_v1_mda_connection_url(mda.id, conn), params: { requested_at: Time.now }, as: :json, headers: @auth_headers
         assert_response :success
       end
     end
@@ -285,7 +285,7 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
     update_attrs = attrs.zip(values).to_h
     update_attrs[:parameter_attributes] = { init: "[[1,2]]", lower: "0", upper: "10" }
     update_attrs[:scaling_attributes] = { ref: "[[1,2]]", ref0: "100", res_ref: "1e-6" }
-    # FIXME: have to propagate distribution but 
+    # FIXME: have to propagate distribution but
     # update_attrs[:distributions_attributes] = [{ kind: "Normal",
     #                                              options_attributes: [{ name: "mu", value: "0.0" }, { name: "sigma", value: "1.0" }] }]
     mda = conn.from.discipline.analysis
@@ -310,7 +310,7 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
     assert_not conn_to_test.to.scaling
     assert_not conn_to_test.to.active
     assert_not conn_to_test.from.active
-    # FIXME: have to propagate distribution but 
+    # FIXME: have to propagate distribution but
     # assert_equal "Normal", conn_to_test.from.distributions[0].kind
     # assert_equal "mu", conn_to_test.from.distributions[0].options.first.name
     # assert_equal "0.0", conn_to_test.from.distributions[0].options.first.value

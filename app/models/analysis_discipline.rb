@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
 class AnalysisDiscipline < ApplicationRecord
-
-  # When it is a copy no need to report connections as 
+  # When it is a copy no need to report connections as
   # they are supposed to be handled properly in the original analysis
   before_save :report_connections!, unless: :copy_inprogress?
   before_destroy :detach_analysis!
@@ -20,7 +19,6 @@ class AnalysisDiscipline < ApplicationRecord
   end
 
 private
-
   # When saving analysis_discipline we ensure we propagate sub driver's
   # connections to parent analysis.
   def report_connections!
@@ -55,7 +53,7 @@ private
         # Rails.logger.info "EXISTENCE #{var.name}"
         producer_count = outermda.disciplines.nodes.joins(:variables).where(variables: { name: var.name, io_mode: WhatsOpt::Variable::OUT }).count
         # p "#{var.name} #{producer_count}"
-        unless producer_count==1 # produced only by sub_analysis
+        unless producer_count == 1 # produced only by sub_analysis
           raise AlreadyDefinedError, "Variable #{var.name} already defined, present in analysis and sub_analysis to be added. \n
           You must remove either one or the other before attaching the sub_analysis."
         end
@@ -82,7 +80,7 @@ private
   end
 
   # When analysis_discipline is destroyed we manage analysis ancestry
-  # by nullifying the parent and make it root again. 
+  # by nullifying the parent and make it root again.
   def detach_analysis!
     analysis.update!(parent: nil)
   end

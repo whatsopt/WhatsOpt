@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 module OptimizationsHelper
-
   def status_text(status)
     status_text = {
       Optimization::OPTIMIZATION_ERROR => "Optimization_Error",
@@ -19,7 +18,7 @@ module OptimizationsHelper
     case status
     when Optimization::VALID_POINT, Optimization::SOLUTION_REACHED
       ["color:#00AA00;", "fas fa-check"]
-    when Optimization::PENDING, Optimization::RUNNING 
+    when Optimization::PENDING, Optimization::RUNNING
       ["color:#FFA500;", "fas fa-hourglass"]
     else
       ["color:#CC0000;", "fas fa-times"]

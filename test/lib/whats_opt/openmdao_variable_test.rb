@@ -25,5 +25,4 @@ class OpenmdaoMappingTest < ActiveSupport::TestCase
     @var = FakeOpenmdaoVariable.new("VAR2tesT", :Float, 1, :in, "N", "")
     assert_equal "", @var.extended_desc
   end
-
 end

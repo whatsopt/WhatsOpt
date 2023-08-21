@@ -22,10 +22,9 @@ class OperationTest < ActiveSupport::TestCase
     optim = Optimization.new(kind: "SEGOMOE")
     assert !optim.valid?
   end
-  
+
   test "should retrieve config information" do
     optim = optimizations(:optim_ackley2d)
-    assert_equal optim.config, { "xlimits" => [[-32.768, 32.768], [-32.768, 32.768]], "options"=>{}, "n_obj"=>1, "cstr_specs"=>[], "xtypes"=>[]}
+    assert_equal optim.config, { "xlimits" => [[-32.768, 32.768], [-32.768, 32.768]], "options" => {}, "n_obj" => 1, "cstr_specs" => [], "xtypes" => [] }
   end
-
 end

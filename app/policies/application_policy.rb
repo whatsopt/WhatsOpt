@@ -12,7 +12,7 @@ class ApplicationPolicy
     def enable_wopstore?
       APP_CONFIG["enable_wopstore"]
     end
-    
+
     def resolve
       scope.all
     end

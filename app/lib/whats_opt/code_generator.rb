@@ -23,7 +23,7 @@ module WhatsOpt
       @egmdo_module = "egmdo"
       @server_host = "localhost"
       @server_port = 31400
-      # TODO: Should be independent from OpenMDAO impl 
+      # TODO: Should be independent from OpenMDAO impl
       # (should be something like Python impl) but at the moment
       # package format (@pkg_prefix) is only implemented (used) with
       # OpenMDAO Python framework
@@ -92,7 +92,7 @@ HEADER
     end
 
     def _format_code(dir)
-      cmd="#{PYTHON} -m black --line-length 100 #{dir}"
+      cmd = "#{PYTHON} -m black --line-length 100 #{dir}"
       Rails.logger.info cmd
       stdouterr, status = Open3.capture2e(cmd)
       unless status.success?

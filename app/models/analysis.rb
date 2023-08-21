@@ -4,7 +4,6 @@ require "whats_opt/discipline"
 require "whats_opt/openmdao_module"
 
 class Analysis < ApplicationRecord
-
   include Ownable
   resourcify
 
@@ -54,7 +53,7 @@ class Analysis < ApplicationRecord
       "note_text" => self.note.to_plain_text,
       "design_project_name" => self.design_project&.name
     })
-  end  
+  end
 
   def driver
     @driver ||= disciplines.driver.take
@@ -108,9 +107,9 @@ class Analysis < ApplicationRecord
     @output_variables = variables.with_role(WhatsOpt::Variable::OUTPUT_ROLES)
   end
 
-  def coupling_variables 
-    unless @couplings 
-      conns = Connection.of_analysis(self).select{|c| !c.driverish?}
+  def coupling_variables
+    unless @couplings
+      conns = Connection.of_analysis(self).select { |c| !c.driverish? }
       @couplings = conns.map(&:from).uniq
     end
     @couplings
@@ -274,13 +273,13 @@ class Analysis < ApplicationRecord
   def next_operation_id(opeId)
     @opeIds ||= operations.successful.pluck(:id)
     idx = @opeIds.index(opeId)
-    @next ||= (idx == (@opeIds.size - 1)) ? -1 : @opeIds[idx+1]
+    @next ||= (idx == (@opeIds.size - 1)) ? -1 : @opeIds[idx + 1]
   end
 
   def prev_operation_id(opeId)
     @opeIds ||= operations.successful.pluck(:id)
     idx = @opeIds.index(opeId)
-    @prev ||= (idx == 0) ? -1 : @opeIds[idx-1]
+    @prev ||= (idx == 0) ? -1 : @opeIds[idx - 1]
   end
 
   def design_project
@@ -294,7 +293,7 @@ class Analysis < ApplicationRecord
   end
 
   # journalized
-  def note_text  
+  def note_text
     note.to_plain_text
   end
 
@@ -309,7 +308,7 @@ class Analysis < ApplicationRecord
       updated_at: updated_at,
       owner: UserSerializer.new(owner),
       project: design_project || { id: -1, name: "" },
-      note: note.blank? ? "":note.to_s,
+      note: note.blank? ? "" : note.to_s,
 
       public: public,
       locked: locked,
@@ -334,10 +333,10 @@ class Analysis < ApplicationRecord
         nodes: build_nodes.map.with_index { |n, i|
           node = {
             id: n[:id],
-            name: i==0 ? "_U_" : n[:name],
-            type: i==0 ? "driver" : n[:type]
+            name: i == 0 ? "_U_" : n[:name],
+            type: i == 0 ? "driver" : n[:type]
           }
-          node[:subxdsm] = n[:link][:name] if n[:type]=="group" && n[:link]
+          node[:subxdsm] = n[:link][:name] if n[:type] == "group" && n[:link]
           node
         },
         edges: build_edges.map { |e|
@@ -358,7 +357,7 @@ class Analysis < ApplicationRecord
       # TODO: if XDSM v2 accepted migrate database to take into account XDSM v2 new types
       # mda -> group
       node[:type] = "group" if node[:type] == "mda"
-      # analysis -> function 
+      # analysis -> function
       # not required as function and analysis are considered synonymous in XDSMjs for XDSM v2
       node[:type] = 'function' if node[:type] == 'analysis'
       node[:id] = node[:id].to_s
@@ -516,7 +515,7 @@ class Analysis < ApplicationRecord
     end
   end
 
-  def import!(fromAnalysis, discipline_ids=[])
+  def import!(fromAnalysis, discipline_ids = [])
     # do not import from self
     new_discs = []
     if fromAnalysis.id != id
@@ -548,7 +547,7 @@ class Analysis < ApplicationRecord
   end
 
   def create_copy!(parent = nil, super_disc = nil)
-    mda_copy = 
+    mda_copy =
     Analysis.transaction do  # metamodel and subanalysis are saved, rollback if problem
       mda_copy = Analysis.create!(name: name, public: public, locked: locked) do |copy|
         copy.parent_id = parent.id if parent
@@ -597,7 +596,7 @@ class Analysis < ApplicationRecord
     # FIXME: do not propagate distributions for now to avoid error
     # should update distributions properly to manage distribution list should build new params
     # related to variable in sub or super-analysis
-    # FIXME: Maybe sub-analysis variable edition should be disabled to avoid inconsistencies!!! 
+    # FIXME: Maybe sub-analysis variable edition should be disabled to avoid inconsistencies!!!
     if (params[:distributions_attributes])
       down_check = false
       up_check = false
@@ -621,7 +620,7 @@ class Analysis < ApplicationRecord
     end
     # check connection tos
     conn.from.outgoing_connections.each do |cn|
-      next unless (cn.to.discipline.has_sub_analysis? and down_check) 
+      next unless (cn.to.discipline.has_sub_analysis? and down_check)
 
       sub_analysis = cn.to.discipline.sub_analysis
       inner_driver_var = sub_analysis.driver.variables
@@ -765,7 +764,7 @@ class Analysis < ApplicationRecord
       vcopy[:io_mode] = Variable.reflect_io_mode(v[:io_mode])
       vcopy
     end
-    analysis_attrs= {
+    analysis_attrs = {
       name: name,
       public: ope.analysis.public,
       locked: ope.analysis.locked,
@@ -848,7 +847,7 @@ class Analysis < ApplicationRecord
   def save_journal
     current_journal&.save  # journal is optional
   end
-  
+
   # Returns the current journal or nil if it's not initialized
   def current_journal
     @current_journal

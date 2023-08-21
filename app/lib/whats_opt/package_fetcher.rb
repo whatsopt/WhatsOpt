@@ -6,7 +6,6 @@ require 'zlib'
 
 module WhatsOpt
   class PackageFetcher < CodeGenerator
-
     def initialize(mda, src_mda)
       super(mda, pkg_format: true)
       @src_mda = src_mda
@@ -40,6 +39,5 @@ module WhatsOpt
       end
       @genfiles
     end
-
   end
 end

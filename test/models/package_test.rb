@@ -3,7 +3,6 @@
 require "test_helper"
 
 class PackageTest < ActiveSupport::TestCase
-
   def setup
     @pkg = packages(:cicav_pkg)
   end
@@ -25,5 +24,4 @@ class PackageTest < ActiveSupport::TestCase
     @pkg.save!
     refute_equal date, @pkg.updated_at
   end
-  
 end

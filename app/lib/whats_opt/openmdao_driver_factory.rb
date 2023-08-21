@@ -65,8 +65,8 @@ module WhatsOpt
                                                  optimizer: "optimizer", doedim: "size_doe" },
                     egobox_optimizer_egor: { maxiter: "maxiter",  n_clusters: "n_clusters",
                                              infill_strategy: "infill_strategy",
-                                             infill_optimizer: "infill_optimizer",  
-                                             cstr_tol: "cstr_tol", regr_spec: "regr_spec", corr_spec: "corr_spec"}
+                                             infill_optimizer: "infill_optimizer",
+                                             cstr_tol: "cstr_tol", regr_spec: "regr_spec", corr_spec: "corr_spec" }
                    }
 
     # optimizer specific settings
@@ -123,11 +123,9 @@ module WhatsOpt
     def egobox?
       @lib =~ /egobox/
     end
-
   end
 
   class OpenmdaoDriverFactory
-
     # Option pattern: <library>_<optimizer|doe>_<algoname>_<option_name>
     DEFAULT_OPTIONS = {
       runonce: {},
@@ -144,11 +142,11 @@ module WhatsOpt
       pyoptsparse_optimizer_snopt: { tol: 1e-6, maxiter: 100 },
       onerasego_optimizer_segomoe: { maxiter: 100, ncluster: 1, optimizer: "slsqp" },
       onerasego_optimizer_egmdo: { maxiter: 100, ncluster: 1, optimizer: "slsqp" },
-      egobox_optimizer_egor: { maxiter: 100, n_clusters: 1, cstr_tol: 1e-4, 
-                               infill_strategy: ["egx", "InfillStrategy", "WB2"], 
-                               infill_optimizer: ["egx", "InfillOptimizer", "SLSQP"], 
-                               regr_spec: ["egx", "RegressionSpec", "CONSTANT"], 
-                               corr_spec: ["egx", "CorrelationSpec", "SQUARED_EXPONENTIAL"] 
+      egobox_optimizer_egor: { maxiter: 100, n_clusters: 1, cstr_tol: 1e-4,
+                               infill_strategy: ["egx", "InfillStrategy", "WB2"],
+                               infill_optimizer: ["egx", "InfillOptimizer", "SLSQP"],
+                               regr_spec: ["egx", "RegressionSpec", "CONSTANT"],
+                               corr_spec: ["egx", "CorrelationSpec", "SQUARED_EXPONENTIAL"]
                               }
     }
     ALGO_NAMES = DEFAULT_OPTIONS.keys.sort

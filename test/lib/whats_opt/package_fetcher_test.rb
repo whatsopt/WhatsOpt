@@ -6,8 +6,8 @@ require "tmpdir"
 
 class PackageFetcherTest < ActiveSupport::TestCase
   def setup
-    @mda = analyses(:cicav)  
-    @src_mda = analyses(:singleton)  
+    @mda = analyses(:cicav)
+    @src_mda = analyses(:singleton)
     # XXX: Fixture does not seem to always load the file properly
     #      this ensure the presence of the file
     @mda.package.archive.attach(io: File.open(file_fixture('cicav-0.1.0.tar.gz')), filename: 'cicav-0.1.0.tar.gz',
@@ -25,18 +25,18 @@ class PackageFetcherTest < ActiveSupport::TestCase
 
   test "should generate source" do
     Dir.mktmpdir do |dir|
-        @genfiles = @pkgfetcher._generate_code(dir)
-        expected = ["cicav/__init__.py", "cicav/singleton_discipline.py", "cicav/singleton_discipline_base.py"]
-        assert_equal expected, @genfiles.map{|f| f[dir.size+1..]}
+      @genfiles = @pkgfetcher._generate_code(dir)
+      expected = ["cicav/__init__.py", "cicav/singleton_discipline.py", "cicav/singleton_discipline_base.py"]
+      assert_equal expected, @genfiles.map { |f| f[dir.size + 1..] }
     end
   end
 
   test "should generate empty extraction if no package found" do
     @pkgfetcher = WhatsOpt::PackageFetcher.new(@mda, analyses(:fast))
     Dir.mktmpdir do |dir|
-        @genfiles = @pkgfetcher._generate_code(dir)
-        expected = []
-        assert_equal expected, @genfiles.map{|f| f[dir.size+1..]}
+      @genfiles = @pkgfetcher._generate_code(dir)
+      expected = []
+      assert_equal expected, @genfiles.map { |f| f[dir.size + 1..] }
     end
   end
 end

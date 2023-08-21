@@ -81,6 +81,6 @@ class Api::V1::MetaModelsController < Api::ApiController
                                          options: [ :name, :value ],
                                          variables: [ inputs: [], outputs: [] ],
                                          x: [],
-                                        )
+      )
     end
 end

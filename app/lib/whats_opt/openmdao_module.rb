@@ -53,7 +53,6 @@ module WhatsOpt
     end
 
   private
-
     def _modulename
       basename
     end
@@ -72,13 +71,12 @@ module WhatsOpt
       self._namespace.sub(/^#{Regexp.escape(@@root_modulename)}\.?/, "")
     end
 
-    # return fully qualified dotted module name without root name 
+    # return fully qualified dotted module name without root name
     def _full_modulename(final_name: _modulename)
       fmn = _sub_packagename
       fmn += "." unless fmn.blank?
       fmn += "#{final_name}"
       fmn
     end
-
   end
 end

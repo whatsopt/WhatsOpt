@@ -24,6 +24,5 @@ module ExceptionHandler
       Rails.logger.error "Stale Object: " + e.message
       json_response({ message: e.message }, :conflict)
     end
-
   end
 end

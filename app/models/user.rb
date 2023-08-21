@@ -29,7 +29,7 @@ class User < ActiveRecord::Base
   }
 
   # Backward-compatibility WhatsOpt < 1.13
-  # Use save not save! (update not update!) to avoid exception due to password 
+  # Use save not save! (update not update!) to avoid exception due to password
   # complexity validation failure now because we have stronger conditions for password on reset (ie on update)
   def password_complexity
     # Regexp extracted from https://stackoverflow.com/questions/19605150

@@ -44,5 +44,4 @@ class Api::V1::ExportsControllerTest < ActionDispatch::IntegrationTest
     get api_v1_mda_exports_new_url(mda, format: :mda_pkg_content, src_id: src_mda), as: :json, headers: @auth_headers
     assert_response :success
   end
-
 end
