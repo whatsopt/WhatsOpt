@@ -148,7 +148,7 @@ class AnalysisTest < ActiveSupport::TestCase
     mda.operations.reverse.map(&:destroy)
     # mda2.destroy
     # mda.destroy  # can not destroy as it is a mm prototype for mda2 but also mm_copy
-    assert 2, mda.meta_model_prototypes.count
+    assert_equal 2, mda.meta_model_prototypes.count
     mm.reload
     y = mm.predict(x)
     assert_in_delta 5, y[0][0]

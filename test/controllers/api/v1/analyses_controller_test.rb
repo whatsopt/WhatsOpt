@@ -241,7 +241,7 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     assert_equal false, mdajson["impl"]["openmdao"]["parallel_group"]
     assert_equal false, mdajson["impl"]["openmdao"]["use_units"]
     assert_equal "scipy_optimizer_slsqp", mdajson["impl"]["openmdao"]["optimization_driver"]
-    assert 3, mdajson["impl"]["openmdao"]["nodes"].size
+    assert_equal 3, mdajson["impl"]["openmdao"]["nodes"].size
   end
 
   test "should import a discipline from another analysis" do

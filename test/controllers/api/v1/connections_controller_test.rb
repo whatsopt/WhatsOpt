@@ -320,7 +320,7 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
     conn = connections(:aero_y2_driver)
     mda = conn.from.discipline.analysis
     var = conn.from
-    assert "response", conn.role
+    assert_equal "response", conn.role
     assert_nil var.parameter
 
     update_attrs = { role: "constraint" }

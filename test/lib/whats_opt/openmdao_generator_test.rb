@@ -234,7 +234,8 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
       sleep(1) # wait 1s for server start
       @ogen_remote = WhatsOpt::OpenmdaoGenerator.new(@mda, server_host: "localhost")
       ok, log = @ogen_remote.run
-      assert(ok, log)
+      assert ok
+      assert log
       Process.kill("TERM", pid)
       Process.waitpid pid
     end
@@ -249,7 +250,8 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
       sleep(1) # wait 1s for server start
       @ogen_remote = WhatsOpt::OpenmdaoGenerator.new(@mda, server_host: "localhost", driver_name: "runonce")
       ok, log = @ogen_remote.run
-      assert(ok, log)
+      assert ok
+      assert log
       Process.kill("TERM", pid)
       Process.waitpid pid
     end
@@ -265,7 +267,8 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
       @ogen_remote = WhatsOpt::OpenmdaoGenerator.new(@mda, server_host: "localhost", driver_name: "smt_doe_lhs")
       File.delete("cicav_doe.sqlite") if File.exist?("cicav_doe.sqlite")
       ok, log = @ogen_remote.run :doe
-      assert(ok, log)
+      assert ok
+      assert log
       assert File.exist?("cicav_doe.sqlite")
       File.delete("cicav_doe.sqlite") if File.exist?("cicav_doe.sqlite")
       Process.kill("TERM", pid)
@@ -284,7 +287,8 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
       @ogen_remote = WhatsOpt::OpenmdaoGenerator.new(@mda, server_host: "localhost")
       File.delete("singleton_uq_doe.sqlite") if File.exist?("singleton_uq_doe.sqlite")
       ok, log = @ogen_remote.run :doe
-      assert(ok, log)
+      assert ok
+      assert log
       assert File.exist?("singleton_uq_doe.sqlite")
       File.delete("singleton_uq_doe.sqlite") if File.exist?("singleton_uq_doe.sqlite")
       Process.kill("TERM", pid)
@@ -369,7 +373,8 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
       sleep(1) # wait 1s for server start
       @ogen_remote = WhatsOpt::OpenmdaoGenerator.new(mda, server_host: "localhost", driver_name: "runonce")
       ok, log = @ogen_remote.run
-      assert(ok, log)
+      assert ok
+      assert log
       Process.kill("TERM", pid)
       Process.waitpid pid
     end
@@ -386,7 +391,8 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
       sleep(1) # wait 1s for server start
       @ogen_remote = WhatsOpt::OpenmdaoGenerator.new(mda, pkg_format: true, server_host: "localhost", driver_name: "runonce")
       ok, log = @ogen_remote.run
-      assert(ok, log)
+      assert ok
+      assert log
       Process.kill("TERM", pid)
       Process.waitpid pid
     end

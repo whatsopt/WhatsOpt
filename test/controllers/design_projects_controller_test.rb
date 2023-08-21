@@ -25,7 +25,7 @@ class DesignProjectsControllerTest < ActionDispatch::IntegrationTest
 
   test "should assign owner on creation" do
     post design_projects_url, params: { design_project: { name: "test2" } }
-    assert Analysis.last.owner, users(:user1)
+    assert_equal DesignProject.last.owner, users(:user1)
   end
 
   test "name cannot be blank on creation" do

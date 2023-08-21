@@ -74,7 +74,7 @@ class OptimizationsControllerTest < ActionDispatch::IntegrationTest
 
   test "should assign owner on creation" do
     post optimizations_url, params: { optimization: { kind: "SEGOMOE", xlimits: ["1, 2", "3, 4"], options: ["", ""] } }
-    assert Optimization.last.owner, users(:user1)
+    assert_equal Optimization.last.owner, users(:user1)
   end
 
   test "should authorized read access by default to any single optimization" do

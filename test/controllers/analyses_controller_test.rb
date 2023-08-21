@@ -47,7 +47,7 @@ class AnalysesControllerTest < ActionDispatch::IntegrationTest
 
   test "should assign owner on creation" do
     post mdas_url, params: { analysis: { name: "test2" } }
-    assert Analysis.last.owner, users(:user1)
+    assert_equal Analysis.last.owner, users(:user1)
   end
 
   test "should authorized access by default" do

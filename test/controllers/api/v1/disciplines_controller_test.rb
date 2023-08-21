@@ -50,8 +50,9 @@ class Api::V1::DisciplineControllerTest < ActionDispatch::IntegrationTest
     end
     assert_response :success
     @disc.reload
+    @submda.reload
     assert_equal @submda, @disc.sub_analysis
-    assert @submda.name, @disc.name
+    assert_equal @submda.name, @disc.name
   end
 
   test "should update a sub analysis" do
