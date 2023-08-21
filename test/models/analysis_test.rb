@@ -231,4 +231,11 @@ class AnalysisTest < ActiveSupport::TestCase
       end
     end
   end
+
+  test "should get the nesting depth" do
+    mda = analyses(:singleton_mm)
+    assert_equal 0, mda.nesting_depth
+    mda = analyses(:outermda)
+    assert_equal 1, mda.nesting_depth
+  end
 end

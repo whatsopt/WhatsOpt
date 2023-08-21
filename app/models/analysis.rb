@@ -239,7 +239,7 @@ class Analysis < ApplicationRecord
   end
 
   def nesting_depth
-    depth = subtree.select(&:is_childless?).map(&:depth).max
+    depth = subtree.filter_map { |elt| elt.depth if elt.is_childless? }.max
     depth
   end
 

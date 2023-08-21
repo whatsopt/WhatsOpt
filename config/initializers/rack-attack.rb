@@ -55,7 +55,7 @@ class Rack::Attack
 
   # Track requests from a special user agent.
   track("wop") do |req|
-    req.user_agent =~ /wop/
+    req.user_agent && req.user_agent.include?("wop")
   end
 
   # Supports optional limit and period, triggers the notification only when the limit is reached.
@@ -66,7 +66,8 @@ class Rack::Attack
   # Track it using ActiveSupport::Notification
   ActiveSupport::Notifications.subscribe("track.rack_attack") do |name, start, finish, request_id, payload|
     req = payload[:request]
-    if /wop/.match?(req.env["rack.attack.matched"])
+    req_matched =  req.env["rack.attack.matched"]
+    if req_matched && req_matched.include?("wop")
       Rails.logger.info "wop : #{req.path}"
     end
   end

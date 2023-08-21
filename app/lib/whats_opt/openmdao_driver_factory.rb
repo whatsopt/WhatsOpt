@@ -105,23 +105,23 @@ module WhatsOpt
     end
 
     def pyoptsparse?
-      @lib =~ /pyoptsparse/
+      @lib && @lib.include?("pyoptsparse")
     end
 
     def scipy?
-      @lib =~ /scipy/
+      @lib && @lib.include?("scipy")
     end
 
     def simplega?
-      @lib =~ /simplega/
+      @lib && @lib.include?("simplega")
     end
 
     def onerasego?
-      @lib =~ /onerasego/
+      @lib && @lib.include?("onerasego")
     end
 
     def egobox?
-      @lib =~ /egobox/
+      @lib && @lib.include?("egobox")
     end
   end
 
@@ -160,9 +160,9 @@ module WhatsOpt
     end
 
     def create_driver
-      if /doe/.match?(@algoname)
+      if @algoname && @algoname.to_s.include?("doe")
         OpenmdaoDoeDriver.new(@algoname, @dict[@algoname])
-      elsif /optimizer/.match?(@algoname)
+      elsif @algoname && @algoname.to_s.include?("optimizer")
         OpenmdaoOptimizerDriver.new(@algoname, @dict[@algoname])
       else
         OpenmdaoRunOnceDriver.new(@algoname, @dict[@algoname])

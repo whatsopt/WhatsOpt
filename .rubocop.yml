@@ -9,6 +9,7 @@ inherit_mode:
 AllCops:
   Exclude:
     - 'app/lib/whats_opt/services/*.rb'
+  TargetRubyVersion: 3.0
 
 Layout/IndentationConsistency:
   EnforcedStyle: indented_internal_methods
