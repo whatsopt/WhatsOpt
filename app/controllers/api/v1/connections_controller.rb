@@ -31,14 +31,12 @@ class Api::V1::ConnectionsController < Api::V1::ApiMdaUpdaterController
 
   # PUT /api/v1/connections/1
   def update
-    begin
-      old_attrs = @connection.from.attributes
-      @mda.update_connections!(@connection, connection_update_params)
-      @journal.journalize_changes(@connection.from, old_attrs)
-      head :no_content
-    rescue WhatsOpt::Variable::BadShapeAttributeError => e
-      json_response({ message: e }, :unprocessable_entity)
-    end
+    old_attrs = @connection.from.attributes
+    @mda.update_connections!(@connection, connection_update_params)
+    @journal.journalize_changes(@connection.from, old_attrs)
+    head :no_content
+  rescue WhatsOpt::Variable::BadShapeAttributeError => e
+    json_response({ message: e }, :unprocessable_entity)
   end
 
   # DELETE /api/v1/connections/1
@@ -66,7 +64,7 @@ class Api::V1::ConnectionsController < Api::V1::ApiMdaUpdaterController
         authorize @mda, :update?
         check_mda_update   # raise StaleObjectError
         raise e            # otherwise re-raise
-      rescue ActiveRecord::RecordNotFound => e1
+      rescue ActiveRecord::RecordNotFound
         raise e
       end
     end

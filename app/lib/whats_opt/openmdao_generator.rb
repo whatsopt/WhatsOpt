@@ -54,16 +54,15 @@ module WhatsOpt
       @impl.set_as_root_module
       Dir.mktmpdir("check_#{@impl.basename}_") do |dir|
         # dir="/tmp/check" # for debug
-        begin
-          @check_only = true
-          _generate_code(dir, with_server: false, with_runops: false)
-        rescue ServerGenerator::ThriftError => e
-          ok = false
-          lines = e.to_s.lines.map(&:chomp)
-        else
-          ok, log = _check_mda dir
-          lines = log.lines.map(&:chomp)
-        end
+
+        @check_only = true
+        _generate_code(dir, with_server: false, with_runops: false)
+      rescue ServerGenerator::ThriftError => e
+        ok = false
+        lines = e.to_s.lines.map(&:chomp)
+      else
+        ok, log = _check_mda dir
+        lines = log.lines.map(&:chomp)
       end
       @impl.unset_root_module
       return ok, lines
@@ -73,16 +72,15 @@ module WhatsOpt
       ok, lines = false, []
       Dir.mktmpdir("run_#{@impl.basename}_#{category}") do |dir|
         # dir='/tmp' # for debug
-        begin
-          _generate_code(dir, sqlite_filename: sqlite_filename)
-        rescue ServerGenerator::ThriftError => e
-          ok = false
-          lines = e.to_s.lines.map(&:chomp)
-        else
-          method = self.to_run_method(category)
-          ok, log = _run_mda(dir, method)
-          lines = log.lines.map(&:chomp)
-        end
+
+        _generate_code(dir, sqlite_filename: sqlite_filename)
+      rescue ServerGenerator::ThriftError => e
+        ok = false
+        lines = e.to_s.lines.map(&:chomp)
+      else
+        method = self.to_run_method(category)
+        ok, log = _run_mda(dir, method)
+        lines = log.lines.map(&:chomp)
       end
       return ok, lines
     end
@@ -147,7 +145,7 @@ module WhatsOpt
         @eggen._generate_code(gendir, opts)
         @genfiles += @eggen.genfiles
       end
-      if package_dir? && @framework == 'openmdao'
+      if package_dir? && @framework == "openmdao"
         _generate_package_files(gendir)
       end
       @genfiles
@@ -225,7 +223,7 @@ module WhatsOpt
             raise RuntimeError.new("Ouch! Should be run_once driver got #{@driver.inspect}")
           end
         end
-      elsif (options[:with_runops] || @mda.is_root_analysis?)
+      elsif options[:with_runops] || @mda.is_root_analysis?
         @driver = OpenmdaoDriverFactory.new(DEFAULT_DOE_DRIVER).create_driver
         @sqlite_filename = options[:sqlite_filename] || "#{@impl.basename}_doe.sqlite"
         if @mda.uq_mode?

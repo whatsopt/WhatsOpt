@@ -9,8 +9,8 @@ class PackageExtractorTest < ActiveSupport::TestCase
     @mda = analyses(:cicav)
     # XXX: Fixture does not seem to always load the file properly
     #      this ensure the presence of the file
-    @mda.package.archive.attach(io: File.open(file_fixture('cicav-0.1.0.tar.gz')), filename: 'cicav-0.1.0.tar.gz',
-                                content_type: 'application/gzip')
+    @mda.package.archive.attach(io: File.open(file_fixture("cicav-0.1.0.tar.gz")), filename: "cicav-0.1.0.tar.gz",
+                                content_type: "application/gzip")
     assert @mda.package.archive.attached?
     assert File.exist?(ActiveStorage::Blob.service.path_for(@mda.package.archive.key))
     @pkgext = WhatsOpt::PackageExtractor.new(@mda)
@@ -32,8 +32,8 @@ class PackageExtractorTest < ActiveSupport::TestCase
   test "should extract source only from package" do
     Dir.mktmpdir do |dir|
       @genfiles = @pkgext.extract(dir, src_only: true)
-      refute File.exist?(File.join(dir, "pyproject.toml"))
-      refute File.exist?(File.join(dir, "README.md"))
+      assert_not File.exist?(File.join(dir, "pyproject.toml"))
+      assert_not File.exist?(File.join(dir, "README.md"))
       assert File.exist?(File.join(dir, "cicav"))
       expected = ["cicav/__init__.py", "cicav/aerodynamics.py", "cicav/aerodynamics_base.py",
                   "cicav/cicav.py", "cicav/cicav_base.py", "cicav/geometry.py", "cicav/geometry_base.py",

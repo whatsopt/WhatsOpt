@@ -156,7 +156,7 @@ class AnalysesControllerTest < ActionDispatch::IntegrationTest
   test "should make a copy of an analysis" do
     user1 = users(:user1)
     user2 = users(:user2)
-    user3 = users(:user3)
+    users(:user3)
     sign_out user1
     sign_in user2
     assert_difference("Analysis.count") do

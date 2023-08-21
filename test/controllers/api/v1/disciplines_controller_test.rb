@@ -70,7 +70,7 @@ class Api::V1::DisciplineControllerTest < ActionDispatch::IntegrationTest
     disc.reload
     assert_equal @submda, disc.sub_analysis
     @submda.reload
-    refute @submda.is_root?
+    assert_not @submda.is_root?
     innermda.reload
     assert innermda.is_root?
     assert innermda.analysis_discipline.nil?

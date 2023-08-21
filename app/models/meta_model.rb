@@ -131,7 +131,7 @@ class MetaModel < ApplicationRecord
   end
 
   def training_input_uncertainties
-    @distributions ||= operation.input_cases.map { |c| c.variable.distributions[[c.coord_index, 0].max] unless c.variable.distributions.empty? }.compact
+    @distributions ||= operation.input_cases.filter_map { |c| c.variable.distributions[[c.coord_index, 0].max] unless c.variable.distributions.empty? }
     @uncertainties ||= @distributions.flatten.map do |d|
       { name: d.kind, kwargs: d.options.inject({}) { |acc, opt| acc.update([[opt.name, opt.value]].to_h) } }
     end

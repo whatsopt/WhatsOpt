@@ -117,7 +117,7 @@ class Operation < ApplicationRecord
         varattr[:parameter_attributes] = {} unless varattr[:parameter_attributes]
         varattr[:parameter_attributes].merge!(lower: "", upper: "")
       end
-      if varattrs.keys.include?(c.variable.name)
+      if varattrs.key?(c.variable.name)
         if varattr[:io_mode] == WhatsOpt::Variable::IN
           varattr[:parameter_attributes] = {} unless varattr[:parameter_attributes]
           varattr[:parameter_attributes][:lower] = [c.values.min, varattr[:parameter_attributes][:lower].to_f].min.to_s
@@ -201,7 +201,7 @@ class Operation < ApplicationRecord
   end
 
   def option_hash
-    options.map { |h| [h["name"].to_sym, h["value"]] }.to_h
+    options.to_h { |h| [h["name"].to_sym, h["value"]] }
   end
 
   def update_operation(ope_attrs)

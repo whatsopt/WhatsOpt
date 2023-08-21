@@ -42,7 +42,7 @@ module AnalysesHelper
     end
     count = Operation.done(analysis).count
     if count > nb
-      name = ' (+' + (count - nb).to_s + ')'
+      name = " (+" + (count - nb).to_s + ")"
       # res += link_to name, mda_operations_path(analysis), title: "List Operations"
       res += name
     end

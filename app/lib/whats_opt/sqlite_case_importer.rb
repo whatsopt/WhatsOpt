@@ -39,7 +39,7 @@ module WhatsOpt
           end
           JSON.parse(row[2], allow_nan: true).each do |absname, values|
             splitnames = absname.split(".")
-            unless splitnames[0] == '_auto_ivc' # ignore auto ivc outputs variables
+            unless splitnames[0] == "_auto_ivc" # ignore auto ivc outputs variables
               cases[splitnames[-1]] = values
             end
           end

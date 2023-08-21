@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'tempfile'
+require "tempfile"
 
 class WhatsOpt::AnalysisDiff
   def self.compare(mda1, mda2)

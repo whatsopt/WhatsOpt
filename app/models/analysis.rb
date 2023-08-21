@@ -42,7 +42,7 @@ class Analysis < ApplicationRecord
   after_save :_ensure_openmdao_impl_presence
 
   validates :name, presence: true, allow_blank: false
-  validates :name, format: { with: /\A[a-zA-Z][_\.a-zA-Z0-9\s]*\z/, message: "%{value} is not a valid analysis name." }
+  validates :name, format: { with: /\A[a-zA-Z][_.a-zA-Z0-9\s]*\z/, message: "%{value} is not a valid analysis name." }
 
   def journalized_attribute_names
     ["name", "public", "locked", "note_text", "design_project_name"]
@@ -359,7 +359,7 @@ class Analysis < ApplicationRecord
       node[:type] = "group" if node[:type] == "mda"
       # analysis -> function
       # not required as function and analysis are considered synonymous in XDSMjs for XDSM v2
-      node[:type] = 'function' if node[:type] == 'analysis'
+      node[:type] = "function" if node[:type] == "analysis"
       node[:id] = node[:id].to_s
       node[:link] = { id: parent.id, name: parent.name } if d.is_driver? && has_parent?
       node[:link] = { id: d.sub_analysis.id, name: d.sub_analysis.name } if d.has_sub_analysis?
@@ -597,7 +597,7 @@ class Analysis < ApplicationRecord
     # should update distributions properly to manage distribution list should build new params
     # related to variable in sub or super-analysis
     # FIXME: Maybe sub-analysis variable edition should be disabled to avoid inconsistencies!!!
-    if (params[:distributions_attributes])
+    if params[:distributions_attributes]
       down_check = false
       up_check = false
     end
@@ -620,7 +620,7 @@ class Analysis < ApplicationRecord
     end
     # check connection tos
     conn.from.outgoing_connections.each do |cn|
-      next unless (cn.to.discipline.has_sub_analysis? and down_check)
+      next unless cn.to.discipline.has_sub_analysis? && down_check
 
       sub_analysis = cn.to.discipline.sub_analysis
       inner_driver_var = sub_analysis.driver.variables
@@ -849,9 +849,7 @@ class Analysis < ApplicationRecord
   end
 
   # Returns the current journal or nil if it's not initialized
-  def current_journal
-    @current_journal
-  end
+  attr_reader :current_journal
 
   # Clears the current journal
   def clear_journal

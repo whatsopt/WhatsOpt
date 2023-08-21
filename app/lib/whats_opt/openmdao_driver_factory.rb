@@ -15,7 +15,7 @@ module WhatsOpt
         if ["true", "false"].include?(@options[k].to_s)
           @options[k] = @options[k].to_s.capitalize  # Python boolean
         elsif @options[k].kind_of?(Array)
-          @options[k] = @options[k].join('.')
+          @options[k] = @options[k].join(".")
         elsif /\b[a-zA-Z]/.match?(@options[k].to_s) # wrap string
           @options[k] = "'#{@options[k]}'"
         end

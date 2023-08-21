@@ -13,7 +13,7 @@ class Api::V1::AnalysesController < Api::V1::ApiMdaUpdaterController
       @mdas
     elsif params[:design_project_query]
       @mdas = @mdas.joins(design_project_filing: :design_project)
-                   .where('design_projects.name like ?', '%' + params["design_project_query"] + '%')
+                   .where("design_projects.name like ?", "%" + params["design_project_query"] + "%")
     else
       @mdas = @mdas.with_role(:owner, current_user)
     end
@@ -38,22 +38,22 @@ class Api::V1::AnalysesController < Api::V1::ApiMdaUpdaterController
     if params[:format] == "xdsm"  # wop show <openmdao_pb.py>
       skip_authorization
       xdsm = nil
-      original_connection = Analysis.remove_connection
-      begin
-        ActiveRecord::Base.connected_to(role: :writing, shard: :scratch) do
-          Analysis.transaction do
-            xdsm = Rails.cache.fetch(mda_params.to_h.deep_sort!) do
-              Rails.logger.debug ">>> XDSM request cache miss"
-              Rails.logger.debug ">>> XDSM creation..."
-              mda = create_nested_analysis
-              mda.init_journal(current_user)
-              Rails.logger.debug ">>> XDSM depth=#{mda.depth}"
-              mda.to_xdsm_json
-            end
-            raise ActiveRecord::Rollback  # no need to keep saved analyses in scratch database
+      Analysis.remove_connection
+
+      ActiveRecord::Base.connected_to(role: :writing, shard: :scratch) do
+        Analysis.transaction do
+          xdsm = Rails.cache.fetch(mda_params.to_h.deep_sort!) do
+            Rails.logger.debug ">>> XDSM request cache miss"
+            Rails.logger.debug ">>> XDSM creation..."
+            mda = create_nested_analysis
+            mda.init_journal(current_user)
+            Rails.logger.debug ">>> XDSM depth=#{mda.depth}"
+            mda.to_xdsm_json
           end
+          raise ActiveRecord::Rollback  # no need to keep saved analyses in scratch database
         end
       end
+
       json_response xdsm, :ok
     else # wop push
       @mda = create_nested_analysis

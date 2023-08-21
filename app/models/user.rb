@@ -34,7 +34,7 @@ class User < ActiveRecord::Base
   def password_complexity
     # Regexp extracted from https://stackoverflow.com/questions/19605150
     return if password.blank? || password =~ /(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-;])/
-    errors.add :password, 'Complexity requirement not met. Please use: 1 uppercase, 1 lowercase, 1 digit and 1 special character (#?!@$%^&*-;)'
+    errors.add :password, "Complexity requirement not met. Please use: 1 uppercase, 1 lowercase, 1 digit and 1 special character (#?!@$%^&*-;)"
   end
 
   # Used to create user on first LDAP authentication

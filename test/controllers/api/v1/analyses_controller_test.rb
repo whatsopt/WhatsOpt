@@ -305,7 +305,7 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     @mda.package.destroy!  # remove package to avoid forbidden error (cannot import if analysis is packaged)
     @mda.operations.final.map(&:destroy!)  # remove operations to avoid forbidden error (cannot import if analysis is operated)
     @mda.operations.map(&:destroy!)  # remove operations to avoid forbidden error (cannot import if analysis is operated)
-    orig_count = @mda.disciplines.count
+    @mda.disciplines.count
     mda2 = analyses(:outermda)
     disc = disciplines(:outermda_innermda_discipline)
     put api_v1_mda_url(@mda), params: { analysis: { import: { analysis: mda2.id, disciplines: [disc.id] } }, requested_at: Time.now },

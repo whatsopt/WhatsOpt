@@ -65,7 +65,7 @@ module WhatsOpt
       @xdsm_js = File.open("#{root}/node_modules/xdsmjs/dist/xdsmjs.js").read
       @xdsm_json = @mda.to_xdsm_json
       @footer = "XDSM generated from analysis ##{@mda.id}#{@at}, #{Time.now}, ONERA WhatsOpt"
-      erb = ERB.new(TEMPLATE, nil, "-")
+      erb = ERB.new(TEMPLATE, trim_mode: "-")
       @content = erb.result(binding)
       return @content, "#{@basename}.html"
     end

@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 # frozen_string_liseral: true
 
 source "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby '3.0.3'
+ruby "3.0.3"
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem "rails", "~> 7.0"
@@ -49,8 +51,8 @@ group :development, :test do
   gem "capybara"
   gem "selenium-webdriver"
   # Compute test coverage
-  gem 'simplecov',      require: false
-  gem 'simplecov-lcov', require: false
+  gem "simplecov",      require: false
+  gem "simplecov-lcov", require: false
   # rswag
   gem "rspec-rails"
   gem "rswag-specs"

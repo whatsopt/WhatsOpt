@@ -39,7 +39,7 @@ class Variable < ApplicationRecord
 
   accepts_nested_attributes_for :distributions, reject_if: proc { |attr| attr["kind"].nil? }, allow_destroy: true
 
-  validates :name, format: { with: /\A[a-zA-Z][\-\.=:_a-zA-Z0-9]*\z/, message: "%{value} is not a valid variable name." }
+  validates :name, format: { with: /\A[a-zA-Z][-.=:_a-zA-Z0-9]*\z/, message: "%{value} is not a valid variable name." }
   validates :name, :io_mode, :type, :shape, presence: true, allow_blank: false
   validates :name, uniqueness: { scope: [:discipline], message: -> (object, data) {
       "%{value} as a variable name should be unique for discipline #{object.discipline.name}."
@@ -203,7 +203,7 @@ class Variable < ApplicationRecord
 
   def vectorized_shape
     super
-  rescue WhatsOpt::Variable::VectorizedShapeError => e
+  rescue WhatsOpt::Variable::VectorizedShapeError
     "Cannot vectorize"
   end
 

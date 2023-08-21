@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Rack::Attack
   ### Configure Cache ###
 
@@ -23,7 +25,7 @@ class Rack::Attack
   # Throttle all requests by IP (60rpm)
   #
   # Key: "track::attack:#{Time.now.to_i/:period}:req/ip:#{req.ip}"
-  throttle('req/ip', limit: 300, period: 5.minutes) do |req|
+  throttle("req/ip", limit: 300, period: 5.minutes) do |req|
     req.ip # unless req.path.start_with?('/assets')
   end
 
@@ -39,8 +41,8 @@ class Rack::Attack
   # Throttle POST requests to /login by IP address
   #
   # Key: "rack::attack:#{Time.now.to_i/:period}:logins/ip:#{req.ip}"
-  throttle('logins/ip', limit: 5, period: 20.seconds) do |req|
-    if req.path == '/users/sign_in' && req.post?
+  throttle("logins/ip", limit: 5, period: 20.seconds) do |req|
+    if req.path == "/users/sign_in" && req.post?
       req.ip
     end
   end
@@ -64,7 +66,7 @@ class Rack::Attack
   # Track it using ActiveSupport::Notification
   ActiveSupport::Notifications.subscribe("track.rack_attack") do |name, start, finish, request_id, payload|
     req = payload[:request]
-    if req.env['rack.attack.matched'] =~ /wop/
+    if /wop/.match?(req.env["rack.attack.matched"])
       Rails.logger.info "wop : #{req.path}"
     end
   end

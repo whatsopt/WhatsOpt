@@ -31,7 +31,7 @@ class OptimizationsController < ApplicationController
       end
 
       if error == ""
-        redirect_to controller: 'optimizations', action: 'compare', optim_list: params[:optimization_request_ids]
+        redirect_to controller: "optimizations", action: "compare", optim_list: params[:optimization_request_ids]
       else
         redirect_to optimizations_url, alert: "You can't compare these Optimizations : " + error
       end
@@ -58,14 +58,14 @@ class OptimizationsController < ApplicationController
       @optimization = Optimization.new(optimization_params)
       if optimization_params[:kind] == "SEGOMOE"
         @optimization.n_obj = 1
-        @optimization.xlimits = params[:optimization][:xlimits].map { |e| e.delete(' ').split(',').map { |s| s.to_i } }
+        @optimization.xlimits = params[:optimization][:xlimits].map { |e| e.delete(" ").split(",").map { |s| s.to_i } }
         unless params[:optimization][:options][0].empty? || params[:optimization][:options][1].empty?
           @optimization.options["mod_obj__regr"] = params[:optimization][:options][0]
           @optimization.options["optimizer"] = params[:optimization][:options][1]
         end
       else
         @optimization.xtypes = params[:optimization][:xtypes].map do |e|
-          arr = e.delete(' ').split(',')
+          arr = e.delete(" ").split(",")
           if arr[0] == "int_type"
             arr[1] = arr[1].to_i
             arr[2] = arr[2].to_i
@@ -78,7 +78,7 @@ class OptimizationsController < ApplicationController
         @optimization.n_obj = params[:optimization][:n_obj].to_i
         unless params[:optimization][:cstr_specs][0].empty?
           @optimization.cstr_specs = params[:optimization][:cstr_specs].map do |e|
-            arr = e.delete(' ').split(',')
+            arr = e.delete(" ").split(",")
             { "type" => arr[0], "bound" => arr[1].to_f, "tol" => arr[2].to_f }
           end
         end
@@ -109,16 +109,16 @@ class OptimizationsController < ApplicationController
     else
       errors = ""
       params[:optimization][:inputs][:x].each_with_index do |x, i|
-        new_x = x.delete(' ').split(',').map { |s| s.to_f }
-        new_y = params[:optimization][:inputs][:y][i].delete(' ').split(',').map { |s| s.to_f }
+        new_x = x.delete(" ").split(",").map { |s| s.to_f }
+        new_y = params[:optimization][:inputs][:y][i].delete(" ").split(",").map { |s| s.to_f }
 
         if new_x.length == @optimization.xlimits.length + @optimization.xtypes.length
           if new_y.length == @optimization.n_obj
-            if @optimization.inputs.empty? or @optimization.inputs['x'].nil?
+            if @optimization.inputs.empty? || @optimization.inputs["x"].nil?
               @optimization.inputs = { "x" => [], "y" => [] }
             end
-            @optimization.inputs['x'].append(new_x)
-            @optimization.inputs['y'].append(new_y)
+            @optimization.inputs["x"].append(new_x)
+            @optimization.inputs["y"].append(new_y)
           else
             errors += "the input n°#{i + 1} has a wrong y dimention, expected #{@optimization.n_obj}, got #{new_y.length}. "
           end

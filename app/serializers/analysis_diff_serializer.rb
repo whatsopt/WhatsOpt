@@ -4,7 +4,7 @@ class AnalysisDiffSerializer < ActiveModel::Serializer
   attributes :name, :disciplines
 
   def disciplines
-    object.disciplines.map { |disc|
+    object.disciplines.filter_map { |disc|
       if disc.type == Discipline::ANALYSIS
         {
           "name": disc.name,
@@ -13,6 +13,6 @@ class AnalysisDiffSerializer < ActiveModel::Serializer
       else
         DisciplineDiffSerializer.new(disc).as_json
       end
-    }.compact
+    }
   end
 end

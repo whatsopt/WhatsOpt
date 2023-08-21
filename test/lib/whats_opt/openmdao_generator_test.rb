@@ -38,7 +38,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     @mda = analyses(:singleton)
     # XXX: Fixture does not seem to always load the file properly
     #      this ensure the presence of the file and avoid tar extraction error
-    @mda.package.archive.attach(io: File.open(file_fixture('singleton-0.1.0.tar.gz')), filename: 'singleton-0.1.0.tar.gz')
+    @mda.package.archive.attach(io: File.open(file_fixture("singleton-0.1.0.tar.gz")), filename: "singleton-0.1.0.tar.gz")
     assert File.exist?(ActiveStorage::Blob.service.path_for(@mda.package.archive.key))
 
     @ogen = WhatsOpt::OpenmdaoGenerator.new(@mda, pkg_format: true)
@@ -121,7 +121,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     skip "Apache Thrift not installed" unless thrift?
     # Remove attached package to test pristine package mode
     @mda.package = nil
-    refute @mda.packaged?
+    assert_not @mda.packaged?
 
     pkg_expected = ["__init__.py", "aerodynamics.py", "aerodynamics_base.py", "cicav.py",
                 "cicav_base.py", "geometry.py", "geometry_base.py", "propulsion.py", "propulsion_base.py"] +
@@ -155,7 +155,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
 
     # XXX: Fixture does not seem to always load the file properly
     #      this ensure the presence of the file
-    @mda.package.archive.attach(io: File.open(file_fixture('cicav-0.1.0.tar.gz')), filename: 'cicav-0.1.0.tar.gz')
+    @mda.package.archive.attach(io: File.open(file_fixture("cicav-0.1.0.tar.gz")), filename: "cicav-0.1.0.tar.gz")
     assert File.exist?(ActiveStorage::Blob.service.path_for(@mda.package.archive.key))
 
     pkg_expected = ["__init__.py", "aerodynamics.py", "aerodynamics_base.py", "cicav.py",

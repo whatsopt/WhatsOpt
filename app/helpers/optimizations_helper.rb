@@ -11,7 +11,7 @@ module OptimizationsHelper
       Optimization::SOLUTION_REACHED => "Solution Reached",
       Optimization::RUNNING => "Running"
     }
-    status_text[status] ? status_text[status] : "Empty"
+    status_text[status] || "Empty"
   end
 
   def status_display(status)
@@ -48,6 +48,6 @@ module OptimizationsHelper
   end
 
   def nb_points(input)
-    (input.empty? or input["x"].nil?) ? "0" : input["x"].length
+    (input.empty? || input["x"].nil?) ? "0" : input["x"].length
   end
 end

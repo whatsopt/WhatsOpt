@@ -1,4 +1,6 @@
-require 'devise/strategies/authenticatable'
+# frozen_string_literal: true
+
+require "devise/strategies/authenticatable"
 
 module Devise
   module Strategies

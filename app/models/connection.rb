@@ -43,7 +43,7 @@ class Connection < ApplicationRecord
 
   def driver
     return from.discipline if from.discipline.is_driver?
-    return to.discipline if to.discipline.is_driver?
+    to.discipline if to.discipline.is_driver?
   end
 
   def analysis

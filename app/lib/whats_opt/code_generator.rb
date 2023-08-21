@@ -79,7 +79,7 @@ module WhatsOpt
     end
 
     def _run_template(name)
-      erb = ERB.new(File.open(name, "rb:utf-8").read, nil, "-")
+      erb = ERB.new(File.open(name, "rb:utf-8").read, trim_mode: "-")
       erb.result(binding)
     end
 

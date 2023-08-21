@@ -10,13 +10,13 @@ class PackageFetcherTest < ActiveSupport::TestCase
     @src_mda = analyses(:singleton)
     # XXX: Fixture does not seem to always load the file properly
     #      this ensure the presence of the file
-    @mda.package.archive.attach(io: File.open(file_fixture('cicav-0.1.0.tar.gz')), filename: 'cicav-0.1.0.tar.gz',
-                                content_type: 'application/gzip')
+    @mda.package.archive.attach(io: File.open(file_fixture("cicav-0.1.0.tar.gz")), filename: "cicav-0.1.0.tar.gz",
+                                content_type: "application/gzip")
     assert @mda.package.archive.attached?
     assert File.exist?(ActiveStorage::Blob.service.path_for(@mda.package.archive.key))
 
-    @src_mda.package.archive.attach(io: File.open(file_fixture('singleton-0.1.0.tar.gz')), filename: 'singleton-0.1.0.tar.gz',
-                                content_type: 'application/gzip')
+    @src_mda.package.archive.attach(io: File.open(file_fixture("singleton-0.1.0.tar.gz")), filename: "singleton-0.1.0.tar.gz",
+                                content_type: "application/gzip")
     assert @src_mda.package.archive.attached?
     assert File.exist?(ActiveStorage::Blob.service.path_for(@src_mda.package.archive.key))
 

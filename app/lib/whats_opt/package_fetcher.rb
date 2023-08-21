@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 require "whats_opt/code_generator"
-require 'rubygems/package'
-require 'zlib'
+require "rubygems/package"
+require "zlib"
 
 module WhatsOpt
   class PackageFetcher < CodeGenerator
@@ -19,8 +19,8 @@ module WhatsOpt
 
         files.each do |src_file|
           # skip root analysis implementation
-          next if src_file =~ /#{@src_mda.impl.py_filename}$/
-          next if src_file =~ /#{@src_mda.impl.py_basefilename}$/
+          next if /#{@src_mda.impl.py_filename}$/.match?(src_file)
+          next if /#{@src_mda.impl.py_basefilename}$/.match?(src_file)
 
           outfile = src_file
           outfile = outfile.gsub("/#{@src_mda.impl.py_modulename}/", "/#{@impl.py_modulename}/")
@@ -31,7 +31,7 @@ module WhatsOpt
 
           outfile = File.join(gendir, rel_outfile)
           FileUtils.mkdir_p File.dirname(outfile)
-          File.open(outfile, 'w') do |out|
+          File.open(outfile, "w") do |out|
             out << File.open(src_file).read.gsub("from #{@src_mda.impl.py_modulename}", "from #{@impl.py_modulename}")
           end
           @genfiles << outfile

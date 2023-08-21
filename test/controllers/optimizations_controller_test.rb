@@ -94,7 +94,7 @@ class OptimizationsControllerTest < ActionDispatch::IntegrationTest
     sign_out users(:user1)
     sign_in users(:admin)
     post select_optimizations_path, params: { optimization_request_ids: [@optim_ack.id, @optim_unknown_status.id] }
-    assert_redirected_to controller: 'optimizations', action: 'compare', optim_list: [@optim_ack.id, @optim_unknown_status.id]
+    assert_redirected_to controller: "optimizations", action: "compare", optim_list: [@optim_ack.id, @optim_unknown_status.id]
   end
 
   test "should add an input to the optimization" do

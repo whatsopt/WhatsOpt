@@ -3,7 +3,7 @@
 require "test_helper"
 require "mkmf" # for find_executable
 MakeMakefile::Logging.instance_variable_set(:@log, File.open(File::NULL, "wb"))
-require 'fileutils'
+require "fileutils"
 
 class ExportsControllerTest < ActionDispatch::IntegrationTest
   def thrift?

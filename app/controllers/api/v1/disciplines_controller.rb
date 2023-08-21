@@ -56,7 +56,7 @@ class Api::V1::DisciplinesController < Api::V1::ApiMdaUpdaterController
         authorize @mda, :update?
         check_mda_update   # raise StaleObjectError
         raise e            # otherwise re-raise
-      rescue ActiveRecord::RecordNotFound => e1
+      rescue ActiveRecord::RecordNotFound
         raise e
       end
     end

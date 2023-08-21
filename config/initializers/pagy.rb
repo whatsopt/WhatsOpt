@@ -127,7 +127,7 @@
 
 # Bootstrap extra: Add nav, nav_js and combo_nav_js helpers and templates for Bootstrap pagination
 # See https://ddnexus.github.io/pagy/docs/extras/bootstrap
-require 'pagy/extras/bootstrap'
+require "pagy/extras/bootstrap"
 
 # Bulma extra: Add nav, nav_js and combo_nav_js helpers and templates for Bulma pagination
 # See https://ddnexus.github.io/pagy/docs/extras/bulma
@@ -179,7 +179,7 @@ require 'pagy/extras/bootstrap'
 
 # Overflow extra: Allow for easy handling of overflowing pages
 # See https://ddnexus.github.io/pagy/docs/extras/overflow
-require 'pagy/extras/overflow'
+require "pagy/extras/overflow"
 Pagy::DEFAULT[:overflow] = :last_page    # :empty_page default  (other options: :last_page and :exception)
 
 # Support extra: Extra support for features like: incremental, infinite, auto-scroll pagination

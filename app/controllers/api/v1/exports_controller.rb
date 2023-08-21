@@ -35,7 +35,7 @@ class Api::V1::ExportsController < Api::ApiController
     when "mda_pkg_content"
       src_id = params[:src_id]
       src_mda = Analysis.find(src_id)
-      src_pkg = src_mda
+      src_mda
       fetcher = WhatsOpt::PackageFetcher.new(mda, src_mda)
       begin
         content, filename = fetcher.generate()

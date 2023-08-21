@@ -19,7 +19,7 @@ class OptimizationExportsController < ApplicationController
       end
     elsif format == "csv"
       content = CSV.generate(col_sep: ";") do |csv|
-        unless optim.inputs.empty? or optim.x.nil?
+        unless optim.inputs.empty? || optim.x.nil?
           headers = []
           headers += optim.x[0].map.with_index { |_, i| "x_#{i + 1}" }
           headers += (1..optim.n_obj).map { |i| "obj_#{i}" }
@@ -33,7 +33,7 @@ class OptimizationExportsController < ApplicationController
       send_data content, filename: "optim_#{optim_id}.csv"
     elsif format == "result_csv"
       content = CSV.generate(col_sep: ";") do |csv|
-        unless optim.inputs.empty? or optim.x.nil?
+        unless optim.inputs.empty? || optim.x.nil?
           headers = []
           headers += optim.x_best[0].map.with_index { |_, i| "x_#{i + 1}" }
           headers += (1..optim.n_obj).map { |i| "obj_#{i}" }

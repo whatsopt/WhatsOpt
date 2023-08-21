@@ -1,10 +1,12 @@
-lock '~>3.17'
+# frozen_string_literal: true
 
-set :application, 'WhatsOpt' # config valid only for current version of Capistrano
+lock "~>3.17"
+
+set :application, "WhatsOpt" # config valid only for current version of Capistrano
 
 set :repo_url, "#{ENV['WHATSOPT_REPOSITORY']}"
 
-set :branch, ENV['branch'] || :master
+set :branch, ENV["branch"] || :master
 set :keep_releases, 5
 
 set :log_level, :info
@@ -23,7 +25,7 @@ SSHKit.config.command_map[:rails] = "bundle exec rails"
 before "deploy:assets:precompile", "deploy:yarn_install"
 
 namespace :deploy do
-  desc 'Run rake yarn:install'
+  desc "Run rake yarn:install"
   task :yarn_install do
     on roles(:web) do
       within release_path do

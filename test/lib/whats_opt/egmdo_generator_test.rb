@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "test_helper"
 require "whats_opt/egmdo_generator"
 require "tmpdir"
