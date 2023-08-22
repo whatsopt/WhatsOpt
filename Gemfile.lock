@@ -394,7 +394,7 @@ GEM
       rubyzip (>= 1.2.2, < 3.0)
       websocket (~> 1.0)
     semantic_range (3.0.0)
-    shakapacker (6.6.0)
+    shakapacker (7.0.3)
       activesupport (>= 5.2)
       rack-proxy (>= 0.6.1)
       railties (>= 5.2)
@@ -516,7 +516,7 @@ DEPENDENCIES
   rubyzip (~> 2.3.0)
   sass-rails (>= 6)
   selenium-webdriver
-  shakapacker (~> 6.0)
+  shakapacker (~> 7.0)
   simplecov
   simplecov-lcov
   solargraph
