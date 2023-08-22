@@ -12,7 +12,7 @@ class AnalysisExportsController < ApplicationController
     with_server = (params[:with_server] == "true")
     with_runops = (params[:with_runops] == "true")
     with_unittests = (params[:with_unittests] == "true")
-    with_run=true
+    with_run = true
 
     mda = Analysis.find(mda_id)
     authorize mda
@@ -29,7 +29,7 @@ class AnalysisExportsController < ApplicationController
       begin
         content, filename = ggen.generate(with_run: with_run,
                                           with_server: with_server, with_runops: with_runops, with_unittests: with_unittests)
-        send_data content, filename: filename                          
+        send_data content, filename: filename
       rescue WhatsOpt::GemseoGenerator::NotYetImplementedError => e
         Rails.logger.warn "GEMSEO export error: #{e}"
         redirect_to mda_url(mda), alert: "GEMSEO export failed: #{e}"

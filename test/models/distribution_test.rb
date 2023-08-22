@@ -16,7 +16,7 @@ class DistributionTest < ActiveSupport::TestCase
     json["vars"].each do |d, vars|
       variables << vars["out"]
     end
-    u = variables.flatten.detect { |v| v["name"]=="u" }
+    u = variables.flatten.detect { |v| v["name"] == "u" }
     # expected = { "kind"=>"Normal",
     #             "options_attributes" => [
     #               { "name" => "mu", "value" => "0.5" },
@@ -32,7 +32,7 @@ class DistributionTest < ActiveSupport::TestCase
     json["vars"].each do |d, vars|
       variables << vars["out"]
     end
-    x1 = variables.flatten.detect { |v| v["name"]=="x1" }
+    x1 = variables.flatten.detect { |v| v["name"] == "x1" }
     assert_empty x1["distributions_attributes"]
   end
 end

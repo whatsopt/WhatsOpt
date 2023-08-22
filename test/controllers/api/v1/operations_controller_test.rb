@@ -183,7 +183,7 @@ class Api::V1::OperationsControllerTest < ActionDispatch::IntegrationTest
             cases: [{ varname: "x1", coord_index: -1, values: inputs.column(0).to_a },
                     { varname: "x2", coord_index: -1, values: inputs.column(0).to_a },
                     { varname: "y", coord_index: -1, values: output }],
-            success: [1]*output.size
+            success: [1] * output.size
           },
           outvar_count_hint: 1
         },

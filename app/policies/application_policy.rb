@@ -8,16 +8,6 @@ class ApplicationPolicy
     @record = record
   end
 
-  class Scope < Struct.new(:user, :scope)
-    def enable_wopstore?
-      APP_CONFIG["enable_wopstore"]
-    end
-    
-    def resolve
-      scope.all
-    end
-  end
-
   def index?
     false
   end
@@ -52,6 +42,10 @@ class ApplicationPolicy
 
   class Scope
     attr_reader :user, :scope
+
+    def enable_wopstore?
+      APP_CONFIG["enable_wopstore"]
+    end
 
     def initialize(user, scope)
       @user = user

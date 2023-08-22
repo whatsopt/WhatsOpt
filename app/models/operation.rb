@@ -14,7 +14,7 @@ class Operation < ApplicationRecord
   CAT_SENSITIVITY_DOE = "sensitivity_doe"
   CAT_SENSITIVITY = "sensitivity_analysis"
   CAT_METAMODEL = "metamodel"
-  CATEGORIES = [CAT_RUNONCE, CAT_OPTIMIZATION, 
+  CATEGORIES = [CAT_RUNONCE, CAT_OPTIMIZATION,
                 CAT_EGDOE, CAT_EGMDO,
                 CAT_DOE, CAT_SENSITIVITY_DOE,
                 CAT_SENSITIVITY, CAT_METAMODEL].freeze
@@ -114,10 +114,10 @@ class Operation < ApplicationRecord
           distAttr.update(id: nil)
           distAttr[:options_attributes].map { |optAttr| optAttr.update(id: nil) }
         }
-        varattr[:parameter_attributes] = {} unless varattr[:parameter_attributes]        
+        varattr[:parameter_attributes] = {} unless varattr[:parameter_attributes]
         varattr[:parameter_attributes].merge!(lower: "", upper: "")
       end
-      if varattrs.keys.include?(c.variable.name)
+      if varattrs.key?(c.variable.name)
         if varattr[:io_mode] == WhatsOpt::Variable::IN
           varattr[:parameter_attributes] = {} unless varattr[:parameter_attributes]
           varattr[:parameter_attributes][:lower] = [c.values.min, varattr[:parameter_attributes][:lower].to_f].min.to_s
@@ -201,7 +201,7 @@ class Operation < ApplicationRecord
   end
 
   def option_hash
-    options.map { |h| [h["name"].to_sym, h["value"]] }.to_h
+    options.to_h { |h| [h["name"].to_sym, h["value"]] }
   end
 
   def update_operation(ope_attrs)
@@ -247,7 +247,7 @@ class Operation < ApplicationRecord
       vname = c.variable.name
       if varnames.empty? || varnames.include?(vname)
         dest_variable = prototypes_variables.where(name: vname).take unless prototypes_variables.blank?
-        c_copy =  c.build_copy(ope_copy, dest_variable)
+        c_copy = c.build_copy(ope_copy, dest_variable)
         ope_copy.cases << c_copy
       end
     end
@@ -261,7 +261,7 @@ class Operation < ApplicationRecord
 
   def perform
     outdir = Dir.tmpdir # "/tmp/TEST"
-    ogen = WhatsOpt::OpenmdaoGenerator.new(analysis, server_host: host, driver_name: driver, 
+    ogen = WhatsOpt::OpenmdaoGenerator.new(analysis, server_host: host, driver_name: driver,
                                            driver_options: option_hash, outdir: outdir)
     sqlite_filename = File.join(outdir, "#{SecureRandom.urlsafe_base64}.sqlite")
     tmplog_filename = File.join(outdir, "#{SecureRandom.urlsafe_base64}.log")

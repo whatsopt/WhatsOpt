@@ -21,10 +21,10 @@ module WhatsOpt
         opts[k] = Services::OptionValue.new(number: v.to_f) if !opts[k] && v =~ /^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$/
         opts[k] = Services::OptionValue.new(str: v.to_s) unless opts[k]
       end
-      uncs = uncertainties.map { |us|
-        u = us.map { |k, v| [k.to_sym, v] }.to_h
-        Services::Distribution.new(name: u[:name], kwargs: u[:kwargs].map { |ks, v| [ks.to_s, v.to_f] }.to_h) unless u.blank?
-      }.compact
+      uncs = uncertainties.filter_map { |us|
+        u = us.transform_keys { |k| k.to_sym }
+        Services::Distribution.new(name: u[:name], kwargs: u[:kwargs].to_h { |ks, v| [ks.to_s, v.to_f] }) unless u.blank?
+      }
       _send { @client.create_surrogate(@id, surrogate_kind, x, y, opts, uncs) }
     end
 

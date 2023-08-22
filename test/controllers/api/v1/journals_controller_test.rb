@@ -3,7 +3,6 @@
 require "test_helper"
 
 class Api::V1::JournalsControllerTest < ActionDispatch::IntegrationTest
-
   setup do
     @user1 = users(:user1)
     @auth_headers = { "Authorization" => "Token " + TEST_API_KEY }
@@ -24,5 +23,4 @@ class Api::V1::JournalsControllerTest < ActionDispatch::IntegrationTest
     resp = JSON.parse(response.body)
     assert_equal 1, resp.size
   end
-
 end

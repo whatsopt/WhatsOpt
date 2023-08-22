@@ -29,12 +29,12 @@ class User < ActiveRecord::Base
   }
 
   # Backward-compatibility WhatsOpt < 1.13
-  # Use save not save! (update not update!) to avoid exception due to password 
+  # Use save not save! (update not update!) to avoid exception due to password
   # complexity validation failure now because we have stronger conditions for password on reset (ie on update)
   def password_complexity
     # Regexp extracted from https://stackoverflow.com/questions/19605150
     return if password.blank? || password =~ /(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-;])/
-    errors.add :password, 'Complexity requirement not met. Please use: 1 uppercase, 1 lowercase, 1 digit and 1 special character (#?!@$%^&*-;)'
+    errors.add :password, "Complexity requirement not met. Please use: 1 uppercase, 1 lowercase, 1 digit and 1 special character (#?!@$%^&*-;)"
   end
 
   # Used to create user on first LDAP authentication

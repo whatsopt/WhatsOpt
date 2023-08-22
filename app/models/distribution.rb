@@ -12,7 +12,7 @@ class Distribution < ApplicationRecord
   validates :kind, inclusion: { in: DISTRIBUTIONS }
 
   def nullified?
-    kind=="none" || kind.blank?
+    kind == "none" || kind.blank?
   end
 
   def self.uniform_attrs(a, b)

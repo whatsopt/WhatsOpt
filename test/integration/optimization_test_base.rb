@@ -51,7 +51,7 @@ class OptimizationTestBase < ActionDispatch::IntegrationTest
           x_suggested = resp["outputs"]["x_suggested"]
         end
         sleep(1)
-        try = try-1
+        try = try - 1
       end
       if try <= 0
         raise "Can not get x suggestion"
@@ -66,7 +66,7 @@ class OptimizationTestBase < ActionDispatch::IntegrationTest
 
       neg_cstr = new_y.size == 1 || new_y[1..-1].inject(true) { |acc, g| acc && g < 0 }
       if new_y[0] < best[0] && neg_cstr
-        best = [new_y[0], y.size-1]
+        best = [new_y[0], y.size - 1]
       end
     end
     best

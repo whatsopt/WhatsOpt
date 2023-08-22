@@ -45,10 +45,9 @@ class GemseoGeneratorTest < ActiveSupport::TestCase
 
   test "should maintain a list of generated filepaths with optimization" do
     expected = ["__init__.py", "aerodynamics.py", "aerodynamics_base.py", "cicav.py",
-                "cicav_base.py", "geometry.py", "geometry_base.py", "mda_init.py", 
+                "cicav_base.py", "geometry.py", "geometry_base.py", "mda_init.py",
                 "propulsion.py", "propulsion_base.py",
                 "run_mda.py", "run_mdo.py", "run_doe.py"]
     _assert_file_generation expected, with_server: false
   end
-
 end

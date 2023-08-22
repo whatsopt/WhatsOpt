@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "active_support/core_ext/integer/time"
 
 Rails.application.configure do
@@ -41,15 +43,15 @@ Rails.application.configure do
 
   config.action_mailer.perform_caching = false
 
-  config.action_mailer.default_url_options   = { :host => "persephone:3000" }
+  config.action_mailer.default_url_options = { host: "persephone:3000" }
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.perform_deliveries = true
-  config.action_mailer.default :charset => "utf-8"
+  config.action_mailer.default charset: "utf-8"
   ActionMailer::Base.smtp_settings = {
-    :address => "mailhost",
-    :port    => 25,
-    :domain  => "onecert.fr",
-    :enable_starttls_auto => true
+    address: "mailhost",
+    port: 25,
+    domain: "onecert.fr",
+    enable_starttls_auto: true
   }
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
@@ -78,5 +80,5 @@ Rails.application.configure do
   # Uncomment if you wish to allow Action Cable access from any origin.
   # config.action_cable.disable_request_forgery_protection = true
   config.hosts.clear
-  config.web_console.whitelisted_ips = ['134.212.27.183', '134.212.16.16', '134.212.26.254', '192.168.99.1', '172.18.0.1']
+  config.web_console.whitelisted_ips = ["134.212.27.183", "134.212.16.16", "134.212.26.254", "192.168.99.1", "172.18.0.1"]
 end

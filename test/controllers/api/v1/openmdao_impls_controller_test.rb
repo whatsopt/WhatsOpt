@@ -14,7 +14,7 @@ class Api::V1::OpenmdaoImplsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update openmdao impl parallel flag" do
-    refute @mda.openmdao_impl.parallel_group
+    assert_not @mda.openmdao_impl.parallel_group
     put api_v1_mda_openmdao_impl_url(@mda), params: { openmdao_impl: { parallel_group: true }, requested_at: Time.now },
                                             as: :json, headers: @auth_headers
     assert_response :success
@@ -23,7 +23,7 @@ class Api::V1::OpenmdaoImplsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update openmdao impl use_units flag to true" do
-    refute @mda.openmdao_impl.use_units
+    assert_not @mda.openmdao_impl.use_units
     put api_v1_mda_openmdao_impl_url(@mda), params: { openmdao_impl: { use_units: true }, requested_at: Time.now },
                                             as: :json, headers: @auth_headers
     assert_response :success
@@ -37,11 +37,11 @@ class Api::V1::OpenmdaoImplsControllerTest < ActionDispatch::IntegrationTest
                                             as: :json, headers: @auth_headers
     assert_response :success
     @mda.reload
-    refute @mda.openmdao_impl.use_units
+    assert_not @mda.openmdao_impl.use_units
   end
 
   test "should update openmdao impl optim driver" do
-    refute @mda.openmdao_impl.use_units
+    assert_not @mda.openmdao_impl.use_units
     put api_v1_mda_openmdao_impl_url(@mda), params: { openmdao_impl: { optimization_driver: :onerasego_optimizer_segomoe }, requested_at: Time.now },
                                             as: :json, headers: @auth_headers
     assert_response :success
@@ -51,10 +51,10 @@ class Api::V1::OpenmdaoImplsControllerTest < ActionDispatch::IntegrationTest
 
   test "should propagate use_units change" do
     outermda = analyses(:outermda)
-    oimpl = outermda.openmdao_impl
+    outermda.openmdao_impl
     innermda = analyses(:innermda)
     inner_oimpl = innermda.openmdao_impl
-    refute inner_oimpl.use_units
+    assert_not inner_oimpl.use_units
     put api_v1_mda_openmdao_impl_url(outermda), params: { openmdao_impl: { use_units: true }, requested_at: Time.now },
     as: :json, headers: @auth_headers
     assert_response :success

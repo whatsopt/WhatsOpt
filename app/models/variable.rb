@@ -39,10 +39,10 @@ class Variable < ApplicationRecord
 
   accepts_nested_attributes_for :distributions, reject_if: proc { |attr| attr["kind"].nil? }, allow_destroy: true
 
-  validates :name, format: { with: /\A[a-zA-Z][\-\.=:_a-zA-Z0-9]*\z/, message: "%{value} is not a valid variable name." }
+  validates :name, format: { with: /\A[a-zA-Z][-.=:_a-zA-Z0-9]*\z/, message: "%{value} is not a valid variable name." }
   validates :name, :io_mode, :type, :shape, presence: true, allow_blank: false
   validates :name, uniqueness: { scope: [:discipline], message: -> (object, data) {
-      "%{value} as a variable name should be unique for discipline #{object.discipline.name}." 
+      "%{value} as a variable name should be unique for discipline #{object.discipline.name}."
     }
   }
   validate :shape_is_well_formed
@@ -69,7 +69,7 @@ class Variable < ApplicationRecord
     !distributions.empty?
   end
 
-  def roles 
+  def roles
     outgoing_connections.map(&:role).uniq
   end
 
@@ -130,26 +130,26 @@ class Variable < ApplicationRecord
 
   def lower_py_value
     if parameter&.lower.blank?
-      if io_mode == WhatsOpt::Variable::IN 
+      if io_mode == WhatsOpt::Variable::IN
         vout = Variable.of_analysis(discipline.analysis).where(name: v.name, io_mode: OUT).take
         vout.lower_py_value
       else
-        super 
+        super
       end
-    else 
+    else
       parameter.lower
     end
   end
 
   def upper_py_value
     if parameter&.upper.blank?
-      if io_mode == WhatsOpt::Variable::IN 
+      if io_mode == WhatsOpt::Variable::IN
         vout = Variable.of_analysis(discipline.analysis).where(name: v.name, io_mode: OUT).take
         vout.upper_py_value
       else
-        super 
+        super
       end
-    else 
+    else
       parameter.upper
     end
   end
@@ -203,7 +203,7 @@ class Variable < ApplicationRecord
 
   def vectorized_shape
     super
-  rescue WhatsOpt::Variable::VectorizedShapeError => e
+  rescue WhatsOpt::Variable::VectorizedShapeError
     "Cannot vectorize"
   end
 

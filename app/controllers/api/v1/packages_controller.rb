@@ -25,17 +25,15 @@ class Api::V1::PackagesController < Api::ApiController
     render json: @package, status: :created
   end
 
-  private 
+  private
+    def set_package
+      @mda = Analysis.find(params[:mda_id])
+      authorize @mda
+      @package = @mda&.package
+      authorize @package if @package
+    end
 
-  def set_package
-    @mda = Analysis.find(params[:mda_id])
-    authorize @mda
-    @package = @mda&.package
-    authorize @package if @package
-  end
-
-  def package_params
-    params.require(:package).permit(:description, :archive) 
-  end
-
+    def package_params
+      params.require(:package).permit(:description, :archive)
+    end
 end

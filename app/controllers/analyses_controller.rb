@@ -86,9 +86,9 @@ class AnalysesController < ApplicationController
       redirect_to mdas_url, notice: "Analysis #{@mda.name} was successfully deleted."
     end
   rescue Discipline::ForbiddenRemovalError => exc
-    redirect_to mdas_url, alert: "Can not delete analysis #{@mda.name}, reason: "+exc.message
+    redirect_to mdas_url, alert: "Can not delete analysis #{@mda.name}, reason: " + exc.message
   rescue Operation::ForbiddenRemovalError => exc
-    redirect_to mdas_url, alert: "Can not delete analysis #{@mda.name}, reason: "+exc.message
+    redirect_to mdas_url, alert: "Can not delete analysis #{@mda.name}, reason: " + exc.message
   end
 
   private
@@ -101,8 +101,8 @@ class AnalysesController < ApplicationController
     def mda_params
       params.require(:analysis).permit(:name, :public, :locked, design_project: [:id])
     end
-    
+
     def save_journal
-      @mda.save_journal if @mda  # analysis may not exist when cancelling analysis creation 
+      @mda.save_journal if @mda  # analysis may not exist when cancelling analysis creation
     end
 end

@@ -1,4 +1,5 @@
-const { webpackConfig: baseWebpackConfig, merge } = require('shakapacker');
+const { globalMutableWebpackConfig: webpackConfig, merge } = require('shakapacker')
+
 const webpack = require('webpack');
 
 const options = {
@@ -35,16 +36,8 @@ const options = {
       },
     ],
   },
-
-  // 04/11/2022: Workaround webpack error: Uncaught TypeError:
-  // __webpack_modules__[moduleId] is undefined
-  // https://github.com/webpack/webpack/issues/5429
-  // https://github.com/webpack/webpack/issues/11277
-  // From time to time: should check if this can be removed
-  optimization: { concatenateModules: false, providedExports: false, usedExports: false },
-
 };
 
-const config = merge({}, baseWebpackConfig, options);
+const config = merge({}, webpackConfig, options);
 console.log(config);
 module.exports = config;

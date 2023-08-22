@@ -17,14 +17,14 @@ class Api::V1::DisciplineControllerTest < ActionDispatch::IntegrationTest
     get api_v1_mda_disciplines_url(@mda), as: :json, headers: @auth_headers
     assert_response :success
     resp = JSON.parse(response.body)
-    assert_equal ["Geometry", "Propulsion", "Aerodynamics"], resp.map{|d| d["name"]}
+    assert_equal ["Geometry", "Propulsion", "Aerodynamics"], resp.map { |d| d["name"] }
   end
 
   test "should create discipline in given mda" do
     assert_difference("Discipline.count") do
-      post api_v1_mda_disciplines_url(@mda), params: { 
-        discipline: { name: "TestDiscipline", type: "analysis" 
-      }, requested_at: Time.now}, as: :json, headers: @auth_headers
+      post api_v1_mda_disciplines_url(@mda), params: {
+        discipline: { name: "TestDiscipline", type: "analysis"
+      }, requested_at: Time.now }, as: :json, headers: @auth_headers
     end
     assert_response :success
     resp = JSON.parse(response.body)
@@ -40,18 +40,19 @@ class Api::V1::DisciplineControllerTest < ActionDispatch::IntegrationTest
     assert_not_equal @submda.name, @disc.name
     assert_difference("Discipline.count", 0) do
       assert_difference("AnalysisDiscipline.count") do
-        put api_v1_mda_discipline_url(@mda, @disc), params: { 
+        put api_v1_mda_discipline_url(@mda, @disc), params: {
           discipline: { type: "mda",
                         analysis_discipline_attributes: { discipline_id: @disc.id, analysis_id: @submda.id }
-          }, requested_at: Time.now}, as: :json, headers: @auth_headers
+          }, requested_at: Time.now }, as: :json, headers: @auth_headers
         journal = Journal.last
-        assert_equal 1, journal.details.size      
+        assert_equal 1, journal.details.size
       end
     end
     assert_response :success
     @disc.reload
+    @submda.reload
     assert_equal @submda, @disc.sub_analysis
-    assert @submda.name, @disc.name
+    assert_equal @submda.name, @disc.name
   end
 
   test "should update a sub analysis" do
@@ -60,7 +61,7 @@ class Api::V1::DisciplineControllerTest < ActionDispatch::IntegrationTest
     innermda = analyses(:innermda)
     assert_difference("Discipline.count", 0) do
       assert_difference("AnalysisDiscipline.count", 0) do
-        put api_v1_mda_discipline_url(outermda, disc), params: { 
+        put api_v1_mda_discipline_url(outermda, disc), params: {
           discipline: { type: "mda",
                         analysis_discipline_attributes: { discipline_id: disc.id, analysis_id: @submda.id }
           }, requested_at: Time.now }, as: :json, headers: @auth_headers
@@ -70,21 +71,21 @@ class Api::V1::DisciplineControllerTest < ActionDispatch::IntegrationTest
     disc.reload
     assert_equal @submda, disc.sub_analysis
     @submda.reload
-    refute @submda.is_root?
+    assert_not @submda.is_root?
     innermda.reload
     assert innermda.is_root?
     assert innermda.analysis_discipline.nil?
   end
 
   test "should prevent a sub_analysis with same output" do
-    post api_v1_mda_disciplines_url(@mda), params: { 
-      discipline: { name: "TestDiscipline", type: "analysis" 
+    post api_v1_mda_disciplines_url(@mda), params: {
+      discipline: { name: "TestDiscipline", type: "analysis"
     }, requested_at: Time.now }, as: :json, headers: @auth_headers
     assert_response :success
     disc = Discipline.last
     assert_difference("Discipline.count", 0) do
       assert_difference("AnalysisDiscipline.count", 0) do
-        put api_v1_mda_discipline_url(@mda, disc), params: { 
+        put api_v1_mda_discipline_url(@mda, disc), params: {
           discipline: { name: "TestDiscipline", type: "mda",
                         analysis_discipline_attributes: { discipline_id: disc.id, analysis_id: @submda2.id }
           }, requested_at: Time.now }, as: :json, headers: @auth_headers
@@ -95,7 +96,7 @@ class Api::V1::DisciplineControllerTest < ActionDispatch::IntegrationTest
 
   test "should prevent a sub_analysis discipline without analysis" do
     assert_difference("AnalysisDiscipline.count", 0) do
-      put api_v1_mda_discipline_url(@mda, @disc), params: { 
+      put api_v1_mda_discipline_url(@mda, @disc), params: {
         discipline: { name: "TestDiscipline", type: "mda",
                       analysis_discipline_attributes: { discipline_id: @disc.id, analysis_id: nil }
         }, requested_at: Time.now }, as: :json, headers: @auth_headers
@@ -124,10 +125,10 @@ class Api::V1::DisciplineControllerTest < ActionDispatch::IntegrationTest
   test "should delete discipline and related variables" do
     initial_drivervar_count = @disc.analysis.driver.variables.count
     assert_difference("Discipline.count", -1) do
-      delete api_v1_mda_discipline_url(@mda, @disc), params: {requested_at: Time.now}, as: :json, headers: @auth_headers
+      delete api_v1_mda_discipline_url(@mda, @disc), params: { requested_at: Time.now }, as: :json, headers: @auth_headers
       assert_response :success
       journal = Journal.last
-      assert_equal 1, journal.details.size 
+      assert_equal 1, journal.details.size
       vars = @disc.analysis.driver.variables.reload.map(&:name)
       drivervar_count = vars.size
       assert_equal initial_drivervar_count, drivervar_count
@@ -140,7 +141,7 @@ class Api::V1::DisciplineControllerTest < ActionDispatch::IntegrationTest
     @outermda = @disc.analysis.parent
     initial_drivervars = @outermda.driver.variables.map(&:name)
     assert_difference("Discipline.count", -1) do
-      delete api_v1_mda_discipline_url(@innermda, @disc), params: {requested_at: Time.now}, as: :json, headers: @auth_headers
+      delete api_v1_mda_discipline_url(@innermda, @disc), params: { requested_at: Time.now }, as: :json, headers: @auth_headers
       assert_response :success
       # should have suppressed connection to y and driver y variable because only used by deleted disc in innermda
       # should have suppressed connection to x2 and driver x2 variable because only used by deleted disc in innermda
@@ -163,7 +164,7 @@ class Api::V1::DisciplineControllerTest < ActionDispatch::IntegrationTest
       assert_difference("Discipline.count", -1) do
         assert_difference("AnalysisDiscipline.count", -1) do
           innermda = @disc.sub_analysis
-          delete api_v1_mda_discipline_url(@mda, @disc), params: {requested_at: Time.now}, as: :json, headers: @auth_headers
+          delete api_v1_mda_discipline_url(@mda, @disc), params: { requested_at: Time.now }, as: :json, headers: @auth_headers
           assert innermda.reload.is_root_analysis?
         end
       end
@@ -175,7 +176,7 @@ class Api::V1::DisciplineControllerTest < ActionDispatch::IntegrationTest
     sub_mda = analyses(:innermda)
     super_disc = disciplines(:outermda_innermda_discipline)
     assert_equal sub_mda.name, super_disc.name
-    patch api_v1_mda_discipline_url(mda, super_disc), params: { discipline: {  name: "NewName" }, requested_at: Time.now }, 
+    patch api_v1_mda_discipline_url(mda, super_disc), params: { discipline: {  name: "NewName" }, requested_at: Time.now },
                                                   as: :json, headers: @auth_headers
     assert_response :success
     super_disc.reload

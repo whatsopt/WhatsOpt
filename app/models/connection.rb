@@ -17,7 +17,7 @@ class Connection < ApplicationRecord
   scope :from_discipline, ->(discipline_id) { joins(from: :discipline).where(variables: { discipline_id: discipline_id }) }
   scope :to_discipline, ->(discipline_id) { joins(to: :discipline).where(variables: { discipline_id: discipline_id }) }
   scope :with_role, ->(role) { where(role: role) }
-  
+
   class SubAnalysisVariableNotFoundError < StandardError
   end
 
@@ -43,7 +43,7 @@ class Connection < ApplicationRecord
 
   def driver
     return from.discipline if from.discipline.is_driver?
-    return to.discipline if to.discipline.is_driver?
+    to.discipline if to.discipline.is_driver?
   end
 
   def analysis
@@ -57,7 +57,7 @@ class Connection < ApplicationRecord
   end
 
   # used in journal details
-  def name  
+  def name
     "#{from.discipline.name}.#{from.name} -> #{to.discipline.name}.#{to.name}"
   end
 
@@ -69,7 +69,7 @@ class Connection < ApplicationRecord
       end
       vout = Variable.of_analysis(from_disc.analysis)
                      .where(name: name, io_mode: WhatsOpt::Variable::OUT).first
-      if vout.blank? 
+      if vout.blank?
         vout = Variable.of_analysis(from_disc.analysis)
           .where(name: name, io_mode: WhatsOpt::Variable::OUT)
           .create!(discipline: from_disc,  shape: 1, type: "Float", desc: "", units: "", active: true)
@@ -82,7 +82,7 @@ class Connection < ApplicationRecord
           raise VariableAlreadyProducedError.new "Variable #{vout.name} already produced by #{vout.discipline.name} discipline"
         end
       end
-      
+
       vin = Variable.where(discipline_id: to_disc.id, name: name, io_mode: WhatsOpt::Variable::IN)
                     .first_or_create!(shape: 1, type: "Float", desc: "", units: "", active: true)
       conn = Connection.where(from_id: vout.id, to_id: vin.id).first_or_create!
@@ -147,7 +147,7 @@ class Connection < ApplicationRecord
               if dists.size == from.dim
                 params.merge!(distributions_attributes: dists)
               elsif dists.size == 1
-                params.merge!(distributions_attributes: dists*from.dim)
+                params.merge!(distributions_attributes: dists * from.dim)
               end
             rescue ArrayParseError => e
               Rails.logger.info "Error when parsing #{from.parameter.lower} or #{from.parameter.upper}  of #{from.name}: #{e}"
@@ -160,10 +160,10 @@ class Connection < ApplicationRecord
                 params.merge!(distributions_attributes: init_values.map { |init| Distribution.normal_attrs(init, "1.0") })
               rescue ArrayParseError => e
                 Rails.logger.info "Error when parsing #{from.parameter.init} of #{from.name}: #{e}"
-                params.merge!(distributions_attributes: [Distribution.normal_attrs("1.0", "1.0")]*from.dim)
+                params.merge!(distributions_attributes: [Distribution.normal_attrs("1.0", "1.0")] * from.dim)
               end
             else
-              params[:distributions_attributes] = [Distribution.normal_attrs("1.0", "1.0")]*from.dim
+              params[:distributions_attributes] = [Distribution.normal_attrs("1.0", "1.0")] * from.dim
             end
           end
         end
@@ -180,7 +180,7 @@ class Connection < ApplicationRecord
       if from.scaling && !params[:scaling_attributes].blank?
         params[:scaling_attributes] = params[:scaling_attributes].merge!(id: from.scaling.id)
       end
-      if from.distributions.size>0 && !params[:distributions_attributes].blank?
+      if from.distributions.size > 0 && !params[:distributions_attributes].blank?
         params[:distributions_attributes] = params[:distributions_attributes]
       end
 
@@ -198,7 +198,7 @@ class Connection < ApplicationRecord
 
   def destroy_connection!(sub_analysis_check = true)
     Connection.transaction do
-      if sub_analysis_check && from.discipline.is_sub_analysis_connected_by?(from) 
+      if sub_analysis_check && from.discipline.is_sub_analysis_connected_by?(from)
         if from.outgoing_connections.count == 1
           if to.discipline.is_driver?
             raise CannotRemoveConnectionError.new "Connection #{from.name} has to be suppressed" \
@@ -209,7 +209,7 @@ class Connection < ApplicationRecord
         else
           _delete
         end
-      elsif sub_analysis_check && to.discipline.is_sub_analysis_connected_by?(to) 
+      elsif sub_analysis_check && to.discipline.is_sub_analysis_connected_by?(to)
         if from.discipline.is_driver?
           raise CannotRemoveConnectionError.new "Connection #{from.name} has to be suppressed" \
             " in #{to.discipline.name} sub-analysis first"

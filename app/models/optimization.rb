@@ -37,8 +37,8 @@ class Optimization < ApplicationRecord
 
   after_initialize :init
 
-  before_destroy :destroy_optimizer 
-  
+  before_destroy :destroy_optimizer
+
   def init
     self.options = {} if self.options.blank?
     self.kind = "SEGOMOE" if self.kind.blank?
@@ -78,19 +78,19 @@ class Optimization < ApplicationRecord
       end
 
       self.xtypes.each_with_index do |xt, i|
-        case xt['type']
+        case xt["type"]
         when "float_type"
-          if xt['limits'].size != 2 && xt['limits'][0].to_f != xt['limits'][0] && xt['limits'][1].to_f != xt['limits'][1]
+          if xt["limits"].size != 2 && xt["limits"][0].to_f != xt["limits"][0] && xt["limits"][1].to_f != xt["limits"][1]
             errors.add(:base, "xtype.limits should be float [lower, upper], got '#{xt['limits']}'")
           end
         when "int_type"
-          if xt['limits'].size != 2 && xt['limits'][0].to_i != xt['limits'][0] && xt['limits'][1].to_i != xt['limits'][1]
+          if xt["limits"].size != 2 && xt["limits"][0].to_i != xt["limits"][0] && xt["limits"][1].to_i != xt["limits"][1]
             errors.add(:base, "xtype.limits should be int [lower, upper], got '#{xt['limits']}'")
           end
         when "ord_type"
           begin
-            raise unless xt['limits'].kind_of?(Array)  
-            xt['limits'].each do |l|
+            raise unless xt["limits"].kind_of?(Array)
+            xt["limits"].each do |l|
               raise unless l.to_i == l
             end
           rescue Exception
@@ -98,11 +98,11 @@ class Optimization < ApplicationRecord
           end
         when "enum_type"
           begin
-            raise unless xt['limits'].kind_of?(Array)  
+            raise unless xt["limits"].kind_of?(Array)
           rescue Exception
             errors.add(:base, "xtype.limits should be a list of string, got '#{xt['limits']}'")
           end
-        else 
+        else
           errors.add(:base, "xtype.type should be FLOAT, INT, ORD or ENUM, got '#{xt['limits']}'")
         end
       end
@@ -116,7 +116,7 @@ class Optimization < ApplicationRecord
       end
     end
   end
-  
+
   def create_optimizer
     unless new_record?
       if self.kind == "SEGOMOE"
@@ -147,7 +147,7 @@ class Optimization < ApplicationRecord
 
   def destroy_optimizer
     self.proxy.destroy_optimizer
-  end 
+  end
 
   def xdim
     0 if self.xlimits.blank?

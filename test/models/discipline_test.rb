@@ -46,7 +46,7 @@ class DisciplineTest < ActiveSupport::TestCase
     disc = disciplines(:disc_cicav_metamodel)
     mda = analyses(:singleton)
     copy = disc.build_copy(mda)
-    assert :metamodel, copy.type
+    assert_equal "metamodel", copy.type
     assert copy.is_pure_metamodel?
   end
 
@@ -61,8 +61,8 @@ class DisciplineTest < ActiveSupport::TestCase
     outermda.reload
     disc.reload
     assert innermda.has_parent?
-    assert outermda, innermda.ancestors
-    assert innermda.name, disc.name
+    assert_equal outermda, innermda.ancestors.first
+    assert_equal innermda.name, disc.name
   end
 
   test "should check sub_analysis connection" do

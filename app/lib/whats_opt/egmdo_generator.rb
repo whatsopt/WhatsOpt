@@ -4,7 +4,6 @@ require "whats_opt/code_generator"
 
 module WhatsOpt
   class EgmdoGenerator < CodeGenerator
-
     def initialize(mda, pkg_format: false, remote_operation: false, outdir: ".", driver_name: nil, driver_options: {})
       super(mda, pkg_format: pkg_format)
       @remote = remote_operation
@@ -39,7 +38,7 @@ module WhatsOpt
           @sqlite_filename = options[:sqlite_filename] || "#{@mda.impl.basename}_doe.sqlite"
           _generate("run_egdoe.py", "run_doe.py.erb", gendir)
         else
-          raise RuntimeError.new("Ouch! Should be egmdo or egdoe driver got #{@driver.inspect}")  
+          raise RuntimeError.new("Ouch! Should be egmdo or egdoe driver got #{@driver.inspect}")
         end
       else
         @sqlite_filename = "#{@mda.impl.basename}_egdoe.sqlite"
@@ -50,6 +49,5 @@ module WhatsOpt
         _generate("run_egmdo.py", "run_mdo.py.erb", gendir)
       end
     end
-
   end
 end

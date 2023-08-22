@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 set :stage, :staging
 
-set :server, ENV['WHATSOPT_STAGING_SERVER']
+set :server, ENV["WHATSOPT_STAGING_SERVER"]
 
 set :deploy_to, "#{ENV['WHATSOPT_DEPLOY_DIR']}"
 set :rvm_ruby_version, "ruby-3.0.3@whatsopt"

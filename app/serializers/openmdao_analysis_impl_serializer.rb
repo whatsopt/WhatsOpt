@@ -10,7 +10,7 @@ class OpenmdaoAnalysisImplSerializer < ActiveModel::Serializer
     { package_name: object.top_packagename }
   end
 
-  def nodes 
+  def nodes
     disciplines = object.send(:analysis).disciplines.nodes.select(&:is_plain?)
     impls = disciplines.map do |d|
       d.openmdao_impl ||= OpenmdaoDisciplineImpl.new

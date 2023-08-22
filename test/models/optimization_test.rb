@@ -10,22 +10,21 @@ class OperationTest < ActiveSupport::TestCase
 
   test "should reject bad optimizer kind" do
     optim = Optimization.new(kind: "TOTO", xlimits: [[0, 1], [0, 1]])
-    assert !optim.valid?
+    assert_not optim.valid?
   end
 
   test "should reject bad xlimits" do
     optim = Optimization.new(kind: "SEGOMOE", xlimits: [])
-    assert !optim.valid?
+    assert_not optim.valid?
   end
 
   test "should reject without xlimits" do
     optim = Optimization.new(kind: "SEGOMOE")
-    assert !optim.valid?
-  end
-  
-  test "should retrieve config information" do
-    optim = optimizations(:optim_ackley2d)
-    assert_equal optim.config, { "xlimits" => [[-32.768, 32.768], [-32.768, 32.768]], "options"=>{}, "n_obj"=>1, "cstr_specs"=>[], "xtypes"=>[]}
+    assert_not optim.valid?
   end
 
+  test "should retrieve config information" do
+    optim = optimizations(:optim_ackley2d)
+    assert_equal optim.config, { "xlimits" => [[-32.768, 32.768], [-32.768, 32.768]], "options" => {}, "n_obj" => 1, "cstr_specs" => [], "xtypes" => [] }
+  end
 end

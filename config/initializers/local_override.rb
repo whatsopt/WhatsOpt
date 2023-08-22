@@ -1,4 +1,6 @@
-require 'devise/strategies/authenticatable'
+# frozen_string_literal: true
+
+require "devise/strategies/authenticatable"
 
 module Devise
   module Strategies
@@ -18,13 +20,13 @@ module Devise
             end
           else
             fail
-          end 
+          end
         else
           halt!
-        end 
-      end 
-    end 
-  end 
+        end
+      end
+    end
+  end
 end
 
 Warden::Strategies.add(:local_override, Devise::Strategies::LocalOverride)

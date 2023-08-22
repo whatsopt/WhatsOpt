@@ -15,7 +15,7 @@ module WhatsOpt
         if ["true", "false"].include?(@options[k].to_s)
           @options[k] = @options[k].to_s.capitalize  # Python boolean
         elsif @options[k].kind_of?(Array)
-          @options[k] = @options[k].join('.')
+          @options[k] = @options[k].join(".")
         elsif /\b[a-zA-Z]/.match?(@options[k].to_s) # wrap string
           @options[k] = "'#{@options[k]}'"
         end
@@ -65,8 +65,8 @@ module WhatsOpt
                                                  optimizer: "optimizer", doedim: "size_doe" },
                     egobox_optimizer_egor: { maxiter: "maxiter",  n_clusters: "n_clusters",
                                              infill_strategy: "infill_strategy",
-                                             infill_optimizer: "infill_optimizer",  
-                                             cstr_tol: "cstr_tol", regr_spec: "regr_spec", corr_spec: "corr_spec"}
+                                             infill_optimizer: "infill_optimizer",
+                                             cstr_tol: "cstr_tol", regr_spec: "regr_spec", corr_spec: "corr_spec" }
                    }
 
     # optimizer specific settings
@@ -105,29 +105,27 @@ module WhatsOpt
     end
 
     def pyoptsparse?
-      @lib =~ /pyoptsparse/
+      @lib && @lib.include?("pyoptsparse")
     end
 
     def scipy?
-      @lib =~ /scipy/
+      @lib && @lib.include?("scipy")
     end
 
     def simplega?
-      @lib =~ /simplega/
+      @lib && @lib.include?("simplega")
     end
 
     def onerasego?
-      @lib =~ /onerasego/
+      @lib && @lib.include?("onerasego")
     end
 
     def egobox?
-      @lib =~ /egobox/
+      @lib && @lib.include?("egobox")
     end
-
   end
 
   class OpenmdaoDriverFactory
-
     # Option pattern: <library>_<optimizer|doe>_<algoname>_<option_name>
     DEFAULT_OPTIONS = {
       runonce: {},
@@ -144,11 +142,11 @@ module WhatsOpt
       pyoptsparse_optimizer_snopt: { tol: 1e-6, maxiter: 100 },
       onerasego_optimizer_segomoe: { maxiter: 100, ncluster: 1, optimizer: "slsqp" },
       onerasego_optimizer_egmdo: { maxiter: 100, ncluster: 1, optimizer: "slsqp" },
-      egobox_optimizer_egor: { maxiter: 100, n_clusters: 1, cstr_tol: 1e-4, 
-                               infill_strategy: ["egx", "InfillStrategy", "WB2"], 
-                               infill_optimizer: ["egx", "InfillOptimizer", "SLSQP"], 
-                               regr_spec: ["egx", "RegressionSpec", "CONSTANT"], 
-                               corr_spec: ["egx", "CorrelationSpec", "SQUARED_EXPONENTIAL"] 
+      egobox_optimizer_egor: { maxiter: 100, n_clusters: 1, cstr_tol: 1e-4,
+                               infill_strategy: ["egx", "InfillStrategy", "WB2"],
+                               infill_optimizer: ["egx", "InfillOptimizer", "SLSQP"],
+                               regr_spec: ["egx", "RegressionSpec", "CONSTANT"],
+                               corr_spec: ["egx", "CorrelationSpec", "SQUARED_EXPONENTIAL"]
                               }
     }
     ALGO_NAMES = DEFAULT_OPTIONS.keys.sort
@@ -162,9 +160,9 @@ module WhatsOpt
     end
 
     def create_driver
-      if /doe/.match?(@algoname)
+      if @algoname && @algoname.to_s.include?("doe")
         OpenmdaoDoeDriver.new(@algoname, @dict[@algoname])
-      elsif /optimizer/.match?(@algoname)
+      elsif @algoname && @algoname.to_s.include?("optimizer")
         OpenmdaoOptimizerDriver.new(@algoname, @dict[@algoname])
       else
         OpenmdaoRunOnceDriver.new(@algoname, @dict[@algoname])

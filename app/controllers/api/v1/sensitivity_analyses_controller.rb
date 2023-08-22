@@ -24,7 +24,7 @@ class Api::V1::SensitivityAnalysesController < Api::ApiController
           analyser = WhatsOpt::SalibSensitivityAnalyser.new(ope, kind: $1.to_sym)
           status, sa, err = analyser.run
           return { statusOk: status, sensitivity: sa, error: err }
-        elsif /openturns_sensitivity_pce/.match?(ope.driver)
+        elsif ope.driver && ope.driver.to_s.include?("openturns_sensitivity_pce")
           analyser = WhatsOpt::OpenturnsSensitivityAnalyser.new(ope)
           status, sa, err = analyser.run
           return { statusOk: status, sensitivity: sa, error: err }

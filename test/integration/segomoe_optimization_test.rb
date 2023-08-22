@@ -17,7 +17,7 @@ class SegomoeOptimization < OptimizationTestBase
       """
       x1 = x[0]
       x2 = x[1]
-      4*x1**2-2.1*x1**4+1.0/3.0*x1**6+x1*x2-4*x2**2+4*x2**4
+      4 * x1**2 - 2.1 * x1**4 + 1.0 / 3.0 * x1**6 + x1 * x2 - 4 * x2**2 + 4 * x2**4
     end
 
     xlimits = [[-3, 3], [-2, 2]]
@@ -48,9 +48,9 @@ class SegomoeOptimization < OptimizationTestBase
       """
       x1 = x[0]
       x2 = x[1]
-      part_1 = -0.2*Math.sqrt(0.5*(x1*x1 + x2*x2))
-      part_2 = 0.5*(Math.cos(2*Math::PI*x1) + Math.cos(2*Math::PI*x2))
-      Math.exp(1) + 20 -20*Math.exp(part_1) - Math.exp(part_2)
+      part_1 = -0.2 * Math.sqrt(0.5 * (x1 * x1 + x2 * x2))
+      part_2 = 0.5 * (Math.cos(2 * Math::PI * x1) + Math.cos(2 * Math::PI * x2))
+      Math.exp(1) + 20 - 20 * Math.exp(part_1) - Math.exp(part_2)
     end
 
     xlimits = [[-32.768, 32.768], [-32.768, 32.768]]

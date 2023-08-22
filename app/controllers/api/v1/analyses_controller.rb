@@ -11,9 +11,9 @@ class Api::V1::AnalysesController < Api::V1::ApiMdaUpdaterController
     @mdas = policy_scope(Analysis)
     if params[:all]
       @mdas
-    elsif params[:design_project_query]  
+    elsif params[:design_project_query]
       @mdas = @mdas.joins(design_project_filing: :design_project)
-                   .where('design_projects.name like ?', '%' + params["design_project_query"] + '%')
+                   .where("design_projects.name like ?", "%" + params["design_project_query"] + "%")
     else
       @mdas = @mdas.with_role(:owner, current_user)
     end
@@ -26,7 +26,7 @@ class Api::V1::AnalysesController < Api::V1::ApiMdaUpdaterController
       render json: @mda.to_whatsopt_ui_json
     elsif params[:format] == "xdsm"      # wop show
       render json: @mda.to_xdsm_json
-    elsif params[:format]  == "wopjson"  # wop pull --json
+    elsif params[:format] == "wopjson"  # wop pull --json
       json_response @mda, :ok, serializer: AnalysisAttrsSerializer
     else # Analysis public REST API
       json_response @mda
@@ -38,22 +38,22 @@ class Api::V1::AnalysesController < Api::V1::ApiMdaUpdaterController
     if params[:format] == "xdsm"  # wop show <openmdao_pb.py>
       skip_authorization
       xdsm = nil
-      original_connection = Analysis.remove_connection
-      begin
-        ActiveRecord::Base.connected_to(role: :writing, shard: :scratch) do
-          Analysis.transaction do
-            xdsm = Rails.cache.fetch(mda_params.to_h.deep_sort!) do
-              Rails.logger.debug ">>> XDSM request cache miss"
-              Rails.logger.debug ">>> XDSM creation..."
-              mda = create_nested_analysis
-              mda.init_journal(current_user)
-              Rails.logger.debug ">>> XDSM depth=#{mda.depth}"
-              mda.to_xdsm_json
-            end
-            raise ActiveRecord::Rollback  # no need to keep saved analyses in scratch database
+      Analysis.remove_connection
+
+      ActiveRecord::Base.connected_to(role: :writing, shard: :scratch) do
+        Analysis.transaction do
+          xdsm = Rails.cache.fetch(mda_params.to_h.deep_sort!) do
+            Rails.logger.debug ">>> XDSM request cache miss"
+            Rails.logger.debug ">>> XDSM creation..."
+            mda = create_nested_analysis
+            mda.init_journal(current_user)
+            Rails.logger.debug ">>> XDSM depth=#{mda.depth}"
+            mda.to_xdsm_json
           end
+          raise ActiveRecord::Rollback  # no need to keep saved analyses in scratch database
         end
       end
+
       json_response xdsm, :ok
     else # wop push
       @mda = create_nested_analysis
@@ -73,7 +73,7 @@ class Api::V1::AnalysesController < Api::V1::ApiMdaUpdaterController
       @mda.update!(mda_params)
       @journal.journalize_changes(@mda, old_attrs)
       json_response @mda
-    elsif import 
+    elsif import
       if @mda.packaged? || @mda.operated?
         p @mda.packaged?
         p @mda.operated?
@@ -82,11 +82,11 @@ class Api::V1::AnalysesController < Api::V1::ApiMdaUpdaterController
         fromAnalysis = Analysis.find(import[:analysis])
         authorize(fromAnalysis, :show?)
         new_discs = @mda.import!(fromAnalysis, import[:disciplines])
-        new_discs.filter{|d| d.has_sub_analysis?}.each do |disc|
+        new_discs.filter { |d| d.has_sub_analysis? }.each do |disc|
           disc.sub_analysis.set_owner(current_user)
           disc.sub_analysis.copy_ownership(@mda)
         end
-        info = new_discs.map{|d| d.name}.join(", ")
+        info = new_discs.map { |d| d.name }.join(", ")
         what_info = "[#{info}]"
         @journal.journalize(fromAnalysis, Journal::COPY_ACTION, copy_what: what_info)
         json_response @mda
@@ -105,7 +105,6 @@ class Api::V1::AnalysesController < Api::V1::ApiMdaUpdaterController
   end
 
   protected
-
     def create_nested_analysis
       mda = Analysis.create_nested_analyses(mda_params)
       mda.save!

@@ -1,13 +1,15 @@
+# frozen_string_literal: true
+
 set :stage, :production
 
-if ENV['WHATSOPT_INTERNET']
+if ENV["WHATSOPT_INTERNET"]
   set :version, ENV["branch"] || "master"
   set :appname, "whatsopt-#{fetch(:version)}"
   set :dlvdir, "~/DELIVERY"
   set :repository, "#{ENV['WHATSOPT_INTERNET_DELIVERY_DIR']}/#{fetch(:appname)}"
-  set :server, ENV['WHATSOPT_INTERNET_SERVER']
+  set :server, ENV["WHATSOPT_INTERNET_SERVER"]
 else
-  set :server, ENV['WHATSOPT_INTRANET_SERVER']
+  set :server, ENV["WHATSOPT_INTRANET_SERVER"]
 end
 
 set :deploy_to, "#{ENV['WHATSOPT_DEPLOY_DIR']}"

@@ -30,9 +30,9 @@ module WhatsOpt
       _generate("#{@impl.py_modulename}_conversions.py", "thrift/analysis_conversions.py.erb", server_dir)
       _generate("discipline_proxy.py", "thrift/discipline_proxy.py.erb", server_dir)
       if @mda.is_root?
-        _generate("#{@impl.py_modulename}_proxy.py", "thrift/analysis_proxy.py.erb", server_dir) 
+        _generate("#{@impl.py_modulename}_proxy.py", "thrift/analysis_proxy.py.erb", server_dir)
         _generate("remote_discipline.py", "thrift/remote_discipline.py.erb", server_dir)
-        _generate("run_server.py", "thrift/run_server.py.erb", gendir) 
+        _generate("run_server.py", "thrift/run_server.py.erb", gendir)
       end
     end
 

@@ -65,7 +65,7 @@ class AnalysisTest < ActiveSupport::TestCase
   end
 
   test "should get XDSM json of nested analysis" do
-    json =  analyses(:outermda).to_xdsm_json
+    json = analyses(:outermda).to_xdsm_json
     xdsm = JSON.parse(json)
     assert_equal ["root", analyses(:innermda).name], xdsm.keys()
   end
@@ -148,7 +148,7 @@ class AnalysisTest < ActiveSupport::TestCase
     mda.operations.reverse.map(&:destroy)
     # mda2.destroy
     # mda.destroy  # can not destroy as it is a mm prototype for mda2 but also mm_copy
-    assert 2, mda.meta_model_prototypes.count
+    assert_equal 2, mda.meta_model_prototypes.count
     mm.reload
     y = mm.predict(x)
     assert_in_delta 5, y[0][0]
@@ -230,5 +230,12 @@ class AnalysisTest < ActiveSupport::TestCase
         mm.destroy
       end
     end
+  end
+
+  test "should get the nesting depth" do
+    mda = analyses(:singleton_mm)
+    assert_equal 0, mda.nesting_depth
+    mda = analyses(:outermda)
+    assert_equal 1, mda.nesting_depth
   end
 end

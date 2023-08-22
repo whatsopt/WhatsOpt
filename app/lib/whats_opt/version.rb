@@ -25,7 +25,7 @@ module WhatsOpt::Version
       $3
     end
     def whatsopt_version_release
-      whatsopt_version =~ /(\d+)\.(\d+)\.(\d+)\-(\d+)/
+      whatsopt_version =~ /(\d+)\.(\d+)\.(\d+)-(\d+)/
       $4
     end
 

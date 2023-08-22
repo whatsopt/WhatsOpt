@@ -7,7 +7,7 @@ class Api::V1::UsersController < Api::ApiController
     authorize @user
     if params[:user][:settings]
       # Backward-compatibility
-      # Use update not update! to avoid exception due to password 
+      # Use update not update! to avoid exception due to password
       # complexity validation failure (stronger conditions for password reset ie on update)
       # See User password_complexity validation
       current_user.update(settings: @user.settings.merge(user_params[:settings]))

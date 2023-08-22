@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 namespace :whatsopt do
   namespace :metamodels do
     desc "Force retrain metamodel"

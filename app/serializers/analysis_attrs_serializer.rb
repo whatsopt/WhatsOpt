@@ -4,7 +4,7 @@ class AnalysisAttrsSerializer < ActiveModel::Serializer
   attributes :name, :disciplines_attributes
 
   def disciplines_attributes
-    object.disciplines.map { |disc|
+    object.disciplines.filter_map { |disc|
       if disc.type == Discipline::ANALYSIS
         {
           "name" => disc.name,
@@ -14,6 +14,6 @@ class AnalysisAttrsSerializer < ActiveModel::Serializer
       else
         DisciplineAttrsSerializer.new(disc)
       end
-    }.compact
+    }
   end
 end

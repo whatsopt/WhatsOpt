@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module DesignProjectsHelper
-  def link_to_analyses_if_authorized(design_project, nb=5)
+  def link_to_analyses_if_authorized(design_project, nb = 5)
     res = ""
     design_project.analyses.roots.newest.first(nb).each do |mda|
       res += '<span style="margin: 0px 5px">'
@@ -15,7 +15,7 @@ module DesignProjectsHelper
     count = design_project.analyses.roots.count
 
     if count > nb
-      res += "<span style=\"margin: 0px 5px\">(+#{count-nb})</span>"
+      res += "<span style=\"margin: 0px 5px\">(+#{count - nb})</span>"
     end
     raw(res)
   end
