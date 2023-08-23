@@ -4,7 +4,7 @@ import { Tooltip } from 'bootstrap';
 function update_checkbox_count() {
   $('#display_checkbox_count').text(($('.checkbox_child:checked').length === 0) ? `0/${$('.checkbox_child').length}` : `${$('.checkbox_child:checked').length}/${$('.checkbox_child').length}`);
 
-  $('.checkbox_child').each(function () {
+  $('.checkbox_child').each(function toggle_table_primary() {
     $(this).parent().parent().removeClass((this.checked) ? '' : 'table-primary')
       .addClass((this.checked) ? 'table-primary' : '');
   });
@@ -22,7 +22,7 @@ function update_checkbox_count() {
   }
 }
 class OptimizationsIndex {
-  start() {
+  static start() {
     $('#need_selected').hide();
 
     // Initialize tooltips BS5
@@ -31,7 +31,7 @@ class OptimizationsIndex {
 
     $('#selectAll').on('change', (e) => {
       const { checked } = e.target;
-      $('.checkbox_child').each(function () {
+      $('.checkbox_child').each(function toggle_all() {
         $(this).prop('checked', checked);
       });
 
@@ -43,7 +43,7 @@ class OptimizationsIndex {
       const { checked } = e.target;
       const status = $('#status-select').val();
 
-      $('.checkbox_child').each(function () {
+      $('.checkbox_child').each(function toggle_status() {
         console.log(this);
         if ($(this).attr('class').indexOf(status) > 0) {
           $(this).prop('checked', checked);

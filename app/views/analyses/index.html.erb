@@ -45,6 +45,18 @@
 
 <h1>Multi Disciplinary Analyses</h1>
 
+<%= form_tag(api_v1_user_path(current_user), method: :patch, remote: true, class: "float-end", id: "analyses-filter") do |f| %>
+  <div>
+    <div class="btn-toolbar input-group">
+      <input type="search" class="form-control" name="user[settings][analyses_filter]" id="user_settings_analyses_filter" placeholder="Search..."/>
+      <label class="btn btn-primary" name="btn-filter" for="user_settings_analyses_filter">
+        <i class="fas fa-search"></i>
+      </label>
+    </div>
+  </div>
+<% end %>
+
+
 <div id="analyses"><%= render 'analyses' %></div>
 
 <% content_for :document_ready do %>

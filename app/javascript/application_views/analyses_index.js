@@ -13,13 +13,23 @@ class AnalysesIndex {
     function setAnalysesListSettings() {
       const query = $(this).data('analyses-query');
       const order = $(this).data('analyses-order');
+      const filter = $(this).data('analyses-filter');
+      console.log('filter');
       let timeout;
       $.ajax({
         type: 'PATCH',
         xhrFields: { withCredentials: true },
         headers: { Authorization: `Token ${apiKey}` },
         url: `${relRoot}/api/v1/users/${userId}`,
-        data: { user: { settings: { analyses_query: query, analyses_order: order } } },
+        data: {
+          user: {
+            settings: {
+              analyses_query: query,
+              analyses_order: order,
+              analyses_filter: filter,
+            },
+          },
+        },
         beforeSend() {
           timeout = setTimeout(() => {
             $('.spinner').show();
@@ -36,10 +46,11 @@ class AnalysesIndex {
 
     $('input[data-analyses-query]').on('click', setAnalysesListSettings);
     $('input[data-analyses-order]').on('click', setAnalysesListSettings);
+    $('#analyses-filter').on('submit', setAnalysesListSettings);
 
     let current_design_project_id = '<%= current_user.analyses_scope_design_project_id %>';
 
-    $('#designProjectScope').on('click', function () {
+    $('#designProjectScope').on('click', function select_project() {
       const design_project_id = this.value;
       let timeout;
       if (design_project_id !== current_design_project_id) {
