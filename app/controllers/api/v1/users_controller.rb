@@ -5,6 +5,10 @@ class Api::V1::UsersController < Api::ApiController
   def update
     @user = User.find(params[:id])
     authorize @user
+    p current_user
+    p params
+    p user_params
+    p user_params[:settings]
     if params[:user][:settings]
       # Backward-compatibility
       # Use update not update! to avoid exception due to password
@@ -16,6 +20,6 @@ class Api::V1::UsersController < Api::ApiController
   end
 
   def user_params
-    params.require(:user).permit(settings: [:analyses_query, :analyses_order, :analyses_scope_design_project_id])
+    params.require(:user).permit(settings: [:analyses_filter, :analyses_query, :analyses_order, :analyses_scope_design_project_id])
   end
 end

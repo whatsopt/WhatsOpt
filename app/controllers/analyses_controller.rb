@@ -22,7 +22,7 @@ class AnalysesController < ApplicationController
         @mdas = @mdas.newest
       end
       unless current_user.analyses_filter.blank?
-        @mdas = @mdas.name_starts_with(current_user.analysis_filter)
+        @mdas = @mdas.name_starts_with(current_user.analyses_filter)
       end
       unless current_user.analyses_scope_design_project_id.blank?
         @mdas = @mdas.joins(:design_project_filing)

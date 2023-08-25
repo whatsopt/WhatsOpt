@@ -13,7 +13,7 @@ class AnalysesIndex {
     function setAnalysesListSettings() {
       const query = $(this).data('analyses-query');
       const order = $(this).data('analyses-order');
-      const filter = $(this).data('analyses-filter');
+      const filter = $('#user_settings_analyses_filter').val();
       console.log('filter');
       let timeout;
       $.ajax({
@@ -44,9 +44,21 @@ class AnalysesIndex {
       });
     }
 
+    console.log('ATTACH EVENT');
     $('input[data-analyses-query]').on('click', setAnalysesListSettings);
     $('input[data-analyses-order]').on('click', setAnalysesListSettings);
-    $('#analyses-filter').on('submit', setAnalysesListSettings);
+    $('#analyses-filter').on(
+      'keypress',
+      (event) => {
+        console.log('Keypress');
+        if (event.key === 'Enter') {
+          setAnalysesListSettings();
+          // Cancel the default action, if needed
+          event.preventDefault();
+        }
+      },
+    );
+    $('#analyses-filter').on('click', setAnalysesListSettings);
 
     let current_design_project_id = '<%= current_user.analyses_scope_design_project_id %>';
 
