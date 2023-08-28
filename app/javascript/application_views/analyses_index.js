@@ -13,8 +13,8 @@ class AnalysesIndex {
     function setAnalysesListSettings() {
       const query = $(this).data('analyses-query');
       const order = $(this).data('analyses-order');
-      const filter = $('#user_settings_analyses_filter').val();
-      console.log('filter');
+      const filterElt = $('#user_settings_analyses_filter');
+      const filter = filterElt.val();
       let timeout;
       $.ajax({
         type: 'PATCH',
@@ -39,6 +39,28 @@ class AnalysesIndex {
           $.getScript(this.href, () => {
             if (timeout) { clearTimeout(timeout); }
             $('.spinner').hide();
+
+            // UX test: code below reset the search string
+            // // Reset filter
+            // if (filter) {
+            //   // document.getElementById('user_settings_analyses_filter').value = '';
+            //   filterElt.val('');
+            //   console.log('RESET');
+            //   console.log(filterElt.val());
+            //   $.ajax({
+            //     type: 'PATCH',
+            //     xhrFields: { withCredentials: true },
+            //     headers: { Authorization: `Token ${apiKey}` },
+            //     url: `${relRoot}/api/v1/users/${userId}`,
+            //     data: {
+            //       user: {
+            //         settings: {
+            //           analyses_filter: '',
+            //         },
+            //       },
+            //     },
+            //   });
+            // }
           });
         },
       });
@@ -58,7 +80,7 @@ class AnalysesIndex {
         }
       },
     );
-    $('#analyses-filter').on('click', setAnalysesListSettings);
+    $('#btn_user_settings_analyses_filter').on('click', setAnalysesListSettings);
 
     let current_design_project_id = '<%= current_user.analyses_scope_design_project_id %>';
 
