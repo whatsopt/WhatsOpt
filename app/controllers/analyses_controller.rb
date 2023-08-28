@@ -21,6 +21,18 @@ class AnalysesController < ApplicationController
       if current_user.analyses_order == "newest"
         @mdas = @mdas.newest
       end
+      unless current_user.analyses_filter.blank?
+        if current_user.analyses_filter.start_with?("by:")
+          user = User.find_by_login(current_user.analyses_filter[3..-1])
+          if user  # User is found then filter
+            @mdas = @mdas.owned_by(user)
+          else     # otherwise just return empty scope
+            @mdas = @mdas.none
+          end
+        else
+          @mdas = @mdas.name_starts_with(current_user.analyses_filter)
+        end
+      end
       unless current_user.analyses_scope_design_project_id.blank?
         @mdas = @mdas.joins(:design_project_filing)
           .where(design_project_filings: { design_project_id: current_user.analyses_scope_design_project_id })

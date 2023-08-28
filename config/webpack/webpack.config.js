@@ -1,4 +1,4 @@
-const { globalMutableWebpackConfig: webpackConfig, merge } = require('shakapacker')
+const { globalMutableWebpackConfig: webpackConfig, merge } = require('shakapacker');
 
 const webpack = require('webpack');
 

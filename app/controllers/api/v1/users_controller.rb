@@ -16,6 +16,6 @@ class Api::V1::UsersController < Api::ApiController
   end
 
   def user_params
-    params.require(:user).permit(settings: [:analyses_query, :analyses_order, :analyses_scope_design_project_id])
+    params.require(:user).permit(settings: [:analyses_filter, :analyses_query, :analyses_order, :analyses_scope_design_project_id])
   end
 end
