@@ -22,7 +22,12 @@ class AnalysesController < ApplicationController
         @mdas = @mdas.newest
       end
       unless current_user.analyses_filter.blank?
-        @mdas = @mdas.name_starts_with(current_user.analyses_filter)
+        if current_user.analyses_filter.start_with?("by:") && !current_user.analyses_filter[3..-1].blank?
+          user = User.find_by_login(current_user.analyses_filter[3..-1])
+          @mdas = @mdas.owned_by(user);
+        else
+          @mdas = @mdas.name_starts_with(current_user.analyses_filter)
+        end
       end
       unless current_user.analyses_scope_design_project_id.blank?
         @mdas = @mdas.joins(:design_project_filing)
