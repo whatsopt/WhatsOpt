@@ -1,5 +1,10 @@
 <h1>CHANGELOG</h1>
 
+<h3>1.28.0 (29/08/2023)</h3>
+<ul>
+  <li>User can now search analyses by name beginnings or by owner names</li>
+</ul>
+
 <h3>1.28.0 (30/06/2023)</h3>
 <ul>
   <li>Implement sub-optimization handling using `SubmodelComp` component introduced in OpenMDAO 3.27</li>
