@@ -157,7 +157,7 @@ service OptimizerStore {
 
 
 
-enum Thresholding {
+enum HsicThresholding {
   ZERO,
   COND,
   IND,
@@ -172,9 +172,9 @@ struct HsicAnalysis {
 
 service SensitivityAnalyser {
 
-  HsicAnalysis compute_hsic(1: Thresholding thresholding_type
-                            2: Matrix xdoe, 
-                            3: Matrix ydoe, 
+  HsicAnalysis compute_hsic(1: Matrix xdoe, 
+                            2: Matrix ydoe, 
+                            3: HsicThresholding thresholding_type
                             4: Float quantile
                             5: Float g_threshold);
 

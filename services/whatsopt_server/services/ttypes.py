@@ -97,7 +97,7 @@ class Type(object):
     }
 
 
-class Thresholding(object):
+class HsicThresholding(object):
     ZERO = 0
     COND = 1
     IND = 2

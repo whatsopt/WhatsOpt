@@ -19,12 +19,12 @@ all_structs = []
 
 
 class Iface(object):
-    def compute_hsic(self, thresholding_type, xdoe, ydoe, quantile, g_threshold):
+    def compute_hsic(self, xdoe, ydoe, thresholding_type, quantile, g_threshold):
         """
         Parameters:
-         - thresholding_type
          - xdoe
          - ydoe
+         - thresholding_type
          - quantile
          - g_threshold
 
@@ -39,25 +39,25 @@ class Client(Iface):
             self._oprot = oprot
         self._seqid = 0
 
-    def compute_hsic(self, thresholding_type, xdoe, ydoe, quantile, g_threshold):
+    def compute_hsic(self, xdoe, ydoe, thresholding_type, quantile, g_threshold):
         """
         Parameters:
-         - thresholding_type
          - xdoe
          - ydoe
+         - thresholding_type
          - quantile
          - g_threshold
 
         """
-        self.send_compute_hsic(thresholding_type, xdoe, ydoe, quantile, g_threshold)
+        self.send_compute_hsic(xdoe, ydoe, thresholding_type, quantile, g_threshold)
         return self.recv_compute_hsic()
 
-    def send_compute_hsic(self, thresholding_type, xdoe, ydoe, quantile, g_threshold):
+    def send_compute_hsic(self, xdoe, ydoe, thresholding_type, quantile, g_threshold):
         self._oprot.writeMessageBegin('compute_hsic', TMessageType.CALL, self._seqid)
         args = compute_hsic_args()
-        args.thresholding_type = thresholding_type
         args.xdoe = xdoe
         args.ydoe = ydoe
+        args.thresholding_type = thresholding_type
         args.quantile = quantile
         args.g_threshold = g_threshold
         args.write(self._oprot)
@@ -113,7 +113,7 @@ class Processor(Iface, TProcessor):
         iprot.readMessageEnd()
         result = compute_hsic_result()
         try:
-            result.success = self._handler.compute_hsic(args.thresholding_type, args.xdoe, args.ydoe, args.quantile, args.g_threshold)
+            result.success = self._handler.compute_hsic(args.xdoe, args.ydoe, args.thresholding_type, args.quantile, args.g_threshold)
             msg_type = TMessageType.REPLY
         except TTransport.TTransportException:
             raise
@@ -136,19 +136,19 @@ class Processor(Iface, TProcessor):
 class compute_hsic_args(object):
     """
     Attributes:
-     - thresholding_type
      - xdoe
      - ydoe
+     - thresholding_type
      - quantile
      - g_threshold
 
     """
 
 
-    def __init__(self, thresholding_type=None, xdoe=None, ydoe=None, quantile=None, g_threshold=None,):
-        self.thresholding_type = thresholding_type
+    def __init__(self, xdoe=None, ydoe=None, thresholding_type=None, quantile=None, g_threshold=None,):
         self.xdoe = xdoe
         self.ydoe = ydoe
+        self.thresholding_type = thresholding_type
         self.quantile = quantile
         self.g_threshold = g_threshold
 
@@ -162,11 +162,6 @@ class compute_hsic_args(object):
             if ftype == TType.STOP:
                 break
             if fid == 1:
-                if ftype == TType.I32:
-                    self.thresholding_type = iprot.readI32()
-                else:
-                    iprot.skip(ftype)
-            elif fid == 2:
                 if ftype == TType.LIST:
                     self.xdoe = []
                     (_etype291, _size288) = iprot.readListBegin()
@@ -181,7 +176,7 @@ class compute_hsic_args(object):
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
-            elif fid == 3:
+            elif fid == 2:
                 if ftype == TType.LIST:
                     self.ydoe = []
                     (_etype303, _size300) = iprot.readListBegin()
@@ -194,6 +189,11 @@ class compute_hsic_args(object):
                         iprot.readListEnd()
                         self.ydoe.append(_elem305)
                     iprot.readListEnd()
+                else:
+                    iprot.skip(ftype)
+            elif fid == 3:
+                if ftype == TType.I32:
+                    self.thresholding_type = iprot.readI32()
                 else:
                     iprot.skip(ftype)
             elif fid == 4:
@@ -216,12 +216,8 @@ class compute_hsic_args(object):
             oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
             return
         oprot.writeStructBegin('compute_hsic_args')
-        if self.thresholding_type is not None:
-            oprot.writeFieldBegin('thresholding_type', TType.I32, 1)
-            oprot.writeI32(self.thresholding_type)
-            oprot.writeFieldEnd()
         if self.xdoe is not None:
-            oprot.writeFieldBegin('xdoe', TType.LIST, 2)
+            oprot.writeFieldBegin('xdoe', TType.LIST, 1)
             oprot.writeListBegin(TType.LIST, len(self.xdoe))
             for iter312 in self.xdoe:
                 oprot.writeListBegin(TType.DOUBLE, len(iter312))
@@ -231,7 +227,7 @@ class compute_hsic_args(object):
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         if self.ydoe is not None:
-            oprot.writeFieldBegin('ydoe', TType.LIST, 3)
+            oprot.writeFieldBegin('ydoe', TType.LIST, 2)
             oprot.writeListBegin(TType.LIST, len(self.ydoe))
             for iter314 in self.ydoe:
                 oprot.writeListBegin(TType.DOUBLE, len(iter314))
@@ -239,6 +235,10 @@ class compute_hsic_args(object):
                     oprot.writeDouble(iter315)
                 oprot.writeListEnd()
             oprot.writeListEnd()
+            oprot.writeFieldEnd()
+        if self.thresholding_type is not None:
+            oprot.writeFieldBegin('thresholding_type', TType.I32, 3)
+            oprot.writeI32(self.thresholding_type)
             oprot.writeFieldEnd()
         if self.quantile is not None:
             oprot.writeFieldBegin('quantile', TType.DOUBLE, 4)
@@ -267,9 +267,9 @@ class compute_hsic_args(object):
 all_structs.append(compute_hsic_args)
 compute_hsic_args.thrift_spec = (
     None,  # 0
-    (1, TType.I32, 'thresholding_type', None, None, ),  # 1
-    (2, TType.LIST, 'xdoe', (TType.LIST, (TType.DOUBLE, None, False), False), None, ),  # 2
-    (3, TType.LIST, 'ydoe', (TType.LIST, (TType.DOUBLE, None, False), False), None, ),  # 3
+    (1, TType.LIST, 'xdoe', (TType.LIST, (TType.DOUBLE, None, False), False), None, ),  # 1
+    (2, TType.LIST, 'ydoe', (TType.LIST, (TType.DOUBLE, None, False), False), None, ),  # 2
+    (3, TType.I32, 'thresholding_type', None, None, ),  # 3
     (4, TType.DOUBLE, 'quantile', None, None, ),  # 4
     (5, TType.DOUBLE, 'g_threshold', None, None, ),  # 5
 )

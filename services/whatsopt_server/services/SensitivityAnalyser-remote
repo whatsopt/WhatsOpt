@@ -24,7 +24,7 @@ if len(sys.argv) <= 1 or sys.argv[1] == '--help':
     print('Usage: ' + sys.argv[0] + ' [-h host[:port]] [-u url] [-f[ramed]] [-s[sl]] [-novalidate] [-ca_certs certs] [-keyfile keyfile] [-certfile certfile] function [arg1 [arg2...]]')
     print('')
     print('Functions:')
-    print('  HsicAnalysis compute_hsic(Thresholding thresholding_type, Matrix xdoe, Matrix ydoe, Float quantile, Float g_threshold)')
+    print('  HsicAnalysis compute_hsic(Matrix xdoe, Matrix ydoe, HsicThresholding thresholding_type, Float quantile, Float g_threshold)')
     print('')
     sys.exit(0)
 

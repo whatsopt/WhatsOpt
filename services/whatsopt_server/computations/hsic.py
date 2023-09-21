@@ -2,7 +2,9 @@ import numpy as np
 import openturns as ot
 
 
-def compute_thresholding(thresholding_type, xdoe, ydoe, quantile, g_threshold):
+def compute_thresholding(xdoe, ydoe, thresholding_type, quantile, g_threshold):
+    xdoe = np.atleast_2d(xdoe)
+    ydoe = np.atleast_2d(ydoe)
 
     f_obj_arr = ydoe[:, 0:1]
     g_arr = ydoe[:, 1:]
@@ -60,9 +62,8 @@ def compute_hsic(
     quantile=0.2,
     g_threshold=0.0,
 ):
-
-    f_obj_q, Samples_HSIC = compute_thresholding(
-        thresholding_type, xdoe, ydoe, quantile, g_threshold
+    f_obj_q, Samples_HSIC = compute_thresholding(xdoe, ydoe, 
+        thresholding_type, quantile, g_threshold
     )
 
     ### definition of the covariance model for the input and the output
