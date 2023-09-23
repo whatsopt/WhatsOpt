@@ -475,3 +475,71 @@ varv_disc_out_sub:
   <<: *var_out
   io_mode: out
   discipline: disc_sub_analysis
+
+# HSIC #########################################################################
+varx0_driver_out: &varx0_driver_out
+  name: x0
+  discipline: driver_hsic
+  io_mode: out
+  type: Float
+  shape: 1
+  active: true
+
+varx0_disc_in: &varx0_disc_in
+  <<: *varx0_driver_out
+  discipline: disc_hsic
+  io_mode: in
+
+varx1_driver_out:
+  <<: *varx0_driver_out
+  name: x1
+
+varx1_disc_in:
+  <<: *varx0_disc_in
+  name: x1
+
+varx2_driver_out:
+  <<: *varx0_driver_out
+  name: x2
+
+varx2_disc_in:
+  <<: *varx0_disc_in
+  name: x2
+
+varx3_driver_out:
+  <<: *varx0_driver_out
+  name: x3
+
+varx3_disc_in:
+  <<: *varx0_disc_in
+  name: x3
+
+varx4_driver_out:
+  <<: *varx0_driver_out
+  name: x4
+
+varx4_disc_in:
+  <<: *varx0_disc_in
+  name: x4
+
+## out
+varf_driver_in: &varf_driver_in
+  name: f
+  discipline: driver_hsic
+  io_mode: in
+  type: Float
+  shape: 1
+  active: true
+
+varf_disc_out: &varf_disc_out
+  <<: *varf_driver_in
+  discipline: disc_hsic
+  io_mode: out
+
+varg_driver_in:
+  <<: *varf_driver_in
+  name: g
+
+varg_disc_out:
+  <<: *varf_disc_out
+  name: g

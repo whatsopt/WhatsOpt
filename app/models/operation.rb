@@ -168,6 +168,10 @@ class Operation < ApplicationRecord
     self.category == CAT_METAMODEL
   end
 
+  def doe?
+    self.category == CAT_DOE
+  end
+
   def category
     @category ||=
       case driver

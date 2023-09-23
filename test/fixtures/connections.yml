@@ -165,3 +165,39 @@ disc_driver_v_uq:
   from_id: <%= ActiveRecord::FixtureSet.identify(:varv_disc_out_uq) %>
   to_id: <%= ActiveRecord::FixtureSet.identify(:varv_driver_in_uq) %>
   role: "response"
+
+# HSIC #######################################################################
+driver_disc_x0:
+  from_id: <%= ActiveRecord::FixtureSet.identify(:varx0_driver_out) %>
+  to_id: <%= ActiveRecord::FixtureSet.identify(:varx0_disc_in) %>
+  role: "design_var"
+
+driver_disc_x1:
+  from_id: <%= ActiveRecord::FixtureSet.identify(:varx1_driver_out) %>
+  to_id: <%= ActiveRecord::FixtureSet.identify(:varx1_disc_in) %>
+  role: "design_var"
+
+driver_disc_x2:
+  from_id: <%= ActiveRecord::FixtureSet.identify(:varx2_driver_out) %>
+  to_id: <%= ActiveRecord::FixtureSet.identify(:varx2_disc_in) %>
+  role: "design_var"
+
+driver_disc_x3:
+  from_id: <%= ActiveRecord::FixtureSet.identify(:varx3_driver_out) %>
+  to_id: <%= ActiveRecord::FixtureSet.identify(:varx3_disc_in) %>
+  role: "design_var"
+
+driver_disc_x4:
+  from_id: <%= ActiveRecord::FixtureSet.identify(:varx4_driver_out) %>
+  to_id: <%= ActiveRecord::FixtureSet.identify(:varx4_disc_in) %>
+  role: "design_var"
+
+disc_driver_f:
+  from_id: <%= ActiveRecord::FixtureSet.identify(:varf_disc_out) %>
+  to_id: <%= ActiveRecord::FixtureSet.identify(:varf_driver_in) %>
+  role: "min_objective"
+
+disc_driver_g:
+  from_id: <%= ActiveRecord::FixtureSet.identify(:varg_disc_out) %>
+  to_id: <%= ActiveRecord::FixtureSet.identify(:varg_driver_in) %>
+  role: "ineq_constraint"

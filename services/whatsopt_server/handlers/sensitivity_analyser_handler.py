@@ -11,7 +11,5 @@ THRESHOLDING_MAP = {
 class SensitivityAnalyserHandler:
     
     def compute_hsic(self, xdoe, ydoe, thresholding_type, quantile, g_threshold):
-
-        r2, indices, pvperm, pvas =  compute_hsic(xdoe, ydoe, THRESHOLDING_MAP[thresholding_type], quantile, g_threshold)
-    
+        r2, indices, pvperm, pvas = compute_hsic(xdoe, ydoe, THRESHOLDING_MAP[thresholding_type], quantile, g_threshold)
         return SensibilityAnalyserTypes.HsicAnalysis(r2=r2, indices=indices, pvperm=pvperm, pvas=pvas)

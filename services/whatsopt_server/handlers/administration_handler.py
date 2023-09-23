@@ -1,6 +1,6 @@
 class AdministrationHandler:
     def ping(self):
-        print("Optimizer server... Ping!")
+        print("WhatsOpt server... Ping!")
 
     def shutdown(self):
         print("Shutdown server!")

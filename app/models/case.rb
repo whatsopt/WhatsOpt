@@ -6,7 +6,7 @@ class Case < ApplicationRecord
   belongs_to :operation
   belongs_to :variable
 
-  scope :with_role_case, ->(role) { includes(:variable).references(:variables).joins("variables.outgoing_connections").where(connections: { role: role }).uniq }
+  scope :with_role_case, ->(role) { includes(:variable).references(:variables).joins(variable: :outgoing_connections).where(connections: { role: role }).uniq }
   scope :inputs, ->(ope) { where(operation: ope).with_role_case(WhatsOpt::Variable::INTEREST_INPUT_ROLES) }
   scope :outputs, ->(ope) { where(operation: ope).with_role_case(WhatsOpt::Variable::INTEREST_OUTPUT_ROLES) }
   scope :uncertains, -> { joins(variable: :distributions) }
