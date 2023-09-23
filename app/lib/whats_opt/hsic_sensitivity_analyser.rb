@@ -14,6 +14,8 @@ module WhatsOpt
     end
 
     def get_hsic_sensitivity(thresholding=Services::HsicThresholding::ZERO, quantile=0.2, g_threshold=0.0)
+      ok, err = true, ""
+
       # xdoe from cases
       xdata = @ope.input_cases.map {|c| c.values}
       xdoe = Matrix[*xdata].t
@@ -28,7 +30,10 @@ module WhatsOpt
       cstrs_vals = cstrs_vars.map {|c| c.values}
       ydoe = (Matrix[*obj_vals].vstack(Matrix[*cstrs_vals])).t
 
-      @proxy.compute_hsic(xdoe.to_a, ydoe.to_a, thresholding, quantile, g_threshold)
+      hsic = @proxy.compute_hsic(xdoe.to_a, ydoe.to_a, thresholding, quantile, g_threshold)
+      return ok, hsic, err
+    rescue StandardError => e
+      return false, {}, e.to_s
     end
 
   end

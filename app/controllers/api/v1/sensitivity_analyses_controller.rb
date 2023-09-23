@@ -29,8 +29,12 @@ class Api::V1::SensitivityAnalysesController < Api::ApiController
           status, sa, err = analyser.run
           return { statusOk: status, sensitivity: sa, error: err }
         end
+      when Operation::CAT_DOE
+        analyser = WhatsOpt::HsicSensitivityAnalyser.new(ope)
+        status, sa, err = analyser.get_hsic_sensitivity
+        return { statusOk: status, sensitivity: sa, error: err }
       end
       { statusOk: false, sensitivity: sa,
-               error: "Bad operation category: Should be #{Operation::CAT_SENSITIVITY} (got #{ope.category})" }
+               error: "Bad operation category: Should be #{Operation::CAT_SENSITIVITY} or #{Operation::CAT_DOE} (got #{ope.category})" }
     end
 end
