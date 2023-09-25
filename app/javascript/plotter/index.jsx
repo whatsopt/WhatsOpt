@@ -11,12 +11,37 @@ import MetaModelManager from 'plotter/components/MetaModelManager';
 import AnalysisDatabase from '../utils/AnalysisDatabase';
 import * as caseUtils from '../utils/cases';
 import DistributionHistogram from './components/DistributionHistogram';
+import HsicScatterPlot from './components/HsicScatterPlot';
 
 const PLOTS_TAB = 'plots';
 const VARIABLES_TAB = 'variables';
 const METAMODEL_TAB = 'metamodel';
 
 class PlotPanel extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      sensitivity: null,
+    };
+  }
+
+  componentDidMount() {
+    const { db } = this.props;
+    console.log('component did mount');
+    const obj = db.getObjective();
+    if (obj) {
+      const { api, opeId } = this.props;
+      console.log('OCUCOU');
+      api.analyseSensitivity(
+        opeId,
+        (response) => {
+          console.log(response.data);
+          this.setState({ ...response.data });
+        },
+      );
+    }
+  }
+
   shouldComponentUpdate(nextProps /* ,  nextState */) {
     return nextProps.active;
   }
@@ -25,6 +50,8 @@ class PlotPanel extends React.Component {
     const {
       db, optim, cases, success, title, uqMode,
     } = this.props;
+    const { sensitivity } = this.state;
+    console.log(this.state);
 
     let plotdist;
     if (uqMode) {
@@ -98,18 +125,31 @@ class PlotPanel extends React.Component {
         </div>
       );
     }
+    let plothsic;
+    if (sensitivity) {
+      plothsic = (
+        <HsicScatterPlot
+          hsicData={sensitivity}
+          title={title}
+          width={600}
+        />
+      );
+    }
 
     return (
       <div className="tab-pane fade active show" id={PLOTS_TAB} role="tabpanel" aria-labelledby="plots-tab">
         {plotdist}
         {plotparall}
         {plotoptim}
+        {plothsic}
       </div>
     );
   }
 }
 
 PlotPanel.propTypes = {
+  api: PropTypes.object.isRequired,
+  opeId: PropTypes.number.isRequired,
   active: PropTypes.bool.isRequired,
   db: PropTypes.object.isRequired,
   optim: PropTypes.bool.isRequired,
@@ -367,6 +407,8 @@ class Plotter extends React.Component {
           </ul>
           <div className="tab-content" id="myTabContent">
             <PlotPanel
+              api={this.api}
+              opeId={ope.id}
               db={this.db}
               optim={isOptim}
               uqMode={uqMode}
