@@ -97,6 +97,24 @@ class Type(object):
     }
 
 
+class HsicThresholding(object):
+    ZERO = 0
+    COND = 1
+    IND = 2
+
+    _VALUES_TO_NAMES = {
+        0: "ZERO",
+        1: "COND",
+        2: "IND",
+    }
+
+    _NAMES_TO_VALUES = {
+        "ZERO": 0,
+        "COND": 1,
+        "IND": 2,
+    }
+
+
 class OptionValue(object):
     """
     Attributes:
@@ -1126,6 +1144,128 @@ class Xtype(object):
 
     def __ne__(self, other):
         return not (self == other)
+
+
+class HsicAnalysis(object):
+    """
+    Attributes:
+     - indices
+     - r2
+     - pvperm
+     - pvas
+
+    """
+
+
+    def __init__(self, indices=None, r2=None, pvperm=None, pvas=None,):
+        self.indices = indices
+        self.r2 = r2
+        self.pvperm = pvperm
+        self.pvas = pvas
+
+    def read(self, iprot):
+        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
+            return
+        iprot.readStructBegin()
+        while True:
+            (fname, ftype, fid) = iprot.readFieldBegin()
+            if ftype == TType.STOP:
+                break
+            if fid == 1:
+                if ftype == TType.LIST:
+                    self.indices = []
+                    (_etype103, _size100) = iprot.readListBegin()
+                    for _i104 in range(_size100):
+                        _elem105 = iprot.readDouble()
+                        self.indices.append(_elem105)
+                    iprot.readListEnd()
+                else:
+                    iprot.skip(ftype)
+            elif fid == 2:
+                if ftype == TType.LIST:
+                    self.r2 = []
+                    (_etype109, _size106) = iprot.readListBegin()
+                    for _i110 in range(_size106):
+                        _elem111 = iprot.readDouble()
+                        self.r2.append(_elem111)
+                    iprot.readListEnd()
+                else:
+                    iprot.skip(ftype)
+            elif fid == 3:
+                if ftype == TType.LIST:
+                    self.pvperm = []
+                    (_etype115, _size112) = iprot.readListBegin()
+                    for _i116 in range(_size112):
+                        _elem117 = iprot.readDouble()
+                        self.pvperm.append(_elem117)
+                    iprot.readListEnd()
+                else:
+                    iprot.skip(ftype)
+            elif fid == 4:
+                if ftype == TType.LIST:
+                    self.pvas = []
+                    (_etype121, _size118) = iprot.readListBegin()
+                    for _i122 in range(_size118):
+                        _elem123 = iprot.readDouble()
+                        self.pvas.append(_elem123)
+                    iprot.readListEnd()
+                else:
+                    iprot.skip(ftype)
+            else:
+                iprot.skip(ftype)
+            iprot.readFieldEnd()
+        iprot.readStructEnd()
+
+    def write(self, oprot):
+        if oprot._fast_encode is not None and self.thrift_spec is not None:
+            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
+            return
+        oprot.writeStructBegin('HsicAnalysis')
+        if self.indices is not None:
+            oprot.writeFieldBegin('indices', TType.LIST, 1)
+            oprot.writeListBegin(TType.DOUBLE, len(self.indices))
+            for iter124 in self.indices:
+                oprot.writeDouble(iter124)
+            oprot.writeListEnd()
+            oprot.writeFieldEnd()
+        if self.r2 is not None:
+            oprot.writeFieldBegin('r2', TType.LIST, 2)
+            oprot.writeListBegin(TType.DOUBLE, len(self.r2))
+            for iter125 in self.r2:
+                oprot.writeDouble(iter125)
+            oprot.writeListEnd()
+            oprot.writeFieldEnd()
+        if self.pvperm is not None:
+            oprot.writeFieldBegin('pvperm', TType.LIST, 3)
+            oprot.writeListBegin(TType.DOUBLE, len(self.pvperm))
+            for iter126 in self.pvperm:
+                oprot.writeDouble(iter126)
+            oprot.writeListEnd()
+            oprot.writeFieldEnd()
+        if self.pvas is not None:
+            oprot.writeFieldBegin('pvas', TType.LIST, 4)
+            oprot.writeListBegin(TType.DOUBLE, len(self.pvas))
+            for iter127 in self.pvas:
+                oprot.writeDouble(iter127)
+            oprot.writeListEnd()
+            oprot.writeFieldEnd()
+        oprot.writeFieldStop()
+        oprot.writeStructEnd()
+
+    def validate(self):
+        return
+
+    def __repr__(self):
+        L = ['%s=%r' % (key, value)
+             for key, value in self.__dict__.items()]
+        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+
+    def __eq__(self, other):
+        return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
+
+    def __ne__(self, other):
+        return not (self == other)
 all_structs.append(OptionValue)
 OptionValue.thrift_spec = (
     None,  # 0
@@ -1203,6 +1343,14 @@ Xtype.thrift_spec = (
     None,  # 0
     (1, TType.I32, 'type', None, None, ),  # 1
     (2, TType.STRUCT, 'limits', [Xlimits, None], None, ),  # 2
+)
+all_structs.append(HsicAnalysis)
+HsicAnalysis.thrift_spec = (
+    None,  # 0
+    (1, TType.LIST, 'indices', (TType.DOUBLE, None, False), None, ),  # 1
+    (2, TType.LIST, 'r2', (TType.DOUBLE, None, False), None, ),  # 2
+    (3, TType.LIST, 'pvperm', (TType.DOUBLE, None, False), None, ),  # 3
+    (4, TType.LIST, 'pvas', (TType.DOUBLE, None, False), None, ),  # 4
 )
 fix_spec(all_structs)
 del all_structs

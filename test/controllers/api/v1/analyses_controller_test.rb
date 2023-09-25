@@ -17,7 +17,7 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     get api_v1_mdas_url, as: :json, headers: @auth_headers
     assert_response :success
     analyses = JSON.parse(response.body)
-    assert_equal 4, analyses.size # user1 owns 4 analyses
+    assert_equal 5, analyses.size # user1 owns 5 analyses
     mda = analyses[0]
     assert_equal ["created_at", "id", "name", "updated_at"], mda.keys.sort
   end

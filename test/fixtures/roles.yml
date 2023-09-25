@@ -83,3 +83,7 @@ coowner_cicav_mda_role:
 member2_cicav_mda_role:
   name: member
   resource: cicav (Analysis)
+
+owner_hsic_role:
+  name: owner
+  resource: hsic (Analysis)

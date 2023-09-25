@@ -155,3 +155,27 @@ service OptimizerStore {
   void destroy_optimizer(1: string optimizer_id);
 }
 
+
+
+enum HsicThresholding {
+  ZERO,
+  COND,
+  IND,
+}
+
+struct HsicAnalysis {
+  1: Vector indices,
+  2: Vector r2,
+  3: Vector pvperm,
+  4: Vector pvas
+}
+
+service SensitivityAnalyser {
+
+  HsicAnalysis compute_hsic(1: Matrix xdoe, 
+                            2: Matrix ydoe, 
+                            3: HsicThresholding thresholding_type
+                            4: Float quantile
+                            5: Float g_threshold);
+
+}
