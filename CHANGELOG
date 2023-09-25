@@ -1,8 +1,13 @@
 <h1>CHANGELOG</h1>
 
-<h3>1.28.0 (29/08/2023)</h3>
+<h3>1.28.2 (25/09/2023)</h3>
 <ul>
-  <li>User can now search analyses by name beginnings or by owner names</li>
+  <li>User can see HSIC sensitivity analysis when browsing DoE data</li>
+</ul>
+
+<h3>1.28.1 (29/08/2023)</h3>
+<ul>
+  <li>User can search analyses by name beginnings or by owner names</li>
 </ul>
 
 <h3>1.28.0 (30/06/2023)</h3>
