@@ -31,8 +31,10 @@ module WhatsOpt
       ydoe = (Matrix[*obj_vals].vstack(Matrix[*cstrs_vals])).t
 
       hsic = @proxy.compute_hsic(xdoe.to_a, ydoe.to_a, thresholding, quantile, g_threshold)
-      return ok, hsic, err
+      result = { obj_name: obj_vars.first.var_label, hsic: hsic, parameters_names: @ope.input_cases.map {|c| c.var_label} }
+      return ok, result, err
     rescue StandardError => e
+      p e
       return false, {}, e.to_s
     end
 
