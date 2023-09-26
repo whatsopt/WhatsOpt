@@ -20,7 +20,7 @@ def compute_thresholding(xdoe, ydoe, thresholding_type, quantile, g_threshold):
     if thresholding_type == "Zero_th":
         f_obj_tot = np.zeros((len(f_obj_arr), 1))
         for i in range(len(f_obj_tot)):
-            if f_obj_arr[i] < q and g_arr[i] <= g_threshold:
+            if f_obj_arr[i] < q and np.all(g_arr[i] <= g_threshold):
                 f_obj_tot[i] = f_obj_arr[i]
             else:
                 f_obj_tot[i] = 0.0
@@ -30,7 +30,7 @@ def compute_thresholding(xdoe, ydoe, thresholding_type, quantile, g_threshold):
 
     ## Conditional thresholding
     elif thresholding_type == "Cond_th":
-        mask = (f_obj_arr < q) & (g_arr <= g_threshold)
+        mask = (f_obj_arr < q) & np.all(g_arr <= g_threshold)
         f_obj_q_arr = f_obj_arr[mask]
 
         Samples_arr = np.array(Samples)
@@ -44,7 +44,7 @@ def compute_thresholding(xdoe, ydoe, thresholding_type, quantile, g_threshold):
     elif thresholding_type == "Ind_th":
         f_obj_tot = np.zeros((len(f_obj_arr), 1))
         for i in range(len(f_obj_tot)):
-            if f_obj_arr[i] < q and g_arr[i] <= g_threshold:
+            if f_obj_arr[i] < q and np.all(g_arr[i] <= g_threshold):
                 f_obj_tot[i] = 1.0
             else:
                 f_obj_tot[i] = 0.0
