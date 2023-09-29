@@ -20,6 +20,17 @@ const METAMODEL_TAB = 'metamodel';
 
 const ZEROTH = 'Zero_th';
 
+let throttleTimer;
+
+const throttle = (callback, time) => {
+  if (throttleTimer) return;
+  throttleTimer = true;
+  setTimeout(() => {
+    callback();
+    throttleTimer = false;
+  }, time);
+};
+
 class PlotPanel extends React.Component {
   constructor(props) {
     super(props);
@@ -29,6 +40,7 @@ class PlotPanel extends React.Component {
       quantile: 0.2,
       gThreshold: 0.0,
     };
+    this.timeout = null;
 
     this.handleThresholdingChange = this.handleThresholdingChange.bind(this);
     this.handleQuantileChange = this.handleQuantileChange.bind(this);
@@ -70,16 +82,19 @@ class PlotPanel extends React.Component {
 
   updateSensitivityAnalysis(thresholding, quantile, gThreshold) {
     const { api, opeId } = this.props;
-    api.analyseSensitivity(
-      opeId,
-      thresholding,
-      quantile,
-      gThreshold,
-      (response) => {
-        console.log(response.data);
-        this.setState({ ...response.data });
-      },
-    );
+
+    throttle(() => {
+      api.analyseSensitivity(
+        opeId,
+        thresholding,
+        quantile,
+        gThreshold,
+        (response) => {
+          console.log(response.data);
+          this.setState({ ...response.data });
+        },
+      );
+    }, 500); // trigger one call each 500ms at most
   }
 
   render() {
