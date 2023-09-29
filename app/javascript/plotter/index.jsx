@@ -12,38 +12,74 @@ import AnalysisDatabase from '../utils/AnalysisDatabase';
 import * as caseUtils from '../utils/cases';
 import DistributionHistogram from './components/DistributionHistogram';
 import HsicScatterPlot from './components/HsicScatterPlot';
+import HsicControls from './components/HsicControls';
 
 const PLOTS_TAB = 'plots';
 const VARIABLES_TAB = 'variables';
 const METAMODEL_TAB = 'metamodel';
+
+const ZEROTH = 'Zero_th';
 
 class PlotPanel extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       sensitivity: null,
+      thresholding: ZEROTH,
+      quantile: 0.2,
+      gThreshold: 0.0,
     };
+
+    this.handleThresholdingChange = this.handleThresholdingChange.bind(this);
+    this.handleQuantileChange = this.handleQuantileChange.bind(this);
+    this.handleGThresholdChange = this.handleGThresholdChange.bind(this);
+    this.updateSensitivityAnalysis = this.updateSensitivityAnalysis.bind(this);
   }
 
   componentDidMount() {
     const { db } = this.props;
-    console.log('component did mount');
+    const { thresholding, quantile, gThreshold } = this.state;
     const obj = db.getObjective();
     if (obj) {
-      const { api, opeId } = this.props;
-      console.log('OCUCOU');
-      api.analyseSensitivity(
-        opeId,
-        (response) => {
-          console.log(response.data);
-          this.setState({ ...response.data });
-        },
-      );
+      this.updateSensitivityAnalysis(thresholding, quantile, gThreshold);
     }
   }
 
   shouldComponentUpdate(nextProps /* ,  nextState */) {
     return nextProps.active;
+  }
+
+  handleThresholdingChange(event) {
+    const { quantile, gThreshold } = this.state;
+    const { value } = event.target;
+    this.setState({ thresholding: value });
+    this.updateSensitivityAnalysis(value, quantile, gThreshold);
+  }
+
+  handleQuantileChange(value) {
+    const { thresholding, gThreshold } = this.state;
+    this.setState({ quantile: value });
+    this.updateSensitivityAnalysis(thresholding, value, gThreshold);
+  }
+
+  handleGThresholdChange(value) {
+    const { thresholding, quantile } = this.state;
+    this.setState({ gThreshold: value });
+    this.updateSensitivityAnalysis(thresholding, quantile, value);
+  }
+
+  updateSensitivityAnalysis(thresholding, quantile, gThreshold) {
+    const { api, opeId } = this.props;
+    api.analyseSensitivity(
+      opeId,
+      thresholding,
+      quantile,
+      gThreshold,
+      (response) => {
+        console.log(response.data);
+        this.setState({ ...response.data });
+      },
+    );
   }
 
   render() {
@@ -127,12 +163,31 @@ class PlotPanel extends React.Component {
     }
     let plothsic;
     if (sensitivity) {
+      const { thresholding, quantile, gThreshold } = this.state;
+
       plothsic = (
-        <HsicScatterPlot
-          hsicData={sensitivity}
-          title={title}
-          width={600}
-        />
+        <div>
+          <div className="row align-items-center">
+            <div style={{ minWidth: 600 }} className="col-md-6">
+              <HsicScatterPlot
+                hsicData={sensitivity}
+                title={title}
+                width={600}
+              />
+            </div>
+            <div className="col-md-4">
+              <HsicControls
+                thresholding={thresholding}
+                quantile={quantile}
+                gThreshold={gThreshold}
+                onThresholdingChange={this.handleThresholdingChange}
+                onQuantileChange={this.handleQuantileChange}
+                onGThresholdChange={this.handleGThresholdChange}
+              />
+            </div>
+          </div>
+
+        </div>
       );
     }
 
