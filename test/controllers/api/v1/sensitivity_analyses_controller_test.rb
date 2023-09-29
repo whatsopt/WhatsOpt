@@ -47,7 +47,8 @@ class Api::V1::SensitivityAnalysisControllerTest < ActionDispatch::IntegrationTe
 
   test "should return hsic sensitivity analysis" do
     @ope = operations(:doe_hsic)
-    get api_v1_operation_sensitivity_analysis_url(@ope), as: :json, headers: @auth_headers
+    get api_v1_operation_sensitivity_analysis_url(@ope, 
+      params: {thresholding: "Zero_th", quantile: 0.2, g_threshold: 0.0}), as: :json, headers: @auth_headers
     assert_response :success
     res = JSON.parse(response.body)["sensitivity"]
 

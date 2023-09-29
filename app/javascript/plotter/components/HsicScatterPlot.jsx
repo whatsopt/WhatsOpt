@@ -24,7 +24,7 @@ class HsicScatterPlot extends React.PureComponent {
     };
 
     const tracePvperm = {
-      name: 'p-value by permutation',
+      name: 'p-value',
       x: parameterNames.map((_, i) => i + 1.1),
       y: pvperm,
       type: 'scatter',
