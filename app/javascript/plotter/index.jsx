@@ -40,7 +40,6 @@ class PlotPanel extends React.Component {
       quantile: 0.2,
       gThreshold: 0.0,
     };
-    this.timeout = null;
 
     this.handleThresholdingChange = this.handleThresholdingChange.bind(this);
     this.handleQuantileChange = this.handleQuantileChange.bind(this);
