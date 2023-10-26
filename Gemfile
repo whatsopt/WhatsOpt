@@ -8,9 +8,9 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby "3.0.3"
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem "rails", "~> 7.0"
+gem "rails", "~> 7.1"
 # Use Puma as the app server
-gem "puma", "~> 5.0"
+gem "puma", "~> 6.0"
 # Use SCSS for stylesheets
 gem "sass-rails", ">= 6"
 # Use Terser as compressor for JavaScript assets
@@ -55,7 +55,7 @@ group :development, :test do
   gem "simplecov-lcov", require: false
   # rswag
   gem "rspec-rails"
-  gem "rswag-specs"
+  gem "rswag-specs", "~>2.11"
 end
 
 group :development do
@@ -105,7 +105,7 @@ gem "ancestry"
 gem "acts_as_list"
 
 # JSON serializers
-gem "active_model_serializers", "~> 0.10.12"
+gem "active_model_serializers", "~> 0.10.14"
 
 # Background jobs
 gem "sucker_punch"
@@ -125,7 +125,7 @@ gem "thrift", "~>0.18"
 gem "image_processing", "~> 1.2"
 
 # Document API
-gem "rswag-api"
+gem "rswag-api", "~>2.11"
 
 # To cache XDSM json to get XDSM standalone html
 gem "deepsort"
