@@ -17,7 +17,14 @@ from whatsopt_server.optimizer_store.optimizer import Optimizer
 
 class SegmoomoeOptimizer(Optimizer):
     def __init__(
-        self, xtypes, xlimits, n_obj, cstr_specs=[], mod_obj_options={}, options={}, logfile=None
+        self,
+        xtypes,
+        xlimits,
+        n_obj,
+        cstr_specs=[],
+        mod_obj_options={},
+        options={},
+        logfile=None,
     ):
         super().__init__(xlimits, n_obj, cstr_specs, mod_obj_options, options, logfile)
         self.xtypes = xtypes
@@ -64,7 +71,6 @@ class SegmoomoeOptimizer(Optimizer):
         default_models = {"obj": mod_obj, "con": mod_con}
 
         optim_settings = {
-            "n_start": 10,
             "criterion": "PI",
             "n_iter": 1,
             "pop_size": 30,
