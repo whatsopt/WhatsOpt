@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Monkey patch for rails 7.1
-# XXX: To be removed with devise > 4.9.2
+# XXX: To be removed with devise > 4.9.3
 # See https://github.com/heartcombo/devise/issues/5644#issuecomment-1780766510
 class Devise::SecretKeyFinder
   def find
