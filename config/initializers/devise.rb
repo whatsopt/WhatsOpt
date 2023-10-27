@@ -1,5 +1,14 @@
 # frozen_string_literal: true
 
+# Monkey patch for rails 7.1
+# XXX: To be removed with devise > 4.9.3
+# See https://github.com/heartcombo/devise/issues/5644#issuecomment-1780766510
+class Devise::SecretKeyFinder
+  def find
+    @application.secret_key_base
+  end
+end
+
 # Use this hook to configure devise mailer, warden hooks and so forth.
 # Many of these configuration options can be set straight in your model.
 Devise.setup do |config|

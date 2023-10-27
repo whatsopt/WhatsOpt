@@ -50,7 +50,7 @@ class Operation < ApplicationRecord
   scope :done, ->(analysis) { where(analysis: analysis).successful }
   scope :newest, ->() { order(updated_at: :desc) }
 
-  serialize :success, Array
+  serialize :success, type: Array
 
   def success_flags_consistent_with_cases
     if (cases.blank? && !success.blank?) || (!cases.blank? && (cases[0].values.size != success.size))

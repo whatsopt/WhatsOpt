@@ -8,9 +8,9 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby "3.0.3"
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem "rails", "~> 7.0"
+gem "rails", "~> 7.1"
 # Use Puma as the app server
-gem "puma", "~> 5.0"
+gem "puma", "~> 6.0"
 # Use SCSS for stylesheets
 gem "sass-rails", ">= 6"
 # Use Terser as compressor for JavaScript assets
@@ -55,7 +55,7 @@ group :development, :test do
   gem "simplecov-lcov", require: false
   # rswag
   gem "rspec-rails"
-  gem "rswag-specs"
+  gem "rswag-specs", "~>2.11"
 end
 
 group :development do
@@ -64,7 +64,6 @@ group :development do
   gem "capistrano-rails", "~> 1.4", require: false
   gem "capistrano-rvm"
   gem "capistrano-passenger"
-  gem "capistrano-git-with-submodules", "~> 2.0"
   gem "capistrano-maintenance", "~> 1.2", require: false
   # Access an IRB console on exception pages or by using <%= console %> in views
   gem "web-console"
@@ -72,7 +71,6 @@ group :development do
   gem "spring"
   gem "rubocop", require: false
   gem "rubocop-rails_config"
-  gem "solargraph"
 end
 
 group :staging, :production do
@@ -105,7 +103,7 @@ gem "ancestry"
 gem "acts_as_list"
 
 # JSON serializers
-gem "active_model_serializers", "~> 0.10.12"
+gem "active_model_serializers", "~> 0.10.14"
 
 # Background jobs
 gem "sucker_punch"
@@ -125,7 +123,7 @@ gem "thrift", "~>0.18"
 gem "image_processing", "~> 1.2"
 
 # Document API
-gem "rswag-api"
+gem "rswag-api", "~>2.11"
 
 # To cache XDSM json to get XDSM standalone html
 gem "deepsort"
