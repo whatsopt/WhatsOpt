@@ -64,7 +64,6 @@ group :development do
   gem "capistrano-rails", "~> 1.4", require: false
   gem "capistrano-rvm"
   gem "capistrano-passenger"
-  gem "capistrano-git-with-submodules", "~> 2.0"
   gem "capistrano-maintenance", "~> 1.2", require: false
   # Access an IRB console on exception pages or by using <%= console %> in views
   gem "web-console"
@@ -72,7 +71,6 @@ group :development do
   gem "spring"
   gem "rubocop", require: false
   gem "rubocop-rails_config"
-  gem "solargraph"
 end
 
 group :staging, :production do
