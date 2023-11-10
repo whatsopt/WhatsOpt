@@ -21,9 +21,6 @@ if ENV["WHATSOPT_INTERNET"]
 else
   require "capistrano/scm/git"
   install_plugin Capistrano::SCM::Git
-
-  require "capistrano/scm/git-with-submodules"
-  install_plugin Capistrano::SCM::Git::WithSubmodules
 end
 
 # Load custom tasks from `lib/capistrano/tasks` if you have any defined
