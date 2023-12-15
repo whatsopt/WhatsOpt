@@ -1,18 +1,11 @@
 <h1>CHANGELOG</h1>
 
-<h3>1.28.3 (10/11/2023)</h3>
+<h3>1.29.0 (15/12/2023)</h3>
 <ul>
   <li>Tech: Upgrade to Rails 7.1</li>
-</ul>
-
-<h3>1.28.2 (25/09/2023)</h3>
-<ul>
   <li>User can see HSIC sensitivity analysis when browsing DoE data</li>
-</ul>
-
-<h3>1.28.1 (29/08/2023)</h3>
-<ul>
   <li>User can search analyses by name beginnings or by owner names</li>
+  <li>Fix `run_mdo` template to work with egobox 0.14.0+</li>
 </ul>
 
 <h3>1.28.0 (30/06/2023)</h3>
