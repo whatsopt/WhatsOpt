@@ -142,7 +142,7 @@ module WhatsOpt
       pyoptsparse_optimizer_snopt: { tol: 1e-6, maxiter: 100 },
       onerasego_optimizer_segomoe: { maxiter: 100, ncluster: 1, optimizer: "slsqp" },
       onerasego_optimizer_egmdo: { maxiter: 100, ncluster: 1, optimizer: "slsqp" },
-      egobox_optimizer_egor: { maxiter: 100, n_clusters: 1, cstr_tol: 1e-4,
+      egobox_optimizer_egor: { maxiter: 20, n_clusters: 1,
                                infill_strategy: ["egx", "InfillStrategy", "WB2"],
                                infill_optimizer: ["egx", "InfillOptimizer", "SLSQP"],
                                regr_spec: ["egx", "RegressionSpec", "CONSTANT"],
