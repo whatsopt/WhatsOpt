@@ -14,12 +14,12 @@ module WhatsOpt
     end
 
     def py_varname
-      self.name.tr("./()", "_")
+      self.name.tr(".=:/()-|", "_")
     end
 
     def py_shortname
-      if self.py_varname =~ /^.*:(\w+)$/
-        $1
+      if self.name =~ /^.*:(\w+)$/ 
+        $1.tr(".=:/()-|", "_")
       else
         self.py_varname
       end
