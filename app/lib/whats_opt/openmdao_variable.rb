@@ -2,6 +2,8 @@
 
 require "whats_opt/variable"
 
+EXCLUDED_CHARS = '\\.\\=\\:\\/\\(\\)\\-\\|'
+
 module WhatsOpt
   module OpenmdaoVariable
     include WhatsOpt::Variable
@@ -14,12 +16,12 @@ module WhatsOpt
     end
 
     def py_varname
-      self.name.tr("./()", "_")
+      self.name.tr(EXCLUDED_CHARS, "_")
     end
 
     def py_shortname
-      if self.py_varname =~ /^.*:(\w+)$/
-        $1
+      if self.name =~ /^.*:(\w+)$/ 
+        $1.tr(EXCLUDED_CHARS, "_")
       else
         self.py_varname
       end

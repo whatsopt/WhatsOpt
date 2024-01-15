@@ -7070,7 +7070,7 @@ react-beautiful-dnd@^13.0.0:
     redux "^4.0.4"
     use-memo-one "^1.1.1"
 
-react-bootstrap-typeahead@^6.0.0:
+react-bootstrap-typeahead@6.2.3:
   version "6.2.3"
   resolved "https://registry.yarnpkg.com/react-bootstrap-typeahead/-/react-bootstrap-typeahead-6.2.3.tgz#85aa956fe608a4463e297df7f714c9f8c2ffcd32"
   integrity sha512-Ge2au2WxR8CWsAH3GbKsaJpIEV2OMKum2Ov7/kuVMBlHNKwsJc2ULJIjk3yZMoTvvfOzOnYDScaWrQwzPc5c/A==
@@ -7781,10 +7781,10 @@ sha.js@^2.4.11:
     inherits "^2.0.1"
     safe-buffer "^5.0.1"
 
-shakapacker@7.1.0:
-  version "7.1.0"
-  resolved "https://registry.yarnpkg.com/shakapacker/-/shakapacker-7.1.0.tgz#95bd37db60702ffa21f9ea29a88f438de3db25b2"
-  integrity sha512-xKfF4LKrFQdMLYeIi/uBV6pfkPTO4lgCAIMx3W5+MHW61ENOXu4WeQ50qVR9u5hV6XXzi7AiS7C6dWO2GFnYAg==
+shakapacker@7.2.1:
+  version "7.2.1"
+  resolved "https://registry.yarnpkg.com/shakapacker/-/shakapacker-7.2.1.tgz#de9895bbbb6b6ee1016478dbbb8d4c37b25e5a50"
+  integrity sha512-IRPkEdIY2JiPfj7fnQ9sP8SBaUcaArMVBHAn3ctB91FndgyaM/bfXXlSEiveWPT3A3wkoadx44U6pKXo1DdC3w==
   dependencies:
     glob "^7.2.0"
     js-yaml "^4.1.0"
