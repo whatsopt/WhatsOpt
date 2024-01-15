@@ -1,5 +1,11 @@
 <h1>CHANGELOG</h1>
 
+<h3>1.29.0 (15/01/2024)</h3>
+<ul>
+  <li>Tech: Upgrade backend and frontend dependencies</li>
+  <li>Relax variable name parsing to allow '|', ':' and '.'</li>
+</ul>
+
 <h3>1.29.0 (15/12/2023)</h3>
 <ul>
   <li>Tech: Upgrade to Rails 7.1</li>
