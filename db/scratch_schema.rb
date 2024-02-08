@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_04_26_142546) do
+ActiveRecord::Schema[7.1].define(version: 2024_02_08_080947) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -221,8 +221,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_26_142546) do
   create_table "optimizations", force: :cascade do |t|
     t.string "kind"
     t.text "config"
-    t.text "inputs"
-    t.text "outputs"
+    t.text "inputs", limit: 16777215
+    t.text "outputs", limit: 16777215
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
