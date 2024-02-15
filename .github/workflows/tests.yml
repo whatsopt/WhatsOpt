@@ -17,7 +17,7 @@ jobs:
       - name: Setup Ruby and install gems
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.0.3'
+          ruby-version: '3.3.0'
           bundler-cache: true
 
       - name: Set up Python 3.11
