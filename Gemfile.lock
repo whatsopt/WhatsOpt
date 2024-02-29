@@ -511,6 +511,7 @@ DEPENDENCIES
   image_processing (~> 1.2)
   jbuilder (~> 2.7)
   jquery-rails
+  matrix
   mysql2 (~> 0.5)
   pagy (~> 6.0)
   popper

@@ -133,3 +133,6 @@ gem "sprockets-rails"
 
 # Pagination
 gem "pagy", "~> 6.0"
+
+# Matrix
+gem "matrix"  # removed from stndard library in ruby 3.1
