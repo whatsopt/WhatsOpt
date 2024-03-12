@@ -7,10 +7,12 @@ SEGMOOMOE_NOT_INSTALLED = False
 try:
     from moo.smoot import MOO
     from segomoe.constraint import Constraint
-
 except ImportError:
     warnings.warn("Optimizer SEGOMOE - MOO not installed")
     SEGMOOMOE_NOT_INSTALLED = True
+
+from smt.surrogate_models import MixIntKernelType
+from smt.utils.design_space import DesignSpace
 
 from whatsopt_server.optimizer_store.optimizer import Optimizer
 
@@ -28,6 +30,9 @@ class SegmoomoeOptimizer(Optimizer):
     ):
         super().__init__(xlimits, n_obj, cstr_specs, mod_obj_options, options, logfile)
         self.xtypes = xtypes
+        self.design_space = DesignSpace(
+            xtypes
+        )
         if SEGMOOMOE_NOT_INSTALLED:
             raise RuntimeError("Optimizer SEGMOOMOE not installed")
 
@@ -59,12 +64,12 @@ class SegmoomoeOptimizer(Optimizer):
                 self.y[:, idx] = self.y[:, idx] - cstr["bound"]
 
         mod_obj = {
-            "type": "MIXEDsmt",
+            "type": "MIXED",
             "name": "KRG",
             "eval_noise": False,
             "corr": "squar_exp",
-            "xtypes": self.xtypes,
-            "xlimits": self.xlimits,
+            "design_space": self.design_space,  # type and limits of the variables
+            "categorical_kernel": MixIntKernelType.CONT_RELAX,  # MixIntKernelType.GOWER, #ajout NB MixIntKernelType.CONT_RELAX: 3>, <MixIntKernelType.GOWER: 4>, <MixIntKernelType.EXP_HOMO_HSPHERE: 1>, <MixIntKernelType.HOMO_HSPHER
         }
         mod_obj = {**mod_obj, **self.mod_obj_options}
         mod_con = mod_obj

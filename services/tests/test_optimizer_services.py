@@ -10,9 +10,7 @@ from thrift.protocol import TBinaryProtocol, TMultiplexedProtocol
 
 from whatsopt_server.services import OptimizerStore, Administration
 import whatsopt_server.services.ttypes as tt
-
-import DOE.doe_lhs as doe_lhs
-from DOE.tools_doe import trans
+from smt.sampling_methods import LHS
 
 
 class OptimizerStoreProxy(object):
@@ -186,7 +184,8 @@ class TestOptimizerService(unittest.TestCase):
 
         xlimits = np.array([[13, 100], [0, 100]])
 
-        doe = trans(doe_lhs.doe_remi(2, 5), [13, 0], [100, 100])
+        lhs = LHS(xlimits=xlimits)
+        doe = lhs(5)
         print(doe)
         x = doe
         y = np.hstack((self.f(x), self.g1(x), self.g2(x)))

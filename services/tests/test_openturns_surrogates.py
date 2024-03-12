@@ -36,11 +36,11 @@ class TestOpenturnsSurrogates(unittest.TestCase):
         )
         self.surr.train()
 
-        num = 13
+        num = 100
         x = np.linspace(0.0, 4.0, num).reshape(-1, 1)
         y = self.surr.predict_values(x)
 
-        self.assertEqual((13, 1), y.shape)
+        self.assertEqual((100, 1), y.shape)
 
         sa = self.surr.get_sobol_indices()
         print(sa.getSobolIndex(0))
