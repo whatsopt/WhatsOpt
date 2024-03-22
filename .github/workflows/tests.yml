@@ -81,7 +81,7 @@ jobs:
           mkdir -p upload/logs
           RAILS_ENV=test bundle exec rake db:schema:load
           bundle exec rake db:test:prepare
-          RAILS_ENV=test bundle exec rake webpacker:compile
+          RAILS_ENV=test bundle exec rake shakapacker:compile
 
       - name: Run tests
         run: |
