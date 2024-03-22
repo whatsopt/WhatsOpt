@@ -63,6 +63,6 @@ Rails.application.configure do
   config.active_job.queue_adapter = :inline
 
   RSpec.configure do |config|
-    config.swagger_dry_run = false
+    config.rswag_dry_run = false
   end
 end
