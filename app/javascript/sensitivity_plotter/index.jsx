@@ -16,6 +16,9 @@ class SensitivityPlotter extends React.Component {
     const { api, ope: { id: opeId } } = this.props;
     api.analyseSensitivity(
       opeId,
+      undefined,
+      undefined,
+      undefined,
       (response) => {
         this.setState({ ...response.data });
       },
