@@ -10,6 +10,12 @@
 # Ignore the default SQLite database.
 /db/*.sqlite3
 /db/*.sqlite3-journal
+# Ignore parallel test databases
+db/test.sqlite3-*
+db/test_scratch.sqlite3-*
+# SQLite files
+db/development.sqlite3-shm
+db/development.sqlite3-wal
 
 # Ignore all logfiles and tempfiles.
 /log/*
@@ -59,10 +65,6 @@ yarn-debug.log*
 # Ignore pickled files
 **/*.pkl
 
-# Ignore parallel test databases
-db/test.sqlite3-*
-db/test_scratch.sqlite3-*
-
 # Ignore configuration
 config/configuration.yml
 config/database.yml
@@ -76,3 +78,5 @@ app/javascript/XDSMjs
 
 # Ignore Openmdao reports
 **/reports
+
+# Ignore sqlite files
