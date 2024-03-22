@@ -13,7 +13,7 @@ else
 end
 
 set :deploy_to, "#{ENV['WHATSOPT_DEPLOY_DIR']}"
-set :rvm_ruby_version, "ruby-3.0.3@whatsopt"
+set :rvm_ruby_version, "ruby-3.3.0@whatsopt"
 server fetch(:server), user: "#{ENV['WHATSOPT_DEPLOY_USER']}", roles: %w{app web db}, primary: true
 
 set :passenger_restart_with_touch, true

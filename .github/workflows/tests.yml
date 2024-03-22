@@ -17,7 +17,7 @@ jobs:
       - name: Setup Ruby and install gems
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.0.3'
+          ruby-version: '3.3.0'
           bundler-cache: true
 
       - name: Set up Python 3.11
@@ -66,7 +66,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: '14'
+          node-version: '20'
           cache: 'yarn'
 
       - name: Install packages
@@ -81,7 +81,7 @@ jobs:
           mkdir -p upload/logs
           RAILS_ENV=test bundle exec rake db:schema:load
           bundle exec rake db:test:prepare
-          RAILS_ENV=test bundle exec rake webpacker:compile
+          RAILS_ENV=test bundle exec rake shakapacker:compile
 
       - name: Run tests
         run: |

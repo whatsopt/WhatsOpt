@@ -38,7 +38,7 @@ class SurrogateProxyTest < ActiveSupport::TestCase
   test "should get sobol indices with openturns surrogate" do
     skip_if_parallel
     xt = [[0.0], [1.0], [2.0], [3.0], [4.0]]
-    yt = [0.0, 1.0, 1.5, 0.5, 1.0]
+    yt = [0.0, 1.0, 2.0, 3.0, 4.0]
     surr_kind = WhatsOpt::Services::SurrogateKind::OPENTURNS_PCE
     @surr_proxy.create_surrogate(surr_kind, xt, yt, { pce_degree: "3" },
                                  [{ name: "Uniform", kwargs: { a: "1.9", b: "2.1" } }])
