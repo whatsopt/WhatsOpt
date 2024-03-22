@@ -89,6 +89,7 @@ class ComparisonPanel extends React.Component {
               selected={selected}
               onAnalysisSearch={this.handleAnalysisSearch}
               onAnalysisSelected={this.handleAnalysisSelected}
+              disabled={false}
             />
           </div>
           <div className="editor-section col-12">
