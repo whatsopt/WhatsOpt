@@ -35,7 +35,10 @@ class ExportPanel extends React.Component {
     const { selected } = this.state;
     const [selection] = selected;
 
-    this.api.importDiscipline(this.db.getAnalysisId(), disc.id, selection.id,
+    this.api.importDiscipline(
+      this.db.getAnalysisId(),
+      disc.id,
+      selection.id,
       () => {
         /* global dataConfirmModal */
         dataConfirmModal.confirm({
@@ -63,7 +66,8 @@ class ExportPanel extends React.Component {
           cancelClass: 'd-none',
           onConfirm: () => { },
         });
-      });
+      },
+    );
   }
 
   render() {
@@ -103,6 +107,7 @@ class ExportPanel extends React.Component {
                 selected={selected}
                 onAnalysisSearch={this.handleAnalysisSearch}
                 onAnalysisSelected={this.handleAnalysisSelected}
+                disabled={false}
               />
             </div>
           </div>
