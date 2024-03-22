@@ -7,5 +7,6 @@ wop
 smt
 salib
 thrift
-openturns==1.20.post3
+openturns
+egobox
 
