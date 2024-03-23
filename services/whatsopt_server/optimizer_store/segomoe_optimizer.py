@@ -64,6 +64,7 @@ class SegomoeOptimizer(Optimizer):
             "thetaL": [0.1] * nx,
             "thetaU": [10.0] * nx,
             "normalize": True,
+            "hyper_opt": "Cobyla",
         }
         mod_obj = {**mod_obj, **self.mod_obj_options}
         mod_con = mod_obj
