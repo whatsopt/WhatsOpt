@@ -5,11 +5,12 @@ import warnings
 
 SEGOMOE_NOT_INSTALLED = False
 
-from segomoe.sego import Sego
-from segomoe.constraint import Constraint
-# except ImportError:
-#     warnings.warn("Optimizer SEGOMOE not installed")
-#     SEGOMOE_NOT_INSTALLED = True
+try:
+    from segomoe.sego import Sego
+    from segomoe.constraint import Constraint
+except ImportError:
+    warnings.warn("Optimizer SEGOMOE not installed")
+    SEGOMOE_NOT_INSTALLED = True
 
 from whatsopt_server.optimizer_store.optimizer import Optimizer
 
