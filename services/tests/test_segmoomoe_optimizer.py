@@ -2,9 +2,6 @@ import unittest
 import numpy as np
 from whatsopt_server.optimizer_store.segmoomoe_optimizer import SegmoomoeOptimizer
 from smt.utils.design_space import (
-    DesignSpace,
-    CategoricalVariable,
-    OrdinalVariable,
     FloatVariable,
     IntegerVariable,
 )

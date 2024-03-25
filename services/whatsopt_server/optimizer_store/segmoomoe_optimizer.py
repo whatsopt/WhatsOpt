@@ -69,7 +69,7 @@ class SegmoomoeOptimizer(Optimizer):
             "eval_noise": False,
             "corr": "squar_exp",
             "design_space": self.design_space,  # type and limits of the variables
-            "categorical_kernel": MixIntKernelType.CONT_RELAX,  # MixIntKernelType.GOWER, #ajout NB MixIntKernelType.CONT_RELAX: 3>, <MixIntKernelType.GOWER: 4>, <MixIntKernelType.EXP_HOMO_HSPHERE: 1>, <MixIntKernelType.HOMO_HSPHER
+            "categorical_kernel": MixIntKernelType.CONT_RELAX,
         }
         mod_obj = {**mod_obj, **self.mod_obj_options}
         mod_con = mod_obj
