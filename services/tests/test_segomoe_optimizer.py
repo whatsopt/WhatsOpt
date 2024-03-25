@@ -1,9 +1,7 @@
 import unittest
 import numpy as np
 from whatsopt_server.optimizer_store.segomoe_optimizer import SegomoeOptimizer
-import DOE.doe_lhs as doe_lhs
-from DOE.tools_doe import trans
-
+from smt.sampling_methods import LHS
 
 class TestSegomoeOptimizer(unittest.TestCase):
     def setUp(self):
@@ -56,7 +54,8 @@ class TestSegomoeOptimizer(unittest.TestCase):
         xlimits = np.array([[13, 100], [0, 100]])
         cstrs = [{"type": "<", "bound": 0.0}, {"type": "<", "bound": 0.0}]
 
-        doe = trans(doe_lhs.doe_remi(2, 5), [13, 0], [100, 100])
+        lhs = LHS(xlimits=xlimits)
+        doe = lhs(5)
         print(doe)
         x = doe
         y = np.hstack((self.f(x), self.g1(x), self.g2(x)))

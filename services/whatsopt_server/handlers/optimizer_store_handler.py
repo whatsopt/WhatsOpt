@@ -1,6 +1,11 @@
 from whatsopt_server.services import ttypes as OptimizerStoreTypes
 from whatsopt_server.optimizer_store.optimizer_store import OptimizerStore
-import smt.applications.mixed_integer as mixint
+from smt.utils.design_space import (
+    CategoricalVariable,
+    OrdinalVariable,
+    FloatVariable,
+    IntegerVariable,
+)
 
 OPTIMIZERS_MAP = {
     OptimizerStoreTypes.OptimizerKind.SEGOMOE: OptimizerStore.SEGOMOE,
@@ -64,16 +69,16 @@ class OptimizerStoreHandler:
         xlimits = []
         for xtype in xtyps:
             if xtype.type == OptimizerStoreTypes.Type.FLOAT:
-                xtypes.append(mixint.FLOAT)
+                xtypes.append(FloatVariable(xtype.limits.flimits.lower, xtype.limits.flimits.upper))
                 xlimits.append([xtype.limits.flimits.lower, xtype.limits.flimits.upper])
             elif xtype.type == OptimizerStoreTypes.Type.INT:
-                xtypes.append(mixint.INT)
+                xtypes.append(IntegerVariable(xtype.limits.ilimits.lower, xtype.limits.ilimits.upper))
                 xlimits.append([xtype.limits.ilimits.lower, xtype.limits.ilimits.upper])
             elif xtype.type == OptimizerStoreTypes.Type.ORD:
-                xtypes.append(mixint.ORD)
+                xtypes.append(OrdinalVariable(xtype.limits.olimits))
                 xlimits.append(xtype.limits.olimits)
             elif xtype.type == OptimizerStoreTypes.Type.ENUM:
-                xtypes.append((mixint.ENUM, len(xtype.limits.elimits)))
+                xtypes.append(CategoricalVariable(xtype.limits.elimits))
                 xlimits.append(xtype.limits.elimits)
             else:
                 raise ValueError("Unknown xtype {xtype.type}")

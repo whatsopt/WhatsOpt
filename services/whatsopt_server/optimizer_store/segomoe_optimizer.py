@@ -4,6 +4,7 @@ import tempfile
 import warnings
 
 SEGOMOE_NOT_INSTALLED = False
+
 try:
     from segomoe.sego import Sego
     from segomoe.constraint import Constraint
@@ -57,13 +58,14 @@ class SegomoeOptimizer(Optimizer):
                 self.y[:, i + 1] = self.y[:, i + 1] - cstr["bound"]
 
         mod_obj = {
-            "type": "Krig",
+            "name": "KRG",
             "regr": "constant",
-            "corr": "squared_exponential",
+            "corr": "squar_exp",
             "theta0": [1.0] * nx,
             "thetaL": [0.1] * nx,
             "thetaU": [10.0] * nx,
             "normalize": True,
+            "hyper_opt": "Cobyla",
         }
         mod_obj = {**mod_obj, **self.mod_obj_options}
         mod_con = mod_obj

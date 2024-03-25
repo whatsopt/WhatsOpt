@@ -74,6 +74,7 @@ class TestSurrogateService(unittest.TestCase):
     def tearDown(self):
         self.store.close()
         self.server.kill()
+        time.sleep(0.5)
 
     # @unittest.skip("skip")
     def test_create_surrogate(self):
