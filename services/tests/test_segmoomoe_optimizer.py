@@ -133,20 +133,20 @@ def fun_mixed_color(x):  # function with 3 objectives
     return [f1, f2, f3]
 
 
-def g1(x):  # constraint to force x < 0.8
+def g1_mixed_color(x):  # constraint to force x < 0.8
     return (x[0] - 0.8, False)
 
 
-def g2(x):  # constraint to force x > 0.2
+def g2_mixed_color(x):  # constraint to force x > 0.2
     return (0.2 - x[0], False)
 
 
 # To group functions relative to objective &  constraint
-def f_grouped(x):
+def f_grouped_mixed_color(x):
     # print('ds fgrouped',x)
     resfun = fun_mixed_color(x)
-    resg1 = g1(x)[0]
-    resg2 = g2(x)[0]
+    resg1 = g1_mixed_color(x)[0]
+    resg2 = g2_mixed_color(x)[0]
     # print(resfun, resg1,resg2)
     res = np.hstack((resfun, resg1, resg2))
     return res, False
