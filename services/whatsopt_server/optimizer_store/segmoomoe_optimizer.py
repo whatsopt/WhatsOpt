@@ -21,9 +21,9 @@ class SegmoomoeOptimizer(Optimizer):
         self,
         xspecs,
         n_obj,
-        cstr_specs=[],
-        mod_obj_options={},
-        options={},
+        cstr_specs=None,
+        mod_obj_options=None,
+        options=None,
         logfile=None,
     ):
         super().__init__(xspecs, n_obj, cstr_specs, mod_obj_options, options, logfile)
