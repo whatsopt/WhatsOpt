@@ -20,19 +20,14 @@ from whatsopt_server.optimizer_store.optimizer import Optimizer
 class SegmoomoeOptimizer(Optimizer):
     def __init__(
         self,
-        xtypes,
-        xlimits,
+        xspecs,
         n_obj,
         cstr_specs=[],
         mod_obj_options={},
         options={},
         logfile=None,
     ):
-        super().__init__(xlimits, n_obj, cstr_specs, mod_obj_options, options, logfile)
-        self.xtypes = xtypes
-        self.design_space = DesignSpace(
-            xtypes
-        )
+        super().__init__(xspecs, n_obj, cstr_specs, mod_obj_options, options, logfile)
         if SEGMOOMOE_NOT_INSTALLED:
             raise RuntimeError("Optimizer SEGMOOMOE not installed")
 
@@ -70,6 +65,7 @@ class SegmoomoeOptimizer(Optimizer):
             "corr": "squar_exp",
             "design_space": self.design_space,  # type and limits of the variables
             "categorical_kernel": MixIntKernelType.CONT_RELAX,
+            "hyper_opt": "Cobyla",
         }
         mod_obj = {**mod_obj, **self.mod_obj_options}
         mod_con = mod_obj
@@ -95,8 +91,6 @@ class SegmoomoeOptimizer(Optimizer):
             np.save(os.path.join(tmpdir, "doe"), self.x)
             np.save(os.path.join(tmpdir, "doe_response"), self.y)
             segmoomoe = MOO(
-                xlimits=self.xlimits,
-                xtypes=self.xtypes,
                 n_obj=self.n_obj,
                 const=cons,
                 path_hs=tmpdir,

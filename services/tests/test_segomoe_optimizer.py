@@ -12,7 +12,7 @@ class TestSegomoeOptimizer(unittest.TestCase):
 
     # @unittest.skip("")
     def test_segomoe(self):
-        xlimits = np.array([[-32.768, 32.768], [-32.768, 32.768]])
+        xlimits = [[-32.768, 32.768], [-32.768, 32.768]]
         doe = np.array(
             [
                 [0.1005624023, 0.1763338461, 9.09955542],
@@ -51,10 +51,10 @@ class TestSegomoeOptimizer(unittest.TestCase):
         return np.array(-82.81 - (x1 - 6) ** 2 - (x2 - 5) ** 2).reshape((-1, 1))
 
     def test_segomoe_cstrs(self):
-        xlimits = np.array([[13, 100], [0, 100]])
+        xlimits = [[13, 100], [0, 100]]
         cstrs = [{"type": "<", "bound": 0.0}, {"type": "<", "bound": 0.0}]
 
-        lhs = LHS(xlimits=xlimits)
+        lhs = LHS(xlimits=np.array(xlimits))
         doe = lhs(5)
         print(doe)
         x = doe

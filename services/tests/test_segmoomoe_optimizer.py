@@ -4,7 +4,10 @@ from whatsopt_server.optimizer_store.segmoomoe_optimizer import SegmoomoeOptimiz
 from smt.utils.design_space import (
     FloatVariable,
     IntegerVariable,
+    CategoricalVariable
 )
+from whatsopt.mooptimization import MOOptimization, FLOAT, INT, ENUM
+
 
 def fun(x):  # function with 2 objectives
     f1 = x[:, 0] - x[:, 1] * x[:, 2]
@@ -121,6 +124,34 @@ YDOE = np.array(
     ]
 )
 
+def fun_mixed_color(x):#function with 3 objectives
+    if x[2]=="blue":
+        x2=0
+    elif x[2]=="red":
+        x2=1
+    elif x[2]=="green":
+        x2=2
+    f1 = x[0] -np.float(x[1])*x2
+    f2 = 4*x[0]**2 - 4*x[0]**x2 +1 + np.float(x[1])
+    f3= x[0]**2
+    return [f1,f2,f3]
+
+def g1(x):#constraint to force x < 0.8
+    return (x[0]-0.8, False)
+def g2(x):#constraint to force x > 0.2
+    return (0.2 - x[0], False)
+
+# To group functions relative to objective &  constraint 
+def f_grouped(x):
+    #print('ds fgrouped',x)
+    resfun = fun_mixed_color(x)
+    resg1 = g1(x)[0]
+    resg2 = g2(x)[0]
+    #print(resfun, resg1,resg2)
+    res = np.hstack((resfun, resg1, resg2))
+    return res,False
+
+
 
 class TestSegmoomoeOptimizer(unittest.TestCase):
     def setUp(self):
@@ -146,15 +177,26 @@ class TestSegmoomoeOptimizer(unittest.TestCase):
             {"type": "<", "bound": 0.0, "tol": 1e-6},
         ]
 
-        xtypes = [FloatVariable(0., 1.), IntegerVariable(0., 3.), IntegerVariable(0., 3.)]
-        xlimits = np.array([[0., 1.], [0., 3.], [0., 3.]])
+        xspecs = [FloatVariable(0., 1.), IntegerVariable(0., 3.), IntegerVariable(0., 3.)]
 
-        segmoomoe = SegmoomoeOptimizer(xtypes, xlimits, 3, cstrs, logfile="LOGFILE.log")
+        segmoomoe = SegmoomoeOptimizer(xspecs, 3, cstrs, logfile="LOGFILE.log")
         segmoomoe.tell(xdoe, ydoe)
         res = segmoomoe.ask()
 
         status, _, _, _ = res
         self.assertEqual(0, status)
+
+
+    def test_segmoomoe2(self):
+
+        # Specifications for constraints 
+        cstrs = 2*[{"type": '<', "bound": 0.0}]
+
+        xspecs = [FloatVariable(0.0, 1.0),
+                  IntegerVariable(0, 3),
+                  CategoricalVariable(["blue","red","green"])]
+
+        _segmoomoe = SegmoomoeOptimizer(xspecs, 3, cstrs, logfile="LOGFILE.log")
 
 
 if __name__ == "__main__":

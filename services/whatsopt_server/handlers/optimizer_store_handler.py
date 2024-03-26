@@ -65,21 +65,16 @@ class OptimizerStoreHandler:
             f"xlimits={xtyps} n_obj={n_obj} cstr_specs={cstr_specs} options={optimizer_options}"
         )
 
-        xtypes = []
-        xlimits = []
+        xspecs = []
         for xtype in xtyps:
             if xtype.type == OptimizerStoreTypes.Type.FLOAT:
-                xtypes.append(FloatVariable(xtype.limits.flimits.lower, xtype.limits.flimits.upper))
-                xlimits.append([xtype.limits.flimits.lower, xtype.limits.flimits.upper])
+                xspecs.append(FloatVariable(xtype.limits.flimits.lower, xtype.limits.flimits.upper))
             elif xtype.type == OptimizerStoreTypes.Type.INT:
-                xtypes.append(IntegerVariable(xtype.limits.ilimits.lower, xtype.limits.ilimits.upper))
-                xlimits.append([xtype.limits.ilimits.lower, xtype.limits.ilimits.upper])
+                xspecs.append(IntegerVariable(xtype.limits.ilimits.lower, xtype.limits.ilimits.upper))
             elif xtype.type == OptimizerStoreTypes.Type.ORD:
-                xtypes.append(OrdinalVariable(xtype.limits.olimits))
-                xlimits.append(xtype.limits.olimits)
+                xspecs.append(OrdinalVariable(xtype.limits.olimits))
             elif xtype.type == OptimizerStoreTypes.Type.ENUM:
-                xtypes.append(CategoricalVariable(xtype.limits.elimits))
-                xlimits.append(xtype.limits.elimits)
+                xspecs.append(CategoricalVariable(xtype.limits.elimits))
             else:
                 raise ValueError("Unknown xtype {xtype.type}")
 
@@ -89,8 +84,7 @@ class OptimizerStoreHandler:
         self.optim_store.create_mixint_optimizer(
             optimizer_id,
             OPTIMIZERS_MAP[optimizer_kind],
-            xtypes,
-            xlimits,
+            xspecs,
             n_obj,
             cspecs,
             mod_obj_options,

@@ -13,11 +13,19 @@ except ImportError:
     SEGOMOE_NOT_INSTALLED = True
 
 from whatsopt_server.optimizer_store.optimizer import Optimizer
-
+from smt.utils.design_space import (
+    FloatVariable,
+)
 
 class SegomoeOptimizer(Optimizer):
     def __init__(self, xlimits, cstr_specs=[], mod_obj_options={}, options={}, logfile=None):
-        super().__init__(xlimits, 1, cstr_specs, mod_obj_options, options, logfile)
+        self.xlimits = np.array(xlimits)
+
+        xspecs = []
+        for xlimit in xlimits:
+            xspecs.append(FloatVariable(*xlimit))
+
+        super().__init__(xspecs, 1, cstr_specs, mod_obj_options, options, logfile)
         if SEGOMOE_NOT_INSTALLED:
             raise RuntimeError("Optimizer SEGOMOE not installed")
 

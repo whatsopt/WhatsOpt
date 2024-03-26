@@ -58,8 +58,7 @@ class OptimizerStore(object):
         self,
         optimizer_id,
         optimizer_kind,
-        xtypes,
-        xlimits,
+        xspecs,
         n_obj=1,
         cstr_specs=[],
         mod_obj_options={},
@@ -68,8 +67,7 @@ class OptimizerStore(object):
         print(f"mod obj options = {mod_obj_options}")
         print(f"general options = {general_options}")
         self.optimizer = self.mixint_optimizer_classes[optimizer_kind](
-            xtypes,
-            xlimits,
+            xspecs,
             n_obj,
             cstr_specs,
             mod_obj_options,

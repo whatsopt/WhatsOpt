@@ -1,10 +1,16 @@
 import numpy as np
 import tempfile
-
+from smt.utils.design_space import (
+    CategoricalVariable,
+    DesignSpace,
+    FloatVariable,
+    IntegerVariable,
+    OrdinalVariable,
+)
 
 class Optimizer:
-    def __init__(self, xlimits, n_obj, cstr_specs, mod_obj_options, options, logfile):
-        self.xlimits = np.array(xlimits)
+    def __init__(self, xspecs, n_obj, cstr_specs, mod_obj_options, options, logfile):
+        self.design_space = DesignSpace(xspecs)
         self.n_obj = n_obj
         self.constraints = self._check_constraint_specs(cstr_specs)
         self.mod_obj_options = mod_obj_options
