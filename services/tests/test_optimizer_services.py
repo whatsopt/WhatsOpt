@@ -181,7 +181,6 @@ class TestOptimizerService(unittest.TestCase):
 
     # @unittest.skip("skip")
     def test_segomoe_cstrs(self):
-
         xlimits = np.array([[13, 100], [0, 100]])
 
         lhs = LHS(xlimits=xlimits)

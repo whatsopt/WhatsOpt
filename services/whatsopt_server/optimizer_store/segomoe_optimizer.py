@@ -17,8 +17,11 @@ from smt.utils.design_space import (
     FloatVariable,
 )
 
+
 class SegomoeOptimizer(Optimizer):
-    def __init__(self, xlimits, cstr_specs=[], mod_obj_options={}, options={}, logfile=None):
+    def __init__(
+        self, xlimits, cstr_specs=[], mod_obj_options={}, options={}, logfile=None
+    ):
         self.xlimits = np.array(xlimits)
 
         xspecs = []

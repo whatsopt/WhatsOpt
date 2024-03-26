@@ -9,7 +9,7 @@ from smt.utils.design_space import (
 
 OPTIMIZERS_MAP = {
     OptimizerStoreTypes.OptimizerKind.SEGOMOE: OptimizerStore.SEGOMOE,
-    OptimizerStoreTypes.OptimizerKind.SEGMOOMOE: OptimizerStore.SEGMOOMOE
+    OptimizerStoreTypes.OptimizerKind.SEGMOOMOE: OptimizerStore.SEGMOOMOE,
 }
 
 
@@ -40,7 +40,7 @@ class OptimizerStoreHandler:
         self, optimizer_id, optimizer_kind, xlimits, cstr_specs, optimizer_options={}
     ):
         print(
-            f"CREATE #{optimizer_id} kind={optimizer_kind} opt={OPTIMIZERS_MAP[optimizer_kind]} " \
+            f"CREATE #{optimizer_id} kind={optimizer_kind} opt={OPTIMIZERS_MAP[optimizer_kind]} "
             f"xlimits={xlimits} cstr_specs={cstr_specs} options={optimizer_options}"
         )
 
@@ -58,19 +58,33 @@ class OptimizerStoreHandler:
 
     @throw_optimizer_exception
     def create_mixint_optimizer(
-        self, optimizer_id, optimizer_kind, xtyps, n_obj, cstr_specs, optimizer_options={}
+        self,
+        optimizer_id,
+        optimizer_kind,
+        xtyps,
+        n_obj,
+        cstr_specs,
+        optimizer_options={},
     ):
         print(
-            f"CREATE #{optimizer_id} kind={optimizer_kind} opt={OPTIMIZERS_MAP[optimizer_kind]} " \
+            f"CREATE #{optimizer_id} kind={optimizer_kind} opt={OPTIMIZERS_MAP[optimizer_kind]} "
             f"xlimits={xtyps} n_obj={n_obj} cstr_specs={cstr_specs} options={optimizer_options}"
         )
 
         xspecs = []
         for xtype in xtyps:
             if xtype.type == OptimizerStoreTypes.Type.FLOAT:
-                xspecs.append(FloatVariable(xtype.limits.flimits.lower, xtype.limits.flimits.upper))
+                xspecs.append(
+                    FloatVariable(
+                        xtype.limits.flimits.lower, xtype.limits.flimits.upper
+                    )
+                )
             elif xtype.type == OptimizerStoreTypes.Type.INT:
-                xspecs.append(IntegerVariable(xtype.limits.ilimits.lower, xtype.limits.ilimits.upper))
+                xspecs.append(
+                    IntegerVariable(
+                        xtype.limits.ilimits.lower, xtype.limits.ilimits.upper
+                    )
+                )
             elif xtype.type == OptimizerStoreTypes.Type.ORD:
                 xspecs.append(OrdinalVariable(xtype.limits.olimits))
             elif xtype.type == OptimizerStoreTypes.Type.ENUM:
@@ -91,7 +105,6 @@ class OptimizerStoreHandler:
             general_options,
         )
 
-
     # @throw_optimizer_exception
     def ask(self, optimizer_id, with_best=False):
         print(f"ASK #{optimizer_id} with_best={with_best}")
@@ -99,7 +112,9 @@ class OptimizerStoreHandler:
         if optim:
             status, next_x, x_best, y_best = optim.ask(with_best)
             if with_best:
-                print(f"status = {status}, x_suggested = {next_x}, x_best = {x_best}, y_best = {y_best}")
+                print(
+                    f"status = {status}, x_suggested = {next_x}, x_best = {x_best}, y_best = {y_best}"
+                )
                 return OptimizerStoreTypes.OptimizerResult(
                     status=status, x_suggested=next_x, x_best=x_best, y_best=y_best
                 )
@@ -111,17 +126,14 @@ class OptimizerStoreHandler:
         else:
             return OptimizerStoreTypes.OptimizerResult(status=status, x_suggested=[])
 
-
     @throw_optimizer_exception
     def tell(self, optimizer_id, x, y):
         print(f"TELL #{optimizer_id} x={x} y={y}")
         self.optim_store.tell_optimizer(optimizer_id, x, y)
 
-
     def destroy_optimizer(self, optimizer_id):
         print(f"DESTROY #{optimizer_id}")
         self.optim_store.destroy_optimizer(optimizer_id)
-
 
     @staticmethod
     def _parse_cstrs(cstr_specs):
@@ -164,7 +176,7 @@ class OptimizerStoreHandler:
         general_options = {}
         for name, val in optimizer_opts.items():
             if name.startswith("mod_obj__"):
-                mod_obj_options[name[len("mod_obj__"):]] = val
+                mod_obj_options[name[len("mod_obj__") :]] = val
             else:
                 general_options[name] = val
         return mod_obj_options, general_options

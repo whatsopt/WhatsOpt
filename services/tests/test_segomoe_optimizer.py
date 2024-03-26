@@ -3,6 +3,7 @@ import numpy as np
 from whatsopt_server.optimizer_store.segomoe_optimizer import SegomoeOptimizer
 from smt.sampling_methods import LHS
 
+
 class TestSegomoeOptimizer(unittest.TestCase):
     def setUp(self):
         pass

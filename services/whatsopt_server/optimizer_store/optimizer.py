@@ -1,12 +1,8 @@
-import numpy as np
 import tempfile
 from smt.utils.design_space import (
-    CategoricalVariable,
     DesignSpace,
-    FloatVariable,
-    IntegerVariable,
-    OrdinalVariable,
 )
+
 
 class Optimizer:
     def __init__(self, xspecs, n_obj, cstr_specs, mod_obj_options, options, logfile):

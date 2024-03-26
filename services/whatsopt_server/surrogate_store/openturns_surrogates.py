@@ -17,7 +17,6 @@ DISTRIBUTION_SIGNATURES = {
 
 
 class PCE(SurrogateModel):
-
     name = "OPENTURNS_PCE"
 
     def _initialize(self):
@@ -115,4 +114,3 @@ class PCE(SurrogateModel):
 
     def get_sobol_indices(self):
         return ot.FunctionalChaosSobolIndices(self._pce_result)
-

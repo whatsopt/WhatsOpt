@@ -11,7 +11,6 @@ from whatsopt_server.optimizer_store.segmoomoe_optimizer import SegmoomoeOptimiz
 
 
 class OptimizerStore(object):
-
     SEGOMOE = "SEGOMOE"
     SEGMOOMOE = "SEGMOOMOE"
     OPTIMIZER_NAMES = [SEGOMOE, SEGMOOMOE]

@@ -6,15 +6,14 @@
 #  options string: py
 #
 
-from thrift.Thrift import TType, TMessageType, TFrozenDict, TException, TApplicationException
-from thrift.protocol.TProtocol import TProtocolException
+from thrift.Thrift import TType, TMessageType, TApplicationException
 from thrift.TRecursive import fix_spec
 
-import sys
 import logging
 from .ttypes import *
 from thrift.Thrift import TProcessor
 from thrift.transport import TTransport
+
 all_structs = []
 
 
@@ -53,7 +52,7 @@ class Client(Iface):
         return self.recv_compute_hsic()
 
     def send_compute_hsic(self, xdoe, ydoe, thresholding_type, quantile, g_threshold):
-        self._oprot.writeMessageBegin('compute_hsic', TMessageType.CALL, self._seqid)
+        self._oprot.writeMessageBegin("compute_hsic", TMessageType.CALL, self._seqid)
         args = compute_hsic_args()
         args.xdoe = xdoe
         args.ydoe = ydoe
@@ -77,7 +76,9 @@ class Client(Iface):
         iprot.readMessageEnd()
         if result.success is not None:
             return result.success
-        raise TApplicationException(TApplicationException.MISSING_RESULT, "compute_hsic failed: unknown result")
+        raise TApplicationException(
+            TApplicationException.MISSING_RESULT, "compute_hsic failed: unknown result"
+        )
 
 
 class Processor(Iface, TProcessor):
@@ -97,7 +98,9 @@ class Processor(Iface, TProcessor):
         if name not in self._processMap:
             iprot.skip(TType.STRUCT)
             iprot.readMessageEnd()
-            x = TApplicationException(TApplicationException.UNKNOWN_METHOD, 'Unknown function %s' % (name))
+            x = TApplicationException(
+                TApplicationException.UNKNOWN_METHOD, "Unknown function %s" % (name)
+            )
             oprot.writeMessageBegin(name, TMessageType.EXCEPTION, seqid)
             x.write(oprot)
             oprot.writeMessageEnd()
@@ -113,22 +116,31 @@ class Processor(Iface, TProcessor):
         iprot.readMessageEnd()
         result = compute_hsic_result()
         try:
-            result.success = self._handler.compute_hsic(args.xdoe, args.ydoe, args.thresholding_type, args.quantile, args.g_threshold)
+            result.success = self._handler.compute_hsic(
+                args.xdoe,
+                args.ydoe,
+                args.thresholding_type,
+                args.quantile,
+                args.g_threshold,
+            )
             msg_type = TMessageType.REPLY
         except TTransport.TTransportException:
             raise
         except TApplicationException as ex:
-            logging.exception('TApplication exception in handler')
+            logging.exception("TApplication exception in handler")
             msg_type = TMessageType.EXCEPTION
             result = ex
         except Exception:
-            logging.exception('Unexpected exception in handler')
+            logging.exception("Unexpected exception in handler")
             msg_type = TMessageType.EXCEPTION
-            result = TApplicationException(TApplicationException.INTERNAL_ERROR, 'Internal error')
+            result = TApplicationException(
+                TApplicationException.INTERNAL_ERROR, "Internal error"
+            )
         oprot.writeMessageBegin("compute_hsic", msg_type, seqid)
         result.write(oprot)
         oprot.writeMessageEnd()
         oprot.trans.flush()
+
 
 # HELPER FUNCTIONS AND STRUCTURES
 
@@ -144,8 +156,14 @@ class compute_hsic_args(object):
 
     """
 
-
-    def __init__(self, xdoe=None, ydoe=None, thresholding_type=None, quantile=None, g_threshold=None,):
+    def __init__(
+        self,
+        xdoe=None,
+        ydoe=None,
+        thresholding_type=None,
+        quantile=None,
+        g_threshold=None,
+    ):
         self.xdoe = xdoe
         self.ydoe = ydoe
         self.thresholding_type = thresholding_type
@@ -153,7 +171,11 @@ class compute_hsic_args(object):
         self.g_threshold = g_threshold
 
     def read(self, iprot):
-        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+        if (
+            iprot._fast_decode is not None
+            and isinstance(iprot.trans, TTransport.CReadableTransport)
+            and self.thrift_spec is not None
+        ):
             iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
             return
         iprot.readStructBegin()
@@ -213,11 +235,13 @@ class compute_hsic_args(object):
 
     def write(self, oprot):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
+            oprot.trans.write(
+                oprot._fast_encode(self, [self.__class__, self.thrift_spec])
+            )
             return
-        oprot.writeStructBegin('compute_hsic_args')
+        oprot.writeStructBegin("compute_hsic_args")
         if self.xdoe is not None:
-            oprot.writeFieldBegin('xdoe', TType.LIST, 1)
+            oprot.writeFieldBegin("xdoe", TType.LIST, 1)
             oprot.writeListBegin(TType.LIST, len(self.xdoe))
             for iter312 in self.xdoe:
                 oprot.writeListBegin(TType.DOUBLE, len(iter312))
@@ -227,7 +251,7 @@ class compute_hsic_args(object):
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         if self.ydoe is not None:
-            oprot.writeFieldBegin('ydoe', TType.LIST, 2)
+            oprot.writeFieldBegin("ydoe", TType.LIST, 2)
             oprot.writeListBegin(TType.LIST, len(self.ydoe))
             for iter314 in self.ydoe:
                 oprot.writeListBegin(TType.DOUBLE, len(iter314))
@@ -237,15 +261,15 @@ class compute_hsic_args(object):
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         if self.thresholding_type is not None:
-            oprot.writeFieldBegin('thresholding_type', TType.I32, 3)
+            oprot.writeFieldBegin("thresholding_type", TType.I32, 3)
             oprot.writeI32(self.thresholding_type)
             oprot.writeFieldEnd()
         if self.quantile is not None:
-            oprot.writeFieldBegin('quantile', TType.DOUBLE, 4)
+            oprot.writeFieldBegin("quantile", TType.DOUBLE, 4)
             oprot.writeDouble(self.quantile)
             oprot.writeFieldEnd()
         if self.g_threshold is not None:
-            oprot.writeFieldBegin('g_threshold', TType.DOUBLE, 5)
+            oprot.writeFieldBegin("g_threshold", TType.DOUBLE, 5)
             oprot.writeDouble(self.g_threshold)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
@@ -255,23 +279,54 @@ class compute_hsic_args(object):
         return
 
     def __repr__(self):
-        L = ['%s=%r' % (key, value)
-             for key, value in self.__dict__.items()]
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+        L = ["%s=%r" % (key, value) for key, value in self.__dict__.items()]
+        return "%s(%s)" % (self.__class__.__name__, ", ".join(L))
 
     def __eq__(self, other):
         return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
 
     def __ne__(self, other):
         return not (self == other)
+
+
 all_structs.append(compute_hsic_args)
 compute_hsic_args.thrift_spec = (
     None,  # 0
-    (1, TType.LIST, 'xdoe', (TType.LIST, (TType.DOUBLE, None, False), False), None, ),  # 1
-    (2, TType.LIST, 'ydoe', (TType.LIST, (TType.DOUBLE, None, False), False), None, ),  # 2
-    (3, TType.I32, 'thresholding_type', None, None, ),  # 3
-    (4, TType.DOUBLE, 'quantile', None, None, ),  # 4
-    (5, TType.DOUBLE, 'g_threshold', None, None, ),  # 5
+    (
+        1,
+        TType.LIST,
+        "xdoe",
+        (TType.LIST, (TType.DOUBLE, None, False), False),
+        None,
+    ),  # 1
+    (
+        2,
+        TType.LIST,
+        "ydoe",
+        (TType.LIST, (TType.DOUBLE, None, False), False),
+        None,
+    ),  # 2
+    (
+        3,
+        TType.I32,
+        "thresholding_type",
+        None,
+        None,
+    ),  # 3
+    (
+        4,
+        TType.DOUBLE,
+        "quantile",
+        None,
+        None,
+    ),  # 4
+    (
+        5,
+        TType.DOUBLE,
+        "g_threshold",
+        None,
+        None,
+    ),  # 5
 )
 
 
@@ -282,12 +337,18 @@ class compute_hsic_result(object):
 
     """
 
-
-    def __init__(self, success=None,):
+    def __init__(
+        self,
+        success=None,
+    ):
         self.success = success
 
     def read(self, iprot):
-        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+        if (
+            iprot._fast_decode is not None
+            and isinstance(iprot.trans, TTransport.CReadableTransport)
+            and self.thrift_spec is not None
+        ):
             iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
             return
         iprot.readStructBegin()
@@ -308,11 +369,13 @@ class compute_hsic_result(object):
 
     def write(self, oprot):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
+            oprot.trans.write(
+                oprot._fast_encode(self, [self.__class__, self.thrift_spec])
+            )
             return
-        oprot.writeStructBegin('compute_hsic_result')
+        oprot.writeStructBegin("compute_hsic_result")
         if self.success is not None:
-            oprot.writeFieldBegin('success', TType.STRUCT, 0)
+            oprot.writeFieldBegin("success", TType.STRUCT, 0)
             self.success.write(oprot)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
@@ -322,18 +385,25 @@ class compute_hsic_result(object):
         return
 
     def __repr__(self):
-        L = ['%s=%r' % (key, value)
-             for key, value in self.__dict__.items()]
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+        L = ["%s=%r" % (key, value) for key, value in self.__dict__.items()]
+        return "%s(%s)" % (self.__class__.__name__, ", ".join(L))
 
     def __eq__(self, other):
         return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
 
     def __ne__(self, other):
         return not (self == other)
+
+
 all_structs.append(compute_hsic_result)
 compute_hsic_result.thrift_spec = (
-    (0, TType.STRUCT, 'success', [HsicAnalysis, None], None, ),  # 0
+    (
+        0,
+        TType.STRUCT,
+        "success",
+        [HsicAnalysis, None],
+        None,
+    ),  # 0
 )
 fix_spec(all_structs)
 del all_structs

@@ -12,7 +12,6 @@ except ImportError:
     SEGMOOMOE_NOT_INSTALLED = True
 
 from smt.surrogate_models import MixIntKernelType
-from smt.utils.design_space import DesignSpace
 
 from whatsopt_server.optimizer_store.optimizer import Optimizer
 

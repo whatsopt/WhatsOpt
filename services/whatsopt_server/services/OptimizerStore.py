@@ -6,8 +6,7 @@
 #  options string: py
 #
 
-from thrift.Thrift import TType, TMessageType, TFrozenDict, TException, TApplicationException
-from thrift.protocol.TProtocol import TProtocolException
+from thrift.Thrift import TType, TMessageType, TApplicationException
 from thrift.TRecursive import fix_spec
 
 import sys
@@ -15,6 +14,7 @@ import logging
 from .ttypes import *
 from thrift.Thrift import TProcessor
 from thrift.transport import TTransport
+
 all_structs = []
 
 
@@ -31,7 +31,9 @@ class Iface(object):
         """
         pass
 
-    def create_mixint_optimizer(self, optimizer_id, kind, xtypes, n_obj, cstr_specs, options):
+    def create_mixint_optimizer(
+        self, optimizer_id, kind, xtypes, n_obj, cstr_specs, options
+    ):
         """
         Parameters:
          - optimizer_id
@@ -93,7 +95,9 @@ class Client(Iface):
         self.recv_create_optimizer()
 
     def send_create_optimizer(self, optimizer_id, kind, xlimits, cstr_specs, options):
-        self._oprot.writeMessageBegin('create_optimizer', TMessageType.CALL, self._seqid)
+        self._oprot.writeMessageBegin(
+            "create_optimizer", TMessageType.CALL, self._seqid
+        )
         args = create_optimizer_args()
         args.optimizer_id = optimizer_id
         args.kind = kind
@@ -119,7 +123,9 @@ class Client(Iface):
             raise result.exc
         return
 
-    def create_mixint_optimizer(self, optimizer_id, kind, xtypes, n_obj, cstr_specs, options):
+    def create_mixint_optimizer(
+        self, optimizer_id, kind, xtypes, n_obj, cstr_specs, options
+    ):
         """
         Parameters:
          - optimizer_id
@@ -130,11 +136,17 @@ class Client(Iface):
          - options
 
         """
-        self.send_create_mixint_optimizer(optimizer_id, kind, xtypes, n_obj, cstr_specs, options)
+        self.send_create_mixint_optimizer(
+            optimizer_id, kind, xtypes, n_obj, cstr_specs, options
+        )
         self.recv_create_mixint_optimizer()
 
-    def send_create_mixint_optimizer(self, optimizer_id, kind, xtypes, n_obj, cstr_specs, options):
-        self._oprot.writeMessageBegin('create_mixint_optimizer', TMessageType.CALL, self._seqid)
+    def send_create_mixint_optimizer(
+        self, optimizer_id, kind, xtypes, n_obj, cstr_specs, options
+    ):
+        self._oprot.writeMessageBegin(
+            "create_mixint_optimizer", TMessageType.CALL, self._seqid
+        )
         args = create_mixint_optimizer_args()
         args.optimizer_id = optimizer_id
         args.kind = kind
@@ -172,7 +184,7 @@ class Client(Iface):
         return self.recv_ask()
 
     def send_ask(self, optimizer_id, with_best):
-        self._oprot.writeMessageBegin('ask', TMessageType.CALL, self._seqid)
+        self._oprot.writeMessageBegin("ask", TMessageType.CALL, self._seqid)
         args = ask_args()
         args.optimizer_id = optimizer_id
         args.with_best = with_best
@@ -195,7 +207,9 @@ class Client(Iface):
             return result.success
         if result.exc is not None:
             raise result.exc
-        raise TApplicationException(TApplicationException.MISSING_RESULT, "ask failed: unknown result")
+        raise TApplicationException(
+            TApplicationException.MISSING_RESULT, "ask failed: unknown result"
+        )
 
     def tell(self, optimizer_id, x, y):
         """
@@ -209,7 +223,7 @@ class Client(Iface):
         self.recv_tell()
 
     def send_tell(self, optimizer_id, x, y):
-        self._oprot.writeMessageBegin('tell', TMessageType.CALL, self._seqid)
+        self._oprot.writeMessageBegin("tell", TMessageType.CALL, self._seqid)
         args = tell_args()
         args.optimizer_id = optimizer_id
         args.x = x
@@ -243,7 +257,9 @@ class Client(Iface):
         self.recv_destroy_optimizer()
 
     def send_destroy_optimizer(self, optimizer_id):
-        self._oprot.writeMessageBegin('destroy_optimizer', TMessageType.CALL, self._seqid)
+        self._oprot.writeMessageBegin(
+            "destroy_optimizer", TMessageType.CALL, self._seqid
+        )
         args = destroy_optimizer_args()
         args.optimizer_id = optimizer_id
         args.write(self._oprot)
@@ -269,7 +285,9 @@ class Processor(Iface, TProcessor):
         self._handler = handler
         self._processMap = {}
         self._processMap["create_optimizer"] = Processor.process_create_optimizer
-        self._processMap["create_mixint_optimizer"] = Processor.process_create_mixint_optimizer
+        self._processMap["create_mixint_optimizer"] = (
+            Processor.process_create_mixint_optimizer
+        )
         self._processMap["ask"] = Processor.process_ask
         self._processMap["tell"] = Processor.process_tell
         self._processMap["destroy_optimizer"] = Processor.process_destroy_optimizer
@@ -285,7 +303,9 @@ class Processor(Iface, TProcessor):
         if name not in self._processMap:
             iprot.skip(TType.STRUCT)
             iprot.readMessageEnd()
-            x = TApplicationException(TApplicationException.UNKNOWN_METHOD, 'Unknown function %s' % (name))
+            x = TApplicationException(
+                TApplicationException.UNKNOWN_METHOD, "Unknown function %s" % (name)
+            )
             oprot.writeMessageBegin(name, TMessageType.EXCEPTION, seqid)
             x.write(oprot)
             oprot.writeMessageEnd()
@@ -301,7 +321,13 @@ class Processor(Iface, TProcessor):
         iprot.readMessageEnd()
         result = create_optimizer_result()
         try:
-            self._handler.create_optimizer(args.optimizer_id, args.kind, args.xlimits, args.cstr_specs, args.options)
+            self._handler.create_optimizer(
+                args.optimizer_id,
+                args.kind,
+                args.xlimits,
+                args.cstr_specs,
+                args.options,
+            )
             msg_type = TMessageType.REPLY
         except TTransport.TTransportException:
             raise
@@ -309,13 +335,15 @@ class Processor(Iface, TProcessor):
             msg_type = TMessageType.REPLY
             result.exc = exc
         except TApplicationException as ex:
-            logging.exception('TApplication exception in handler')
+            logging.exception("TApplication exception in handler")
             msg_type = TMessageType.EXCEPTION
             result = ex
         except Exception:
-            logging.exception('Unexpected exception in handler')
+            logging.exception("Unexpected exception in handler")
             msg_type = TMessageType.EXCEPTION
-            result = TApplicationException(TApplicationException.INTERNAL_ERROR, 'Internal error')
+            result = TApplicationException(
+                TApplicationException.INTERNAL_ERROR, "Internal error"
+            )
         oprot.writeMessageBegin("create_optimizer", msg_type, seqid)
         result.write(oprot)
         oprot.writeMessageEnd()
@@ -327,7 +355,14 @@ class Processor(Iface, TProcessor):
         iprot.readMessageEnd()
         result = create_mixint_optimizer_result()
         try:
-            self._handler.create_mixint_optimizer(args.optimizer_id, args.kind, args.xtypes, args.n_obj, args.cstr_specs, args.options)
+            self._handler.create_mixint_optimizer(
+                args.optimizer_id,
+                args.kind,
+                args.xtypes,
+                args.n_obj,
+                args.cstr_specs,
+                args.options,
+            )
             msg_type = TMessageType.REPLY
         except TTransport.TTransportException:
             raise
@@ -335,13 +370,15 @@ class Processor(Iface, TProcessor):
             msg_type = TMessageType.REPLY
             result.exc = exc
         except TApplicationException as ex:
-            logging.exception('TApplication exception in handler')
+            logging.exception("TApplication exception in handler")
             msg_type = TMessageType.EXCEPTION
             result = ex
         except Exception:
-            logging.exception('Unexpected exception in handler')
+            logging.exception("Unexpected exception in handler")
             msg_type = TMessageType.EXCEPTION
-            result = TApplicationException(TApplicationException.INTERNAL_ERROR, 'Internal error')
+            result = TApplicationException(
+                TApplicationException.INTERNAL_ERROR, "Internal error"
+            )
         oprot.writeMessageBegin("create_mixint_optimizer", msg_type, seqid)
         result.write(oprot)
         oprot.writeMessageEnd()
@@ -361,13 +398,15 @@ class Processor(Iface, TProcessor):
             msg_type = TMessageType.REPLY
             result.exc = exc
         except TApplicationException as ex:
-            logging.exception('TApplication exception in handler')
+            logging.exception("TApplication exception in handler")
             msg_type = TMessageType.EXCEPTION
             result = ex
         except Exception:
-            logging.exception('Unexpected exception in handler')
+            logging.exception("Unexpected exception in handler")
             msg_type = TMessageType.EXCEPTION
-            result = TApplicationException(TApplicationException.INTERNAL_ERROR, 'Internal error')
+            result = TApplicationException(
+                TApplicationException.INTERNAL_ERROR, "Internal error"
+            )
         oprot.writeMessageBegin("ask", msg_type, seqid)
         result.write(oprot)
         oprot.writeMessageEnd()
@@ -387,13 +426,15 @@ class Processor(Iface, TProcessor):
             msg_type = TMessageType.REPLY
             result.exc = exc
         except TApplicationException as ex:
-            logging.exception('TApplication exception in handler')
+            logging.exception("TApplication exception in handler")
             msg_type = TMessageType.EXCEPTION
             result = ex
         except Exception:
-            logging.exception('Unexpected exception in handler')
+            logging.exception("Unexpected exception in handler")
             msg_type = TMessageType.EXCEPTION
-            result = TApplicationException(TApplicationException.INTERNAL_ERROR, 'Internal error')
+            result = TApplicationException(
+                TApplicationException.INTERNAL_ERROR, "Internal error"
+            )
         oprot.writeMessageBegin("tell", msg_type, seqid)
         result.write(oprot)
         oprot.writeMessageEnd()
@@ -410,17 +451,20 @@ class Processor(Iface, TProcessor):
         except TTransport.TTransportException:
             raise
         except TApplicationException as ex:
-            logging.exception('TApplication exception in handler')
+            logging.exception("TApplication exception in handler")
             msg_type = TMessageType.EXCEPTION
             result = ex
         except Exception:
-            logging.exception('Unexpected exception in handler')
+            logging.exception("Unexpected exception in handler")
             msg_type = TMessageType.EXCEPTION
-            result = TApplicationException(TApplicationException.INTERNAL_ERROR, 'Internal error')
+            result = TApplicationException(
+                TApplicationException.INTERNAL_ERROR, "Internal error"
+            )
         oprot.writeMessageBegin("destroy_optimizer", msg_type, seqid)
         result.write(oprot)
         oprot.writeMessageEnd()
         oprot.trans.flush()
+
 
 # HELPER FUNCTIONS AND STRUCTURES
 
@@ -436,8 +480,14 @@ class create_optimizer_args(object):
 
     """
 
-
-    def __init__(self, optimizer_id=None, kind=None, xlimits=None, cstr_specs=None, options=None,):
+    def __init__(
+        self,
+        optimizer_id=None,
+        kind=None,
+        xlimits=None,
+        cstr_specs=None,
+        options=None,
+    ):
         self.optimizer_id = optimizer_id
         self.kind = kind
         self.xlimits = xlimits
@@ -445,7 +495,11 @@ class create_optimizer_args(object):
         self.options = options
 
     def read(self, iprot):
-        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+        if (
+            iprot._fast_decode is not None
+            and isinstance(iprot.trans, TTransport.CReadableTransport)
+            and self.thrift_spec is not None
+        ):
             iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
             return
         iprot.readStructBegin()
@@ -455,7 +509,11 @@ class create_optimizer_args(object):
                 break
             if fid == 1:
                 if ftype == TType.STRING:
-                    self.optimizer_id = iprot.readString().decode('utf-8', errors='replace') if sys.version_info[0] == 2 else iprot.readString()
+                    self.optimizer_id = (
+                        iprot.readString().decode("utf-8", errors="replace")
+                        if sys.version_info[0] == 2
+                        else iprot.readString()
+                    )
                 else:
                     iprot.skip(ftype)
             elif fid == 2:
@@ -494,7 +552,11 @@ class create_optimizer_args(object):
                     self.options = {}
                     (_ktype226, _vtype227, _size225) = iprot.readMapBegin()
                     for _i229 in range(_size225):
-                        _key230 = iprot.readString().decode('utf-8', errors='replace') if sys.version_info[0] == 2 else iprot.readString()
+                        _key230 = (
+                            iprot.readString().decode("utf-8", errors="replace")
+                            if sys.version_info[0] == 2
+                            else iprot.readString()
+                        )
                         _val231 = OptionValue()
                         _val231.read(iprot)
                         self.options[_key230] = _val231
@@ -508,19 +570,25 @@ class create_optimizer_args(object):
 
     def write(self, oprot):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
+            oprot.trans.write(
+                oprot._fast_encode(self, [self.__class__, self.thrift_spec])
+            )
             return
-        oprot.writeStructBegin('create_optimizer_args')
+        oprot.writeStructBegin("create_optimizer_args")
         if self.optimizer_id is not None:
-            oprot.writeFieldBegin('optimizer_id', TType.STRING, 1)
-            oprot.writeString(self.optimizer_id.encode('utf-8') if sys.version_info[0] == 2 else self.optimizer_id)
+            oprot.writeFieldBegin("optimizer_id", TType.STRING, 1)
+            oprot.writeString(
+                self.optimizer_id.encode("utf-8")
+                if sys.version_info[0] == 2
+                else self.optimizer_id
+            )
             oprot.writeFieldEnd()
         if self.kind is not None:
-            oprot.writeFieldBegin('kind', TType.I32, 2)
+            oprot.writeFieldBegin("kind", TType.I32, 2)
             oprot.writeI32(self.kind)
             oprot.writeFieldEnd()
         if self.xlimits is not None:
-            oprot.writeFieldBegin('xlimits', TType.LIST, 3)
+            oprot.writeFieldBegin("xlimits", TType.LIST, 3)
             oprot.writeListBegin(TType.LIST, len(self.xlimits))
             for iter232 in self.xlimits:
                 oprot.writeListBegin(TType.DOUBLE, len(iter232))
@@ -530,17 +598,19 @@ class create_optimizer_args(object):
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         if self.cstr_specs is not None:
-            oprot.writeFieldBegin('cstr_specs', TType.LIST, 4)
+            oprot.writeFieldBegin("cstr_specs", TType.LIST, 4)
             oprot.writeListBegin(TType.STRUCT, len(self.cstr_specs))
             for iter234 in self.cstr_specs:
                 iter234.write(oprot)
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         if self.options is not None:
-            oprot.writeFieldBegin('options', TType.MAP, 5)
+            oprot.writeFieldBegin("options", TType.MAP, 5)
             oprot.writeMapBegin(TType.STRING, TType.STRUCT, len(self.options))
             for kiter235, viter236 in self.options.items():
-                oprot.writeString(kiter235.encode('utf-8') if sys.version_info[0] == 2 else kiter235)
+                oprot.writeString(
+                    kiter235.encode("utf-8") if sys.version_info[0] == 2 else kiter235
+                )
                 viter236.write(oprot)
             oprot.writeMapEnd()
             oprot.writeFieldEnd()
@@ -551,23 +621,54 @@ class create_optimizer_args(object):
         return
 
     def __repr__(self):
-        L = ['%s=%r' % (key, value)
-             for key, value in self.__dict__.items()]
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+        L = ["%s=%r" % (key, value) for key, value in self.__dict__.items()]
+        return "%s(%s)" % (self.__class__.__name__, ", ".join(L))
 
     def __eq__(self, other):
         return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
 
     def __ne__(self, other):
         return not (self == other)
+
+
 all_structs.append(create_optimizer_args)
 create_optimizer_args.thrift_spec = (
     None,  # 0
-    (1, TType.STRING, 'optimizer_id', 'UTF8', None, ),  # 1
-    (2, TType.I32, 'kind', None, None, ),  # 2
-    (3, TType.LIST, 'xlimits', (TType.LIST, (TType.DOUBLE, None, False), False), None, ),  # 3
-    (4, TType.LIST, 'cstr_specs', (TType.STRUCT, [ConstraintSpec, None], False), None, ),  # 4
-    (5, TType.MAP, 'options', (TType.STRING, 'UTF8', TType.STRUCT, [OptionValue, None], False), None, ),  # 5
+    (
+        1,
+        TType.STRING,
+        "optimizer_id",
+        "UTF8",
+        None,
+    ),  # 1
+    (
+        2,
+        TType.I32,
+        "kind",
+        None,
+        None,
+    ),  # 2
+    (
+        3,
+        TType.LIST,
+        "xlimits",
+        (TType.LIST, (TType.DOUBLE, None, False), False),
+        None,
+    ),  # 3
+    (
+        4,
+        TType.LIST,
+        "cstr_specs",
+        (TType.STRUCT, [ConstraintSpec, None], False),
+        None,
+    ),  # 4
+    (
+        5,
+        TType.MAP,
+        "options",
+        (TType.STRING, "UTF8", TType.STRUCT, [OptionValue, None], False),
+        None,
+    ),  # 5
 )
 
 
@@ -578,12 +679,18 @@ class create_optimizer_result(object):
 
     """
 
-
-    def __init__(self, exc=None,):
+    def __init__(
+        self,
+        exc=None,
+    ):
         self.exc = exc
 
     def read(self, iprot):
-        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+        if (
+            iprot._fast_decode is not None
+            and isinstance(iprot.trans, TTransport.CReadableTransport)
+            and self.thrift_spec is not None
+        ):
             iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
             return
         iprot.readStructBegin()
@@ -603,11 +710,13 @@ class create_optimizer_result(object):
 
     def write(self, oprot):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
+            oprot.trans.write(
+                oprot._fast_encode(self, [self.__class__, self.thrift_spec])
+            )
             return
-        oprot.writeStructBegin('create_optimizer_result')
+        oprot.writeStructBegin("create_optimizer_result")
         if self.exc is not None:
-            oprot.writeFieldBegin('exc', TType.STRUCT, 1)
+            oprot.writeFieldBegin("exc", TType.STRUCT, 1)
             self.exc.write(oprot)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
@@ -617,19 +726,26 @@ class create_optimizer_result(object):
         return
 
     def __repr__(self):
-        L = ['%s=%r' % (key, value)
-             for key, value in self.__dict__.items()]
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+        L = ["%s=%r" % (key, value) for key, value in self.__dict__.items()]
+        return "%s(%s)" % (self.__class__.__name__, ", ".join(L))
 
     def __eq__(self, other):
         return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
 
     def __ne__(self, other):
         return not (self == other)
+
+
 all_structs.append(create_optimizer_result)
 create_optimizer_result.thrift_spec = (
     None,  # 0
-    (1, TType.STRUCT, 'exc', [OptimizerException, None], None, ),  # 1
+    (
+        1,
+        TType.STRUCT,
+        "exc",
+        [OptimizerException, None],
+        None,
+    ),  # 1
 )
 
 
@@ -645,8 +761,15 @@ class create_mixint_optimizer_args(object):
 
     """
 
-
-    def __init__(self, optimizer_id=None, kind=None, xtypes=None, n_obj=None, cstr_specs=None, options=None,):
+    def __init__(
+        self,
+        optimizer_id=None,
+        kind=None,
+        xtypes=None,
+        n_obj=None,
+        cstr_specs=None,
+        options=None,
+    ):
         self.optimizer_id = optimizer_id
         self.kind = kind
         self.xtypes = xtypes
@@ -655,7 +778,11 @@ class create_mixint_optimizer_args(object):
         self.options = options
 
     def read(self, iprot):
-        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+        if (
+            iprot._fast_decode is not None
+            and isinstance(iprot.trans, TTransport.CReadableTransport)
+            and self.thrift_spec is not None
+        ):
             iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
             return
         iprot.readStructBegin()
@@ -665,7 +792,11 @@ class create_mixint_optimizer_args(object):
                 break
             if fid == 1:
                 if ftype == TType.STRING:
-                    self.optimizer_id = iprot.readString().decode('utf-8', errors='replace') if sys.version_info[0] == 2 else iprot.readString()
+                    self.optimizer_id = (
+                        iprot.readString().decode("utf-8", errors="replace")
+                        if sys.version_info[0] == 2
+                        else iprot.readString()
+                    )
                 else:
                     iprot.skip(ftype)
             elif fid == 2:
@@ -705,7 +836,11 @@ class create_mixint_optimizer_args(object):
                     self.options = {}
                     (_ktype250, _vtype251, _size249) = iprot.readMapBegin()
                     for _i253 in range(_size249):
-                        _key254 = iprot.readString().decode('utf-8', errors='replace') if sys.version_info[0] == 2 else iprot.readString()
+                        _key254 = (
+                            iprot.readString().decode("utf-8", errors="replace")
+                            if sys.version_info[0] == 2
+                            else iprot.readString()
+                        )
                         _val255 = OptionValue()
                         _val255.read(iprot)
                         self.options[_key254] = _val255
@@ -719,40 +854,48 @@ class create_mixint_optimizer_args(object):
 
     def write(self, oprot):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
+            oprot.trans.write(
+                oprot._fast_encode(self, [self.__class__, self.thrift_spec])
+            )
             return
-        oprot.writeStructBegin('create_mixint_optimizer_args')
+        oprot.writeStructBegin("create_mixint_optimizer_args")
         if self.optimizer_id is not None:
-            oprot.writeFieldBegin('optimizer_id', TType.STRING, 1)
-            oprot.writeString(self.optimizer_id.encode('utf-8') if sys.version_info[0] == 2 else self.optimizer_id)
+            oprot.writeFieldBegin("optimizer_id", TType.STRING, 1)
+            oprot.writeString(
+                self.optimizer_id.encode("utf-8")
+                if sys.version_info[0] == 2
+                else self.optimizer_id
+            )
             oprot.writeFieldEnd()
         if self.kind is not None:
-            oprot.writeFieldBegin('kind', TType.I32, 2)
+            oprot.writeFieldBegin("kind", TType.I32, 2)
             oprot.writeI32(self.kind)
             oprot.writeFieldEnd()
         if self.xtypes is not None:
-            oprot.writeFieldBegin('xtypes', TType.LIST, 3)
+            oprot.writeFieldBegin("xtypes", TType.LIST, 3)
             oprot.writeListBegin(TType.STRUCT, len(self.xtypes))
             for iter256 in self.xtypes:
                 iter256.write(oprot)
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         if self.n_obj is not None:
-            oprot.writeFieldBegin('n_obj', TType.I64, 4)
+            oprot.writeFieldBegin("n_obj", TType.I64, 4)
             oprot.writeI64(self.n_obj)
             oprot.writeFieldEnd()
         if self.cstr_specs is not None:
-            oprot.writeFieldBegin('cstr_specs', TType.LIST, 5)
+            oprot.writeFieldBegin("cstr_specs", TType.LIST, 5)
             oprot.writeListBegin(TType.STRUCT, len(self.cstr_specs))
             for iter257 in self.cstr_specs:
                 iter257.write(oprot)
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         if self.options is not None:
-            oprot.writeFieldBegin('options', TType.MAP, 6)
+            oprot.writeFieldBegin("options", TType.MAP, 6)
             oprot.writeMapBegin(TType.STRING, TType.STRUCT, len(self.options))
             for kiter258, viter259 in self.options.items():
-                oprot.writeString(kiter258.encode('utf-8') if sys.version_info[0] == 2 else kiter258)
+                oprot.writeString(
+                    kiter258.encode("utf-8") if sys.version_info[0] == 2 else kiter258
+                )
                 viter259.write(oprot)
             oprot.writeMapEnd()
             oprot.writeFieldEnd()
@@ -763,24 +906,61 @@ class create_mixint_optimizer_args(object):
         return
 
     def __repr__(self):
-        L = ['%s=%r' % (key, value)
-             for key, value in self.__dict__.items()]
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+        L = ["%s=%r" % (key, value) for key, value in self.__dict__.items()]
+        return "%s(%s)" % (self.__class__.__name__, ", ".join(L))
 
     def __eq__(self, other):
         return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
 
     def __ne__(self, other):
         return not (self == other)
+
+
 all_structs.append(create_mixint_optimizer_args)
 create_mixint_optimizer_args.thrift_spec = (
     None,  # 0
-    (1, TType.STRING, 'optimizer_id', 'UTF8', None, ),  # 1
-    (2, TType.I32, 'kind', None, None, ),  # 2
-    (3, TType.LIST, 'xtypes', (TType.STRUCT, [Xtype, None], False), None, ),  # 3
-    (4, TType.I64, 'n_obj', None, None, ),  # 4
-    (5, TType.LIST, 'cstr_specs', (TType.STRUCT, [ConstraintSpec, None], False), None, ),  # 5
-    (6, TType.MAP, 'options', (TType.STRING, 'UTF8', TType.STRUCT, [OptionValue, None], False), None, ),  # 6
+    (
+        1,
+        TType.STRING,
+        "optimizer_id",
+        "UTF8",
+        None,
+    ),  # 1
+    (
+        2,
+        TType.I32,
+        "kind",
+        None,
+        None,
+    ),  # 2
+    (
+        3,
+        TType.LIST,
+        "xtypes",
+        (TType.STRUCT, [Xtype, None], False),
+        None,
+    ),  # 3
+    (
+        4,
+        TType.I64,
+        "n_obj",
+        None,
+        None,
+    ),  # 4
+    (
+        5,
+        TType.LIST,
+        "cstr_specs",
+        (TType.STRUCT, [ConstraintSpec, None], False),
+        None,
+    ),  # 5
+    (
+        6,
+        TType.MAP,
+        "options",
+        (TType.STRING, "UTF8", TType.STRUCT, [OptionValue, None], False),
+        None,
+    ),  # 6
 )
 
 
@@ -791,12 +971,18 @@ class create_mixint_optimizer_result(object):
 
     """
 
-
-    def __init__(self, exc=None,):
+    def __init__(
+        self,
+        exc=None,
+    ):
         self.exc = exc
 
     def read(self, iprot):
-        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+        if (
+            iprot._fast_decode is not None
+            and isinstance(iprot.trans, TTransport.CReadableTransport)
+            and self.thrift_spec is not None
+        ):
             iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
             return
         iprot.readStructBegin()
@@ -816,11 +1002,13 @@ class create_mixint_optimizer_result(object):
 
     def write(self, oprot):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
+            oprot.trans.write(
+                oprot._fast_encode(self, [self.__class__, self.thrift_spec])
+            )
             return
-        oprot.writeStructBegin('create_mixint_optimizer_result')
+        oprot.writeStructBegin("create_mixint_optimizer_result")
         if self.exc is not None:
-            oprot.writeFieldBegin('exc', TType.STRUCT, 1)
+            oprot.writeFieldBegin("exc", TType.STRUCT, 1)
             self.exc.write(oprot)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
@@ -830,19 +1018,26 @@ class create_mixint_optimizer_result(object):
         return
 
     def __repr__(self):
-        L = ['%s=%r' % (key, value)
-             for key, value in self.__dict__.items()]
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+        L = ["%s=%r" % (key, value) for key, value in self.__dict__.items()]
+        return "%s(%s)" % (self.__class__.__name__, ", ".join(L))
 
     def __eq__(self, other):
         return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
 
     def __ne__(self, other):
         return not (self == other)
+
+
 all_structs.append(create_mixint_optimizer_result)
 create_mixint_optimizer_result.thrift_spec = (
     None,  # 0
-    (1, TType.STRUCT, 'exc', [OptimizerException, None], None, ),  # 1
+    (
+        1,
+        TType.STRUCT,
+        "exc",
+        [OptimizerException, None],
+        None,
+    ),  # 1
 )
 
 
@@ -854,13 +1049,20 @@ class ask_args(object):
 
     """
 
-
-    def __init__(self, optimizer_id=None, with_best=None,):
+    def __init__(
+        self,
+        optimizer_id=None,
+        with_best=None,
+    ):
         self.optimizer_id = optimizer_id
         self.with_best = with_best
 
     def read(self, iprot):
-        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+        if (
+            iprot._fast_decode is not None
+            and isinstance(iprot.trans, TTransport.CReadableTransport)
+            and self.thrift_spec is not None
+        ):
             iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
             return
         iprot.readStructBegin()
@@ -870,7 +1072,11 @@ class ask_args(object):
                 break
             if fid == 1:
                 if ftype == TType.STRING:
-                    self.optimizer_id = iprot.readString().decode('utf-8', errors='replace') if sys.version_info[0] == 2 else iprot.readString()
+                    self.optimizer_id = (
+                        iprot.readString().decode("utf-8", errors="replace")
+                        if sys.version_info[0] == 2
+                        else iprot.readString()
+                    )
                 else:
                     iprot.skip(ftype)
             elif fid == 2:
@@ -885,15 +1091,21 @@ class ask_args(object):
 
     def write(self, oprot):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
+            oprot.trans.write(
+                oprot._fast_encode(self, [self.__class__, self.thrift_spec])
+            )
             return
-        oprot.writeStructBegin('ask_args')
+        oprot.writeStructBegin("ask_args")
         if self.optimizer_id is not None:
-            oprot.writeFieldBegin('optimizer_id', TType.STRING, 1)
-            oprot.writeString(self.optimizer_id.encode('utf-8') if sys.version_info[0] == 2 else self.optimizer_id)
+            oprot.writeFieldBegin("optimizer_id", TType.STRING, 1)
+            oprot.writeString(
+                self.optimizer_id.encode("utf-8")
+                if sys.version_info[0] == 2
+                else self.optimizer_id
+            )
             oprot.writeFieldEnd()
         if self.with_best is not None:
-            oprot.writeFieldBegin('with_best', TType.BOOL, 2)
+            oprot.writeFieldBegin("with_best", TType.BOOL, 2)
             oprot.writeBool(self.with_best)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
@@ -903,20 +1115,33 @@ class ask_args(object):
         return
 
     def __repr__(self):
-        L = ['%s=%r' % (key, value)
-             for key, value in self.__dict__.items()]
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+        L = ["%s=%r" % (key, value) for key, value in self.__dict__.items()]
+        return "%s(%s)" % (self.__class__.__name__, ", ".join(L))
 
     def __eq__(self, other):
         return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
 
     def __ne__(self, other):
         return not (self == other)
+
+
 all_structs.append(ask_args)
 ask_args.thrift_spec = (
     None,  # 0
-    (1, TType.STRING, 'optimizer_id', 'UTF8', None, ),  # 1
-    (2, TType.BOOL, 'with_best', None, None, ),  # 2
+    (
+        1,
+        TType.STRING,
+        "optimizer_id",
+        "UTF8",
+        None,
+    ),  # 1
+    (
+        2,
+        TType.BOOL,
+        "with_best",
+        None,
+        None,
+    ),  # 2
 )
 
 
@@ -928,13 +1153,20 @@ class ask_result(object):
 
     """
 
-
-    def __init__(self, success=None, exc=None,):
+    def __init__(
+        self,
+        success=None,
+        exc=None,
+    ):
         self.success = success
         self.exc = exc
 
     def read(self, iprot):
-        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+        if (
+            iprot._fast_decode is not None
+            and isinstance(iprot.trans, TTransport.CReadableTransport)
+            and self.thrift_spec is not None
+        ):
             iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
             return
         iprot.readStructBegin()
@@ -960,15 +1192,17 @@ class ask_result(object):
 
     def write(self, oprot):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
+            oprot.trans.write(
+                oprot._fast_encode(self, [self.__class__, self.thrift_spec])
+            )
             return
-        oprot.writeStructBegin('ask_result')
+        oprot.writeStructBegin("ask_result")
         if self.success is not None:
-            oprot.writeFieldBegin('success', TType.STRUCT, 0)
+            oprot.writeFieldBegin("success", TType.STRUCT, 0)
             self.success.write(oprot)
             oprot.writeFieldEnd()
         if self.exc is not None:
-            oprot.writeFieldBegin('exc', TType.STRUCT, 1)
+            oprot.writeFieldBegin("exc", TType.STRUCT, 1)
             self.exc.write(oprot)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
@@ -978,19 +1212,32 @@ class ask_result(object):
         return
 
     def __repr__(self):
-        L = ['%s=%r' % (key, value)
-             for key, value in self.__dict__.items()]
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+        L = ["%s=%r" % (key, value) for key, value in self.__dict__.items()]
+        return "%s(%s)" % (self.__class__.__name__, ", ".join(L))
 
     def __eq__(self, other):
         return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
 
     def __ne__(self, other):
         return not (self == other)
+
+
 all_structs.append(ask_result)
 ask_result.thrift_spec = (
-    (0, TType.STRUCT, 'success', [OptimizerResult, None], None, ),  # 0
-    (1, TType.STRUCT, 'exc', [OptimizerException, None], None, ),  # 1
+    (
+        0,
+        TType.STRUCT,
+        "success",
+        [OptimizerResult, None],
+        None,
+    ),  # 0
+    (
+        1,
+        TType.STRUCT,
+        "exc",
+        [OptimizerException, None],
+        None,
+    ),  # 1
 )
 
 
@@ -1003,14 +1250,22 @@ class tell_args(object):
 
     """
 
-
-    def __init__(self, optimizer_id=None, x=None, y=None,):
+    def __init__(
+        self,
+        optimizer_id=None,
+        x=None,
+        y=None,
+    ):
         self.optimizer_id = optimizer_id
         self.x = x
         self.y = y
 
     def read(self, iprot):
-        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+        if (
+            iprot._fast_decode is not None
+            and isinstance(iprot.trans, TTransport.CReadableTransport)
+            and self.thrift_spec is not None
+        ):
             iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
             return
         iprot.readStructBegin()
@@ -1020,7 +1275,11 @@ class tell_args(object):
                 break
             if fid == 1:
                 if ftype == TType.STRING:
-                    self.optimizer_id = iprot.readString().decode('utf-8', errors='replace') if sys.version_info[0] == 2 else iprot.readString()
+                    self.optimizer_id = (
+                        iprot.readString().decode("utf-8", errors="replace")
+                        if sys.version_info[0] == 2
+                        else iprot.readString()
+                    )
                 else:
                     iprot.skip(ftype)
             elif fid == 2:
@@ -1060,15 +1319,21 @@ class tell_args(object):
 
     def write(self, oprot):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
+            oprot.trans.write(
+                oprot._fast_encode(self, [self.__class__, self.thrift_spec])
+            )
             return
-        oprot.writeStructBegin('tell_args')
+        oprot.writeStructBegin("tell_args")
         if self.optimizer_id is not None:
-            oprot.writeFieldBegin('optimizer_id', TType.STRING, 1)
-            oprot.writeString(self.optimizer_id.encode('utf-8') if sys.version_info[0] == 2 else self.optimizer_id)
+            oprot.writeFieldBegin("optimizer_id", TType.STRING, 1)
+            oprot.writeString(
+                self.optimizer_id.encode("utf-8")
+                if sys.version_info[0] == 2
+                else self.optimizer_id
+            )
             oprot.writeFieldEnd()
         if self.x is not None:
-            oprot.writeFieldBegin('x', TType.LIST, 2)
+            oprot.writeFieldBegin("x", TType.LIST, 2)
             oprot.writeListBegin(TType.LIST, len(self.x))
             for iter284 in self.x:
                 oprot.writeListBegin(TType.DOUBLE, len(iter284))
@@ -1078,7 +1343,7 @@ class tell_args(object):
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         if self.y is not None:
-            oprot.writeFieldBegin('y', TType.LIST, 3)
+            oprot.writeFieldBegin("y", TType.LIST, 3)
             oprot.writeListBegin(TType.LIST, len(self.y))
             for iter286 in self.y:
                 oprot.writeListBegin(TType.DOUBLE, len(iter286))
@@ -1094,21 +1359,40 @@ class tell_args(object):
         return
 
     def __repr__(self):
-        L = ['%s=%r' % (key, value)
-             for key, value in self.__dict__.items()]
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+        L = ["%s=%r" % (key, value) for key, value in self.__dict__.items()]
+        return "%s(%s)" % (self.__class__.__name__, ", ".join(L))
 
     def __eq__(self, other):
         return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
 
     def __ne__(self, other):
         return not (self == other)
+
+
 all_structs.append(tell_args)
 tell_args.thrift_spec = (
     None,  # 0
-    (1, TType.STRING, 'optimizer_id', 'UTF8', None, ),  # 1
-    (2, TType.LIST, 'x', (TType.LIST, (TType.DOUBLE, None, False), False), None, ),  # 2
-    (3, TType.LIST, 'y', (TType.LIST, (TType.DOUBLE, None, False), False), None, ),  # 3
+    (
+        1,
+        TType.STRING,
+        "optimizer_id",
+        "UTF8",
+        None,
+    ),  # 1
+    (
+        2,
+        TType.LIST,
+        "x",
+        (TType.LIST, (TType.DOUBLE, None, False), False),
+        None,
+    ),  # 2
+    (
+        3,
+        TType.LIST,
+        "y",
+        (TType.LIST, (TType.DOUBLE, None, False), False),
+        None,
+    ),  # 3
 )
 
 
@@ -1119,12 +1403,18 @@ class tell_result(object):
 
     """
 
-
-    def __init__(self, exc=None,):
+    def __init__(
+        self,
+        exc=None,
+    ):
         self.exc = exc
 
     def read(self, iprot):
-        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+        if (
+            iprot._fast_decode is not None
+            and isinstance(iprot.trans, TTransport.CReadableTransport)
+            and self.thrift_spec is not None
+        ):
             iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
             return
         iprot.readStructBegin()
@@ -1144,11 +1434,13 @@ class tell_result(object):
 
     def write(self, oprot):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
+            oprot.trans.write(
+                oprot._fast_encode(self, [self.__class__, self.thrift_spec])
+            )
             return
-        oprot.writeStructBegin('tell_result')
+        oprot.writeStructBegin("tell_result")
         if self.exc is not None:
-            oprot.writeFieldBegin('exc', TType.STRUCT, 1)
+            oprot.writeFieldBegin("exc", TType.STRUCT, 1)
             self.exc.write(oprot)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
@@ -1158,19 +1450,26 @@ class tell_result(object):
         return
 
     def __repr__(self):
-        L = ['%s=%r' % (key, value)
-             for key, value in self.__dict__.items()]
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+        L = ["%s=%r" % (key, value) for key, value in self.__dict__.items()]
+        return "%s(%s)" % (self.__class__.__name__, ", ".join(L))
 
     def __eq__(self, other):
         return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
 
     def __ne__(self, other):
         return not (self == other)
+
+
 all_structs.append(tell_result)
 tell_result.thrift_spec = (
     None,  # 0
-    (1, TType.STRUCT, 'exc', [OptimizerException, None], None, ),  # 1
+    (
+        1,
+        TType.STRUCT,
+        "exc",
+        [OptimizerException, None],
+        None,
+    ),  # 1
 )
 
 
@@ -1181,12 +1480,18 @@ class destroy_optimizer_args(object):
 
     """
 
-
-    def __init__(self, optimizer_id=None,):
+    def __init__(
+        self,
+        optimizer_id=None,
+    ):
         self.optimizer_id = optimizer_id
 
     def read(self, iprot):
-        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+        if (
+            iprot._fast_decode is not None
+            and isinstance(iprot.trans, TTransport.CReadableTransport)
+            and self.thrift_spec is not None
+        ):
             iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
             return
         iprot.readStructBegin()
@@ -1196,7 +1501,11 @@ class destroy_optimizer_args(object):
                 break
             if fid == 1:
                 if ftype == TType.STRING:
-                    self.optimizer_id = iprot.readString().decode('utf-8', errors='replace') if sys.version_info[0] == 2 else iprot.readString()
+                    self.optimizer_id = (
+                        iprot.readString().decode("utf-8", errors="replace")
+                        if sys.version_info[0] == 2
+                        else iprot.readString()
+                    )
                 else:
                     iprot.skip(ftype)
             else:
@@ -1206,12 +1515,18 @@ class destroy_optimizer_args(object):
 
     def write(self, oprot):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
+            oprot.trans.write(
+                oprot._fast_encode(self, [self.__class__, self.thrift_spec])
+            )
             return
-        oprot.writeStructBegin('destroy_optimizer_args')
+        oprot.writeStructBegin("destroy_optimizer_args")
         if self.optimizer_id is not None:
-            oprot.writeFieldBegin('optimizer_id', TType.STRING, 1)
-            oprot.writeString(self.optimizer_id.encode('utf-8') if sys.version_info[0] == 2 else self.optimizer_id)
+            oprot.writeFieldBegin("optimizer_id", TType.STRING, 1)
+            oprot.writeString(
+                self.optimizer_id.encode("utf-8")
+                if sys.version_info[0] == 2
+                else self.optimizer_id
+            )
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
@@ -1220,27 +1535,36 @@ class destroy_optimizer_args(object):
         return
 
     def __repr__(self):
-        L = ['%s=%r' % (key, value)
-             for key, value in self.__dict__.items()]
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+        L = ["%s=%r" % (key, value) for key, value in self.__dict__.items()]
+        return "%s(%s)" % (self.__class__.__name__, ", ".join(L))
 
     def __eq__(self, other):
         return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
 
     def __ne__(self, other):
         return not (self == other)
+
+
 all_structs.append(destroy_optimizer_args)
 destroy_optimizer_args.thrift_spec = (
     None,  # 0
-    (1, TType.STRING, 'optimizer_id', 'UTF8', None, ),  # 1
+    (
+        1,
+        TType.STRING,
+        "optimizer_id",
+        "UTF8",
+        None,
+    ),  # 1
 )
 
 
 class destroy_optimizer_result(object):
-
-
     def read(self, iprot):
-        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+        if (
+            iprot._fast_decode is not None
+            and isinstance(iprot.trans, TTransport.CReadableTransport)
+            and self.thrift_spec is not None
+        ):
             iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
             return
         iprot.readStructBegin()
@@ -1255,9 +1579,11 @@ class destroy_optimizer_result(object):
 
     def write(self, oprot):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
+            oprot.trans.write(
+                oprot._fast_encode(self, [self.__class__, self.thrift_spec])
+            )
             return
-        oprot.writeStructBegin('destroy_optimizer_result')
+        oprot.writeStructBegin("destroy_optimizer_result")
         oprot.writeFieldStop()
         oprot.writeStructEnd()
 
@@ -1265,17 +1591,17 @@ class destroy_optimizer_result(object):
         return
 
     def __repr__(self):
-        L = ['%s=%r' % (key, value)
-             for key, value in self.__dict__.items()]
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+        L = ["%s=%r" % (key, value) for key, value in self.__dict__.items()]
+        return "%s(%s)" % (self.__class__.__name__, ", ".join(L))
 
     def __eq__(self, other):
         return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
 
     def __ne__(self, other):
         return not (self == other)
+
+
 all_structs.append(destroy_optimizer_result)
-destroy_optimizer_result.thrift_spec = (
-)
+destroy_optimizer_result.thrift_spec = ()
 fix_spec(all_structs)
 del all_structs
