@@ -1,0 +1,12 @@
+numpy 
+pandas 
+scipy 
+cython 
+scikit-learn
+wop
+smt~=2.5.0
+salib~=1.4.7
+thrift~=0.20.0
+openturns~=1.21.0
+egobox~=0.16.0
+
