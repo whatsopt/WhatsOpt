@@ -100,7 +100,6 @@ class TestSurrogateService(unittest.TestCase):
 
     # @unittest.skip("skip")
     def test_predict(self):
-
         xt = np.array([[0.0, 1.0, 2.0, 3.0, 4.0]]).T
         yt = np.array([0.0, 1.0, 1.5, 0.5, 1.0])
 

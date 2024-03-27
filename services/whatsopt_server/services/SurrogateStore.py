@@ -6,8 +6,7 @@
 #  options string: py
 #
 
-from thrift.Thrift import TType, TMessageType, TFrozenDict, TException, TApplicationException
-from thrift.protocol.TProtocol import TProtocolException
+from thrift.Thrift import TType, TMessageType, TApplicationException
 from thrift.TRecursive import fix_spec
 
 import sys
@@ -15,6 +14,7 @@ import logging
 from .ttypes import *
 from thrift.Thrift import TProcessor
 from thrift.transport import TTransport
+
 all_structs = []
 
 
@@ -99,7 +99,9 @@ class Client(Iface):
         self.recv_create_surrogate()
 
     def send_create_surrogate(self, surrogate_id, kind, xt, yt, options, uncertainties):
-        self._oprot.writeMessageBegin('create_surrogate', TMessageType.CALL, self._seqid)
+        self._oprot.writeMessageBegin(
+            "create_surrogate", TMessageType.CALL, self._seqid
+        )
         args = create_surrogate_args()
         args.surrogate_id = surrogate_id
         args.kind = kind
@@ -137,7 +139,7 @@ class Client(Iface):
         self.recv_copy_surrogate()
 
     def send_copy_surrogate(self, src_id, dst_id):
-        self._oprot.writeMessageBegin('copy_surrogate', TMessageType.CALL, self._seqid)
+        self._oprot.writeMessageBegin("copy_surrogate", TMessageType.CALL, self._seqid)
         args = copy_surrogate_args()
         args.src_id = src_id
         args.dst_id = dst_id
@@ -172,7 +174,7 @@ class Client(Iface):
         return self.recv_qualify()
 
     def send_qualify(self, surrogate_id, xv, yv):
-        self._oprot.writeMessageBegin('qualify', TMessageType.CALL, self._seqid)
+        self._oprot.writeMessageBegin("qualify", TMessageType.CALL, self._seqid)
         args = qualify_args()
         args.surrogate_id = surrogate_id
         args.xv = xv
@@ -196,7 +198,9 @@ class Client(Iface):
             return result.success
         if result.exc is not None:
             raise result.exc
-        raise TApplicationException(TApplicationException.MISSING_RESULT, "qualify failed: unknown result")
+        raise TApplicationException(
+            TApplicationException.MISSING_RESULT, "qualify failed: unknown result"
+        )
 
     def predict_values(self, surrogate_id, x):
         """
@@ -209,7 +213,7 @@ class Client(Iface):
         return self.recv_predict_values()
 
     def send_predict_values(self, surrogate_id, x):
-        self._oprot.writeMessageBegin('predict_values', TMessageType.CALL, self._seqid)
+        self._oprot.writeMessageBegin("predict_values", TMessageType.CALL, self._seqid)
         args = predict_values_args()
         args.surrogate_id = surrogate_id
         args.x = x
@@ -232,7 +236,10 @@ class Client(Iface):
             return result.success
         if result.exc is not None:
             raise result.exc
-        raise TApplicationException(TApplicationException.MISSING_RESULT, "predict_values failed: unknown result")
+        raise TApplicationException(
+            TApplicationException.MISSING_RESULT,
+            "predict_values failed: unknown result",
+        )
 
     def destroy_surrogate(self, surrogate_id):
         """
@@ -244,7 +251,9 @@ class Client(Iface):
         self.recv_destroy_surrogate()
 
     def send_destroy_surrogate(self, surrogate_id):
-        self._oprot.writeMessageBegin('destroy_surrogate', TMessageType.CALL, self._seqid)
+        self._oprot.writeMessageBegin(
+            "destroy_surrogate", TMessageType.CALL, self._seqid
+        )
         args = destroy_surrogate_args()
         args.surrogate_id = surrogate_id
         args.write(self._oprot)
@@ -274,7 +283,9 @@ class Client(Iface):
         return self.recv_get_sobol_pce_sensitivity_analysis()
 
     def send_get_sobol_pce_sensitivity_analysis(self, surrogate_id):
-        self._oprot.writeMessageBegin('get_sobol_pce_sensitivity_analysis', TMessageType.CALL, self._seqid)
+        self._oprot.writeMessageBegin(
+            "get_sobol_pce_sensitivity_analysis", TMessageType.CALL, self._seqid
+        )
         args = get_sobol_pce_sensitivity_analysis_args()
         args.surrogate_id = surrogate_id
         args.write(self._oprot)
@@ -294,7 +305,10 @@ class Client(Iface):
         iprot.readMessageEnd()
         if result.success is not None:
             return result.success
-        raise TApplicationException(TApplicationException.MISSING_RESULT, "get_sobol_pce_sensitivity_analysis failed: unknown result")
+        raise TApplicationException(
+            TApplicationException.MISSING_RESULT,
+            "get_sobol_pce_sensitivity_analysis failed: unknown result",
+        )
 
 
 class Processor(Iface, TProcessor):
@@ -306,7 +320,9 @@ class Processor(Iface, TProcessor):
         self._processMap["qualify"] = Processor.process_qualify
         self._processMap["predict_values"] = Processor.process_predict_values
         self._processMap["destroy_surrogate"] = Processor.process_destroy_surrogate
-        self._processMap["get_sobol_pce_sensitivity_analysis"] = Processor.process_get_sobol_pce_sensitivity_analysis
+        self._processMap["get_sobol_pce_sensitivity_analysis"] = (
+            Processor.process_get_sobol_pce_sensitivity_analysis
+        )
         self._on_message_begin = None
 
     def on_message_begin(self, func):
@@ -319,7 +335,9 @@ class Processor(Iface, TProcessor):
         if name not in self._processMap:
             iprot.skip(TType.STRUCT)
             iprot.readMessageEnd()
-            x = TApplicationException(TApplicationException.UNKNOWN_METHOD, 'Unknown function %s' % (name))
+            x = TApplicationException(
+                TApplicationException.UNKNOWN_METHOD, "Unknown function %s" % (name)
+            )
             oprot.writeMessageBegin(name, TMessageType.EXCEPTION, seqid)
             x.write(oprot)
             oprot.writeMessageEnd()
@@ -335,7 +353,14 @@ class Processor(Iface, TProcessor):
         iprot.readMessageEnd()
         result = create_surrogate_result()
         try:
-            self._handler.create_surrogate(args.surrogate_id, args.kind, args.xt, args.yt, args.options, args.uncertainties)
+            self._handler.create_surrogate(
+                args.surrogate_id,
+                args.kind,
+                args.xt,
+                args.yt,
+                args.options,
+                args.uncertainties,
+            )
             msg_type = TMessageType.REPLY
         except TTransport.TTransportException:
             raise
@@ -343,13 +368,15 @@ class Processor(Iface, TProcessor):
             msg_type = TMessageType.REPLY
             result.exc = exc
         except TApplicationException as ex:
-            logging.exception('TApplication exception in handler')
+            logging.exception("TApplication exception in handler")
             msg_type = TMessageType.EXCEPTION
             result = ex
         except Exception:
-            logging.exception('Unexpected exception in handler')
+            logging.exception("Unexpected exception in handler")
             msg_type = TMessageType.EXCEPTION
-            result = TApplicationException(TApplicationException.INTERNAL_ERROR, 'Internal error')
+            result = TApplicationException(
+                TApplicationException.INTERNAL_ERROR, "Internal error"
+            )
         oprot.writeMessageBegin("create_surrogate", msg_type, seqid)
         result.write(oprot)
         oprot.writeMessageEnd()
@@ -369,13 +396,15 @@ class Processor(Iface, TProcessor):
             msg_type = TMessageType.REPLY
             result.exc = exc
         except TApplicationException as ex:
-            logging.exception('TApplication exception in handler')
+            logging.exception("TApplication exception in handler")
             msg_type = TMessageType.EXCEPTION
             result = ex
         except Exception:
-            logging.exception('Unexpected exception in handler')
+            logging.exception("Unexpected exception in handler")
             msg_type = TMessageType.EXCEPTION
-            result = TApplicationException(TApplicationException.INTERNAL_ERROR, 'Internal error')
+            result = TApplicationException(
+                TApplicationException.INTERNAL_ERROR, "Internal error"
+            )
         oprot.writeMessageBegin("copy_surrogate", msg_type, seqid)
         result.write(oprot)
         oprot.writeMessageEnd()
@@ -395,13 +424,15 @@ class Processor(Iface, TProcessor):
             msg_type = TMessageType.REPLY
             result.exc = exc
         except TApplicationException as ex:
-            logging.exception('TApplication exception in handler')
+            logging.exception("TApplication exception in handler")
             msg_type = TMessageType.EXCEPTION
             result = ex
         except Exception:
-            logging.exception('Unexpected exception in handler')
+            logging.exception("Unexpected exception in handler")
             msg_type = TMessageType.EXCEPTION
-            result = TApplicationException(TApplicationException.INTERNAL_ERROR, 'Internal error')
+            result = TApplicationException(
+                TApplicationException.INTERNAL_ERROR, "Internal error"
+            )
         oprot.writeMessageBegin("qualify", msg_type, seqid)
         result.write(oprot)
         oprot.writeMessageEnd()
@@ -421,13 +452,15 @@ class Processor(Iface, TProcessor):
             msg_type = TMessageType.REPLY
             result.exc = exc
         except TApplicationException as ex:
-            logging.exception('TApplication exception in handler')
+            logging.exception("TApplication exception in handler")
             msg_type = TMessageType.EXCEPTION
             result = ex
         except Exception:
-            logging.exception('Unexpected exception in handler')
+            logging.exception("Unexpected exception in handler")
             msg_type = TMessageType.EXCEPTION
-            result = TApplicationException(TApplicationException.INTERNAL_ERROR, 'Internal error')
+            result = TApplicationException(
+                TApplicationException.INTERNAL_ERROR, "Internal error"
+            )
         oprot.writeMessageBegin("predict_values", msg_type, seqid)
         result.write(oprot)
         oprot.writeMessageEnd()
@@ -444,13 +477,15 @@ class Processor(Iface, TProcessor):
         except TTransport.TTransportException:
             raise
         except TApplicationException as ex:
-            logging.exception('TApplication exception in handler')
+            logging.exception("TApplication exception in handler")
             msg_type = TMessageType.EXCEPTION
             result = ex
         except Exception:
-            logging.exception('Unexpected exception in handler')
+            logging.exception("Unexpected exception in handler")
             msg_type = TMessageType.EXCEPTION
-            result = TApplicationException(TApplicationException.INTERNAL_ERROR, 'Internal error')
+            result = TApplicationException(
+                TApplicationException.INTERNAL_ERROR, "Internal error"
+            )
         oprot.writeMessageBegin("destroy_surrogate", msg_type, seqid)
         result.write(oprot)
         oprot.writeMessageEnd()
@@ -462,22 +497,27 @@ class Processor(Iface, TProcessor):
         iprot.readMessageEnd()
         result = get_sobol_pce_sensitivity_analysis_result()
         try:
-            result.success = self._handler.get_sobol_pce_sensitivity_analysis(args.surrogate_id)
+            result.success = self._handler.get_sobol_pce_sensitivity_analysis(
+                args.surrogate_id
+            )
             msg_type = TMessageType.REPLY
         except TTransport.TTransportException:
             raise
         except TApplicationException as ex:
-            logging.exception('TApplication exception in handler')
+            logging.exception("TApplication exception in handler")
             msg_type = TMessageType.EXCEPTION
             result = ex
         except Exception:
-            logging.exception('Unexpected exception in handler')
+            logging.exception("Unexpected exception in handler")
             msg_type = TMessageType.EXCEPTION
-            result = TApplicationException(TApplicationException.INTERNAL_ERROR, 'Internal error')
+            result = TApplicationException(
+                TApplicationException.INTERNAL_ERROR, "Internal error"
+            )
         oprot.writeMessageBegin("get_sobol_pce_sensitivity_analysis", msg_type, seqid)
         result.write(oprot)
         oprot.writeMessageEnd()
         oprot.trans.flush()
+
 
 # HELPER FUNCTIONS AND STRUCTURES
 
@@ -494,8 +534,15 @@ class create_surrogate_args(object):
 
     """
 
-
-    def __init__(self, surrogate_id=None, kind=None, xt=None, yt=None, options=None, uncertainties=None,):
+    def __init__(
+        self,
+        surrogate_id=None,
+        kind=None,
+        xt=None,
+        yt=None,
+        options=None,
+        uncertainties=None,
+    ):
         self.surrogate_id = surrogate_id
         self.kind = kind
         self.xt = xt
@@ -504,7 +551,11 @@ class create_surrogate_args(object):
         self.uncertainties = uncertainties
 
     def read(self, iprot):
-        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+        if (
+            iprot._fast_decode is not None
+            and isinstance(iprot.trans, TTransport.CReadableTransport)
+            and self.thrift_spec is not None
+        ):
             iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
             return
         iprot.readStructBegin()
@@ -514,7 +565,11 @@ class create_surrogate_args(object):
                 break
             if fid == 1:
                 if ftype == TType.STRING:
-                    self.surrogate_id = iprot.readString().decode('utf-8', errors='replace') if sys.version_info[0] == 2 else iprot.readString()
+                    self.surrogate_id = (
+                        iprot.readString().decode("utf-8", errors="replace")
+                        if sys.version_info[0] == 2
+                        else iprot.readString()
+                    )
                 else:
                     iprot.skip(ftype)
             elif fid == 2:
@@ -552,7 +607,11 @@ class create_surrogate_args(object):
                     self.options = {}
                     (_ktype147, _vtype148, _size146) = iprot.readMapBegin()
                     for _i150 in range(_size146):
-                        _key151 = iprot.readString().decode('utf-8', errors='replace') if sys.version_info[0] == 2 else iprot.readString()
+                        _key151 = (
+                            iprot.readString().decode("utf-8", errors="replace")
+                            if sys.version_info[0] == 2
+                            else iprot.readString()
+                        )
                         _val152 = OptionValue()
                         _val152.read(iprot)
                         self.options[_key151] = _val152
@@ -577,19 +636,25 @@ class create_surrogate_args(object):
 
     def write(self, oprot):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
+            oprot.trans.write(
+                oprot._fast_encode(self, [self.__class__, self.thrift_spec])
+            )
             return
-        oprot.writeStructBegin('create_surrogate_args')
+        oprot.writeStructBegin("create_surrogate_args")
         if self.surrogate_id is not None:
-            oprot.writeFieldBegin('surrogate_id', TType.STRING, 1)
-            oprot.writeString(self.surrogate_id.encode('utf-8') if sys.version_info[0] == 2 else self.surrogate_id)
+            oprot.writeFieldBegin("surrogate_id", TType.STRING, 1)
+            oprot.writeString(
+                self.surrogate_id.encode("utf-8")
+                if sys.version_info[0] == 2
+                else self.surrogate_id
+            )
             oprot.writeFieldEnd()
         if self.kind is not None:
-            oprot.writeFieldBegin('kind', TType.I32, 2)
+            oprot.writeFieldBegin("kind", TType.I32, 2)
             oprot.writeI32(self.kind)
             oprot.writeFieldEnd()
         if self.xt is not None:
-            oprot.writeFieldBegin('xt', TType.LIST, 3)
+            oprot.writeFieldBegin("xt", TType.LIST, 3)
             oprot.writeListBegin(TType.LIST, len(self.xt))
             for iter159 in self.xt:
                 oprot.writeListBegin(TType.DOUBLE, len(iter159))
@@ -599,22 +664,24 @@ class create_surrogate_args(object):
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         if self.yt is not None:
-            oprot.writeFieldBegin('yt', TType.LIST, 4)
+            oprot.writeFieldBegin("yt", TType.LIST, 4)
             oprot.writeListBegin(TType.DOUBLE, len(self.yt))
             for iter161 in self.yt:
                 oprot.writeDouble(iter161)
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         if self.options is not None:
-            oprot.writeFieldBegin('options', TType.MAP, 5)
+            oprot.writeFieldBegin("options", TType.MAP, 5)
             oprot.writeMapBegin(TType.STRING, TType.STRUCT, len(self.options))
             for kiter162, viter163 in self.options.items():
-                oprot.writeString(kiter162.encode('utf-8') if sys.version_info[0] == 2 else kiter162)
+                oprot.writeString(
+                    kiter162.encode("utf-8") if sys.version_info[0] == 2 else kiter162
+                )
                 viter163.write(oprot)
             oprot.writeMapEnd()
             oprot.writeFieldEnd()
         if self.uncertainties is not None:
-            oprot.writeFieldBegin('uncertainties', TType.LIST, 6)
+            oprot.writeFieldBegin("uncertainties", TType.LIST, 6)
             oprot.writeListBegin(TType.STRUCT, len(self.uncertainties))
             for iter164 in self.uncertainties:
                 iter164.write(oprot)
@@ -627,24 +694,61 @@ class create_surrogate_args(object):
         return
 
     def __repr__(self):
-        L = ['%s=%r' % (key, value)
-             for key, value in self.__dict__.items()]
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+        L = ["%s=%r" % (key, value) for key, value in self.__dict__.items()]
+        return "%s(%s)" % (self.__class__.__name__, ", ".join(L))
 
     def __eq__(self, other):
         return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
 
     def __ne__(self, other):
         return not (self == other)
+
+
 all_structs.append(create_surrogate_args)
 create_surrogate_args.thrift_spec = (
     None,  # 0
-    (1, TType.STRING, 'surrogate_id', 'UTF8', None, ),  # 1
-    (2, TType.I32, 'kind', None, None, ),  # 2
-    (3, TType.LIST, 'xt', (TType.LIST, (TType.DOUBLE, None, False), False), None, ),  # 3
-    (4, TType.LIST, 'yt', (TType.DOUBLE, None, False), None, ),  # 4
-    (5, TType.MAP, 'options', (TType.STRING, 'UTF8', TType.STRUCT, [OptionValue, None], False), None, ),  # 5
-    (6, TType.LIST, 'uncertainties', (TType.STRUCT, [Distribution, None], False), None, ),  # 6
+    (
+        1,
+        TType.STRING,
+        "surrogate_id",
+        "UTF8",
+        None,
+    ),  # 1
+    (
+        2,
+        TType.I32,
+        "kind",
+        None,
+        None,
+    ),  # 2
+    (
+        3,
+        TType.LIST,
+        "xt",
+        (TType.LIST, (TType.DOUBLE, None, False), False),
+        None,
+    ),  # 3
+    (
+        4,
+        TType.LIST,
+        "yt",
+        (TType.DOUBLE, None, False),
+        None,
+    ),  # 4
+    (
+        5,
+        TType.MAP,
+        "options",
+        (TType.STRING, "UTF8", TType.STRUCT, [OptionValue, None], False),
+        None,
+    ),  # 5
+    (
+        6,
+        TType.LIST,
+        "uncertainties",
+        (TType.STRUCT, [Distribution, None], False),
+        None,
+    ),  # 6
 )
 
 
@@ -655,12 +759,18 @@ class create_surrogate_result(object):
 
     """
 
-
-    def __init__(self, exc=None,):
+    def __init__(
+        self,
+        exc=None,
+    ):
         self.exc = exc
 
     def read(self, iprot):
-        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+        if (
+            iprot._fast_decode is not None
+            and isinstance(iprot.trans, TTransport.CReadableTransport)
+            and self.thrift_spec is not None
+        ):
             iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
             return
         iprot.readStructBegin()
@@ -680,11 +790,13 @@ class create_surrogate_result(object):
 
     def write(self, oprot):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
+            oprot.trans.write(
+                oprot._fast_encode(self, [self.__class__, self.thrift_spec])
+            )
             return
-        oprot.writeStructBegin('create_surrogate_result')
+        oprot.writeStructBegin("create_surrogate_result")
         if self.exc is not None:
-            oprot.writeFieldBegin('exc', TType.STRUCT, 1)
+            oprot.writeFieldBegin("exc", TType.STRUCT, 1)
             self.exc.write(oprot)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
@@ -694,19 +806,26 @@ class create_surrogate_result(object):
         return
 
     def __repr__(self):
-        L = ['%s=%r' % (key, value)
-             for key, value in self.__dict__.items()]
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+        L = ["%s=%r" % (key, value) for key, value in self.__dict__.items()]
+        return "%s(%s)" % (self.__class__.__name__, ", ".join(L))
 
     def __eq__(self, other):
         return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
 
     def __ne__(self, other):
         return not (self == other)
+
+
 all_structs.append(create_surrogate_result)
 create_surrogate_result.thrift_spec = (
     None,  # 0
-    (1, TType.STRUCT, 'exc', [SurrogateException, None], None, ),  # 1
+    (
+        1,
+        TType.STRUCT,
+        "exc",
+        [SurrogateException, None],
+        None,
+    ),  # 1
 )
 
 
@@ -718,13 +837,20 @@ class copy_surrogate_args(object):
 
     """
 
-
-    def __init__(self, src_id=None, dst_id=None,):
+    def __init__(
+        self,
+        src_id=None,
+        dst_id=None,
+    ):
         self.src_id = src_id
         self.dst_id = dst_id
 
     def read(self, iprot):
-        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+        if (
+            iprot._fast_decode is not None
+            and isinstance(iprot.trans, TTransport.CReadableTransport)
+            and self.thrift_spec is not None
+        ):
             iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
             return
         iprot.readStructBegin()
@@ -734,12 +860,20 @@ class copy_surrogate_args(object):
                 break
             if fid == 1:
                 if ftype == TType.STRING:
-                    self.src_id = iprot.readString().decode('utf-8', errors='replace') if sys.version_info[0] == 2 else iprot.readString()
+                    self.src_id = (
+                        iprot.readString().decode("utf-8", errors="replace")
+                        if sys.version_info[0] == 2
+                        else iprot.readString()
+                    )
                 else:
                     iprot.skip(ftype)
             elif fid == 2:
                 if ftype == TType.STRING:
-                    self.dst_id = iprot.readString().decode('utf-8', errors='replace') if sys.version_info[0] == 2 else iprot.readString()
+                    self.dst_id = (
+                        iprot.readString().decode("utf-8", errors="replace")
+                        if sys.version_info[0] == 2
+                        else iprot.readString()
+                    )
                 else:
                     iprot.skip(ftype)
             else:
@@ -749,16 +883,22 @@ class copy_surrogate_args(object):
 
     def write(self, oprot):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
+            oprot.trans.write(
+                oprot._fast_encode(self, [self.__class__, self.thrift_spec])
+            )
             return
-        oprot.writeStructBegin('copy_surrogate_args')
+        oprot.writeStructBegin("copy_surrogate_args")
         if self.src_id is not None:
-            oprot.writeFieldBegin('src_id', TType.STRING, 1)
-            oprot.writeString(self.src_id.encode('utf-8') if sys.version_info[0] == 2 else self.src_id)
+            oprot.writeFieldBegin("src_id", TType.STRING, 1)
+            oprot.writeString(
+                self.src_id.encode("utf-8") if sys.version_info[0] == 2 else self.src_id
+            )
             oprot.writeFieldEnd()
         if self.dst_id is not None:
-            oprot.writeFieldBegin('dst_id', TType.STRING, 2)
-            oprot.writeString(self.dst_id.encode('utf-8') if sys.version_info[0] == 2 else self.dst_id)
+            oprot.writeFieldBegin("dst_id", TType.STRING, 2)
+            oprot.writeString(
+                self.dst_id.encode("utf-8") if sys.version_info[0] == 2 else self.dst_id
+            )
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
@@ -767,20 +907,33 @@ class copy_surrogate_args(object):
         return
 
     def __repr__(self):
-        L = ['%s=%r' % (key, value)
-             for key, value in self.__dict__.items()]
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+        L = ["%s=%r" % (key, value) for key, value in self.__dict__.items()]
+        return "%s(%s)" % (self.__class__.__name__, ", ".join(L))
 
     def __eq__(self, other):
         return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
 
     def __ne__(self, other):
         return not (self == other)
+
+
 all_structs.append(copy_surrogate_args)
 copy_surrogate_args.thrift_spec = (
     None,  # 0
-    (1, TType.STRING, 'src_id', 'UTF8', None, ),  # 1
-    (2, TType.STRING, 'dst_id', 'UTF8', None, ),  # 2
+    (
+        1,
+        TType.STRING,
+        "src_id",
+        "UTF8",
+        None,
+    ),  # 1
+    (
+        2,
+        TType.STRING,
+        "dst_id",
+        "UTF8",
+        None,
+    ),  # 2
 )
 
 
@@ -791,12 +944,18 @@ class copy_surrogate_result(object):
 
     """
 
-
-    def __init__(self, exc=None,):
+    def __init__(
+        self,
+        exc=None,
+    ):
         self.exc = exc
 
     def read(self, iprot):
-        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+        if (
+            iprot._fast_decode is not None
+            and isinstance(iprot.trans, TTransport.CReadableTransport)
+            and self.thrift_spec is not None
+        ):
             iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
             return
         iprot.readStructBegin()
@@ -816,11 +975,13 @@ class copy_surrogate_result(object):
 
     def write(self, oprot):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
+            oprot.trans.write(
+                oprot._fast_encode(self, [self.__class__, self.thrift_spec])
+            )
             return
-        oprot.writeStructBegin('copy_surrogate_result')
+        oprot.writeStructBegin("copy_surrogate_result")
         if self.exc is not None:
-            oprot.writeFieldBegin('exc', TType.STRUCT, 1)
+            oprot.writeFieldBegin("exc", TType.STRUCT, 1)
             self.exc.write(oprot)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
@@ -830,19 +991,26 @@ class copy_surrogate_result(object):
         return
 
     def __repr__(self):
-        L = ['%s=%r' % (key, value)
-             for key, value in self.__dict__.items()]
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+        L = ["%s=%r" % (key, value) for key, value in self.__dict__.items()]
+        return "%s(%s)" % (self.__class__.__name__, ", ".join(L))
 
     def __eq__(self, other):
         return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
 
     def __ne__(self, other):
         return not (self == other)
+
+
 all_structs.append(copy_surrogate_result)
 copy_surrogate_result.thrift_spec = (
     None,  # 0
-    (1, TType.STRUCT, 'exc', [SurrogateException, None], None, ),  # 1
+    (
+        1,
+        TType.STRUCT,
+        "exc",
+        [SurrogateException, None],
+        None,
+    ),  # 1
 )
 
 
@@ -855,14 +1023,22 @@ class qualify_args(object):
 
     """
 
-
-    def __init__(self, surrogate_id=None, xv=None, yv=None,):
+    def __init__(
+        self,
+        surrogate_id=None,
+        xv=None,
+        yv=None,
+    ):
         self.surrogate_id = surrogate_id
         self.xv = xv
         self.yv = yv
 
     def read(self, iprot):
-        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+        if (
+            iprot._fast_decode is not None
+            and isinstance(iprot.trans, TTransport.CReadableTransport)
+            and self.thrift_spec is not None
+        ):
             iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
             return
         iprot.readStructBegin()
@@ -872,7 +1048,11 @@ class qualify_args(object):
                 break
             if fid == 1:
                 if ftype == TType.STRING:
-                    self.surrogate_id = iprot.readString().decode('utf-8', errors='replace') if sys.version_info[0] == 2 else iprot.readString()
+                    self.surrogate_id = (
+                        iprot.readString().decode("utf-8", errors="replace")
+                        if sys.version_info[0] == 2
+                        else iprot.readString()
+                    )
                 else:
                     iprot.skip(ftype)
             elif fid == 2:
@@ -907,15 +1087,21 @@ class qualify_args(object):
 
     def write(self, oprot):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
+            oprot.trans.write(
+                oprot._fast_encode(self, [self.__class__, self.thrift_spec])
+            )
             return
-        oprot.writeStructBegin('qualify_args')
+        oprot.writeStructBegin("qualify_args")
         if self.surrogate_id is not None:
-            oprot.writeFieldBegin('surrogate_id', TType.STRING, 1)
-            oprot.writeString(self.surrogate_id.encode('utf-8') if sys.version_info[0] == 2 else self.surrogate_id)
+            oprot.writeFieldBegin("surrogate_id", TType.STRING, 1)
+            oprot.writeString(
+                self.surrogate_id.encode("utf-8")
+                if sys.version_info[0] == 2
+                else self.surrogate_id
+            )
             oprot.writeFieldEnd()
         if self.xv is not None:
-            oprot.writeFieldBegin('xv', TType.LIST, 2)
+            oprot.writeFieldBegin("xv", TType.LIST, 2)
             oprot.writeListBegin(TType.LIST, len(self.xv))
             for iter183 in self.xv:
                 oprot.writeListBegin(TType.DOUBLE, len(iter183))
@@ -925,7 +1111,7 @@ class qualify_args(object):
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         if self.yv is not None:
-            oprot.writeFieldBegin('yv', TType.LIST, 3)
+            oprot.writeFieldBegin("yv", TType.LIST, 3)
             oprot.writeListBegin(TType.DOUBLE, len(self.yv))
             for iter185 in self.yv:
                 oprot.writeDouble(iter185)
@@ -938,21 +1124,40 @@ class qualify_args(object):
         return
 
     def __repr__(self):
-        L = ['%s=%r' % (key, value)
-             for key, value in self.__dict__.items()]
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+        L = ["%s=%r" % (key, value) for key, value in self.__dict__.items()]
+        return "%s(%s)" % (self.__class__.__name__, ", ".join(L))
 
     def __eq__(self, other):
         return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
 
     def __ne__(self, other):
         return not (self == other)
+
+
 all_structs.append(qualify_args)
 qualify_args.thrift_spec = (
     None,  # 0
-    (1, TType.STRING, 'surrogate_id', 'UTF8', None, ),  # 1
-    (2, TType.LIST, 'xv', (TType.LIST, (TType.DOUBLE, None, False), False), None, ),  # 2
-    (3, TType.LIST, 'yv', (TType.DOUBLE, None, False), None, ),  # 3
+    (
+        1,
+        TType.STRING,
+        "surrogate_id",
+        "UTF8",
+        None,
+    ),  # 1
+    (
+        2,
+        TType.LIST,
+        "xv",
+        (TType.LIST, (TType.DOUBLE, None, False), False),
+        None,
+    ),  # 2
+    (
+        3,
+        TType.LIST,
+        "yv",
+        (TType.DOUBLE, None, False),
+        None,
+    ),  # 3
 )
 
 
@@ -964,13 +1169,20 @@ class qualify_result(object):
 
     """
 
-
-    def __init__(self, success=None, exc=None,):
+    def __init__(
+        self,
+        success=None,
+        exc=None,
+    ):
         self.success = success
         self.exc = exc
 
     def read(self, iprot):
-        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+        if (
+            iprot._fast_decode is not None
+            and isinstance(iprot.trans, TTransport.CReadableTransport)
+            and self.thrift_spec is not None
+        ):
             iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
             return
         iprot.readStructBegin()
@@ -996,15 +1208,17 @@ class qualify_result(object):
 
     def write(self, oprot):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
+            oprot.trans.write(
+                oprot._fast_encode(self, [self.__class__, self.thrift_spec])
+            )
             return
-        oprot.writeStructBegin('qualify_result')
+        oprot.writeStructBegin("qualify_result")
         if self.success is not None:
-            oprot.writeFieldBegin('success', TType.STRUCT, 0)
+            oprot.writeFieldBegin("success", TType.STRUCT, 0)
             self.success.write(oprot)
             oprot.writeFieldEnd()
         if self.exc is not None:
-            oprot.writeFieldBegin('exc', TType.STRUCT, 1)
+            oprot.writeFieldBegin("exc", TType.STRUCT, 1)
             self.exc.write(oprot)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
@@ -1014,19 +1228,32 @@ class qualify_result(object):
         return
 
     def __repr__(self):
-        L = ['%s=%r' % (key, value)
-             for key, value in self.__dict__.items()]
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+        L = ["%s=%r" % (key, value) for key, value in self.__dict__.items()]
+        return "%s(%s)" % (self.__class__.__name__, ", ".join(L))
 
     def __eq__(self, other):
         return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
 
     def __ne__(self, other):
         return not (self == other)
+
+
 all_structs.append(qualify_result)
 qualify_result.thrift_spec = (
-    (0, TType.STRUCT, 'success', [SurrogateQualification, None], None, ),  # 0
-    (1, TType.STRUCT, 'exc', [SurrogateException, None], None, ),  # 1
+    (
+        0,
+        TType.STRUCT,
+        "success",
+        [SurrogateQualification, None],
+        None,
+    ),  # 0
+    (
+        1,
+        TType.STRUCT,
+        "exc",
+        [SurrogateException, None],
+        None,
+    ),  # 1
 )
 
 
@@ -1038,13 +1265,20 @@ class predict_values_args(object):
 
     """
 
-
-    def __init__(self, surrogate_id=None, x=None,):
+    def __init__(
+        self,
+        surrogate_id=None,
+        x=None,
+    ):
         self.surrogate_id = surrogate_id
         self.x = x
 
     def read(self, iprot):
-        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+        if (
+            iprot._fast_decode is not None
+            and isinstance(iprot.trans, TTransport.CReadableTransport)
+            and self.thrift_spec is not None
+        ):
             iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
             return
         iprot.readStructBegin()
@@ -1054,7 +1288,11 @@ class predict_values_args(object):
                 break
             if fid == 1:
                 if ftype == TType.STRING:
-                    self.surrogate_id = iprot.readString().decode('utf-8', errors='replace') if sys.version_info[0] == 2 else iprot.readString()
+                    self.surrogate_id = (
+                        iprot.readString().decode("utf-8", errors="replace")
+                        if sys.version_info[0] == 2
+                        else iprot.readString()
+                    )
                 else:
                     iprot.skip(ftype)
             elif fid == 2:
@@ -1079,15 +1317,21 @@ class predict_values_args(object):
 
     def write(self, oprot):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
+            oprot.trans.write(
+                oprot._fast_encode(self, [self.__class__, self.thrift_spec])
+            )
             return
-        oprot.writeStructBegin('predict_values_args')
+        oprot.writeStructBegin("predict_values_args")
         if self.surrogate_id is not None:
-            oprot.writeFieldBegin('surrogate_id', TType.STRING, 1)
-            oprot.writeString(self.surrogate_id.encode('utf-8') if sys.version_info[0] == 2 else self.surrogate_id)
+            oprot.writeFieldBegin("surrogate_id", TType.STRING, 1)
+            oprot.writeString(
+                self.surrogate_id.encode("utf-8")
+                if sys.version_info[0] == 2
+                else self.surrogate_id
+            )
             oprot.writeFieldEnd()
         if self.x is not None:
-            oprot.writeFieldBegin('x', TType.LIST, 2)
+            oprot.writeFieldBegin("x", TType.LIST, 2)
             oprot.writeListBegin(TType.LIST, len(self.x))
             for iter198 in self.x:
                 oprot.writeListBegin(TType.DOUBLE, len(iter198))
@@ -1103,20 +1347,33 @@ class predict_values_args(object):
         return
 
     def __repr__(self):
-        L = ['%s=%r' % (key, value)
-             for key, value in self.__dict__.items()]
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+        L = ["%s=%r" % (key, value) for key, value in self.__dict__.items()]
+        return "%s(%s)" % (self.__class__.__name__, ", ".join(L))
 
     def __eq__(self, other):
         return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
 
     def __ne__(self, other):
         return not (self == other)
+
+
 all_structs.append(predict_values_args)
 predict_values_args.thrift_spec = (
     None,  # 0
-    (1, TType.STRING, 'surrogate_id', 'UTF8', None, ),  # 1
-    (2, TType.LIST, 'x', (TType.LIST, (TType.DOUBLE, None, False), False), None, ),  # 2
+    (
+        1,
+        TType.STRING,
+        "surrogate_id",
+        "UTF8",
+        None,
+    ),  # 1
+    (
+        2,
+        TType.LIST,
+        "x",
+        (TType.LIST, (TType.DOUBLE, None, False), False),
+        None,
+    ),  # 2
 )
 
 
@@ -1128,13 +1385,20 @@ class predict_values_result(object):
 
     """
 
-
-    def __init__(self, success=None, exc=None,):
+    def __init__(
+        self,
+        success=None,
+        exc=None,
+    ):
         self.success = success
         self.exc = exc
 
     def read(self, iprot):
-        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+        if (
+            iprot._fast_decode is not None
+            and isinstance(iprot.trans, TTransport.CReadableTransport)
+            and self.thrift_spec is not None
+        ):
             iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
             return
         iprot.readStructBegin()
@@ -1164,18 +1428,20 @@ class predict_values_result(object):
 
     def write(self, oprot):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
+            oprot.trans.write(
+                oprot._fast_encode(self, [self.__class__, self.thrift_spec])
+            )
             return
-        oprot.writeStructBegin('predict_values_result')
+        oprot.writeStructBegin("predict_values_result")
         if self.success is not None:
-            oprot.writeFieldBegin('success', TType.LIST, 0)
+            oprot.writeFieldBegin("success", TType.LIST, 0)
             oprot.writeListBegin(TType.DOUBLE, len(self.success))
             for iter206 in self.success:
                 oprot.writeDouble(iter206)
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         if self.exc is not None:
-            oprot.writeFieldBegin('exc', TType.STRUCT, 1)
+            oprot.writeFieldBegin("exc", TType.STRUCT, 1)
             self.exc.write(oprot)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
@@ -1185,19 +1451,32 @@ class predict_values_result(object):
         return
 
     def __repr__(self):
-        L = ['%s=%r' % (key, value)
-             for key, value in self.__dict__.items()]
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+        L = ["%s=%r" % (key, value) for key, value in self.__dict__.items()]
+        return "%s(%s)" % (self.__class__.__name__, ", ".join(L))
 
     def __eq__(self, other):
         return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
 
     def __ne__(self, other):
         return not (self == other)
+
+
 all_structs.append(predict_values_result)
 predict_values_result.thrift_spec = (
-    (0, TType.LIST, 'success', (TType.DOUBLE, None, False), None, ),  # 0
-    (1, TType.STRUCT, 'exc', [SurrogateException, None], None, ),  # 1
+    (
+        0,
+        TType.LIST,
+        "success",
+        (TType.DOUBLE, None, False),
+        None,
+    ),  # 0
+    (
+        1,
+        TType.STRUCT,
+        "exc",
+        [SurrogateException, None],
+        None,
+    ),  # 1
 )
 
 
@@ -1208,12 +1487,18 @@ class destroy_surrogate_args(object):
 
     """
 
-
-    def __init__(self, surrogate_id=None,):
+    def __init__(
+        self,
+        surrogate_id=None,
+    ):
         self.surrogate_id = surrogate_id
 
     def read(self, iprot):
-        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+        if (
+            iprot._fast_decode is not None
+            and isinstance(iprot.trans, TTransport.CReadableTransport)
+            and self.thrift_spec is not None
+        ):
             iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
             return
         iprot.readStructBegin()
@@ -1223,7 +1508,11 @@ class destroy_surrogate_args(object):
                 break
             if fid == 1:
                 if ftype == TType.STRING:
-                    self.surrogate_id = iprot.readString().decode('utf-8', errors='replace') if sys.version_info[0] == 2 else iprot.readString()
+                    self.surrogate_id = (
+                        iprot.readString().decode("utf-8", errors="replace")
+                        if sys.version_info[0] == 2
+                        else iprot.readString()
+                    )
                 else:
                     iprot.skip(ftype)
             else:
@@ -1233,12 +1522,18 @@ class destroy_surrogate_args(object):
 
     def write(self, oprot):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
+            oprot.trans.write(
+                oprot._fast_encode(self, [self.__class__, self.thrift_spec])
+            )
             return
-        oprot.writeStructBegin('destroy_surrogate_args')
+        oprot.writeStructBegin("destroy_surrogate_args")
         if self.surrogate_id is not None:
-            oprot.writeFieldBegin('surrogate_id', TType.STRING, 1)
-            oprot.writeString(self.surrogate_id.encode('utf-8') if sys.version_info[0] == 2 else self.surrogate_id)
+            oprot.writeFieldBegin("surrogate_id", TType.STRING, 1)
+            oprot.writeString(
+                self.surrogate_id.encode("utf-8")
+                if sys.version_info[0] == 2
+                else self.surrogate_id
+            )
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
@@ -1247,27 +1542,36 @@ class destroy_surrogate_args(object):
         return
 
     def __repr__(self):
-        L = ['%s=%r' % (key, value)
-             for key, value in self.__dict__.items()]
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+        L = ["%s=%r" % (key, value) for key, value in self.__dict__.items()]
+        return "%s(%s)" % (self.__class__.__name__, ", ".join(L))
 
     def __eq__(self, other):
         return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
 
     def __ne__(self, other):
         return not (self == other)
+
+
 all_structs.append(destroy_surrogate_args)
 destroy_surrogate_args.thrift_spec = (
     None,  # 0
-    (1, TType.STRING, 'surrogate_id', 'UTF8', None, ),  # 1
+    (
+        1,
+        TType.STRING,
+        "surrogate_id",
+        "UTF8",
+        None,
+    ),  # 1
 )
 
 
 class destroy_surrogate_result(object):
-
-
     def read(self, iprot):
-        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+        if (
+            iprot._fast_decode is not None
+            and isinstance(iprot.trans, TTransport.CReadableTransport)
+            and self.thrift_spec is not None
+        ):
             iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
             return
         iprot.readStructBegin()
@@ -1282,9 +1586,11 @@ class destroy_surrogate_result(object):
 
     def write(self, oprot):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
+            oprot.trans.write(
+                oprot._fast_encode(self, [self.__class__, self.thrift_spec])
+            )
             return
-        oprot.writeStructBegin('destroy_surrogate_result')
+        oprot.writeStructBegin("destroy_surrogate_result")
         oprot.writeFieldStop()
         oprot.writeStructEnd()
 
@@ -1292,18 +1598,18 @@ class destroy_surrogate_result(object):
         return
 
     def __repr__(self):
-        L = ['%s=%r' % (key, value)
-             for key, value in self.__dict__.items()]
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+        L = ["%s=%r" % (key, value) for key, value in self.__dict__.items()]
+        return "%s(%s)" % (self.__class__.__name__, ", ".join(L))
 
     def __eq__(self, other):
         return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
 
     def __ne__(self, other):
         return not (self == other)
+
+
 all_structs.append(destroy_surrogate_result)
-destroy_surrogate_result.thrift_spec = (
-)
+destroy_surrogate_result.thrift_spec = ()
 
 
 class get_sobol_pce_sensitivity_analysis_args(object):
@@ -1313,12 +1619,18 @@ class get_sobol_pce_sensitivity_analysis_args(object):
 
     """
 
-
-    def __init__(self, surrogate_id=None,):
+    def __init__(
+        self,
+        surrogate_id=None,
+    ):
         self.surrogate_id = surrogate_id
 
     def read(self, iprot):
-        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+        if (
+            iprot._fast_decode is not None
+            and isinstance(iprot.trans, TTransport.CReadableTransport)
+            and self.thrift_spec is not None
+        ):
             iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
             return
         iprot.readStructBegin()
@@ -1328,7 +1640,11 @@ class get_sobol_pce_sensitivity_analysis_args(object):
                 break
             if fid == 1:
                 if ftype == TType.STRING:
-                    self.surrogate_id = iprot.readString().decode('utf-8', errors='replace') if sys.version_info[0] == 2 else iprot.readString()
+                    self.surrogate_id = (
+                        iprot.readString().decode("utf-8", errors="replace")
+                        if sys.version_info[0] == 2
+                        else iprot.readString()
+                    )
                 else:
                     iprot.skip(ftype)
             else:
@@ -1338,12 +1654,18 @@ class get_sobol_pce_sensitivity_analysis_args(object):
 
     def write(self, oprot):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
+            oprot.trans.write(
+                oprot._fast_encode(self, [self.__class__, self.thrift_spec])
+            )
             return
-        oprot.writeStructBegin('get_sobol_pce_sensitivity_analysis_args')
+        oprot.writeStructBegin("get_sobol_pce_sensitivity_analysis_args")
         if self.surrogate_id is not None:
-            oprot.writeFieldBegin('surrogate_id', TType.STRING, 1)
-            oprot.writeString(self.surrogate_id.encode('utf-8') if sys.version_info[0] == 2 else self.surrogate_id)
+            oprot.writeFieldBegin("surrogate_id", TType.STRING, 1)
+            oprot.writeString(
+                self.surrogate_id.encode("utf-8")
+                if sys.version_info[0] == 2
+                else self.surrogate_id
+            )
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
@@ -1352,19 +1674,26 @@ class get_sobol_pce_sensitivity_analysis_args(object):
         return
 
     def __repr__(self):
-        L = ['%s=%r' % (key, value)
-             for key, value in self.__dict__.items()]
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+        L = ["%s=%r" % (key, value) for key, value in self.__dict__.items()]
+        return "%s(%s)" % (self.__class__.__name__, ", ".join(L))
 
     def __eq__(self, other):
         return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
 
     def __ne__(self, other):
         return not (self == other)
+
+
 all_structs.append(get_sobol_pce_sensitivity_analysis_args)
 get_sobol_pce_sensitivity_analysis_args.thrift_spec = (
     None,  # 0
-    (1, TType.STRING, 'surrogate_id', 'UTF8', None, ),  # 1
+    (
+        1,
+        TType.STRING,
+        "surrogate_id",
+        "UTF8",
+        None,
+    ),  # 1
 )
 
 
@@ -1375,12 +1704,18 @@ class get_sobol_pce_sensitivity_analysis_result(object):
 
     """
 
-
-    def __init__(self, success=None,):
+    def __init__(
+        self,
+        success=None,
+    ):
         self.success = success
 
     def read(self, iprot):
-        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+        if (
+            iprot._fast_decode is not None
+            and isinstance(iprot.trans, TTransport.CReadableTransport)
+            and self.thrift_spec is not None
+        ):
             iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
             return
         iprot.readStructBegin()
@@ -1401,11 +1736,13 @@ class get_sobol_pce_sensitivity_analysis_result(object):
 
     def write(self, oprot):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
+            oprot.trans.write(
+                oprot._fast_encode(self, [self.__class__, self.thrift_spec])
+            )
             return
-        oprot.writeStructBegin('get_sobol_pce_sensitivity_analysis_result')
+        oprot.writeStructBegin("get_sobol_pce_sensitivity_analysis_result")
         if self.success is not None:
-            oprot.writeFieldBegin('success', TType.STRUCT, 0)
+            oprot.writeFieldBegin("success", TType.STRUCT, 0)
             self.success.write(oprot)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
@@ -1415,18 +1752,25 @@ class get_sobol_pce_sensitivity_analysis_result(object):
         return
 
     def __repr__(self):
-        L = ['%s=%r' % (key, value)
-             for key, value in self.__dict__.items()]
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+        L = ["%s=%r" % (key, value) for key, value in self.__dict__.items()]
+        return "%s(%s)" % (self.__class__.__name__, ", ".join(L))
 
     def __eq__(self, other):
         return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
 
     def __ne__(self, other):
         return not (self == other)
+
+
 all_structs.append(get_sobol_pce_sensitivity_analysis_result)
 get_sobol_pce_sensitivity_analysis_result.thrift_spec = (
-    (0, TType.STRUCT, 'success', [SobolIndices, None], None, ),  # 0
+    (
+        0,
+        TType.STRUCT,
+        "success",
+        [SobolIndices, None],
+        None,
+    ),  # 0
 )
 fix_spec(all_structs)
 del all_structs

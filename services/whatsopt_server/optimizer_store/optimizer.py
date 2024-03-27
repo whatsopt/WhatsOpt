@@ -1,19 +1,23 @@
-import numpy as np
 import tempfile
+from smt.utils.design_space import (
+    DesignSpace,
+)
 
 
 class Optimizer:
-    def __init__(self, xlimits, n_obj, cstr_specs, mod_obj_options, options, logfile):
-        self.xlimits = np.array(xlimits)
+    def __init__(self, xspecs, n_obj, cstr_specs=None, mod_obj_options=None, options=None, logfile=None):
+        self.design_space = DesignSpace(xspecs)
         self.n_obj = n_obj
         self.constraints = self._check_constraint_specs(cstr_specs)
-        self.mod_obj_options = mod_obj_options
-        self.options = options
+        self.mod_obj_options = mod_obj_options if mod_obj_options is not None else {}
+        self.options = options if options is not None else {}
         self.logfile = logfile
         self.workdir = tempfile.TemporaryDirectory()
 
     @staticmethod
     def _check_constraint_specs(cstr_specs):
+        if cstr_specs is None:
+            return []
         cstrs = []
         for i, spec in enumerate(cstr_specs):
             if spec["type"] == "<" or spec["type"] == "=" or spec["type"] == ">":

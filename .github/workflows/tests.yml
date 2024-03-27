@@ -28,7 +28,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install pytest
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          if [ -f services/requirements.txt ]; then pip install -r services/requirements.txt; fi
           pip install -e services
           pip list
 
@@ -37,12 +37,12 @@ jobs:
         uses: actions/cache@v3
         with:
           path: install
-          key: ${{ runner.os }}-thrift-0.18.1-cache
+          key: ${{ runner.os }}-thrift-0.20.0-cache
 
       - name: Make Thrift Compiler
         if: steps.cache-thrift.outputs.cache-hit != 'true'
         run: |
-          export THRIFT_VERSION=0.18.1
+          export THRIFT_VERSION=0.20.0
           export buildDeps="automake bison curl flex g++ libboost-dev libboost-filesystem-dev libboost-program-options-dev libboost-system-dev libboost-test-dev  libevent-dev libssl-dev libtool make pkg-config"
           sudo apt-get install -y --no-install-recommends $buildDeps && sudo rm -rf /var/lib/apt/lists/*
           curl -sSL "http://archive.apache.org/dist/thrift/$THRIFT_VERSION/thrift-$THRIFT_VERSION.tar.gz" -o thrift.tar.gz

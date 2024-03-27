@@ -5,6 +5,7 @@ from whatsopt_server.optimizer_store.optimizer_store import OptimizerStore
 from whatsopt_server.optimizer_store.segomoe_optimizer import SegomoeOptimizer
 from smt.sampling_methods import LHS
 
+
 class TestOptimizerStore(unittest.TestCase):
     def setUp(self):
         self.store = OptimizerStore()
