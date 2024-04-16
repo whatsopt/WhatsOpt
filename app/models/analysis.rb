@@ -861,6 +861,40 @@ class Analysis < ApplicationRecord
     self.openmdao_impl || OpenmdaoAnalysisImpl.new(analysis: self)
   end
 
+  # Find informations about variable usage within the mda
+
+  def find_source(varname)
+    out_disc = Variable.of_analysis(self).where(name: varname, io_mode: Variable::OUT).first.discipline
+    if out_disc.has_sub_analysis?
+      out_disc.sub_analysis.find_source(varname)
+    else
+      out_disc
+    end
+  end
+  
+  def find_targets(varname)
+    in_discs = Variable.of_analysis(self).where(name: varname, io_mode: Variable::IN).map(&:discipline)
+    res =  []
+    in_discs.each do |in_disc| 
+      if in_disc.has_sub_analysis?
+        res += in_disc.sub_analysis.find_targets(varname)
+      else
+        puts "Add target #{in_disc.name}"
+        res.push(in_disc)
+      end
+    end
+    res
+  end 
+
+  def find_info(varname)
+    res = {}
+    # from
+    res[:from] = self.find_source(varname)
+    # to
+    res[:to] = self.find_targets(varname)
+    res
+  end
+
   private
     def _ensure_driver_presence
       if self.disciplines.empty?

@@ -240,6 +240,10 @@ class AnalysisDatabase {
     return this.inputVariables;
   }
 
+  getAnalysisOutputVariables() {
+    return this.outputVariables;
+  }
+
   isConnected(nodeId) {
     return (this.mda.vars[nodeId].out.length !== 0 || this.mda.vars[nodeId].in.length !== 0);
   }

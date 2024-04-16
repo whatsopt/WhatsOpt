@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class VariableSerializer < ActiveModel::Serializer
-  attributes :name, :io_mode, :shape, :type, :desc, :units, :active
+  attributes :id, :name, :io_mode, :shape, :type, :desc, :units, :active
 
   has_one :parameter, key: :parameter_attributes
   has_one :scaling, key: :scaling_attributes
