@@ -29,9 +29,7 @@ Rails.application.routes.draw do
       resources :analyses, shallow: true, as: :mdas, only: [:index, :show, :create, :update] do
         resources :disciplines, only: [:index, :create, :update, :destroy], shallow: false
         resources :connections, only: [:create, :update, :destroy], shallow: false
-        resources :variables, only: [:index] do
-          get "search"
-        end
+        resources :variables, only: [:index, :show], shallow: false
         resources :operations, only: [:show, :create, :update, :destroy] do
           resource :job, only: [:show, :create, :update] if APP_CONFIG["enable_remote_operations"]
           resources :meta_models, only: [:create, :update] do

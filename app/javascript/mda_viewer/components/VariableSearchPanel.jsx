@@ -31,8 +31,8 @@ class VariableSearchPanel extends React.Component {
   }
 
   handleVariableSelected(selected) {
-    // const [selection] = selected;
-    // const { mdaId } = this.props;
+    const [selection] = selected;
+    const { mdaId } = this.props;
 
     console.log('Trigger variable search API call');
     // this.api.compareAnalyses(

@@ -242,7 +242,9 @@ class AnalysisTest < ActiveSupport::TestCase
   test "should find disciplines related to a variable" do
     outer_mda = analyses(:outermda) 
     inner_mda = analyses(:innermda) 
-    info = outer_mda.find_info("z")
+    var = variables(:varz_outermda_driver_out)
+    p var
+    info = outer_mda.find_info(var)
     assert_equal({from: outer_mda.disciplines.first, to: [inner_mda.disciplines.second, outer_mda.disciplines.second]}, info)
   end 
 end

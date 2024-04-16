@@ -863,21 +863,23 @@ class Analysis < ApplicationRecord
 
   # Find informations about variable usage within the mda
 
-  def find_source(varname)
-    out_disc = Variable.of_analysis(self).where(name: varname, io_mode: Variable::OUT).first.discipline
+  def find_source(var)
+    out_disc = var.discipline
     if out_disc.has_sub_analysis?
-      out_disc.sub_analysis.find_source(varname)
+      out_disc.sub_analysis.find_source(var.name)
     else
       out_disc
     end
   end
   
-  def find_targets(varname)
-    in_discs = Variable.of_analysis(self).where(name: varname, io_mode: Variable::IN).map(&:discipline)
+  def find_targets(var)
+    in_discs = var.outgoing_connections.map(&:to).map(&:discipline)
     res =  []
     in_discs.each do |in_disc| 
       if in_disc.has_sub_analysis?
-        res += in_disc.sub_analysis.find_targets(varname)
+        # should get the only out var of the same name in the sub analysis
+        var = Variable.of_analysis(in_disc.sub_analysis).where(name: var.name, io_mode: WhatsOpt::Variable::OUT).first 
+        res += in_disc.sub_analysis.find_targets(var)
       else
         puts "Add target #{in_disc.name}"
         res.push(in_disc)
@@ -886,12 +888,12 @@ class Analysis < ApplicationRecord
     res
   end 
 
-  def find_info(varname)
+  def find_info(var)
     res = {}
     # from
-    res[:from] = self.find_source(varname)
+    res[:from] = self.find_source(var)
     # to
-    res[:to] = self.find_targets(varname)
+    res[:to] = self.find_targets(var)
     res
   end
 

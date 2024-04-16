@@ -11,22 +11,8 @@ class VariableSelector extends React.Component {
       defaultSelected: selected,
     };
     console.log(this.state);
-    // this.handleSearch = this.handleSearch.bind(this);
     this.handleChange = this.handleChange.bind(this);
   }
-
-  // eslint-disable-next-line no-unused-vars
-  // handleSearch(query) {
-  //   this.setState({ isLoading: true });
-  //   const { onVariableSearch } = this.props;
-  //   onVariableSearch(
-  //     // TODO: implement Variable request using the query string
-  //     // query,
-  //     (options) => {
-  //       this.setState({ isLoading: false, options });
-  //     },
-  //   );
-  // }
 
   handleChange(selected) {
     if (selected.length) {
