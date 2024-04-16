@@ -14,6 +14,7 @@ import ExportPanel from 'mda_viewer/components/ExportPanel';
 import HistoryPanel from 'mda_viewer/components/HistoryPanel';
 import ComparisonPanel from 'mda_viewer/components/ComparisonPanel';
 import DistributionModals from 'mda_viewer/components/DistributionModals';
+import VariableSearchPanel from './components/VariableSearchPanel';
 
 import Error from '../utils/components/Error';
 import MetaModelQualification from '../utils/components/MetaModelQualification';
@@ -918,6 +919,19 @@ class MdaViewer extends React.Component {
             <li className="nav-item">
               <a
                 className="nav-link"
+                id="var-search-tab"
+                data-bs-toggle="tab"
+                href="#var-search"
+                role="tab"
+                aria-controls="var-search"
+                aria-selected="false"
+              >
+                Search...
+              </a>
+            </li>
+            <li className="nav-item">
+              <a
+                className="nav-link"
                 id="exports-tab"
                 data-bs-toggle="tab"
                 href="#exports"
@@ -961,6 +975,9 @@ class MdaViewer extends React.Component {
             </div>
             {noteTab}
             {metaModelTab}
+            <div className="tab-pane fade" id="var-search" role="tabpanel" aria-labelledby="var-search-tab">
+              <VariableSearchPanel api={this.api} mdaId={db.mda.id} />
+            </div>
             <div className="tab-pane fade" id="exports" role="tabpanel" aria-labelledby="exports-tab">
               <ExportPanel
                 api={this.api}
