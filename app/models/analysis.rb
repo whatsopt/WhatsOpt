@@ -865,8 +865,13 @@ class Analysis < ApplicationRecord
 
   def find_source(var)
     out_disc = var.discipline
-    if out_disc.has_sub_analysis?
-      out_disc.sub_analysis.find_source(var.name)
+    if out_disc.is_driver? and not self.is_root_analysis?
+      # should get the only out var of the same name in the parent analysis
+      var = Variable.of_analysis(out_disc.sub_analysis).where(name: var.name, io_mode: WhatsOpt::Variable::OUT).first
+      self.parent.find_source(var)
+    elsif out_disc.has_sub_analysis?
+      var = Variable.of_analysis(out_disc.sub_analysis).where(name: var.name, io_mode: WhatsOpt::Variable::OUT).first
+      out_disc.sub_analysis.find_source(var)
     else
       out_disc
     end
