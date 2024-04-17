@@ -21,9 +21,11 @@ class Api::V1::VariableControllerTest < ActionDispatch::IntegrationTest
     get api_v1_mda_variable_url(@mda, @varz), as: :json, headers: @auth_headers
     assert_response :success
     resp = JSON.parse(response.body)
-    assert_equal WhatsOpt::Discipline::NULL_DRIVER_NAME, resp["from"]["name"]
-    assert_equal "PlainDiscipline", resp["to"][0]["name"]
-    assert_equal "Disc", resp["to"][1]["name"]
+    assert_equal WhatsOpt::Discipline::NULL_DRIVER_NAME, resp["from"][0]["name"]
+    assert_equal "PlainDiscipline", resp["to"][0][0]["name"]
+    assert_equal "INNER", resp["to"][0][1][0]["name"]
+    assert_equal "Disc", resp["to"][1][0]["name"]
+    assert_equal [], resp["to"][1][1]
   end
 
 end

@@ -867,13 +867,15 @@ class Analysis < ApplicationRecord
     out_disc = var.discipline
     if out_disc.is_driver? and not self.is_root_analysis?
       # should get the only out var of the same name in the parent analysis
-      var = Variable.of_analysis(out_disc.sub_analysis).where(name: var.name, io_mode: WhatsOpt::Variable::OUT).first
+      var = Variable.of_analysis(self.parent).where(name: var.name, io_mode: WhatsOpt::Variable::OUT).first
       self.parent.find_source(var)
     elsif out_disc.has_sub_analysis?
       var = Variable.of_analysis(out_disc.sub_analysis).where(name: var.name, io_mode: WhatsOpt::Variable::OUT).first
       out_disc.sub_analysis.find_source(var)
     else
-      out_disc
+      abspath = out_disc.path.to_a
+      abspath.shift
+      [out_disc, abspath]
     end
   end
   
@@ -887,7 +889,9 @@ class Analysis < ApplicationRecord
         res += in_disc.sub_analysis.find_targets(var)
       else
         puts "Add target #{in_disc.name}"
-        res.push(in_disc)
+        abspath = in_disc.path.to_a
+        abspath.shift
+        res.push([in_disc, abspath])
       end
     end
     res

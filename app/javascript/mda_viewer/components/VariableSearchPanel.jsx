@@ -1,13 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Tooltip } from 'bootstrap';
 import VariableSelector from './VariableSelector';
 
 function getDiscButtons(api, discs) {
-  const buttons = discs.map((disc) => {
+  const buttons = discs.map(([disc, path]) => {
     const { name, analysis_id } = disc;
-    const label = name === '__DRIVER__' ? 'Driver' : `${disc.name}`;
+    const title = path.map((a) => (a.name)).join('/');
+    const label = name === '__DRIVER__' ? 'User' : `${disc.name}`;
     return (
-      <div key={disc.id} className="btn-group me-2 mt-2" role="group">
+      <div key={disc.id} className="btn-group me-2 mt-2 disc-button" role="group" data-bs-toggle="tooltip" title={`${title}`}>
         <a href={api.url(`/analyses/${analysis_id}`)} className="btn btn-info" role="button">{label}</a>
       </div>
     );
@@ -16,6 +18,13 @@ function getDiscButtons(api, discs) {
 }
 
 class VariableDisplay extends React.PureComponent {
+  componentDidUpdate() {
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    [...tooltipTriggerList].map((tooltipTriggerEl) => new Tooltip(tooltipTriggerEl, {
+      trigger: 'hover',
+    }));
+  }
+
   render() {
     const { api, varinfo } = this.props;
     const disciplineFrom = getDiscButtons(api, varinfo.from);
