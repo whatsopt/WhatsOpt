@@ -2,14 +2,43 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import VariableSelector from './VariableSelector';
 
+function getDiscButtons(api, discs) {
+  const buttons = discs.map((disc) => {
+    const { name, analysis_id } = disc;
+    const label = name === '__DRIVER__' ? 'Driver' : `${disc.name}`;
+    return (
+      <div key={disc.id} className="btn-group me-2 mt-2" role="group">
+        <a href={api.url(`/analyses/${analysis_id}`)} className="btn btn-info" role="button">{label}</a>
+      </div>
+    );
+  });
+  return buttons;
+}
+
 class VariableDisplay extends React.PureComponent {
   render() {
-    return (<div />);
+    const { api, varinfo } = this.props;
+    const disciplineFrom = getDiscButtons(api, varinfo.from);
+    const disciplineTo = getDiscButtons(api, varinfo.to);
+
+    return (
+      <div>
+        From:
+        <div className="mb-2">
+          { disciplineFrom }
+        </div>
+        To:
+        <div className="mb-2">
+          { disciplineTo }
+        </div>
+      </div>
+    );
   }
 }
 
 VariableDisplay.propTypes = {
-
+  api: PropTypes.object.isRequired,
+  varinfo: PropTypes.object.isRequired,
 };
 
 class VariableSearchPanel extends React.Component {
@@ -18,6 +47,7 @@ class VariableSearchPanel extends React.Component {
     this.state = {
       selected: [],
       vars: [],
+      varinfo: { from: [], to: [] },
     };
     this.handleVariableSelected = this.handleVariableSelected.bind(this);
   }
@@ -32,24 +62,24 @@ class VariableSearchPanel extends React.Component {
 
   handleVariableSelected(selected) {
     const [selection] = selected;
-    const { mdaId } = this.props;
+    const { mdaId, api } = this.props;
 
-    console.log('Trigger variable search API call');
-    // this.api.compareAnalyses(
-    //   mdaId,
-    //   selection.id,
-    //   (response) => {
-    //     const diff = response.data;
-    //     this.setState({ diff });
-    //   },
-    //   (error) => {
-    //     console.log(error);
-    //   },
-    // );
+    api.getVariableInformation(
+      mdaId,
+      selection.id,
+      (response) => {
+        const varinfo = { from: [response.data.from], to: response.data.to };
+        this.setState({ varinfo });
+      },
+      (error) => {
+        console.log(error);
+      },
+    );
   }
 
   render() {
-    const { selected, vars } = this.state;
+    const { selected, vars, varinfo } = this.state;
+    const { api } = this.props;
     return (
       <div className="container-fluid">
         <div className="row">
@@ -63,7 +93,7 @@ class VariableSearchPanel extends React.Component {
             />
           </div>
           <div className="editor-section col-12">
-            <VariableDisplay />
+            <VariableDisplay api={api} varinfo={varinfo} />
           </div>
         </div>
       </div>

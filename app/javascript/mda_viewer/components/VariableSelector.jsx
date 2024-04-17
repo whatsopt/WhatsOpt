@@ -10,7 +10,6 @@ class VariableSelector extends React.Component {
     this.state = {
       defaultSelected: selected,
     };
-    console.log(this.state);
     this.handleChange = this.handleChange.bind(this);
   }
 
