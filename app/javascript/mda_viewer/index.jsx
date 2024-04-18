@@ -914,8 +914,6 @@ class MdaViewer extends React.Component {
                 Variables
               </a>
             </li>
-            {noteItem}
-            {metaModelItem}
             <li className="nav-item">
               <a
                 className="nav-link"
@@ -968,13 +966,13 @@ class MdaViewer extends React.Component {
                 History
               </a>
             </li>
+            {noteItem}
+            {metaModelItem}
           </ul>
           <div className="tab-content" id="myTabContent">
             <div className="tab-pane fade show active" id="variables" role="tabpanel" aria-labelledby="variables-tab">
               {varEditor}
             </div>
-            {noteTab}
-            {metaModelTab}
             <div className="tab-pane fade" id="var-search" role="tabpanel" aria-labelledby="var-search-tab">
               <VariableSearchPanel api={this.api} mdaId={db.mda.id} />
             </div>
@@ -990,6 +988,8 @@ class MdaViewer extends React.Component {
             <div className="tab-pane fade" id="history" role="tabpanel" aria-labelledby="history-tab">
               <HistoryPanel api={this.api} mdaId={db.mda.id} />
             </div>
+            {noteTab}
+            {metaModelTab}
           </div>
         </div>
       </div>
