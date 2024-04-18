@@ -31,12 +31,13 @@ class VariableDisplay extends React.PureComponent {
     const disciplineTo = getDiscButtons(api, varinfo.to);
 
     return (
-      <div>
-        From:
+      <div className="editor-section">
+        <div className="editor-section-label">Source</div>
         <div className="mb-2">
           { disciplineFrom }
         </div>
-        To:
+
+        <div className="editor-section-label">Targets</div>
         <div className="mb-2">
           { disciplineTo }
         </div>
@@ -78,7 +79,7 @@ class VariableSearchPanel extends React.Component {
       selection.id,
       (response) => {
         const varinfo = { from: [response.data.from], to: response.data.to };
-        this.setState({ varinfo });
+        this.setState({ varinfo, selected });
       },
       (error) => {
         console.log(error);
@@ -89,20 +90,27 @@ class VariableSearchPanel extends React.Component {
   render() {
     const { selected, vars, varinfo } = this.state;
     const { api } = this.props;
+
+    console.log(selected);
+    let varDisplay = null;
+    if (selected.length !== 0) {
+      varDisplay = (<VariableDisplay api={api} varinfo={varinfo} />);
+    }
+
     return (
       <div className="container-fluid">
         <div className="row">
           <div className="editor-section col-4">
             <VariableSelector
               vars={vars}
-              message="Search variable name..."
+              message="Search variable..."
               selected={selected}
               onVariableSelected={this.handleVariableSelected}
               disabled={false}
             />
           </div>
           <div className="editor-section col-12">
-            <VariableDisplay api={api} varinfo={varinfo} />
+            {varDisplay}
           </div>
         </div>
       </div>

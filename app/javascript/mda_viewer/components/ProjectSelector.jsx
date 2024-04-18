@@ -11,7 +11,6 @@ class ProjectSelector extends React.Component {
       isLoading: false,
       options: [selected],
     };
-    this.typeaheadRef = React.createRef();
     this.handleSearch = this.handleSearch.bind(this);
     this.handleChange = this.handleChange.bind(this);
   }
