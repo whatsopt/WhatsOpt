@@ -861,6 +861,51 @@ class Analysis < ApplicationRecord
     self.openmdao_impl || OpenmdaoAnalysisImpl.new(analysis: self)
   end
 
+  # Find informations about variable usage within the mda
+
+  def find_source(var)
+    out_disc = var.discipline
+    if out_disc.is_driver? and not self.is_root_analysis?
+      # should get the only out var of the same name in the parent analysis
+      var = Variable.of_analysis(self.parent).where(name: var.name, io_mode: WhatsOpt::Variable::OUT).first
+      self.parent.find_source(var)
+    elsif out_disc.has_sub_analysis?
+      var = Variable.of_analysis(out_disc.sub_analysis).where(name: var.name, io_mode: WhatsOpt::Variable::OUT).first
+      out_disc.sub_analysis.find_source(var)
+    else
+      abspath = out_disc.path.to_a
+      abspath.shift
+      [out_disc, abspath]
+    end
+  end
+  
+  def find_targets(var)
+    in_discs = var.outgoing_connections.map(&:to).map(&:discipline)
+    res =  []
+    in_discs.each do |in_disc| 
+      if in_disc.has_sub_analysis?
+        # should get the only out var of the same name in the sub analysis
+        var = Variable.of_analysis(in_disc.sub_analysis).where(name: var.name, io_mode: WhatsOpt::Variable::OUT).first 
+        res += in_disc.sub_analysis.find_targets(var)
+      else
+        puts "Add target #{in_disc.name}"
+        abspath = in_disc.path.to_a
+        abspath.shift
+        res.push([in_disc, abspath])
+      end
+    end
+    res
+  end 
+
+  def find_info(var)
+    res = {}
+    # from
+    res[:from] = self.find_source(var)
+    # to
+    res[:to] = self.find_targets(var)
+    res
+  end
+
   private
     def _ensure_driver_presence
       if self.disciplines.empty?

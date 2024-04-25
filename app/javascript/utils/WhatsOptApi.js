@@ -162,6 +162,20 @@ class WhatsOptApi {
       .catch((error) => console.log(error));
   }
 
+  getVariables(mdaId, callback) {
+    const path = `/analyses/${mdaId}/variables`;
+    axios.get(this.apiUrl(path))
+      .then(callback)
+      .catch((error) => console.log(error));
+  }
+
+  getVariableInformation(mdaId, id, callback) {
+    const path = `/analyses/${mdaId}/variables/${id}`;
+    axios.get(this.apiUrl(path))
+      .then(callback)
+      .catch((error) => console.log(error));
+  }
+
   importDiscipline(fromMdaId, discId, toMdaId, callback, onError) {
     const path = `/analyses/${toMdaId}`;
     this.getAnalysis(toMdaId, false, (response) => {

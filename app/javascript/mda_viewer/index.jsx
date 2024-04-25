@@ -14,6 +14,7 @@ import ExportPanel from 'mda_viewer/components/ExportPanel';
 import HistoryPanel from 'mda_viewer/components/HistoryPanel';
 import ComparisonPanel from 'mda_viewer/components/ComparisonPanel';
 import DistributionModals from 'mda_viewer/components/DistributionModals';
+import VariableSearchPanel from './components/VariableSearchPanel';
 
 import Error from '../utils/components/Error';
 import MetaModelQualification from '../utils/components/MetaModelQualification';
@@ -913,8 +914,19 @@ class MdaViewer extends React.Component {
                 Variables
               </a>
             </li>
-            {noteItem}
-            {metaModelItem}
+            <li className="nav-item">
+              <a
+                className="nav-link"
+                id="var-search-tab"
+                data-bs-toggle="tab"
+                href="#var-search"
+                role="tab"
+                aria-controls="var-search"
+                aria-selected="false"
+              >
+                Search...
+              </a>
+            </li>
             <li className="nav-item">
               <a
                 className="nav-link"
@@ -954,13 +966,16 @@ class MdaViewer extends React.Component {
                 History
               </a>
             </li>
+            {noteItem}
+            {metaModelItem}
           </ul>
           <div className="tab-content" id="myTabContent">
             <div className="tab-pane fade show active" id="variables" role="tabpanel" aria-labelledby="variables-tab">
               {varEditor}
             </div>
-            {noteTab}
-            {metaModelTab}
+            <div className="tab-pane fade" id="var-search" role="tabpanel" aria-labelledby="var-search-tab">
+              <VariableSearchPanel api={this.api} mdaId={db.mda.id} />
+            </div>
             <div className="tab-pane fade" id="exports" role="tabpanel" aria-labelledby="exports-tab">
               <ExportPanel
                 api={this.api}
@@ -973,6 +988,8 @@ class MdaViewer extends React.Component {
             <div className="tab-pane fade" id="history" role="tabpanel" aria-labelledby="history-tab">
               <HistoryPanel api={this.api} mdaId={db.mda.id} />
             </div>
+            {noteTab}
+            {metaModelTab}
           </div>
         </div>
       </div>
