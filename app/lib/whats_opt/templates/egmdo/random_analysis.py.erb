@@ -81,7 +81,8 @@ class <%= disc.impl.py_classname %>RandomDiscipline(om.ExplicitComponent):
 <%- disc.impl.numeric_output_vars.each do |v| -%>
         i = 0
         sigma = np.sqrt(self.gp_<%= v.py_varname %>.predict_variances(inputs_gp))
-        d_sigma = self.gp_<%= v.py_varname %>.predict_variance_derivatives(inputs_gp)/(2.0*sigma)
+        sigma += 1e-8  # to avoid division by zero if sigma is zero (1e-8 ~ sqrt(machine epsilon))
+        d_sigma = np.atleast_2d(self.gp_<%= v.py_varname %>.predict_variance_gradient(inputs_gp))/(2.0*sigma)
         for name in sorted(inputs.keys()):
             if name in random_inputs:
                 sigma = np.sqrt(self.gp_<%= v.py_varname %>.predict_variances(inputs_gp))
