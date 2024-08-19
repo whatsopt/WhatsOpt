@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require_relative "boot"
 
 require "rails/all"
@@ -14,6 +12,10 @@ module WhatsOpt
     config.load_defaults 7.0
     Rails.autoloaders.main.ignore("#{Rails.root}/app/lib/whats_opt/services")
     Rails.autoloaders.main.ignore("#{Rails.root}/app/lib/whats_opt/string.rb")
+    # Please, add to the `ignore` list any other `lib` subdirectories that do
+    # not contain `.rb` files, or that should not be reloaded or eager loaded.
+    # Common ones are `templates`, `generators`, or `middleware`, for example.
+    config.autoload_lib(ignore: %w[assets tasks])
 
     # Configuration for the application, engines, and railties goes here.
     #
