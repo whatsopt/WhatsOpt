@@ -3,8 +3,8 @@
 class AnalysesController < ApplicationController
   include Pagy::Backend
 
-  before_action :set_mda, only: [:show, :edit, :update, :destroy]
-  after_action :save_journal, only: [:create, :update]
+  before_action :set_mda, only: [:show, :edit, :destroy]
+  after_action :save_journal, only: [:create]
 
   # GET /mdas
   def index
