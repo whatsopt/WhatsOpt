@@ -10,6 +10,7 @@ module WhatsOpt
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.0
+    Rails.autoloaders.main.ignore("#{Rails.root}/lib")
     Rails.autoloaders.main.ignore("#{Rails.root}/app/lib/whats_opt/services")
     Rails.autoloaders.main.ignore("#{Rails.root}/app/lib/whats_opt/string.rb")
     # Please, add to the `ignore` list any other `lib` subdirectories that do
