@@ -38,9 +38,9 @@ module WhatsOpt
 
     def default_py_type
       if self.type == INTEGER_T
-        "np.int"
+        "np.int32"
       else
-        "np.float"
+        "np.float64"
       end
     end
 
@@ -55,7 +55,7 @@ module WhatsOpt
         if self.type == FLOAT_T
           "np.ones(#{self.shape})"
         else
-          "np.ones(#{self.shape}, dtype=np.int)"
+          "np.ones(#{self.shape}, dtype=np.int32)"
         end
       end
     end
