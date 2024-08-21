@@ -17,7 +17,7 @@ gem "sass-rails", ">= 6"
 gem "terser"
 
 # Transpile app-like JavaScript. Read more: https://github.com/shakacode/shakapacker
-gem "shakapacker", "~>7.0"
+gem "shakapacker", "~> 8.0"
 # See https://github.com/rails/execjs#readme for more supported runtimes
 # gem 'therubyracer', platforms: :ruby
 
