@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class OptimizationsController < ApplicationController
-  before_action :set_optimization, only: [:show, :destroy]
+  before_action :set_optimization, only: [:show]
 
   # GET /optimizations
   def index

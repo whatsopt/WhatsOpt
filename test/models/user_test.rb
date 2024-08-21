@@ -12,6 +12,7 @@ class UserTest < ActiveSupport::TestCase
   test "should not validate complexity on creation" do
     user = User.create!(login: "Test", email: "fdsfd@onera.fr", password: "too_simple", password_confirmation: "too_simple")
     user.update(password: "too_simple", password_confirmation: "too_simple")
+    assert user.password
   end
 
   test "should deactivate when destroying" do

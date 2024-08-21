@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Api::V1::MetaModelsController < Api::ApiController
-  before_action :set_meta_model, only: [:show, :update, :destroy]
+  before_action :set_meta_model, only: [:show, :update]
 
   def index
     @meta_models = policy_scope(MetaModel)

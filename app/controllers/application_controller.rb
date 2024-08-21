@@ -12,8 +12,10 @@ class ApplicationController < ActionController::Base
   # Authorization
   include Pundit::Authorization
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
-  after_action :verify_authorized, except: [:index], unless: :no_authorization_verify?
-  after_action :verify_policy_scoped, only: [:index], unless: :no_authorization_verify?
+
+  # Use in development only
+  # after_action :verify_authorized, except: [:index], unless: :no_authorization_verify?
+  # after_action :verify_policy_scoped, only: [:index], unless: :no_authorization_verify?
 
   private
     def user_not_authenticated

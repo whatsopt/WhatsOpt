@@ -18,6 +18,7 @@ class Api::V1::JobsControllerTest < ActionDispatch::IntegrationTest
     #   OperationJob.perform_later(@ope)
     # end
     post api_v1_operation_job_url(@ope), as: :json, headers: @auth_headers
+    assert_response :success
   end
 
   test "should kill a running job" do

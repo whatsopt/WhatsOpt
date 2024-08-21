@@ -888,7 +888,6 @@ class Analysis < ApplicationRecord
         var = Variable.of_analysis(in_disc.sub_analysis).where(name: var.name, io_mode: WhatsOpt::Variable::OUT).first 
         res += in_disc.sub_analysis.find_targets(var)
       else
-        puts "Add target #{in_disc.name}"
         abspath = in_disc.path.to_a
         abspath.shift
         res.push([in_disc, abspath])

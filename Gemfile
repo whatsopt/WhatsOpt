@@ -8,7 +8,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby "3.3.0"
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem "rails", "~> 7.1"
+gem "rails", "~> 7.2"
 # Use Puma as the app server
 gem "puma", "~> 6.0"
 # Use SCSS for stylesheets
@@ -17,7 +17,7 @@ gem "sass-rails", ">= 6"
 gem "terser"
 
 # Transpile app-like JavaScript. Read more: https://github.com/shakacode/shakapacker
-gem "shakapacker", "~>7.0"
+gem "shakapacker", "~> 8.0"
 # See https://github.com/rails/execjs#readme for more supported runtimes
 # gem 'therubyracer', platforms: :ruby
 
@@ -132,7 +132,7 @@ gem "deepsort"
 gem "sprockets-rails"
 
 # Pagination
-gem "pagy", "~> 7.0"
+gem "pagy", "~> 9.0"
 
 # Matrix
 gem "matrix"  # removed from stndard library in ruby 3.1

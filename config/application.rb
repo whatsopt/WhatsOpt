@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require_relative "boot"
 
 require "rails/all"
@@ -11,9 +9,15 @@ Bundler.require(*Rails.groups)
 module WhatsOpt
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 7.0
+    config.load_defaults 7.2
+
+    Rails.autoloaders.main.ignore("#{Rails.root}/lib")
     Rails.autoloaders.main.ignore("#{Rails.root}/app/lib/whats_opt/services")
     Rails.autoloaders.main.ignore("#{Rails.root}/app/lib/whats_opt/string.rb")
+    # Please, add to the `ignore` list any other `lib` subdirectories that do
+    # not contain `.rb` files, or that should not be reloaded or eager loaded.
+    # Common ones are `templates`, `generators`, or `middleware`, for example.
+    config.autoload_lib(ignore: %w[assets tasks])
 
     # Configuration for the application, engines, and railties goes here.
     #
@@ -24,8 +28,19 @@ module WhatsOpt
     # config.eager_load_paths << Rails.root.join("extras")
     config.active_job.queue_adapter = :sucker_punch
 
+    # Thrift generated code needs this 
     config.autoload_paths << "#{config.root}/app/lib/whats_opt/services"
-    # Require `belongs_to` associations by default. Previous versions < rails 6 had false.
+
+    # Keep previous defaults 
+    # See https://guides.rubyonrails.org/configuring.html
+
+    # Require `belongs_to` associations by default. Rails >= 5.0 default is true.
     config.active_record.belongs_to_required_by_default = false
+
+    # Add autoload_path to load path. Rails >= 7.1 default is false.
+    config.add_autoload_paths_to_load_path = true
+
+    # Add autoload_path to load path. Rails >= 7.1 default is nil.
+    config.active_record.default_column_serializer = YAML
   end
 end
