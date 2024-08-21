@@ -186,12 +186,12 @@ module WhatsOpt
       @sub_impl = @sub_mda.openmdao_impl || OpenmdaoAnalysisImpl.new(analysis: @sub_mda)
       @sub_driver = OpenmdaoDriverFactory.new(@sub_impl.optimization_driver).create_driver
 
-      if @driver.optimization?
+      if @sub_driver.optimization?
         _generate(@dimpl.py_filename, "openmdao_discipline_mdo.py.erb", gendir)
         _generate(@dimpl.py_basefilename, "openmdao_discipline_mdo_base.py.erb", gendir)
       else
         # should be simple run_once driver
-        if @driver.class != WhatsOpt::OpenmdaoRunOnceDriver
+        if @sub_driver.class != WhatsOpt::OpenmdaoRunOnceDriver
           raise RuntimeError.new("Ouch! Should be run_once driver got #{@driver.inspect}")
         end
       end
