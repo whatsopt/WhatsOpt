@@ -2,20 +2,43 @@
 
 import numpy as np
 from numpy import nan
-from os import path
-from importlib import import_module
-from yaml import load, FullLoader
+
 from gemseo.core.discipline import MDODiscipline
-from gemseo.core.json_grammar import JSONGrammar
+from gemseo.core.grammars.factory import GrammarFactory
 
 class <%= @discipline.impl.py_classname %>Base(MDODiscipline):
     """ An GEMSEO discipline to encapsulate <%= @discipline.impl.py_classname %> discipline """
 
     def __init__(self, **kwargs):
         self.comp_dir = "./"
-        super().__init__(grammar_type=MDODiscipline.SIMPLE_GRAMMAR_TYPE, **kwargs)
+        super().__init__(grammar_type=MDODiscipline.GrammarType.JSON, **kwargs)
 
-    def _instantiate_grammars(self, input_grammar_file, output_grammar_file, grammar_type=MDODiscipline.JSON_GRAMMAR_TYPE):
+    def _instantiate_grammars(self, input_grammar_file, output_grammar_file, grammar_type=MDODiscipline.GrammarType.JSON):
+        inputs = {
+            <% @discipline.impl.numeric_input_vars.each do |var| %>
+                '<%= var.py_varname %>': np.atleast_1d(<%= var.init_py_value %>),<% end -%>
+            }    
+        outputs = {
+            <% @discipline.impl.numeric_output_vars.each do |var| %>
+                '<%= var.py_varname %>': np.atleast_1d(<%= var.init_py_value %>),<% end -%>
+            }
+
+        factory = GrammarFactory()
+
+        self.input_grammar = factory.create(
+            grammar_type,
+            name="<%= @discipline.impl.py_classname %>_discipline_input",
+            file_path=input_grammar_file,
+        )
+        self.input_grammar.update_from_data(inputs)
+
+        self.output_grammar = factory.create(
+            grammar_type,
+            name="<%= @discipline.impl.py_classname %>_discipline_output",
+            file_path=output_grammar_file,
+        )
+        self.output_grammar.update_from_data(outputs)
+
         self.default_inputs = {
         <% @discipline.impl.numeric_input_vars.each do |var| %>
             '<%= var.py_varname %>': np.atleast_1d(<%= var.init_py_value %>),<% end -%>
@@ -24,10 +47,6 @@ class <%= @discipline.impl.py_classname %>Base(MDODiscipline):
         <% @discipline.impl.numeric_output_vars.each do |var| %>
             '<%= var.py_varname %>': np.atleast_1d(<%= var.init_py_value %>),<% end -%>
         }
-        self.input_grammar = JSONGrammar("<%= @discipline.impl.py_classname %>")
-        self.input_grammar.initialize_from_base_dict(self.default_inputs)
-        self.output_grammar = JSONGrammar("<%= @discipline.impl.py_classname %>")
-        self.output_grammar.initialize_from_base_dict(self.default_outputs)
 
     def _run(self):
     <% @discipline.impl.numeric_input_vars.each do |var| %>
