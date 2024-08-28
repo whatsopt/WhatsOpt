@@ -22,7 +22,7 @@ class <%= @dimpl.py_classname %>MdoBase(om.SubmodelComp):
     def __init__(self, inputs=None, outputs=None, reports=False, **kwargs):
 
         # Problem definition
-        pb = om.Problem(<%= @dimpl.py_classname %>())
+        pb = om.Problem(model=<%= @dimpl.py_classname %>())
         super().__init__(pb, inputs=None, outputs=None, reports=False, **kwargs)
 
         <%- if @sub_driver.pyoptsparse? -%>
@@ -86,7 +86,7 @@ class <%= @dimpl.py_classname %>MdoBase(om.SubmodelComp):
 <% @dimpl.numeric_input_vars.each do |var| -%>
         self.add_input('<%= var.py_varname %>', val=<%= var.init_py_value %>, <%= var.ndim > 0 ? "shape=#{var.shape} ," : "" %> <%= var.is_int? ? "tags=['#{Variable::INTEGER_TAG}'] ," : "" %> desc='<%= var.escaped_desc %>'<%= @impl.use_units && !var.units.blank? ? ", units='#{var.units}'":"" %>)
 <% end %>
-<% @dimpl.numeric_input_vars.each do |var| -%>
+<% @dimpl.numeric_output_vars.each do |var| -%>
 <% if var.scaling.blank? -%>
         self.add_output('<%= var.py_varname %>', val=<%= var.init_py_value %>, <%= var.ndim > 0 ? "shape=#{var.shape} ," : "" %> <%= var.is_int? ? "tags=['#{Variable::INTEGER_TAG}'] ," : "" %> desc='<%= var.escaped_desc %>'<%= @impl.use_units && !var.units.blank? ? ", units='#{var.units}'":"" %>)
 <%- else -%>
@@ -97,6 +97,7 @@ class <%= @dimpl.py_classname %>MdoBase(om.SubmodelComp):
 
 <%- unless @dimpl.numeric_input_vars.empty? || @dimpl.numeric_output_vars.empty? || !@discipline.is_derivable?-%>
     def setup_partials(self):
+        super().setup_partials()
         self.declare_partials('*', '*', method='<%= @dimpl.support_derivatives ? "exact" : "fd" %>')
 <% end -%>
 <% else -%>
