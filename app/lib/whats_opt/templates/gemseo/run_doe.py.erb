@@ -1,5 +1,5 @@
 from optparse import OptionParser
-from gemseo.api import configure_logger
+from gemseo import configure_logger
 from <%= @impl.py_modulename %> import <%= @impl.py_classname %>DOEScenario 
 
 parser = OptionParser()
@@ -18,7 +18,7 @@ scenario.add_observable('<%= voi.name %>')<% end -%>
 scenario.execute(input_data={"max_iter": 10, "algo": "OT_LHS", "n_samples": options.n_cases })
 
 problem = scenario.formulation.opt_problem
-problem.export_hdf("<%= @impl.py_modulename %>_doe.hdf5")
+problem.to_hdf("<%= @impl.py_modulename %>_doe.hdf5")
 
 ### Post-processing Example
 # from gemseo.api import execute_post

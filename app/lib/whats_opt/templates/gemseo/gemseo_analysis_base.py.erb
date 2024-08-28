@@ -13,7 +13,7 @@ from gemseo.mda.jacobi import MDAJacobi
 from gemseo.core.doe_scenario import DOEScenario
 from gemseo.core.mdo_scenario import MDOScenario
 from gemseo.core.discipline import MDODiscipline
-from gemseo.core.json_grammar import JSONGrammar
+from gemseo.core.grammars.factory import GrammarFactory
 from gemseo.algos.design_space import DesignSpace
 
 class <%= @impl.py_classname %>MDABase(MDAJacobi):
@@ -23,19 +23,21 @@ class <%= @impl.py_classname %>MDABase(MDAJacobi):
         ]
         super().__init__(disciplines, **mda_options)
 
-    def _instantiate_grammars(self, input_grammar_file, output_grammar_file, grammar_type=MDODiscipline.JSON_GRAMMAR_TYPE):
-        self.default_inputs = {<% @mda.input_variables.each do |var| %>
-            '<%= var.py_varname %>': np.atleast_1d(<%= var.init_py_value %>),<% end -%>
+    def _instantiate_grammars(self, input_grammar_file, output_grammar_file, grammar_type=MDODiscipline.GrammarType.JSON):
+        factory = GrammarFactory()
 
-        }
-        self.default_outputs = {<% @mda.output_variables.each do |var| %>
-            '<%= var.py_varname %>': np.atleast_1d(<%= var.init_py_value %>),<% end -%>
+        self.input_grammar = factory.create(
+            grammar_type,
+            name="<%= @mda.impl.py_classname %>_analysis_input",
+            file_path=input_grammar_file,
+        )
 
-        }
-        self.input_grammar = JSONGrammar("<%= @discipline.impl.py_classname %>")
-        self.input_grammar.initialize_from_base_dict(self.default_inputs)
-        self.output_grammar = JSONGrammar("<%= @discipline.impl.py_classname %>")
-        self.output_grammar.initialize_from_base_dict(self.default_outputs)
+        self.output_grammar = factory.create(
+            grammar_type,
+            name="<%= @mda.impl.py_classname %>_analysis_output",
+            file_path=output_grammar_file,
+        )
+
 
 <% @mda.plain_disciplines.each do |disc| -%>
     def create_<%= disc.impl.basename %>(self):
@@ -49,7 +51,7 @@ class <%= @impl.py_classname %>DesignSpace(DesignSpace):
     def __init__(self):
         super().__init__()
 
-        # Initial solution<% @mda.input_variables.each do |dv| %>
+        # Initial solution<% @mda.variables.where(io_mode: WhatsOpt::Variable::OUT).each do |dv| %>
         <%= dv.name %> = np.atleast_1d(<%= dv.init_py_value %>)<% end -%>
 
 
@@ -61,7 +63,17 @@ class <%= @impl.py_classname %>DOEScenarioBase(DOEScenario):
     """ A base class for <%= @impl.py_classname %> DOE Scenario """
 
     def __init__(self, **kwargs):
+        self._init_from_whatsopt()
+        super().__init__(
+            disciplines=self._disciplines,
+            formulation=self._formulation,
+            objective_name=self._objective_name,
+            design_space=self._design_space,
+            name=self._name,
+            **kwargs,
+        )
 
+    def _init_from_whatsopt(self):
         self._disciplines = [
             <%= @mda.disciplines.nodes.map{|d| "self.create_#{d.impl.basename}()"}.join(', ') %>
         ]
@@ -70,23 +82,11 @@ class <%= @impl.py_classname %>DOEScenarioBase(DOEScenario):
         self._formulation = "MDF"
         self._objective_name =  "<%= @mda.has_objective? ? @mda.min_objective_variables.first.name : 'NO_OBJECTIVE_ERROR' %>"
         self._design_space = <%= @impl.py_classname %>DesignSpace()
-        self._name = "<%= @impl.py_classname %>DOEScenario"
-
-        super().__init__(
-            self._disciplines,
-            self._formulation,
-            self._objective_name,
-            self._design_space,
-            self._name,
-            **kwargs,
-        )
-
-    def _init_base_grammar(self, name):
-        name = "DOEScenario"
-        self.comp_dir = path.dirname(inspect.getfile(DOEScenario))
-        input_grammar_file = self.auto_get_grammar_file(True, name, self.comp_dir)
-        output_grammar_file = self.auto_get_grammar_file(False, name, self.comp_dir)
-        self._instantiate_grammars(input_grammar_file, output_grammar_file)
+        self._name = "DOEScenario"
+        
+    def auto_get_grammar_file(self, is_input=True, name = "DOEScenario", comp_dir = None):
+        comp_dir = path.dirname(inspect.getfile(DOEScenario))
+        return super().auto_get_grammar_file(is_input, name, comp_dir)
 
 <% @mda.plain_disciplines.each do |disc| -%>
     def create_<%= disc.impl.basename %>(self):
@@ -98,23 +98,13 @@ class <%= @impl.py_classname %>MDOScenarioBase(MDOScenario):
     """ A base class for <%= @impl.py_classname %> MDO Scenario """
 
     def __init__(self, **kwargs):
-
-        self._disciplines = [
-            <%= @mda.disciplines.nodes.map{|d| "self.create_#{d.impl.basename}()"}.join(', ') %>
-        ]
-        for disc in self._disciplines:
-            disc.set_jacobian_approximation()
-        self._formulation = "MDF" 
-        self._objective_name =  "<%= @mda.has_objective? ? @mda.min_objective_variables.first.name : 'NO_OBJECTIVE_ERROR' %>" 
-        self._design_space = <%= @impl.py_classname %>DesignSpace()
-        self._name = "<%= @impl.py_classname %>MDOScenario"
-
+        self._init_from_whatsopt()
         super().__init__(
-            self._disciplines,
-            self._formulation,
-            self._objective_name,
-            self._design_space,
-            self._name,
+            disciplines=self._disciplines,
+            formulation=self._formulation,
+            objective_name=self._objective_name,
+            design_space=self._design_space,
+            name=self._name,
             **kwargs,
         )
         <% @mda.neg_constraint_variables.each do |voi| %>
@@ -128,13 +118,20 @@ class <%= @impl.py_classname %>MDOScenarioBase(MDOScenario):
         <% @mda.eq_constraint_variables.each do |voi| %>
         self.add_constraint('<%= voi.name %>', value=<%= voi.cstr_init_py_value %>)<% end -%>
 
+    def _init_from_whatsopt(self):
+        self._disciplines = [
+            <%= @mda.disciplines.nodes.map{|d| "self.create_#{d.impl.basename}()"}.join(', ') %>
+        ]
+        for disc in self._disciplines:
+            disc.set_jacobian_approximation()
+        self._formulation = "MDF"
+        self._objective_name =  "<%= @mda.has_objective? ? @mda.min_objective_variables.first.name : 'NO_OBJECTIVE_ERROR' %>"
+        self._design_space = <%= @impl.py_classname %>DesignSpace()
+        self._name = "MDOScenario"
 
-    def _init_base_grammar(self, name):
-        name = "MDOScenario"
-        self.comp_dir = path.dirname(inspect.getfile(MDOScenario))
-        input_grammar_file = self.auto_get_grammar_file(True, name, self.comp_dir)
-        output_grammar_file = self.auto_get_grammar_file(False, name, self.comp_dir)
-        self._instantiate_grammars(input_grammar_file, output_grammar_file)
+    def auto_get_grammar_file(self, is_input=True, name = "MDOScenario", comp_dir = None):
+        comp_dir = path.dirname(inspect.getfile(DOEScenario))
+        return super().auto_get_grammar_file(is_input, name, comp_dir)
 
 <% @mda.plain_disciplines.each do |disc| -%>
     def create_<%= disc.impl.basename %>(self):
