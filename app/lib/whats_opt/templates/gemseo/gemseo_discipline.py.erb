@@ -1,5 +1,5 @@
 import numpy as np
-from <%= @discipline.impl.py_full_modulename %>_base import <%= @discipline.impl.py_classname %>Base
+from <%= @pkg_prefix %><%= @discipline.impl.py_full_modulename %>_base import <%= @discipline.impl.py_classname %>Base
 
 class <%= @discipline.impl.py_classname %>(<%= @discipline.impl.py_classname %>Base):
     """ A class to encapsulate <%= @discipline.impl.py_classname %> discipline """

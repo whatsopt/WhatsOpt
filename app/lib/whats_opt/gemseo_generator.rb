@@ -14,29 +14,45 @@ module WhatsOpt
     class NotYetImplementedError < StandardError
     end
 
-    def initialize(mda)
-      super(mda)
+    def initialize(mda, pkg_format: false)
+      super(mda, pkg_format: pkg_format)
       @prefix = "gemseo"
       @framework = "gemseo"
     end
 
     # sqlite_filename: nil, with_run: true, with_server: true, with_runops: true
     def _generate_code(gendir, options = {})
-      opts = { with_server: false, with_run: true, with_unittests: false }.merge(options)
+      opts = { with_server: false, with_run: true, with_unittests: false, with_src_dir: false }.merge(options)
+      if opts[:with_src_dir]
+        src_dir = File.join(gendir, "src")
+        Dir.mkdir(src_dir) unless Dir.exist?(src_dir)
+      else
+        src_dir = gendir
+      end
+      pkg_dir = package_dir? ? File.join(src_dir, @impl.py_modulename) : src_dir
+      Dir.mkdir(pkg_dir) unless Dir.exist?(pkg_dir)
+
       @mda.disciplines.nodes.each do |disc|
         if disc.has_sub_analysis?
           raise NotYetImplementedError.new("Cannot generate code for sub_analysis #{disc.name}")
-          _generate_sub_analysis(disc, gendir, opts)
+          _generate_sub_analysis(disc, pkg_dir, opts)
         else
-          _generate_discipline(disc, gendir, opts)
+          _generate_discipline(disc, pkg_dir, opts)
           raise NotYetImplementedError.new("Cannot generate code for unit test #{disc.name}") if opts[:with_unittests]
         end
       end
-      _generate_main(gendir, opts)
+      _generate_main(pkg_dir, opts)
       _generate_run_scripts(gendir, opts)
       if opts[:with_server] || (!@check_only && @mda.has_remote_discipline?(@remote_ip))
         raise NotYetImplementedError.new("Cannot generate code for server")
       end
+      if opts[:with_egmdo] || @driver_name =~ /egmdo|egdoe/
+        raise NotYetImplementedError.new("Cannot generate code for egmdo")
+      end
+      if package_dir? && @framework == "gemseo"
+        _generate_package_files(gendir)
+      end
+
       @genfiles
     end
 
@@ -68,6 +84,18 @@ module WhatsOpt
           _generate("run_doe.py", "gemseo/run_doe.py.erb", gendir)
           _generate("run_mdo.py", "gemseo/run_mdo.py.erb", gendir)
         end
+      end
+    end
+
+    def _generate_package_files(gendir)
+      if @mda.packaged?
+        # Package is attached, use it!
+        @genfiles |= WhatsOpt::PackageExtractor.new(@mda).extract(gendir)
+      else
+        # no package => generate package skeleton
+        _generate(".gitignore", "package/gitignore.erb", gendir, no_comment: true)
+        _generate("README.md", "package/README.md.erb", gendir, no_comment: true)
+        _generate("pyproject.toml", "package/pyproject.toml.erb", gendir, no_comment: true)
       end
     end
   end

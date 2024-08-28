@@ -1,4 +1,4 @@
-from <%= @impl.py_full_modulename %>_base import <%= @impl.py_classname %>MDABase, <%= @impl.py_classname %>DOEScenarioBase, <%= @impl.py_classname %>MDOScenarioBase
+from <%= @pkg_prefix %><%= @impl.py_full_modulename %>_base import <%= @impl.py_classname %>MDABase, <%= @impl.py_classname %>DOEScenarioBase, <%= @impl.py_classname %>MDOScenarioBase
 
 class <%= @impl.py_classname %>MDA(<%= @impl.py_classname %>MDABase):
     """ A GEMSEO MDA to encapsulate <%= @impl.py_classname %> analysis """
