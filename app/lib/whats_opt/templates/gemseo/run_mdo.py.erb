@@ -11,7 +11,7 @@ scenario.add_observable('<%= voi.name %>')<% end -%>
 scenario.execute(input_data={"max_iter": 10, "algo": "SLSQP"}) 
 
 problem = scenario.formulation.opt_problem
-problem.export_hdf("<%= @impl.py_modulename %>_optimization.hdf5")
+problem.to_hdf("<%= @impl.py_modulename %>_optimization.hdf5")
 
 ### Post-processing Example
 # from gemseo.api import execute_post
