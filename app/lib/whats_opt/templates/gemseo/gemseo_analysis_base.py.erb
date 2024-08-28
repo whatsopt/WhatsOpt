@@ -51,7 +51,7 @@ class <%= @impl.py_classname %>DesignSpace(DesignSpace):
     def __init__(self):
         super().__init__()
 
-        # Initial solution<% @mda.variables.each do |dv| %>
+        # Initial solution<% @mda.variables.where(io_mode: WhatsOpt::Variable::OUT).each do |dv| %>
         <%= dv.name %> = np.atleast_1d(<%= dv.init_py_value %>)<% end -%>
 
 
@@ -72,23 +72,19 @@ class <%= @impl.py_classname %>DOEScenarioBase(DOEScenario):
         self._formulation = "MDF"
         self._objective_name =  "<%= @mda.has_objective? ? @mda.min_objective_variables.first.name : 'NO_OBJECTIVE_ERROR' %>"
         self._design_space = <%= @impl.py_classname %>DesignSpace()
-        self._name = "<%= @impl.py_classname %>DOEScenario"
 
         super().__init__(
-            self._disciplines,
-            self._formulation,
-            self._objective_name,
-            self._design_space,
-            self._name,
+            disciplines=self._disciplines,
+            formulation=self._formulation,
+            objective_name=self._objective_name,
+            design_space=self._design_space,
+            name="DOEScenario",
             **kwargs,
         )
-
-    def _init_base_grammar(self, name):
-        name = "DOEScenario"
-        self.comp_dir = path.dirname(inspect.getfile(DOEScenario))
-        input_grammar_file = self.auto_get_grammar_file(True, name, self.comp_dir)
-        output_grammar_file = self.auto_get_grammar_file(False, name, self.comp_dir)
-        self._instantiate_grammars(input_grammar_file, output_grammar_file)
+        
+    def auto_get_grammar_file(self, is_input=True, name = "DOEScenario", comp_dir = None):
+        comp_dir = path.dirname(inspect.getfile(DOEScenario))
+        return super().auto_get_grammar_file(is_input, name, comp_dir)
 
 <% @mda.plain_disciplines.each do |disc| -%>
     def create_<%= disc.impl.basename %>(self):
@@ -112,11 +108,11 @@ class <%= @impl.py_classname %>MDOScenarioBase(MDOScenario):
         self._name = "<%= @impl.py_classname %>MDOScenario"
 
         super().__init__(
-            self._disciplines,
-            self._formulation,
-            self._objective_name,
-            self._design_space,
-            self._name,
+            disciplines=self._disciplines,
+            formulation=self._formulation,
+            objective_name=self._objective_name,
+            design_space=self._design_space,
+            name=self._name,
             **kwargs,
         )
         <% @mda.neg_constraint_variables.each do |voi| %>
