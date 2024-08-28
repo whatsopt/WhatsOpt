@@ -92,12 +92,19 @@ HEADER
     end
 
     def _format_code(dir)
-      cmd = "#{PYTHON} -m black --line-length 100 #{dir}"
-      Rails.logger.info cmd
-      stdouterr, status = Open3.capture2e(cmd)
-      unless status.success?
-        Rails.logger.warn "Black formatting failed!"
-        Rails.logger.warn "#{stdouterr}"
+      # ["black", "ruff"].each do |formatter|
+      ["ruff"].each do |formatter|
+        cmd = if formatter == "ruff"
+          "#{PYTHON} -m #{formatter} format --line-length 100 #{dir}"
+        else
+          "#{PYTHON} -m #{formatter} --line-length 100 #{dir}"
+        end
+        Rails.logger.info cmd
+        stdouterr, status = Open3.capture2e(cmd)
+        unless status.success?
+          Rails.logger.warn "#{formatter.capitalize} formatting failed!"
+          Rails.logger.warn "#{stdouterr}"
+        end
       end
     end
   end
