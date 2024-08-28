@@ -24,7 +24,7 @@ class Api::V1::ExportsController < Api::ApiController
                                         with_egmdo: with_egmdo, with_runops: with_runops, with_unittests: with_unittests)
       send_data content, filename: filename
     when "gemseo", "gemseo_pkg"
-      ggen = WhatsOpt::GemseoGenerator.new(mda)
+      ggen = WhatsOpt::GemseoGenerator.new(mda, pkg_format: (format == "gemseo_pkg"))
       begin
         content, filename = ggen.generate(user_agent: user_agent, with_run: with_run, with_server: with_server,
                                           with_egmdo: with_egmdo, with_runops: with_runops, with_unittests: with_unittests)
