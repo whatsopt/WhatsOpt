@@ -6,7 +6,7 @@ import numpy as np
 from numpy import nan
 
 <% @mda.all_plain_disciplines.each do |disc| -%>
-from <%= disc.impl.py_full_modulename %> import <%= disc.impl.py_classname %>
+from <%= @pkg_prefix %><%= disc.impl.py_full_modulename %> import <%= disc.impl.py_classname %>
 <% end -%>
 
 from gemseo.mda.jacobi import MDAJacobi
