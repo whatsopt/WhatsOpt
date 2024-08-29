@@ -337,7 +337,7 @@ class Analysis < ApplicationRecord
             name: i == 0 ? "_U_" : n[:name],
             type: i == 0 ? "driver" : n[:type]
           }
-          node[:subxdsm] = n[:link][:name] if n[:type] == "group" && n[:link]
+          node[:subxdsm] = n[:link][:name] if (n[:type] == "group" || n[:type] == "sub-optimization") && n[:link]
           node
         },
         edges: build_edges.map { |e|
@@ -358,6 +358,7 @@ class Analysis < ApplicationRecord
       # TODO: if XDSM v2 accepted migrate database to take into account XDSM v2 new types
       # mda -> group
       node[:type] = "group" if node[:type] == "mda"
+      node[:type] = "sub-optimization" if node[:type] == "mdo"
       # analysis -> function
       # not required as function and analysis are considered synonymous in XDSMjs for XDSM v2
       node[:type] = "function" if node[:type] == "analysis"
@@ -816,19 +817,20 @@ class Analysis < ApplicationRecord
     end
 
     # create disciplines
-    # Rails.logger.info "################ BEFORE CREATE #{mda_attrs["name"]}"
+    # Rails.logger.info "################ BEFORE CREATE #{mda_attrs}"
     mda = Analysis.create(mda_attrs)
     # Rails.logger.info "################ AFTER CREATE #{mda_attrs["name"]}"
     # Rails.logger.info ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> #{mda.name}"
-    Variable.of_analysis(mda).each do |v|
+    # Variable.of_analysis(mda).each do |v|
       # Rails.logger.info ">>> #{v.discipline.name}(#{v.discipline.id}) #{v.name} #{v.io_mode}"
-    end
+    # end
     # Connection.of_analysis(mda).each do |c|
     #   # Rails.logger.info "CCCCCCCCCCCCCCC #{c.from.discipline.name} -> #{c.to.discipline.name}  #{c.from.name}(#{c.from.id})"
     # end
     # link disciplines and sub analyses
     subs.each.with_index do |submda, i|
       if submda
+        # Rails.logger.info "before DISCIPLINE TYPE #{mda.disciplines[i].type}"
         mda.disciplines[i].create_sub_analysis_discipline!(submda)
         # Rails.logger.info "DISCIPLINE TYPE #{mda.disciplines[i].type}"
       end

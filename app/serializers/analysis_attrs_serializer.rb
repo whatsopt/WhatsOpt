@@ -5,7 +5,7 @@ class AnalysisAttrsSerializer < ActiveModel::Serializer
 
   def disciplines_attributes
     object.disciplines.filter_map { |disc|
-      if disc.type == Discipline::ANALYSIS
+      if disc.type == Discipline::ANALYSIS or disc.type == Discipline::OPTIMIZATION
         {
           "name" => disc.name,
           "type" => disc.type,

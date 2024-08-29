@@ -5,7 +5,7 @@ class AnalysisDiffSerializer < ActiveModel::Serializer
 
   def disciplines
     object.disciplines.filter_map { |disc|
-      if disc.type == Discipline::ANALYSIS
+      if disc.type == Discipline::ANALYSIS or disc.type == Discipline::OPTIMIZATION
         {
           "name": disc.name,
           "sub_analysis": AnalysisDiffSerializer.new(disc.sub_analysis).as_json
