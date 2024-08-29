@@ -75,8 +75,6 @@ class Api::V1::AnalysesController < Api::V1::ApiMdaUpdaterController
       json_response @mda
     elsif import
       if @mda.packaged? || @mda.operated?
-        p @mda.packaged?
-        p @mda.operated?
         json_response @mda, :forbidden
       else
         fromAnalysis = Analysis.find(import[:analysis])
@@ -135,10 +133,12 @@ class Api::V1::AnalysesController < Api::V1::ApiMdaUpdaterController
         import: [:analysis, disciplines: [] ],
         disciplines_attributes: [
             :name,
+            :type,
             variables_attributes: [
-              :name, :io_mode, :type, :shape, :units, :desc,
+              :name, :io_mode, :type, :shape, :units, :desc, :active,
               parameter_attributes: [:lower, :upper, :init],
-              scaling_attributes: [:ref, :ref0, :res_ref]
+              scaling_attributes: [:ref, :ref0, :res_ref],
+              distributions_attributes: {}
             ],
             sub_analysis_attributes: {}
           ]
