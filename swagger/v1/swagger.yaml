@@ -16,10 +16,10 @@ servers:
   description: Internal production server
 - url: https://erebe.onecert.fr/whatsopt
   description: Internal staging server
-- url: http://persephone:3000
+- url: http://erebe:3000
   description: Development server
 - url: http://localhost:3000
-  description: Docker development server
+  description: Docker/WSL development server
 paths:
   "/api/v1/analyses":
     get:
