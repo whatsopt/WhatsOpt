@@ -3,32 +3,35 @@ import PropTypes from 'prop-types';
 import SwaggerUI from 'swagger-ui-react';
 import 'swagger-ui-react/swagger-ui.css';
 
-class SwaggerApiDoc extends React.Component {
-  constructor(props) {
-    super(props);
+function MySwaggerUI(props) {
+  const { url, preAuthorize } = props;
+  return (
+    <SwaggerUI
+      url={url}
+      onComplete={preAuthorize}
+      docExpansion="list"
+    />
+  );
+}
 
-    this.preAuthorize = this.preAuthorize.bind(this);
-    this.ref = React.createRef();
-  }
+MySwaggerUI.propTypes = {
+  url: PropTypes.string.isRequired,
+  preAuthorize: PropTypes.func.isRequired,
+};
 
-  preAuthorize() {
-    const { api } = this.props;
+function SwaggerApiDoc({ api }) {
+  function preAuthorize(sui) {
     if (api.apiKey) {
-      this.ref.current.system.preauthorizeApiKey('Token', `Token ${api.apiKey}`);
+      sui.getSystem().preauthorizeApiKey('Token', `Token ${api.apiKey}`);
     }
   }
 
-  render() {
-    const { api } = this.props;
-    return (
-      <SwaggerUI
-        ref={this.ref}
-        url={api.docUrl()}
-        onComplete={this.preAuthorize}
-        docExpansion="list"
-      />
-    );
-  }
+  return (
+    <MySwaggerUI
+      url={api.docUrl()}
+      preAuthorize={(sui) => preAuthorize(sui)}
+    />
+  );
 }
 
 SwaggerApiDoc.propTypes = {
