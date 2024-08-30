@@ -44,7 +44,6 @@ class OptimizationsIndex {
       const status = $('#status-select').val();
 
       $('.checkbox_child').each(function toggle_status() {
-        console.log(this);
         if ($(this).attr('class').indexOf(status) > 0) {
           $(this).prop('checked', checked);
         }

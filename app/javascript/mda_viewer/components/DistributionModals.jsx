@@ -184,21 +184,6 @@ class DistributionModal extends React.Component {
     return this.visible;
   }
 
-  getFormData() {
-    const { selected } = this.state;
-    const taken = selected < 0 ? 0 : selected;
-    const { dists: { [taken]: { kind, options_attributes } } } = this.state;
-    const formData = { kind };
-    if (options_attributes) {
-      formData[`${kind.toLowerCase()}_options`] = {};
-    }
-    for (let i = 0; i < options_attributes.length; i += 1) {
-      const opt = options_attributes[i];
-      formData[`${kind.toLowerCase()}_options`][opt.name] = opt.value;
-    }
-    return formData;
-  }
-
   handleChange(data) {
     const { selected } = this.state;
 
@@ -207,9 +192,6 @@ class DistributionModal extends React.Component {
     }
     const { formData } = data;
     const { kind } = formData;
-
-    const { conn: { name } } = this.props;
-    console.log(`${name}[${selected}]`);
 
     const newState = update(this.state, {
       dists: {
@@ -223,7 +205,6 @@ class DistributionModal extends React.Component {
       if (k.startsWith(kind.toLowerCase())) {
         for (const optname in formData[k]) {
           if (formData[k][optname] !== undefined) { // Form bug: filter undefined data
-            // console.log('PUSH ', { name: optname, value: formData[k][optname] });
             newState.dists[selected].options_attributes.push(
               { name: optname, value: formData[k][optname] },
             );
@@ -256,6 +237,21 @@ class DistributionModal extends React.Component {
     onConnectionChange(id, { distributions_attributes: [dists[selected]] });
     // eslint-disable-next-line no-undef
     $(`#distributionModal-${name}`).modal('hide');
+  }
+
+  getFormData() {
+    const { selected } = this.state;
+    const taken = selected < 0 ? 0 : selected;
+    const { dists: { [taken]: { kind, options_attributes } } } = this.state;
+    const formData = { kind };
+    if (options_attributes) {
+      formData[`${kind.toLowerCase()}_options`] = {};
+    }
+    for (let i = 0; i < options_attributes.length; i += 1) {
+      const opt = options_attributes[i];
+      formData[`${kind.toLowerCase()}_options`][opt.name] = opt.value;
+    }
+    return formData;
   }
 
   /* eslint-disable jsx-a11y/control-has-associated-label */
