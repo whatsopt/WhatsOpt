@@ -91,7 +91,6 @@ class VariableSearchPanel extends React.Component {
     const { selected, vars, varinfo } = this.state;
     const { api } = this.props;
 
-    console.log(selected);
     let varDisplay = null;
     if (selected.length !== 0) {
       varDisplay = (<VariableDisplay api={api} varinfo={varinfo} />);

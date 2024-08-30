@@ -297,7 +297,6 @@ class MdaViewer extends React.Component {
         },
       });
       if (selected.length) {
-        console.log(`Project: ${JSON.stringify(selected[0])}`);
         newState = update(this.state, {
           mda: { project: { $set: selected[0] } },
         });

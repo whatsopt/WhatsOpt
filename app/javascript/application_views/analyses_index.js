@@ -66,13 +66,11 @@ class AnalysesIndex {
       });
     }
 
-    console.log('ATTACH EVENT');
     $('input[data-analyses-query]').on('click', setAnalysesListSettings);
     $('input[data-analyses-order]').on('click', setAnalysesListSettings);
     $('#analyses-filter').on(
       'keypress',
       (event) => {
-        console.log('Keypress');
         if (event.key === 'Enter') {
           setAnalysesListSettings();
           // Cancel the default action, if needed
@@ -101,7 +99,7 @@ class AnalysesIndex {
           },
           success() {
             $.getScript(this.href, () => {
-              if (timeout) { clearTimeout(timeout); console.log('CLEAR'); }
+              if (timeout) { clearTimeout(timeout); }
               $('.spinner').hide();
             });
           },

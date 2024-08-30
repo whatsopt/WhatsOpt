@@ -149,7 +149,6 @@ class Discipline extends React.Component {
   }
 
   handleSubAnalysisSelected(selected) {
-    console.log(`Select ${JSON.stringify(selected)}`);
     // Extract name from analysis label #\d+ name
     const [, discName] = selected[0].label.match(/#\d+\s(.*)/);
     this.setState({ selected, discName });
