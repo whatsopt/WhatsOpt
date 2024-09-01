@@ -1,5 +1,15 @@
 <h1>CHANGELOG</h1>
 
+<h3>1.31.0 (30/08/2024)</h3>
+<ul>
+  <li>Upgrade GEMSEO generated code to GEMSEO 5.x</li>
+  <li>Generate GEMSEO code in package layout mode</li>
+  <li>Use ruff 0.6 as code formatter</li>
+  <li>Fix sub-optimization code generation</li>
+  <li>Manage sub-optimization discipline in json format</li>
+  <li>Upgrade javascript frontend dependencies</li>
+</ul>
+
 <h3>1.30.3 (21/08/2024)</h3>
 <ul>
   <li>[Tech] Upgrade backend to rails 7.2, pagy 9.0, shakapacker 9.0</li>
