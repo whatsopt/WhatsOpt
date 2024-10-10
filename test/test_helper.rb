@@ -52,6 +52,17 @@ class ActiveSupport::TestCase
   end
 end
 
+# XXX: Dirty monkeypatching as flock used by shakapacker prevents from running test on erebe due to 
+# ActionView::Template::Error: Bad file descriptor @ rb_file_flock - /d/rlafage/workspace/WhatsOpt/tmp/shakapacker.lock
+# Problem seems to be related to flock / NFS interaction
+if `hostname`.include?('erebe')
+  class File 
+    def flock(_p)
+      p "Warning: flock call disabled on erebe! (see test_helper.rb)"
+    end
+  end
+end
+
 class ActionDispatch::IntegrationTest
   include Devise::Test::IntegrationHelpers
 
