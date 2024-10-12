@@ -818,7 +818,7 @@ class Analysis < ApplicationRecord
 
     # create disciplines
     # Rails.logger.info "################ BEFORE CREATE #{mda_attrs}"
-    mda = Analysis.create(mda_attrs)
+    mda = Analysis.create!(mda_attrs)
     # Rails.logger.info "################ AFTER CREATE #{mda_attrs["name"]}"
     # Rails.logger.info ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> #{mda.name}"
     # Variable.of_analysis(mda).each do |v|
