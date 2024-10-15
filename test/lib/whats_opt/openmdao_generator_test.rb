@@ -236,7 +236,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
       ok, log = @ogen_remote.run
       assert ok
       assert log
-      Process.kill("TERM", pid)
+      Process.kill("KILL", pid)
       Process.waitpid pid; sleep(1)
     end
   end
@@ -252,7 +252,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
       ok, log = @ogen_remote.run
       assert ok
       assert log
-      Process.kill("TERM", pid)
+      Process.kill("KILL", pid)
       Process.waitpid pid; sleep(1)
     end
   end
@@ -271,7 +271,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
       assert log
       assert File.exist?("cicav_doe.sqlite")
       File.delete("cicav_doe.sqlite") if File.exist?("cicav_doe.sqlite")
-      Process.kill("TERM", pid)
+      Process.kill("KILL", pid)
       Process.waitpid pid; sleep(1)
     end
   end
@@ -291,7 +291,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
       assert log
       assert File.exist?("singleton_uq_doe.sqlite")
       File.delete("singleton_uq_doe.sqlite") if File.exist?("singleton_uq_doe.sqlite")
-      Process.kill("TERM", pid)
+      Process.kill("KILL", pid)
       Process.waitpid pid; sleep(1)
     end
   end
@@ -375,7 +375,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
       ok, log = @ogen_remote.run
       assert ok
       assert log
-      Process.kill("TERM", pid)
+      Process.kill("KILL", pid)
       Process.waitpid pid; sleep(1)
     end
   end
@@ -383,7 +383,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
   test "should run packaged nested mda once" do
     skip_if_parallel
     skip "Apache Thrift not installed" unless thrift?
-    mda = analyses(:outermda)
+    mda = analyses(:ouKILLda)
     ogen = WhatsOpt::OpenmdaoGenerator.new(mda, pkg_format: true)
     Dir.mktmpdir do |dir|
       ogen._generate_code dir
@@ -393,7 +393,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
       ok, log = @ogen_remote.run
       assert ok
       assert log
-      Process.kill("TERM", pid)
+      Process.kill("KILL", pid)
       Process.waitpid pid; sleep(1)
     end
   end
