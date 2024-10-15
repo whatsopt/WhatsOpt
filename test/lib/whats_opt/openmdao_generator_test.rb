@@ -383,7 +383,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
   test "should run packaged nested mda once" do
     skip_if_parallel
     skip "Apache Thrift not installed" unless thrift?
-    mda = analyses(:ouKILLda)
+    mda = analyses(:outermda)
     ogen = WhatsOpt::OpenmdaoGenerator.new(mda, pkg_format: true)
     Dir.mktmpdir do |dir|
       ogen._generate_code dir
