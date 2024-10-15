@@ -57,11 +57,11 @@ module WhatsOpt
       client = Services::Administration::Client.new(admin_protocol)
       transport.open()
       client.shutdown
-      self.kill_server(@pid)
     rescue => e
       Rails.logger.warn e
     else
       transport.close()
+      self.kill_server(@pid)
     end
 
     def self.kill_server(pid)
