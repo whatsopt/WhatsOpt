@@ -61,6 +61,7 @@ module WhatsOpt
       Rails.logger.warn e
     else
       transport.close()
+      self.kill_server(@pid)
     end
 
     def self.kill_server(pid)

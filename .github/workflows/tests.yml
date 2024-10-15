@@ -17,7 +17,7 @@ jobs:
       - name: Setup Ruby and install gems
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.3.0'
+          ruby-version: '3.3.5'
           bundler-cache: true
 
       - name: Set up Python 3.11
@@ -86,7 +86,7 @@ jobs:
       - name: Run tests
         run: |
           echo $PATH
-          WHATSOPT_COVERALLS=1 bundle exec rails test
+          WHATSOPT_COVERALLS=1 bundle exec rails test --verbose
 
       - name: Coveralls 
         uses: coverallsapp/github-action@v2
