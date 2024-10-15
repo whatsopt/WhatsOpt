@@ -237,7 +237,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
       assert ok
       assert log
       Process.kill("TERM", pid)
-      Process.waitpid pid
+      Process.waitpid pid; sleep(1)
     end
   end
 
@@ -253,7 +253,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
       assert ok
       assert log
       Process.kill("TERM", pid)
-      Process.waitpid pid
+      Process.waitpid pid; sleep(1)
     end
   end
 
@@ -272,7 +272,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
       assert File.exist?("cicav_doe.sqlite")
       File.delete("cicav_doe.sqlite") if File.exist?("cicav_doe.sqlite")
       Process.kill("TERM", pid)
-      Process.waitpid pid
+      Process.waitpid pid; sleep(1)
     end
   end
 
@@ -292,7 +292,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
       assert File.exist?("singleton_uq_doe.sqlite")
       File.delete("singleton_uq_doe.sqlite") if File.exist?("singleton_uq_doe.sqlite")
       Process.kill("TERM", pid)
-      Process.waitpid pid
+      Process.waitpid pid; sleep(1)
     end
   end
 
@@ -376,7 +376,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
       assert ok
       assert log
       Process.kill("TERM", pid)
-      Process.waitpid pid
+      Process.waitpid pid; sleep(1)
     end
   end
 
@@ -394,7 +394,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
       assert ok
       assert log
       Process.kill("TERM", pid)
-      Process.waitpid pid
+      Process.waitpid pid; sleep(1)
     end
   end
 
