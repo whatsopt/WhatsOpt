@@ -86,7 +86,7 @@ jobs:
       - name: Run tests
         run: |
           echo $PATH
-          WHATSOPT_COVERALLS=1 bundle exec rails test
+          WHATSOPT_COVERALLS=1 bundle exec rails test --verbose
 
       - name: Coveralls 
         uses: coverallsapp/github-action@v2
