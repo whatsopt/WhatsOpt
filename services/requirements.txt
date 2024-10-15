@@ -7,7 +7,7 @@ wop
 smt~=2.6.2
 salib~=1.4.7
 thrift~=0.20.0
-openturns~=1.23.0
+openturns~=1.21.0
 egobox~=0.21.0
 ruff~=0.6.0
 
