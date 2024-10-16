@@ -1,5 +1,11 @@
 <h1>CHANGELOG</h1>
 
+<h3>1.31.1 (15/10/2024)</h3>
+<ul>
+  <li>Raise an exception on failed analysis creation</li>
+  <li>Upgrade to ruby 3.3.5 and Passenger 6.0.23</li>
+</ul>
+
 <h3>1.31.0 (30/08/2024)</h3>
 <ul>
   <li>Upgrade GEMSEO generated code to GEMSEO 5.x</li>
