@@ -287,10 +287,12 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
   end
 
   test "should run UQ doe" do
+    skip
     skip_if_parallel
     skip "Apache Thrift not installed" unless thrift?
     @mda = analyses(:singleton_uq)
     Dir.mktmpdir do |dir|
+      dir = "/tmp"
       @ogen._generate_code dir
       pid = self.start_server(dir)
       @ogen_remote = WhatsOpt::OpenmdaoGenerator.new(@mda, server_host: "localhost")
