@@ -10,9 +10,9 @@ module WhatsOpt
     DEFAULT_DOE_DRIVER = :smt_doe_lhs
     DEFAULT_OPTIMIZATION_DRIVER = :scipy_optimizer_slsqp
 
-    attr_accessor :genfiles, :prefix
+    attr_accessor :genfiles, :prefix, :server_host, :server_port
 
-    def initialize(mda, pkg_format: false)
+    def initialize(mda, pkg_format: false, server_host: nil, server_port: 31400)
       @prefix = "code"
       @comment_delimiters = { begin: '"""', end: '"""' }
       @mda = mda
@@ -22,7 +22,9 @@ module WhatsOpt
       @server_module = "server"
       @egmdo_module = "egmdo"
       @server_host = "localhost"
-      @server_port = 31400
+      @server_host = server_host
+      @remote = !server_host.nil?
+      @server_port = server_port
       # TODO: Should be independent from OpenMDAO impl
       # (should be something like Python impl) but at the moment
       # package format (@pkg_prefix) is only implemented (used) with

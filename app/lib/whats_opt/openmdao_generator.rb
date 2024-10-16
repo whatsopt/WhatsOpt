@@ -8,16 +8,14 @@ module WhatsOpt
     class DisciplineNotFoundException < StandardError
     end
 
-    def initialize(mda, pkg_format: false, server_host: nil, driver_name: nil, driver_options: {}, outdir: ".",
+    def initialize(mda, pkg_format: false, server_host: nil, server_port: 31400, driver_name: nil, driver_options: {}, outdir: ".",
                    whatsopt_url: "", api_key: "", remote_ip: "")
-      super(mda, pkg_format: pkg_format)
+      super(mda, pkg_format: pkg_format, server_host: server_host, server_port: server_port)
       @prefix = "openmdao"
       @framework = "openmdao"
-      @server_host = server_host
-      @remote = !server_host.nil?
       @outdir = outdir
 
-      @sgen = WhatsOpt::ServerGenerator.new(mda, pkg_format: pkg_format, server_host: server_host, remote_ip: remote_ip)
+      @sgen = WhatsOpt::ServerGenerator.new(mda, pkg_format: pkg_format, server_host: server_host, server_port: server_port, remote_ip: remote_ip)
       @eggen = WhatsOpt::EgmdoGenerator.new(mda, pkg_format: pkg_format, remote_operation: @remote, outdir: outdir,
                                             driver_name: driver_name, driver_options: driver_options)
       @sqlite_filename = "cases.sqlite"
@@ -71,8 +69,7 @@ module WhatsOpt
     def run(category = Operation::CAT_RUNONCE, sqlite_filename = nil)
       ok, lines = false, []
       Dir.mktmpdir("run_#{@impl.basename}_#{category}") do |dir|
-        # dir='/tmp' # for debug
-
+        # dir='/tmp/CLIENT' # for debug
         _generate_code(dir, sqlite_filename: sqlite_filename)
       rescue ServerGenerator::ThriftError => e
         ok = false
