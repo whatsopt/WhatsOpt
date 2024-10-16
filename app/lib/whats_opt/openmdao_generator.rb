@@ -69,7 +69,7 @@ module WhatsOpt
     def run(category = Operation::CAT_RUNONCE, sqlite_filename = nil)
       ok, lines = false, []
       Dir.mktmpdir("run_#{@impl.basename}_#{category}") do |dir|
-        # dir='/tmp/CLIENT' # for debug
+        # dir='/tmp/CLIENT_DOE' # for debug
         _generate_code(dir, sqlite_filename: sqlite_filename)
       rescue ServerGenerator::ThriftError => e
         ok = false

@@ -283,14 +283,17 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     skip_if_parallel
     skip "Apache Thrift not installed" unless thrift?
     Dir.mktmpdir do |dir|
+      # dir = "/tmp/SERVER_DOE"
       pid = self.start_server(@ogen, dir)
       @ogen_remote = WhatsOpt::OpenmdaoGenerator.new(@mda, server_host: "localhost", server_port: @@server_port, driver_name: "smt_doe_lhs")
       File.delete("cicav_doe.sqlite") if File.exist?("cicav_doe.sqlite")
       ok, log = @ogen_remote.run :doe
       assert ok
       assert log
-      assert File.exist?("cicav_doe.sqlite")
-      File.delete("cicav_doe.sqlite") if File.exist?("cicav_doe.sqlite")
+      outdir = "./run_doe_out"  # since openmdao 3.35
+      outfile = "#{outdir}/cicav_doe.sqlite"
+      assert File.exist?(outfile)
+      File.delete(outfile) if File.exist?(outfile)
       self.stop_server
     end
   end
@@ -306,8 +309,10 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
       ok, log = @ogen_remote.run :doe
       assert ok
       assert log
-      assert File.exist?("singleton_uq_doe.sqlite")
-      File.delete("singleton_uq_doe.sqlite") if File.exist?("singleton_uq_doe.sqlite")
+      outdir = "./run_doe_out"  # since openmdao 3.35
+      outfile = "#{outdir}/singleton_uq_doe.sqlite"
+      assert File.exist?(outfile)
+      File.delete(outfile) if File.exist?(outfile)
       self.stop_server
     end
   end
