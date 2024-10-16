@@ -10,10 +10,8 @@ module WhatsOpt
     class ThriftError < StandardError
     end
 
-    def initialize(mda, server_host: nil, remote_ip: "", pkg_format: false)
-      super(mda, pkg_format: pkg_format)
-      @server_host = server_host
-      @remote = !server_host.nil?
+    def initialize(mda, server_host: nil, server_port: 31400, remote_ip: "", pkg_format: false)
+      super(mda, pkg_format: pkg_format, server_host: server_host, server_port: server_port)
       @prefix = "remote_server"
       @comment_delimiters = { begin: "/*", end: "*/" }
       @remote_ip = remote_ip

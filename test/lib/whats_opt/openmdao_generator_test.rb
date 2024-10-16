@@ -7,6 +7,8 @@ require "mkmf" # for find_executable
 MakeMakefile::Logging.instance_variable_set(:@log, File.open(File::NULL, "wb"))
 
 class OpenmdaoGeneratorTest < ActiveSupport::TestCase
+  @@server_port = 31400
+
   def thrift?
     @found ||= find_executable("thrift")
   end
@@ -14,7 +16,32 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
   def setup
     @mda = analyses(:cicav)
     @ogen = WhatsOpt::OpenmdaoGenerator.new(@mda)
+    @server_host = "localhost"  
+    @pid = -1
   end
+
+  def start_server(ogen, dir)
+    skip_if_parallel
+    @@server_port += 1  # ensure we start on a different port for Github CI to avoid "Already in use" error
+    # p "Start on #{@@server_port}"
+    ogen.server_port = @@server_port  
+    ogen._generate_code dir
+    cmd = "#{WhatsOpt::OpenmdaoGenerator::PYTHON} #{File.join(dir, 'run_server.py')} --port #{@@server_port}"
+    # p cmd
+    @pid = spawn(cmd, [:out] => "/dev/null")
+    sleep(1) # wait 1s for server start
+    # p "Process #{@pid} started"
+    @pid
+  end 
+
+  def stop_server()
+    if @pid > 0
+      Process.kill("TERM", @pid)
+      Process.waitpid @pid;
+      # p "Process #{@pid} stopped"
+    end
+  end
+
 
   test "should generate openmdao component for a given discipline in mda" do
     skip "Apache Thrift not installed" unless thrift?
@@ -229,15 +256,13 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     skip_if_parallel
     skip "Apache Thrift not installed" unless thrift?
     Dir.mktmpdir do |dir|
-      @ogen._generate_code dir
-      pid = spawn("#{WhatsOpt::OpenmdaoGenerator::PYTHON} #{File.join(dir, 'run_server.py')}", [:out] => "/dev/null")
-      sleep(1) # wait 1s for server start
-      @ogen_remote = WhatsOpt::OpenmdaoGenerator.new(@mda, server_host: "localhost")
+      dir = "tmp/BUG"
+      pid = self.start_server(@ogen, dir)
+      @ogen_remote = WhatsOpt::OpenmdaoGenerator.new(@mda, server_host: "localhost", server_port: @@server_port)
       ok, log = @ogen_remote.run
       assert ok
       assert log
-      Process.kill("KILL", pid)
-      Process.waitpid pid; sleep(1)
+      self.stop_server
     end
   end
 
@@ -245,15 +270,12 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     skip_if_parallel
     skip "Apache Thrift not installed" unless thrift?
     Dir.mktmpdir do |dir|
-      @ogen._generate_code dir
-      pid = spawn("#{WhatsOpt::OpenmdaoGenerator::PYTHON} #{File.join(dir, 'run_server.py')}", [:out] => "/dev/null")
-      sleep(1) # wait 1s for server start
-      @ogen_remote = WhatsOpt::OpenmdaoGenerator.new(@mda, server_host: "localhost", driver_name: "runonce")
+      pid = self.start_server(@ogen, dir)
+      @ogen_remote = WhatsOpt::OpenmdaoGenerator.new(@mda, server_host: "localhost", server_port: @@server_port, driver_name: "runonce")
       ok, log = @ogen_remote.run
       assert ok
       assert log
-      Process.kill("KILL", pid)
-      Process.waitpid pid; sleep(1)
+      self.stop_server
     end
   end
 
@@ -261,18 +283,18 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     skip_if_parallel
     skip "Apache Thrift not installed" unless thrift?
     Dir.mktmpdir do |dir|
-      @ogen._generate_code dir
-      pid = spawn("#{WhatsOpt::OpenmdaoGenerator::PYTHON} #{File.join(dir, 'run_server.py')}", [:out] => "/dev/null")
-      sleep(1) # wait 1s for server start
-      @ogen_remote = WhatsOpt::OpenmdaoGenerator.new(@mda, server_host: "localhost", driver_name: "smt_doe_lhs")
+      # dir = "/tmp/SERVER_DOE"
+      pid = self.start_server(@ogen, dir)
+      @ogen_remote = WhatsOpt::OpenmdaoGenerator.new(@mda, server_host: "localhost", server_port: @@server_port, driver_name: "smt_doe_lhs")
       File.delete("cicav_doe.sqlite") if File.exist?("cicav_doe.sqlite")
       ok, log = @ogen_remote.run :doe
       assert ok
       assert log
-      assert File.exist?("cicav_doe.sqlite")
-      File.delete("cicav_doe.sqlite") if File.exist?("cicav_doe.sqlite")
-      Process.kill("KILL", pid)
-      Process.waitpid pid; sleep(1)
+      outdir = "./run_doe_out"  # since openmdao 3.35
+      outfile = "#{outdir}/cicav_doe.sqlite"
+      assert File.exist?(outfile)
+      File.delete(outfile) if File.exist?(outfile)
+      self.stop_server
     end
   end
 
@@ -281,18 +303,17 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     skip "Apache Thrift not installed" unless thrift?
     @mda = analyses(:singleton_uq)
     Dir.mktmpdir do |dir|
-      @ogen._generate_code dir
-      pid = spawn("#{WhatsOpt::OpenmdaoGenerator::PYTHON} #{File.join(dir, 'run_server.py')}", [:out] => "/dev/null")
-      sleep(1) # wait 1s for server start
-      @ogen_remote = WhatsOpt::OpenmdaoGenerator.new(@mda, server_host: "localhost")
+      pid = self.start_server(@ogen, dir)
+      @ogen_remote = WhatsOpt::OpenmdaoGenerator.new(@mda, server_host: "localhost", server_port: @@server_port)
       File.delete("singleton_uq_doe.sqlite") if File.exist?("singleton_uq_doe.sqlite")
       ok, log = @ogen_remote.run :doe
       assert ok
       assert log
-      assert File.exist?("singleton_uq_doe.sqlite")
-      File.delete("singleton_uq_doe.sqlite") if File.exist?("singleton_uq_doe.sqlite")
-      Process.kill("KILL", pid)
-      Process.waitpid pid; sleep(1)
+      outdir = "./run_doe_out"  # since openmdao 3.35
+      outfile = "#{outdir}/singleton_uq_doe.sqlite"
+      assert File.exist?(outfile)
+      File.delete(outfile) if File.exist?(outfile)
+      self.stop_server
     end
   end
 
@@ -368,15 +389,12 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     mda = analyses(:outermda)
     ogen = WhatsOpt::OpenmdaoGenerator.new(mda)
     Dir.mktmpdir do |dir|
-      ogen._generate_code dir
-      pid = spawn("#{WhatsOpt::OpenmdaoGenerator::PYTHON} #{File.join(dir, 'run_server.py')}", [:out] => "/dev/null")
-      sleep(1) # wait 1s for server start
-      @ogen_remote = WhatsOpt::OpenmdaoGenerator.new(mda, server_host: "localhost", driver_name: "runonce")
+      pid = self.start_server(ogen, dir)
+      @ogen_remote = WhatsOpt::OpenmdaoGenerator.new(mda, server_host: "localhost", server_port: @@server_port, driver_name: "runonce")
       ok, log = @ogen_remote.run
       assert ok
       assert log
-      Process.kill("KILL", pid)
-      Process.waitpid pid; sleep(1)
+      self.stop_server
     end
   end
 
@@ -386,15 +404,12 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     mda = analyses(:outermda)
     ogen = WhatsOpt::OpenmdaoGenerator.new(mda, pkg_format: true)
     Dir.mktmpdir do |dir|
-      ogen._generate_code dir
-      pid = spawn("#{WhatsOpt::OpenmdaoGenerator::PYTHON} #{File.join(dir, 'run_server.py')}", [:out] => "/dev/null")
-      sleep(1) # wait 1s for server start
-      @ogen_remote = WhatsOpt::OpenmdaoGenerator.new(mda, pkg_format: true, server_host: "localhost", driver_name: "runonce")
+      pid = self.start_server(ogen, dir)
+      @ogen_remote = WhatsOpt::OpenmdaoGenerator.new(mda, pkg_format: true, server_host: "localhost", server_port: @@server_port, driver_name: "runonce")
       ok, log = @ogen_remote.run
       assert ok
       assert log
-      Process.kill("KILL", pid)
-      Process.waitpid pid; sleep(1)
+      self.stop_server
     end
   end
 
