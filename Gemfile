@@ -136,3 +136,10 @@ gem "pagy", "~> 9.0"
 
 # Matrix
 gem "matrix"  # removed from stndard library in ruby 3.1
+
+# No longer in standard library in ruby 3.4
+# Add gems here to silence warnings
+# /dtis-app/rvm/rubies/ruby-3.3.5/lib/ruby/3.3.0/kconv.rb:13: warning: /dtis-app/rvm/rubies/ruby-3.3.5/lib/ruby/3.3.0/x86_64-linux/nkf.so was loaded from the standard library, but will no longer be part of the default gems starting from Ruby 3.4.0.
+gem "nkf"
+# /d/rlafage/workspace/WhatsOpt/test/test_helper.rb:3: warning: /dtis-app/rvm/rubies/ruby-3.3.5/lib/ruby/3.3.0/csv.rb was loaded from the standard library, but will no longer be part of the default gems starting from Ruby 3.4.0.
+gem "csv"
