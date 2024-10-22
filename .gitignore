@@ -79,5 +79,6 @@ app/javascript/XDSMjs
 
 # Ignore Openmdao reports
 **/reports
+**/*_out
 
 # Ignore sqlite files
