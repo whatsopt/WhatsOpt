@@ -45,11 +45,11 @@ gem "sqlite3"
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem "byebug", platforms: [:mri, :mingw, :x64_mingw]
-  gem "guard"
-  gem "guard-minitest"
+  # gem "guard"
+  # gem "guard-minitest"
   # Adds support for Capybara system testing and selenium driver
-  gem "capybara"
-  gem "selenium-webdriver"
+  # gem "capybara"
+  # gem "selenium-webdriver"
   # Compute test coverage
   gem "simplecov",      require: false
   gem "simplecov-lcov", require: false
