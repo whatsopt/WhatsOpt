@@ -54,10 +54,22 @@ Rails.application.configure do
   # Skip http-to-https redirect for the default health check endpoint.
   # config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
 
-  # Log to STDOUT by default
-  # config.logger = ActiveSupport::Logger.new(STDOUT)
-  #   .tap  { |logger| logger.formatter = ::Logger::Formatter.new }
-  #   .then { |logger| ActiveSupport::TaggedLogging.new(logger) }
+  # Customizing the log format by defining a new formatter class.
+  # This formatter outputs logs with a custom format including timestamp, severity,
+  # and the log message.
+  class CustomLoggerFormatter < Logger::Formatter
+    def call(severity, time, progname, msg)
+      formatted_time = time.strftime("%Y-%m-%d %H:%M:%S")
+      "#{formatted_time} #{severity} #{msg}\n"
+    end
+  end
+
+  # Configure log file rotation. This line sets up the logger to write to 
+  # 'log/production.log', rotate the log file when it reaches 100 megabytes, and
+  # keep up to 10 old log files.
+  config.logger = Logger.new('log/production.log', 10, 100.megabytes)
+    .tap  { |logger| logger.formatter = CustomLoggerFormatter.new }
+    .then { |logger| ActiveSupport::TaggedLogging.new(logger) }
 
   # Prepend all log lines with the following tags.
   config.log_tags = [ :remote_ip ]
