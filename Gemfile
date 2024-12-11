@@ -8,7 +8,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby "3.3.5"
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem "rails", "~> 7.2"
+gem "rails", "~> 8.0"
 # Use Puma as the app server
 gem "puma", "~> 6.0"
 # Use SCSS for stylesheets
@@ -103,7 +103,7 @@ gem "ancestry"
 gem "acts_as_list"
 
 # JSON serializers
-gem "active_model_serializers", "~> 0.10.14"
+gem "active_model_serializers", "~> 0.10.15"
 
 # Background jobs
 gem "sucker_punch"
