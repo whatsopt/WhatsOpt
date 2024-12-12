@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class Api::V1::VariablesController < Api::V1::ApiMdaUpdaterController
-
   # GET /api/v1/analyses/{mda_id}/variables
   def index
     @mda = Analysis.find(params[:mda_id])
@@ -18,5 +17,4 @@ class Api::V1::VariablesController < Api::V1::ApiMdaUpdaterController
     varinfo = @mda.find_info(@variable)
     json_response varinfo.to_json
   end
-
 end

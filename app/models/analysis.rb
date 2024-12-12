@@ -35,7 +35,7 @@ class Analysis < ApplicationRecord
   scope :owned_by, ->(user) { with_role(:owner, user) }
   scope :of_project, -> (project) { joins(:design_project_filings).where(design_project_filing: { design_project: project }) }
   scope :newest, ->() { order(updated_at: :desc) }
-  scope :name_starts_with, ->(prefix) { where('lower(analyses.name) like ?', "#{prefix.downcase}%")}
+  scope :name_starts_with, ->(prefix) { where('lower(analyses.name) like ?', "#{prefix.downcase}%") }
 
   after_save :refresh_connections, unless: Proc.new { self.disciplines.count < 2 }
   after_save :ensure_ancestry_for_sub_analyses
@@ -822,7 +822,7 @@ class Analysis < ApplicationRecord
     # Rails.logger.info "################ AFTER CREATE #{mda_attrs["name"]}"
     # Rails.logger.info ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> #{mda.name}"
     # Variable.of_analysis(mda).each do |v|
-      # Rails.logger.info ">>> #{v.discipline.name}(#{v.discipline.id}) #{v.name} #{v.io_mode}"
+    # Rails.logger.info ">>> #{v.discipline.name}(#{v.discipline.id}) #{v.name} #{v.io_mode}"
     # end
     # Connection.of_analysis(mda).each do |c|
     #   # Rails.logger.info "CCCCCCCCCCCCCCC #{c.from.discipline.name} -> #{c.to.discipline.name}  #{c.from.name}(#{c.from.id})"
@@ -880,14 +880,14 @@ class Analysis < ApplicationRecord
       [out_disc, abspath]
     end
   end
-  
+
   def find_targets(var)
     in_discs = var.outgoing_connections.map(&:to).map(&:discipline)
-    res =  []
-    in_discs.each do |in_disc| 
+    res = []
+    in_discs.each do |in_disc|
       if in_disc.has_sub_analysis?
         # should get the only out var of the same name in the sub analysis
-        var = Variable.of_analysis(in_disc.sub_analysis).where(name: var.name, io_mode: WhatsOpt::Variable::OUT).first 
+        var = Variable.of_analysis(in_disc.sub_analysis).where(name: var.name, io_mode: WhatsOpt::Variable::OUT).first
         res += in_disc.sub_analysis.find_targets(var)
       else
         abspath = in_disc.path.to_a
@@ -896,7 +896,7 @@ class Analysis < ApplicationRecord
       end
     end
     res
-  end 
+  end
 
   def find_info(var)
     res = {}

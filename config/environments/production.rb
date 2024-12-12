@@ -43,7 +43,7 @@ Rails.application.configure do
     end
   end
 
-  # Configure log file rotation. This line sets up the logger to write to 
+  # Configure log file rotation. This line sets up the logger to write to
   # 'log/production.log', rotate the log file when it reaches 100 megabytes, and
   # keep up to 10 old log files.
   config.logger = Logger.new('log/production.log', 10, 100.megabytes)

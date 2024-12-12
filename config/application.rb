@@ -28,10 +28,10 @@ module WhatsOpt
     # config.eager_load_paths << Rails.root.join("extras")
     config.active_job.queue_adapter = :sucker_punch
 
-    # Thrift generated code needs this 
+    # Thrift generated code needs this
     config.autoload_paths << "#{config.root}/app/lib/whats_opt/services"
 
-    # Keep previous defaults 
+    # Keep previous defaults
     # See https://guides.rubyonrails.org/configuring.html
 
     # Require `belongs_to` associations by default. Rails >= 5.0 default is true.
