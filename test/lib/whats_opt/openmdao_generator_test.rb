@@ -16,7 +16,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
   def setup
     @mda = analyses(:cicav)
     @ogen = WhatsOpt::OpenmdaoGenerator.new(@mda)
-    @server_host = "localhost"  
+    @server_host = "localhost"
     @pid = -1
   end
 
@@ -24,7 +24,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     skip_if_parallel
     @@server_port += 1  # ensure we start on a different port for Github CI to avoid "Already in use" error
     # p "Start on #{@@server_port}"
-    ogen.server_port = @@server_port  
+    ogen.server_port = @@server_port
     ogen._generate_code dir
     cmd = "#{WhatsOpt::OpenmdaoGenerator::PYTHON} #{File.join(dir, 'run_server.py')} --port #{@@server_port}"
     # p cmd
@@ -32,7 +32,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     sleep(1) # wait 1s for server start
     # p "Process #{@pid} started"
     @pid
-  end 
+  end
 
   def stop_server()
     if @pid > 0

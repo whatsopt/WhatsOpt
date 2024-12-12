@@ -27,5 +27,4 @@ class Api::V1::VariableControllerTest < ActionDispatch::IntegrationTest
     assert_equal "Disc", resp["to"][1][0]["name"]
     assert_equal [], resp["to"][1][1]
   end
-
 end

@@ -20,7 +20,7 @@ module WhatsOpt
     end
 
     def py_shortname
-      if self.name =~ /^.*:(\w+)$/ 
+      if self.name =~ /^.*:(\w+)$/
         $1.tr(EXCLUDED_CHARS, "_")
       else
         self.py_varname

@@ -186,7 +186,7 @@ class Discipline < ApplicationRecord
   end
 
   def create_sub_analysis_discipline!(innermda)
-    self.type = Discipline::ANALYSIS if self.type != Discipline::ANALYSIS && self.type != Discipline::OPTIMIZATION 
+    self.type = Discipline::ANALYSIS if self.type != Discipline::ANALYSIS && self.type != Discipline::OPTIMIZATION
     self.name = innermda.name
     self.save!
     ad = self.build_analysis_discipline(analysis: innermda)
