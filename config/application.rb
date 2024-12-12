@@ -9,7 +9,7 @@ Bundler.require(*Rails.groups)
 module WhatsOpt
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 7.2
+    config.load_defaults 8.0
 
     Rails.autoloaders.main.ignore("#{Rails.root}/lib")
     Rails.autoloaders.main.ignore("#{Rails.root}/app/lib/whats_opt/services")
