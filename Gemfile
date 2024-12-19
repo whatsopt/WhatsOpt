@@ -143,3 +143,7 @@ gem "matrix"  # removed from stndard library in ruby 3.1
 gem "nkf"
 # /d/rlafage/workspace/WhatsOpt/test/test_helper.rb:3: warning: /dtis-app/rvm/rubies/ruby-3.3.5/lib/ruby/3.3.0/csv.rb was loaded from the standard library, but will no longer be part of the default gems starting from Ruby 3.4.0.
 gem "csv"
+
+# Fix stringio version required by passenger in production
+gem "stringio", "3.1.1"
+

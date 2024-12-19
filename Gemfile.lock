@@ -433,7 +433,7 @@ GEM
       net-sftp (>= 2.1.2)
       net-ssh (>= 2.8.0)
       ostruct
-    stringio (3.1.2)
+    stringio (3.1.1)
     sucker_punch (3.2.0)
       concurrent-ruby (~> 1.0)
     terser (1.2.4)
@@ -529,6 +529,7 @@ DEPENDENCIES
   spring
   sprockets-rails
   sqlite3
+  stringio (= 3.1.1)
   sucker_punch
   terser
   thrift (~> 0.20)
