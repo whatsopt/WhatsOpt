@@ -114,7 +114,7 @@ gem "rubyzip", "~>2.3.0"
 # UI
 gem "popper" # bootstrap dependency
 gem "bootstrap", "~> 5.0"
-gem "font-awesome-sass", "~> 6.5.0"
+gem "font-awesome-sass", "~> 6.7.2"
 
 # thrift
 gem "thrift", "~>0.20"
