@@ -1,5 +1,10 @@
 <h1>CHANGELOG</h1>
 
+<h3>1.31.3 (23/12/2024)</h3>
+<ul>
+  <li>Upgrade to rails 8.0.1 and update javascript dependencies</li>
+</ul>
+
 <h3>1.31.2 (12/12/2024)</h3>
 <ul>
   <li>Upgrade to rails 8.0 and update gems dependencies</li>
