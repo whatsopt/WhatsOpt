@@ -22,7 +22,7 @@
     "bootstrap": "^5.2.2",
     "buffer": "^6.0.3",
     "compression-webpack-plugin": "^11.1.0",
-    "cookie": "^0.6.0",
+    "cookie": "^1.0.2",
     "core-js": "^3.0.0",
     "css-loader": "^7.1.2",
     "css-minimizer-webpack-plugin": "^7.0.0",
@@ -81,7 +81,7 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^7.1.0",
     "eslint-plugin-react": "^7.20.0",
-    "eslint-plugin-react-hooks": "^4.1.0",
+    "eslint-plugin-react-hooks": "^5.1.0",
     "eslint-webpack-plugin": "^4.0.0",
     "webpack-dev-server": "^5.0.4"
   },
