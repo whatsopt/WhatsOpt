@@ -147,15 +147,3 @@ disc_sub_analysis:
   type: analysis
   analysis: sub_analysis
   position: 1
-
-driver_hsic:
-  name: __DRIVER__
-  type: null_driver
-  analysis: hsic
-  position: 0
-
-disc_hsic:
-  name: TestHsic
-  type: analysis
-  analysis: hsic
-  position: 1

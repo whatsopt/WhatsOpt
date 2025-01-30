@@ -40,7 +40,6 @@
     "pnp-webpack-plugin": "1",
     "prop-types": "^15.7.2",
     "qs": "^6.9.4",
-    "rc-slider": "^11.1.5",
     "react": "^18.2.0",
     "react-beautiful-dnd": "^13.0.0",
     "react-bootstrap": "^2.1.1",

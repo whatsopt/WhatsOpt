@@ -14,10 +14,6 @@ from whatsopt_server.handlers.surrogate_store_handler import SurrogateStoreHandl
 from whatsopt_server.services import SurrogateStore as SurrogateStoreService
 from whatsopt_server.handlers.optimizer_store_handler import OptimizerStoreHandler
 from whatsopt_server.services import OptimizerStore as OptimizerStoreService
-from whatsopt_server.handlers.sensitivity_analyser_handler import (
-    SensitivityAnalyserHandler,
-)
-from whatsopt_server.services import SensitivityAnalyser as SensitivityAnalyserService
 
 import warnings
 
@@ -59,10 +55,6 @@ def main(args=sys.argv[1:]):
         OptimizerStoreService.Processor(
             OptimizerStoreHandler(outdir=outdir, logdir=logdir)
         ),
-    )
-    processor.registerProcessor(
-        "SensitivityAnalyserService",
-        SensitivityAnalyserService.Processor(SensitivityAnalyserHandler()),
     )
     processor.registerProcessor(
         "AdministrationService",

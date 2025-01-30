@@ -57,11 +57,8 @@ class WhatsOptApi {
       .catch((error) => console.log(error));
   }
 
-  analyseSensitivity(opeId, thresholding, quantile, gThreshold, callback) {
-    let path = `/operations/${opeId}/sensitivity_analysis?`;
-    path += `thresholding=${thresholding}`;
-    path += `&quantile=${quantile}`;
-    path += `&g_threshold=${gThreshold}`;
+  analyseSensitivity(opeId, callback) {
+    const path = `/operations/${opeId}/sensitivity_analysis`;
     axios.get(this.apiUrl(path))
       .then(callback)
       .catch((error) => console.log(error));
