@@ -29,25 +29,8 @@ class Api::V1::SensitivityAnalysesController < Api::ApiController
           status, sa, err = analyser.run
           return { statusOk: status, sensitivity: sa, error: err }
         end
-      when Operation::CAT_DOE
-        analyser = WhatsOpt::HsicSensitivityAnalyser.new(ope)
-        thresholding = case params[:thresholding]
-                       when "Zero_th"
-                         WhatsOpt::Services::HsicThresholding::ZERO
-                       when "Cond_th"
-                         WhatsOpt::Services::HsicThresholding::COND
-                       when "Ind_th"
-                         WhatsOpt::Services::HsicThresholding::IND
-                       else
-                         err_msg = "Unknown thresholding type: should be [Zero|Cond|Ind]_th, got #{params[:thresholding]}"
-                         Rails.logger.error "Unknown thresholding type: should be [Zero|Cond|Ind]_th, got #{params[:thresholding]}"
-        end
-        quantile = params[:quantile].to_f
-        g_threshold = params[:g_threshold].to_f
-        status, sa, err_msg = analyser.get_hsic_sensitivity(thresholding, quantile, g_threshold)
-        return { statusOk: status, sensitivity: sa, error: err_msg }
       end
       { statusOk: false, sensitivity: {},
-               error: "Bad operation category: Should be #{Operation::CAT_SENSITIVITY} or #{Operation::CAT_DOE} (got #{ope.category})" }
+               error: "Bad operation category: Should be #{Operation::CAT_SENSITIVITY} (got #{ope.category})" }
     end
 end

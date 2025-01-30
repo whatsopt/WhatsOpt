@@ -85,7 +85,4 @@ users_roles_coowner:
 users_roles_member2:
   user: user4
   role: member2_cicav_mda_role
-
-users_roles_owner_hsic:
-  user: user1
-  role: owner_hsic_role
+  

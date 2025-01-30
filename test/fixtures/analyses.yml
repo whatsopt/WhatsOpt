@@ -33,6 +33,3 @@ singleton_uq:
 
 sub_analysis:
   name: sub_analysis_to_be_added
-
-hsic:
-  name: TestHsic
