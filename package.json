@@ -43,7 +43,7 @@
     "react": "^18.2.0",
     "react-beautiful-dnd": "^13.0.0",
     "react-bootstrap": "^2.1.1",
-    "react-bootstrap-typeahead": "^6.3.2",
+    "react-bootstrap-typeahead": "^7.0.0-rc.5",
     "react-dom": "^18.2.0",
     "react-plotly.js": "^2.4.0",
     "react-promise-tracker": "^2.1.0",

@@ -61,10 +61,6 @@ function VariablesGlobalFilter({
   }, 200);
 
   const active = (value !== '');
-  let color = 'grey'; // inactive
-  if (active) {
-    color = '#007bff'; // active
-  }
   return (
     <div className="input-group mb-3">
       <input
@@ -78,21 +74,7 @@ function VariablesGlobalFilter({
         }}
         placeholder="Filter..."
       />
-      <button
-        disabled={!active}
-        type="button"
-        className="btn bg-transparent"
-        style={{
-          marginLeft: '-40px', zIndex: 100, color, border: 0,
-        }}
-        onClick={() => {
-          setValue('');
-          onChange('');
-        }}
-      >
-        <i className="fa fa-times" />
-      </button>
-      <span className="input-group-text padding-left">
+      <span className="input-group-text">
         {matchCount}
         {' '}
         Variables
