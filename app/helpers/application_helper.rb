@@ -21,4 +21,8 @@ module ApplicationHelper
   def enable_remote_operations?
     APP_CONFIG["enable_remote_operations"]
   end
+
+  def restricted_access?
+    APP_CONFIG["restrict_access"]
+  end
 end

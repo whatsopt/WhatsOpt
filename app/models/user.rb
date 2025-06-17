@@ -39,7 +39,11 @@ class User < ActiveRecord::Base
 
   # Used to create user on first LDAP authentication
   def ldap_before_save
-    self.email = Devise::LDAP::Adapter.get_ldap_param(login, "mail").first
+    if !restricted_access? || need_to_know_expert?
+      self.email = Devise::LDAP::Adapter.get_ldap_param(login, "mail").first
+    else 
+      raise "Restricted server: you are not allowed to create a user account."
+    end
   end
 
   def admin?
@@ -50,13 +54,22 @@ class User < ActiveRecord::Base
     @sego_expert ||= has_role?(:sego_expert)
   end
 
+  def need_to_know_expert?
+    @need_to_know_expert ||= has_role?(:need_to_know_expert)
+    if !@need_to_know_expert
+      @unit ||= Devise::LDAP::Adapter.get_ldap_param(login, "ou")&.first
+      @need_to_know_expert ||= @unit == "DTIS/CASH" || @unit == "DTIS/CSAM" || @unit == "DTIS/MARS"
+    end
+    @need_to_know_expert
+  end
+
   def reset_api_key!
     generate_api_key
     save
   end
 
   def active_for_authentication?
-    super && !deactivated
+    super && !deactivated && (!restricted_access? || need_to_know_expert? || admin?)
   end
 
   def destroy
@@ -87,5 +100,9 @@ class User < ActiveRecord::Base
       add_role(:user)
       self.analyses_query = "all"
       self.analyses_scope_design_project_id = nil
+    end
+
+    def restricted_access?
+      APP_CONFIG["restrict_access"]
     end
 end
