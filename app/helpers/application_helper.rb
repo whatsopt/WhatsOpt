@@ -5,10 +5,10 @@ module ApplicationHelper
   def logo_svg()
     image_svg = if restricted_access?
       "logo_whatsopt_kaki_v1.0.svg"
-    elsif Rails.env.development?
-      "logo_whatsopt_yellow_v1.0.svg"
-    else
+    elsif Rails.env.production?
       "logo_whatsopt_v1.0.svg"
+    else
+      "logo_whatsopt_yellow_v1.0.svg"
     end
     image_tag("#{}", alt: "Logo", width: 32, height: 32, class: "d-inline-block align-top")
   end

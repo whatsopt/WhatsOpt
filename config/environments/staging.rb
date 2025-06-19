@@ -102,6 +102,6 @@ Rails.application.configure do
   # Skip DNS rebinding protection for the default health check endpoint.
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
 
-  # set the relative root, because we're deploying to /whatsopt
-  config.relative_url_root = "/whatsopt"
+  # set the relative root, because we're deploying to /whatsopt-dev
+  config.relative_url_root = "/whatsopt-dev"
 end
