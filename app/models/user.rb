@@ -56,7 +56,7 @@ class User < ActiveRecord::Base
 
   def need_to_know_expert?
     @need_to_know_expert ||= has_role?(:need_to_know_expert)
-    if !@need_to_know_expert
+    if !@need_to_know_expert && API_CONFIG["enable_ldap"]
       @unit ||= Devise::LDAP::Adapter.get_ldap_param(login, "ou")&.first
       @need_to_know_expert ||= @unit == "DTIS/CASH" || @unit == "DTIS/CSAM" || @unit == "DTIS/MARS"
     end
