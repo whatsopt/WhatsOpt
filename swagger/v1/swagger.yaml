@@ -15,11 +15,11 @@ servers:
 - url: https://selene.onecert.fr/whatsopt
   description: Internal production server
 - url: https://erebe.onecert.fr/whatsopt
+  description: Internal Restricted server
+- url: https://selene.onecert.fr/whatsopt-dev
   description: Internal staging server
-- url: http://erebe:3000
+- url: http://erebe.onecert.fr:3000
   description: Development server
-- url: http://localhost:3000
-  description: Docker/WSL development server
 paths:
   "/api/v1/analyses":
     get:

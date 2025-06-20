@@ -8,6 +8,14 @@ if ENV["WHATSOPT_INTERNET"]
   set :dlvdir, "~/DELIVERY"
   set :repository, "#{ENV['WHATSOPT_INTERNET_DELIVERY_DIR']}/#{fetch(:appname)}"
   set :server, ENV["WHATSOPT_INTERNET_SERVER"]
+elsif ENV["WHATSOPT_RESTRICT"]
+  puts "*****************************************************"
+  puts "*** You are deploying to a restricted server.     ***" 
+  puts "*** Please ensure you have the right permissions. ***"
+  puts "*****************************************************"
+  puts "Press enter to continue or Ctrl+C to abort."
+  STDIN.gets
+  set :server, ENV["WHATSOPT_RESTRICT_SERVER"]
 else
   set :server, ENV["WHATSOPT_INTRANET_SERVER"]
 end

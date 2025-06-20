@@ -32,9 +32,9 @@ RSpec.configure do |config|
       servers: [
         { url: "https://ether.onera.fr/whatsopt", description: "External production server" },
         { url: "https://selene.onecert.fr/whatsopt", description: "Internal production server" },
-        { url: "http://rdri206h.onecert.fr/whatsopt", description: "Internal staging server" },
-        { url: "http://endymion:3000", description: "Development server" },
-        { url: "http://192.168.99.100:3000", description: "Docker development server" },
+        { url: "http://erebe.onecert.fr/whatsopt", description: "Restricted server" },
+        { url: "https://selene.onecert.fr/whatsopt-dev", description: "Internal staging server" },
+        { url: "http://erebe.onecert.fr:3000", description: "Development server" },
       ],
       paths: {},
       components: {
