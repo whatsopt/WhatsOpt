@@ -8,17 +8,24 @@ if ENV["WHATSOPT_INTERNET"]
   set :dlvdir, "~/DELIVERY"
   set :repository, "#{ENV['WHATSOPT_INTERNET_DELIVERY_DIR']}/#{fetch(:appname)}"
   set :server, ENV["WHATSOPT_INTERNET_SERVER"]
+  puts "*****************************************************"
+  puts "*** You are deploying to the INTERNET server.     ***" 
+  puts "*****************************************************"
+  set :server, ENV["WHATSOPT_INTRANET_SERVER"]
 elsif ENV["WHATSOPT_RESTRICT"]
   puts "*****************************************************"
-  puts "*** You are deploying to a restricted server.     ***" 
-  puts "*** Please ensure you have the right permissions. ***"
+  puts "*** You are deploying to a RESTRICTED server.     ***" 
   puts "*****************************************************"
-  puts "Press enter to continue or Ctrl+C to abort."
-  STDIN.gets
   set :server, ENV["WHATSOPT_RESTRICT_SERVER"]
 else
+  puts "*****************************************************"
+  puts "*** You are deploying to the INTRANET server.     ***" 
+  puts "*****************************************************"
   set :server, ENV["WHATSOPT_INTRANET_SERVER"]
 end
+
+puts "Press enter to continue or Ctrl+C to abort."
+STDIN.gets
 
 set :deploy_to, "#{ENV['WHATSOPT_DEPLOY_DIR']}"
 set :rvm_ruby_version, "ruby-3.3.5@whatsopt"
