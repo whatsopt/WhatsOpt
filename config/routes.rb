@@ -52,7 +52,7 @@ Rails.application.routes.draw do
       end
       resources :user_roles, only: [:index, :update, :destroy]
       resource :versioning, only: [:show]
-      resources :optimizations
+      resources :optimizations if APP_CONFIG["enable_remote_optimizations"]
       resources :design_projects, only: [:index, :show, :create]
     end
   end
