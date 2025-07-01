@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 class User < ActiveRecord::Base
+
+  class RestrictedServerException < StandardError; end
+
   rolify strict: true
 
   devise :database_authenticatable
@@ -42,7 +45,7 @@ class User < ActiveRecord::Base
     if !restricted_access? || need_to_know_expert?
       self.email = Devise::LDAP::Adapter.get_ldap_param(login, "mail").first
     else 
-      raise "Restricted server: you are not allowed to create a user account."
+      raise RestrictedServerException, "You are not authorized to access this server."
     end
   end
 

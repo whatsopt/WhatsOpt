@@ -9,6 +9,8 @@ class ApplicationController < ActionController::Base
   rescue_from DeviseLdapAuthenticatable::LdapException, with: :user_not_authenticated
   before_action :authenticate_user!, unless: :api_docs_controller?
 
+  rescue_from User::RestrictedServerException, with: :user_not_authorized
+
   # Authorization
   include Pundit::Authorization
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
