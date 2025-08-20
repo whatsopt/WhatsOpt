@@ -93,7 +93,7 @@ module WhatsOpt
     end
 
     def scaling_res_ref_py_value
-      "1.0"
+      "None"
     end
 
     def escaped_desc
