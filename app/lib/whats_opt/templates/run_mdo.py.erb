@@ -91,10 +91,10 @@ exit(-1)
 <% end %>
 # Objective and constraints definition
 <% @mda.min_objective_variables.each do |voi| -%>
-pb.model.add_objective('<%= voi.name %>'ref=, <%= voi.scaling_ref_py_value %>)
+pb.model.add_objective('<%= voi.name %>', ref=<%= voi.scaling_ref_py_value %>)
 <%- end -%>
 <%- @mda.max_objective_variables.each do |voi| -%>
-pb.model.add_objective('<%= voi.name %>', ref=-1.*<%=voi.scaling_ref_py_value %>)
+pb.model.add_objective('<%= voi.name %>', ref=-1.*<%= voi.scaling_ref_py_value %>)
 <%- end -%>
 <%- @mda.neg_constraint_variables.each do |voi| -%>
 pb.model.add_constraint('<%= voi.name %>', upper=<%= voi.cstr_upper_py_value %>)
