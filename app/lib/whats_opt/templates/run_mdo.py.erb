@@ -91,19 +91,19 @@ exit(-1)
 <% end %>
 # Objective and constraints definition
 <% @mda.min_objective_variables.each do |voi| -%>
-pb.model.add_objective('<%= voi.name %>'<%= @impl.use_units && !voi.units.blank? ? ", units='#{voi.units}'":"" %>)
+pb.model.add_objective('<%= voi.name %>'ref=, <%= voi.scaling_ref_py_value %>)
 <%- end -%>
 <%- @mda.max_objective_variables.each do |voi| -%>
-pb.model.add_objective('<%= voi.name %>', scaler=-1<%= @impl.use_units && !voi.units.blank? ? ", units='#{voi.units}'":"" %>)
+pb.model.add_objective('<%= voi.name %>', ref=-1.*<%=voi.scaling_ref_py_value %>)
 <%- end -%>
 <%- @mda.neg_constraint_variables.each do |voi| -%>
-pb.model.add_constraint('<%= voi.name %>', upper=<%= voi.cstr_upper_py_value %><%= @impl.use_units && !voi.units.blank? ? ", units='#{voi.units}'":"" %>)
+pb.model.add_constraint('<%= voi.name %>', upper=<%= voi.cstr_upper_py_value %>)
 <%- end -%>
 <%- @mda.pos_constraint_variables.each do |voi| -%>
-pb.model.add_constraint('<%= voi.name %>', lower=<%= voi.cstr_lower_py_value %><%= @impl.use_units && !voi.units.blank? ? ", units='#{voi.units}'":"" %>)
+pb.model.add_constraint('<%= voi.name %>', lower=<%= voi.cstr_lower_py_value %>)
 <%- end -%>
 <%- @mda.eq_constraint_variables.each do |voi| -%>
-pb.model.add_constraint('<%= voi.name %>', equals=<%= voi.cstr_init_py_value %><%= @impl.use_units && !voi.units.blank? ? ", units='#{voi.units}'":"" %>)
+pb.model.add_constraint('<%= voi.name %>', equals=<%= voi.cstr_init_py_value %>)
 <%- end -%>
 <%- @mda.bounded_constraint_variables.each do |voi| -%>
 pb.model.add_constraint('<%= voi.name %>', lower=<%= voi.cstr_lower_py_value %>, upper=<%= voi.cstr_upper_py_value %><%= @impl.use_units && !voi.units.blank? ? ", units='#{voi.units}'":"" %>)
