@@ -25,7 +25,7 @@ class MorrisScatterPlot extends React.PureComponent {
 
     const data = [trace];
     const layout = {
-      title: `${outVarName} sensitivity`,
+      title: { text: `${outVarName} sensitivity` },
       width: 500,
       height: 500,
       xaxis: {

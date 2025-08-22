@@ -55,16 +55,16 @@ class ScatterPlotMatrix extends React.PureComponent {
         layout[`xaxis${n}`] = { domain: [(j + 0.1) * pdh, (j + 0.9) * pdh], anchor: yname };
         layout[`yaxis${n}`] = { domain: [(i + 0.1) * pdv, (i + 0.9) * pdv], anchor: xname };
         if (j === 0) {
-          layout[`yaxis${n}`].title = ylabel;
+          layout[`yaxis${n}`].title = { text: ylabel };
         }
         if (i === 0) {
-          layout[`xaxis${n}`].title = xlabel;
+          layout[`xaxis${n}`].title = { text: xlabel };
         }
       }
     }
     layout.width = nDes * 250 + 500;
     layout.height = nOut * 250 + 100;
-    layout.title = title;
+    layout.title = { text: title };
 
     return (<Plot data={data} layout={layout} />);
   }

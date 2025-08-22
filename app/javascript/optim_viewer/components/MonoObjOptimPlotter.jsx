@@ -46,9 +46,9 @@ class MonoObjOptimPlotter extends React.PureComponent {
     const layout = {
       width: 800,
       height: 500,
-      title: 'Data Points',
-      xaxis: { title: '# Evaluations' },
-      yaxis: { title: 'Values' },
+      title: { text: 'Data Points' },
+      xaxis: { title: { text: '# Evaluations' } },
+      yaxis: { title: { text: 'Values' } },
     };
 
     return (<Plot data={plot_data} layout={layout} />);

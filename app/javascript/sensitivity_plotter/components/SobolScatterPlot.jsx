@@ -43,7 +43,7 @@ class SobolScatterPlot extends React.PureComponent {
 
     const data = [traceS1, traceST];
     const layout = {
-      title: `${outVarName} sensitivity`,
+      title: { text: `${outVarName} sensitivity` },
       width: 200 + 75 * (parameterNames.length + 1),
       height: 500,
       xaxis: {

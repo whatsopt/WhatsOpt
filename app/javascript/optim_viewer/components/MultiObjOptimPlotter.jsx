@@ -63,10 +63,10 @@ class MultiObjOptimViewer extends React.PureComponent {
           layout[`xaxis${n}`] = { domain: [(j + 0.1) * pdh, (j + 0.9) * pdh], anchor: yname };
           layout[`yaxis${n}`] = { domain: [(i + 0.1) * pdv, (i + 0.9) * pdv], anchor: xname };
           if (j === 0) {
-            layout[`yaxis${n}`].title = ylabel;
+            layout[`yaxis${n}`].title = { text: ylabel };
           }
           if (i === 0) {
-            layout[`xaxis${n}`].title = xlabel;
+            layout[`xaxis${n}`].title = { text: xlabel };
           }
           plot_data.push(trace);
 
@@ -101,7 +101,7 @@ class MultiObjOptimViewer extends React.PureComponent {
     }
     layout.width = n_obj * 250 + 500;
     layout.height = n_obj * 250 + 100;
-    layout.title = 'Optim history and Pareto fronts';
+    layout.title = { text: 'Optim history and Pareto fronts' };
 
     return (<Plot data={plot_data} layout={layout} />);
   }

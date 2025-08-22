@@ -32,14 +32,14 @@ class ScatterSurfacePlot extends React.PureComponent {
     const layout = {};
     layout.width = 600;
     layout.height = 500;
-    layout.title = title;
+    layout.title = { text: title };
     layout.margin = {
       l: 0, r: 0, b: 0, t: 0,
     };
     layout.scene = {};
-    layout.scene.xaxis = { title: caseUtils.label(casesx) };
-    layout.scene.yaxis = { title: caseUtils.label(casesy) };
-    layout.scene.zaxis = { title: caseUtils.label(casesz) };
+    layout.scene.xaxis = { title: { text: caseUtils.label(casesx) } };
+    layout.scene.yaxis = { title: { text: caseUtils.label(casesy) } };
+    layout.scene.zaxis = { title: { text: caseUtils.label(casesz) } };
 
     return (<Plot data={data} layout={layout} />);
   }
