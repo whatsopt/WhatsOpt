@@ -36,7 +36,7 @@ class IterationRadarPlot extends React.PureComponent {
       data.push(trace);
     }
     const { title } = this.props;
-    const layout = { width: 600, height: 500, title: {text: title} };
+    const layout = { width: 600, height: 500, title: { text: title } };
 
     return (<Plot data={data} layout={layout} />);
   }
