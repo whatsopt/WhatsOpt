@@ -1,5 +1,10 @@
 <h1>CHANGELOG</h1>
 
+<h3>1.31.7 (22/08/2025)</h3>
+<ul>
+  <li>Fix plot title property syntax with plotly 3.0</li>
+</ul>
+
 <h3>1.31.6 (20/06/2025)</h3>
 <ul>
   <li>[Tech] Rework deployment procedure to add restricted server and new dev environement </li>
