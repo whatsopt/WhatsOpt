@@ -34,7 +34,7 @@ class SobolHeatMap extends React.PureComponent {
       },
     ];
     const layout = {
-      title: `${sobolOrder} Sobol indices heatmap`,
+      title: { text: `${sobolOrder} Sobol indices heatmap` },
       xaxis: {
         title: { text: 'Input variables' },
         layer: 'below traces',

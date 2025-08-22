@@ -23,7 +23,7 @@ class DistributionHistogramList extends React.PureComponent {
     data.push(trace);
     layout.width = 300;
     layout.height = 300;
-    layout.title = caseUtils.label(varcase);
+    layout.title = { text: caseUtils.label(varcase) };
 
     return (<Plot data={data} layout={layout} />);
   }
