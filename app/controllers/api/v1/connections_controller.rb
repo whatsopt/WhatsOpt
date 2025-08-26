@@ -23,9 +23,9 @@ class Api::V1::ConnectionsController < Api::V1::ApiMdaUpdaterController
       end
       json_response conns, :created
     rescue Analysis::AncestorUpdateError => e
-      json_response({ message: e }, :unprocessable_entity)
+      json_response({ message: e }, :unprocessable_content)
     rescue Connection::SubAnalysisVariableNotFoundError, Connection::VariableAlreadyProducedError => e
-      json_response({ message: e }, :unprocessable_entity)
+      json_response({ message: e }, :unprocessable_content)
     end
   end
 
@@ -36,7 +36,7 @@ class Api::V1::ConnectionsController < Api::V1::ApiMdaUpdaterController
     @journal.journalize_changes(@connection.from, old_attrs)
     head :no_content
   rescue WhatsOpt::Variable::BadShapeAttributeError => e
-    json_response({ message: e }, :unprocessable_entity)
+    json_response({ message: e }, :unprocessable_content)
   end
 
   # DELETE /api/v1/connections/1
@@ -46,9 +46,9 @@ class Api::V1::ConnectionsController < Api::V1::ApiMdaUpdaterController
       @mda.destroy_connection!(@connection)
       head :no_content
     rescue Analysis::AncestorUpdateError => e
-      json_response({ message: e }, :unprocessable_entity)
+      json_response({ message: e }, :unprocessable_content)
     rescue Connection::CannotRemoveConnectionError => e
-      json_response({ message: e }, :unprocessable_entity)
+      json_response({ message: e }, :unprocessable_content)
     end
   end
 

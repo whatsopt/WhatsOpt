@@ -65,7 +65,7 @@ class Api::V1::PackagesControllerTest < ActionDispatch::IntegrationTest
               archive: fixture_file_upload(sample_file("sellar_optim.json"), "application/gzip"),
               description: "This a package for testing filename validity"
             } }, headers: @auth_headers
-      assert_response :unprocessable_entity
+      assert_response :unprocessable_content
       JSON.parse(response.body)
     end
   end
@@ -77,7 +77,7 @@ class Api::V1::PackagesControllerTest < ActionDispatch::IntegrationTest
               description: "This a package for testing filename validity"
             } }, headers: @auth_headers
       JSON.parse(response.body)
-      assert_response :unprocessable_entity
+      assert_response :unprocessable_content
     end
   end
 end

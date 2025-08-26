@@ -99,7 +99,7 @@ class Api::V1::AnalysesController < Api::V1::ApiMdaUpdaterController
       json_response @mda
     end
   rescue Connection::VariableAlreadyProducedError => e
-    json_response({ message: e }, :unprocessable_entity)
+    json_response({ message: e }, :unprocessable_content)
   end
 
   protected

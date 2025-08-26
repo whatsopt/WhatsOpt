@@ -12,7 +12,7 @@ class Api::V1::SensitivityAnalysesController < Api::ApiController
     if sensitivity_infos[:statusOk]
       render json: sensitivity_infos, status: :ok
     else
-      render json: sensitivity_infos, status: :unprocessable_entity
+      render json: sensitivity_infos, status: :unprocessable_content
     end
   end
 

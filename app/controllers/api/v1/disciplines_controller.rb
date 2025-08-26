@@ -33,7 +33,7 @@ class Api::V1::DisciplinesController < Api::V1::ApiMdaUpdaterController
     @journal.journalize_changes(@discipline, old_attrs)
     head :no_content
   rescue AnalysisDiscipline::AlreadyDefinedError => e
-    json_response({ message: e.message }, :unprocessable_entity)
+    json_response({ message: e.message }, :unprocessable_content)
   end
 
   # DELETE /api/v1/analyses/{mda_id}/disciplines/1

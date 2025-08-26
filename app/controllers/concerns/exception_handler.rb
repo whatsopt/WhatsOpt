@@ -12,7 +12,7 @@ module ExceptionHandler
 
     rescue_from ActiveRecord::RecordInvalid do |e|
       Rails.logger.error "Record invalid : " + e.message
-      json_response({ message: e.message }, :unprocessable_entity)
+      json_response({ message: e.message }, :unprocessable_content)
     end
 
     rescue_from WhatsOpt::Version::WopVersionMismatchException do |e|

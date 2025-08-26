@@ -71,7 +71,7 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
                                     connection: { from: @geometry.id, to: @aerodynamics.id, names: [""] }),
          as: :json, headers: @auth_headers
     assert_match(/can't be blank/, JSON.parse(response.body)["message"])
-    assert_response :unprocessable_entity
+    assert_response :unprocessable_content
   end
 
   test "should delete a connection" do
@@ -120,11 +120,11 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
         post api_v1_mda_connections_url(mda_id: @outermda.id, requested_at: Time.now,
                                          connection: { from: @outermdadisc.id, to: @innermdadisc.id, names: ["unknown"] }),
              as: :json, headers: @auth_headers
-        assert_response :unprocessable_entity
+        assert_response :unprocessable_content
         post api_v1_mda_connections_url(mda_id: @outermda.id, requested_at: Time.now,
                                          connection: { from: @innermdadisc.id, to: @outermdadisc.id, names: ["unknown"] }),
              as: :json, headers: @auth_headers
-        assert_response :unprocessable_entity
+        assert_response :unprocessable_content
       end
     end
   end
@@ -157,13 +157,13 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
         conn = connections(:innermda_disc_y_outermda_driver)
         mda = conn.from.discipline.analysis
         delete api_v1_mda_connection_url(mda.id, conn), params: { requested_at: Time.now }, as: :json, headers: @auth_headers
-        assert_response :unprocessable_entity
+        assert_response :unprocessable_content
         assert_equal "Connection y has to be suppressed in INNER sub-analysis first",
                      JSON.parse(response.body)["message"]
         conn = connections(:outermda_driver_x2_innermda_disc)
         mda = conn.from.discipline.analysis
         delete api_v1_mda_connection_url(mda.id, conn), params: { requested_at: Time.now }, as: :json, headers: @auth_headers
-        assert_response :unprocessable_entity
+        assert_response :unprocessable_content
         assert_equal "Connection x2 has to be suppressed in INNER sub-analysis first",
                      JSON.parse(response.body)["message"]
       end

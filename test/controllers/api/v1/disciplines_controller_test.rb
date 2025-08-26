@@ -91,7 +91,7 @@ class Api::V1::DisciplineControllerTest < ActionDispatch::IntegrationTest
           }, requested_at: Time.now }, as: :json, headers: @auth_headers
       end
     end
-    assert_response :unprocessable_entity
+    assert_response :unprocessable_content
   end
 
   test "should prevent a sub_analysis discipline without analysis" do
