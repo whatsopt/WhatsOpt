@@ -36,13 +36,12 @@ class OpenmdaoDriverFactoryTest < ActiveSupport::TestCase
 
   test "should create an egor driver" do
     @driver = WhatsOpt::OpenmdaoDriverFactory.new(:egobox_optimizer_egor,
-        egobox_optimizer_egor_n_clusters: 2,
         egobox_optimizer_egor_maxiter: 100,
     ).create_driver
     assert_equal("egobox_optimizer", @driver.lib)
     assert_equal("egor", @driver.algo)
     assert_equal({}, @driver.options)
-    assert_equal({ "n_clusters" => 2, "maxiter" => 100, "infill_strategy" => "egx.InfillStrategy.WB2", "infill_optimizer" => "egx.InfillOptimizer.SLSQP", "regr_spec" => "egx.RegressionSpec.CONSTANT", "corr_spec" => "egx.CorrelationSpec.SQUARED_EXPONENTIAL" }, @driver.opt_settings)
+    assert_equal({ "maxiter" => 100, "infill_strategy" => "egx.InfillStrategy.WB2", "infill_optimizer" => "egx.InfillOptimizer.SLSQP" }, @driver.opt_settings)
   end
 
   test "should reject bad-formed option hash" do
