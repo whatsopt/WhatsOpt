@@ -14,10 +14,15 @@ module WhatsOpt
 
     DEFAULT_HOST = "localhost"
     DEFAULT_PORT = 41400
+    DEFAULT_DEV_PORT = 41401
 
     def initialize(id: nil, host: DEFAULT_HOST, port: DEFAULT_PORT, server_start: true)
       @host = host
-      @port = port
+      @port = if Rails.application.config.relative_url_root.to_s =~ /dev/
+                DEFAULT_DEV_PORT
+              else
+                port
+              end
       socket = Thrift::Socket.new(@host, @port)
       @transport = Thrift::BufferedTransport.new(socket)
       @protocol = Thrift::BinaryProtocol.new(@transport)
@@ -32,7 +37,7 @@ module WhatsOpt
       self._initialize
 
       if server_start && !server_available?
-        cmd = "#{PYTHON} #{File.join(Rails.root, 'services', 'run_server.py')} --outdir #{OUTDIR} --logdir #{LOGDIR}"
+        cmd = "#{PYTHON} #{File.join(Rails.root, 'services', 'run_server.py')} --outdir #{OUTDIR} --logdir #{LOGDIR} --port #{@port}"
         Rails.logger.info cmd
         @pid = spawn(cmd, [:out, :err] => File.join(Rails.root, "log", "whatsopt_server.log"))
         retries = 0

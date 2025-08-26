@@ -39,11 +39,20 @@ def main(args=sys.argv[1:]):
         help="save logs to DIRECTORY",
         metavar="DIRECTORY",
     )
+    parser.add_option(
+        "--port",
+        dest="port",
+        default=41400,
+        help="port to listen on",
+        metavar="PORT",
+    )
     (options, args) = parser.parse_args(args)
     outdir = options.outdir
     logdir = options.logdir
+    port = int(options.port)
     print("Surrogates/Optimizers saved to {}".format(outdir))
     print("Logs saved to {}".format(logdir))
+    print("Listening on port {}".format(port))
 
     processor = TMultiplexedProcessor()
     processor.registerProcessor(
@@ -60,7 +69,7 @@ def main(args=sys.argv[1:]):
         "AdministrationService",
         AdministrationService.Processor(AdministrationHandler()),
     )
-    transport = TSocket.TServerSocket("0.0.0.0", port=41400)
+    transport = TSocket.TServerSocket("0.0.0.0", port=port)
     tfactory = TTransport.TBufferedTransportFactory()
     pfactory = TBinaryProtocol.TBinaryProtocolFactory()
 
