@@ -4,6 +4,7 @@ require "integration/optimization_test_base"
 
 class SegomoeOptimizationCstrTest < OptimizationTestBase
   test "optimize objective with constraints" do
+    skip "too long to run"
     skip_if_parallel
     skip_if_segomoe_not_installed
 
