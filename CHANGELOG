@@ -1,5 +1,12 @@
 <h1>CHANGELOG</h1>
 
+
+<h3>1.31.8 (26/08/2025)</h3>
+<ul>
+  <li>Fix running thrift server in dev and production on the same host</li>
+  <li>Fix run_mdo.py generation when egobox 0.32 is used</li>
+</ul>
+
 <h3>1.31.7 (22/08/2025)</h3>
 <ul>
   <li>Fix plot title property syntax with plotly 3.0</li>
