@@ -7,7 +7,7 @@ require "mkmf" # for find_executable
 MakeMakefile::Logging.instance_variable_set(:@log, File.open(File::NULL, "wb"))
 
 class OpenmdaoGeneratorTest < ActiveSupport::TestCase
-  @@server_port = 31400
+  @@server_port = 31401
 
   def thrift?
     @found ||= find_executable("thrift")
@@ -20,12 +20,17 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     @pid = -1
   end
 
+  def self.server_port
+    @@server_port
+  end
+
   def start_server(ogen, dir)
     skip_if_parallel
     @@server_port += 1  # ensure we start on a different port for Github CI to avoid "Already in use" error
+    # p @@server_port
     # p "Start on #{@@server_port}"
     ogen.server_port = @@server_port
-    ogen._generate_code dir
+    files = ogen._generate_code dir, with_server: true
     cmd = "#{WhatsOpt::OpenmdaoGenerator::PYTHON} #{File.join(dir, 'run_server.py')} --port #{@@server_port}"
     # p cmd
     @pid = spawn(cmd, [:out] => "/dev/null")
@@ -302,6 +307,7 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     skip_if_parallel
     skip "Apache Thrift not installed" unless thrift?
     @mda = analyses(:singleton_uq)
+    @ogen = WhatsOpt::OpenmdaoGenerator.new(@mda)
     Dir.mktmpdir do |dir|
       pid = self.start_server(@ogen, dir)
       @ogen_remote = WhatsOpt::OpenmdaoGenerator.new(@mda, server_host: "localhost", server_port: @@server_port)
