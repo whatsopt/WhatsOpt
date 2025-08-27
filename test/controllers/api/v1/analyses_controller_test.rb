@@ -310,7 +310,7 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     disc = disciplines(:outermda_innermda_discipline)
     put api_v1_mda_url(@mda), params: { analysis: { import: { analysis: mda2.id, disciplines: [disc.id] } }, requested_at: Time.now },
       as: :json, headers: @auth_headers
-    assert_response :unprocessable_entity  # y2 already produced
+    assert_response :unprocessable_content  # y2 already produced
   end
 
   test "should recreate analysis with imports" do
@@ -338,7 +338,7 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     disc = @mda.disciplines.nodes.first
     put api_v1_mda_url(mda), params: { analysis: { import: { analysis: @mda.id, disciplines: [disc.id, disc.id] } }, requested_at: Time.now },
         as: :json, headers: @auth_headers
-    assert_response :unprocessable_entity
+    assert_response :unprocessable_content
   end
 
   test "should file an analysis in a project reference" do

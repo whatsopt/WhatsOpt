@@ -22,7 +22,7 @@ class Api::V1::UserRolesController < Api::ApiController
         json_response users
       else
         skip_authorization
-        json_response({ message: 'Bad query: should select "members", "co_owners", "member_candidates" or "co_owner_candidates"'  }, :unprocessable_entity)
+        json_response({ message: 'Bad query: should select "members", "co_owners", "member_candidates" or "co_owner_candidates"'  }, :unprocessable_content)
       end
     else
       json_response policy_scope(User)

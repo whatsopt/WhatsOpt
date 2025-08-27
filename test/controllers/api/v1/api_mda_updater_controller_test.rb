@@ -45,7 +45,7 @@ class Api::V1::ApiMdaUpdaterControllerTest < ActionDispatch::IntegrationTest
     post api_v1_mda_connections_url(mda_id: @mda.id, requested_at: time_ok,
                                    connection: { from: @geometry.id, to: @aerodynamics.id, names: ["ya"] }),
                                    as: :json, headers: @auth_headers
-    assert_response :unprocessable_entity
+    assert_response :unprocessable_content
     @mda.reload
     assert_equal time_update, @mda.updated_at
     post api_v1_mda_connections_url(mda_id: @mda.id, requested_at: time_ok,
