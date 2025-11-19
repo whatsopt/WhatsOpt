@@ -31,10 +31,10 @@ RSpec.configure do |config|
       },
       servers: [
         { url: "https://ether.onera.fr/whatsopt", description: "External production server" },
-        { url: "https://selene.onecert.fr/whatsopt", description: "Internal production server" },
-        { url: "http://erebe.onecert.fr/whatsopt", description: "Restricted server" },
-        { url: "https://selene.onecert.fr/whatsopt-dev", description: "Internal staging server" },
-        { url: "http://erebe.onecert.fr:3000", description: "Development server" },
+        { url: "https://selene.onera.net/whatsopt", description: "Internal production server" },
+        { url: "http://erebe.onera.net/whatsopt", description: "Restricted server" },
+        { url: "https://selene.onera.net/whatsopt-dev", description: "Internal staging server" },
+        { url: "http://erebe.onera.net:3000", description: "Development server" },
       ],
       paths: {},
       components: {

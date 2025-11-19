@@ -66,7 +66,7 @@ development:
     # For running dev server with https, set `server: https`.
     # server: https
 
-    host: erebe.onecert.fr
+    host: erebe.onera.net
     port: 3035
     # Hot Module Replacement updates modules while the application is running without a full reload
     # Used instead of the `hot` key in https://webpack.js.org/configuration/dev-server/#devserverhot
