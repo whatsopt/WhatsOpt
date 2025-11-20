@@ -122,5 +122,5 @@ production: &prod
   # Cache manifest.json for performance
   cache_manifest: true
 
-staging: &prod
+staging:
   <<: *prod
