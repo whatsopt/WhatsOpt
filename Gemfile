@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-# frozen_string_liseral: true
-
 source "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
@@ -104,9 +102,6 @@ gem "acts_as_list"
 
 # JSON serializers
 gem "active_model_serializers", "~> 0.10.15"
-
-# Background jobs
-gem "sucker_punch"
 
 # Zip
 gem "rubyzip", "~>2.3.0"
