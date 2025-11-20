@@ -104,7 +104,7 @@ gem "acts_as_list"
 gem "active_model_serializers", "~> 0.10.15"
 
 # Zip
-gem "rubyzip", "~>2.3.0"
+gem "rubyzip", "~>3.2"
 
 # UI
 gem "popper" # bootstrap dependency
@@ -112,7 +112,7 @@ gem "bootstrap", "~> 5.0"
 gem "font-awesome-sass", "~> 6.7.2"
 
 # thrift
-gem "thrift", "~>0.20"
+gem "thrift", "~>0.22"
 
 # Actiontext image processing
 gem "image_processing", "~> 1.2"

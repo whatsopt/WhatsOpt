@@ -411,7 +411,7 @@ GEM
     ruby-vips (2.2.5)
       ffi (~> 1.12)
       logger
-    rubyzip (2.3.2)
+    rubyzip (3.2.2)
     sass-rails (6.0.0)
       sassc-rails (~> 2.1, >= 2.1.1)
     sassc (2.4.0)
@@ -468,8 +468,6 @@ GEM
       net-ssh (>= 2.8.0)
       ostruct
     stringio (3.1.1)
-    sucker_punch (3.2.0)
-      concurrent-ruby (~> 1.0)
     terser (1.2.6)
       execjs (>= 0.3.0, < 3)
     thor (1.4.0)
@@ -557,7 +555,7 @@ DEPENDENCIES
   rswag-specs (~> 2.11)
   rubocop
   rubocop-rails_config
-  rubyzip (~> 2.3.0)
+  rubyzip (~> 3.2)
   sass-rails (>= 6)
   shakapacker (~> 8.0)
   simplecov
@@ -566,9 +564,8 @@ DEPENDENCIES
   sprockets-rails
   sqlite3
   stringio (= 3.1.1)
-  sucker_punch
   terser
-  thrift (~> 0.20)
+  thrift (~> 0.22)
   turbo-rails
   tzinfo-data
   web-console
