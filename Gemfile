@@ -127,7 +127,7 @@ gem "deepsort"
 gem "sprockets-rails"
 
 # Pagination
-gem "pagy", "~> 9.0"
+gem "pagy", "~> 43.0"
 
 # Matrix
 gem "matrix"  # removed from stndard library in ruby 3.1
