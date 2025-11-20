@@ -111,6 +111,8 @@ test:
 production:
   <<: *default
 
+  javascript_transpiler: 'babel'
+
   # Production depends on precompilation of packs prior to booting for performance.
   compile: false
 
