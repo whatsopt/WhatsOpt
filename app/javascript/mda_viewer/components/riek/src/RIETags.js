@@ -91,7 +91,7 @@ export default class RIETags extends RIEStatefulBase {
     };
 
     componentDidUpdate = (prevProps, prevState) => {
-        var inputElem = ReactDOM.findDOMNode(this.refs.input);
+        var inputElem = this.inputRef.current;
         if (this.state.editing) {
             inputElem.focus();
         }
@@ -118,7 +118,7 @@ export default class RIETags extends RIEStatefulBase {
                 onBlur={this.cancelEditingDelayed}
                 onKeyDown={this.keyDown}
                 placeholder={(this.props.placeholder || "New tag")}
-                ref="input" />
+                ref={this.inputRef} />
         </div>;
     };
 }
