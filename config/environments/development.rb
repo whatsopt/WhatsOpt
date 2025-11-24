@@ -38,7 +38,7 @@ Rails.application.configure do
   config.action_mailer.perform_caching = false
 
   # Set localhost to be used by links generated in mailer templates.
-  config.action_mailer.default_url_options = { host: "localhost", port: 3000 }
+  config.action_mailer.default_url_options = { host: "erebe", port: 3000 }
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.perform_deliveries = true
   config.action_mailer.default charset: "utf-8"
@@ -63,6 +63,9 @@ Rails.application.configure do
   # Highlight code that enqueued background job in logs.
   config.active_job.verbose_enqueue_logs = true
 
+  # Highlight code that triggered redirect in logs.
+  config.action_dispatch.verbose_redirect_logs = true
+
   # Raises error for missing translations.
   # config.i18n.raise_on_missing_translations = true
 
@@ -79,5 +82,5 @@ Rails.application.configure do
   # config.generators.apply_rubocop_autocorrect_after_generate!
 
   config.hosts.clear
-  config.web_console.whitelisted_ips = ["134.212.27.183", "134.212.16.16", "134.212.26.254", "192.168.99.1", "172.18.0.1"]
+  config.web_console.whitelisted_ips = ["10.25.0.224", "134.212.27.183", "134.212.16.16", "134.212.26.254", "192.168.99.1", "172.18.0.1"]
 end

@@ -26,7 +26,7 @@ module WhatsOpt
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
-    config.active_job.queue_adapter = :sucker_punch
+    config.active_job.queue_adapter = :async
 
     # Thrift generated code needs this
     config.autoload_paths << "#{config.root}/app/lib/whats_opt/services"

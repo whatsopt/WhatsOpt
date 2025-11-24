@@ -2,11 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import validator from '@rjsf/validator-ajv8';
-import Form from '@rjsf/bootstrap-4';
-
-// Patch bootstrap 4 theme with bootstrap 5 select widget,
-// otherwise bootstrap 4 theme is compatible with Bootstrap 5
-import SelectWidget from '../../utils/RjsfSelectWidgetBs5';
+import Form from '@rjsf/react-bootstrap';
 
 const SCHEMA_GENERAL = {
   type: 'object',
@@ -251,7 +247,6 @@ class OpenmdaoImplEditor extends React.Component {
               onChange={(data) => this.handleChange(data)}
               onSubmit={(data) => this.handleSubmit(data)}
               validator={validator}
-              widgets={{ SelectWidget }}
               liveValidate
             >
               <div>
@@ -268,7 +263,6 @@ class OpenmdaoImplEditor extends React.Component {
               onChange={(data) => this.handleChange(data)}
               onSubmit={(data) => this.handleSubmit(data)}
               validator={validator}
-              widgets={{ SelectWidget }}
               liveValidate
             >
               <div>
@@ -284,7 +278,6 @@ class OpenmdaoImplEditor extends React.Component {
               onChange={(data) => this.handleChange(data)}
               onSubmit={(data) => this.handleSubmit(data)}
               validator={validator}
-              widgets={{ SelectWidget }}
               liveValidate
             >
               <div className="mb-3">
@@ -300,7 +293,6 @@ class OpenmdaoImplEditor extends React.Component {
               onChange={(data) => this.handleChange(data)}
               onSubmit={(data) => this.handleSubmit(data)}
               validator={validator}
-              widgets={{ SelectWidget }}
               liveValidate
             >
               <div className="mb-3">

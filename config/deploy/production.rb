@@ -11,7 +11,7 @@ if ENV["WHATSOPT_INTERNET"]
   puts "*****************************************************"
   puts "*** You are deploying to the INTERNET server.     ***" 
   puts "*****************************************************"
-  set :server, ENV["WHATSOPT_INTRANET_SERVER"]
+  set :server, ENV["WHATSOPT_INTERNET_SERVER"]
 elsif ENV["WHATSOPT_RESTRICT"]
   puts "*****************************************************"
   puts "*** You are deploying to a RESTRICTED server.     ***" 
