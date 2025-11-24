@@ -7961,10 +7961,10 @@ sha.js@^2.4.12:
     safe-buffer "^5.2.1"
     to-buffer "^1.2.0"
 
-shakapacker@^9.3.4:
-  version "9.3.4"
-  resolved "https://registry.yarnpkg.com/shakapacker/-/shakapacker-9.3.4.tgz#65291c8ef97cd9c5422d0a86aa8ee8839ab58e95"
-  integrity sha512-bMQe8EPFgLpqbsHc9RERRX2NmowK5jYbT9XmzbPxud/+pqKdlABGheiZ6EwYbsQThgdh2odtJdEPp177wdBHdw==
+shakapacker@^9.4.0:
+  version "9.4.0"
+  resolved "https://registry.yarnpkg.com/shakapacker/-/shakapacker-9.4.0.tgz#a47120208a0433159740a5ba45f8b4736999f9b8"
+  integrity sha512-Kf5+LADw5kkaPHqXDA6NknGt6p8MK9jjWuiudM+ESHcF/POxFZ1S5p7lMsyezvuMRMm0HrltQCM/NPadGEEnVg==
   dependencies:
     js-yaml "^4.1.0"
     path-complete-extname "^1.0.0"

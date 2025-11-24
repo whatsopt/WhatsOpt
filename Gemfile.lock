@@ -429,7 +429,7 @@ GEM
       faraday (>= 0.17.3, < 3)
     securerandom (0.4.1)
     semantic_range (3.1.0)
-    shakapacker (9.3.3)
+    shakapacker (9.4.0)
       activesupport (>= 5.2)
       package_json
       rack-proxy (>= 0.6.1)
