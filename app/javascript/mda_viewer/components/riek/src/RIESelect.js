@@ -8,12 +8,10 @@ export default class RIESelect extends RIEStatefulBase {
         options: PropTypes.array.isRequired
     };
 
-
-
     finishEditing = () => {
         // get the object from options that matches user selected value
         const newValue = this.props.options.find(function (option) {
-            return option.id === ReactDOM.findDOMNode(this.myRef.current).value;
+            return option.id === this.inputRef.current.value;
         }, this);
         this.doValidations(newValue);
         if (!this.state.invalid && this.props.value !== newValue) {
@@ -32,7 +30,7 @@ export default class RIESelect extends RIEStatefulBase {
             className={this.makeClassString()}
             onChange={this.finishEditing}
             onBlur={this.cancelEditing}
-            ref={this.myRef}
+            ref={this.inputRef}
             onKeyDown={this.keyDown}
             {...this.props.editProps}>{optionNodes}</select>
     };
@@ -43,7 +41,7 @@ export default class RIESelect extends RIEStatefulBase {
             className={this.makeClassString()}
             onFocus={this.startEditing}
             onClick={this.startEditing}
-            ref={this.myRef}
+            ref={this.inputRef}
             {...this.props.defaultProps}>{(!!this.state.newValue) ? this.state.newValue.text : this.props.value.text}</span>;
     };
 }

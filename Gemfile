@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-# frozen_string_liseral: true
-
 source "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
@@ -10,14 +8,14 @@ ruby "3.3.5"
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem "rails", "~> 8.0"
 # Use Puma as the app server
-gem "puma", "~> 6.0"
+gem "puma", "~> 7.0"
 # Use SCSS for stylesheets
 gem "sass-rails", ">= 6"
 # Use Terser as compressor for JavaScript assets
 gem "terser"
 
 # Transpile app-like JavaScript. Read more: https://github.com/shakacode/shakapacker
-gem "shakapacker", "~> 8.0"
+gem "shakapacker", "~> 9.0"
 # See https://github.com/rails/execjs#readme for more supported runtimes
 # gem 'therubyracer', platforms: :ruby
 
@@ -44,7 +42,7 @@ gem "sqlite3"
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
-  gem "byebug", platforms: [:mri, :mingw, :x64_mingw]
+  gem "byebug", platforms: [:mri, :windows]
   # gem "guard"
   # gem "guard-minitest"
   # Adds support for Capybara system testing and selenium driver
@@ -105,11 +103,8 @@ gem "acts_as_list"
 # JSON serializers
 gem "active_model_serializers", "~> 0.10.15"
 
-# Background jobs
-gem "sucker_punch"
-
 # Zip
-gem "rubyzip", "~>2.3.0"
+gem "rubyzip", "~>3.2"
 
 # UI
 gem "popper" # bootstrap dependency
@@ -117,7 +112,7 @@ gem "bootstrap", "~> 5.0"
 gem "font-awesome-sass", "~> 6.7.2"
 
 # thrift
-gem "thrift", "~>0.20"
+gem "thrift", "~>0.22"
 
 # Actiontext image processing
 gem "image_processing", "~> 1.2"
@@ -132,7 +127,7 @@ gem "deepsort"
 gem "sprockets-rails"
 
 # Pagination
-gem "pagy", "~> 9.0"
+gem "pagy", "~> 43.0"
 
 # Matrix
 gem "matrix"  # removed from stndard library in ruby 3.1

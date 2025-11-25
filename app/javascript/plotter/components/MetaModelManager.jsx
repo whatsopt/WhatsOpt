@@ -2,11 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import update from 'immutability-helper';
 import validator from '@rjsf/validator-ajv8';
-import Form from '@rjsf/bootstrap-4';
-
-// Patch bootstrap 4 theme with bootstrap 5 select widget,
-// otherwise bootstrap 4 theme is compatible with Bootstrap 5
-import SelectWidget from '../../utils/RjsfSelectWidgetBs5';
+import Form from '@rjsf/react-bootstrap';
 
 import Error from '../../utils/components/Error';
 import LoadingIndicator from '../../utils/components/LoadingIndicator';
@@ -197,7 +193,6 @@ class MetaModelManager extends React.Component {
             formData={formData}
             onChange={this.handleChange}
             onSubmit={this.handleSubmit}
-            widgets={{ SelectWidget }}
             validator={validator}
           >
             <div>

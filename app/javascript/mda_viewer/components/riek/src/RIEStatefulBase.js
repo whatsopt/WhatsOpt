@@ -1,14 +1,13 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import RIEBase from './RIEBase';
 
 const debug = require('debug')('RIEStatefulBase');
 
 export default class RIEStatefulBase extends RIEBase {
+    
     constructor(props) {
         super(props);
-
-        this.myRef = React.createRef();
+        this.inputRef = React.createRef(null);
     }
 
     startEditing = () => {
@@ -22,7 +21,7 @@ export default class RIEStatefulBase extends RIEBase {
     finishEditing = () => {
         debug('finishEditing')
         this.props.beforeFinish ? this.props.beforeFinish() : null;
-        let inputElem = ReactDOM.findDOMNode(this.myRef.current);
+        let inputElem = this.inputRef.current;
         let newValue = inputElem.value;
         const result = this.doValidations(newValue);
         if (result && this.props.value !== newValue) {
@@ -54,7 +53,7 @@ export default class RIEStatefulBase extends RIEBase {
 
     componentDidUpdate = (prevProps, prevState) => {
         debug(`componentDidUpdate(${JSON.stringify(prevProps)}, ${JSON.stringify(prevState)})`)
-        var inputElem = ReactDOM.findDOMNode(this.myRef.current);
+        var inputElem = this.inputRef.current;
         if (this.state.editing && !prevState.editing) {
             debug('entering edit mode')
             inputElem.focus();
@@ -73,7 +72,7 @@ export default class RIEStatefulBase extends RIEBase {
             defaultValue={this.props.value}
             onInput={this.textChanged}
             onBlur={this.elementBlur}
-            ref={this.myRef}
+            ref={this.inputRef}
             onKeyDown={this.keyDown}
             {...this.props.editProps} />;
     };
@@ -85,7 +84,7 @@ export default class RIEStatefulBase extends RIEBase {
             className={this.makeClassString()}
             onFocus={this.startEditing}
             onClick={this.startEditing}
-            ref={this.myRef}
+            ref={this.inputRef}
             {...this.props.defaultProps}>{this.state.newValue || this.props.value}</span>;
     };
 

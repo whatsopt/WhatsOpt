@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class AnalysesController < ApplicationController
-  include Pagy::Backend
+  include Pagy::Method
 
   before_action :set_mda, only: [:show, :edit, :destroy]
   after_action :save_journal, only: [:create]
