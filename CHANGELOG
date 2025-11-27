@@ -3,6 +3,7 @@
 <h3>1.32.0 (27/11/2025)</h3>
 <ul>
   <li>Disable metamodel creation from DOE</li>
+  <li>Disable running operation on the server</li>
   <li>[Tech] Update dependencies backend (rails 8.1, ...)/frontend (React 19, ...)</li>
   <li>Fix running thrift server in dev and production on the same host</li>
   <li>Fix run_mdo.py generation when egobox 0.32 is used</li>
