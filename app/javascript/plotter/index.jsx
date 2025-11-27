@@ -297,34 +297,34 @@ class Plotter extends React.Component {
     const { activeTab } = this.state;
 
     let metaModelItem; let metaModelPanel;
-    if (isDoe) {
-      metaModelItem = (
-        <li className="nav-item">
-          <a
-            className="nav-link"
-            id="metamodel-tab"
-            href="#metamodel"
-            role="tab"
-            aria-controls="metamodel"
-            data-bs-toggle="tab"
-            aria-selected="false"
-            onClick={(e) => this.activateTab(e, METAMODEL_TAB)}
-          >
-            MetaModel
-          </a>
-        </li>
-      );
-      metaModelPanel = (
-        <MetaModelPanel
-          active={activeTab === METAMODEL_TAB}
-          api={this.api}
-          opeId={ope.id}
-          uqMode={uqMode}
-          selCases={selCases}
-          onMetaModelCreate={this.handleMetaModelCreate}
-        />
-      );
-    }
+    // if (isDoe) {
+    //   metaModelItem = (
+    //     <li className="nav-item">
+    //       <a
+    //         className="nav-link"
+    //         id="metamodel-tab"
+    //         href="#metamodel"
+    //         role="tab"
+    //         aria-controls="metamodel"
+    //         data-bs-toggle="tab"
+    //         aria-selected="false"
+    //         onClick={(e) => this.activateTab(e, METAMODEL_TAB)}
+    //       >
+    //         MetaModel
+    //       </a>
+    //     </li>
+    //   );
+    //   metaModelPanel = (
+    //     <MetaModelPanel
+    //       active={activeTab === METAMODEL_TAB}
+    //       api={this.api}
+    //       opeId={ope.id}
+    //       uqMode={uqMode}
+    //       selCases={selCases}
+    //       onMetaModelCreate={this.handleMetaModelCreate}
+    //     />
+    //   );
+    // }
 
     const exportUrl = this.api.url(`/operations/${ope.id}/exports/new`);
     return (
