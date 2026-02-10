@@ -37,7 +37,7 @@ class <%= @dimpl.py_classname %>(<%= @dimpl.py_classname %>Base):
 <% if @dimpl.jax_component -%>
 
 <% @dimpl.numeric_output_vars.each do |var_out| -%>
-        <%= var_out.py_shortname %> = <%= var_out.default_py_value(@dimpl.jax_component) %>
+        <%= var_out.py_shortname %> = <%= var_out.ones_py_value(@dimpl.jax_component) %>
 <% end -%> 
         return (
 <% @dimpl.numeric_output_vars.each do |var_out| -%>
@@ -52,7 +52,7 @@ class <%= @dimpl.py_classname %>(<%= @dimpl.py_classname %>Base):
 <% end %>
 
 <%- @dimpl.numeric_output_vars.each do |var_out| -%>
-        outputs['<%= var_out.py_varname %>'] = <%= var_out.default_py_value %>
+        outputs['<%= var_out.py_varname %>'] = <%= var_out.default_py_value(@dimpl.jax_component) %>
 <%- end -%>
 <%- end -%>
 

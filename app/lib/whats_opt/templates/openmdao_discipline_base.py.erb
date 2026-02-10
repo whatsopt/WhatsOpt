@@ -15,13 +15,13 @@ class <%= @dimpl.py_classname %>Base(<%= @dimpl.openmdao_component_baseclass %>)
 <% unless @dimpl.discipline.variables.empty? -%>
     def setup(self):
 <% @dimpl.numeric_input_vars.each do |var| -%>
-        self.add_input('<%= var.py_varname %>', val=<%= var.init_py_value %>, <%= var.ndim > 0 ? "shape=#{var.shape} ," : "" %> <%= var.is_int? ? "tags=['#{Variable::INTEGER_TAG}'] ," : "" %> desc='<%= var.escaped_desc %>'<%= @impl.use_units && !var.units.blank? ? ", units='#{var.units}'":"" %>)
+        self.add_input('<%= var.py_varname %>', val=<%= var.init_py_value(@dimpl.jax_component) %>, <%= var.ndim > 0 ? "shape=#{var.shape} ," : "" %> <%= var.is_int? ? "tags=['#{Variable::INTEGER_TAG}'] ," : "" %> desc='<%= var.escaped_desc %>'<%= @impl.use_units && !var.units.blank? ? ", units='#{var.units}'":"" %>)
 <% end %>
 <% @dimpl.numeric_output_vars.each do |var| -%>
 <% if var.scaling.blank? -%>
-        self.add_output('<%= var.py_varname %>', val=<%= var.init_py_value %>, <%= var.ndim > 0 ? "shape=#{var.shape} ," : "" %> <%= var.is_int? ? "tags=['#{Variable::INTEGER_TAG}'] ," : "" %> desc='<%= var.escaped_desc %>'<%= @impl.use_units && !var.units.blank? ? ", units='#{var.units}'":"" %>)
+        self.add_output('<%= var.py_varname %>', val=<%= var.init_py_value(@dimpl.jax_component) %>, <%= var.ndim > 0 ? "shape=#{var.shape} ," : "" %> <%= var.is_int? ? "tags=['#{Variable::INTEGER_TAG}'] ," : "" %> desc='<%= var.escaped_desc %>'<%= @impl.use_units && !var.units.blank? ? ", units='#{var.units}'":"" %>)
 <%- else -%>
-        self.add_output('<%= var.py_varname %>', val=<%= var.init_py_value %>, <%= var.ndim > 0 ? "shape=#{var.shape} ," : "" %> <%= var.is_int? ? "tags=['#{Variable::INTEGER_TAG}'] ," : "" %> desc='<%= var.escaped_desc %>',
+        self.add_output('<%= var.py_varname %>', val=<%= var.init_py_value(@dimpl.jax_component) %>, <%= var.ndim > 0 ? "shape=#{var.shape} ," : "" %> <%= var.is_int? ? "tags=['#{Variable::INTEGER_TAG}'] ," : "" %> desc='<%= var.escaped_desc %>',
                             ref=<%= var.scaling_ref_py_value %>, ref0=<%= var.scaling_ref0_py_value %>, res_ref=<%= var.scaling_res_ref_py_value %><%= @impl.use_units && !var.units.blank? ? ", units='#{var.units}'":"" %>)
 <% end -%>
 <% end -%>
