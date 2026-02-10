@@ -1,12 +1,24 @@
-import numpy as np
+import numpy as np #noqa
 from <%= @pkg_prefix %><%= @dimpl.py_full_modulename %>_base import <%= @dimpl.py_classname %>Base
+<% if @dimpl.jax_component -%>
+import jax.numpy as jnp #noqa
+<% end -%>
 
 
 class <%= @dimpl.py_classname %>(<%= @dimpl.py_classname %>Base):
     """ A class to encapsulate <%= @dimpl.py_classname %> discipline """
 
+<% if @dimpl.jax_component -%>
+    def compute_primal(self, 
+        <%- @dimpl.numeric_input_vars.each do |var_in| -%>
+                <%= var_in.py_shortname %>,
+        <% end -%>
+        ):
+        """ <%= @dimpl.py_classname %> Jax computation (use jax.numpy operations for auto-differentiation) """
+<% else -%>
     def compute(self, inputs, outputs):
         """ <%= @dimpl.py_classname %> computation """
+<% end -%>
         # Here the user can implement discipline resolution code
         # (python function or module, external software calls...)
 
@@ -21,18 +33,37 @@ class <%= @dimpl.py_classname %>(<%= @dimpl.py_classname %>Base):
 <%- if @dimpl.numeric_input_vars.empty? && @dimpl.numeric_output_vars.empty? -%>
         pass
 <%- else -%>
+
+<% if @dimpl.jax_component -%>
+
+<% @dimpl.numeric_output_vars.each do |var_out| -%>
+        <%= var_out.py_shortname %> = <%= var_out.default_py_value(@dimpl.jax_component) %>
+<% end -%> 
+        return (
+<% @dimpl.numeric_output_vars.each do |var_out| -%>
+            <%= var_out.py_shortname %>,
+<% end -%>
+        )
+
+<% else -%>  
+
 <%- @dimpl.numeric_input_vars.each do |var_in| -%>
         <%= var_in.py_shortname %> = inputs['<%= var_in.py_varname %>']  # shape: <%= var_in.shape %>, type: <%= var_in.type %>
 <% end %>
-<%- end -%>
 
 <%- @dimpl.numeric_output_vars.each do |var_out| -%>
         outputs['<%= var_out.py_varname %>'] = <%= var_out.default_py_value %>
 <%- end -%>
+<%- end -%>
 
-<% if @dimpl.support_derivatives -%>
+<% end -%>
+
+
+
+<% if @dimpl.support_derivatives && !@dimpl.jax_component -%>
     def compute_partials(self, inputs, partials):
         """ Jacobian for <%= @dimpl.py_classname %> """
 <% @dimpl.numeric_output_vars.each do |var_out| %><% @dimpl.numeric_input_vars.each do |var_in| %>
         partials['<%= var_out.py_varname %>', '<%= var_in.py_varname %>'] = np.zeros((<%= var_out.dim %>, <%= var_in.dim %>))<% end %><% end %>
 <% end -%>
+

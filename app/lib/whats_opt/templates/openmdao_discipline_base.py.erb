@@ -1,7 +1,10 @@
 <%= @generator.render_partial('base_header_partial.py.erb') %>
 
-import numpy as np
-from numpy import nan, inf
+import numpy as np #noqa
+from numpy import nan, inf #noqa
+<% if @dimpl.jax_component -%>
+import jax.numpy as jnp #noqa
+<% end -%>
 import openmdao.api as om
 
 class <%= @dimpl.py_classname %>Base(<%= @dimpl.openmdao_component_baseclass %>):
@@ -23,7 +26,7 @@ class <%= @dimpl.py_classname %>Base(<%= @dimpl.openmdao_component_baseclass %>)
 <% end -%>
 <% end -%>
 
-<%- unless @dimpl.numeric_input_vars.empty? || @dimpl.numeric_output_vars.empty? || !@discipline.is_derivable?-%>
+<%- unless @dimpl.numeric_input_vars.empty? || @dimpl.numeric_output_vars.empty? || !@discipline.is_derivable? || @dimpl.jax_component -%>
     def setup_partials(self):
         self.declare_partials('*', '*', method='<%= @dimpl.support_derivatives ? "exact" : "fd" %>')
 <% end -%>

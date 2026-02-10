@@ -21,12 +21,19 @@ class OpenmdaoDisciplineImpl < ActiveRecord::Base
     OpenmdaoDisciplineImpl.new(
       implicit_component: implicit_component,
       support_derivatives: support_derivatives,
-      egmdo_surrogate: egmdo_surrogate
+      egmdo_surrogate: egmdo_surrogate,
+      jax_component: jax_component
     )
   end
 
   def openmdao_component_baseclass
-    if self.implicit_component
+    if self.jax_component
+      if self.implicit_component
+        "om.JaxImplicitComponent"
+      else
+        "om.JaxExplicitComponent"
+      end
+    elsif self.implicit_component
       "om.ImplicitComponent"
     elsif self.discipline.is_sub_optimization?
       "om.SubmodelComponent"
@@ -64,5 +71,6 @@ class OpenmdaoDisciplineImpl < ActiveRecord::Base
       self.implicit_component = false if implicit_component.nil?
       self.support_derivatives = false if support_derivatives.nil?
       self.egmdo_surrogate = false if egmdo_surrogate.nil?
+      self.jax_component = false if jax_component.nil?
     end
 end

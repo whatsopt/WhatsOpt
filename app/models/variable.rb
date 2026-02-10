@@ -85,18 +85,18 @@ class Variable < ApplicationRecord
     conn_roles.first
   end
 
-  def init_py_value
+  def init_py_value(jax = false)
     if self.parameter&.init.blank?
       if is_in? # retrieve init value from connected uniq 'out' variable
-        val = incoming_connection&.from&.init_py_value
-        val || default_py_value # in case not connected
+        val = incoming_connection&.from&.init_py_value(jax)
+        val || default_py_value(jax) # in case not connected
       else
-        default_py_value
+        default_py_value(jax)  
       end
     else
       is_num = true if Float(self.parameter.init) rescue false
       if is_num && self.ndim > 0
-        ones_py_value + " * #{self.parameter.init}"
+        ones_py_value(jax) + " * #{self.parameter.init}"
       else
         self.parameter.init
       end
