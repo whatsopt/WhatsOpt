@@ -270,6 +270,7 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
  end
 
   test "should import a metamodel" do
+    skip("Python services disabled")
     orig_count = @mda.disciplines.count
     @mda.package.destroy!  # remove package to avoid forbidden error (cannot import if analysis is packaged)
     @mda.operations.final.map(&:destroy!)  # remove operations to avoid forbidden error (cannot import if analysis is operated)

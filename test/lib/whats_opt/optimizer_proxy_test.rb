@@ -14,6 +14,7 @@ class OptimizerProxyTest < ActiveSupport::TestCase
   end
 
   test "should tell and ask" do
+    skip("Python services disabled")
     skip_if_parallel
     skip_if_segomoe_not_installed
     kind = WhatsOpt::Services::OptimizerKind::SEGOMOE
@@ -30,12 +31,14 @@ class OptimizerProxyTest < ActiveSupport::TestCase
   end
 
   test "should check server presence" do
+    skip("Python services disabled")
     skip_if_parallel
     sleep 2
     assert @proxy.server_available?
   end
 
   test "should check server absence" do
+    skip("Python services disabled")
     skip_if_parallel
     teardown
     sleep 1
@@ -43,6 +46,7 @@ class OptimizerProxyTest < ActiveSupport::TestCase
   end
 
   test "should not start server" do
+    skip("Python services disabled")
     WhatsOpt::OptimizerProxy.shutdown_server
     sleep 1
     assert_not @proxy.server_available?

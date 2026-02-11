@@ -13,6 +13,7 @@ class SurrogateTest < ActiveSupport::TestCase
   end
 
   test "should be train and predict" do
+    skip("Python services disabled")
     skip_if_parallel
     assert_equal Surrogate::STATUS_CREATED, @surr.status
     @surr.train
@@ -25,6 +26,7 @@ class SurrogateTest < ActiveSupport::TestCase
   end
 
   test "should be train and predict with options" do
+    skip("Python services disabled")
     skip_if_parallel
     assert_equal Surrogate::STATUS_CREATED, @surr.status
     @surr.train
@@ -36,6 +38,7 @@ class SurrogateTest < ActiveSupport::TestCase
   end
 
   test "should be copied and prediction with copy get same results" do
+    skip("Python services disabled")
     skip_if_parallel
     assert_equal Surrogate::STATUS_CREATED, @surr.status
     @surr.train
@@ -60,6 +63,7 @@ class SurrogateTest < ActiveSupport::TestCase
   end
 
   test "should compute qualification" do
+    skip("Python services disabled")
     skip_if_parallel
     @surr = surrogates(:surrogate_obj2)
     assert_equal Surrogate::STATUS_CREATED, @surr.status

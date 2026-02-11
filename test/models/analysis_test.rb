@@ -134,6 +134,7 @@ class AnalysisTest < ActiveSupport::TestCase
   end
 
   test "should copy of a copy of a metamodel and predict with" do
+    skip("Python services disabled")
     # skip "doe copy not yet implemented"
     mda = analyses(:cicav_metamodel_analysis)
     # mda2 = analyses(:cicav_metamodel2_analysis)

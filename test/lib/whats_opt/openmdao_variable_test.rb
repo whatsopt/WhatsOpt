@@ -40,7 +40,7 @@ class OpenmdaoMappingTest < ActiveSupport::TestCase
 
   def test_ones_py_value
     @var = FakeOpenmdaoVariable.new("VAR2tesT", WhatsOpt::Variable::FLOAT_T, "(2,)", :in, "m", "description")
-    assert_equal "np.ones((2,))", @var.init_py_value(@var.default_py_value)
-    assert_equal "jnp.ones((2,))", @var.init_py_value(@var.default_py_value(true))
+    assert_equal "np.ones((2,))", @var.ones_py_value
+    assert_equal "jnp.ones((2,))", @var.ones_py_value(true)
   end
 end
