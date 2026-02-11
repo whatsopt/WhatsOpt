@@ -1,5 +1,12 @@
 <h1>CHANGELOG</h1>
 
+<h3>2.0.0 (11/02/2026)</h3>
+<ul>
+  <li>Breaking change: the metamodel creation from DOE is not available anymore</li>
+  <li>Breaking change: the running operation on the server is not available anymore</li>
+  <li>Openmdao code generation handles Jax components</li>
+</ul>
+
 <h3>1.32.0 (27/11/2025)</h3>
 <ul>
   <li>Disable metamodel creation from DOE</li>
@@ -68,9 +75,11 @@
 <h3>1.27.0 (27/04/2023)</h3>
 <ul>
   <li>Add WhatsOpt Package Store (WopStore) which allows to store and distribute implementations of analyses</li>
-  <li>Add analysis lock: the owner of an analysis can lock it into readonly mode to prevent unwanted deletion or updates
+  <li>Add analysis lock: the owner of an analysis can lock it into readonly mode to prevent unwanted deletion or
+    updates
     in the long run</li>
-  <li>Add <a href="https://joss.theoj.org/papers/10.21105/joss.04737">Egor</a> optimizer among available optimizers</li>
+  <li>Add <a href="https://joss.theoj.org/papers/10.21105/joss.04737">Egor</a> optimizer among available optimizers
+  </li>
   <li>Add a special tag (DISC) for mono-disciplinary analyses</li>
   <li>Allow to initialize array variables with a scalar (array filled with the scalar value)</li>
   <li>Fix flash notices format when cancelling actions</li>
@@ -79,7 +88,8 @@
 
 <h3>1.26.0 (24/01/2023)</h3>
 <ul>
-  <li>Manage integer variables by using <a href="https://joss.theoj.org/papers/10.21105/joss.04737">egobox</a> for mixed
+  <li>Manage integer variables by using <a href="https://joss.theoj.org/papers/10.21105/joss.04737">egobox</a> for
+    mixed
     integer LHS DOE and Egor optimizer</li>
   <li>Authorize optimizations list read access to SEGO experts</li>
   <li>Authorize any optimization read access given its id to any user</li>
@@ -183,7 +193,8 @@
   <li>Fix generated code for analysis to use initialize() method following OpenMDAO way of initializing instances
     (instead of <code>__init__()</code>, actually previous implementation was error-prone as it did not pass
     the <code>**kwargs</code> argument to parent classes).
-  <li>Tech. upgrade: Ruby 3.0.3, Passenger 6.0.12, Apache thrift 0.15.0, ruby dependencies, javascript dependencies</li>
+  <li>Tech. upgrade: Ruby 3.0.3, Passenger 6.0.12, Apache thrift 0.15.0, ruby dependencies, javascript dependencies
+  </li>
 </ul>
 
 <h3>1.19.0 (23/11/2021)</h3>
@@ -195,7 +206,8 @@
 
 <h3>1.18.1 (18/11/2021)</h3>
 <ul>
-  <li>The scripts <strong>run_analysis.py and run_optimization.py are deprecated</strong>, and will be renamed in future
+  <li>The scripts <strong>run_analysis.py and run_optimization.py are deprecated</strong>, and will be renamed in
+    future
     versions
     <ul>
       <li>run_analysis.py will be renamed run_mda.py</li>
@@ -231,7 +243,8 @@
   <li>User can specify co-owners to allow them to edit the analysis</li>
   <li>User as a co-owner is warned if a concurrent occured when editing a given analysis</li>
   <li>User can sort analyses the most recently updated first ('Newest' button)</li>
-  <li>User as a owner can import/export a project (and all its analyses) as a json format (see wop push/pull --json -p)
+  <li>User as a owner can import/export a project (and all its analyses) as a json format (see wop push/pull --json
+    -p)
   </li>
   <li>User can directly import a discipline frome another analysis in edition mode</li>
   <li>User can get standalone html through the WhastOpt GUI ('Export Html' button)</li>
@@ -712,7 +725,8 @@
 
 <h3>0.3.0 (29/09/2017)</h3>
 <ul>
-  <li>Implement automatic openmdao checking by generating code and running it in the background on a given MDA page</li>
+  <li>Implement automatic openmdao checking by generating code and running it in the background on a given MDA page
+  </li>
 </ul>
 
 <h3>0.2.6 (22/09/2017)</h3>
