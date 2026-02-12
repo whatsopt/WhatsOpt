@@ -1,9 +1,11 @@
 <h1>CHANGELOG</h1>
 
-<h3>2.0.0 (11/02/2026)</h3>
+<h3>2.0.1 (12/02/2026)</h3>
 <ul>
-  <li>Breaking change: the metamodel creation from DOE is not available anymore</li>
-  <li>Breaking change: the running operation on the server is not available anymore</li>
+  <li>Breaking change: the metamodel creation (kriging, pce) from DOE is removed</li>
+  <li>Breaking change: the running operation on the server is removed</li>
+  <li>Breaking change: the package management is removed</li>
+  <li>Breaking change: remote access to SEGOMOE optimizer is removed</li>
   <li>Openmdao code generation handles Jax components</li>
 </ul>
 
