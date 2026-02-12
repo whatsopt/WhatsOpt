@@ -11,6 +11,8 @@ class OpenmdaoDisciplineImplTest < ActiveSupport::TestCase
     odi = OpenmdaoDisciplineImpl.new
     assert_not odi.implicit_component.nil?
     assert_not odi.support_derivatives.nil?
+    assert_not odi.jax_component.nil?
+    assert_equal false, odi.jax_component
   end
 
   test "should have a json representation" do

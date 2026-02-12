@@ -44,7 +44,7 @@ module WhatsOpt
       end
     end
 
-    def default_py_value
+    def default_py_value(jax = false)
       if self.ndim == 0
         if self.type == FLOAT_T
           "1.0"
@@ -52,16 +52,17 @@ module WhatsOpt
           "1"
         end
       else
-        if self.type == FLOAT_T
-          "np.ones(#{self.shape})"
-        else
-          "np.ones(#{self.shape}, dtype=np.int32)"
-        end
+        ones_py_value(jax)
       end
     end
 
-    def ones_py_value
-      default_py_value
+    def ones_py_value(jax = false)
+      jnp_prefix = jax ? "j" : ""
+      if self.type == FLOAT_T
+        "#{jnp_prefix}np.ones(#{self.shape})"
+      else
+        "#{jnp_prefix}np.ones(#{self.shape}, dtype=#{jnp_prefix}np.int32)"
+      end
     end
 
     def lower_py_value

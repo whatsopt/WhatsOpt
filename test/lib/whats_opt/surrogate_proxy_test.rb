@@ -13,6 +13,7 @@ class SurrogateProxyTest < ActiveSupport::TestCase
   end
 
   test "should predict values" do
+    skip("Python services disabled")
     skip_if_parallel
     xt = [[0.0], [1.0], [2.0], [3.0], [4.0]]
     yt = [0.0, 1.0, 1.5, 0.9, 1.0]
@@ -25,6 +26,7 @@ class SurrogateProxyTest < ActiveSupport::TestCase
   end
 
   test "should predict values with openturns surrogate" do
+    skip("Python services disabled")
     skip_if_parallel
     xt = [[0.0], [1.0], [2.0], [3.0], [4.0]]
     yt = [0.0, 1.0, 1.5, 0.5, 1.0]
@@ -36,6 +38,7 @@ class SurrogateProxyTest < ActiveSupport::TestCase
   end
 
   test "should get sobol indices with openturns surrogate" do
+    skip("Python services disabled")
     skip_if_parallel
     xt = [[0.0], [1.0], [2.0], [3.0], [4.0]]
     yt = [0.0, 1.0, 2.0, 3.0, 4.0]
@@ -49,6 +52,7 @@ class SurrogateProxyTest < ActiveSupport::TestCase
   end
 
   test "should qualify surrogate" do
+    skip("Python services disabled")
     skip_if_parallel
     xt = [[0.0], [1.0], [2.0], [3.0], [4.0]]
     yt = [0.0, 1.0, 1.5, 0.5, 1.0]
@@ -66,12 +70,14 @@ class SurrogateProxyTest < ActiveSupport::TestCase
   end
 
   test "should check server presence" do
+    skip("Python services disabled")
     skip_if_parallel
     sleep 1
     assert @surr_proxy.server_available?
   end
 
   test "should check server absence" do
+    skip("Python services disabled")
     skip_if_parallel
     teardown
     sleep 1
@@ -79,6 +85,7 @@ class SurrogateProxyTest < ActiveSupport::TestCase
   end
 
   test "should not start server" do
+    skip("Python services disabled")
     WhatsOpt::SurrogateProxy.shutdown_server
     sleep 1
     assert_not @surr_proxy.server_available?

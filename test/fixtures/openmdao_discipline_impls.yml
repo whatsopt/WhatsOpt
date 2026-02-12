@@ -3,51 +3,60 @@ openmdao_geometry_impl:
   implicit_component: false
   support_derivatives: false
   egmdo_surrogate: true
+  jax_component: false
 
 openmdao_aerodynamics_impl:
   discipline: aerodynamics
   implicit_component: false
   support_derivatives: false
   egmdo_surrogate: true
+  jax_component: false
 
 openmdao_propulsion_impl:
   discipline: propulsion
   implicit_component: false
   support_derivatives: false
   egmdo_surrogate: false
+  jax_component: false
 
 fast_discipline_impl:
   discipline: fast_discipline
   implicit_component: false
   support_derivatives: false
   egmdo_surrogate: false
+  jax_component: false
 
 outermda_discipline_impl:
   discipline: outermda_discipline
   implicit_component: false
   support_derivatives: false
   egmdo_surrogate: false
+  jax_component: false
 
 outermda_vacant_discipline_impl:
   discipline: outermda_vacant_discipline
   implicit_component: false
   support_derivatives: false
   egmdo_surrogate: false
+  jax_component: false
 
 innermda_discipline_impl:
   discipline: innermda_discipline
   implicit_component: false
   support_derivatives: false
   egmdo_surrogate: false
+  jax_component: false
 
 disc_cicav_metamodel_impl:
   discipline: disc_cicav_metamodel
   implicit_component: false
   support_derivatives: false
   egmdo_surrogate: false
+  jax_component: false
 
 disc_singleton_impl:
   discipline: disc_singleton_impl
   implicit_component: false
   support_derivatives: false
   egmdo_surrogate: false
+  jax_component: false

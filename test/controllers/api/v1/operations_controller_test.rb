@@ -165,6 +165,7 @@ class Api::V1::OperationsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should create a DOE morris with sensitivity analysis operation" do
+    skip("Python services disabled")
     inputs = Matrix[[0, 1.0 / 3], [0, 1], [2.0 / 3, 1],
       [0, 1.0 / 3], [2.0 / 3, 1.0 / 3], [2.0 / 3, 1],
       [2.0 / 3, 0], [2.0 / 3, 2.0 / 3], [0, 2.0 / 3],

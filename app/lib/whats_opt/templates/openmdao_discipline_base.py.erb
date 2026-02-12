@@ -1,7 +1,10 @@
 <%= @generator.render_partial('base_header_partial.py.erb') %>
 
-import numpy as np
-from numpy import nan, inf
+import numpy as np #noqa
+from numpy import nan, inf #noqa
+<% if @dimpl.jax_component -%>
+import jax.numpy as jnp #noqa
+<% end -%>
 import openmdao.api as om
 
 class <%= @dimpl.py_classname %>Base(<%= @dimpl.openmdao_component_baseclass %>):
@@ -12,18 +15,18 @@ class <%= @dimpl.py_classname %>Base(<%= @dimpl.openmdao_component_baseclass %>)
 <% unless @dimpl.discipline.variables.empty? -%>
     def setup(self):
 <% @dimpl.numeric_input_vars.each do |var| -%>
-        self.add_input('<%= var.py_varname %>', val=<%= var.init_py_value %>, <%= var.ndim > 0 ? "shape=#{var.shape} ," : "" %> <%= var.is_int? ? "tags=['#{Variable::INTEGER_TAG}'] ," : "" %> desc='<%= var.escaped_desc %>'<%= @impl.use_units && !var.units.blank? ? ", units='#{var.units}'":"" %>)
+        self.add_input('<%= var.py_varname %>', val=<%= var.init_py_value(@dimpl.jax_component) %>, <%= var.ndim > 0 ? "shape=#{var.shape} ," : "" %> <%= var.is_int? ? "tags=['#{Variable::INTEGER_TAG}'] ," : "" %> desc='<%= var.escaped_desc %>'<%= @impl.use_units && !var.units.blank? ? ", units='#{var.units}'":"" %>)
 <% end %>
 <% @dimpl.numeric_output_vars.each do |var| -%>
 <% if var.scaling.blank? -%>
-        self.add_output('<%= var.py_varname %>', val=<%= var.init_py_value %>, <%= var.ndim > 0 ? "shape=#{var.shape} ," : "" %> <%= var.is_int? ? "tags=['#{Variable::INTEGER_TAG}'] ," : "" %> desc='<%= var.escaped_desc %>'<%= @impl.use_units && !var.units.blank? ? ", units='#{var.units}'":"" %>)
+        self.add_output('<%= var.py_varname %>', val=<%= var.init_py_value(@dimpl.jax_component) %>, <%= var.ndim > 0 ? "shape=#{var.shape} ," : "" %> <%= var.is_int? ? "tags=['#{Variable::INTEGER_TAG}'] ," : "" %> desc='<%= var.escaped_desc %>'<%= @impl.use_units && !var.units.blank? ? ", units='#{var.units}'":"" %>)
 <%- else -%>
-        self.add_output('<%= var.py_varname %>', val=<%= var.init_py_value %>, <%= var.ndim > 0 ? "shape=#{var.shape} ," : "" %> <%= var.is_int? ? "tags=['#{Variable::INTEGER_TAG}'] ," : "" %> desc='<%= var.escaped_desc %>',
+        self.add_output('<%= var.py_varname %>', val=<%= var.init_py_value(@dimpl.jax_component) %>, <%= var.ndim > 0 ? "shape=#{var.shape} ," : "" %> <%= var.is_int? ? "tags=['#{Variable::INTEGER_TAG}'] ," : "" %> desc='<%= var.escaped_desc %>',
                             ref=<%= var.scaling_ref_py_value %>, ref0=<%= var.scaling_ref0_py_value %>, res_ref=<%= var.scaling_res_ref_py_value %><%= @impl.use_units && !var.units.blank? ? ", units='#{var.units}'":"" %>)
 <% end -%>
 <% end -%>
 
-<%- unless @dimpl.numeric_input_vars.empty? || @dimpl.numeric_output_vars.empty? || !@discipline.is_derivable?-%>
+<%- unless @dimpl.numeric_input_vars.empty? || @dimpl.numeric_output_vars.empty? || !@discipline.is_derivable? || @dimpl.jax_component -%>
     def setup_partials(self):
         self.declare_partials('*', '*', method='<%= @dimpl.support_derivatives ? "exact" : "fd" %>')
 <% end -%>

@@ -56,6 +56,7 @@ class Api::V1::MetaModelsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should create a metamodel" do
+    skip("Python services disabled")
     assert_difference("Analysis.count", 1) do
       assert_difference("Operation.count", 2) do # doe copy + metamodel
         assert_difference("MetaModel.count", 1) do
@@ -99,6 +100,7 @@ class Api::V1::MetaModelsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should create a mm and take into account variables selection" do
+    skip("Python services disabled")
     post api_v1_operation_meta_models_url(@ope), params: {
       meta_model: { kind: Surrogate::SMT_KRIGING, variables: { inputs: ["x1"], outputs: ["obj"] } }
     }, as: :json, headers: @auth_headers
@@ -109,6 +111,7 @@ class Api::V1::MetaModelsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should create a sensitivity operation with openturns pce metamodel" do
+    skip("Python services disabled")
     post api_v1_operation_meta_models_url(@ope), params: {
       meta_model: { kind: Surrogate::OPENTURNS_PCE, variables: { inputs: ["x1"], outputs: ["obj"] } }
     }, as: :json, headers: @auth_headers
@@ -128,6 +131,7 @@ class Api::V1::MetaModelsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should use a metamodel" do
+    skip("Python services disabled")
     mm = meta_models(:cicav_metamodel)
     put api_v1_meta_model_url(mm), params: { meta_model: {
         x: [[3, 5, 7], [6, 10, 1]]
@@ -140,6 +144,7 @@ class Api::V1::MetaModelsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "anybody can make prediction" do
+    skip("Python services disabled")
     mm = meta_models(:cicav_metamodel)
     @auth_headers = { "Authorization" => "Token " + @user2.api_key }
     put api_v1_meta_model_url(mm), params: { meta_model: {

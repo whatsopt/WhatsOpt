@@ -39,11 +39,15 @@ function _check_and_set_new_openmdao_impl(old_impl, new_impl) {
       node.implicit_component = false;
       // eslint-disable-next-line no-param-reassign
       node.support_derivatives = false;
+      // eslint-disable-next-line no-param-reassign
+      node.jax_component = false;
     }
     if ((node.implicit_component && node.implicit_component
         !== old_impl.nodes[i].implicit_component)
       || (node.support_derivatives && node.support_derivatives
-        !== old_impl.nodes[i].support_derivatives)) {
+        !== old_impl.nodes[i].support_derivatives)
+      || (node.jax_component && node.jax_component
+        !== old_impl.nodes[i].jax_component)) {
       // eslint-disable-next-line no-param-reassign
       node.egmdo_surrogate = false;
     }

@@ -28,7 +28,9 @@ class Api::V1::OpenmdaoImplsController < Api::V1::ApiMdaUpdaterController
                                             nodes: [[:discipline_id,
                                                      :implicit_component,
                                                      :support_derivatives,
-                                                     :egmdo_surrogate]],
+                                                     :egmdo_surrogate,
+                                                     :jax_component]],
+
                                             nonlinear_solver: [:name, :atol, :rtol, :maxiter, :err_on_non_converge, :iprint],
                                             linear_solver: [:name, :atol, :rtol, :maxiter, :err_on_non_converge, :iprint])
     end

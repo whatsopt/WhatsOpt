@@ -22,6 +22,7 @@ class MetaModelTest < ActiveSupport::TestCase
   end
 
   test "should predict" do
+    skip("Python services disabled")
     skip_if_parallel
     x = [[2.5, 3, 4], [8, 9, 10], [5, 4, 3]]
     y = @mm.predict(x)
@@ -30,6 +31,7 @@ class MetaModelTest < ActiveSupport::TestCase
   end
 
   test "should predict with a copy" do
+    skip("Python services disabled")
     skip_if_parallel
     x = [[2.5, 3, 4], [8, 9, 10], [5, 4, 3]]
     assert_difference("Option.count", 2) do  # one copy for mm.default_options + one for surrogate
@@ -42,6 +44,7 @@ class MetaModelTest < ActiveSupport::TestCase
   end
 
   test "should raise exception if x invalid" do
+    skip("Python services disabled")
     x = [[1.0, 8], [8, 9, 10], [5, 4, 3]]
     assert_raises MetaModel::PredictionError do
       @mm.predict(x)
@@ -49,6 +52,7 @@ class MetaModelTest < ActiveSupport::TestCase
   end
 
   test "should be qualified" do
+    skip("Python services disabled")
     assert_equal 1, @mm2.qualification.size
     assert_equal [:kind, :name, :r2, :xvalid, :ypred, :yvalid], @mm2.qualification[0].keys.sort
     assert_in_delta(1.0, @mm2.qualification[0][:r2])

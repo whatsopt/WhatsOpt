@@ -149,7 +149,9 @@ class Operation < ApplicationRecord
   def rerunnable?
     # if started_at is nil, the operation was not run from WhatsOpt server
     # hence non runnable again.
-    self.job && self.job.started_at
+    # self.job && self.job.started_at
+  
+    false # disable rerunnable to sunset the feature
   end
 
   def success?
