@@ -12,8 +12,6 @@ from whatsopt_server.handlers.administration_handler import AdministrationHandle
 from whatsopt_server.services import Administration as AdministrationService
 from whatsopt_server.handlers.surrogate_store_handler import SurrogateStoreHandler
 from whatsopt_server.services import SurrogateStore as SurrogateStoreService
-from whatsopt_server.handlers.optimizer_store_handler import OptimizerStoreHandler
-from whatsopt_server.services import OptimizerStore as OptimizerStoreService
 
 import warnings
 
@@ -29,7 +27,7 @@ def main(args=sys.argv[1:]):
         "--outdir",
         dest="outdir",
         default=tempfile.gettempdir(),
-        help="save trained surrogates or configured optimizers to DIRECTORY",
+        help="save trained surrogates to DIRECTORY",
         metavar="DIRECTORY",
     )
     parser.add_option(
@@ -50,7 +48,7 @@ def main(args=sys.argv[1:]):
     outdir = options.outdir
     logdir = options.logdir
     port = int(options.port)
-    print("Surrogates/Optimizers saved to {}".format(outdir))
+    print("Surrogates saved to {}".format(outdir))
     print("Logs saved to {}".format(logdir))
     print("Listening on port {}".format(port))
 
@@ -58,12 +56,6 @@ def main(args=sys.argv[1:]):
     processor.registerProcessor(
         "SurrogateStoreService",
         SurrogateStoreService.Processor(SurrogateStoreHandler(outdir=outdir)),
-    )
-    processor.registerProcessor(
-        "OptimizerStoreService",
-        OptimizerStoreService.Processor(
-            OptimizerStoreHandler(outdir=outdir, logdir=logdir)
-        ),
     )
     processor.registerProcessor(
         "AdministrationService",

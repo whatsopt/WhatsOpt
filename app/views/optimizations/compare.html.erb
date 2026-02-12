@@ -1,7 +1,0 @@
-<h2>Compare <%= @compare_optimizations_list.length %> optimizations : Optim #<%= params[:optim_list].join(', Optim #') %></h2>
-
-<div id="optim_viewer" data-optimization="<%=@compare_optimizations_list.to_json %>"></div>
-
-<%= render partial: "optimization_infos", locals: { optimizations: @compare_optimizations_list } %>
-
-<%= append_javascript_pack_tag 'optim_viewer_application' %>

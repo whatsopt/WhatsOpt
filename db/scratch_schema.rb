@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_09_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_12_000000) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -21,7 +21,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_09_120000) do
     t.index ["record_type", "record_id", "name"], name: "index_action_text_rich_texts_uniqueness", unique: true
   end
 
-  create_table "active_storage_attachments", id: :integer, default: nil, force: :cascade do |t|
+  create_table "active_storage_attachments", force: :cascade do |t|
     t.integer "blob_id", null: false
     t.datetime "created_at", precision: nil, null: false
     t.string "name", null: false
@@ -31,7 +31,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_09_120000) do
     t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
   end
 
-  create_table "active_storage_blobs", id: :integer, default: nil, force: :cascade do |t|
+  create_table "active_storage_blobs", force: :cascade do |t|
     t.integer "byte_size", null: false
     t.string "checksum"
     t.string "content_type"
@@ -59,7 +59,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_09_120000) do
     t.index ["ancestry"], name: "index_analyses_on_ancestry"
   end
 
-  create_table "analysis_disciplines", id: :integer, default: nil, force: :cascade do |t|
+  create_table "analysis_disciplines", force: :cascade do |t|
     t.integer "analysis_id"
     t.integer "discipline_id"
     t.index ["analysis_id"], name: "index_analysis_disciplines_on_analysis_id"
@@ -217,15 +217,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_09_120000) do
     t.string "name"
     t.text "success"
     t.datetime "updated_at", precision: nil
-  end
-
-  create_table "optimizations", force: :cascade do |t|
-    t.text "config"
-    t.datetime "created_at", null: false
-    t.text "inputs", limit: 16777215
-    t.string "kind"
-    t.text "outputs", limit: 16777215
-    t.datetime "updated_at", null: false
   end
 
   create_table "options", force: :cascade do |t|

@@ -19,13 +19,6 @@ module WhatsOpt
       VALID_VALUES = Set.new([SMT_KRIGING, SMT_KPLS, SMT_KPLSK, SMT_LS, SMT_QP, OPENTURNS_PCE]).freeze
     end
 
-    module OptimizerKind
-      SEGOMOE = 0
-      SEGMOOMOE = 1
-      VALUE_MAP = {0 => "SEGOMOE", 1 => "SEGMOOMOE"}
-      VALID_VALUES = Set.new([SEGOMOE, SEGMOOMOE]).freeze
-    end
-
     module ConstraintType
       LESS = 0
       EQUAL = 1
@@ -47,15 +40,11 @@ module WhatsOpt
 
     class SurrogateException < ::Thrift::Exception; end
 
-    class OptimizerException < ::Thrift::Exception; end
-
     class SurrogateQualification; end
 
     class SobolIndices; end
 
     class Distribution; end
-
-    class OptimizerResult; end
 
     class ConstraintSpec; end
 
@@ -143,29 +132,6 @@ module WhatsOpt
       ::Thrift::Struct.generate_accessors self
     end
 
-    class OptimizerException < ::Thrift::Exception
-      include ::Thrift::Struct, ::Thrift::Struct_Union
-      def initialize(message=nil)
-        super()
-        self.msg = message
-      end
-
-      def message; msg end
-
-      MSG = 1
-
-      FIELDS = {
-        MSG => {:type => ::Thrift::Types::STRING, :name => 'msg'}
-      }
-
-      def struct_fields; FIELDS; end
-
-      def validate
-      end
-
-      ::Thrift::Struct.generate_accessors self
-    end
-
     class SurrogateQualification
       include ::Thrift::Struct, ::Thrift::Struct_Union
       R2 = 1
@@ -210,28 +176,6 @@ module WhatsOpt
       FIELDS = {
         NAME => {:type => ::Thrift::Types::STRING, :name => 'name'},
         KWARGS => {:type => ::Thrift::Types::MAP, :name => 'kwargs', :key => {:type => ::Thrift::Types::STRING}, :value => {:type => ::Thrift::Types::DOUBLE}}
-      }
-
-      def struct_fields; FIELDS; end
-
-      def validate
-      end
-
-      ::Thrift::Struct.generate_accessors self
-    end
-
-    class OptimizerResult
-      include ::Thrift::Struct, ::Thrift::Struct_Union
-      STATUS = 1
-      X_SUGGESTED = 2
-      X_BEST = 3
-      Y_BEST = 4
-
-      FIELDS = {
-        STATUS => {:type => ::Thrift::Types::I64, :name => 'status'},
-        X_SUGGESTED => {:type => ::Thrift::Types::LIST, :name => 'x_suggested', :element => {:type => ::Thrift::Types::DOUBLE}},
-        X_BEST => {:type => ::Thrift::Types::LIST, :name => 'x_best', :element => {:type => ::Thrift::Types::LIST, :element => {:type => ::Thrift::Types::DOUBLE}}, :optional => true},
-        Y_BEST => {:type => ::Thrift::Types::LIST, :name => 'y_best', :element => {:type => ::Thrift::Types::LIST, :element => {:type => ::Thrift::Types::DOUBLE}}, :optional => true}
       }
 
       def struct_fields; FIELDS; end

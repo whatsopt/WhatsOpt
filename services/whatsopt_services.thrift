@@ -31,10 +31,6 @@ exception SurrogateException {
   1: string msg
 }
 
-exception OptimizerException {
-  1: string msg
-}
-
 struct SurrogateQualification {
   1: Float r2,
   2: Vector yp
@@ -81,18 +77,6 @@ service SurrogateStore {
 }
 
 
-enum OptimizerKind {
-  SEGOMOE,
-  SEGMOOMOE
-}
-
-struct OptimizerResult {
-  1: Integer status,
-  2: Vector x_suggested,
-  3: optional Matrix x_best, 
-  4: optional Matrix y_best 
-}
-
 enum ConstraintType {
   LESS,
   EQUAL,
@@ -133,24 +117,3 @@ struct Xtype {
 }
 typedef list<Xtype> Xtypes;
 
-service OptimizerStore {
-
-  void create_optimizer(1: string optimizer_id,
-                        2: OptimizerKind kind,
-                        3: Matrix xlimits, 
-                        4: ConstraintSpecs cstr_specs, 
-                        5: Options options) throws (1: OptimizerException exc);
-
-  void create_mixint_optimizer(1: string optimizer_id,
-                               2: OptimizerKind kind,
-                               3: Xtypes xtypes, 
-                               4: Integer n_obj,
-                               5: ConstraintSpecs cstr_specs, 
-                               6: Options options) throws (1: OptimizerException exc);
-
-  OptimizerResult ask(1: string optimizer_id, 2: bool with_best) throws (1: OptimizerException exc);
-
-  void tell(1: string optimizer_id, 2: Matrix x, 3: Matrix y) throws (1: OptimizerException exc);
-
-  void destroy_optimizer(1: string optimizer_id);
-}

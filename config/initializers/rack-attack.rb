@@ -47,12 +47,6 @@ class Rack::Attack
     end
   end
 
-  # throttle('optimization/ip', limit: 5, period: 20.seconds) do |req|
-  #   if req.path ~= /^/api/v1/optimization && req.put?
-  #     req.ip
-  #   end
-  # end
-
   # Track requests from a special user agent.
   track("wop") do |req|
     req.user_agent && req.user_agent.include?("wop")

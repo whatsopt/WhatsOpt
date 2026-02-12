@@ -44,21 +44,6 @@ class SurrogateKind(object):
     }
 
 
-class OptimizerKind(object):
-    SEGOMOE = 0
-    SEGMOOMOE = 1
-
-    _VALUES_TO_NAMES = {
-        0: "SEGOMOE",
-        1: "SEGMOOMOE",
-    }
-
-    _NAMES_TO_VALUES = {
-        "SEGOMOE": 0,
-        "SEGMOOMOE": 1,
-    }
-
-
 class ConstraintType(object):
     LESS = 0
     EQUAL = 1
@@ -311,81 +296,6 @@ class SurrogateException(TException):
         return not (self == other)
 
 
-class OptimizerException(TException):
-    """
-    Attributes:
-     - msg
-
-    """
-    thrift_spec = None
-
-
-    def __init__(self, msg = None,):
-        super(OptimizerException, self).__setattr__('msg', msg)
-
-    def __setattr__(self, *args):
-        raise TypeError("can't modify immutable instance")
-
-    def __delattr__(self, *args):
-        raise TypeError("can't modify immutable instance")
-
-    def __hash__(self):
-        return hash(self.__class__) ^ hash((self.msg, ))
-
-    @classmethod
-    def read(cls, iprot):
-        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and cls.thrift_spec is not None:
-            return iprot._fast_decode(None, iprot, [cls, cls.thrift_spec])
-        iprot.readStructBegin()
-        msg = None
-        while True:
-            (fname, ftype, fid) = iprot.readFieldBegin()
-            if ftype == TType.STOP:
-                break
-            if fid == 1:
-                if ftype == TType.STRING:
-                    msg = iprot.readString().decode('utf-8', errors='replace') if sys.version_info[0] == 2 else iprot.readString()
-                else:
-                    iprot.skip(ftype)
-            else:
-                iprot.skip(ftype)
-            iprot.readFieldEnd()
-        iprot.readStructEnd()
-        return cls(
-            msg=msg,
-        )
-
-    def write(self, oprot):
-        self.validate()
-        if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
-            return
-        oprot.writeStructBegin('OptimizerException')
-        if self.msg is not None:
-            oprot.writeFieldBegin('msg', TType.STRING, 1)
-            oprot.writeString(self.msg.encode('utf-8') if sys.version_info[0] == 2 else self.msg)
-            oprot.writeFieldEnd()
-        oprot.writeFieldStop()
-        oprot.writeStructEnd()
-
-    def validate(self):
-        return
-
-    def __str__(self):
-        return repr(self)
-
-    def __repr__(self):
-        L = ['%s=%r' % (key, value)
-             for key, value in self.__dict__.items()]
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
-
-    def __eq__(self, other):
-        return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
-
-    def __ne__(self, other):
-        return not (self == other)
-
-
 class SurrogateQualification(object):
     """
     Attributes:
@@ -611,138 +521,6 @@ class Distribution(object):
                 oprot.writeString(kiter49.encode('utf-8') if sys.version_info[0] == 2 else kiter49)
                 oprot.writeDouble(viter50)
             oprot.writeMapEnd()
-            oprot.writeFieldEnd()
-        oprot.writeFieldStop()
-        oprot.writeStructEnd()
-
-    def validate(self):
-        return
-
-    def __repr__(self):
-        L = ['%s=%r' % (key, value)
-             for key, value in self.__dict__.items()]
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
-
-    def __eq__(self, other):
-        return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
-
-    def __ne__(self, other):
-        return not (self == other)
-
-
-class OptimizerResult(object):
-    """
-    Attributes:
-     - status
-     - x_suggested
-     - x_best
-     - y_best
-
-    """
-    thrift_spec = None
-
-
-    def __init__(self, status = None, x_suggested = None, x_best = None, y_best = None,):
-        self.status = status
-        self.x_suggested = x_suggested
-        self.x_best = x_best
-        self.y_best = y_best
-
-    def read(self, iprot):
-        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
-            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
-            return
-        iprot.readStructBegin()
-        while True:
-            (fname, ftype, fid) = iprot.readFieldBegin()
-            if ftype == TType.STOP:
-                break
-            if fid == 1:
-                if ftype == TType.I64:
-                    self.status = iprot.readI64()
-                else:
-                    iprot.skip(ftype)
-            elif fid == 2:
-                if ftype == TType.LIST:
-                    self.x_suggested = []
-                    (_etype54, _size51) = iprot.readListBegin()
-                    for _i55 in range(_size51):
-                        _elem56 = iprot.readDouble()
-                        self.x_suggested.append(_elem56)
-                    iprot.readListEnd()
-                else:
-                    iprot.skip(ftype)
-            elif fid == 3:
-                if ftype == TType.LIST:
-                    self.x_best = []
-                    (_etype60, _size57) = iprot.readListBegin()
-                    for _i61 in range(_size57):
-                        _elem62 = []
-                        (_etype66, _size63) = iprot.readListBegin()
-                        for _i67 in range(_size63):
-                            _elem68 = iprot.readDouble()
-                            _elem62.append(_elem68)
-                        iprot.readListEnd()
-                        self.x_best.append(_elem62)
-                    iprot.readListEnd()
-                else:
-                    iprot.skip(ftype)
-            elif fid == 4:
-                if ftype == TType.LIST:
-                    self.y_best = []
-                    (_etype72, _size69) = iprot.readListBegin()
-                    for _i73 in range(_size69):
-                        _elem74 = []
-                        (_etype78, _size75) = iprot.readListBegin()
-                        for _i79 in range(_size75):
-                            _elem80 = iprot.readDouble()
-                            _elem74.append(_elem80)
-                        iprot.readListEnd()
-                        self.y_best.append(_elem74)
-                    iprot.readListEnd()
-                else:
-                    iprot.skip(ftype)
-            else:
-                iprot.skip(ftype)
-            iprot.readFieldEnd()
-        iprot.readStructEnd()
-
-    def write(self, oprot):
-        self.validate()
-        if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
-            return
-        oprot.writeStructBegin('OptimizerResult')
-        if self.status is not None:
-            oprot.writeFieldBegin('status', TType.I64, 1)
-            oprot.writeI64(self.status)
-            oprot.writeFieldEnd()
-        if self.x_suggested is not None:
-            oprot.writeFieldBegin('x_suggested', TType.LIST, 2)
-            oprot.writeListBegin(TType.DOUBLE, len(self.x_suggested))
-            for iter81 in self.x_suggested:
-                oprot.writeDouble(iter81)
-            oprot.writeListEnd()
-            oprot.writeFieldEnd()
-        if self.x_best is not None:
-            oprot.writeFieldBegin('x_best', TType.LIST, 3)
-            oprot.writeListBegin(TType.LIST, len(self.x_best))
-            for iter82 in self.x_best:
-                oprot.writeListBegin(TType.DOUBLE, len(iter82))
-                for iter83 in iter82:
-                    oprot.writeDouble(iter83)
-                oprot.writeListEnd()
-            oprot.writeListEnd()
-            oprot.writeFieldEnd()
-        if self.y_best is not None:
-            oprot.writeFieldBegin('y_best', TType.LIST, 4)
-            oprot.writeListBegin(TType.LIST, len(self.y_best))
-            for iter84 in self.y_best:
-                oprot.writeListBegin(TType.DOUBLE, len(iter84))
-                for iter85 in iter84:
-                    oprot.writeDouble(iter85)
-                oprot.writeListEnd()
-            oprot.writeListEnd()
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
@@ -1014,20 +792,20 @@ class Xlimits(object):
             elif fid == 3:
                 if ftype == TType.LIST:
                     self.olimits = []
-                    (_etype89, _size86) = iprot.readListBegin()
-                    for _i90 in range(_size86):
-                        _elem91 = iprot.readDouble()
-                        self.olimits.append(_elem91)
+                    (_etype54, _size51) = iprot.readListBegin()
+                    for _i55 in range(_size51):
+                        _elem56 = iprot.readDouble()
+                        self.olimits.append(_elem56)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
             elif fid == 4:
                 if ftype == TType.LIST:
                     self.elimits = []
-                    (_etype95, _size92) = iprot.readListBegin()
-                    for _i96 in range(_size92):
-                        _elem97 = iprot.readString().decode('utf-8', errors='replace') if sys.version_info[0] == 2 else iprot.readString()
-                        self.elimits.append(_elem97)
+                    (_etype60, _size57) = iprot.readListBegin()
+                    for _i61 in range(_size57):
+                        _elem62 = iprot.readString().decode('utf-8', errors='replace') if sys.version_info[0] == 2 else iprot.readString()
+                        self.elimits.append(_elem62)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
@@ -1053,15 +831,15 @@ class Xlimits(object):
         if self.olimits is not None:
             oprot.writeFieldBegin('olimits', TType.LIST, 3)
             oprot.writeListBegin(TType.DOUBLE, len(self.olimits))
-            for iter98 in self.olimits:
-                oprot.writeDouble(iter98)
+            for iter63 in self.olimits:
+                oprot.writeDouble(iter63)
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         if self.elimits is not None:
             oprot.writeFieldBegin('elimits', TType.LIST, 4)
             oprot.writeListBegin(TType.STRING, len(self.elimits))
-            for iter99 in self.elimits:
-                oprot.writeString(iter99.encode('utf-8') if sys.version_info[0] == 2 else iter99)
+            for iter64 in self.elimits:
+                oprot.writeString(iter64.encode('utf-8') if sys.version_info[0] == 2 else iter64)
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
@@ -1166,11 +944,6 @@ SurrogateException.thrift_spec = (
     None,  # 0
     (1, TType.STRING, 'msg', 'UTF8', None, ),  # 1
 )
-all_structs.append(OptimizerException)
-OptimizerException.thrift_spec = (
-    None,  # 0
-    (1, TType.STRING, 'msg', 'UTF8', None, ),  # 1
-)
 all_structs.append(SurrogateQualification)
 SurrogateQualification.thrift_spec = (
     None,  # 0
@@ -1188,14 +961,6 @@ Distribution.thrift_spec = (
     None,  # 0
     (1, TType.STRING, 'name', 'UTF8', None, ),  # 1
     (2, TType.MAP, 'kwargs', (TType.STRING, 'UTF8', TType.DOUBLE, None, False), None, ),  # 2
-)
-all_structs.append(OptimizerResult)
-OptimizerResult.thrift_spec = (
-    None,  # 0
-    (1, TType.I64, 'status', None, None, ),  # 1
-    (2, TType.LIST, 'x_suggested', (TType.DOUBLE, None, False), None, ),  # 2
-    (3, TType.LIST, 'x_best', (TType.LIST, (TType.DOUBLE, None, False), False), None, ),  # 3
-    (4, TType.LIST, 'y_best', (TType.LIST, (TType.DOUBLE, None, False), False), None, ),  # 4
 )
 all_structs.append(ConstraintSpec)
 ConstraintSpec.thrift_spec = (

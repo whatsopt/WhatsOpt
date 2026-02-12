@@ -53,10 +53,6 @@ class User < ActiveRecord::Base
     @admin ||= has_role?(:admin)
   end
 
-  def sego_expert?
-    @sego_expert ||= has_role?(:sego_expert)
-  end
-
   def need_to_know_expert?
     @need_to_know_expert ||= has_role?(:need_to_know_expert)
     if !@need_to_know_expert && APP_CONFIG["enable_ldap"]

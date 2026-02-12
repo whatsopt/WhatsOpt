@@ -15,14 +15,6 @@ Rails.application.routes.draw do
   resources :design_projects
   resources :packages, only: [:index, :destroy] if APP_CONFIG["enable_wopstore"]
 
-  resources :optimizations do
-    collection do
-      post "select"
-      get "compare"
-    end
-    get "download", to: "optimization_exports#new"
-  end
-
   namespace :api do
     namespace :v1, defaults: { format: :json } do
       resource :api_doc, only: [:show]
@@ -52,7 +44,6 @@ Rails.application.routes.draw do
       end
       resources :user_roles, only: [:index, :update, :destroy]
       resource :versioning, only: [:show]
-      resources :optimizations if APP_CONFIG["enable_remote_optimizations"]
       resources :design_projects, only: [:index, :show, :create]
     end
   end

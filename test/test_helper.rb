@@ -14,9 +14,6 @@ TEST_API_KEY = "FriendlyApiKey"
 
 PYTHON = APP_CONFIG["python_cmd"] || "python"
 
-SEGOMOE_INSTALLED = system("#{PYTHON} << EOF\nimport segomoe\nEOF")
-# puts("SEGOMOE_INSTALLED=#{SEGOMOE_INSTALLED}")
-
 class ActiveSupport::TestCase
   # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
   fixtures :all
@@ -30,14 +27,6 @@ class ActiveSupport::TestCase
 
   def skip_if_parallel
     skip "when run in parallel" if ENV["PARALLEL_WORKERS"].to_i > 1
-  end
-
-  def skip_if_segomoe_not_installed
-    skip "SEGOMOE not installed" unless SEGOMOE_INSTALLED
-  end
-
-  def skip_if_segomoe_installed
-    skip "SEGOMOE installed" if SEGOMOE_INSTALLED
   end
 
   def csv2hash(filename)
