@@ -9,7 +9,6 @@ module WhatsOpt
     attr_reader :id, :pid, :host, :port
 
     PYTHON = APP_CONFIG["python_cmd"] || "python"
-    OUTDIR = File.join(Rails.root, "upload", "store")
     LOGDIR = File.join(Rails.root, "log")
 
     DEFAULT_HOST = "localhost"
@@ -37,7 +36,7 @@ module WhatsOpt
       self._initialize
 
       if server_start && !server_available?
-        cmd = "#{PYTHON} #{File.join(Rails.root, 'services', 'run_server.py')} --outdir #{OUTDIR} --logdir #{LOGDIR} --port #{@port}"
+        cmd = "#{PYTHON} #{File.join(Rails.root, 'services', 'run_server.py')} --logdir #{LOGDIR} --port #{@port}"
         Rails.logger.info cmd
         @pid = spawn(cmd, [:out, :err] => File.join(Rails.root, "log", "whatsopt_server.log"))
         retries = 0
@@ -83,10 +82,6 @@ module WhatsOpt
     def _send
       @transport.open()
       yield
-    rescue Services::SurrogateException => e
-      # puts "#{e}: #{e.msg}"
-      Rails.logger.warn "#{e}: #{e.msg}"
-      raise
     rescue Thrift::TransportException => e
       # puts "#{e}"
       Rails.logger.warn e

@@ -17,7 +17,7 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     get api_v1_mdas_url, as: :json, headers: @auth_headers
     assert_response :success
     analyses = JSON.parse(response.body)
-    assert_equal 4, analyses.size # user1 owns 4 analyses
+    assert_equal 3, analyses.size # user1 owns 3 analyses
     mda = analyses[0]
     assert_equal ["created_at", "id", "name", "updated_at"], mda.keys.sort
   end
@@ -35,7 +35,7 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
     query = design_projects(:cicav_project).name
     get api_v1_mdas_url(design_project_query: query), as: :json, headers: @auth_headers
     analyses = JSON.parse(response.body)
-    assert_equal 3, analyses.size # cicav, cicav_mm, cicav_mm2 analyses
+    assert_equal 1, analyses.size # cicav analysis only
   end
 
   test "should get an analysis" do
@@ -268,26 +268,6 @@ class Api::V1::AnalysesControllerTest < ActionDispatch::IntegrationTest
    # Connection y from PlainDiscipline to __DRIVER__
    # Connection y2 from PlainDiscipline to __DRIVER__
  end
-
-  test "should import a metamodel" do
-    skip("Python services disabled")
-    orig_count = @mda.disciplines.count
-    @mda.package.destroy!  # remove package to avoid forbidden error (cannot import if analysis is packaged)
-    @mda.operations.final.map(&:destroy!)  # remove operations to avoid forbidden error (cannot import if analysis is operated)
-    @mda.operations.map(&:destroy!)  # remove operations to avoid forbidden error (cannot import if analysis is operated)
-    mda2 = analyses(:singleton_mm)
-    disc = disciplines(:disc_singleton_mm)
-    put api_v1_mda_url(@mda), params: { analysis: { import: { analysis: mda2.id, disciplines: [disc.id] } }, requested_at: Time.now },
-      as: :json, headers: @auth_headers
-    @mda.reload
-    assert_equal orig_count + 1, @mda.disciplines.count
-
-    mm = @mda.disciplines.last.meta_model
-    put api_v1_meta_model_url(mm), params: { meta_model: {
-        x: [[3], [6]]
-      } }, as: :json, headers: @auth_headers
-    assert_response :success
-  end
 
   test "should import a sub-analysis" do
     mda = analyses(:singleton)

@@ -47,13 +47,6 @@ innermda_discipline_impl:
   egmdo_surrogate: false
   jax_component: false
 
-disc_cicav_metamodel_impl:
-  discipline: disc_cicav_metamodel
-  implicit_component: false
-  support_derivatives: false
-  egmdo_surrogate: false
-  jax_component: false
-
 disc_singleton_impl:
   discipline: disc_singleton_impl
   implicit_component: false

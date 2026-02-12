@@ -24,8 +24,6 @@ class Variable < ApplicationRecord
   has_many :outgoing_connections, -> { includes :to }, class_name: "Connection", foreign_key: "from_id", dependent: :delete_all
   has_many :cases
 
-  has_one :surrogate, dependent: :destroy
-
   accepts_nested_attributes_for :parameter, reject_if: proc { |attr|
                                                          attr["init"].nil? &&
                                                            attr["lower"].nil? &&

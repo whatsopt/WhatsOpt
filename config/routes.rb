@@ -24,9 +24,6 @@ Rails.application.routes.draw do
         resources :variables, only: [:index, :show], shallow: false
         resources :operations, only: [:show, :create, :update, :destroy] do
           resource :job, only: [:show, :create, :update] if APP_CONFIG["enable_remote_operations"]
-          resources :meta_models, only: [:create, :update] do
-            resource :prediction_quality, only: [:show]
-          end
           resource :sensitivity_analysis, only: [:show]
         end
         resource :openmdao_impl, only: [:show, :update]
@@ -37,7 +34,6 @@ Rails.application.routes.draw do
         get "exports/new"
         get "comparisons/new"
       end
-      resources :meta_models, only: [:index, :show]
       resources :operations, only: [:create] if APP_CONFIG["enable_remote_operations"]
       resources :users, only: [:update] do
         resource :api_key

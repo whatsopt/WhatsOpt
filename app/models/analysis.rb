@@ -20,9 +20,6 @@ class Analysis < ApplicationRecord
   has_one :analysis_discipline, dependent: :destroy
   has_one :super_discipline, through: :analysis_discipline, source: :discipline
 
-  has_many :meta_model_prototypes, foreign_key: :prototype_id, dependent: :destroy
-  has_many :meta_models, through: :meta_model_prototypes, inverse_of: :prototype
-
   has_many :operations, -> { includes(:job) }, dependent: :destroy
 
   has_one :openmdao_impl, class_name: "OpenmdaoAnalysisImpl", dependent: :destroy
@@ -70,14 +67,6 @@ class Analysis < ApplicationRecord
 
   def mono_disciplinary?
     self.disciplines.nodes.size == 1 && self.is_plain?
-  end
-
-  def is_metamodel?
-    disciplines.nodes.size > 0 && !disciplines.nodes.detect { |d| !d.is_metamodel? }
-  end
-
-  def is_metamodel_prototype?
-    disciplines.nodes.count == 1 && disciplines.last.is_metamodel_prototype?
   end
 
   def uq_mode?
@@ -320,8 +309,7 @@ class Analysis < ApplicationRecord
       edges: build_edges,
       inactive_edges: build_edges(active: false),
       vars: build_var_infos,
-      impl: { openmdao: build_openmdao_impl,
-              metamodel: { quality: build_metamodel_quality } }
+      impl: { openmdao: build_openmdao_impl }
     }.to_json
   end
 
@@ -408,14 +396,6 @@ class Analysis < ApplicationRecord
 
   def build_openmdao_impl
     ActiveModelSerializers::SerializableResource.new(self.impl).as_json
-  end
-
-  def build_metamodel_quality
-    res = []
-    if is_metamodel?
-      res = disciplines.inject([]) { |acc, d| acc + d.metamodel_qualification }
-    end
-    res
   end
 
   def refresh_connections(default_role_for_inputs = WhatsOpt::Variable::PARAMETER_ROLE,
@@ -533,9 +513,6 @@ class Analysis < ApplicationRecord
             attrs = { disciplines_attributes: [discattrs] }
             self.update!(attrs)
             new_disc = self.disciplines.reload.last
-            if disc.is_pure_metamodel?
-              new_disc.meta_model = disc.meta_model.build_copy(self, new_disc)
-            end
             if disc.has_sub_analysis?
               new_disc.sub_analysis = disc.sub_analysis.create_copy!(self)
             end
@@ -550,7 +527,7 @@ class Analysis < ApplicationRecord
 
   def create_copy!(parent = nil, super_disc = nil)
     mda_copy =
-    Analysis.transaction do  # metamodel and subanalysis are saved, rollback if problem
+    Analysis.transaction do  # subanalysis are saved, rollback if problem
       mda_copy = Analysis.create!(name: name, public: public, locked: locked) do |copy|
         copy.parent_id = parent.id if parent
         copy.openmdao_impl = self.openmdao_impl.build_copy if self.openmdao_impl
@@ -758,28 +735,6 @@ class Analysis < ApplicationRecord
     )
   end
 
-  def self.build_from_metamodel_ope(ope, varnames = nil)
-    name = "#{ope.analysis.name.camelize}MetaModel"
-    metamodel_varattrs = ope.build_metamodel_varattrs(varnames)
-    driver_vars = metamodel_varattrs.map do |v|
-      vcopy = v.clone
-      vcopy[:io_mode] = Variable.reflect_io_mode(v[:io_mode])
-      vcopy
-    end
-    analysis_attrs = {
-      name: name,
-      public: ope.analysis.public,
-      locked: ope.analysis.locked,
-      disciplines_attributes: [
-        { name: "__DRIVER__", variables_attributes: driver_vars },
-        { name: "#{ope.analysis.name.camelize}", type: WhatsOpt::Discipline::METAMODEL,
-          variables_attributes: metamodel_varattrs }
-    ] }
-    mm_mda = Analysis.new(analysis_attrs)
-    mm_mda.build_design_project_filing(design_project: ope.analysis.design_project) if ope.analysis.design_project
-    mm_mda
-  end
-
   def parameterize(parameterization)
     names = parameterization[:parameters].map { |p| p[:varname] }
     values = parameterization[:parameters].inject({}) { |acc, elt| acc[elt[:varname]] = elt[:value]; acc }
@@ -801,12 +756,9 @@ class Analysis < ApplicationRecord
   def self.create_nested_analyses(mda_attrs)
     # Rails.logger.info "################ CREATE NESTED #{mda_attrs["name"]}"
     subs = []
-    # manage metamodel and sub analyses
+    # manage sub analyses
     if  mda_attrs["disciplines_attributes"]
       mda_attrs["disciplines_attributes"].each.with_index do |disc, i|
-        # when creating an analysis from params, just disable metamodel
-        # and set a regular discipline instead
-        disc["type"] == Discipline::DISCIPLINE if disc["type"] == Discipline::METAMODEL
         if disc["sub_analysis_attributes"]
           subs << self.create_nested_analyses(disc["sub_analysis_attributes"])
           disc.delete("sub_analysis_attributes")

@@ -59,11 +59,7 @@ module WhatsOpt
     def _generate_discipline(discipline, gendir, options = {})
       @discipline = discipline  # @discipline used in template
       @with_server = options[:with_server]
-      if @discipline.type == "metamodel"
-        raise NotYetImplementedError.new("Cannot generate code for metamodel #{@discipline.name}")
-      else
-        _generate(discipline.impl.py_filename, "gemseo/gemseo_discipline.py.erb", gendir)
-      end
+      _generate(discipline.impl.py_filename, "gemseo/gemseo_discipline.py.erb", gendir)
       _generate(discipline.impl.py_basefilename, "gemseo/gemseo_discipline_base.py.erb", gendir)
     end
 

@@ -10,8 +10,6 @@ from thrift.TMultiplexedProcessor import TMultiplexedProcessor
 
 from whatsopt_server.handlers.administration_handler import AdministrationHandler
 from whatsopt_server.services import Administration as AdministrationService
-from whatsopt_server.handlers.surrogate_store_handler import SurrogateStoreHandler
-from whatsopt_server.services import SurrogateStore as SurrogateStoreService
 
 import warnings
 
@@ -22,14 +20,6 @@ def main(args=sys.argv[1:]):
     from optparse import OptionParser
 
     parser = OptionParser()
-    parser.add_option(
-        "-o",
-        "--outdir",
-        dest="outdir",
-        default=tempfile.gettempdir(),
-        help="save trained surrogates to DIRECTORY",
-        metavar="DIRECTORY",
-    )
     parser.add_option(
         "--logdir",
         dest="logdir",
@@ -45,18 +35,12 @@ def main(args=sys.argv[1:]):
         metavar="PORT",
     )
     (options, args) = parser.parse_args(args)
-    outdir = options.outdir
     logdir = options.logdir
     port = int(options.port)
-    print("Surrogates saved to {}".format(outdir))
     print("Logs saved to {}".format(logdir))
     print("Listening on port {}".format(port))
 
     processor = TMultiplexedProcessor()
-    processor.registerProcessor(
-        "SurrogateStoreService",
-        SurrogateStoreService.Processor(SurrogateStoreHandler(outdir=outdir)),
-    )
     processor.registerProcessor(
         "AdministrationService",
         AdministrationService.Processor(AdministrationHandler()),

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_12_000000) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_12_100000) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -21,7 +21,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_12_000000) do
     t.index ["record_type", "record_id", "name"], name: "index_action_text_rich_texts_uniqueness", unique: true
   end
 
-  create_table "active_storage_attachments", force: :cascade do |t|
+  create_table "active_storage_attachments", id: :integer, default: nil, force: :cascade do |t|
     t.integer "blob_id", null: false
     t.datetime "created_at", precision: nil, null: false
     t.string "name", null: false
@@ -31,7 +31,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_12_000000) do
     t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
   end
 
-  create_table "active_storage_blobs", force: :cascade do |t|
+  create_table "active_storage_blobs", id: :integer, default: nil, force: :cascade do |t|
     t.integer "byte_size", null: false
     t.string "checksum"
     t.string "content_type"
@@ -59,7 +59,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_12_000000) do
     t.index ["ancestry"], name: "index_analyses_on_ancestry"
   end
 
-  create_table "analysis_disciplines", force: :cascade do |t|
+  create_table "analysis_disciplines", id: :integer, default: nil, force: :cascade do |t|
     t.integer "analysis_id"
     t.integer "discipline_id"
     t.index ["analysis_id"], name: "index_analysis_disciplines_on_analysis_id"
@@ -169,23 +169,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_12_000000) do
     t.index ["user_id"], name: "index_journals_on_user_id"
   end
 
-  create_table "meta_model_prototypes", force: :cascade do |t|
-    t.integer "meta_model_id"
-    t.integer "prototype_id"
-    t.index ["meta_model_id"], name: "index_meta_model_prototypes_on_meta_model_id"
-    t.index ["prototype_id"], name: "index_meta_model_prototypes_on_prototype_id"
-  end
-
-  create_table "meta_models", force: :cascade do |t|
-    t.datetime "created_at", precision: nil, null: false
-    t.string "default_surrogate_kind"
-    t.integer "discipline_id"
-    t.integer "operation_id"
-    t.datetime "updated_at", precision: nil, null: false
-    t.index ["discipline_id"], name: "index_meta_models_on_discipline_id"
-    t.index ["operation_id"], name: "index_meta_models_on_operation_id"
-  end
-
   create_table "openmdao_analysis_impls", force: :cascade do |t|
     t.integer "analysis_id"
     t.integer "linear_solver_id"
@@ -270,17 +253,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_12_000000) do
     t.integer "maxiter"
     t.string "name"
     t.float "rtol"
-  end
-
-  create_table "surrogates", force: :cascade do |t|
-    t.integer "coord_index"
-    t.string "kind"
-    t.integer "meta_model_id"
-    t.text "quality"
-    t.string "status"
-    t.integer "variable_id"
-    t.index ["meta_model_id"], name: "index_surrogates_on_meta_model_id"
-    t.index ["variable_id"], name: "index_surrogates_on_variable_id"
   end
 
   create_table "users", force: :cascade do |t|

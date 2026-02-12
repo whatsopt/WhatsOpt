@@ -17,33 +17,6 @@ from thrift.transport import TTransport
 all_structs = []
 
 
-class SurrogateKind(object):
-    SMT_KRIGING = 0
-    SMT_KPLS = 1
-    SMT_KPLSK = 2
-    SMT_LS = 3
-    SMT_QP = 4
-    OPENTURNS_PCE = 5
-
-    _VALUES_TO_NAMES = {
-        0: "SMT_KRIGING",
-        1: "SMT_KPLS",
-        2: "SMT_KPLSK",
-        3: "SMT_LS",
-        4: "SMT_QP",
-        5: "OPENTURNS_PCE",
-    }
-
-    _NAMES_TO_VALUES = {
-        "SMT_KRIGING": 0,
-        "SMT_KPLS": 1,
-        "SMT_KPLSK": 2,
-        "SMT_LS": 3,
-        "SMT_QP": 4,
-        "OPENTURNS_PCE": 5,
-    }
-
-
 class ConstraintType(object):
     LESS = 0
     EQUAL = 1
@@ -221,245 +194,6 @@ class OptionValue(object):
         return not (self == other)
 
 
-class SurrogateException(TException):
-    """
-    Attributes:
-     - msg
-
-    """
-    thrift_spec = None
-
-
-    def __init__(self, msg = None,):
-        super(SurrogateException, self).__setattr__('msg', msg)
-
-    def __setattr__(self, *args):
-        raise TypeError("can't modify immutable instance")
-
-    def __delattr__(self, *args):
-        raise TypeError("can't modify immutable instance")
-
-    def __hash__(self):
-        return hash(self.__class__) ^ hash((self.msg, ))
-
-    @classmethod
-    def read(cls, iprot):
-        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and cls.thrift_spec is not None:
-            return iprot._fast_decode(None, iprot, [cls, cls.thrift_spec])
-        iprot.readStructBegin()
-        msg = None
-        while True:
-            (fname, ftype, fid) = iprot.readFieldBegin()
-            if ftype == TType.STOP:
-                break
-            if fid == 1:
-                if ftype == TType.STRING:
-                    msg = iprot.readString().decode('utf-8', errors='replace') if sys.version_info[0] == 2 else iprot.readString()
-                else:
-                    iprot.skip(ftype)
-            else:
-                iprot.skip(ftype)
-            iprot.readFieldEnd()
-        iprot.readStructEnd()
-        return cls(
-            msg=msg,
-        )
-
-    def write(self, oprot):
-        self.validate()
-        if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
-            return
-        oprot.writeStructBegin('SurrogateException')
-        if self.msg is not None:
-            oprot.writeFieldBegin('msg', TType.STRING, 1)
-            oprot.writeString(self.msg.encode('utf-8') if sys.version_info[0] == 2 else self.msg)
-            oprot.writeFieldEnd()
-        oprot.writeFieldStop()
-        oprot.writeStructEnd()
-
-    def validate(self):
-        return
-
-    def __str__(self):
-        return repr(self)
-
-    def __repr__(self):
-        L = ['%s=%r' % (key, value)
-             for key, value in self.__dict__.items()]
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
-
-    def __eq__(self, other):
-        return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
-
-    def __ne__(self, other):
-        return not (self == other)
-
-
-class SurrogateQualification(object):
-    """
-    Attributes:
-     - r2
-     - yp
-
-    """
-    thrift_spec = None
-
-
-    def __init__(self, r2 = None, yp = None,):
-        self.r2 = r2
-        self.yp = yp
-
-    def read(self, iprot):
-        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
-            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
-            return
-        iprot.readStructBegin()
-        while True:
-            (fname, ftype, fid) = iprot.readFieldBegin()
-            if ftype == TType.STOP:
-                break
-            if fid == 1:
-                if ftype == TType.DOUBLE:
-                    self.r2 = iprot.readDouble()
-                else:
-                    iprot.skip(ftype)
-            elif fid == 2:
-                if ftype == TType.LIST:
-                    self.yp = []
-                    (_etype24, _size21) = iprot.readListBegin()
-                    for _i25 in range(_size21):
-                        _elem26 = iprot.readDouble()
-                        self.yp.append(_elem26)
-                    iprot.readListEnd()
-                else:
-                    iprot.skip(ftype)
-            else:
-                iprot.skip(ftype)
-            iprot.readFieldEnd()
-        iprot.readStructEnd()
-
-    def write(self, oprot):
-        self.validate()
-        if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
-            return
-        oprot.writeStructBegin('SurrogateQualification')
-        if self.r2 is not None:
-            oprot.writeFieldBegin('r2', TType.DOUBLE, 1)
-            oprot.writeDouble(self.r2)
-            oprot.writeFieldEnd()
-        if self.yp is not None:
-            oprot.writeFieldBegin('yp', TType.LIST, 2)
-            oprot.writeListBegin(TType.DOUBLE, len(self.yp))
-            for iter27 in self.yp:
-                oprot.writeDouble(iter27)
-            oprot.writeListEnd()
-            oprot.writeFieldEnd()
-        oprot.writeFieldStop()
-        oprot.writeStructEnd()
-
-    def validate(self):
-        return
-
-    def __repr__(self):
-        L = ['%s=%r' % (key, value)
-             for key, value in self.__dict__.items()]
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
-
-    def __eq__(self, other):
-        return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
-
-    def __ne__(self, other):
-        return not (self == other)
-
-
-class SobolIndices(object):
-    """
-    Attributes:
-     - S1
-     - ST
-
-    """
-    thrift_spec = None
-
-
-    def __init__(self, S1 = None, ST = None,):
-        self.S1 = S1
-        self.ST = ST
-
-    def read(self, iprot):
-        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
-            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
-            return
-        iprot.readStructBegin()
-        while True:
-            (fname, ftype, fid) = iprot.readFieldBegin()
-            if ftype == TType.STOP:
-                break
-            if fid == 1:
-                if ftype == TType.LIST:
-                    self.S1 = []
-                    (_etype31, _size28) = iprot.readListBegin()
-                    for _i32 in range(_size28):
-                        _elem33 = iprot.readDouble()
-                        self.S1.append(_elem33)
-                    iprot.readListEnd()
-                else:
-                    iprot.skip(ftype)
-            elif fid == 2:
-                if ftype == TType.LIST:
-                    self.ST = []
-                    (_etype37, _size34) = iprot.readListBegin()
-                    for _i38 in range(_size34):
-                        _elem39 = iprot.readDouble()
-                        self.ST.append(_elem39)
-                    iprot.readListEnd()
-                else:
-                    iprot.skip(ftype)
-            else:
-                iprot.skip(ftype)
-            iprot.readFieldEnd()
-        iprot.readStructEnd()
-
-    def write(self, oprot):
-        self.validate()
-        if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
-            return
-        oprot.writeStructBegin('SobolIndices')
-        if self.S1 is not None:
-            oprot.writeFieldBegin('S1', TType.LIST, 1)
-            oprot.writeListBegin(TType.DOUBLE, len(self.S1))
-            for iter40 in self.S1:
-                oprot.writeDouble(iter40)
-            oprot.writeListEnd()
-            oprot.writeFieldEnd()
-        if self.ST is not None:
-            oprot.writeFieldBegin('ST', TType.LIST, 2)
-            oprot.writeListBegin(TType.DOUBLE, len(self.ST))
-            for iter41 in self.ST:
-                oprot.writeDouble(iter41)
-            oprot.writeListEnd()
-            oprot.writeFieldEnd()
-        oprot.writeFieldStop()
-        oprot.writeStructEnd()
-
-    def validate(self):
-        return
-
-    def __repr__(self):
-        L = ['%s=%r' % (key, value)
-             for key, value in self.__dict__.items()]
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
-
-    def __eq__(self, other):
-        return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
-
-    def __ne__(self, other):
-        return not (self == other)
-
-
 class Distribution(object):
     """
     Attributes:
@@ -491,11 +225,11 @@ class Distribution(object):
             elif fid == 2:
                 if ftype == TType.MAP:
                     self.kwargs = {}
-                    (_ktype43, _vtype44, _size42) = iprot.readMapBegin()
-                    for _i46 in range(_size42):
-                        _key47 = iprot.readString().decode('utf-8', errors='replace') if sys.version_info[0] == 2 else iprot.readString()
-                        _val48 = iprot.readDouble()
-                        self.kwargs[_key47] = _val48
+                    (_ktype22, _vtype23, _size21) = iprot.readMapBegin()
+                    for _i25 in range(_size21):
+                        _key26 = iprot.readString().decode('utf-8', errors='replace') if sys.version_info[0] == 2 else iprot.readString()
+                        _val27 = iprot.readDouble()
+                        self.kwargs[_key26] = _val27
                     iprot.readMapEnd()
                 else:
                     iprot.skip(ftype)
@@ -517,9 +251,9 @@ class Distribution(object):
         if self.kwargs is not None:
             oprot.writeFieldBegin('kwargs', TType.MAP, 2)
             oprot.writeMapBegin(TType.STRING, TType.DOUBLE, len(self.kwargs))
-            for kiter49, viter50 in self.kwargs.items():
-                oprot.writeString(kiter49.encode('utf-8') if sys.version_info[0] == 2 else kiter49)
-                oprot.writeDouble(viter50)
+            for kiter28, viter29 in self.kwargs.items():
+                oprot.writeString(kiter28.encode('utf-8') if sys.version_info[0] == 2 else kiter28)
+                oprot.writeDouble(viter29)
             oprot.writeMapEnd()
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
@@ -792,20 +526,20 @@ class Xlimits(object):
             elif fid == 3:
                 if ftype == TType.LIST:
                     self.olimits = []
-                    (_etype54, _size51) = iprot.readListBegin()
-                    for _i55 in range(_size51):
-                        _elem56 = iprot.readDouble()
-                        self.olimits.append(_elem56)
+                    (_etype33, _size30) = iprot.readListBegin()
+                    for _i34 in range(_size30):
+                        _elem35 = iprot.readDouble()
+                        self.olimits.append(_elem35)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
             elif fid == 4:
                 if ftype == TType.LIST:
                     self.elimits = []
-                    (_etype60, _size57) = iprot.readListBegin()
-                    for _i61 in range(_size57):
-                        _elem62 = iprot.readString().decode('utf-8', errors='replace') if sys.version_info[0] == 2 else iprot.readString()
-                        self.elimits.append(_elem62)
+                    (_etype39, _size36) = iprot.readListBegin()
+                    for _i40 in range(_size36):
+                        _elem41 = iprot.readString().decode('utf-8', errors='replace') if sys.version_info[0] == 2 else iprot.readString()
+                        self.elimits.append(_elem41)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
@@ -831,15 +565,15 @@ class Xlimits(object):
         if self.olimits is not None:
             oprot.writeFieldBegin('olimits', TType.LIST, 3)
             oprot.writeListBegin(TType.DOUBLE, len(self.olimits))
-            for iter63 in self.olimits:
-                oprot.writeDouble(iter63)
+            for iter42 in self.olimits:
+                oprot.writeDouble(iter42)
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         if self.elimits is not None:
             oprot.writeFieldBegin('elimits', TType.LIST, 4)
             oprot.writeListBegin(TType.STRING, len(self.elimits))
-            for iter64 in self.elimits:
-                oprot.writeString(iter64.encode('utf-8') if sys.version_info[0] == 2 else iter64)
+            for iter43 in self.elimits:
+                oprot.writeString(iter43.encode('utf-8') if sys.version_info[0] == 2 else iter43)
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
@@ -938,23 +672,6 @@ OptionValue.thrift_spec = (
     (4, TType.LIST, 'matrix', (TType.LIST, (TType.DOUBLE, None, False), False), None, ),  # 4
     (5, TType.STRING, 'str', 'UTF8', None, ),  # 5
     (6, TType.BOOL, 'boolean', None, None, ),  # 6
-)
-all_structs.append(SurrogateException)
-SurrogateException.thrift_spec = (
-    None,  # 0
-    (1, TType.STRING, 'msg', 'UTF8', None, ),  # 1
-)
-all_structs.append(SurrogateQualification)
-SurrogateQualification.thrift_spec = (
-    None,  # 0
-    (1, TType.DOUBLE, 'r2', None, None, ),  # 1
-    (2, TType.LIST, 'yp', (TType.DOUBLE, None, False), None, ),  # 2
-)
-all_structs.append(SobolIndices)
-SobolIndices.thrift_spec = (
-    None,  # 0
-    (1, TType.LIST, 'S1', (TType.DOUBLE, None, False), None, ),  # 1
-    (2, TType.LIST, 'ST', (TType.DOUBLE, None, False), None, ),  # 2
 )
 all_structs.append(Distribution)
 Distribution.thrift_spec = (

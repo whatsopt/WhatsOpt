@@ -13,7 +13,6 @@ const XDSMJS_ANALYSIS = 'group';
 
 // no mapping needed same value in XDSMjs
 const OPTIMIZATION = 'mdo';
-const METAMODEL = 'metamodel';
 
 function isLocalHost(host) {
   return (host === '' || host === 'localhost' || host === '127.0.0.1');
@@ -168,7 +167,7 @@ class Discipline extends React.Component {
     if (type === XDSMJS_DISCIPLINE) {
       type = DISCIPLINE;
     }
-    const not_editable = (type === METAMODEL);
+    const not_editable = false;
     const sub_analysable = (type === DISCIPLINE && !connected);
     const type_changeable = sub_analysable || isComposite(type);
 

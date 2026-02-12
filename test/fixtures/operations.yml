@@ -16,19 +16,6 @@ doe:
     analysis: cicav
     success: [1, 0, 1, 1, 1]
     
-doe_copy:
-    name: LHS
-    driver: smt_doe_lhs
-    analysis: cicav_metamodel_analysis
-    success: [1, 0, 1, 1, 1]
-
-mm_from_doe:
-    name: mm
-    analysis: cicav_metamodel_analysis
-    driver: smt_metamodel_kriging
-    base_operation: doe_copy
-
-
 morris_doe:
     name: "morris doe"
     driver: salib_doe_morris
@@ -55,39 +42,10 @@ sobol_sensitivity:
     analysis: cicav
     success: []    
     
-doe2:
-    name: LHS
-    driver: smt_doe_lhs
-    analysis: cicav_metamodel2_analysis
-    success: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                1, 1, 1, 1, 1, 1, 1, 1, 1, 1]               
-
-mm_from_doe2:
-    base_operation: doe2
-    name: mm2
-    driver: smt_metamodel_kriging
-    analysis: cicav_metamodel2_analysis
-    base_operation: doe2
-
-
 doe_singleton_uq:
     name: LHS
     driver: smt_doe_random
     analysis: singleton_uq
     success: [1, 1, 1, 1, 1]
 
-doe_singleton_uq_mm:
-    name: LHS5
-    driver: smt_doe_random
-    analysis: singleton_mm
-    success: [1, 1, 1, 1, 1]
 
-doe_singleton_uq_build_mm:
-    name: Kriging
-    driver: smt_metamodel_kriging
-    analysis: singleton_mm
-    success: [1, 1, 1, 1, 1]
-    base_operation: doe_singleton_uq_mm

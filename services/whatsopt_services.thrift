@@ -18,29 +18,6 @@ union OptionValue {
 typedef map<OptionName, OptionValue> Options;
 typedef map<OptionName, double> Kwargs;
 
-enum SurrogateKind {
-  SMT_KRIGING,
-  SMT_KPLS,
-  SMT_KPLSK,
-  SMT_LS,
-  SMT_QP,
-  OPENTURNS_PCE
-}
-
-exception SurrogateException {
-  1: string msg
-}
-
-struct SurrogateQualification {
-  1: Float r2,
-  2: Vector yp
-}
-
-struct SobolIndices {
-  1: Vector S1,
-  2: Vector ST
-}
-
 struct Distribution {
   1: string name,
   2: Kwargs kwargs
@@ -51,29 +28,6 @@ service Administration {
   void ping();
 
   oneway void shutdown();
-}
-
-service SurrogateStore {
-  void create_surrogate(1: string surrogate_id,
-                        2: SurrogateKind kind, 
-                        3: Matrix xt, 
-                        4: Vector yt,
-                        5: Options options,
-                        6: Distributions uncertainties) throws (1: SurrogateException exc);
-
-  void copy_surrogate(1: string src_id, 
-                      2: string dst_id) throws (1: SurrogateException exc);
-
-  SurrogateQualification qualify(1: string surrogate_id,
-                                 2: Matrix xv, 
-                                 3: Vector yv) throws (1: SurrogateException exc);
-
-  Vector predict_values(1: string surrogate_id, 
-                        2: Matrix x) throws (1: SurrogateException exc);
-
-  void destroy_surrogate(1: string surrogate_id);
-
-  SobolIndices get_sobol_pce_sensitivity_analysis(1: string surrogate_id);
 }
 
 

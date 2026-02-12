@@ -112,48 +112,9 @@ class AnalysisTest < ActiveSupport::TestCase
     assert_equal "ScipyKrylov", impl.linear_solver.name
   end
 
-  test "should know if it is a metamodel" do
-    mda = analyses(:outermda)
-    assert_not mda.is_metamodel?
-    mda = analyses(:cicav_metamodel_analysis)
-    assert mda.is_metamodel?
-  end
-
   test "should copy an analysis" do
     copy = @mda.create_copy!
     assert_equal Connection.of_analysis(@mda).count, Connection.of_analysis(copy).count
-  end
-
-  test "should copy a metamodel" do
-    mda = analyses(:cicav_metamodel_analysis)
-    copy = mda.create_copy!
-    assert copy.is_metamodel?
-    orig_conns = Connection.of_analysis(mda)
-    copy_conns = Connection.of_analysis(copy)
-    assert_equal orig_conns.size, copy_conns.size
-  end
-
-  test "should copy of a copy of a metamodel and predict with" do
-    skip("Python services disabled")
-    # skip "doe copy not yet implemented"
-    mda = analyses(:cicav_metamodel_analysis)
-    # mda2 = analyses(:cicav_metamodel2_analysis)
-    copy = mda.create_copy!
-    assert copy.is_metamodel?
-    x = [[1, 3, 4], [8, 9, 10], [5, 4, 3]]
-    mm = copy.disciplines.last.meta_model
-    assert_not_equal mda.disciplines.last, mm
-    y = mm.predict(x)
-    assert_in_delta 5, y[0][0]
-    assert_equal x.size, y.size
-    mda.operations.reverse.map(&:destroy)
-    # mda2.destroy
-    # mda.destroy  # can not destroy as it is a mm prototype for mda2 but also mm_copy
-    assert_equal 2, mda.meta_model_prototypes.count
-    mm.reload
-    y = mm.predict(x)
-    assert_in_delta 5, y[0][0]
-    assert_equal x.size, y.size
   end
 
   test "should copy a sub-analysis" do
@@ -168,39 +129,6 @@ class AnalysisTest < ActiveSupport::TestCase
     assert_equal orig_conns.size, copy_conns.size
   end
 
-  test "should import a metamodel" do
-    mda = analyses(:singleton)
-    disc = disciplines(:disc_cicav_metamodel)
-    mda.import!(disc.analysis, [disc.id])
-    mda.reload
-    assert_equal 3, mda.disciplines.count
-    assert_equal WhatsOpt::Discipline::METAMODEL, mda.disciplines.last.type
-  end
-
-  test "should not destroy when it is a prototype mm which is used" do
-    mda = analyses(:cicav_metamodel_analysis)
-    assert mda.is_metamodel_prototype?
-    assert_difference("Analysis.count", 0) do
-      assert_raise Discipline::ForbiddenRemovalError do
-        mda.destroy
-      end
-    end
-  end
-
-  test "should destroy when it is a prototype mm not used" do
-    mda = analyses(:singleton_mm)
-    assert mda.is_metamodel_prototype?
-    assert_difference("Analysis.count", -1) do
-      mda.destroy
-    end
-  end
-
-  test "should not be a prototype metamodel or a metamodel when newly created" do
-    mda = Analysis.new(name: "Test")
-    assert_not mda.is_metamodel_prototype?
-    assert_not mda.is_metamodel?
-  end
-
   test "should destroy sub_analysis when destroyed" do
     mda = analyses(:outermda)
     assert_difference("Analysis.count", -2) do
@@ -213,29 +141,7 @@ class AnalysisTest < ActiveSupport::TestCase
     assert_nil analyses(:fast).design_project
   end
 
-  test "should destroy a metamodel analysis" do
-    mm = analyses(:singleton_mm)
-    assert_difference("Analysis.count", -1) do
-      mm.destroy!
-    end
-    mm = analyses(:cicav_metamodel2_analysis)
-    assert_difference("Analysis.count", -1) do
-      mm.destroy!
-    end
-  end
-
-  test "should not destroy a metamodel analysis when prototype in use" do
-    mm = analyses(:cicav_metamodel_analysis)
-    assert_difference("Analysis.count", 0) do
-      assert_raise Discipline::ForbiddenRemovalError do
-        mm.destroy
-      end
-    end
-  end
-
   test "should get the nesting depth" do
-    mda = analyses(:singleton_mm)
-    assert_equal 0, mda.nesting_depth
     mda = analyses(:outermda)
     assert_equal 1, mda.nesting_depth
   end

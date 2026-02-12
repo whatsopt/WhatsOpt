@@ -20,8 +20,6 @@ class Discipline < ApplicationRecord
   has_many :variables, -> { includes([:parameter, :distributions, :scaling]).order("name ASC") }, dependent: :destroy
   has_one :analysis_discipline, dependent: :destroy, inverse_of: :discipline
   has_one :sub_analysis, through: :analysis_discipline, source: :analysis
-  has_one :meta_model, dependent: :destroy
-
   belongs_to :analysis
   acts_as_list scope: :analysis, top_of_list: 0
 
@@ -84,18 +82,6 @@ class Discipline < ApplicationRecord
 
   def is_driver?
     type == WhatsOpt::Discipline::NULL_DRIVER
-  end
-
-  def is_pure_metamodel?
-    !!meta_model
-  end
-
-  def is_metamodel_prototype?
-    is_pure_metamodel? && meta_model.is_prototype?
-  end
-
-  def is_metamodel?
-    !!(meta_model || (has_sub_analysis? && sub_analysis.is_metamodel?))
   end
 
   def is_sub_analysis?
@@ -202,19 +188,10 @@ class Discipline < ApplicationRecord
     end
     mda.disciplines << disc_copy
 
-    if self.is_pure_metamodel?
-      # Special case when metamodel: discipline has to be saved
-      self.meta_model.build_copy(mda, disc_copy)
-      disc_copy.save!
-    end
     disc_copy.openmdao_impl = self.openmdao_impl&.build_copy
 
     # disc_copy.save!
     disc_copy
-  end
-
-  def metamodel_qualification
-    meta_model&.qualification.nil? ? [] : meta_model.qualification
   end
 
   def prepare_attributes_for_import!(analysis_variables, analysis_driver, suffix = "_dup")
@@ -280,10 +257,5 @@ class Discipline < ApplicationRecord
     end
 
     def _check_allowed_destruction
-      if is_metamodel_prototype? && !self.analysis.meta_models.blank?
-        mms = self.analysis.meta_models
-        msg = mms.map { |mm| "##{mm.analysis.id} #{mm.analysis.name}" }.join(", ")
-        raise ForbiddenRemovalError.new("Can not delete discipline metamodel '#{self.name}' as it is a prototype for metamodel in use in #{msg}")
-      end
     end
 end

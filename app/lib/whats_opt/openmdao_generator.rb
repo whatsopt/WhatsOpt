@@ -152,10 +152,7 @@ module WhatsOpt
       @discipline = discipline  # @discipline used in template
       @dimpl = @discipline.impl # for shortcut
       @with_server = options[:with_server]
-      if @discipline.type == WhatsOpt::Discipline::METAMODEL
-        _generate(@dimpl.py_filename, "openmdao_metamodel.py.erb", gendir)
-        _generate(@dimpl.py_basefilename, "openmdao_discipline_base.py.erb", gendir)
-      elsif @discipline.type == WhatsOpt::Discipline::OPTIMIZATION
+      if @discipline.type == WhatsOpt::Discipline::OPTIMIZATION
         _generate_sub_optimization(gendir, discipline)
       else
         _generate(@dimpl.py_filename, "openmdao_discipline.py.erb", gendir)

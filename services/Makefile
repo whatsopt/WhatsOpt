@@ -1,8 +1,8 @@
 PY_SERVER_DIR = whatsopt_server/services
 RB_CLIENT_DIR = ../app/lib/whats_opt/services
 
-PY_SERVER_FILE = ${PY_SERVER_DIR}/Surrogate.py
-RB_CLIENT_FILE = ${RB_CLIENT_DIR}/surrogate.rb
+PY_SERVER_FILE = ${PY_SERVER_DIR}/Administration.py
+RB_CLIENT_FILE = ${RB_CLIENT_DIR}/administration.rb
 
 # Generate python for server
 ${PY_SERVER_FILE}: whatsopt_services.thrift

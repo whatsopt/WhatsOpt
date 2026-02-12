@@ -419,16 +419,4 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
     end
   end
 
-  test "should generate metamodel code" do
-    skip "Apache Thrift not installed" unless thrift?
-    mda = analyses(:cicav_metamodel_analysis)
-    ogen = WhatsOpt::OpenmdaoGenerator.new(mda)
-    Dir.mktmpdir do |dir|
-      dir = "/tmp"
-      ogen._generate_code dir
-      dirpath = Pathname.new(dir)
-      basenames = ogen.genfiles.map { |f| Pathname.new(f).relative_path_from(dirpath).to_s }.sort
-      assert_includes basenames, "meta_model_disc.py"
-    end
-  end
 end

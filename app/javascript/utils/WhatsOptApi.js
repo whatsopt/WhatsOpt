@@ -325,23 +325,6 @@ class WhatsOptApi {
       .catch(onError);
   }
 
-  createMetaModel(opeId, mmAttrs, callback, onError) {
-    const path = `/operations/${opeId}/meta_models`;
-    trackPromise(
-      axios.post(this.apiUrl(path), { meta_model: mmAttrs })
-        .then(callback)
-        .catch(onError),
-    );
-  }
-
-  getMetaModelPredictionQuality(metaModelId, callback, onError) {
-    const path = `/meta_models/${metaModelId}/prediction_quality`;
-    trackPromise(
-      axios.get(this.apiUrl(path))
-        .then(callback)
-        .catch(onError),
-    );
-  }
 }
 
 export default WhatsOptApi;

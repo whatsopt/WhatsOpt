@@ -33,12 +33,3 @@ openmdao_inner_impl:
   use_units: false
   optimization_driver: scipy_optimizer_slsqp
   package_name: <%= OpenmdaoAnalysisImpl::NULL_PACKAGE_NAME %>
-
-openmdao_cicav_metamodel_analysis_impl:
-  analysis: cicav_metamodel_analysis
-  parallel_group: false
-  nonlinear_solver_id: <%= ActiveRecord::FixtureSet.identify(:nlbgs) %>
-  linear_solver_id: <%= ActiveRecord::FixtureSet.identify(:scipy_krylov) %>
-  use_units: false
-  optimization_driver: scipy_optimizer_slsqp
-  package_name: <%= OpenmdaoAnalysisImpl::NULL_PACKAGE_NAME %>

@@ -15,19 +15,9 @@ innermda:
   name: INNER
   ancestry: <%= ActiveRecord::FixtureSet.identify(:outermda) %>
 
-cicav_metamodel_analysis:
-  name: CicavMetaModel
-
-cicav_metamodel2_analysis:
-  name: CicavMetaModel2
-
 singleton:
   name: singleton
 
-singleton_mm:
-  name: SingletonMetaModel
-  public: false
-  
 singleton_uq:
   name: singleton_uq
 

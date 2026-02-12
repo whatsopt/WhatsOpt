@@ -42,14 +42,6 @@ class DisciplineTest < ActiveSupport::TestCase
     end
   end
 
-  test "should copy a metamodel" do
-    disc = disciplines(:disc_cicav_metamodel)
-    mda = analyses(:singleton)
-    copy = disc.build_copy(mda)
-    assert_equal "metamodel", copy.type
-    assert copy.is_pure_metamodel?
-  end
-
   test "should create ancestor when creating analysis_discipline" do
     disc = disciplines(:outermda_vacant_discipline)
     innermda = analyses(:singleton)

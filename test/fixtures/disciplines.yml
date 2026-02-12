@@ -76,30 +76,6 @@ innermda_discipline:
   analysis: innermda
   position: 1
 
-driver_cicav_metamodel:
-  name: __DRIVER__
-  type: null_driver
-  analysis: cicav_metamodel_analysis
-  position: 0
-
-disc_cicav_metamodel:
-  name: MetaModelDisc
-  type: metamodel
-  analysis: cicav_metamodel_analysis
-  position: 1
-
-driver_cicav_metamodel2:
-  name: __DRIVER__
-  type: null_driver
-  analysis: cicav_metamodel2_analysis
-  position: 0
-
-disc_cicav_metamodel2:
-  name: MetaModelDisc2
-  type: metamodel
-  analysis: cicav_metamodel2_analysis
-  position: 1
-
 driver_singleton:
   name: __DRIVER__
   type: null_driver
@@ -110,18 +86,6 @@ disc_singleton:
   name: SingletonDiscipline
   type: analysis
   analysis: singleton
-  position: 1
-
-driver_singleton_mm:
-  name: __DRIVER__
-  type: null_driver
-  analysis: singleton_mm
-  position: 0
-
-disc_singleton_mm:
-  name: SingletonDisciplineMM
-  type: metamodel
-  analysis: singleton_mm
   position: 1
 
 driver_singleton_uq:

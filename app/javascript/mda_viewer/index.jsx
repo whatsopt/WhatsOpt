@@ -17,7 +17,6 @@ import DistributionModals from 'mda_viewer/components/DistributionModals';
 import VariableSearchPanel from './components/VariableSearchPanel';
 
 import Error from '../utils/components/Error';
-import MetaModelQualification from '../utils/components/MetaModelQualification';
 import AnalysisDatabase from '../utils/AnalysisDatabase';
 import deepIsEqual from '../utils/compare';
 
@@ -871,31 +870,6 @@ class MdaViewer extends React.Component {
       noteTab = (<AnalysisNotePanel note={mda.note} />);
     }
 
-    let metaModelItem; let metaModelTab;
-    const { quality } = mda.impl.metamodel;
-    if (quality && quality.length > 0) {
-      metaModelItem = (
-        <li className="nav-item">
-          <a
-            className="nav-link"
-            id="metamodel-tab"
-            href="#metamodel"
-            role="tab"
-            aria-controls="metamodel"
-            data-bs-toggle="tab"
-            aria-selected="false"
-          >
-            MetaModel
-          </a>
-        </li>
-      );
-      metaModelTab = (
-        <div className="tab-pane fade" id="metamodel" role="tabpanel" aria-labelledby="metamodel-tab">
-          <MetaModelQualification quality={mda.impl.metamodel.quality} />
-        </div>
-      );
-    }
-
     return (
       <div>
         {breadcrumbs}
@@ -970,7 +944,6 @@ class MdaViewer extends React.Component {
               </a>
             </li>
             {noteItem}
-            {metaModelItem}
           </ul>
           <div className="tab-content" id="myTabContent">
             <div className="tab-pane fade show active" id="variables" role="tabpanel" aria-labelledby="variables-tab">
@@ -992,7 +965,6 @@ class MdaViewer extends React.Component {
               <HistoryPanel api={this.api} mdaId={db.mda.id} />
             </div>
             {noteTab}
-            {metaModelTab}
           </div>
         </div>
       </div>
@@ -1016,9 +988,6 @@ MdaViewer.propTypes = {
     path: PropTypes.array.isRequired,
     impl: PropTypes.shape({
       openmdao: PropTypes.object.isRequired,
-      metamodel: PropTypes.shape(
-        { quality: PropTypes.array.isRequired },
-      ),
     }),
   }).isRequired,
 };

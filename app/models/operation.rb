@@ -13,11 +13,10 @@ class Operation < ApplicationRecord
   CAT_EGDOE = "egdoe"
   CAT_SENSITIVITY_DOE = "sensitivity_doe"
   CAT_SENSITIVITY = "sensitivity_analysis"
-  CAT_METAMODEL = "metamodel"
   CATEGORIES = [CAT_RUNONCE, CAT_OPTIMIZATION,
                 CAT_EGDOE, CAT_EGMDO,
                 CAT_DOE, CAT_SENSITIVITY_DOE,
-                CAT_SENSITIVITY, CAT_METAMODEL].freeze
+                CAT_SENSITIVITY].freeze
 
   BATCH_COUNT = 10 # nb of log lines processed together
   LOGDIR = File.join(Rails.root, "upload/logs")
@@ -32,8 +31,6 @@ class Operation < ApplicationRecord
 
   # when optimization / doe
   has_many :cases, -> { joins(:variable).order("name ASC") }, dependent: :delete_all
-  # when meta model building operation
-  has_one :meta_model
   # when derived from doe
   has_many :derived_operations, class_name: "Operation", foreign_key: "base_operation_id", inverse_of: :base_operation
   belongs_to :base_operation, class_name: "Operation", foreign_key: "base_operation_id", inverse_of: :derived_operations
@@ -67,9 +64,6 @@ class Operation < ApplicationRecord
     when CAT_DOE, CAT_SENSITIVITY_DOE, CAT_OPTIMIZATION
       operation.build_job(status: :DONE_OFFLINE)
       operation.build_derived_operations
-    when CAT_METAMODEL
-      operation.build_job(status: :ASSUME_DONE)
-      operation.build_derived_operations
     else
       operation.build_job(status: :PENDING)
     end
@@ -89,56 +83,7 @@ class Operation < ApplicationRecord
       else
         Rails.logger.warn('Unknown sensitivity method for sensitivity DOE driver #{self.driver}')
       end
-    when CAT_METAMODEL
-      if self.driver =~ /(openturns)_metamodel_(pce)/
-        library = $1
-        algo = $2
-        derived = self.derived_operations.build(name: "Sensitivity #{algo}",
-                                                driver: "#{library}_sensitivity_#{algo}",
-                                                analysis_id: self.analysis_id)
-        derived.build_job(status: "ASSUME_DONE")
-      end
     end
-  end
-
-  def build_metamodel_varattrs(varnames = nil)
-    input_vars = analysis.uq_mode? ? analysis.uncertain_input_variables : analysis.design_variables
-    input_vars = input_vars.select { |v| varnames[:inputs].include?(v.name) } if varnames && varnames[:inputs]
-    output_vars = analysis.response_variables
-    output_vars = output_vars.select { |v| varnames[:outputs].include?(v.name) } if varnames && varnames[:outputs]
-    varattrs = {}
-    cases.each do |c|
-      varattr = VariableSerializer.new(c.variable).as_json
-      if varattr[:distributions_attributes] && !varattr[:distributions_attributes].empty?
-        varattr[:distributions_attributes].map { |distAttr|
-          distAttr.update(id: nil)
-          distAttr[:options_attributes].map { |optAttr| optAttr.update(id: nil) }
-        }
-        varattr[:parameter_attributes] = {} unless varattr[:parameter_attributes]
-        varattr[:parameter_attributes].merge!(lower: "", upper: "")
-      end
-      if varattrs.key?(c.variable.name)
-        if varattr[:io_mode] == WhatsOpt::Variable::IN
-          varattr[:parameter_attributes] = {} unless varattr[:parameter_attributes]
-          varattr[:parameter_attributes][:lower] = [c.values.min, varattr[:parameter_attributes][:lower].to_f].min.to_s
-          varattr[:parameter_attributes][:upper] = [c.values.max, varattr[:parameter_attributes][:lower].to_f].max.to_s
-        end
-      else
-        if input_vars.include?(c.variable)
-          varattr[:io_mode] = WhatsOpt::Variable::IN
-          varattr[:parameter_attributes] = {} unless varattr[:parameter_attributes]
-          varattr[:parameter_attributes][:lower] = c.values.min.to_s if varattr[:parameter_attributes][:lower].blank?
-          varattr[:parameter_attributes][:upper] = c.values.max.to_s if varattr[:parameter_attributes][:upper].blank?
-        elsif output_vars.include?(c.variable)
-          varattr[:io_mode] = WhatsOpt::Variable::OUT
-          varattr[:parameter_attributes] = {} unless varattr[:parameter_attributes]
-        else
-          next
-        end
-        varattrs[varattr[:name]] = varattr
-      end
-    end
-    varattrs.values
   end
 
   def to_plotter_json
@@ -166,10 +111,6 @@ class Operation < ApplicationRecord
     self.category == CAT_SENSITIVITY
   end
 
-  def meta_model?
-    self.category == CAT_METAMODEL
-  end
-
   def doe?
     self.category == CAT_DOE
   end
@@ -185,8 +126,6 @@ class Operation < ApplicationRecord
         CAT_EGDOE
       when /optimizer/, /slsqp/, /scipy/, /pyoptsparse/
         CAT_OPTIMIZATION
-      when /_metamodel_/
-        CAT_METAMODEL
       when /_doe_morris/, /doe_sobol/
         CAT_SENSITIVITY_DOE
       when /_sensitivity_morris/, /_sensitivity_sobol/, /_sensitivity_pce/
