@@ -26,10 +26,6 @@ module ApplicationHelper
     h
   end
 
-  def enable_wopstore?
-    APP_CONFIG["enable_wopstore"]
-  end
-
   def enable_remote_operations?
     APP_CONFIG["enable_remote_operations"]
   end

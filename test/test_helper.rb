@@ -47,7 +47,8 @@ end
 if `hostname`.include?('erebe')
   class File
     def flock(_p)
-      p "Warning: flock call disabled on erebe! (see test_helper.rb)"
+      # FIXME 
+      # p "Warning: flock call disabled on erebe! (see test_helper.rb)"
     end
   end
 end

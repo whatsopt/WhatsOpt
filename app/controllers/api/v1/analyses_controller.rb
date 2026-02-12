@@ -74,7 +74,7 @@ class Api::V1::AnalysesController < Api::V1::ApiMdaUpdaterController
       @journal.journalize_changes(@mda, old_attrs)
       json_response @mda
     elsif import
-      if @mda.packaged? || @mda.operated?
+      if @mda.operated?
         json_response @mda, :forbidden
       else
         fromAnalysis = Analysis.find(import[:analysis])

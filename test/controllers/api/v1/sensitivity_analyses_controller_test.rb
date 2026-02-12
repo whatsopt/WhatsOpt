@@ -9,7 +9,6 @@ class Api::V1::SensitivityAnalysisControllerTest < ActionDispatch::IntegrationTe
   end
 
   test "should run morris sensitivity analysis" do
-    skip("Python services disabled")
     @ope = operations(:morris_sensitivity)
     get api_v1_operation_sensitivity_analysis_url(@ope), as: :json, headers: @auth_headers
     assert_response :success
@@ -28,7 +27,6 @@ class Api::V1::SensitivityAnalysisControllerTest < ActionDispatch::IntegrationTe
   end
 
   test "should run salib sobol sensitivity analysis" do
-    skip("Python services disabled")
     @ope = operations(:sobol_sensitivity)
     get api_v1_operation_sensitivity_analysis_url(@ope), as: :json, headers: @auth_headers
     assert_response :success

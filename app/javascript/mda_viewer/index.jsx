@@ -587,14 +587,14 @@ class MdaViewer extends React.Component {
       if (!db.mda.locked && db.isAnalysisUsed()) {
         warningIfUsed = (
           <div className="alert alert-info alert-dismissible fade show" role="alert">
-            As this analysis is already operated or packaged,
+            As this analysis is already operated,
             {' '}
             <strong>your edition access is limited</strong>
             .
             <br />
             {' '}
             If you need full edition access either restart with a copy of the analysis
-            or discard existing operations and attached package.
+            or discard existing operations.
             <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close" />
           </div>
         );

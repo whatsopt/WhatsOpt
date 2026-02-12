@@ -25,7 +25,6 @@ class Analysis < ApplicationRecord
   has_one :openmdao_impl, class_name: "OpenmdaoAnalysisImpl", dependent: :destroy
 
   has_one :design_project_filing, dependent: :destroy
-  has_one :package, dependent: :destroy
 
   has_many :journals, -> { includes([:details, :user]).order(created_on: :asc) }, dependent: :destroy
 
@@ -75,10 +74,6 @@ class Analysis < ApplicationRecord
 
   def operated?
     operations.successful.size > 0
-  end
-
-  def packaged?
-    !!package
   end
 
   def mixint?
@@ -303,7 +298,6 @@ class Analysis < ApplicationRecord
       public: public,
       locked: locked,
       operated: operated?,
-      packaged: packaged?,
       path: path.map { |a| { id: a.id, name: a.name } },
       nodes: build_nodes,
       edges: build_edges,

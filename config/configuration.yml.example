@@ -1,6 +1,5 @@
 defaults: &defaults
   enable_remote_operations: true
-  enable_wopstore: true
   enable_ldap: false
   restrict_access: false 
   python_cmd:  python
@@ -14,7 +13,6 @@ test:
 
 production:
   enable_remote_operations: false
-  enable_wopstore: false
   enable_ldap: false
   restrict_access: false 
   python_cmd:  python

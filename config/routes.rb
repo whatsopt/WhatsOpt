@@ -13,7 +13,6 @@ Rails.application.routes.draw do
   end
 
   resources :design_projects
-  resources :packages, only: [:index, :destroy] if APP_CONFIG["enable_wopstore"]
 
   namespace :api do
     namespace :v1, defaults: { format: :json } do

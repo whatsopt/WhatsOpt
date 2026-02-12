@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_12_100000) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_12_200000) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -21,7 +21,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_12_100000) do
     t.index ["record_type", "record_id", "name"], name: "index_action_text_rich_texts_uniqueness", unique: true
   end
 
-  create_table "active_storage_attachments", id: :integer, default: nil, force: :cascade do |t|
+  create_table "active_storage_attachments", force: :cascade do |t|
     t.integer "blob_id", null: false
     t.datetime "created_at", precision: nil, null: false
     t.string "name", null: false
@@ -59,7 +59,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_12_100000) do
     t.index ["ancestry"], name: "index_analyses_on_ancestry"
   end
 
-  create_table "analysis_disciplines", id: :integer, default: nil, force: :cascade do |t|
+  create_table "analysis_disciplines", force: :cascade do |t|
     t.integer "analysis_id"
     t.integer "discipline_id"
     t.index ["analysis_id"], name: "index_analysis_disciplines_on_analysis_id"
@@ -212,14 +212,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_12_100000) do
     t.index ["optionizable_type", "optionizable_id"], name: "index_options_on_optionizable_type_and_optionizable_id"
   end
 
-  create_table "packages", force: :cascade do |t|
-    t.integer "analysis_id"
-    t.datetime "created_at", null: false
-    t.text "description"
-    t.datetime "updated_at", null: false
-    t.index ["analysis_id"], name: "index_packages_on_analysis_id"
-  end
-
   create_table "parameters", force: :cascade do |t|
     t.text "init"
     t.text "lower"
@@ -302,5 +294,4 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_12_100000) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "analysis_disciplines", "analyses"
   add_foreign_key "analysis_disciplines", "disciplines"
-  add_foreign_key "packages", "analyses"
 end

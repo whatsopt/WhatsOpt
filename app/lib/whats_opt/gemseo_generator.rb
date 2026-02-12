@@ -84,15 +84,9 @@ module WhatsOpt
     end
 
     def _generate_package_files(gendir)
-      if @mda.packaged?
-        # Package is attached, use it!
-        @genfiles |= WhatsOpt::PackageExtractor.new(@mda).extract(gendir)
-      else
-        # no package => generate package skeleton
-        _generate(".gitignore", "package/gitignore.erb", gendir, no_comment: true)
-        _generate("README.md", "package/README.md.erb", gendir, no_comment: true)
-        _generate("pyproject.toml", "package/pyproject.toml.erb", gendir, no_comment: true)
-      end
+      _generate(".gitignore", "package/gitignore.erb", gendir, no_comment: true)
+      _generate("README.md", "package/README.md.erb", gendir, no_comment: true)
+      _generate("pyproject.toml", "package/pyproject.toml.erb", gendir, no_comment: true)
     end
   end
 end
