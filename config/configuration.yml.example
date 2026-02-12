@@ -19,4 +19,3 @@ production:
   restrict_access: false 
   python_cmd:  python
   thrift_cmd:  thrift
-
