@@ -1,4 +1,4 @@
-[![Tests](https://github.com/OneraHub/WhatsOpt/workflows/Tests/badge.svg)](https://github.com/OneraHub/WhatsOpt/actions?query=workflow%3ATests)
+[![Tests](https://github.com/whatsopt/WhatsOpt/workflows/Tests/badge.svg)](https://github.com/whatsopt/WhatsOpt/actions?query=workflow%3ATests)
 [![Documentation Status](https://readthedocs.org/projects/whatsopt/badge/?version=latest)](https://whatsopt.readthedocs.io/en/latest/?badge=latest)
 [![Coverage Status](https://coveralls.io/repos/github/OneraHub/WhatsOpt/badge.svg?branch=master)](https://coveralls.io/github/OneraHub/WhatsOpt?branch=master)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/3a8a9db4b77a4df89d9f10affceeb28c)](https://app.codacy.com/gh/whatsopt/WhatsOpt/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
