@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_12_200000) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_13_100000) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -21,7 +21,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_12_200000) do
     t.index ["record_type", "record_id", "name"], name: "index_action_text_rich_texts_uniqueness", unique: true
   end
 
-  create_table "active_storage_attachments", force: :cascade do |t|
+  create_table "active_storage_attachments", id: :integer, default: nil, force: :cascade do |t|
     t.integer "blob_id", null: false
     t.datetime "created_at", precision: nil, null: false
     t.string "name", null: false
@@ -59,7 +59,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_12_200000) do
     t.index ["ancestry"], name: "index_analyses_on_ancestry"
   end
 
-  create_table "analysis_disciplines", force: :cascade do |t|
+  create_table "analysis_disciplines", id: :integer, default: nil, force: :cascade do |t|
     t.integer "analysis_id"
     t.integer "discipline_id"
     t.index ["analysis_id"], name: "index_analysis_disciplines_on_analysis_id"
@@ -139,17 +139,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_12_200000) do
     t.datetime "updated_at", precision: nil, null: false
   end
 
-  create_table "jobs", force: :cascade do |t|
-    t.datetime "ended_at", precision: nil
-    t.text "log"
-    t.integer "log_count", default: 0
-    t.integer "operation_id"
-    t.integer "pid", default: -1
-    t.string "sqlite_filename"
-    t.datetime "started_at", precision: nil
-    t.string "status"
-  end
-
   create_table "journal_details", force: :cascade do |t|
     t.string "action", limit: 30, default: "", null: false
     t.string "entity_attr", limit: 30, default: "", null: false
@@ -196,8 +185,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_12_200000) do
     t.integer "base_operation_id"
     t.datetime "created_at", precision: nil
     t.string "driver", default: "runonce"
-    t.string "host", default: ""
     t.string "name"
+    t.string "status", default: "DONE_OFFLINE"
     t.text "success"
     t.datetime "updated_at", precision: nil
   end

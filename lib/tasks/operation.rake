@@ -17,14 +17,10 @@ namespace :whatsopt do
       end
     end
 
-    desc "Set created_at/update_at to started_at or analysis.created_at/updated_at"
+    desc "Set created_at/update_at to analysis.created_at/updated_at"
     task set_timestamps: :environment do
       Operation.all.each do |ope|
-        timestamp = if ope.job && !ope.job.started_at.blank?
-          ope.job.started_at
-        else
-          ope.analysis.created_at
-        end
+        timestamp = ope.analysis.created_at
         puts "Set '#{ope.name}' at #{timestamp}"
         ope.update_column(:created_at, timestamp)
         ope.update_column(:updated_at, timestamp)

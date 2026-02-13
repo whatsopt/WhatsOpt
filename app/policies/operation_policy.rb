@@ -1,10 +1,6 @@
 # frozen_string_literal: true
 
 class OperationPolicy < ApplicationPolicy
-  def enable_remote_operations?
-    APP_CONFIG["enable_remote_operations"]
-  end
-
   def analysis_unlocked?
     !@record.analysis.locked
   end
@@ -14,7 +10,7 @@ class OperationPolicy < ApplicationPolicy
   end
 
   def create?
-    enable_remote_operations? && analysis_unlocked? && @user.has_role?(:owner, @record.analysis)
+    analysis_unlocked? && @user.has_role?(:owner, @record.analysis)
   end
 
   def update?

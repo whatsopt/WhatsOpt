@@ -6,7 +6,7 @@ Rails.application.routes.draw do
   resource :api_doc, only: [:show]
 
   resources :analyses, shallow: true, as: :mdas do
-    resources :operations do
+    resources :operations, only: [:index, :show, :destroy] do
       get "exports/new", to: "operation_exports#new"
     end
     get "exports/new", to: "analysis_exports#new"
@@ -22,18 +22,16 @@ Rails.application.routes.draw do
         resources :connections, only: [:create, :update, :destroy], shallow: false
         resources :variables, only: [:index, :show], shallow: false
         resources :operations, only: [:show, :create, :update, :destroy] do
-          resource :job, only: [:show, :create, :update] if APP_CONFIG["enable_remote_operations"]
           resource :sensitivity_analysis, only: [:show]
         end
         resource :openmdao_impl, only: [:show, :update]
         resource :parameterization, only: [:update]
         resource :journal, only: [:show]
-        resource :package, only: [:show, :create] if APP_CONFIG["enable_wopstore"]
         post "openmdao_checking", to: "openmdao_checking#create"
         get "exports/new"
         get "comparisons/new"
       end
-      resources :operations, only: [:create] if APP_CONFIG["enable_remote_operations"]
+      resources :operations, only: [:create]
       resources :users, only: [:update] do
         resource :api_key
       end

@@ -9,12 +9,6 @@ class OperationTest < ActiveSupport::TestCase
     assert ope.as_json
   end
 
-  test "operations in progress with no case" do
-    mda = analyses(:cicav)
-    ope = Operation.in_progress(mda).take
-    assert_equal [], ope.success
-    assert_equal operations(:inprogress).id, ope.id
-  end
 
   test "operation may have options" do
     ope = operations(:doe)

@@ -35,13 +35,13 @@ class Api::V1::OperationsControllerTest < ActionDispatch::IntegrationTest
     assert_equal ["obj", "x1"], resp["cases"].map { |c| c["varname"] }.sort
     assert_equal [0, 0], resp["cases"].map { |c| c["coord_index"] }.sort
     assert_equal [10, 20, 30, 40, 50, 60], resp["cases"].map { |c| c["values"] }.flatten.sort
-    assert_equal({ "status" => "DONE_OFFLINE", "log" => "", "log_count" => 0, "start_in_ms" => 0.0, "end_in_ms" => 0.0 }, resp["job"])
+    assert_equal "DONE_OFFLINE", resp["status"]
   end
 
   test "should create an operation with LHS options" do
     assert_difference("Operation.count", 1) do
       post api_v1_mda_operations_url(@mda),
-        params: { operation: { name: "new_doe", host: "localhost", driver: "lhs",
+        params: { operation: { name: "new_doe", driver: "lhs",
                              options_attributes: [{ name: "lhs_nbpts", value: "57" }] } },
         as: :json, headers: @auth_headers
     end
@@ -72,8 +72,7 @@ class Api::V1::OperationsControllerTest < ActionDispatch::IntegrationTest
     assert_equal ["x1", "y2"], resp["cases"].map { |c| c["varname"] }.sort
     assert_equal [0, 0], resp["cases"].map { |c| c["coord_index"] }.sort
     assert_equal [1, 2, 4, 5], resp["cases"].map { |c| c["values"] }.flatten.sort
-    assert_equal "DONE_OFFLINE", resp["job"]["status"]
-    assert_equal "this is a test job\nData uploaded\n", resp["job"]["log"]
+    assert_equal "DONE_OFFLINE", resp["status"]
   end
 
   test "should update an operation with LHS options" do
@@ -118,7 +117,6 @@ class Api::V1::OperationsControllerTest < ActionDispatch::IntegrationTest
             params: {
               operation: { name: "MyData",
                 driver: "user_defined_algo",
-                host: "localhost",
                 cases: [{ varname: "x1", coord_index: 0, values: [10, 20, 30] },
                         { varname: "x1", coord_index: 1, values: [40, 50, 60] },
                         { varname: "obj", coord_index: -1, values: [70, 80, 90] }
@@ -144,7 +142,6 @@ class Api::V1::OperationsControllerTest < ActionDispatch::IntegrationTest
       params: {
         operation: { name: "MyData",
           driver: "user_defined_algo",
-          host: "localhost",
           cases: [{ varname: "x1", coord_index: -1, values: [10, 20, 30] },
                   { varname: "y", coord_index: -1, values: [10, 20, 30] },
                   { varname: "obj", coord_index: 0, values: [40, 50, 60] },
@@ -179,7 +176,6 @@ class Api::V1::OperationsControllerTest < ActionDispatch::IntegrationTest
         params: {
           operation: { name: "DOE morris",
             driver: "salib_doe_morris",
-            host: "localhost",
             cases: [{ varname: "x1", coord_index: -1, values: inputs.column(0).to_a },
                     { varname: "x2", coord_index: -1, values: inputs.column(0).to_a },
                     { varname: "y", coord_index: -1, values: output }],

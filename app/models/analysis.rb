@@ -20,7 +20,7 @@ class Analysis < ApplicationRecord
   has_one :analysis_discipline, dependent: :destroy
   has_one :super_discipline, through: :analysis_discipline, source: :discipline
 
-  has_many :operations, -> { includes(:job) }, dependent: :destroy
+  has_many :operations, dependent: :destroy
 
   has_one :openmdao_impl, class_name: "OpenmdaoAnalysisImpl", dependent: :destroy
 

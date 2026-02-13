@@ -1,3 +1,0 @@
-<div id="runner" data-mda="<%= ope.analysis.to_whatsopt_ui_json %>" data-ope="<%= ActiveModelSerializers::SerializableResource.new(ope).to_json %>" data-api-key="<%= current_user.api_key %>" data-ws-server="<%= root_url(root_url, protocol: 'ws') %>"></div>
-
-<%= append_javascript_pack_tag 'runner_application' %>

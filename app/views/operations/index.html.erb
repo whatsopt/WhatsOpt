@@ -1,5 +1,4 @@
 <div class="btn-toolbar float-end">
-  <%= button_to 'New', mda_operations_path(@mda), title: "Operate #{@mda.name}", method: 'post', class: "btn btn-primary" %>
   <%= button_to mdas_url, method: :get, class:"btn ms-2" do |b|%>
     <span class="fa fa-times-circle"></span>
       Close
@@ -29,18 +28,12 @@
 	      <td><%= link_to_operation_if_authorized(ope, current_user) %></td>
         <td><%= ope.category.humanize %></td>
         <td><%= ope.driver.humanize(capitalize: false) %></td>
-	      <td title="<%= (ope.job && ope.job.started_at && ope.job.ended_at) ? 'Duration: '+distance_of_time_in_words(ope.job.started_at, ope.job.ended_at, include_seconds: true):""%>"><%= time_ago_in_words(ope.updated_at) %> ago</td>
+	      <td><%= time_ago_in_words(ope.updated_at) %> ago</td>
 	      <td>
           <% if policy(ope).update? %>
             <a href='#' name="edit-name" class="d-inline btn btn-light btn-inverse btn-sm" title="Edit name" data-api-key="<%=current_user.api_key%>" data-ope-id="<%= ope.id %>" data-ope-name="<%= ope.name %>" data-bs-toggle="modal" data-bs-target="#editModal">
               <i class="fa fa-edit"></i> 
             </a> 
-            <% if ope.rerunnable? %>
-              <%= link_to edit_operation_path(ope), 
-                class: "d-inline btn btn-light btn-inverse btn-sm ms-2", title: "Re-run" do %>
-                <i class="fa fa-undo"></i> 
-              <% end %>  
-            <% end %>  
 	          <%= link_to operation_path(ope), method: :delete, 
                 data: { confirm: "Remove #{ope.name} operation?" }, 
 	              class: "d-inline btn btn-light btn-inverse btn-sm text-danger ms-2", title:"Delete" do %>
