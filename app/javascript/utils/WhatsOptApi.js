@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { trackPromise } from 'react-promise-tracker';
 
 const API_URL = '/api/v1';
 
@@ -278,7 +277,6 @@ class WhatsOptApi {
       }))
       .catch(onError);
   }
-
 }
 
 export default WhatsOptApi;
