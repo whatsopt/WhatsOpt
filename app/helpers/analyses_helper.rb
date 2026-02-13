@@ -50,9 +50,7 @@ module AnalysesHelper
 
   def badges(analysis)
     res = ""
-    if analysis.is_metamodel_prototype?
-      res += '<span class="badge rounded-pill bg-success me-2" title="Analysis reference for a meta-model discipline">MM</span>'
-    elsif analysis.mono_disciplinary?
+    if analysis.mono_disciplinary?
       res += '<span class="badge rounded-pill bg-secondary me-2" title="Analysis has one discipline">DISC</span>'
     end
     if analysis.uq_mode?
@@ -60,9 +58,6 @@ module AnalysesHelper
     end
     if analysis.has_objective?
       res += '<span class="badge rounded-pill bg-primary me-2" title="Analysis with optimization problem">OPTIM</span>'
-    end
-    if analysis.packaged?
-      res += '<span class="badge rounded-pill bg-warning me-2" title="Analysis is packaged">PKG</span>'
     end
     if analysis.nesting_depth > 2
       res += '<span class="badge rounded-pill bg-danger me-2" title="Analysis with more than 2 sub-analysis levels">DEEP</span>'

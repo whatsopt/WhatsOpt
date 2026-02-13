@@ -1,30 +1,6 @@
 import axios from 'axios';
-import { trackPromise } from 'react-promise-tracker';
 
 const API_URL = '/api/v1';
-
-function _pollStatus(fn, check, callback, timeout, interval) {
-  const endTime = Number(new Date()) + (timeout || 2000);
-  const interv = interval || 100;
-  const checkCondition = (resolve, reject) => {
-    const ajax = fn();
-    ajax.then((response) => {
-      if (check(response.data)) {
-        // If the condition is met, we're done!
-        resolve(response.data);
-      } else if (Number(new Date()) < endTime) {
-        // If the condition isn't met but the timeout hasn't elapsed, go again
-        callback(response.data);
-        setTimeout(checkCondition, interv, resolve, reject);
-      } else {
-        // Didn't match and too much time, reject!
-        reject(new Error(`timed out for ${fn}`));
-      }
-    });
-  };
-
-  return new Promise(checkCondition);
-}
 
 class WhatsOptApi {
   constructor(csrfToken, apiKey, relativeUrlRoot, requested_at) {
@@ -279,29 +255,6 @@ class WhatsOptApi {
       .catch((error) => console.log(error));
   }
 
-  updateOperation(operationId, opeAttrs, callback) {
-    const path = `/operations/${operationId}`;
-    const jobpath = `${path}/job`;
-    axios.patch(this.apiUrl(path), { operation: opeAttrs })
-      .then(() => axios.post(this.apiUrl(jobpath))
-        .then(callback).catch((error) => console.log(error)))
-      .catch((error) => console.log(error));
-  }
-
-  killOperationJob(operationId) {
-    const path = `/operations/${operationId}/job`;
-    axios.patch(this.apiUrl(path))
-      .then((resp) => console.log(resp))
-      .catch((error) => console.log(error));
-  }
-
-  pollOperationJob(operationId, check, callback, onError) {
-    const path = `/operations/${operationId}/job`;
-    _pollStatus(() => axios.get(this.apiUrl(path)), check, callback, 300000, 2000)
-      .then(callback)
-      .catch(onError);
-  }
-
   getOpenmdaoImpl(mdaId, callback) {
     const path = `/analyses/${mdaId}/openmdao_impl`;
     axios.get(this.apiUrl(path))
@@ -323,24 +276,6 @@ class WhatsOptApi {
         callback();
       }))
       .catch(onError);
-  }
-
-  createMetaModel(opeId, mmAttrs, callback, onError) {
-    const path = `/operations/${opeId}/meta_models`;
-    trackPromise(
-      axios.post(this.apiUrl(path), { meta_model: mmAttrs })
-        .then(callback)
-        .catch(onError),
-    );
-  }
-
-  getMetaModelPredictionQuality(metaModelId, callback, onError) {
-    const path = `/meta_models/${metaModelId}/prediction_quality`;
-    trackPromise(
-      axios.get(this.apiUrl(path))
-        .then(callback)
-        .catch(onError),
-    );
   }
 }
 

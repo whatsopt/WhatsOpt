@@ -41,7 +41,7 @@ describe "analyses", type: :request do
       response "200", "return analysis information" do
         schema :$ref => "#/components/schemas/AnalysisInfo"
 
-        let(:id) { analyses(:cicav_metamodel_analysis).id }
+        let(:id) { analyses(:cicav).id }
         let(:Authorization) { "Token FriendlyApiKey" }
         after do |example|
           example.metadata[:response][:examples] = { "application/json" => JSON.parse(response.body, symbolize_names: true) }

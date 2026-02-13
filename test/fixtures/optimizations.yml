@@ -1,8 +1,0 @@
-optim_ackley2d:
-  kind: SEGOMOE
-  config: <%= { :xlimits => [[-32.768, 32.768], [-32.768, 32.768]] }.to_json.inspect  %>
-
-optim_unknown_status:
-  kind: SEGOMOE
-  config: <%= { :xlimits => [[-4, 2], [-2, 4]] }.to_json.inspect  %>
-  outputs: <%= { :status => -666}.to_json.inspect %>

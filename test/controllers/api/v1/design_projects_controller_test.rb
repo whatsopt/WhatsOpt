@@ -24,7 +24,7 @@ class Api::V1::DesignProjectsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     resp = JSON.parse(response.body)
     assert_nil resp["analyses_attributes"]
-    assert_equal 3, resp["analyses"].size
+    assert_equal 1, resp["analyses"].size
   end
 
   test "should get design project in wopjson" do
@@ -32,7 +32,7 @@ class Api::V1::DesignProjectsControllerTest < ActionDispatch::IntegrationTest
     get api_v1_design_project_url(@proj, format: :wopjson), as: :json, headers: @auth_headers
     assert_response :success
     resp = JSON.parse(response.body)
-    assert_equal 3, resp["analyses_attributes"].size
+    assert_equal 1, resp["analyses_attributes"].size
   end
 
   test "should not get a project as wopjson when not owner" do
@@ -48,13 +48,13 @@ class Api::V1::DesignProjectsControllerTest < ActionDispatch::IntegrationTest
     resp = JSON.parse(response.body)
     resp["name"] = "#{resp["name"]}_duplicate"
     assert_difference("DesignProject.count") do
-      assert_difference("Analysis.count", 3) do
+      assert_difference("Analysis.count", 1) do
         post api_v1_design_projects_url, as: :json, headers: @auth_headers, params: { project: resp }
         assert_response :success
       end
     end
     proj = DesignProject.last
-    assert_equal 3, proj.analyses.count
+    assert_equal 1, proj.analyses.count
   end
 
   test "should create a project with nested analyses" do
@@ -64,12 +64,12 @@ class Api::V1::DesignProjectsControllerTest < ActionDispatch::IntegrationTest
     resp = JSON.parse(response.body)
     resp["name"] = "#{resp["name"]}_duplicate"
     assert_difference("DesignProject.count") do
-      assert_difference("Analysis.count", 3) do
+      assert_difference("Analysis.count", 2) do
         post api_v1_design_projects_url, as: :json, headers: @auth_headers2, params: { project: resp }
         assert_response :success
       end
     end
     proj = DesignProject.last
-    assert_equal 2, proj.analyses.count   # the sub analyse innermda not attached to a project
+    assert_equal 1, proj.analyses.count   # the sub analyse innermda not attached to a project
   end
 end

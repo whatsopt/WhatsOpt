@@ -1,0 +1,14 @@
+# dependencies used in generated scripts
+openmdao
+salib
+smt
+openturns
+egobox
+openmdao_extensions
+thrift
+jax
+matplotlib
+
+# dev tools
+pytest
+ruff

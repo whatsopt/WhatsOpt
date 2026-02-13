@@ -43,10 +43,6 @@ class ApplicationPolicy
   class Scope
     attr_reader :user, :scope
 
-    def enable_wopstore?
-      APP_CONFIG["enable_wopstore"]
-    end
-
     def initialize(user, scope)
       @user = user
       @scope = scope

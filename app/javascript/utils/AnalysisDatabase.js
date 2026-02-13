@@ -90,7 +90,7 @@ class AnalysisDatabase {
   }
 
   isAnalysisUsed() {
-    return this.mda.operated || this.mda.packaged;
+    return this.mda.operated;
   }
 
   getObjective() {

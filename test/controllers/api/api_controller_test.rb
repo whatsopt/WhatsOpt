@@ -13,7 +13,7 @@ class Api::V1::VersioningsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should respond not_found when getting an unknown resource" do
-    get api_v1_optimization_url(666), as: :json, headers: @auth_headers
+    get api_v1_operation_url(666), as: :json, headers: @auth_headers
     assert_response :not_found
   end
 end

@@ -12,7 +12,6 @@ module WhatsOpt
     config.load_defaults 8.0
 
     Rails.autoloaders.main.ignore("#{Rails.root}/lib")
-    Rails.autoloaders.main.ignore("#{Rails.root}/app/lib/whats_opt/services")
     Rails.autoloaders.main.ignore("#{Rails.root}/app/lib/whats_opt/string.rb")
     # Please, add to the `ignore` list any other `lib` subdirectories that do
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
@@ -27,9 +26,6 @@ module WhatsOpt
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
     config.active_job.queue_adapter = :async
-
-    # Thrift generated code needs this
-    config.autoload_paths << "#{config.root}/app/lib/whats_opt/services"
 
     # Keep previous defaults
     # See https://guides.rubyonrails.org/configuring.html

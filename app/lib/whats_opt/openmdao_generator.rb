@@ -152,10 +152,7 @@ module WhatsOpt
       @discipline = discipline  # @discipline used in template
       @dimpl = @discipline.impl # for shortcut
       @with_server = options[:with_server]
-      if @discipline.type == WhatsOpt::Discipline::METAMODEL
-        _generate(@dimpl.py_filename, "openmdao_metamodel.py.erb", gendir)
-        _generate(@dimpl.py_basefilename, "openmdao_discipline_base.py.erb", gendir)
-      elsif @discipline.type == WhatsOpt::Discipline::OPTIMIZATION
+      if @discipline.type == WhatsOpt::Discipline::OPTIMIZATION
         _generate_sub_optimization(gendir, discipline)
       else
         _generate(@dimpl.py_filename, "openmdao_discipline.py.erb", gendir)
@@ -248,15 +245,9 @@ module WhatsOpt
     end
 
     def _generate_package_files(gendir)
-      if @mda.packaged?
-        # Package is attached, use it!
-        @genfiles |= WhatsOpt::PackageExtractor.new(@mda).extract(gendir)
-      else
-        # no package => generate package skeleton
-        _generate(".gitignore", "package/gitignore.erb", gendir, no_comment: true)
-        _generate("README.md", "package/README.md.erb", gendir, no_comment: true)
-        _generate("pyproject.toml", "package/pyproject.toml.erb", gendir, no_comment: true)
-      end
+      _generate(".gitignore", "package/gitignore.erb", gendir, no_comment: true)
+      _generate("README.md", "package/README.md.erb", gendir, no_comment: true)
+      _generate("pyproject.toml", "package/pyproject.toml.erb", gendir, no_comment: true)
     end
   end
 end

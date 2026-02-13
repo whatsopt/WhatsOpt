@@ -7,14 +7,12 @@ import IterationLinePlot from 'plotter/components/IterationLinePlot';
 import IterationRadarPlot from 'plotter/components/IterationRadarPlot';
 import ScatterSurfacePlot from 'plotter/components/ScatterSurfacePlot';
 import VariableSelector from 'plotter/components/VariableSelector';
-import MetaModelManager from 'plotter/components/MetaModelManager';
 import AnalysisDatabase from '../utils/AnalysisDatabase';
 import * as caseUtils from '../utils/cases';
 import DistributionHistogram from './components/DistributionHistogram';
 
 const PLOTS_TAB = 'plots';
 const VARIABLES_TAB = 'variables';
-const METAMODEL_TAB = 'metamodel';
 
 class PlotPanel extends React.Component {
   constructor(props) {
@@ -160,46 +158,6 @@ VariablePanel.propTypes = {
   onSelectionChange: PropTypes.func.isRequired,
 };
 
-class MetaModelPanel extends React.Component {
-  shouldComponentUpdate(nextProps /* , nextState */) {
-    return nextProps.active;
-  }
-
-  render() {
-    const {
-      active, opeId, api, selCases, onMetaModelCreate, uqMode,
-    } = this.props;
-    const metamodel = (
-      <MetaModelManager
-        active={active}
-        opeId={opeId}
-        api={api}
-        uqMode={uqMode}
-        selCases={selCases}
-        onMetaModelCreate={onMetaModelCreate}
-      />
-    );
-    return (
-      <div className="tab-pane fade" id={METAMODEL_TAB} role="tabpanel" aria-labelledby="metamodel-tab">
-        {metamodel}
-      </div>
-    );
-  }
-}
-
-MetaModelPanel.propTypes = {
-  active: PropTypes.bool.isRequired,
-  opeId: PropTypes.number.isRequired,
-  api: PropTypes.object.isRequired,
-  uqMode: PropTypes.bool.isRequired,
-  selCases: PropTypes.shape({
-    i: PropTypes.array.isRequired,
-    o: PropTypes.array.isRequired,
-    c: PropTypes.array.isRequired,
-  }).isRequired,
-  onMetaModelCreate: PropTypes.func.isRequired,
-};
-
 class Plotter extends React.Component {
   constructor(props) {
     super(props);
@@ -223,7 +181,6 @@ class Plotter extends React.Component {
     this.state = { inputVarCases, selection, activeTab: PLOTS_TAB };
 
     this.handleSelectionChange = this.handleSelectionChange.bind(this);
-    this.handleMetaModelCreate = this.handleMetaModelCreate.bind(this);
     this.activateTab = this.activateTab.bind(this);
   }
 
@@ -239,15 +196,6 @@ class Plotter extends React.Component {
       newSelection = update(selection, { $splice: [[index, 1]] });
     }
     this.setState({ selection: newSelection });
-  }
-
-  handleMetaModelCreate() {
-    console.log('Create MetaModel... ');
-    const { api, ope } = this.props;
-    api.createMetaModel(
-      ope.id,
-      (response) => { console.log(response.data); },
-    );
   }
 
   initializeSelection(inputs, outputs) {
@@ -296,36 +244,6 @@ class Plotter extends React.Component {
 
     const { activeTab } = this.state;
 
-    let metaModelItem; let metaModelPanel;
-    // if (isDoe) {
-    //   metaModelItem = (
-    //     <li className="nav-item">
-    //       <a
-    //         className="nav-link"
-    //         id="metamodel-tab"
-    //         href="#metamodel"
-    //         role="tab"
-    //         aria-controls="metamodel"
-    //         data-bs-toggle="tab"
-    //         aria-selected="false"
-    //         onClick={(e) => this.activateTab(e, METAMODEL_TAB)}
-    //       >
-    //         MetaModel
-    //       </a>
-    //     </li>
-    //   );
-    //   metaModelPanel = (
-    //     <MetaModelPanel
-    //       active={activeTab === METAMODEL_TAB}
-    //       api={this.api}
-    //       opeId={ope.id}
-    //       uqMode={uqMode}
-    //       selCases={selCases}
-    //       onMetaModelCreate={this.handleMetaModelCreate}
-    //     />
-    //   );
-    // }
-
     const exportUrl = this.api.url(`/operations/${ope.id}/exports/new`);
     return (
       <div>
@@ -360,7 +278,6 @@ class Plotter extends React.Component {
                 Plots
               </a>
             </li>
-            {metaModelItem}
             <li className="nav-item">
               <a
                 className="nav-link"
@@ -388,7 +305,6 @@ class Plotter extends React.Component {
               active={activeTab === PLOTS_TAB}
               success={ope.success}
             />
-            {metaModelPanel}
             <VariablePanel
               db={this.db}
               optim={isOptim}

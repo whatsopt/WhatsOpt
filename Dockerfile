@@ -97,7 +97,6 @@ RUN pip install numpy \
 	&& pip install salib \
 	&& pip install smt \
 	&& pip install openturns \
-	&& pip install thrift \
 	&& pip install wop
 
 # Clean up APT when done.
@@ -113,13 +112,6 @@ RUN gem install bundler:2.2.33 \
 	&& bundle install --jobs 20 --retry 5
 
 COPY . ./
-
-RUN pip install -e services/whatsopt_server/optimizer_store/oneramdao/doe \
-	&& pip install -e services/whatsopt_server/optimizer_store/oneramdao/kpls \
-	&& pip install -e services/whatsopt_server/optimizer_store/oneramdao/mfk \
-	&& pip install -e services/whatsopt_server/optimizer_store/oneramdao/moe \
-	&& pip install -e services/whatsopt_server/optimizer_store/oneramdao/sego \
-	&& pip install -e services
 
 RUN bundle install
 

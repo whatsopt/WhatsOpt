@@ -1,24 +1,9 @@
 admin_role: 
   name: admin
 
-sego_expert_role:
-  name: sego_expert
-
 owner_cicav_mda_role:
   name: owner
   resource: cicav (Analysis)
-
-owner_cicav_meta_model_role:
-  name: owner
-  resource: cicav_metamodel_analysis (Analysis)
-  
-owner_cicav_meta_model2_role:
-  name: owner
-  resource: cicav_metamodel2_analysis (Analysis)
-
-member_cicav_meta_model2_role:
-  name: member
-  resource: cicav_metamodel2_analysis (Analysis)
 
 owner_outermda_role:
   name: owner
@@ -44,25 +29,9 @@ owner_singleton_role:
   name: owner
   resource: singleton (Analysis)
 
-owner_singleton_mm_role:
-  name: owner
-  resource: singleton_mm (Analysis)  
-
-member_singleton_mm_role:
-  name: member
-  resource: singleton_mm (Analysis)    
-
 owner_singleton_uq_role:
   name: owner
   resource: singleton_uq (Analysis)  
-
-owner_optim_ackley2d_role:
-  name: owner
-  resource: optim_ackley2d (Optimization) 
-
-owner_optim_unknown_status_role:
-  name: owner
-  resource: optim_unknown_status (Optimization)
 
 owner_cicav_project_role:
   name: owner

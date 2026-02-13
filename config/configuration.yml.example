@@ -1,7 +1,4 @@
 defaults: &defaults
-  enable_remote_operations: true
-  enable_remote_optimizations: true
-  enable_wopstore: true
   enable_ldap: false
   restrict_access: false 
   python_cmd:  python
@@ -14,11 +11,7 @@ test:
   <<: *defaults
 
 production:
-  enable_remote_operations: false
-  enable_remote_optimizations: false
-  enable_wopstore: false
   enable_ldap: false
   restrict_access: false 
   python_cmd:  python
   thrift_cmd:  thrift
-

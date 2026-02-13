@@ -59,11 +59,7 @@ module WhatsOpt
     def _generate_discipline(discipline, gendir, options = {})
       @discipline = discipline  # @discipline used in template
       @with_server = options[:with_server]
-      if @discipline.type == "metamodel"
-        raise NotYetImplementedError.new("Cannot generate code for metamodel #{@discipline.name}")
-      else
-        _generate(discipline.impl.py_filename, "gemseo/gemseo_discipline.py.erb", gendir)
-      end
+      _generate(discipline.impl.py_filename, "gemseo/gemseo_discipline.py.erb", gendir)
       _generate(discipline.impl.py_basefilename, "gemseo/gemseo_discipline_base.py.erb", gendir)
     end
 
@@ -88,15 +84,9 @@ module WhatsOpt
     end
 
     def _generate_package_files(gendir)
-      if @mda.packaged?
-        # Package is attached, use it!
-        @genfiles |= WhatsOpt::PackageExtractor.new(@mda).extract(gendir)
-      else
-        # no package => generate package skeleton
-        _generate(".gitignore", "package/gitignore.erb", gendir, no_comment: true)
-        _generate("README.md", "package/README.md.erb", gendir, no_comment: true)
-        _generate("pyproject.toml", "package/pyproject.toml.erb", gendir, no_comment: true)
-      end
+      _generate(".gitignore", "package/gitignore.erb", gendir, no_comment: true)
+      _generate("README.md", "package/README.md.erb", gendir, no_comment: true)
+      _generate("pyproject.toml", "package/pyproject.toml.erb", gendir, no_comment: true)
     end
   end
 end

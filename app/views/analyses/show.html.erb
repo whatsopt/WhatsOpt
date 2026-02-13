@@ -17,12 +17,6 @@
   Edit
   <% end %>
   <% end %>
-  <% if policy(@mda).operate? %>
-  <%= button_to mda_operations_path(@mda), method: :post, class:"btn ms-2" do |b|%>
-  <span class="fa fa-rocket"></span>
-  Operate
-  <% end %>
-  <% end %>
   <% if policy(@mda).destroy? %>
   <%= button_to mda_path(@mda), method: :delete, 
       data: { confirm: "Remove #{@mda.name} analysis?" }, 

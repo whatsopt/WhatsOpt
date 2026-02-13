@@ -14,10 +14,6 @@ users_roles4:
   user: user1 
   role: owner_cicav_mda_role
 
-users_roles5:
-  user: user1 
-  role: owner_cicav_meta_model_role
-
 users_roles6:
   user: user1 
   role: owner_dummy_mda_role
@@ -26,14 +22,6 @@ users_roles7:
   user: user2 
   role: owner_fast_mda_role
 
-users_roles71:
-  user: user2 
-  role: owner_cicav_meta_model2_role
-  
-users_roles72:
-  user: user1
-  role: member_cicav_meta_model2_role
-  
 users_roles8:
   user: user3 
   role: member_cicav_mda_role
@@ -42,29 +30,9 @@ users_roles12:
   user: user3
   role: owner_singleton_role
 
-users_roles13:
-  user: user3
-  role: owner_singleton_mm_role
-
 users_roles14:
-  user: user1
-  role: member_singleton_mm_role
-
-users_roles15:
   user: user3
   role: owner_singleton_uq_role
-
-users_roles_optim_ackley2d:
-  user: user1
-  role: owner_optim_ackley2d_role
-
-users_roles_optim_unknown_status:
-  user: user5
-  role: owner_optim_unknown_status_role
-
-users_roles_optim_unknown_status:
-  user: user2
-  role: sego_expert_role
 
 users_roles_cicav_project:
   user: user1

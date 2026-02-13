@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_09_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_13_100000) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -155,17 +155,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_09_120000) do
     t.datetime "updated_at", precision: nil, null: false
   end
 
-  create_table "jobs", force: :cascade do |t|
-    t.datetime "ended_at", precision: nil
-    t.text "log"
-    t.integer "log_count", default: 0
-    t.integer "operation_id"
-    t.integer "pid", default: -1
-    t.string "sqlite_filename"
-    t.datetime "started_at", precision: nil
-    t.string "status"
-  end
-
   create_table "journal_details", force: :cascade do |t|
     t.string "action", limit: 30, default: "", null: false
     t.string "entity_attr", limit: 30, default: "", null: false
@@ -183,23 +172,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_09_120000) do
     t.integer "user_id", default: 0, null: false
     t.index ["analysis_id"], name: "index_journals_on_analysis_id"
     t.index ["user_id"], name: "index_journals_on_user_id"
-  end
-
-  create_table "meta_model_prototypes", force: :cascade do |t|
-    t.integer "meta_model_id"
-    t.integer "prototype_id"
-    t.index ["meta_model_id"], name: "index_meta_model_prototypes_on_meta_model_id"
-    t.index ["prototype_id"], name: "index_meta_model_prototypes_on_prototype_id"
-  end
-
-  create_table "meta_models", force: :cascade do |t|
-    t.datetime "created_at", precision: nil, null: false
-    t.string "default_surrogate_kind"
-    t.integer "discipline_id"
-    t.integer "operation_id"
-    t.datetime "updated_at", precision: nil, null: false
-    t.index ["discipline_id"], name: "index_meta_models_on_discipline_id"
-    t.index ["operation_id"], name: "index_meta_models_on_operation_id"
   end
 
   create_table "openmdao_analysis_impls", force: :cascade do |t|
@@ -229,19 +201,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_09_120000) do
     t.integer "base_operation_id"
     t.datetime "created_at", precision: nil
     t.string "driver", default: "runonce"
-    t.string "host", default: ""
     t.string "name"
+    t.string "status", default: "DONE_OFFLINE"
     t.text "success"
     t.datetime "updated_at", precision: nil
-  end
-
-  create_table "optimizations", force: :cascade do |t|
-    t.text "config"
-    t.datetime "created_at", null: false
-    t.text "inputs", limit: 16777215
-    t.string "kind"
-    t.text "outputs", limit: 16777215
-    t.datetime "updated_at", null: false
   end
 
   create_table "options", force: :cascade do |t|
@@ -252,14 +215,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_09_120000) do
     t.string "value"
     t.index ["operation_id"], name: "index_options_on_operation_id"
     t.index ["optionizable_type", "optionizable_id"], name: "index_options_on_optionizable_type_and_optionizable_id"
-  end
-
-  create_table "packages", force: :cascade do |t|
-    t.integer "analysis_id"
-    t.datetime "created_at", null: false
-    t.text "description"
-    t.datetime "updated_at", null: false
-    t.index ["analysis_id"], name: "index_packages_on_analysis_id"
   end
 
   create_table "parameters", force: :cascade do |t|
@@ -295,17 +250,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_09_120000) do
     t.integer "maxiter"
     t.string "name"
     t.float "rtol"
-  end
-
-  create_table "surrogates", force: :cascade do |t|
-    t.integer "coord_index"
-    t.string "kind"
-    t.integer "meta_model_id"
-    t.text "quality"
-    t.string "status"
-    t.integer "variable_id"
-    t.index ["meta_model_id"], name: "index_surrogates_on_meta_model_id"
-    t.index ["variable_id"], name: "index_surrogates_on_variable_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -354,5 +298,4 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_09_120000) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "analysis_disciplines", "analyses"
   add_foreign_key "analysis_disciplines", "disciplines"
-  add_foreign_key "packages", "analyses"
 end

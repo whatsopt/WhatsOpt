@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "whats_opt/salib_sensitivity_analyser"
-# require "whats_opt/openturns_sensitivity_analyser"
 
 class Api::V1::SensitivityAnalysesController < Api::ApiController
   # GET /api/v1/{operation_id}/sensitivity_analysis
@@ -22,10 +21,6 @@ class Api::V1::SensitivityAnalysesController < Api::ApiController
       when Operation::CAT_SENSITIVITY
         if ope.driver =~ /salib_sensitivity_(sobol|morris)/
           analyser = WhatsOpt::SalibSensitivityAnalyser.new(ope, kind: $1.to_sym)
-          status, sa, err = analyser.run
-          return { statusOk: status, sensitivity: sa, error: err }
-        elsif ope.driver && ope.driver.to_s.include?("openturns_sensitivity_pce")
-          analyser = WhatsOpt::OpenturnsSensitivityAnalyser.new(ope)
           status, sa, err = analyser.run
           return { statusOk: status, sensitivity: sa, error: err }
         end
