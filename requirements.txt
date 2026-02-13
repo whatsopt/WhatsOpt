@@ -8,3 +8,7 @@ openmdao_extensions
 thrift
 jax
 matplotlib
+
+# dev tools
+pytest
+ruff
