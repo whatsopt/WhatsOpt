@@ -47,7 +47,6 @@ function _computeTypeSelection(conn) {
   const options = [
     { id: 'Float', text: 'Float' },
     { id: 'Integer', text: 'Integer' },
-    { id: 'String', text: 'String' },
   ];
   return options;
 }
