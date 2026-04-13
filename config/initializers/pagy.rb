@@ -47,4 +47,4 @@
 #
 # Pagy::Calendar.localize_with_rails_i18n_gem(*your_locales)
 
-Pagy.options[:overflow] = :last_page    # default  (other options: :last_page and :exception)
+Pagy::OPTIONS[:overflow] = :last_page    # default  (other options: :last_page and :exception)
