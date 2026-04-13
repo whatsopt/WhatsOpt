@@ -435,7 +435,7 @@ GEM
       faraday (>= 0.17.3, < 3)
     securerandom (0.4.1)
     semantic_range (3.1.1)
-    shakapacker (9.7.0)
+    shakapacker (10.0.0)
       activesupport (>= 5.2)
       package_json
       rack-proxy (>= 0.6.1)
@@ -564,7 +564,7 @@ DEPENDENCIES
   rubocop-rails_config
   rubyzip (~> 3.2)
   sass-rails (>= 6)
-  shakapacker (~> 9.0)
+  shakapacker (~> 10.0)
   simplecov
   simplecov-lcov
   spring
