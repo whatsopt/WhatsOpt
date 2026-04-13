@@ -3,6 +3,8 @@
   "name": "whatsopt",
   "private": true,
   "dependencies": {
+    "@atlaskit/pragmatic-drag-and-drop": "^1.7.10",
+    "@atlaskit/pragmatic-drag-and-drop-hitbox": "^1.1.0",
     "@babel/core": "^7.28.5",
     "@babel/plugin-transform-runtime": "^7.28.5",
     "@babel/preset-env": "^7.28.5",
@@ -41,7 +43,6 @@
     "prop-types": "^15.7.2",
     "qs": "^6.9.4",
     "react": "^19.2.0",
-    "react-beautiful-dnd": "^13.0.0",
     "react-bootstrap": "^2.1.1",
     "react-bootstrap-typeahead": "^7.0.0-rc.5",
     "react-dom": "^19.2.0",
