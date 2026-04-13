@@ -1,5 +1,10 @@
 <h1>CHANGELOG</h1>
 
+<h3>2.0.2 (13/04/2026)</h3>
+<ul>
+  <li>[Tech] Update dependencies backend/frontend</li>
+</ul>
+
 <h3>2.0.1 (12/02/2026)</h3>
 <ul>
   <li>Breaking change: the metamodel creation (kriging, pce) from DOE is removed</li>
