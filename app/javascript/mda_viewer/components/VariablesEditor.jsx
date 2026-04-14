@@ -243,26 +243,6 @@ function EditableCell({
       );
     }
 
-    // React.useEffect(() => {
-    //   if (cellToFocus.current
-    //     && cellToFocus.current.index === index
-    //     && cellToFocus.current.id === id) {
-    //     // console.log('Trying to focus on cell', { index, id });
-    //     // if (myRef.current && myRef.current.myRef && myRef.current.myRef.current) {
-    //     //   // defensive programming
-    //     //   console.log('myRef.current is', myRef.current);
-    //     //   console.log('myRef.current.myRef.current is', myRef.current.myRef.current);
-    //     //   const input = myRef.current.myRef.current.querySelector('input');
-    //     //   if (input) {
-    //     //     input.focus();
-    //     //     input.select();
-    //     //   }
-    //     // }
-    //     // // if (myRef.current.myRef.current) { // defensive programming
-    //     // //   myRef.current.myRef.current.click();
-    //     // // }
-    //   }
-    // });
 
     // Editable fields regarding variable role
     const { role } = connections[index];
