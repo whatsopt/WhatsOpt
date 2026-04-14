@@ -48,8 +48,8 @@ class SensitivityPlotter extends React.Component {
       } else if (saMethod === 'sobol') {
         desc = 'For each output, plot of Sobol first order (S1) and total order (ST) indices (share of the variance of the output that is due to a given input: the greater, the more influent the input is)';
         heatmaps = [
-          <SobolHeatMap outVarNames={varnames} saResult={saResult} firstOrder />,
-          <SobolHeatMap outVarNames={varnames} saResult={saResult} />,
+          <SobolHeatMap key="first order" outVarNames={varnames} saResult={saResult} firstOrder />,
+          <SobolHeatMap key="total order" outVarNames={varnames} saResult={saResult} />,
         ];
         plots = outs.map(
           (o) => (

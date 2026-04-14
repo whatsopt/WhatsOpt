@@ -10,7 +10,7 @@ module.exports = function (api) {
         {
           development: !isProductionEnv,
           useBuiltIns: true,
-          // runtime: "automatic",
+          runtime: "automatic",
         },
       ],
     ].filter(Boolean),

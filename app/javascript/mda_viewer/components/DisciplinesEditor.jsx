@@ -1,6 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { draggable, dropTargetForElements, monitorForElements } from '@atlaskit/pragmatic-drag-and-drop/element/adapter';
+import { combine } from '@atlaskit/pragmatic-drag-and-drop/combine';
+import { attachClosestEdge, extractClosestEdge } from '@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge';
+import { getReorderDestinationIndex } from '@atlaskit/pragmatic-drag-and-drop-hitbox/util/get-reorder-destination-index';
 import AnalysisSelector from './AnalysisSelector';
 import ImportSection from './ImportSection';
 import DataConfirmModal from '../../utils/components/DataConfirmModal';
@@ -36,8 +39,12 @@ class Discipline extends React.Component {
       discHost: '',
       discPort: 31400,
       isEditing: false,
+      isDragging: false,
+      closestEdge: null,
       selected,
     };
+
+    this.listItemRef = React.createRef();
 
     this.handleDiscNameChange = this.handleDiscNameChange.bind(this);
     this.handleDiscHostChange = this.handleDiscHostChange.bind(this);
@@ -50,23 +57,46 @@ class Discipline extends React.Component {
   }
 
   componentDidMount() {
-    // TODO: Tooltips call backs have to re-enabled between edits?
-    // TODO: Not straightforward but not critical, so ...
-    // const { conn: { name } } = this.props;
-    // // eslint-disable-next-line no-undef
-    // $(`#confirmModal-${name}`).on(
-    //   'show.bs.modal',
-    //   () => {
-    //     this.visible = true;
-    //   },
-    // );
-    // // eslint-disable-next-line no-undef
-    // $(`#confirmModal-${name}`).on(
-    //   'hidden.bs.modal',
-    //   () => {
-    //     this.visible = false;
-    //   },
-    // );
+    this.setupDragAndDrop();
+  }
+
+  componentWillUnmount() {
+    if (this.cleanupDnd) {
+      this.cleanupDnd();
+    }
+  }
+
+  setupDragAndDrop() {
+    if (this.cleanupDnd) {
+      this.cleanupDnd();
+    }
+    const el = this.listItemRef.current;
+    if (!el) return;
+
+    this.cleanupDnd = combine(
+      draggable({
+        element: el,
+        getInitialData: () => ({ index: this.props.index, id: this.props.node.id }),
+        onDragStart: () => this.setState({ isDragging: true }),
+        onDrop: () => this.setState({ isDragging: false }),
+      }),
+      dropTargetForElements({
+        element: el,
+        getData: ({ input, element }) => attachClosestEdge(
+          { index: this.props.index, id: this.props.node.id },
+          { input, element, allowedEdges: ['top', 'bottom'] },
+        ),
+        canDrop: ({ source }) => source.data.id !== this.props.node.id,
+        onDragEnter: (args) => {
+          this.setState({ closestEdge: extractClosestEdge(args.self.data) });
+        },
+        onDrag: (args) => {
+          this.setState({ closestEdge: extractClosestEdge(args.self.data) });
+        },
+        onDragLeave: () => this.setState({ closestEdge: null }),
+        onDrop: () => this.setState({ closestEdge: null }),
+      }),
+    );
   }
 
   handleDiscNameChange(event) {
@@ -156,9 +186,10 @@ class Discipline extends React.Component {
   render() {
     const {
       isEditing, discType, discHost, discPort, discName, selected,
+      isDragging, closestEdge,
     } = this.state;
     const {
-      node, onSubAnalysisSearch, index, limited, connected,
+      node, onSubAnalysisSearch, index, limited, connected, flash,
     } = this.props;
     let { type } = node;
     if (type === XDSMJS_ANALYSIS) {
@@ -221,16 +252,12 @@ class Discipline extends React.Component {
         );
       }
       return (
-        <Draggable draggableId={node.id} index={index}>
-          {(provided) => (
             <li
-              ref={provided.innerRef}
-              // eslint-disable-next-line react/jsx-props-no-spreading
-              {...provided.dragHandleProps}
-              // eslint-disable-next-line react/jsx-props-no-spreading
-              {...provided.draggableProps}
-              className="list-group-item editor-discipline"
+              ref={this.listItemRef}
+              className={`list-group-item editor-discipline${flash ? ' editor-discipline--flash' : ''}`}
+              style={{ position: 'relative', opacity: isDragging ? 0.4 : 1 }}
             >
+              {closestEdge && <div className="editor-discipline-drop-indicator" style={closestEdge === 'top' ? { top: -1 } : { bottom: -1 }} />}
               <form className="d-flex flex-row align-items-bottom flex-wrap" onSubmit={this.handleUpdate}>
                 <div className="row">
                   <div className="col-auto">
@@ -266,8 +293,6 @@ class Discipline extends React.Component {
                 </div>
               </form>
             </li>
-          )}
-        </Draggable>
       );
     }
     let item = node.name;
@@ -277,16 +302,12 @@ class Discipline extends React.Component {
     }
 
     return (
-      <Draggable draggableId={node.id} index={index}>
-        {(provided) => (
           <li
-            ref={provided.innerRef}
-            // eslint-disable-next-line react/jsx-props-no-spreading
-            {...provided.dragHandleProps}
-            // eslint-disable-next-line react/jsx-props-no-spreading
-            {...provided.draggableProps}
-            className="list-group-item editor-discipline col-md-4"
+            ref={this.listItemRef}
+            className={`list-group-item editor-discipline col-md-4${flash ? ' editor-discipline--flash' : ''}`}
+            style={{ position: 'relative', opacity: isDragging ? 0.4 : 1 }}
           >
+            {closestEdge && <div className="editor-discipline-drop-indicator" style={closestEdge === 'top' ? { top: -1 } : { bottom: -1 }} />}
             <span className="align-bottom">{item}</span>
             <button
               type="button"
@@ -308,8 +329,6 @@ class Discipline extends React.Component {
               <i className="fa fa-edit" />
             </button>
           </li>
-        )}
-      </Draggable>
     );
   }
 }
@@ -320,6 +339,7 @@ Discipline.propTypes = {
   subAnalysisOption: PropTypes.number,
   limited: PropTypes.bool.isRequired,
   connected: PropTypes.bool.isRequired,
+  flash: PropTypes.bool,
   onDisciplineUpdate: PropTypes.func.isRequired,
   onDisciplineDelete: PropTypes.func.isRequired,
   onSubAnalysisSearch: PropTypes.func.isRequired,
@@ -329,30 +349,56 @@ class DisciplinesEditor extends React.Component {
   constructor(props) {
     super(props);
     const { db } = this.props;
-    this.state = { nodes: db.getDisciplines() };
-
-    this.onDragEnd = this.onDragEnd.bind(this);
+    this.state = { nodes: db.getDisciplines(), flashId: null };
   }
 
-  onDragEnd(result) {
-    if (!result.destination) {
-      return;
+  componentDidMount() {
+    this.cleanupMonitor = monitorForElements({
+      onDrop: ({ source, location }) => {
+        const target = location.current.dropTargets[0];
+        if (!target) return;
+
+        const sourceIndex = source.data.index;
+        const targetIndex = target.data.index;
+        const sourceId = source.data.id;
+        const closestEdge = extractClosestEdge(target.data);
+
+        if (closestEdge === null) return;
+
+        const destinationIndex = getReorderDestinationIndex({
+          startIndex: sourceIndex,
+          indexOfTarget: targetIndex,
+          closestEdgeOfTarget: closestEdge,
+          axis: 'vertical',
+        });
+
+        if (sourceIndex === destinationIndex) return;
+
+        this.setState({ flashId: sourceId });
+        setTimeout(() => this.setState({ flashId: null }), 700);
+
+        this.props.onDisciplineUpdate(
+          this.props.db.nodes[sourceIndex + 1],
+          { position: destinationIndex + 1 },
+        );
+      },
+    });
+  }
+
+  componentWillUnmount() {
+    if (this.cleanupMonitor) {
+      this.cleanupMonitor();
     }
-    const { db: { nodes }, onDisciplineUpdate } = this.props;
-    onDisciplineUpdate(
-      nodes[result.source.index + 1],
-      { position: result.destination.index + 1 },
-    );
   }
 
   // Take into account in this.state of discipline changes coming
   // from Discipline components that should arrive through new props
-  static getDerivedStateFromProps(nextProps) {
-    return { nodes: nextProps.db.getDisciplines() };
+  static getDerivedStateFromProps(nextProps, prevState) {
+    return { nodes: nextProps.db.getDisciplines(), flashId: prevState.flashId };
   }
 
   render() {
-    const { nodes } = this.state;
+    const { nodes, flashId } = this.state;
     const {
       db, api,
       name,
@@ -373,6 +419,7 @@ class DisciplinesEditor extends React.Component {
         node={node}
         limited={limited}
         connected={db.isConnected(node.id)}
+        flash={flashId === node.id}
         onDisciplineUpdate={onDisciplineUpdate}
         onDisciplineDelete={onDisciplineDelete}
         onSubAnalysisSearch={onSubAnalysisSearch}
@@ -402,23 +449,9 @@ class DisciplinesEditor extends React.Component {
             Disciplines
             <span className="badge bg-info ms-2">{nbNodes}</span>
           </div>
-          <DragDropContext
-            onDragStart={this.onDragStart}
-            onDragUpdate={this.onDragUpdate}
-            onDragEnd={this.onDragEnd}
-          >
-            <Droppable droppableId="droppable">
-              {(provided) => (
-                (
-                  // eslint-disable-next-line react/jsx-props-no-spreading
-                  <ul ref={provided.innerRef} {...provided.droppableProps} className="list-group">
-                    {disciplines}
-                    {provided.placeholder}
-                  </ul>
-                )
-              )}
-            </Droppable>
-          </DragDropContext>
+          <ul className="list-group">
+            {disciplines}
+          </ul>
         </div>
         <div className="editor-section">
           <form className="row g-3" onSubmit={onDisciplineCreate}>

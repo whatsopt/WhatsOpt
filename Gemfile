@@ -8,14 +8,14 @@ ruby "3.3.5"
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem "rails", "~> 8.0"
 # Use Puma as the app server
-gem "puma", "~> 7.0"
+gem "puma", "~> 8.0"
 # Use SCSS for stylesheets
 gem "sass-rails", ">= 6"
 # Use Terser as compressor for JavaScript assets
 gem "terser"
 
 # Transpile app-like JavaScript. Read more: https://github.com/shakacode/shakapacker
-gem "shakapacker", "~> 9.0"
+gem "shakapacker", "~> 10.0"
 # See https://github.com/rails/execjs#readme for more supported runtimes
 # gem 'therubyracer', platforms: :ruby
 
@@ -58,7 +58,7 @@ end
 
 group :development do
   # Use Capistrano for deployment
-  gem "capistrano", "~> 3.19.2", require: false
+  gem "capistrano", "~> 3.20", require: false
   gem "capistrano-rails", "~> 1.4", require: false
   gem "capistrano-rvm"
   gem "capistrano-passenger"

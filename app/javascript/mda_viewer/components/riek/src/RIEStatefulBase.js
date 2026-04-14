@@ -8,6 +8,8 @@ export default class RIEStatefulBase extends RIEBase {
     constructor(props) {
         super(props);
         this.inputRef = React.createRef(null);
+        this._tabDirection = null;
+        this._isTabbing = false;
     }
 
     startEditing = () => {
@@ -44,6 +46,12 @@ export default class RIEStatefulBase extends RIEBase {
         debug('keyDown(${event.keyCode})')
         if (event.keyCode === 13) { this.finishEditing() }           // Enter
         else if (event.keyCode === 27) { this.cancelEditing() }     // Escape
+        else if (event.keyCode === 9) {                              // Tab
+            event.preventDefault();
+            this._tabDirection = event.shiftKey ? 'backward' : 'forward';
+            this._isTabbing = true;
+            this.finishEditing();
+        }
     };
 
     textChanged = (event) => {
@@ -61,6 +69,29 @@ export default class RIEStatefulBase extends RIEBase {
         } else if (this.state.editing && prevProps.text != this.props.text) {
             debug('not editing && text not equal previous props -- finishing editing')
             this.finishEditing();
+        } else if (!this.state.editing && prevState.editing && this._tabDirection) {
+            debug('tab navigation to next cell')
+            const direction = this._tabDirection;
+            this._tabDirection = null;
+            this._isTabbing = false;
+            // Defer focus to next tick so the parent re-render (from committed value) settles first
+            setTimeout(() => {
+                const currentEl = this.inputRef.current;
+                if (currentEl) {
+                    const table = currentEl.closest('table');
+                    if (table) {
+                        const tabbables = Array.from(table.querySelectorAll('[tabindex="0"]'));
+                        const currentIndex = tabbables.indexOf(currentEl);
+                        if (currentIndex !== -1) {
+                            const nextIndex = direction === 'forward'
+                                ? currentIndex + 1 : currentIndex - 1;
+                            if (nextIndex >= 0 && nextIndex < tabbables.length) {
+                                tabbables[nextIndex].focus();
+                            }
+                        }
+                    }
+                }
+            }, 0);
         }
     };
 
@@ -90,6 +121,7 @@ export default class RIEStatefulBase extends RIEBase {
 
     elementBlur = (event) => {
         debug(`elementBlur(${event})`)
+        if (this._isTabbing) return;
         this.finishEditing();
     };
 

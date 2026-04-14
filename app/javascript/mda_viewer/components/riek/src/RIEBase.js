@@ -64,7 +64,7 @@ export default class RIEBase extends React.Component {
 
     UNSAFE_componentWillReceiveProps = (nextProps) => {
         debug(`componentWillReceiveProps(${nextProps})`)
-        if ('value' in nextProps && !(nextProps.shouldRemainWhileInvalid && this.state.invalid)) {
+        if ('value' in nextProps && this.state.loading && !(nextProps.shouldRemainWhileInvalid && this.state.invalid)) {
             this.setState({ loading: false, editing: false, invalid: false, newValue: null });
         }
     };
