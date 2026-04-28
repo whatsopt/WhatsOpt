@@ -117,6 +117,7 @@ class ToolBar extends React.Component {
     const hrefGemseo = api.url(`${exportBase}.gemseo?with_server=false`);
     const hrefCmdows = api.url(`${exportBase}.cmdows`);
     const hrefHtml = api.url(`${exportBase}.html`);
+    const hrefHtmlVariableNames = api.url(`${exportBase}.html?edge_labels=names`);
     return (
       <div>
         <div className="btn-toolbar" role="toolbar">
@@ -159,7 +160,29 @@ class ToolBar extends React.Component {
             </button>
           </div>
           <div className="btn-group me-2" role="group">
-            <a className="btn btn-primary" href={hrefHtml}>Export Html</a>
+            <button
+              className="btn btn-primary dropdown-toggle"
+              type="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              Export Html
+            </button>
+            <ul className="dropdown-menu">
+              <li>
+                <a className="dropdown-item" href={hrefHtml}>with Variables Counts</a>
+              </li>
+              <li>
+                <a
+                  className="dropdown-item"
+                  href={hrefHtmlVariableNames}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  with Variables Names
+                </a>
+              </li>
+            </ul>
           </div>
         </div>
         <div className="collapse" id="collapseListing">

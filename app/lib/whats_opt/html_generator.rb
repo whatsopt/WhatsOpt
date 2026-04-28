@@ -25,14 +25,14 @@ TEMPLATE = <<HTML
       const mdo = <%= @xdsm_json %>;
       const config = {
         labelizer: {
-            ellipsis: 5,
-            subSupScript: false,
-            showLinkNbOnly: true,
+          ellipsis: <%= @label_ellipsis %>,
+          subSupScript: false,
+          showLinkNbOnly: <%= @show_link_nb_only %>,
         },
         layout: {
-            origin: { x: 50, y: 20 },
-            cellsize: { w: 150, h: 50 },
-            padding: 10,
+          origin: { x: 50, y: 20 },
+          cellsize: { w: 150, h: 50 },
+          padding: 10,
         },
         withDefaultDriver: false,
       };
@@ -52,11 +52,13 @@ HTML
 
 module WhatsOpt
   class HtmlGenerator
-    def initialize(mda, url: nil)
+    def initialize(mda, url: nil, show_link_nb_only: true)
       @mda = mda
       @basename = "xdsm"
       @content = ""
       @at = url.nil? ? "" : "@#{url}"
+      @show_link_nb_only = show_link_nb_only
+      @label_ellipsis = show_link_nb_only ? 5 : 200
     end
 
     def generate
