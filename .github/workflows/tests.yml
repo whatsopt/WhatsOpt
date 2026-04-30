@@ -74,7 +74,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: yarn
       - name: Install dependencies
-        run: corepack yarn install --immutable
+        run: YARN_ENABLE_HARDENED_MODE=0 corepack yarn install --immutable
 
       - name: Configure rails app
         run: |
