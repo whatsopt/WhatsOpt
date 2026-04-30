@@ -2,7 +2,7 @@
 openmdao
 salib
 smt
-openturns
+openturns<1.27
 egobox
 openmdao_extensions
 thrift

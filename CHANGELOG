@@ -1,5 +1,10 @@
 <h1>CHANGELOG</h1>
 
+<h3>2.0.3 (28/04/2026)</h3>
+<ul>
+  <li>Add static html XDSM generation with variable names</li>
+</ul>
+
 <h3>2.0.2 (13/04/2026)</h3>
 <ul>
   <li>[Tech] Update dependencies backend/frontend</li>

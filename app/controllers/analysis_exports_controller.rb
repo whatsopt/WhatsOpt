@@ -9,6 +9,7 @@ class AnalysisExportsController < ApplicationController
   def new
     mda_id = params[:mda_id]
     format = params[:format]
+    edge_labels = params[:edge_labels]
     with_server = (params[:with_server] == "true")
     with_runops = (params[:with_runops] == "true")
     with_unittests = (params[:with_unittests] == "true")
@@ -48,9 +49,12 @@ class AnalysisExportsController < ApplicationController
       end
 
     elsif format == "html"
-      htmlgen = WhatsOpt::HtmlGenerator.new(mda, url: self.request.base_url)
+      show_link_nb_only = (edge_labels != "names")
+      htmlgen = WhatsOpt::HtmlGenerator.new(mda,
+                                            url: self.request.base_url,
+                                            show_link_nb_only: show_link_nb_only)
       content, filename = htmlgen.generate
-      send_data content, filename: filename, type: "text/html"
+      send_data content, filename: filename, type: "text/html", disposition: "inline"
     else
       redirect_to mdas_url, alert: "Export format '#{format}' not handled!"
     end
