@@ -66,7 +66,7 @@ class ScatterPlotMatrix extends React.PureComponent {
     layout.height = nOut * 250 + 100;
     layout.title = { text: title };
 
-    return (<Plot data={data} layout={layout} />);
+    return <Plot data={data} layout={layout} />;
   }
 }
 

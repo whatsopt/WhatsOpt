@@ -45,22 +45,17 @@ export function useAsyncDebounce(defaultFn, defaultWait = 0) {
 
       return debounceRef.current.promise;
     },
-    [getDefaultFn, getDefaultWait],
+    [getDefaultFn, getDefaultWait]
   );
 }
 
-function VariablesGlobalFilter({
-  globalFilteredRows,
-  globalFilter,
-  setGlobalFilter,
-}) {
+function VariablesGlobalFilter({ globalFilteredRows, globalFilter, setGlobalFilter }) {
   const matchCount = globalFilteredRows.length;
   const [value, setValue] = React.useState(globalFilter);
   const onChange = useAsyncDebounce((val) => {
     setGlobalFilter(val || undefined);
   }, 200);
 
-  const active = (value !== '');
   return (
     <div className="input-group mb-3">
       <input
@@ -74,11 +69,7 @@ function VariablesGlobalFilter({
         }}
         placeholder="Filter..."
       />
-      <span className="input-group-text">
-        {matchCount}
-        {' '}
-        Variables
-      </span>
+      <span className="input-group-text">{matchCount} Variables</span>
     </div>
   );
 }

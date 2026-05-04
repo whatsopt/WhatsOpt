@@ -23,19 +23,44 @@ class DataConfirmModal extends React.PureComponent {
     const { id, title, text } = this.props;
 
     return (
-      <div className="modal fade" id={`confirmModal-${id}`} tabIndex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+      <div
+        className="modal fade"
+        id={`confirmModal-${id}`}
+        tabIndex="-1"
+        aria-labelledby="confirmModalLabel"
+        aria-hidden="true"
+      >
         <div className="modal-dialog">
           <div className="modal-content">
             <div className="modal-header">
-              <h5 className="modal-title" id="confirmModalLabel">{title }</h5>
-              <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
+              <h5 className="modal-title" id="confirmModalLabel">
+                {title}
+              </h5>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              />
             </div>
-            <div className="modal-body">
-              {text}
-            </div>
+            <div className="modal-body">{text}</div>
             <div className="modal-footer">
-              <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={this.handleCancel}>No, cancel</button>
-              <button type="button" className="btn btn-danger" data-bs-dismiss="modal" onClick={this.handleConfirm}>Yes</button>
+              <button
+                type="button"
+                className="btn btn-secondary"
+                data-bs-dismiss="modal"
+                onClick={this.handleCancel}
+              >
+                No, cancel
+              </button>
+              <button
+                type="button"
+                className="btn btn-danger"
+                data-bs-dismiss="modal"
+                onClick={this.handleConfirm}
+              >
+                Yes
+              </button>
             </div>
           </div>
         </div>

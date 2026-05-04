@@ -25,20 +25,17 @@ class ImportSection extends React.Component {
           .map((analysis) => ({ id: analysis.id, label: `#${analysis.id} ${analysis.name}` }));
         callback(options);
       },
-      'all', // search all analyses not only mine
+      'all' // search all analyses not only mine
     );
   }
 
   handleAnalysisSelected(selected) {
     const [selection] = selected;
-    this.api.getDisciplines(
-      selection.id,
-      (response) => {
-        console.log(response.data);
-        const disciplines = response.data;
-        this.setState({ selected, disciplines });
-      },
-    );
+    this.api.getDisciplines(selection.id, (response) => {
+      console.log(response.data);
+      const disciplines = response.data;
+      this.setState({ selected, disciplines });
+    });
   }
 
   handleImport(discId) {

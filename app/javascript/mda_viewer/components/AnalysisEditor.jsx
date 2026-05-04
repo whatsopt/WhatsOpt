@@ -7,21 +7,26 @@ import AnalysisNoteEditor from './AnalysisNoteEditor';
 
 class UserList extends React.PureComponent {
   render() {
-    const {
-      users, userRole, onUserDelete, editEnabled,
-    } = this.props;
+    const { users, userRole, onUserDelete, editEnabled } = this.props;
     const logins = users.map((user) => user.login);
 
     const userItems = logins.map((login, i) => (
       <span key={users[i].id} className="btn-group m-1" role="group">
-        <button type="button" className="btn">{login}</button>
-        <button type="button" className="btn text-danger" disabled={!editEnabled} onClick={() => onUserDelete(users[i], userRole)}>
+        <button type="button" className="btn">
+          {login}
+        </button>
+        <button
+          type="button"
+          className="btn text-danger"
+          disabled={!editEnabled}
+          onClick={() => onUserDelete(users[i], userRole)}
+        >
           <i className="fa fa-times" />
         </button>
       </span>
     ));
 
-    return (<span className="mb-3">{userItems}</span>);
+    return <span className="mb-3">{userItems}</span>;
   }
 }
 
@@ -34,9 +39,7 @@ UserList.propTypes = {
 
 class TeamSelector extends React.PureComponent {
   render() {
-    const {
-      users, userRole, onUserSearch, onUserSelected, onUserDelete, editEnabled,
-    } = this.props;
+    const { users, userRole, onUserSearch, onUserSelected, onUserDelete, editEnabled } = this.props;
     let title = 'Users';
     if (userRole === 'member') {
       title = 'Members';
@@ -59,10 +62,8 @@ class TeamSelector extends React.PureComponent {
         <div className="editor-section">
           <span className="d-flex flex-row align-items-center flex-wrap">
             <div>
-              { title }
-              <span className="ms-1 me-3 badge bg-info">
-                {users.length}
-              </span>
+              {title}
+              <span className="ms-1 me-3 badge bg-info">{users.length}</span>
             </div>
             {userSelector}
           </span>
@@ -93,11 +94,23 @@ class AnalysisEditor extends React.PureComponent {
   render() {
     let teamMembers = null;
     const {
-      analysisPublic, analysisMembers, analysisCoOwners,
-      analysisPermissionsEditable, onAnalysisUserSearch, onAnalysisUserSelected,
-      onAnalysisUserDelete, onAnalysisUpdate, newAnalysisName,
-      onAnalysisNameChange, onAnalysisNoteChange, onAnalysisPublicChange,
-      mdaId, note, onProjectSearch, onProjectSelected, mdaProject,
+      analysisPublic,
+      analysisMembers,
+      analysisCoOwners,
+      analysisPermissionsEditable,
+      onAnalysisUserSearch,
+      onAnalysisUserSelected,
+      onAnalysisUserDelete,
+      onAnalysisUpdate,
+      newAnalysisName,
+      onAnalysisNameChange,
+      onAnalysisNoteChange,
+      onAnalysisPublicChange,
+      mdaId,
+      note,
+      onProjectSearch,
+      onProjectSelected,
+      mdaProject,
     } = this.props;
     if (!analysisPublic) {
       teamMembers = (
@@ -127,15 +140,12 @@ class AnalysisEditor extends React.PureComponent {
       <div className="container-fluid">
         <div className="editor-section">
           <div className="editor-section-label">
-            <i className="fas fa-info-circle" title="Analysis general informations" />
-            {' '}
-            General Information
+            <i className="fas fa-info-circle" title="Analysis general informations" /> General
+            Information
           </div>
           <form onSubmit={onAnalysisUpdate}>
             <div className="mb-3 col-4">
-              <div className="editor-section-label">
-                Name
-              </div>
+              <div className="editor-section-label">Name</div>
               <input
                 type="text"
                 value={newAnalysisName}
@@ -145,9 +155,7 @@ class AnalysisEditor extends React.PureComponent {
               />
             </div>
             <div className="mb-3 col-4">
-              <div className="editor-section-label">
-                Design Project
-              </div>
+              <div className="editor-section-label">Design Project</div>
               <ProjectSelector
                 selected={mdaProject}
                 onProjectSearch={onProjectSearch}
@@ -155,9 +163,7 @@ class AnalysisEditor extends React.PureComponent {
               />
             </div>
             <div className="mb-3">
-              <div className="editor-section-label">
-                Notes
-              </div>
+              <div className="editor-section-label">Notes</div>
               <div className="editor-section-label col-9">
                 <AnalysisNoteEditor
                   mdaId={mdaId}
@@ -166,16 +172,15 @@ class AnalysisEditor extends React.PureComponent {
                 />
               </div>
             </div>
-            <button type="submit" className="btn btn-primary ms-3">Save</button>
+            <button type="submit" className="btn btn-primary ms-3">
+              Save
+            </button>
           </form>
         </div>
         <hr />
         <div className="editor-section">
           <div className="editor-section-label">
-            <i className="fas fa-users-cog" title="Analysis has co-owners" />
-            {' '}
-            Collaboration
-            {' '}
+            <i className="fas fa-users-cog" title="Analysis has co-owners" /> Collaboration{' '}
             <small>(allow edit access to the users listed below)</small>
           </div>
         </div>
@@ -183,10 +188,7 @@ class AnalysisEditor extends React.PureComponent {
         <hr />
         <div className="editor-section">
           <div className="editor-section-label">
-            <i className="fas fa-user-secret" title="Analysis with restricted access" />
-            {' '}
-            Privacy
-            {' '}
+            <i className="fas fa-user-secret" title="Analysis with restricted access" /> Privacy{' '}
             <small>(when restricted, allow read only access to the users listed below)</small>
           </div>
           <form className="form" onSubmit={onAnalysisUpdate}>

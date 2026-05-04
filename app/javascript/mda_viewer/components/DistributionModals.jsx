@@ -109,7 +109,9 @@ class DistributionModal extends React.Component {
 
   constructor(props) {
     super(props);
-    const { conn: { uq } } = this.props;
+    const {
+      conn: { uq },
+    } = this.props;
     this.state = { selected: -1, dists: DistributionModal._uqToState(uq).dists };
     this.visible = false;
 
@@ -119,61 +121,57 @@ class DistributionModal extends React.Component {
   }
 
   componentDidMount() {
-    const { conn: { name } } = this.props;
+    const {
+      conn: { name },
+    } = this.props;
     // eslint-disable-next-line no-undef
-    $(`#distributionListModal-${name}`).on(
-      'show.bs.modal',
-      () => {
-        const { conn: { uq } } = this.props;
-        const dists = DistributionModal._uqToState(uq);
-        this.setState(dists);
+    $(`#distributionListModal-${name}`).on('show.bs.modal', () => {
+      const {
+        conn: { uq },
+      } = this.props;
+      const dists = DistributionModal._uqToState(uq);
+      this.setState(dists);
+      this.visible = true;
+      for (let i = 0; i < dists.dists.length; i += 1) {
+        // eslint-disable-next-line no-undef
+        $(`#${name}-${i}`).on('click', (/* e */) => {
+          this.setState({ selected: i });
+        });
+      }
+    });
+    // eslint-disable-next-line no-undef
+    $(`#distributionListModal-${name}`).on('hidden.bs.modal', () => {
+      this.visible = false;
+    });
+    // eslint-disable-next-line no-undef
+    $(`#distributionModal-${name}`).on('show.bs.modal', () => {
+      const {
+        conn: { uq },
+      } = this.props;
+      if (uq.length === 1) {
+        const { dists } = DistributionModal._uqToState(uq);
+        this.setState({ selected: 0, dists });
         this.visible = true;
-        for (let i = 0; i < dists.dists.length; i += 1) {
+        for (let i = 0; i < dists.length; i += 1) {
           // eslint-disable-next-line no-undef
-          $(`#${name}-${i}`).on('click', (/* e */) => {
+          $(`#${name}-${i}`).on('click', () => {
             this.setState({ selected: i });
           });
         }
-      },
-    );
+      }
+      const { selected } = this.state;
+      const varname = uq.length === 1 ? name : `${name}[${selected}]`;
+      // eslint-disable-next-line no-undef
+      $(`#distributionModal-${name} .modal-title`).text(`Distribution of ${varname}`);
+    });
     // eslint-disable-next-line no-undef
-    $(`#distributionListModal-${name}`).on(
-      'hidden.bs.modal',
-      () => {
-        this.visible = false;
-      },
-    );
-    // eslint-disable-next-line no-undef
-    $(`#distributionModal-${name}`).on(
-      'show.bs.modal',
-      () => {
-        const { conn: { uq } } = this.props;
-        if (uq.length === 1) {
-          const { dists } = DistributionModal._uqToState(uq);
-          this.setState({ selected: 0, dists });
-          this.visible = true;
-          for (let i = 0; i < dists.length; i += 1) {
-            // eslint-disable-next-line no-undef
-            $(`#${name}-${i}`).on('click', () => {
-              this.setState({ selected: i });
-            });
-          }
-        }
-        const { selected } = this.state;
-        const varname = uq.length === 1 ? name : `${name}[${selected}]`;
-        // eslint-disable-next-line no-undef
-        $(`#distributionModal-${name} .modal-title`).text(`Distribution of ${varname}`);
-      },
-    );
-    // eslint-disable-next-line no-undef
-    $(`#distributionModal-${name}`).on(
-      'hidden.bs.modal',
-      () => {
-        const { conn: { uq } } = this.props;
-        const dists = DistributionModal._uqToState(uq);
-        this.setState(dists);
-      },
-    );
+    $(`#distributionModal-${name}`).on('hidden.bs.modal', () => {
+      const {
+        conn: { uq },
+      } = this.props;
+      const dists = DistributionModal._uqToState(uq);
+      this.setState(dists);
+    });
   }
 
   shouldComponentUpdate() {
@@ -200,12 +198,16 @@ class DistributionModal extends React.Component {
     for (const k in formData) {
       if (k.startsWith(kind.toLowerCase())) {
         for (const optname in formData[k]) {
-          if (formData[k][optname] !== undefined) { // Form bug: filter undefined data
-            newState.dists[selected].options_attributes.push(
-              { name: optname, value: formData[k][optname] },
-            );
+          if (formData[k][optname] !== undefined) {
+            // Form bug: filter undefined data
+            newState.dists[selected].options_attributes.push({
+              name: optname,
+              value: formData[k][optname],
+            });
           } else {
-            console.log(`Bug in jsonschema form: avoid pushing ${k} ${optname} ${formData[k][optname]}`);
+            console.log(
+              `Bug in jsonschema form: avoid pushing ${k} ${optname} ${formData[k][optname]}`
+            );
           }
         }
       }
@@ -213,7 +215,11 @@ class DistributionModal extends React.Component {
 
     // distribution: check for updating/removing options
     const { conn } = this.props;
-    const { uq: { [selected]: { options_attributes: prevOptAttrs } } } = conn;
+    const {
+      uq: {
+        [selected]: { options_attributes: prevOptAttrs },
+      },
+    } = conn;
     const optIds = prevOptAttrs.map((opt) => opt.id);
     for (const optAttr of newState.dists[selected].options_attributes) {
       if (optIds.length) {
@@ -229,7 +235,10 @@ class DistributionModal extends React.Component {
     if (selected < 0) {
       return;
     }
-    const { conn: { id, name }, onConnectionChange } = this.props;
+    const {
+      conn: { id, name },
+      onConnectionChange,
+    } = this.props;
     onConnectionChange(id, { distributions_attributes: [dists[selected]] });
     // eslint-disable-next-line no-undef
     $(`#distributionModal-${name}`).modal('hide');
@@ -238,7 +247,11 @@ class DistributionModal extends React.Component {
   getFormData() {
     const { selected } = this.state;
     const taken = selected < 0 ? 0 : selected;
-    const { dists: { [taken]: { kind, options_attributes } } } = this.state;
+    const {
+      dists: {
+        [taken]: { kind, options_attributes },
+      },
+    } = this.state;
     const formData = { kind };
     if (options_attributes) {
       formData[`${kind.toLowerCase()}_options`] = {};
@@ -253,66 +266,79 @@ class DistributionModal extends React.Component {
   /* eslint-disable jsx-a11y/control-has-associated-label */
   /* eslint-disable react/no-array-index-key */
   render() {
-    const { conn: { name, uq } } = this.props;
+    const {
+      conn: { name, uq },
+    } = this.props;
     const formData = this.getFormData();
 
-    const distributionModalItems = uq.map(
-      (dist, i) => (
-        <div className="row" key={`${name}-${i}`}>
-          <div className="col-md-3">{`${name}[${i}]`}</div>
-          <div className="col-md-5">{DistributionModal._uqLabelOf(uq[i])}</div>
-          <div className="col-md-4">
-            <button
-              title="Edit"
-              type="button"
-              id={`${name}-${i}`}
-              data-varname={name}
-              data-coord={i}
-              data-bs-toggle="modal"
-              data-bs-target={`#distributionModal-${name}`}
-              className="btn btn-sm"
-            >
-              <i className="fas fa-edit" />
-            </button>
-          </div>
+    const distributionModalItems = uq.map((dist, i) => (
+      <div className="row" key={`${name}-${i}`}>
+        <div className="col-md-3">{`${name}[${i}]`}</div>
+        <div className="col-md-5">{DistributionModal._uqLabelOf(uq[i])}</div>
+        <div className="col-md-4">
+          <button
+            title="Edit"
+            type="button"
+            id={`${name}-${i}`}
+            data-varname={name}
+            data-coord={i}
+            data-bs-toggle="modal"
+            data-bs-target={`#distributionModal-${name}`}
+            className="btn btn-sm"
+          >
+            <i className="fas fa-edit" />
+          </button>
         </div>
-      ),
-    );
+      </div>
+    ));
     return (
       <div key={name}>
         <div className="modal distribution-list-modal" id={`distributionListModal-${name}`}>
           <div className="modal-dialog">
             <div className="modal-content">
               <div className="modal-header">
-                <h4 className="modal-title">
-                  Distributions of
-                  {' '}
-                  {name}
-                </h4>
-                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-hidden="true">×</button>
+                <h4 className="modal-title">Distributions of {name}</h4>
+                <button
+                  type="button"
+                  className="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-hidden="true"
+                >
+                  ×
+                </button>
               </div>
               <div className="container" />
               <div className="modal-body">
-                <div className="container-fluid">
-                  {distributionModalItems}
-                </div>
+                <div className="container-fluid">{distributionModalItems}</div>
               </div>
               <div className="modal-footer">
-                <button type="button" className="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                <button type="button" className="btn btn-primary" data-bs-dismiss="modal">
+                  Close
+                </button>
               </div>
             </div>
           </div>
         </div>
-        <div className="modal fade distribution-modal" id={`distributionModal-${name}`} tabIndex="-1" role="dialog" aria-labelledby={`distributionModalLabel-${name}`} aria-hidden="true">
+        <div
+          className="modal fade distribution-modal"
+          id={`distributionModal-${name}`}
+          tabIndex="-1"
+          role="dialog"
+          aria-labelledby={`distributionModalLabel-${name}`}
+          aria-hidden="true"
+        >
           <div className="modal-dialog" role="document">
             <div className="modal-content">
               <div className="modal-header">
                 <h4 className="modal-title" id={`distributionModalLabel-${name}`}>
-                  Distribution of variable
-                  {' '}
-                  {name}
+                  Distribution of variable {name}
                 </h4>
-                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
+                <button
+                  type="button"
+                  className="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                />
               </div>
               <div className="modal-body">
                 <Form
@@ -325,8 +351,12 @@ class DistributionModal extends React.Component {
                 </Form>
               </div>
               <div className="modal-footer">
-                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" className="btn btn-primary" onClick={this.handleSave}>Save</button>
+                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">
+                  Close
+                </button>
+                <button type="button" className="btn btn-primary" onClick={this.handleSave}>
+                  Save
+                </button>
               </div>
             </div>
           </div>
@@ -340,11 +370,13 @@ DistributionModal.propTypes = {
   conn: PropTypes.shape({
     id: PropTypes.number.isRequired,
     name: PropTypes.string.isRequired,
-    uq: PropTypes.arrayOf(PropTypes.shape({
-      id: PropTypes.number,
-      kind: PropTypes.string.isRequired,
-      options_attributes: PropTypes.array.isRequired,
-    })),
+    uq: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.number,
+        kind: PropTypes.string.isRequired,
+        options_attributes: PropTypes.array.isRequired,
+      })
+    ),
   }).isRequired,
   onConnectionChange: PropTypes.func.isRequired,
 };
@@ -352,24 +384,20 @@ DistributionModal.propTypes = {
 class DistributionModals extends React.PureComponent {
   render() {
     const { db, onConnectionChange } = this.props;
-    const connections = db.computeConnections().filter(
-      (c) => c.role === 'design_var' || c.role === 'parameter' || c.role === 'uncertain_var',
-    );
-    const modals = connections.map(
-      (conn) => {
-        const { uq: dists } = conn;
-        if (dists.length > 0) {
-          return (
-            <DistributionModal
-              key={conn.id}
-              conn={conn}
-              onConnectionChange={onConnectionChange}
-            />
-          );
-        }
-        return null;
-      },
-    );
+    const connections = db
+      .computeConnections()
+      .filter(
+        (c) => c.role === 'design_var' || c.role === 'parameter' || c.role === 'uncertain_var'
+      );
+    const modals = connections.map((conn) => {
+      const { uq: dists } = conn;
+      if (dists.length > 0) {
+        return (
+          <DistributionModal key={conn.id} conn={conn} onConnectionChange={onConnectionChange} />
+        );
+      }
+      return null;
+    });
     return modals;
   }
 }

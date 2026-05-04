@@ -28,56 +28,64 @@ class WhatsOptApi {
 
   openmdaoChecking(mdaId, callback) {
     const path = `/analyses/${mdaId}/openmdao_checking`;
-    axios.post(this.apiUrl(path))
+    axios
+      .post(this.apiUrl(path))
       .then(callback)
       .catch((error) => console.log(error));
   }
 
   analyseSensitivity(opeId, callback) {
     const path = `/operations/${opeId}/sensitivity_analysis`;
-    axios.get(this.apiUrl(path))
+    axios
+      .get(this.apiUrl(path))
       .then(callback)
       .catch((error) => console.log(error));
   }
 
   getProjects(callback) {
     const path = '/design_projects';
-    axios.get(this.apiUrl(path))
+    axios
+      .get(this.apiUrl(path))
       .then(callback)
       .catch((error) => console.log(error));
   }
 
   getUsers(mdaId, role, callback) {
     const path = `/user_roles?query[analysis_id]=${mdaId}&query[select]=${role}`;
-    axios.get(this.apiUrl(path))
+    axios
+      .get(this.apiUrl(path))
       .then(callback)
       .catch((error) => console.log(error));
   }
 
   getUserCandidates(mdaId, role, callback) {
     const path = `/user_roles?query[analysis_id]=${mdaId}&query[select]=${role}_candidates`;
-    axios.get(this.apiUrl(path))
+    axios
+      .get(this.apiUrl(path))
       .then(callback)
       .catch((error) => console.log(error));
   }
 
   addUser(userId, mdaId, role, callback) {
     const path = `/user_roles/${userId}`;
-    axios.put(this.apiUrl(path), { user_role: { analysis_id: mdaId, role } })
+    axios
+      .put(this.apiUrl(path), { user_role: { analysis_id: mdaId, role } })
       .then(callback)
       .catch((error) => console.log(error));
   }
 
   removeUser(userId, mdaId, role, callback) {
     const path = `/user_roles/${userId}`;
-    axios.delete(this.apiUrl(path), { data: { user_role: { analysis_id: mdaId, role } } })
+    axios
+      .delete(this.apiUrl(path), { data: { user_role: { analysis_id: mdaId, role } } })
       .then(callback)
       .catch((error) => console.log(error));
   }
 
   updateUserSettings(userId, settings, callback) {
     const path = `/users/${userId}`;
-    axios.put(this.apiUrl(path), { user: { settings } })
+    axios
+      .put(this.apiUrl(path), { user: { settings } })
       .then(callback)
       .catch((error) => console.log(error));
   }
@@ -88,7 +96,8 @@ class WhatsOptApi {
     if (format) {
       path += `.${format}`;
     }
-    axios.get(this.apiUrl(path))
+    axios
+      .get(this.apiUrl(path))
       .then((response) => {
         // Here we set the update time of the MDA as we requested it
         // This field is used to implement optimistic lock on the mda
@@ -103,14 +112,16 @@ class WhatsOptApi {
 
   getAnalysisHistory(mdaId, callback) {
     const path = `/analyses/${mdaId}/journal`;
-    axios.get(this.apiUrl(path))
+    axios
+      .get(this.apiUrl(path))
       .then(callback)
       .catch((error) => console.log(error));
   }
 
   updateAnalysis(mdaId, mdaAttrs, callback, onError) {
     const path = `/analyses/${mdaId}`;
-    axios.put(this.apiUrl(path), { analysis: mdaAttrs, requested_at: this.requested_at })
+    axios
+      .put(this.apiUrl(path), { analysis: mdaAttrs, requested_at: this.requested_at })
       .then((response) => {
         // Here we set the update time of the MDA as we requested it
         // This field is used to implement optimistic lock on the mda
@@ -123,28 +134,32 @@ class WhatsOptApi {
 
   compareAnalyses(mdaId, otherMdaId, callback) {
     const path = `/analyses/${mdaId}/comparisons/new?with=${otherMdaId}`;
-    axios.get(this.apiUrl(path))
+    axios
+      .get(this.apiUrl(path))
       .then(callback)
       .catch((error) => console.log(error));
   }
 
   getDisciplines(mdaId, callback) {
     const path = `/analyses/${mdaId}/disciplines`;
-    axios.get(this.apiUrl(path))
+    axios
+      .get(this.apiUrl(path))
       .then(callback)
       .catch((error) => console.log(error));
   }
 
   getVariables(mdaId, callback) {
     const path = `/analyses/${mdaId}/variables`;
-    axios.get(this.apiUrl(path))
+    axios
+      .get(this.apiUrl(path))
       .then(callback)
       .catch((error) => console.log(error));
   }
 
   getVariableInformation(mdaId, id, callback) {
     const path = `/analyses/${mdaId}/variables/${id}`;
-    axios.get(this.apiUrl(path))
+    axios
+      .get(this.apiUrl(path))
       .then(callback)
       .catch((error) => console.log(error));
   }
@@ -153,14 +168,16 @@ class WhatsOptApi {
     const path = `/analyses/${toMdaId}`;
     this.getAnalysis(toMdaId, false, (response) => {
       const { updated_at } = response.data;
-      axios.put(this.apiUrl(path), {
-        analysis: {
-          import: {
-            analysis: fromMdaId, disciplines: [discId],
+      axios
+        .put(this.apiUrl(path), {
+          analysis: {
+            import: {
+              analysis: fromMdaId,
+              disciplines: [discId],
+            },
           },
-        },
-        requested_at: updated_at,
-      })
+          requested_at: updated_at,
+        })
         .then(callback)
         .catch(onError);
     });
@@ -168,31 +185,34 @@ class WhatsOptApi {
 
   createDiscipline(mdaId, disciplineAttributes, callback, onError) {
     const path = `/analyses/${mdaId}/disciplines`;
-    axios.post(this.apiUrl(path), {
-      discipline: disciplineAttributes,
-      requested_at: this.requested_at,
-    })
+    axios
+      .post(this.apiUrl(path), {
+        discipline: disciplineAttributes,
+        requested_at: this.requested_at,
+      })
       .then(callback)
       .catch(onError);
   }
 
   updateDiscipline(mdaId, discId, disciplineAttributes, callback, onError) {
     const path = `/analyses/${mdaId}/disciplines/${discId}`;
-    axios.put(this.apiUrl(path), {
-      discipline: disciplineAttributes,
-      requested_at: this.requested_at,
-    })
+    axios
+      .put(this.apiUrl(path), {
+        discipline: disciplineAttributes,
+        requested_at: this.requested_at,
+      })
       .then(callback)
       .catch(onError);
   }
 
   deleteDiscipline(mdaId, discId, callback, onError) {
     const path = `/analyses/${mdaId}/disciplines/${discId}`;
-    axios.delete(this.apiUrl(path), {
-      data: {
-        requested_at: this.requested_at,
-      },
-    })
+    axios
+      .delete(this.apiUrl(path), {
+        data: {
+          requested_at: this.requested_at,
+        },
+      })
       .then(callback)
       .catch(onError);
   }
@@ -205,76 +225,86 @@ class WhatsOptApi {
       option = '?owned=true';
     }
     const path = `/analyses${option}`;
-    axios.get(this.apiUrl(path))
+    axios
+      .get(this.apiUrl(path))
       .then(callback)
       .catch((error) => console.log(error));
   }
 
   getSubAnalysisCandidates(callback) {
     const path = '/analyses';
-    axios.get(this.apiUrl(path))
+    axios
+      .get(this.apiUrl(path))
       .then(callback)
       .catch((error) => console.log(error));
   }
 
   createConnection(mdaId, connectionAttributes, callback, onError) {
     const path = `/analyses/${mdaId}/connections`;
-    axios.post(this.apiUrl(path), {
-      connection: connectionAttributes,
-      requested_at: this.requested_at,
-    })
+    axios
+      .post(this.apiUrl(path), {
+        connection: connectionAttributes,
+        requested_at: this.requested_at,
+      })
       .then(callback)
       .catch(onError);
   }
 
   updateConnection(mdaId, connectionId, connectionAttributes, callback, onError) {
     const path = `/analyses/${mdaId}/connections/${connectionId}`;
-    axios.put(this.apiUrl(path), {
-      connection: connectionAttributes,
-      requested_at: this.requested_at,
-    })
+    axios
+      .put(this.apiUrl(path), {
+        connection: connectionAttributes,
+        requested_at: this.requested_at,
+      })
       .then(callback)
       .catch(onError);
   }
 
   deleteConnection(mdaId, connectionId, callback, onError) {
     const path = `/analyses/${mdaId}/connections/${connectionId}`;
-    axios.delete(this.apiUrl(path), {
-      data: {
-        requested_at: this.requested_at,
-      },
-    })
+    axios
+      .delete(this.apiUrl(path), {
+        data: {
+          requested_at: this.requested_at,
+        },
+      })
       .then(callback)
       .catch(onError);
   }
 
   getOperation(operationId, callback) {
     const path = `/operations/${operationId}`;
-    axios.get(this.apiUrl(path))
+    axios
+      .get(this.apiUrl(path))
       .then(callback)
       .catch((error) => console.log(error));
   }
 
   getOpenmdaoImpl(mdaId, callback) {
     const path = `/analyses/${mdaId}/openmdao_impl`;
-    axios.get(this.apiUrl(path))
+    axios
+      .get(this.apiUrl(path))
       .then(callback)
       .catch((error) => console.log(error));
   }
 
   updateOpenmdaoImpl(mdaId, implAttrs, callback, onError) {
     const path = `/analyses/${mdaId}/openmdao_impl`;
-    axios.patch(this.apiUrl(path), {
-      openmdao_impl: implAttrs,
-      requested_at: this.requested_at,
-    })
-      .then(() => this.getAnalysis(mdaId, false, (response) => {
-        // Here we set the update time of the MDA as we requested it
-        // This field is used to implement optimistic lock on the mda
-        // when co_owners do concurrent editing
-        this.requested_at = response.data.updated_at;
-        callback();
-      }))
+    axios
+      .patch(this.apiUrl(path), {
+        openmdao_impl: implAttrs,
+        requested_at: this.requested_at,
+      })
+      .then(() =>
+        this.getAnalysis(mdaId, false, (response) => {
+          // Here we set the update time of the MDA as we requested it
+          // This field is used to implement optimistic lock on the mda
+          // when co_owners do concurrent editing
+          this.requested_at = response.data.updated_at;
+          callback();
+        })
+      )
       .catch(onError);
   }
 }

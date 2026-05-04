@@ -8,15 +8,15 @@ const Plot = createPlotlyComponent(Plotly);
 class SobolScatterPlot extends React.PureComponent {
   render() {
     const { saData, outVarName } = this.props;
-    const {
-      S1, S1_conf: s1Conf, ST, ST_conf: stConf, parameter_names: parameterNames,
-    } = saData;
+    const { S1, S1_conf: s1Conf, ST, ST_conf: stConf, parameter_names: parameterNames } = saData;
     const traceS1 = {
       name: 'S1',
       x: parameterNames.map((_, i) => i + 0.9),
       y: S1,
       error_y: {
-        type: 'data', array: s1Conf, symmetric: true,
+        type: 'data',
+        array: s1Conf,
+        symmetric: true,
       },
       type: 'scatter',
       mode: 'markers+text',
@@ -31,7 +31,9 @@ class SobolScatterPlot extends React.PureComponent {
       x: parameterNames.map((_, i) => i + 1.1),
       y: ST,
       error_y: {
-        type: 'data', array: stConf, symmetric: true,
+        type: 'data',
+        array: stConf,
+        symmetric: true,
       },
       type: 'scatter',
       mode: 'markers+text',
@@ -58,7 +60,7 @@ class SobolScatterPlot extends React.PureComponent {
       },
     };
 
-    return (<Plot data={data} layout={layout} />);
+    return <Plot data={data} layout={layout} />;
   }
 }
 

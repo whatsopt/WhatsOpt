@@ -17,14 +17,12 @@ class ExportPanel extends React.Component {
   }
 
   handleAnalysisSearch(callback) {
-    this.api.getAnalysisCandidates(
-      (response) => {
-        const options = response.data
-          .filter((analysis) => analysis.id !== this.db.getAnalysisId())
-          .map((analysis) => ({ id: analysis.id, label: `#${analysis.id} ${analysis.name}` }));
-        callback(options);
-      },
-    );
+    this.api.getAnalysisCandidates((response) => {
+      const options = response.data
+        .filter((analysis) => analysis.id !== this.db.getAnalysisId())
+        .map((analysis) => ({ id: analysis.id, label: `#${analysis.id} ${analysis.name}` }));
+      callback(options);
+    });
   }
 
   handleAnalysisSelected(selected) {
@@ -48,8 +46,10 @@ class ExportPanel extends React.Component {
           commitClass: 'btn-primary',
           cancel: 'Continue',
           cancelClass: 'btn-info',
-          onConfirm: () => { window.location.href = this.api.url(`/analyses/${selection.id}`); },
-          onCancel: () => { },
+          onConfirm: () => {
+            window.location.href = this.api.url(`/analyses/${selection.id}`);
+          },
+          onCancel: () => {},
         });
       },
       (error) => {
@@ -64,16 +64,16 @@ class ExportPanel extends React.Component {
           commit: 'Ok',
           commitClass: 'btn-primary',
           cancelClass: 'd-none',
-          onConfirm: () => { },
+          onConfirm: () => {},
         });
-      },
+      }
     );
   }
 
   render() {
     const mdaId = this.db.getAnalysisId();
     const { selected } = this.state;
-    const disabled = (selected.length === 0);
+    const disabled = selected.length === 0;
 
     let disciplineExports = [];
     disciplineExports = this.db.getDisciplines().map((disc) => {

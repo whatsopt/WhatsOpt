@@ -1,8 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { draggable, dropTargetForElements, monitorForElements } from '@atlaskit/pragmatic-drag-and-drop/element/adapter';
+import {
+  draggable,
+  dropTargetForElements,
+  monitorForElements,
+} from '@atlaskit/pragmatic-drag-and-drop/element/adapter';
 import { combine } from '@atlaskit/pragmatic-drag-and-drop/combine';
-import { attachClosestEdge, extractClosestEdge } from '@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge';
+import {
+  attachClosestEdge,
+  extractClosestEdge,
+} from '@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge';
 import { getReorderDestinationIndex } from '@atlaskit/pragmatic-drag-and-drop-hitbox/util/get-reorder-destination-index';
 import AnalysisSelector from './AnalysisSelector';
 import ImportSection from './ImportSection';
@@ -18,16 +25,18 @@ const XDSMJS_ANALYSIS = 'group';
 const OPTIMIZATION = 'mdo';
 
 function isLocalHost(host) {
-  return (host === '' || host === 'localhost' || host === '127.0.0.1');
+  return host === '' || host === 'localhost' || host === '127.0.0.1';
 }
 
 function isComposite(discType) {
-  return (discType === ANALYSIS || discType === OPTIMIZATION);
+  return discType === ANALYSIS || discType === OPTIMIZATION;
 }
 class Discipline extends React.Component {
   constructor(props) {
     super(props);
-    const { node: { link } } = props;
+    const {
+      node: { link },
+    } = props;
     let selected = [];
     if (link) {
       selected = [{ id: link.id, label: `#${link.id} ${link.name}` }];
@@ -82,10 +91,11 @@ class Discipline extends React.Component {
       }),
       dropTargetForElements({
         element: el,
-        getData: ({ input, element }) => attachClosestEdge(
-          { index: this.props.index, id: this.props.node.id },
-          { input, element, allowedEdges: ['top', 'bottom'] },
-        ),
+        getData: ({ input, element }) =>
+          attachClosestEdge(
+            { index: this.props.index, id: this.props.node.id },
+            { input, element, allowedEdges: ['top', 'bottom'] }
+          ),
         canDrop: ({ source }) => source.data.id !== this.props.node.id,
         onDragEnter: (args) => {
           this.setState({ closestEdge: extractClosestEdge(args.self.data) });
@@ -95,7 +105,7 @@ class Discipline extends React.Component {
         },
         onDragLeave: () => this.setState({ closestEdge: null }),
         onDrop: () => this.setState({ closestEdge: null }),
-      }),
+      })
     );
   }
 
@@ -138,9 +148,7 @@ class Discipline extends React.Component {
     event.preventDefault();
     this.handleCancelEdit();
     const { node } = this.props;
-    const {
-      discName, discType, discHost, discPort, selected,
-    } = this.state;
+    const { discName, discType, discHost, discPort, selected } = this.state;
     const subAnalysisId = selected[0] && selected[0].id;
     const discAttrs = {
       name: discName,
@@ -151,7 +159,8 @@ class Discipline extends React.Component {
     }
     if (isComposite(discType)) {
       discAttrs.analysis_discipline_attributes = {
-        discipline_id: node.id, analysis_id: subAnalysisId,
+        discipline_id: node.id,
+        analysis_id: subAnalysisId,
       };
     }
     const { endpoint } = node; // an endpoint is already present
@@ -170,7 +179,8 @@ class Discipline extends React.Component {
     const discType = event.target.value;
     const { selected } = this.state;
 
-    if (!isComposite(discType) && selected) { // unset analysis if needed
+    if (!isComposite(discType) && selected) {
+      // unset analysis if needed
       this.setState({ discType, selected: [] });
     } else {
       this.setState({ discType });
@@ -184,13 +194,9 @@ class Discipline extends React.Component {
   }
 
   render() {
-    const {
-      isEditing, discType, discHost, discPort, discName, selected,
-      isDragging, closestEdge,
-    } = this.state;
-    const {
-      node, onSubAnalysisSearch, index, limited, connected, flash,
-    } = this.props;
+    const { isEditing, discType, discHost, discPort, discName, selected, isDragging, closestEdge } =
+      this.state;
+    const { node, onSubAnalysisSearch, limited, connected, flash } = this.props;
     let { type } = node;
     if (type === XDSMJS_ANALYSIS) {
       type = ANALYSIS;
@@ -199,7 +205,7 @@ class Discipline extends React.Component {
       type = DISCIPLINE;
     }
     const not_editable = false;
-    const sub_analysable = (type === DISCIPLINE && !connected);
+    const sub_analysable = type === DISCIPLINE && !connected;
     const type_changeable = sub_analysable || isComposite(type);
 
     if (isEditing) {
@@ -235,7 +241,9 @@ class Discipline extends React.Component {
               />
             </div>
             <div className="col-auto">
-              <label htmlFor="port" className="mt-2">:</label>
+              <label htmlFor="port" className="mt-2">
+                :
+              </label>
             </div>
             <div className="col-auto">
               <input
@@ -247,52 +255,67 @@ class Discipline extends React.Component {
                 onChange={this.handleDiscPortChange}
               />
             </div>
-
           </>
         );
       }
       return (
-            <li
-              ref={this.listItemRef}
-              className={`list-group-item editor-discipline${flash ? ' editor-discipline--flash' : ''}`}
-              style={{ position: 'relative', opacity: isDragging ? 0.4 : 1 }}
-            >
-              {closestEdge && <div className="editor-discipline-drop-indicator" style={closestEdge === 'top' ? { top: -1 } : { bottom: -1 }} />}
-              <form className="d-flex flex-row align-items-bottom flex-wrap" onSubmit={this.handleUpdate}>
-                <div className="row">
-                  <div className="col-auto">
-                    <input
-                      className="form-control"
-                      id="name"
-                      type="text"
-                      defaultValue={discName}
-                      placeholder="Enter Name..."
-                      onChange={this.handleDiscNameChange}
-                    />
-                  </div>
-                  <div className="col-auto">
-                    <select
-                      className="form-control ms-2"
-                      id="type"
-                      value={discType}
-                      onChange={this.handleSelectChange}
-                      disabled={!type_changeable}
-                    >
-                      <option value={DISCIPLINE}>Discipline</option>
-                      <option value={ANALYSIS}>Sub-Analysis</option>
-                      <option value={OPTIMIZATION}>Sub-Optimization</option>
-                    </select>
-                  </div>
-                  {deploymentOrSubAnalysis}
-                  <div className="col-auto">
-                    <button type="submit" className="btn btn-primary ms-3">Update</button>
-                  </div>
-                  <div className="col-auto">
-                    <button type="button" onClick={this.handleCancelEdit} className="btn btn-secondary ms-1">Cancel</button>
-                  </div>
-                </div>
-              </form>
-            </li>
+        <li
+          ref={this.listItemRef}
+          className={`list-group-item editor-discipline${flash ? ' editor-discipline--flash' : ''}`}
+          style={{ position: 'relative', opacity: isDragging ? 0.4 : 1 }}
+        >
+          {closestEdge && (
+            <div
+              className="editor-discipline-drop-indicator"
+              style={closestEdge === 'top' ? { top: -1 } : { bottom: -1 }}
+            />
+          )}
+          <form
+            className="d-flex flex-row align-items-bottom flex-wrap"
+            onSubmit={this.handleUpdate}
+          >
+            <div className="row">
+              <div className="col-auto">
+                <input
+                  className="form-control"
+                  id="name"
+                  type="text"
+                  defaultValue={discName}
+                  placeholder="Enter Name..."
+                  onChange={this.handleDiscNameChange}
+                />
+              </div>
+              <div className="col-auto">
+                <select
+                  className="form-control ms-2"
+                  id="type"
+                  value={discType}
+                  onChange={this.handleSelectChange}
+                  disabled={!type_changeable}
+                >
+                  <option value={DISCIPLINE}>Discipline</option>
+                  <option value={ANALYSIS}>Sub-Analysis</option>
+                  <option value={OPTIMIZATION}>Sub-Optimization</option>
+                </select>
+              </div>
+              {deploymentOrSubAnalysis}
+              <div className="col-auto">
+                <button type="submit" className="btn btn-primary ms-3">
+                  Update
+                </button>
+              </div>
+              <div className="col-auto">
+                <button
+                  type="button"
+                  onClick={this.handleCancelEdit}
+                  className="btn btn-secondary ms-1"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </form>
+        </li>
       );
     }
     let item = node.name;
@@ -302,33 +325,38 @@ class Discipline extends React.Component {
     }
 
     return (
-          <li
-            ref={this.listItemRef}
-            className={`list-group-item editor-discipline col-md-4${flash ? ' editor-discipline--flash' : ''}`}
-            style={{ position: 'relative', opacity: isDragging ? 0.4 : 1 }}
-          >
-            {closestEdge && <div className="editor-discipline-drop-indicator" style={closestEdge === 'top' ? { top: -1 } : { bottom: -1 }} />}
-            <span className="align-bottom">{item}</span>
-            <button
-              type="button"
-              data-bs-toggle="modal"
-              data-bs-target={`#confirmModal-${node.id}`}
-              className="d-inline btn btn-light btn-inverse btn-sm float-end text-danger"
-              title="Delete"
-              disabled={limited}
-            >
-              <i className="fa fa-times" />
-            </button>
-            <button
-              type="button"
-              className="d-inline btn btn-light btn-sm ms-2"
-              title="Edit"
-              onClick={this.handleEdit}
-              disabled={limited || not_editable}
-            >
-              <i className="fa fa-edit" />
-            </button>
-          </li>
+      <li
+        ref={this.listItemRef}
+        className={`list-group-item editor-discipline col-md-4${flash ? ' editor-discipline--flash' : ''}`}
+        style={{ position: 'relative', opacity: isDragging ? 0.4 : 1 }}
+      >
+        {closestEdge && (
+          <div
+            className="editor-discipline-drop-indicator"
+            style={closestEdge === 'top' ? { top: -1 } : { bottom: -1 }}
+          />
+        )}
+        <span className="align-bottom">{item}</span>
+        <button
+          type="button"
+          data-bs-toggle="modal"
+          data-bs-target={`#confirmModal-${node.id}`}
+          className="d-inline btn btn-light btn-inverse btn-sm float-end text-danger"
+          title="Delete"
+          disabled={limited}
+        >
+          <i className="fa fa-times" />
+        </button>
+        <button
+          type="button"
+          className="d-inline btn btn-light btn-sm ms-2"
+          title="Edit"
+          onClick={this.handleEdit}
+          disabled={limited || not_editable}
+        >
+          <i className="fa fa-edit" />
+        </button>
+      </li>
     );
   }
 }
@@ -377,10 +405,9 @@ class DisciplinesEditor extends React.Component {
         this.setState({ flashId: sourceId });
         setTimeout(() => this.setState({ flashId: null }), 700);
 
-        this.props.onDisciplineUpdate(
-          this.props.db.nodes[sourceIndex + 1],
-          { position: destinationIndex + 1 },
-        );
+        this.props.onDisciplineUpdate(this.props.db.nodes[sourceIndex + 1], {
+          position: destinationIndex + 1,
+        });
       },
     });
   }
@@ -400,11 +427,14 @@ class DisciplinesEditor extends React.Component {
   render() {
     const { nodes, flashId } = this.state;
     const {
-      db, api,
+      db,
+      api,
       name,
-      onDisciplineUpdate, onDisciplineDelete,
+      onDisciplineUpdate,
+      onDisciplineDelete,
       onSubAnalysisSearch,
-      onDisciplineCreate, onDisciplineNameChange,
+      onDisciplineCreate,
+      onDisciplineNameChange,
       onDisciplineImport,
     } = this.props;
 
@@ -431,7 +461,9 @@ class DisciplinesEditor extends React.Component {
         id={node.id}
         title="Are you sure?"
         text={`Delete discipline ${node.name}`}
-        onCancel={() => { console.log('cancel'); }}
+        onCancel={() => {
+          console.log('cancel');
+        }}
         onConfirm={() => {
           const self = this;
           self.props.onDisciplineDelete(node);
@@ -449,9 +481,7 @@ class DisciplinesEditor extends React.Component {
             Disciplines
             <span className="badge bg-info ms-2">{nbNodes}</span>
           </div>
-          <ul className="list-group">
-            {disciplines}
-          </ul>
+          <ul className="list-group">{disciplines}</ul>
         </div>
         <div className="editor-section">
           <form className="row g-3" onSubmit={onDisciplineCreate}>
@@ -467,7 +497,9 @@ class DisciplinesEditor extends React.Component {
               />
             </div>
             <div className="col-auto">
-              <button type="submit" className="btn btn-primary ms-3" disabled={limited}>Add</button>
+              <button type="submit" className="btn btn-primary ms-3" disabled={limited}>
+                Add
+              </button>
             </div>
           </form>
         </div>

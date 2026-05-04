@@ -31,7 +31,7 @@ class ComparisonDisplay extends React.PureComponent {
   }
 
   render() {
-    return (<div id="myDiffElement" ref={(el) => this.el = el} />);
+    return <div id="myDiffElement" ref={(el) => (this.el = el)} />;
   }
 }
 
@@ -74,7 +74,7 @@ class ComparisonPanel extends React.Component {
       },
       (error) => {
         console.log(error);
-      },
+      }
     );
   }
 

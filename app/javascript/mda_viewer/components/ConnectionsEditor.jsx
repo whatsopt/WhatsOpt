@@ -19,7 +19,11 @@ class DisciplineSelector extends React.Component {
     let { selected } = this.props;
     const disciplines = nodes.map((node) => {
       const name = node.id === nodes[0].id ? ulabel : node.name;
-      return (<option key={node.id} value={node.id}>{name}</option>);
+      return (
+        <option key={node.id} value={node.id}>
+          {name}
+        </option>
+      );
     });
 
     selected = selected || nodes[0].id;
@@ -54,7 +58,11 @@ class ConnectionList extends React.PureComponent {
   render() {
     const {
       // eslint-disable-next-line camelcase
-      names, conn_ids, active, limited, onConnectionDelete,
+      names,
+      conn_ids,
+      active,
+      limited,
+      onConnectionDelete,
     } = this.props;
     const varnames = names.split(',');
     const vars = varnames.map((varname, i) => {
@@ -62,11 +70,15 @@ class ConnectionList extends React.PureComponent {
       const btn = active ? 'btn' : 'btn text-inactive';
       return (
         <div key={varname} className="btn-group m-1" role="group">
-          <button type="button" className={btn}>{varname}</button>
+          <button type="button" className={btn}>
+            {varname}
+          </button>
           <button
             type="button"
             className="btn text-danger"
-            onClick={() => { onConnectionDelete(id); }}
+            onClick={() => {
+              onConnectionDelete(id);
+            }}
             disabled={limited}
           >
             <i className="fa fa-times" />
@@ -75,7 +87,7 @@ class ConnectionList extends React.PureComponent {
       );
     });
 
-    return (<span className="mb-3">{vars}</span>);
+    return <span className="mb-3">{vars}</span>;
   }
 }
 
@@ -91,7 +103,7 @@ function compare(a, b) {
   if (a.ioMode === b.ioMode) {
     return a.name.localeCompare(b.name);
   }
-  return (a.ioMode === 'in') ? -1 : 1;
+  return a.ioMode === 'in' ? -1 : 1;
 }
 
 class VariableList extends React.PureComponent {
@@ -99,18 +111,16 @@ class VariableList extends React.PureComponent {
     let { vars } = this.props;
     const sorted = vars.sort(compare);
     vars = sorted.map((v) => {
-      const badgeKind = `badge ${(v.ioMode === 'in') ? 'bg-primary' : 'bg-secondary'}`;
+      const badgeKind = `badge ${v.ioMode === 'in' ? 'bg-primary' : 'bg-secondary'}`;
       const klass = v.active ? 'btn m-1' : 'btn m-1 text-inactive';
       return (
         <button type="button" key={v.name} className={klass}>
-          {v.name}
-          {' '}
-          <span className={badgeKind}>{v.ioMode}</span>
+          {v.name} <span className={badgeKind}>{v.ioMode}</span>
         </button>
       );
     });
 
-    return (<span className="mb-3">{vars}</span>);
+    return <span className="mb-3">{vars}</span>;
   }
 }
 
@@ -128,25 +138,29 @@ class ConnectionsViewer extends React.PureComponent {
     if (filter.fr === filter.to) {
       // Node selected => display input/output variables
       title = 'Variables';
-      edges = edges.filter((edge) => (edge.from === filter.fr) || (edge.to === filter.to), this);
+      edges = edges.filter((edge) => edge.from === filter.fr || edge.to === filter.to, this);
       const uniqEdges = [];
       const uniqNames = [];
       edges.forEach((edge) => {
         edge.name.split(',').forEach((name) => {
           if (!uniqNames.includes(name)) {
-            uniqEdges.push({ name, ioMode: (edge.to === filter.to) ? 'in' : 'out', active: edge.active });
+            uniqEdges.push({
+              name,
+              ioMode: edge.to === filter.to ? 'in' : 'out',
+              active: edge.active,
+            });
             uniqNames.push(name);
           }
         }, this);
       }, this);
       edges = uniqEdges;
       count = edges.length;
-      connections = (<VariableList vars={edges} />);
+      connections = <VariableList vars={edges} />;
     } else {
       // Edge selected => Display connection
       title = 'Connections';
 
-      edges = edges.filter((edge) => (edge.from === filter.fr) && (edge.to === filter.to), this);
+      edges = edges.filter((edge) => edge.from === filter.fr && edge.to === filter.to, this);
       connections = edges.map((edge) => {
         count += edge.name.split(',').length;
         return (
@@ -168,9 +182,7 @@ class ConnectionsViewer extends React.PureComponent {
           {title}
           <span className="badge bg-info ms-2">{count}</span>
         </div>
-        <div>
-          {connections}
-        </div>
+        <div>{connections}</div>
       </div>
     );
   }
@@ -189,28 +201,28 @@ ConnectionsViewer.propTypes = {
 class ConnectionsForm extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-
-    };
+    this.state = {};
   }
 
   render() {
     const {
-      connectionErrors, selectedConnectionNames, db, filter, limited,
-      onConnectionCreate, onConnectionNameChange,
+      connectionErrors,
+      selectedConnectionNames,
+      db,
+      filter,
+      limited,
+      onConnectionCreate,
+      onConnectionNameChange,
     } = this.props;
     let { edges } = this.props;
-    const isErroneous = (connectionErrors.length > 0);
+    const isErroneous = connectionErrors.length > 0;
     const selected = selectedConnectionNames;
     // console.log('RENDER ', selected);
     const outvars = db.getOutputVariables(filter.fr);
     const invars = db.getInputVariables(filter.to);
     const driver_outs = db.getDriverOutVariables();
     // console.log(`OUTPUT VARS = ${JSON.stringify(outvars)}`);
-    edges = edges.filter(
-      (edge) => (edge.from === filter.fr) && (edge.to === filter.to),
-      this,
-    ) || [];
+    edges = edges.filter((edge) => edge.from === filter.fr && edge.to === filter.to, this) || [];
     const current = edges.map((edge) => edge.name.split(','))[0] || [];
     // console.log(`CURRENT = ${JSON.stringify(current)}`);
     let selectable = invars.filter((e) => driver_outs.map((d) => d.name).includes(e.name));
@@ -232,14 +244,18 @@ class ConnectionsForm extends React.Component {
             isInvalid={isErroneous}
             minLength={1}
             placeholder="Enter variable names..."
-            onChange={(sel) => { onConnectionNameChange(sel); }}
+            onChange={(sel) => {
+              onConnectionNameChange(sel);
+            }}
             options={selectable}
             selected={selected}
             disabled={limited}
           />
         </div>
         <div className="mb-3">
-          <button type="submit" className="btn btn-primary" disabled={isErroneous || limited}>Add</button>
+          <button type="submit" className="btn btn-primary" disabled={isErroneous || limited}>
+            Add
+          </button>
         </div>
       </form>
     );
@@ -281,8 +297,14 @@ class ConnectionsEditor extends React.Component {
   render() {
     let form;
     const {
-      filter, db, limited, selectedConnectionNames, onConnectionCreate,
-      onConnectionNameChange, connectionErrors, onConnectionDelete,
+      filter,
+      db,
+      limited,
+      selectedConnectionNames,
+      onConnectionCreate,
+      onConnectionNameChange,
+      connectionErrors,
+      onConnectionDelete,
     } = this.props;
     if (filter.fr !== filter.to) {
       form = (

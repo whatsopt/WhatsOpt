@@ -6,7 +6,7 @@ import { select } from 'd3-selection';
 class OpenMDAOLogLine extends React.PureComponent {
   render() {
     const { line } = this.props;
-    return (<div className="listing-line">{line}</div>);
+    return <div className="listing-line">{line}</div>;
   }
 }
 
@@ -26,13 +26,33 @@ function _saveAsPng() {
 }
 
 function _convertVariablesToCsv(connections) {
-  const headers = ['Active', 'From', 'To', 'Name', 'Description', 'Role',
-    'Type', 'Shape', 'Units', 'Init', 'Lower', 'Upper'];
+  const headers = [
+    'Active',
+    'From',
+    'To',
+    'Name',
+    'Description',
+    'Role',
+    'Type',
+    'Shape',
+    'Units',
+    'Init',
+    'Lower',
+    'Upper',
+  ];
   const rows = [];
   connections.forEach((conn) => {
     const row = [];
-    row.push(conn.active, conn.from, conn.to, conn.name,
-      conn.desc, conn.role, conn.type, conn.shape);
+    row.push(
+      conn.active,
+      conn.from,
+      conn.to,
+      conn.name,
+      conn.desc,
+      conn.role,
+      conn.type,
+      conn.shape
+    );
     row.push(conn.units, conn.init, conn.lower, conn.upper);
     rows.push(row.join(';'));
   });
@@ -73,17 +93,14 @@ class ToolBar extends React.Component {
     const { checked } = this.state;
     if (!checked) {
       this.setState({ loading: true });
-      api.openmdaoChecking(
-        mdaId,
-        (response) => {
-          this.setState({
-            loading: false,
-            checked: true,
-            statusOk: response.data.statusOk,
-            log: response.data.log,
-          });
-        },
-      );
+      api.openmdaoChecking(mdaId, (response) => {
+        this.setState({
+          loading: false,
+          checked: true,
+          statusOk: response.data.statusOk,
+          log: response.data.log,
+        });
+      });
     }
   }
 
@@ -95,14 +112,16 @@ class ToolBar extends React.Component {
 
   render() {
     const { api, mdaId } = this.props;
-    const {
-      log, statusOk, checked, loading,
-    } = this.state;
+    const { log, statusOk, checked, loading } = this.state;
 
     // eslint-disable-next-line react/no-array-index-key
-    const lines = log.map((l, i) => (<OpenMDAOLogLine key={i} line={l} />));
+    const lines = log.map((l, i) => <OpenMDAOLogLine key={i} line={l} />);
     let btnStatusClass = statusOk ? 'btn btn-success' : 'btn btn-warning';
-    let btnIcon = statusOk ? <i className="fa fa-check" /> : <i className="fa fa-exclamation-triangle" />;
+    let btnIcon = statusOk ? (
+      <i className="fa fa-check" />
+    ) : (
+      <i className="fa fa-exclamation-triangle" />
+    );
     if (!checked) {
       btnStatusClass = 'btn btn-info';
       btnIcon = <i className="fa fa-question" />;
@@ -132,30 +151,27 @@ class ToolBar extends React.Component {
             >
               {btnIcon}
             </button>
-            <a className="btn btn-primary" href={hrefOm}>Export Openmdao</a>
+            <a className="btn btn-primary" href={hrefOm}>
+              Export Openmdao
+            </a>
           </div>
           <div className="btn-group me-2" role="group">
-            <a className="btn btn-primary" href={hrefGemseo}>Export Gemseo</a>
+            <a className="btn btn-primary" href={hrefGemseo}>
+              Export Gemseo
+            </a>
           </div>
           <div className="btn-group me-2" role="group">
-            <a className="btn btn-primary" href={hrefCmdows}>Export Cmdows</a>
+            <a className="btn btn-primary" href={hrefCmdows}>
+              Export Cmdows
+            </a>
           </div>
           <div className="btn-group me-2" role="group">
-            <button
-              type="button"
-              className="btn btn-primary"
-              href="#"
-              onClick={this._exportCsv}
-            >
+            <button type="button" className="btn btn-primary" href="#" onClick={this._exportCsv}>
               Export Csv
             </button>
           </div>
           <div className="btn-group me-2" role="group">
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={_saveAsPng}
-            >
+            <button type="button" className="btn btn-primary" onClick={_saveAsPng}>
               Export Image
             </button>
           </div>
@@ -170,7 +186,9 @@ class ToolBar extends React.Component {
             </button>
             <ul className="dropdown-menu">
               <li>
-                <a className="dropdown-item" href={hrefHtml}>with Variables Counts</a>
+                <a className="dropdown-item" href={hrefHtml}>
+                  with Variables Counts
+                </a>
               </li>
               <li>
                 <a
@@ -187,9 +205,7 @@ class ToolBar extends React.Component {
         </div>
         <div className="collapse" id="collapseListing">
           <div className="card card-block">
-            <div className="listing">
-              {lines}
-            </div>
+            <div className="listing">{lines}</div>
           </div>
         </div>
       </div>

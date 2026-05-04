@@ -17,9 +17,7 @@ class VariableSelector extends React.Component {
   }
 
   render() {
-    const {
-      message, selected, disabled, vars: options,
-    } = this.props;
+    const { message, selected, disabled, vars: options } = this.props;
     return (
       <Typeahead
         id="varsearch"

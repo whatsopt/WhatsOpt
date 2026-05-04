@@ -12,14 +12,16 @@ class AnalysisBreadCrumbs extends React.PureComponent {
         klass += ' active';
         name = anc.name;
       }
-      return (<li key={anc.id} className={klass}>{name}</li>);
+      return (
+        <li key={anc.id} className={klass}>
+          {name}
+        </li>
+      );
     });
 
     return (
       <nav aria-label="breadcrumb">
-        <ol className="breadcrumb">
-          {crumbs}
-        </ol>
+        <ol className="breadcrumb">{crumbs}</ol>
       </nav>
     );
   }
@@ -27,10 +29,12 @@ class AnalysisBreadCrumbs extends React.PureComponent {
 
 AnalysisBreadCrumbs.propTypes = {
   api: PropTypes.object.isRequired,
-  path: PropTypes.arrayOf(PropTypes.shape({
-    name: PropTypes.string,
-    id: PropTypes.number,
-  })).isRequired,
+  path: PropTypes.arrayOf(
+    PropTypes.shape({
+      name: PropTypes.string,
+      id: PropTypes.number,
+    })
+  ).isRequired,
 };
 
 export default AnalysisBreadCrumbs;

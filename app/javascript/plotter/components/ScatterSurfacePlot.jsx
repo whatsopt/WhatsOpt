@@ -11,9 +11,7 @@ const Plot = createPlotlyComponent(Plotly);
 
 class ScatterSurfacePlot extends React.PureComponent {
   render() {
-    const {
-      casesx, casesy, casesz, success, title,
-    } = this.props;
+    const { casesx, casesy, casesz, success, title } = this.props;
     const trace = {
       x: casesx.values,
       y: casesy.values,
@@ -34,14 +32,17 @@ class ScatterSurfacePlot extends React.PureComponent {
     layout.height = 500;
     layout.title = { text: title };
     layout.margin = {
-      l: 0, r: 0, b: 0, t: 0,
+      l: 0,
+      r: 0,
+      b: 0,
+      t: 0,
     };
     layout.scene = {};
     layout.scene.xaxis = { title: { text: caseUtils.label(casesx) } };
     layout.scene.yaxis = { title: { text: caseUtils.label(casesy) } };
     layout.scene.zaxis = { title: { text: caseUtils.label(casesz) } };
 
-    return (<Plot data={data} layout={layout} />);
+    return <Plot data={data} layout={layout} />;
   }
 }
 

@@ -25,7 +25,7 @@ class AnalysisSelector extends React.Component {
       // query,
       (options) => {
         this.setState({ isLoading: false, options });
-      },
+      }
     );
   }
 
@@ -54,7 +54,9 @@ class AnalysisSelector extends React.Component {
         placeholder={message}
         onChange={this.handleChange}
         // eslint-disable-next-line react/no-unused-class-component-methods
-        ref={(ref) => { this.typeahead = ref; }}
+        ref={(ref) => {
+          this.typeahead = ref;
+        }}
         disabled={disabled}
       />
     );

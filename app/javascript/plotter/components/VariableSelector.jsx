@@ -4,9 +4,7 @@ import * as caseUtils from '../../utils/cases';
 
 class VariableList extends React.PureComponent {
   render() {
-    const {
-      cases, selection, onSelectionChange, title,
-    } = this.props;
+    const { cases, selection, onSelectionChange, title } = this.props;
     const varnames = cases.map((c) => {
       const label = caseUtils.label(c);
       const selected = selection.includes(c);
@@ -19,7 +17,9 @@ class VariableList extends React.PureComponent {
             checked={selected}
             onChange={onSelectionChange}
           />
-          <label className="form-check-label" htmlFor={label}>{label}</label>
+          <label className="form-check-label" htmlFor={label}>
+            {label}
+          </label>
         </div>
       );
     });
@@ -43,9 +43,7 @@ VariableList.propTypes = {
 class VariableSelector extends React.PureComponent {
   render() {
     let stateVars;
-    const {
-      uqMode, cases, selCases, onSelectionChange,
-    } = this.props;
+    const { uqMode, cases, selCases, onSelectionChange } = this.props;
     if (cases.c.length > 0) {
       stateVars = (
         <VariableList

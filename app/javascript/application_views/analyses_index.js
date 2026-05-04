@@ -37,7 +37,9 @@ class AnalysesIndex {
         },
         success() {
           $.getScript(this.href, () => {
-            if (timeout) { clearTimeout(timeout); }
+            if (timeout) {
+              clearTimeout(timeout);
+            }
             $('.spinner').hide();
 
             // UX test: code below reset the search string
@@ -68,16 +70,13 @@ class AnalysesIndex {
 
     $('input[data-analyses-query]').on('click', setAnalysesListSettings);
     $('input[data-analyses-order]').on('click', setAnalysesListSettings);
-    $('#analyses-filter').on(
-      'keypress',
-      (event) => {
-        if (event.key === 'Enter') {
-          setAnalysesListSettings();
-          // Cancel the default action, if needed
-          event.preventDefault();
-        }
-      },
-    );
+    $('#analyses-filter').on('keypress', (event) => {
+      if (event.key === 'Enter') {
+        setAnalysesListSettings();
+        // Cancel the default action, if needed
+        event.preventDefault();
+      }
+    });
     $('#btn_user_settings_analyses_filter').on('click', setAnalysesListSettings);
 
     let current_design_project_id = '<%= current_user.analyses_scope_design_project_id %>';
@@ -99,7 +98,9 @@ class AnalysesIndex {
           },
           success() {
             $.getScript(this.href, () => {
-              if (timeout) { clearTimeout(timeout); }
+              if (timeout) {
+                clearTimeout(timeout);
+              }
               $('.spinner').hide();
             });
           },

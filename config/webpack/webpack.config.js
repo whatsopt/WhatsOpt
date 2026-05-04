@@ -5,7 +5,6 @@ const webpackConfig = generateWebpackConfig();
 const webpack = require('webpack');
 
 const options = {
-
   // Manage css of swagger ui in node_modules, ignore stream
   resolve: {
     extensions: ['.css'],
@@ -16,11 +15,13 @@ const options = {
   },
 
   // Add dependency needed by swagger ui
-  plugins: [new webpack.ProvidePlugin({
-    $: 'jquery',
-    jQuery: 'jquery',
-    Buffer: ['buffer', 'Buffer'],
-  })],
+  plugins: [
+    new webpack.ProvidePlugin({
+      $: 'jquery',
+      jQuery: 'jquery',
+      Buffer: ['buffer', 'Buffer'],
+    }),
+  ],
 
   // Add loader for plotly parallel coordinates
   module: {

@@ -32,7 +32,8 @@ function _computeRoleSelection(conn) {
     { id: 'pos_constraint', text: 'Pos Constraint' },
     { id: 'eq_constraint', text: 'Eq Constraint' },
     { id: 'constraint', text: 'Constraint' },
-    { id: 'state_var', text: 'State Variable' }];
+    { id: 'state_var', text: 'State Variable' },
+  ];
   if (conn.role === 'parameter' || conn.role === 'design_var' || conn.role === 'uncertain_var') {
     options.splice(3); // remove outputs and state vars
   } else {
@@ -54,7 +55,12 @@ function _computeTypeSelection(conn) {
 function CheckButtonCell({
   cell,
   row: { index },
-  table: { options: { data: connections, meta: { limited, onConnectionChange } } },
+  table: {
+    options: {
+      data: connections,
+      meta: { limited, onConnectionChange },
+    },
+  },
 }) {
   const isChecked = connections[index].active;
   return (
@@ -62,10 +68,7 @@ function CheckButtonCell({
       type="checkbox"
       value={cell.getValue()}
       checked={isChecked}
-      onChange={() => onConnectionChange(
-        connections[index].id,
-        { active: !isChecked },
-      )}
+      onChange={() => onConnectionChange(connections[index].id, { active: !isChecked })}
       disabled={limited}
     />
   );
@@ -91,7 +94,9 @@ function ReadonlyCell({
   cell,
   row: { index },
   column: { id },
-  table: { options: { data: connections } },
+  table: {
+    options: { data: connections },
+  },
 }) {
   let textStyle = CELL_CLASSNAME;
   textStyle += connections[index].active ? '' : ' text-inactive';
@@ -125,10 +130,20 @@ function ReadonlyCell({
     const title = connections[index].desc;
     if (title) {
       textStyle += ' table-tooltip';
-      return (<span className={textStyle} title={title} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title={title}>{info}</span>);
+      return (
+        <span
+          className={textStyle}
+          title={title}
+          data-bs-toggle="tooltip"
+          data-bs-placement="right"
+          data-bs-title={title}
+        >
+          {info}
+        </span>
+      );
     }
   }
-  return (<span className={textStyle}>{info}</span>);
+  return <span className={textStyle}>{info}</span>;
 }
 
 ReadonlyCell.propTypes = {
@@ -138,21 +153,19 @@ ReadonlyCell.propTypes = {
   table: PropTypes.object.isRequired,
 };
 
-function ButtonCell({
-  cell,
-  row,
-  column,
-  table,
-}) {
-  const { options: { data: connections, meta: { isEditing } } } = table;
-  const { index } = row;
+function ButtonCell({ cell, row, column, table }) {
   const {
-    name, role, shape, uq,
-  } = connections[index];
+    options: {
+      data: connections,
+      meta: { isEditing },
+    },
+  } = table;
+  const { index } = row;
+  const { name, role, shape, uq } = connections[index];
   let label = uq.length > 0 ? _uqLabelOf(uq[0]) : '';
   label = uq.length > 1 ? `[${label}, ...]` : label;
   if (isEditing) {
-    const isEditable = (role === 'uncertain_var');
+    const isEditable = role === 'uncertain_var';
     if (isEditable) {
       return (
         <button
@@ -176,7 +189,10 @@ function ButtonCell({
   }
 
   return ReadonlyCell({
-    cell, row, column, table,
+    cell,
+    row,
+    column,
+    table,
   });
 }
 
@@ -187,17 +203,11 @@ ButtonCell.propTypes = {
   table: PropTypes.object.isRequired,
 };
 
-function EditableCell({
-  cell,
-  row,
-  column,
-  table,
-}) {
+function EditableCell({ cell, row, column, table }) {
   const {
     options: {
-      data: connections, meta: {
-        onConnectionChange, isEditing, limited, cellToFocus,
-      },
+      data: connections,
+      meta: { onConnectionChange, isEditing, limited, cellToFocus },
     },
   } = table;
   const value = cell.getValue();
@@ -243,21 +253,25 @@ function EditableCell({
       );
     }
 
-
     // Editable fields regarding variable role
     const { role } = connections[index];
-    const isEditable = (((id === 'name' || id === 'shape') && !limited) || id === 'desc' || id === 'units'
-      || id === 'ref' || id === 'ref0' || id === 'res_ref')
-      || (role === 'state_var' && id === 'init')
-      || (role === 'response' && id === 'init')
-      || (role === 'ineq_constraint' && id === 'upper')
-      || (role === 'pos_constraint' && id === 'lower')
-      || (role === 'eq_constraint' && id === 'init')
-      || (role === 'constraint' && (id === 'lower' || id === 'upper'))
-      || (role === 'parameter' && (id === 'init' || id === 'lower' || id === 'upper'))
-      || (role === 'design_var' && (id === 'init' || id === 'lower' || id === 'upper'))
-      || (role === 'uncertain_var' && (id === 'init' || id === 'uq'))
-      || (connections[index].shouldBeBounded && (id === 'lower' || id === 'upper'));
+    const isEditable =
+      ((id === 'name' || id === 'shape') && !limited) ||
+      id === 'desc' ||
+      id === 'units' ||
+      id === 'ref' ||
+      id === 'ref0' ||
+      id === 'res_ref' ||
+      (role === 'state_var' && id === 'init') ||
+      (role === 'response' && id === 'init') ||
+      (role === 'ineq_constraint' && id === 'upper') ||
+      (role === 'pos_constraint' && id === 'lower') ||
+      (role === 'eq_constraint' && id === 'init') ||
+      (role === 'constraint' && (id === 'lower' || id === 'upper')) ||
+      (role === 'parameter' && (id === 'init' || id === 'lower' || id === 'upper')) ||
+      (role === 'design_var' && (id === 'init' || id === 'lower' || id === 'upper')) ||
+      (role === 'uncertain_var' && (id === 'init' || id === 'uq')) ||
+      (connections[index].shouldBeBounded && (id === 'lower' || id === 'upper'));
     if (isEditable) {
       return (
         <RIEInput
@@ -283,7 +297,10 @@ function EditableCell({
     }
   }
   return ReadonlyCell({
-    cell, row, column, table,
+    cell,
+    row,
+    column,
+    table,
   });
 }
 
@@ -300,10 +317,7 @@ const defaultColumn = {
 };
 
 /* eslint-disable react/jsx-props-no-spreading */
-function Table({
-  columns, data,
-  onConnectionChange, isEditing, limited, useScaling,
-}) {
+function Table({ columns, data, onConnectionChange, isEditing, limited, useScaling }) {
   const [sorting, setSorting] = React.useState([]);
   const [globalFilter, setGlobalFilter] = React.useState('');
   const [columnVisibility, setColumnVisibility] = React.useState({});
@@ -378,7 +392,6 @@ function Table({
 
   return (
     <div className="container-fluid">
-
       <div className="row">
         <div className="editor-section row">
           <div className="col-4">
@@ -390,7 +403,10 @@ function Table({
           </div>
         </div>
         <div className="col-12">
-          <table className="connections table table-striped table-sm table-hover col" {...tableProps}>
+          <table
+            className="connections table table-striped table-sm table-hover col"
+            {...tableProps}
+          >
             <thead>
               {table.getHeaderGroups().map((headerGroup) => (
                 <tr key={headerGroup.id}>
@@ -400,28 +416,23 @@ function Table({
                     };
                     return (
                       <th key={header.id} {...hprops}>
-                        {header.isPlaceholder
-                          ? null
-                          : (
-                            // eslint-disable-next-line jsx-a11y/click-events-have-key-events
-                            <div
-                              {...{
-                                className: header.column.getCanSort()
-                                  ? 'cursor-pointer select-none'
-                                  : '',
-                                onClick: header.column.getToggleSortingHandler(),
-                              }}
-                            >
-                              {flexRender(
-                                header.column.columnDef.header,
-                                header.getContext(),
-                              )}
-                              {{
-                                asc: ' 🔼',
-                                desc: ' 🔽',
-                              }[header.column.getIsSorted()] || null}
-                            </div>
-                          )}
+                        {header.isPlaceholder ? null : (
+                          // eslint-disable-next-line jsx-a11y/click-events-have-key-events
+                          <div
+                            {...{
+                              className: header.column.getCanSort()
+                                ? 'cursor-pointer select-none'
+                                : '',
+                              onClick: header.column.getToggleSortingHandler(),
+                            }}
+                          >
+                            {flexRender(header.column.columnDef.header, header.getContext())}
+                            {{
+                              asc: ' 🔼',
+                              desc: ' 🔽',
+                            }[header.column.getIsSorted()] || null}
+                          </div>
+                        )}
                       </th>
                     );
                   })}
@@ -472,9 +483,7 @@ Table.propTypes = {
 };
 
 function VariablesEditor(props) {
-  const {
-    db, filter, isEditing, limited, useScaling, onConnectionChange,
-  } = props;
+  const { db, filter, isEditing, limited, useScaling, onConnectionChange } = props;
 
   const connections = db.computeConnections(filter);
 

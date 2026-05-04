@@ -28,12 +28,9 @@ export default function SelectWidget({
 }) {
   const { enumOptions, enumDisabled, emptyValue: optEmptyValue } = options;
 
-  const emptyValue = multiple ? [] : "";
+  const emptyValue = multiple ? [] : '';
 
-  function getValue(
-    event,
-    multiple
-  ) {
+  function getValue(event, multiple) {
     if (multiple) {
       return [].slice
         .call(event.target.options)
@@ -43,11 +40,7 @@ export default function SelectWidget({
       return event.target.value;
     }
   }
-  const selectedIndexes = enumOptionsIndexForValue(
-    value,
-    enumOptions,
-    multiple
-  );
+  const selectedIndexes = enumOptionsIndexForValue(value, enumOptions, multiple);
 
   return (
     <Form.Control
@@ -55,49 +48,35 @@ export default function SelectWidget({
       bsPrefix="form-select"
       id={id}
       name={id}
-      value={
-        typeof selectedIndexes === "undefined" ? emptyValue : selectedIndexes
-      }
+      value={typeof selectedIndexes === 'undefined' ? emptyValue : selectedIndexes}
       required={required}
       multiple={multiple}
       disabled={disabled || readonly}
       autoFocus={autofocus}
-      className={rawErrors.length > 0 ? "is-invalid" : ""}
+      className={rawErrors.length > 0 ? 'is-invalid' : ''}
       onBlur={
         onBlur &&
         ((event) => {
           const newValue = getValue(event, multiple);
-          onBlur(
-            id,
-            enumOptionsValueForIndex(newValue, enumOptions, optEmptyValue)
-          );
+          onBlur(id, enumOptionsValueForIndex(newValue, enumOptions, optEmptyValue));
         })
       }
       onFocus={
         onFocus &&
         ((event) => {
           const newValue = getValue(event, multiple);
-          onFocus(
-            id,
-            enumOptionsValueForIndex(newValue, enumOptions, optEmptyValue)
-          );
+          onFocus(id, enumOptionsValueForIndex(newValue, enumOptions, optEmptyValue));
         })
       }
       onChange={(event) => {
         const newValue = getValue(event, multiple);
-        onChange(
-          enumOptionsValueForIndex(newValue, enumOptions, optEmptyValue)
-        );
+        onChange(enumOptionsValueForIndex(newValue, enumOptions, optEmptyValue));
       }}
       aria-describedby={ariaDescribedByIds(id)}
     >
-      {!multiple && schema.default === undefined && (
-        <option value="">{placeholder}</option>
-      )}
-      {(enumOptions).map(({ value, label }, i) => {
-        const disabled =
-          Array.isArray(enumDisabled) &&
-          (enumDisabled).indexOf(value) != -1;
+      {!multiple && schema.default === undefined && <option value="">{placeholder}</option>}
+      {enumOptions.map(({ value, label }, i) => {
+        const disabled = Array.isArray(enumDisabled) && enumDisabled.indexOf(value) != -1;
         return (
           <option key={i} id={label} value={String(i)} disabled={disabled}>
             {label}

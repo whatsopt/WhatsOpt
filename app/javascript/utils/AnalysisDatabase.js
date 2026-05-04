@@ -56,7 +56,9 @@ class AnalysisDatabase {
   }
 
   isUncertainVarCases(c) {
-    return this.connections.find((conn) => conn.role === 'uncertain_var' && conn.name === c.varname);
+    return this.connections.find(
+      (conn) => conn.role === 'uncertain_var' && conn.name === c.varname
+    );
   }
 
   isOutputVarCases(c) {
@@ -64,8 +66,10 @@ class AnalysisDatabase {
   }
 
   isCouplingVarCases(c) {
-    return !(this.inputVariables.find((v) => v.name === c.varname)
-      || this.outputVariables.find((v) => v.name === c.varname));
+    return !(
+      this.inputVariables.find((v) => v.name === c.varname) ||
+      this.outputVariables.find((v) => v.name === c.varname)
+    );
   }
 
   isObjective(c) {
@@ -100,10 +104,12 @@ class AnalysisDatabase {
     let isMin;
     let conn;
     for (let i = 0; i < this.connections.length; i += 1) {
-      if (this.connections[i].role === 'min_objective'
-        || this.connections[i].role === 'max_objective') {
+      if (
+        this.connections[i].role === 'min_objective' ||
+        this.connections[i].role === 'max_objective'
+      ) {
         conn = this.connections[i];
-        isMin = (conn.role === 'min_objective');
+        isMin = conn.role === 'min_objective';
         break;
       }
     }
@@ -120,7 +126,9 @@ class AnalysisDatabase {
     if (this.constraints) {
       return this.constraints;
     }
-    const connCstrs = this.connections.filter((c) => c.role === 'ineq_constraint' || c.role === 'eq_constraint');
+    const connCstrs = this.connections.filter(
+      (c) => c.role === 'ineq_constraint' || c.role === 'eq_constraint'
+    );
     const cstrNames = connCstrs.map((c) => c.name);
     this.constraints = this.outputVariables.filter((v) => cstrNames.includes(v.name));
     return this.constraints;
@@ -132,23 +140,24 @@ class AnalysisDatabase {
       .map((node) => `${node.discipline_id}`);
     let shouldBeBounded = false;
     for (const id of conn.to) {
-      shouldBeBounded = shouldBeBounded || (surrogateIds.indexOf(id) > -1);
+      shouldBeBounded = shouldBeBounded || surrogateIds.indexOf(id) > -1;
     }
     return shouldBeBounded;
   }
 
   computeConnections(filter) {
     let { edges } = this;
-    let nodeSelected = filter && filter.fr && (filter.fr === filter.to);
+    let nodeSelected = filter && filter.fr && filter.fr === filter.to;
 
     if (filter && filter.fr && filter.to) {
       const nodeFrom = this._findNode(filter.fr);
       const nodeTo = this._findNode(filter.to);
-      if (nodeSelected) { // node selected
+      if (nodeSelected) {
+        // node selected
         nodeSelected = nodeFrom;
         edges = edges.filter((edge) => edge.from === nodeFrom.id || edge.to === nodeTo.id);
       } else {
-        edges = edges.filter((edge) => (edge.from === nodeFrom.id && edge.to === nodeTo.id));
+        edges = edges.filter((edge) => edge.from === nodeFrom.id && edge.to === nodeTo.id);
       }
     }
 
@@ -245,15 +254,16 @@ class AnalysisDatabase {
   }
 
   isConnected(nodeId) {
-    return (this.mda.vars[nodeId].out.length !== 0 || this.mda.vars[nodeId].in.length !== 0);
+    return this.mda.vars[nodeId].out.length !== 0 || this.mda.vars[nodeId].in.length !== 0;
   }
 
   _findNode(id) {
     for (let i = 0; i < this.mda.nodes.length; i += 1) {
       const node = this.mda.nodes[i];
       // eslint-disable-next-line eqeqeq
-      if (node.id == id) { // weak equality to deal with 1522 == "1522" transparently
-        return (i === 0) ? { id, name: 'Driver' } : { id: node.id, name: node.name };
+      if (node.id == id) {
+        // weak equality to deal with 1522 == "1522" transparently
+        return i === 0 ? { id, name: 'Driver' } : { id: node.id, name: node.name };
       }
     }
     throw Error(`Node id (${id}) unknown: ${JSON.stringify(this.mda.nodes)}`);
@@ -329,11 +339,15 @@ class AnalysisDatabase {
     if (vinfos.length === 1) {
       [vinfo] = vinfos;
     } else if (vinfos.length > 1) {
-      console.log(`Warning: Find several occurences of ${vname}(${ioMode}): ${JSON.stringify(vinfos)}`);
+      console.log(
+        `Warning: Find several occurences of ${vname}(${ioMode}): ${JSON.stringify(vinfos)}`
+      );
       [vinfo] = vinfos;
       console.log(`Take the first: ${JSON.stringify(vinfo)}`);
     } else {
-      throw Error(`Expected one variable "${vname}" found ${vinfos.length} in vars[${disc}][${ioMode}] ${JSON.stringify(vars[disc][ioMode])}`);
+      throw Error(
+        `Expected one variable "${vname}" found ${vinfos.length} in vars[${disc}][${ioMode}] ${JSON.stringify(vars[disc][ioMode])}`
+      );
     }
     return vinfo;
   }

@@ -32,8 +32,7 @@ const reorder = (list, startIndex, endIndex) => {
 
 function _check_and_set_new_openmdao_impl(old_impl, new_impl) {
   new_impl.nodes.forEach((node, i) => {
-    if (node.egmdo_surrogate && node.egmdo_surrogate
-      !== old_impl.nodes[i].egmdo_surrogate) {
+    if (node.egmdo_surrogate && node.egmdo_surrogate !== old_impl.nodes[i].egmdo_surrogate) {
       // eslint-disable-next-line no-param-reassign
       node.implicit_component = false;
       // eslint-disable-next-line no-param-reassign
@@ -41,12 +40,13 @@ function _check_and_set_new_openmdao_impl(old_impl, new_impl) {
       // eslint-disable-next-line no-param-reassign
       node.jax_component = false;
     }
-    if ((node.implicit_component && node.implicit_component
-        !== old_impl.nodes[i].implicit_component)
-      || (node.support_derivatives && node.support_derivatives
-        !== old_impl.nodes[i].support_derivatives)
-      || (node.jax_component && node.jax_component
-        !== old_impl.nodes[i].jax_component)) {
+    if (
+      (node.implicit_component &&
+        node.implicit_component !== old_impl.nodes[i].implicit_component) ||
+      (node.support_derivatives &&
+        node.support_derivatives !== old_impl.nodes[i].support_derivatives) ||
+      (node.jax_component && node.jax_component !== old_impl.nodes[i].jax_component)
+    ) {
       // eslint-disable-next-line no-param-reassign
       node.egmdo_surrogate = false;
     }
@@ -55,9 +55,7 @@ function _check_and_set_new_openmdao_impl(old_impl, new_impl) {
 class MdaViewer extends React.Component {
   constructor(props) {
     super(props);
-    const {
-      api, members, coOwners, currentUser, mda,
-    } = this.props;
+    const { api, members, coOwners, currentUser, mda } = this.props;
     this.api = api;
     const { isEditing } = this.props;
     const filter = { fr: undefined, to: undefined };
@@ -137,12 +135,17 @@ class MdaViewer extends React.Component {
     const names = selectedConnectionNames.map((e) => e.name);
     // console.log("CREATE", names);
     const data = { from: filter.fr, to: filter.to, names };
-    this.api.createConnection(mda.id, data, () => {
-      const newState = update(this.state, { selectedConnectionNames: { $set: [] } });
-      this.setState(newState);
-      // console.log("NEW CONNECTION RESET");
-      this.renderXdsm();
-    }, this.displayError);
+    this.api.createConnection(
+      mda.id,
+      data,
+      () => {
+        const newState = update(this.state, { selectedConnectionNames: { $set: [] } });
+        this.setState(newState);
+        // console.log("NEW CONNECTION RESET");
+        this.renderXdsm();
+      },
+      this.displayError
+    );
   }
 
   handleConnectionChange(connId, connAttrs) {
@@ -177,24 +180,13 @@ class MdaViewer extends React.Component {
     delete cAttrs.res_ref;
 
     if (Object.keys(cAttrs).length !== 0) {
-      this.api.updateConnection(
-        mda.id,
-        connId,
-        cAttrs,
-        this.renderXdsm,
-        this.displayError,
-      );
+      this.api.updateConnection(mda.id, connId, cAttrs, this.renderXdsm, this.displayError);
     }
   }
 
   handleConnectionDelete(connId) {
     const { mda } = this.state;
-    this.api.deleteConnection(
-      mda.id,
-      connId,
-      this.renderXdsm,
-      this.displayError,
-    );
+    this.api.deleteConnection(mda.id, connId, this.renderXdsm, this.displayError);
   }
 
   // *** Disciplines ************************************************************
@@ -210,18 +202,12 @@ class MdaViewer extends React.Component {
         this.setState(newState);
         this.renderXdsm();
       },
-      this.displayError,
+      this.displayError
     );
   }
 
   handleDisciplineImport(mdaFromId, discId, mdaId) {
-    this.api.importDiscipline(
-      mdaFromId,
-      discId,
-      mdaId,
-      this.renderXdsm,
-      this.displayError,
-    );
+    this.api.importDiscipline(mdaFromId, discId, mdaId, this.renderXdsm, this.displayError);
   }
 
   handleDisciplineNameChange(event) {
@@ -237,13 +223,7 @@ class MdaViewer extends React.Component {
       const newState = update(this.state, { mda: { nodes: { $set: items } } });
       this.setState(newState);
     }
-    this.api.updateDiscipline(
-      mda.id,
-      node.id,
-      discAttrs,
-      this.renderXdsm,
-      this.displayError,
-    );
+    this.api.updateDiscipline(mda.id, node.id, discAttrs, this.renderXdsm, this.displayError);
   }
 
   handleDisciplineDelete(node) {
@@ -257,20 +237,18 @@ class MdaViewer extends React.Component {
         }
         this.renderXdsm();
       },
-      this.displayError,
+      this.displayError
     );
   }
 
   handleSubAnalysisSearch(callback) {
     const { mda } = this.state;
-    this.api.getSubAnalysisCandidates(
-      (response) => {
-        const options = response.data
-          .filter((analysis) => analysis.id !== mda.id)
-          .map((analysis) => ({ id: analysis.id, label: `#${analysis.id} ${analysis.name}` }));
-        callback(options);
-      },
-    );
+    this.api.getSubAnalysisCandidates((response) => {
+      const options = response.data
+        .filter((analysis) => analysis.id !== mda.id)
+        .map((analysis) => ({ id: analysis.id, label: `#${analysis.id} ${analysis.name}` }));
+      callback(options);
+    });
   }
 
   // *** Analysis ************************************************************
@@ -291,7 +269,9 @@ class MdaViewer extends React.Component {
   }
 
   handleProjectSelected(selected) {
-    const { mda: { project } } = this.state;
+    const {
+      mda: { project },
+    } = this.state;
     if (selected !== project) {
       let newState = update(this.state, {
         mdaEdited: { $set: true },
@@ -325,7 +305,7 @@ class MdaViewer extends React.Component {
         const newState = update(this.state, { mda: { public: { $set: !mda.public } } });
         this.setState(newState);
       },
-      this.displayError,
+      this.displayError
     );
     return false;
   }
@@ -339,7 +319,7 @@ class MdaViewer extends React.Component {
         const newState = update(this.state, { mda: { locked: { $set: !mda.locked } } });
         this.setState(newState);
       },
-      this.displayError,
+      this.displayError
     );
     return false;
   }
@@ -347,31 +327,22 @@ class MdaViewer extends React.Component {
   handleAnalysisUserSearch(query, role, callback) {
     // TODO: query could be used to filter user on server side
     const { mda } = this.state;
-    this.api.getUserCandidates(
-      mda.id,
-      role,
-      (response) => {
-        callback(response.data);
-      },
-    );
+    this.api.getUserCandidates(mda.id, role, (response) => {
+      callback(response.data);
+    });
   }
 
   handleAnalysisUserCreate(selected, role) {
     const { mda } = this.state;
     if (selected.length) {
-      this.api.addUser(
-        selected[0].id,
-        mda.id,
-        role,
-        () => {
-          this.api.getUsers(mda.id, 'members', (response) => {
-            this.setState({ analysisMembers: response.data });
-          });
-          this.api.getUsers(mda.id, 'co_owners', (response) => {
-            this.setState({ analysisCoOwners: response.data });
-          });
-        },
-      );
+      this.api.addUser(selected[0].id, mda.id, role, () => {
+        this.api.getUsers(mda.id, 'members', (response) => {
+          this.setState({ analysisMembers: response.data });
+        });
+        this.api.getUsers(mda.id, 'co_owners', (response) => {
+          this.setState({ analysisCoOwners: response.data });
+        });
+      });
     }
   }
 
@@ -399,23 +370,19 @@ class MdaViewer extends React.Component {
       mda.id,
       params,
       () => {
-        this.api.getAnalysis(
-          mda.id,
-          false,
-          () => {
-            const newState = update(this.state, {
-              mdaEdited: { $set: false },
-              mda: {
-                name: { $set: newAnalysisName },
-                note: { $set: mda.note },
-                project: { $set: mda.project },
-              },
-            });
-            this.setState(newState);
-          },
-        );
+        this.api.getAnalysis(mda.id, false, () => {
+          const newState = update(this.state, {
+            mdaEdited: { $set: false },
+            mda: {
+              name: { $set: newAnalysisName },
+              note: { $set: mda.note },
+              project: { $set: mda.project },
+            },
+          });
+          this.setState(newState);
+        });
       },
-      this.displayError,
+      this.displayError
     );
   }
 
@@ -439,7 +406,7 @@ class MdaViewer extends React.Component {
         });
         this.setState(newState);
       },
-      this.displayError,
+      this.displayError
     );
   }
 
@@ -496,38 +463,41 @@ class MdaViewer extends React.Component {
 
   renderXdsm() {
     const { mda } = this.state;
-    this.api.getAnalysis(
-      mda.id,
-      'whatsopt_ui',
-      (response) => {
-        const newState = update(
-          this.state,
-          {
-            mda: {
-              nodes: { $set: response.data.nodes },
-              edges: { $set: response.data.edges },
-              inactive_edges: { $set: response.data.inactive_edges },
-              vars: { $set: response.data.vars },
-              impl: { $set: response.data.impl },
-            },
-          },
-        );
-        this.setState(newState);
-        const newMda = { nodes: response.data.nodes, edges: response.data.edges };
-        this.xdsmViewer.update(newMda);
-      },
-    );
+    this.api.getAnalysis(mda.id, 'whatsopt_ui', (response) => {
+      const newState = update(this.state, {
+        mda: {
+          nodes: { $set: response.data.nodes },
+          edges: { $set: response.data.edges },
+          inactive_edges: { $set: response.data.inactive_edges },
+          vars: { $set: response.data.vars },
+          impl: { $set: response.data.impl },
+        },
+      });
+      this.setState(newState);
+      const newMda = { nodes: response.data.nodes, edges: response.data.edges };
+      this.xdsmViewer.update(newMda);
+    });
   }
 
   render() {
     const {
-      mda, currentUser, useScaling, errors, isEditing, filter, implEdited, mdaEdited,
-      newAnalysisName, analysisMembers, analysisCoOwners,
-      selectedConnectionNames, newDisciplineName,
+      mda,
+      currentUser,
+      useScaling,
+      errors,
+      isEditing,
+      filter,
+      implEdited,
+      mdaEdited,
+      newAnalysisName,
+      analysisMembers,
+      analysisCoOwners,
+      selectedConnectionNames,
+      newDisciplineName,
     } = this.state;
     const errs = errors.map(
       // eslint-disable-next-line react/no-array-index-key
-      (message, i) => (<Error key={i} msg={message} onClose={() => this.handleErrorClose(i)} />),
+      (message, i) => <Error key={i} msg={message} onClose={() => this.handleErrorClose(i)} />
     );
     const db = new AnalysisDatabase(mda);
     this.db = db;
@@ -540,7 +510,9 @@ class MdaViewer extends React.Component {
 
     const xdsmViewer = (
       <XdsmViewer
-        ref={(viewer) => { this.xdsmViewer = viewer; }}
+        ref={(viewer) => {
+          this.xdsmViewer = viewer;
+        }}
         api={this.api}
         isEditing={isEditing}
         mda={mda}
@@ -587,15 +559,16 @@ class MdaViewer extends React.Component {
       if (!db.mda.locked && db.isAnalysisUsed()) {
         warningIfUsed = (
           <div className="alert alert-info alert-dismissible fade show" role="alert">
-            As this analysis is already operated,
-            {' '}
-            <strong>your edition access is limited</strong>
+            As this analysis is already operated, <strong>your edition access is limited</strong>
             .
-            <br />
-            {' '}
-            If you need full edition access either restart with a copy of the analysis
-            or discard existing operations.
-            <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close" />
+            <br /> If you need full edition access either restart with a copy of the analysis or
+            discard existing operations.
+            <button
+              type="button"
+              className="btn-close"
+              data-bs-dismiss="alert"
+              aria-label="Close"
+            />
           </div>
         );
       }
@@ -606,27 +579,25 @@ class MdaViewer extends React.Component {
           <span>
             <a href={this.api.url(`/design_projects/${db.mda.project.id}`)}>
               {db.mda.project.name}
-            </a>
-            {' '}
-            /
-            {' '}
+            </a>{' '}
+            /{' '}
           </span>
         );
       }
 
-      const analysisPermissionsEditable = (mda.owner.id === currentUser.id);
+      const analysisPermissionsEditable = mda.owner.id === currentUser.id;
 
       let restricted;
       if (!db.mda.public) {
-        restricted = (<i className="fas fa-user-secret" title="Analysis with restricted access" />);
+        restricted = <i className="fas fa-user-secret" title="Analysis with restricted access" />;
       }
       let lock;
-      let locked = ('');
+      let locked = '';
       if (db.mda.locked) {
-        lock = (<i className="fas fa-lock" title="Analysis is locked readonly" />);
+        lock = <i className="fas fa-lock" title="Analysis is locked readonly" />;
         locked = lock;
       } else {
-        lock = (<i className="fas fa-unlock" title="Analysis is editable/deletable" />);
+        lock = <i className="fas fa-unlock" title="Analysis is editable/deletable" />;
       }
       const tab_disabled = db.mda.locked ? 'disabled' : '';
       const tab_lock_active = db.mda.locked ? 'active' : '';
@@ -635,41 +606,27 @@ class MdaViewer extends React.Component {
       const tab_vars_show = !db.mda.locked ? 'show' : '';
       let co_owned;
       if (analysisCoOwners.length > 0) {
-        co_owned = (<i className="fas fa-users-cog" title="Analysis has co-owners" />);
+        co_owned = <i className="fas fa-users-cog" title="Analysis has co-owners" />;
       }
 
       return (
         <div>
           <form className="button_to" method="get" action={this.api.url(`/analyses/${mda.id}`)}>
             <button className="btn float-end" type="submit">
-              <i className="fa fa-times-circle" />
-              {' '}
-              Close
+              <i className="fa fa-times-circle" /> Close
             </button>
           </form>
           <h1>
-            Edit
-            {' '}
-            {mdaProjectLink}
-            <a href={this.api.url(`/analyses/${mda.id}`)}>{mda.name}</a>
-            {' '}
+            Edit {mdaProjectLink}
+            <a href={this.api.url(`/analyses/${mda.id}`)}>{mda.name}</a>{' '}
             <small>
               (#
-              {mda.id}
-              )
-              {' '}
-              {locked}
-              {' '}
-              {restricted}
-              {' '}
-              {co_owned}
+              {mda.id}) {locked} {restricted} {co_owned}
             </small>
           </h1>
           {warningIfUsed}
           {breadcrumbs}
-          <div className="mda-section">
-            {xdsmViewer}
-          </div>
+          <div className="mda-section">{xdsmViewer}</div>
           <ul className="nav nav-tabs" id="myTab" role="tablist">
             <li className="nav-item">
               <a
@@ -681,7 +638,7 @@ class MdaViewer extends React.Component {
                 aria-controls="lock"
                 aria-selected="false"
               >
-                { lock }
+                {lock}
               </a>
             </li>
             <li className="nav-item">
@@ -752,17 +709,17 @@ class MdaViewer extends React.Component {
           </ul>
           <div className="tab-content" id="myTabContent">
             {errs}
-            <div className={`tab-pane fade ${tab_lock_show} ${tab_lock_active}`} id="lock" role="tabpanel" aria-labelledby="lock-tab">
+            <div
+              className={`tab-pane fade ${tab_lock_show} ${tab_lock_active}`}
+              id="lock"
+              role="tabpanel"
+              aria-labelledby="lock-tab"
+            >
               <div className="container-fluid">
                 <div className="editor-section">
                   <div className="editor-section-label">
-                    <i className="fas fa-lock" title="Analysis locked in readonly mode" />
-                    {' '}
-                    Readonly
-                    {' '}
-                    <small>
-                      (when locked, edition or deletion are disabled)
-                    </small>
+                    <i className="fas fa-lock" title="Analysis locked in readonly mode" /> Readonly{' '}
+                    <small>(when locked, edition or deletion are disabled)</small>
                   </div>
                   <form className="form" onSubmit={this.handleAnalysisUpdate}>
                     <div className="mb-3 form-check">
@@ -782,7 +739,12 @@ class MdaViewer extends React.Component {
                 </div>
               </div>
             </div>
-            <div className="tab-pane fade" id="analysis" role="tabpanel" aria-labelledby="analysis-tab">
+            <div
+              className="tab-pane fade"
+              id="analysis"
+              role="tabpanel"
+              aria-labelledby="analysis-tab"
+            >
               {mdaMsg}
               <AnalysisEditor
                 mdaId={db.mda.id}
@@ -805,7 +767,12 @@ class MdaViewer extends React.Component {
                 onProjectSelected={this.handleProjectSelected}
               />
             </div>
-            <div className="tab-pane fade" id="disciplines" role="tabpanel" aria-labelledby="disciplines-tab">
+            <div
+              className="tab-pane fade"
+              id="disciplines"
+              role="tabpanel"
+              aria-labelledby="disciplines-tab"
+            >
               <DisciplinesEditor
                 db={db}
                 api={this.api}
@@ -818,7 +785,12 @@ class MdaViewer extends React.Component {
                 onDisciplineImport={this.handleDisciplineImport}
               />
             </div>
-            <div className="tab-pane fade" id="connections" role="tabpanel" aria-labelledby="connections-tab">
+            <div
+              className="tab-pane fade"
+              id="connections"
+              role="tabpanel"
+              aria-labelledby="connections-tab"
+            >
               <ConnectionsEditor
                 db={db}
                 filter={filter}
@@ -831,11 +803,21 @@ class MdaViewer extends React.Component {
                 onConnectionDelete={this.handleConnectionDelete}
               />
             </div>
-            <div className={`tab-pane fade ${tab_vars_show} ${tab_vars_active}`} id="variables" role="tabpanel" aria-labelledby="variables-tab">
+            <div
+              className={`tab-pane fade ${tab_vars_show} ${tab_vars_active}`}
+              id="variables"
+              role="tabpanel"
+              aria-labelledby="variables-tab"
+            >
               {varEditor}
               <DistributionModals db={db} onConnectionChange={this.handleConnectionChange} />
             </div>
-            <div className="tab-pane fade" id="openmdao-impl" role="tabpanel" aria-labelledby="openmdao-impl-tab">
+            <div
+              className="tab-pane fade"
+              id="openmdao-impl"
+              role="tabpanel"
+              aria-labelledby="openmdao-impl-tab"
+            >
               {openmdaoImplMsg}
               <OpenmdaoImplEditor
                 impl={openmdaoImpl}
@@ -850,7 +832,8 @@ class MdaViewer extends React.Component {
       );
     }
 
-    let noteItem; let noteTab;
+    let noteItem;
+    let noteTab;
     if (mda.note && mda.note.length > 0) {
       noteItem = (
         <li className="nav-item">
@@ -867,15 +850,13 @@ class MdaViewer extends React.Component {
           </a>
         </li>
       );
-      noteTab = (<AnalysisNotePanel note={mda.note} />);
+      noteTab = <AnalysisNotePanel note={mda.note} />;
     }
 
     return (
       <div>
         {breadcrumbs}
-        <div className="mda-section">
-          {xdsmViewer}
-        </div>
+        <div className="mda-section">{xdsmViewer}</div>
         <div className="mda-section">
           <ul className="nav nav-tabs" id="myTab" role="tablist">
             <li className="nav-item">
@@ -946,22 +927,39 @@ class MdaViewer extends React.Component {
             {noteItem}
           </ul>
           <div className="tab-content" id="myTabContent">
-            <div className="tab-pane fade show active" id="variables" role="tabpanel" aria-labelledby="variables-tab">
+            <div
+              className="tab-pane fade show active"
+              id="variables"
+              role="tabpanel"
+              aria-labelledby="variables-tab"
+            >
               {varEditor}
             </div>
-            <div className="tab-pane fade" id="var-search" role="tabpanel" aria-labelledby="var-search-tab">
+            <div
+              className="tab-pane fade"
+              id="var-search"
+              role="tabpanel"
+              aria-labelledby="var-search-tab"
+            >
               <VariableSearchPanel api={this.api} mdaId={db.mda.id} />
             </div>
-            <div className="tab-pane fade" id="exports" role="tabpanel" aria-labelledby="exports-tab">
-              <ExportPanel
-                api={this.api}
-                db={db}
-              />
+            <div
+              className="tab-pane fade"
+              id="exports"
+              role="tabpanel"
+              aria-labelledby="exports-tab"
+            >
+              <ExportPanel api={this.api} db={db} />
             </div>
             <div className="tab-pane fade" id="diffs" role="tabpanel" aria-labelledby="diffs-tab">
               <ComparisonPanel api={this.api} mdaId={db.mda.id} />
             </div>
-            <div className="tab-pane fade" id="history" role="tabpanel" aria-labelledby="history-tab">
+            <div
+              className="tab-pane fade"
+              id="history"
+              role="tabpanel"
+              aria-labelledby="history-tab"
+            >
               <HistoryPanel api={this.api} mdaId={db.mda.id} />
             </div>
             {noteTab}

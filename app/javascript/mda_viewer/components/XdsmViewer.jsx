@@ -45,8 +45,10 @@ class XdsmViewer extends React.Component {
         },
       },
     });
-    this.selectableXdsm = XDSMjs(config)
-      .createSelectableXdsm(xdsmMda, this._onSelectionChange.bind(this));
+    this.selectableXdsm = XDSMjs(config).createSelectableXdsm(
+      xdsmMda,
+      this._onSelectionChange.bind(this)
+    );
     this.setSelection(filter);
     this._setLinks();
     XdsmViewer._setTooltips();
@@ -65,7 +67,9 @@ class XdsmViewer extends React.Component {
     // eslint-disable-next-line no-undef
     // $('.ellipsized').tooltip('dispose');
 
-    const xdsmMda = update(mda, { nodes: { 0: { name: { $set: 'Driver' }, type: { $set: 'driver' } } } });
+    const xdsmMda = update(mda, {
+      nodes: { 0: { name: { $set: 'Driver' }, type: { $set: 'driver' } } },
+    });
     this.selectableXdsm.updateMdo(xdsmMda);
 
     // links
@@ -100,7 +104,7 @@ class XdsmViewer extends React.Component {
 
   render() {
     const { version } = this.state;
-    return (<div className={version} />);
+    return <div className={version} />;
   }
 }
 

@@ -5,13 +5,7 @@ import 'swagger-ui-react/swagger-ui.css';
 
 function MySwaggerUI(props) {
   const { url, preAuthorize } = props;
-  return (
-    <SwaggerUI
-      url={url}
-      onComplete={preAuthorize}
-      docExpansion="list"
-    />
-  );
+  return <SwaggerUI url={url} onComplete={preAuthorize} docExpansion="list" />;
 }
 
 MySwaggerUI.propTypes = {
@@ -26,12 +20,7 @@ function SwaggerApiDoc({ api }) {
     }
   }
 
-  return (
-    <MySwaggerUI
-      url={api.docUrl()}
-      preAuthorize={(sui) => preAuthorize(sui)}
-    />
-  );
+  return <MySwaggerUI url={api.docUrl()} preAuthorize={(sui) => preAuthorize(sui)} />;
 }
 
 SwaggerApiDoc.propTypes = {

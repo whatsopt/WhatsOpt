@@ -59,8 +59,14 @@ const SCHEMA_NONLINEAR_SOLVER = {
       properties: {
         name: {
           title: 'Solver name',
-          enum: ['NonlinearBlockGS', 'RecklessNonlinearBlockGS', 'NonlinearBlockJac',
-            'NonlinearRunOnce', 'NewtonSolver', 'BroydenSolver'],
+          enum: [
+            'NonlinearBlockGS',
+            'RecklessNonlinearBlockGS',
+            'NonlinearBlockJac',
+            'NonlinearRunOnce',
+            'NewtonSolver',
+            'BroydenSolver',
+          ],
         },
         atol: { type: 'number', title: 'Absolute error tolerance' },
         rtol: { type: 'number', title: 'Relative error tolerance' },
@@ -82,8 +88,15 @@ const SCHEMA_LINEAR_SOLVER = {
       properties: {
         name: {
           title: 'Solver name',
-          enum: ['ScipyKrylov', 'LinearBlockGS', 'LinearBlockJac', 'LinearRunOnce',
-            'DirectSolver', 'PETScKrylov', 'LinearUserDefined'],
+          enum: [
+            'ScipyKrylov',
+            'LinearBlockGS',
+            'LinearBlockJac',
+            'LinearRunOnce',
+            'DirectSolver',
+            'PETScKrylov',
+            'LinearUserDefined',
+          ],
         },
         atol: { type: 'number', title: 'Absolute error tolerance' },
         rtol: { type: 'number', title: 'Relative error tolerance' },
@@ -102,7 +115,8 @@ function _getOpenmdaoImpl(formData) {
   const nodes = [];
   for (const discId in openmdaoComps) {
     // eslint-disable-next-line no-restricted-globals
-    if (!isNaN(parseInt(discId, 10))) { // take only ids, discard use_scaling and parallel_group
+    if (!isNaN(parseInt(discId, 10))) {
+      // take only ids, discard use_scaling and parallel_group
       nodes.push({
         discipline_id: discId,
         implicit_component: openmdaoComps[discId].implicit,
@@ -178,9 +192,17 @@ class OpenmdaoImplEditor extends React.Component {
         type: 'object',
         title: name,
         properties: {
-          implicit: { type: 'boolean', title: 'Implicit component', default: node.implicit_component },
+          implicit: {
+            type: 'boolean',
+            title: 'Implicit component',
+            default: node.implicit_component,
+          },
           jax: { type: 'boolean', title: 'Jax component', default: node.jax_component },
-          derivatives: { type: 'boolean', title: 'Support derivatives', default: node.support_derivatives },
+          derivatives: {
+            type: 'boolean',
+            title: 'Support derivatives',
+            default: node.support_derivatives,
+          },
           surrogate: { type: 'boolean', title: 'EGMDO surrogate', default: node.egmdo_surrogate },
         },
       };
@@ -193,8 +215,14 @@ class OpenmdaoImplEditor extends React.Component {
           'ui:help': (
             <div>
               cf.
-              { }
-              <a href="https://openmdao.org/newdocs/versions/latest/features/units.html" target="_blank" rel="noreferrer">Units definitions</a>
+              {}
+              <a
+                href="https://openmdao.org/newdocs/versions/latest/features/units.html"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Units definitions
+              </a>
             </div>
           ),
         },
@@ -202,8 +230,14 @@ class OpenmdaoImplEditor extends React.Component {
           'ui:help': (
             <div>
               cf.
-              { }
-              <a href="https://openmdao.org/newdocs/versions/latest/features/core_features/working_with_components/scaling.html" target="_blank" rel="noreferrer">Scaling</a>
+              {}
+              <a
+                href="https://openmdao.org/newdocs/versions/latest/features/core_features/working_with_components/scaling.html"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Scaling
+              </a>
             </div>
           ),
         },
@@ -253,8 +287,12 @@ class OpenmdaoImplEditor extends React.Component {
               liveValidate
             >
               <div>
-                <button type="submit" className="btn btn-primary">Save</button>
-                <button type="button" className="ms-1 btn btn-secondary" onClick={this.handleReset}>Reset</button>
+                <button type="submit" className="btn btn-primary">
+                  Save
+                </button>
+                <button type="button" className="ms-1 btn btn-secondary" onClick={this.handleReset}>
+                  Reset
+                </button>
               </div>
             </Form>
           </div>
@@ -269,7 +307,9 @@ class OpenmdaoImplEditor extends React.Component {
               liveValidate
             >
               <div>
-                <button type="submit" className="d-none btn btn-primary">Save</button>
+                <button type="submit" className="d-none btn btn-primary">
+                  Save
+                </button>
               </div>
             </Form>
           </div>
@@ -284,7 +324,9 @@ class OpenmdaoImplEditor extends React.Component {
               liveValidate
             >
               <div className="mb-3">
-                <button type="submit" className="d-none btn btn-primary">Save</button>
+                <button type="submit" className="d-none btn btn-primary">
+                  Save
+                </button>
               </div>
             </Form>
           </div>
@@ -299,7 +341,9 @@ class OpenmdaoImplEditor extends React.Component {
               liveValidate
             >
               <div className="mb-3">
-                <button type="submit" className="d-none btn btn-primary">Save</button>
+                <button type="submit" className="d-none btn btn-primary">
+                  Save
+                </button>
               </div>
             </Form>
           </div>

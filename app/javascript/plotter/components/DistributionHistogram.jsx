@@ -25,7 +25,7 @@ class DistributionHistogramList extends React.PureComponent {
     layout.height = 300;
     layout.title = { text: caseUtils.label(varcase) };
 
-    return (<Plot data={data} layout={layout} />);
+    return <Plot data={data} layout={layout} />;
   }
 }
 
@@ -48,27 +48,17 @@ class DistributionHistograms extends React.PureComponent {
     const nb = mask.filter((b) => b).length;
 
     const inputDists = inputs.map((c) => (
-      <DistributionHistogramList key={caseUtils.label(c)} varcase={c} mask={mask} />));
+      <DistributionHistogramList key={caseUtils.label(c)} varcase={c} mask={mask} />
+    ));
     const outputDists = outputs.map((c) => (
-      <DistributionHistogramList key={caseUtils.label(c)} varcase={c} mask={mask} />));
+      <DistributionHistogramList key={caseUtils.label(c)} varcase={c} mask={mask} />
+    ));
 
     return (
       <div>
-        <div className="editor-section">
-          Input Distributions -
-          {' '}
-          {nb}
-          {' '}
-          cases
-        </div>
+        <div className="editor-section">Input Distributions - {nb} cases</div>
         {inputDists}
-        <div className="editor-section">
-          Output Distributions -
-          {' '}
-          {nb}
-          {' '}
-          cases
-        </div>
+        <div className="editor-section">Output Distributions - {nb} cases</div>
         {outputDists}
       </div>
     );

@@ -23,32 +23,48 @@ class VariablesPagination extends React.PureComponent {
       <nav>
         <ul className="pagination" style={{ marginBottom: 0 }}>
           <li className={pageItemPrev}>
-            <button type="button" className="page-link" onClick={() => gotoPage(0)} aria-label="Previous">
+            <button
+              type="button"
+              className="page-link"
+              onClick={() => gotoPage(0)}
+              aria-label="Previous"
+            >
               <i className="fas fa-angle-double-left" />
             </button>
           </li>
           <li className={pageItemPrev}>
-            <button type="button" className="page-link" onClick={() => previousPage()} aria-label="Previous">
+            <button
+              type="button"
+              className="page-link"
+              onClick={() => previousPage()}
+              aria-label="Previous"
+            >
               <i className="fas fa-angle-left" />
             </button>
           </li>
           <li className="page-item disabled">
             <span className="page-link">
-              {pageIndex + 1}
-              {' '}
-              /
-              {' '}
-              {pageOptions.length}
+              {pageIndex + 1} / {pageOptions.length}
             </span>
           </li>
 
           <li className={pageItemNext}>
-            <button type="button" className="page-link" onClick={() => nextPage()} aria-label="Previous">
+            <button
+              type="button"
+              className="page-link"
+              onClick={() => nextPage()}
+              aria-label="Previous"
+            >
               <i className="fas fa-angle-right" />
             </button>
           </li>
           <li className={pageItemNext}>
-            <button type="button" className="page-link" onClick={() => gotoPage(pageCount - 1)} aria-label="Previous">
+            <button
+              type="button"
+              className="page-link"
+              onClick={() => gotoPage(pageCount - 1)}
+              aria-label="Previous"
+            >
               <i className="fas fa-angle-double-right" />
             </button>
           </li>
@@ -65,9 +81,7 @@ class VariablesPagination extends React.PureComponent {
                 >
                   {[10, 20, 30, 50, 100].map((pSize) => (
                     <option key={pSize} value={pSize}>
-                      Show
-                      {' '}
-                      {pSize}
+                      Show {pSize}
                     </option>
                   ))}
                 </select>

@@ -10,12 +10,13 @@ module.exports = function (api) {
         {
           development: !isProductionEnv,
           useBuiltIns: true,
-          runtime: "automatic",
+          runtime: 'automatic',
         },
       ],
     ].filter(Boolean),
     plugins: [
-      isProductionEnv && ['babel-plugin-transform-react-remove-prop-types',
+      isProductionEnv && [
+        'babel-plugin-transform-react-remove-prop-types',
         {
           removeImport: true,
         },

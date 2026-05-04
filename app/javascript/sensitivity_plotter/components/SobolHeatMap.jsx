@@ -9,9 +9,7 @@ class SobolHeatMap extends React.PureComponent {
   render() {
     const { firstOrder, saResult, outVarNames } = this.props;
     // use first sa info to get in var names
-    const {
-      parameter_names: parameterNames,
-    } = saResult[outVarNames[0]];
+    const { parameter_names: parameterNames } = saResult[outVarNames[0]];
 
     const sobols = [];
     for (const outVarName of outVarNames) {
@@ -45,20 +43,22 @@ class SobolHeatMap extends React.PureComponent {
       },
     };
 
-    return (<Plot data={data} layout={layout} />);
+    return <Plot data={data} layout={layout} />;
   }
 }
 
 SobolHeatMap.propTypes = {
   outVarNames: PropTypes.arrayOf(PropTypes.string).isRequired,
   firstOrder: PropTypes.bool.isRequired,
-  saResult: PropTypes.arrayOf(PropTypes.shape({
-    S1: PropTypes.array.isRequired,
-    S1_conf: PropTypes.array,
-    ST: PropTypes.array.isRequired,
-    ST_conf: PropTypes.array,
-    parameter_names: PropTypes.array.isRequired,
-  })).isRequired,
+  saResult: PropTypes.arrayOf(
+    PropTypes.shape({
+      S1: PropTypes.array.isRequired,
+      S1_conf: PropTypes.array,
+      ST: PropTypes.array.isRequired,
+      ST_conf: PropTypes.array,
+      parameter_names: PropTypes.array.isRequired,
+    })
+  ).isRequired,
 };
 
 export default SobolHeatMap;

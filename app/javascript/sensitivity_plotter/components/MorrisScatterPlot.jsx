@@ -9,7 +9,10 @@ class MorrisScatterPlot extends React.PureComponent {
   render() {
     const { saData, outVarName } = this.props;
     const {
-      mu_star: muStar, sigma, mu_star_conf: muStarConf, parameter_names: paramNames,
+      mu_star: muStar,
+      sigma,
+      mu_star_conf: muStarConf,
+      parameter_names: paramNames,
     } = saData;
     const trace = {
       x: muStar,
@@ -40,7 +43,7 @@ class MorrisScatterPlot extends React.PureComponent {
       },
     };
 
-    return (<Plot data={data} layout={layout} />);
+    return <Plot data={data} layout={layout} />;
   }
 }
 

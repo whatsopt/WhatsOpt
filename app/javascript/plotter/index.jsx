@@ -27,49 +27,24 @@ class PlotPanel extends React.Component {
   }
 
   render() {
-    const {
-      db, optim, cases, success, title, uqMode,
-    } = this.props;
-    const { sensitivity } = this.state;
+    const { db, optim, cases, success, title, uqMode } = this.props;
     console.log(this.state);
 
     let plotdist;
     if (uqMode) {
       plotdist = (
-        <DistributionHistogram
-          db={db}
-          optim
-          cases={cases}
-          success={success}
-          title={title}
-        />
+        <DistributionHistogram db={db} optim cases={cases} success={success} title={title} />
       );
     }
 
     let plotoptim = (
-      <ScatterPlotMatrix
-        db={db}
-        optim
-        cases={cases}
-        success={success}
-        title={title}
-      />
+      <ScatterPlotMatrix db={db} optim cases={cases} success={success} title={title} />
     );
     if (optim) {
       plotoptim = (
         <div>
-          <IterationLinePlot
-            db={db}
-            optim
-            cases={cases}
-            title={title}
-          />
-          <IterationRadarPlot
-            db={db}
-            optim
-            cases={cases}
-            title={title}
-          />
+          <IterationLinePlot db={db} optim cases={cases} title={title} />
+          <IterationRadarPlot db={db} optim cases={cases} title={title} />
         </div>
       );
     }
@@ -107,7 +82,12 @@ class PlotPanel extends React.Component {
     }
 
     return (
-      <div className="tab-pane fade active show" id={PLOTS_TAB} role="tabpanel" aria-labelledby="plots-tab">
+      <div
+        className="tab-pane fade active show"
+        id={PLOTS_TAB}
+        role="tabpanel"
+        aria-labelledby="plots-tab"
+      >
         {plotdist}
         {plotparall}
         {plotoptim}
@@ -130,9 +110,7 @@ PlotPanel.propTypes = {
 
 class VariablePanel extends React.PureComponent {
   render() {
-    const {
-      db, optim, uqMode, cases, selCases, onSelectionChange,
-    } = this.props;
+    const { db, optim, uqMode, cases, selCases, onSelectionChange } = this.props;
     const klass = 'tab-pane fade';
     return (
       <div className={klass} id={VARIABLES_TAB} role="tabpanel" aria-labelledby="variables-tab">
@@ -161,9 +139,7 @@ VariablePanel.propTypes = {
 class Plotter extends React.Component {
   constructor(props) {
     super(props);
-    const {
-      api, mda, uqMode, ope,
-    } = this.props;
+    const { api, mda, uqMode, ope } = this.props;
     this.api = api;
     this.db = new AnalysisDatabase(mda);
     this.cases = ope.cases.sort(caseUtils.compare);
@@ -224,8 +200,7 @@ class Plotter extends React.Component {
 
   render() {
     const { ope, mda, uqMode } = this.props;
-    const isOptim = (ope.category === 'optimization' || ope.category === 'egmdo');
-    const isDoe = (ope.category === 'doe' || ope.category === 'egdoe');
+    const isOptim = ope.category === 'optimization' || ope.category === 'egmdo';
     const { selection, inputVarCases } = this.state;
     const cases = { i: inputVarCases, o: this.outputVarCases, c: this.couplingVarCases };
     const selCases = {
@@ -248,18 +223,14 @@ class Plotter extends React.Component {
     return (
       <div>
         <h1>
-          {ope.name}
-          {' '}
-          on
-          {' '}
-          <a href={this.api.url(`/analyses/${mda.id}`)}>{mda.name}</a>
-          <small>
-            {` (#${mda.id})`}
-          </small>
+          {ope.name} on <a href={this.api.url(`/analyses/${mda.id}`)}>{mda.name}</a>
+          <small>{` (#${mda.id})`}</small>
         </h1>
 
         <div className="btn-group me-2  float-end" role="group">
-          <a className="btn btn-primary" href={exportUrl}>Export Csv</a>
+          <a className="btn btn-primary" href={exportUrl}>
+            Export Csv
+          </a>
         </div>
 
         <div className="container-fluid">

@@ -31,7 +31,7 @@ class IterationLinePlot extends React.PureComponent {
     const { title } = this.props;
     const layout = { width: 600, height: 500, title: { text: title } };
 
-    return (<Plot data={data} layout={layout} />);
+    return <Plot data={data} layout={layout} />;
   }
 }
 

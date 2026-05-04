@@ -8,7 +8,9 @@ import WhatsOptApi from '../utils/WhatsOptApi';
 
 document.addEventListener('DOMContentLoaded', () => {
   const csrfToken = document.getElementsByName('csrf-token')[0].getAttribute('content');
-  const relativeUrlRoot = document.getElementsByName('relative-url-root')[0].getAttribute('content');
+  const relativeUrlRoot = document
+    .getElementsByName('relative-url-root')[0]
+    .getAttribute('content');
 
   // eslint-disable-next-line no-undef
   const mdaViewerElt = $('#mda-viewer');
@@ -22,12 +24,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const api = new WhatsOptApi(csrfToken, apiKey, relativeUrlRoot, mda.updated_at);
 
   const root = createRoot(mdaViewerElt[0]);
-  root.render(<MdaViewer
-    mda={mda}
-    isEditing={isEditing}
-    api={api}
-    members={members}
-    coOwners={coOwners}
-    currentUser={currentUser}
-  />);
+  root.render(
+    <MdaViewer
+      mda={mda}
+      isEditing={isEditing}
+      api={api}
+      members={members}
+      coOwners={coOwners}
+      currentUser={currentUser}
+    />
+  );
 });

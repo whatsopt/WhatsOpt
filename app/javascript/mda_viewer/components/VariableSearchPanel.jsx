@@ -6,11 +6,19 @@ import VariableSelector from './VariableSelector';
 function getDiscButtons(api, discs) {
   const buttons = discs.map(([disc, path]) => {
     const { name, analysis_id } = disc;
-    const title = path.map((a) => (a.name)).join('/');
+    const title = path.map((a) => a.name).join('/');
     const label = name === '__DRIVER__' ? 'User' : `${disc.name}`;
     return (
-      <div key={disc.id} className="btn-group me-2 mt-2 disc-button" role="group" data-bs-toggle="tooltip" title={`${title}`}>
-        <a href={api.url(`/analyses/${analysis_id}`)} className="btn btn-info" role="button">{label}</a>
+      <div
+        key={disc.id}
+        className="btn-group me-2 mt-2 disc-button"
+        role="group"
+        data-bs-toggle="tooltip"
+        title={`${title}`}
+      >
+        <a href={api.url(`/analyses/${analysis_id}`)} className="btn btn-info" role="button">
+          {label}
+        </a>
       </div>
     );
   });
@@ -20,9 +28,12 @@ function getDiscButtons(api, discs) {
 class VariableDisplay extends React.PureComponent {
   componentDidUpdate() {
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-    [...tooltipTriggerList].map((tooltipTriggerEl) => new Tooltip(tooltipTriggerEl, {
-      trigger: 'hover',
-    }));
+    [...tooltipTriggerList].map(
+      (tooltipTriggerEl) =>
+        new Tooltip(tooltipTriggerEl, {
+          trigger: 'hover',
+        })
+    );
   }
 
   render() {
@@ -33,14 +44,10 @@ class VariableDisplay extends React.PureComponent {
     return (
       <div className="editor-section">
         <div className="editor-section-label">Source</div>
-        <div className="mb-2">
-          { disciplineFrom }
-        </div>
+        <div className="mb-2">{disciplineFrom}</div>
 
         <div className="editor-section-label">Targets</div>
-        <div className="mb-2">
-          { disciplineTo }
-        </div>
+        <div className="mb-2">{disciplineTo}</div>
       </div>
     );
   }
@@ -83,7 +90,7 @@ class VariableSearchPanel extends React.Component {
       },
       (error) => {
         console.log(error);
-      },
+      }
     );
   }
 
@@ -93,7 +100,7 @@ class VariableSearchPanel extends React.Component {
 
     let varDisplay = null;
     if (selected.length !== 0) {
-      varDisplay = (<VariableDisplay api={api} varinfo={varinfo} />);
+      varDisplay = <VariableDisplay api={api} varinfo={varinfo} />;
     }
 
     return (
@@ -108,9 +115,7 @@ class VariableSearchPanel extends React.Component {
               disabled={false}
             />
           </div>
-          <div className="editor-section col-12">
-            {varDisplay}
-          </div>
+          <div className="editor-section col-12">{varDisplay}</div>
         </div>
       </div>
     );

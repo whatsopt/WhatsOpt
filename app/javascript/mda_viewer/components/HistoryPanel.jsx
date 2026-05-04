@@ -18,16 +18,20 @@ class DaylyChangeLog extends React.PureComponent {
         if (elt.action === 'change') {
           let oldval = elt.old_value;
           let newval = elt.value;
-          if (elt.old_value === 'analysis') { // Use consistent terminology
+          if (elt.old_value === 'analysis') {
+            // Use consistent terminology
             oldval = 'discipline';
           }
-          if (elt.old_value === 'mda') { // Use consistent terminology
+          if (elt.old_value === 'mda') {
+            // Use consistent terminology
             oldval = 'sub-analysis';
           }
-          if (elt.value === 'analysis') { // Use consistent terminology
+          if (elt.value === 'analysis') {
+            // Use consistent terminology
             newval = 'discipline';
           }
-          if (elt.value === 'mda') { // Use consistent terminology
+          if (elt.value === 'mda') {
+            // Use consistent terminology
             newval = 'sub-analysis';
           }
 
@@ -35,7 +39,7 @@ class DaylyChangeLog extends React.PureComponent {
         }
         return (
           <span key={change.at + chg}>
-            { i > 0 ? ', ' : '' }
+            {i > 0 ? ', ' : ''}
             <em>{chg}</em>
           </span>
         );
@@ -48,11 +52,7 @@ class DaylyChangeLog extends React.PureComponent {
       );
     });
 
-    return (
-      <ul>
-        { list }
-      </ul>
-    );
+    return <ul>{list}</ul>;
   }
 }
 
@@ -114,9 +114,7 @@ class HistoryPanel extends React.Component {
     return (
       <div className="editor-section">
         <div className="editor-section-label">Changes</div>
-        <ul className="editor-section">
-          {items.length > 0 ? items : 'No recorded change'}
-        </ul>
+        <ul className="editor-section">{items.length > 0 ? items : 'No recorded change'}</ul>
       </div>
     );
   }
