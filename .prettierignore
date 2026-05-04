@@ -1,0 +1,14 @@
+node_modules
+.yarn
+public/packs
+public/packs-test
+public/assets
+vendor
+tmp
+log
+storage
+upload
+*_out
+reports
+db/*.sqlite3
+app/javascript/mda_viewer/components/riek
